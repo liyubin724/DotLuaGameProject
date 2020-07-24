@@ -11,9 +11,9 @@ namespace DotEngine.Services
     {
         private LuaBindScript m_BindScript = null;
 
-        public LuaHandlerService(string name,string envName,string scriptPath) : base(name)
+        public LuaHandlerService(string name,string scriptPath) : base(name)
         {
-            m_BindScript = new LuaBindScript(envName, scriptPath);
+            m_BindScript = new LuaBindScript(scriptPath);
         }
 
         public override void DoRegister()

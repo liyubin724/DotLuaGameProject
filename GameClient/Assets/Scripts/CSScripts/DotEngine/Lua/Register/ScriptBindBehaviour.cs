@@ -7,14 +7,6 @@ namespace DotEngine.Lua.Register
     {
         public LuaBindScript bindScript = new LuaBindScript();
 
-        public LuaEnv Env
-        {
-            get 
-            {
-                return bindScript.Env;
-            }
-        }
-
         public LuaTable ObjTable
         {
             get

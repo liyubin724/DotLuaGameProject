@@ -1,0 +1,17 @@
+require ("DotLua/Class")
+
+local DebugLog = DebugLog
+
+EnvManager =
+    Class(
+    function(self)
+    end
+)
+
+function EnvManager:DoStart()
+    DebugLog.Info("EnvMgr", "EnvMgr started")
+end
+
+function EnvManager:DoUpdate(deltaTime)
+    
+end

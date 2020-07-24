@@ -1,6 +1,5 @@
 ﻿using DotEngine.Asset;
 using DotEngine.GOPool;
-using DotEngine.Lua;
 using DotEngine.Services;
 using DotEngine.Timer;
 using DotEngine.Utilities;
@@ -13,7 +12,7 @@ namespace DotEngine
 
         public static Facade GetInstance()
         {
-            if(instance == null)
+            if (instance == null)
             {
                 return instance = new Facade();
             }
@@ -23,6 +22,7 @@ namespace DotEngine
         private ServiceCenter m_ServiceCenter = null;
         protected Facade()
         {
+            instance = this;
             InitializeFacade();
         }
 
@@ -36,23 +36,20 @@ namespace DotEngine
         protected virtual void InitializeService()
         {
             m_ServiceCenter = new ServiceCenter();
-        }
-
-        public virtual void RegisterService(IService service)
-        {
-            m_ServiceCenter.RegisterService(service);
 
             TimerService timerService = new TimerService();
             m_ServiceCenter.RegisterService(timerService);
-
-            LuaEnvService luaEnvService = new LuaEnvService();
-            m_ServiceCenter.RegisterService(luaEnvService);
 
             AssetService assetService = new AssetService();
             m_ServiceCenter.RegisterService(assetService);
 
             GameObjectPoolService poolService = new GameObjectPoolService(assetService.InstantiateAsset);
             m_ServiceCenter.RegisterService(poolService);
+        }
+
+        public virtual void RegisterService(IService service)
+        {
+            m_ServiceCenter.RegisterService(service);
         }
 
         public virtual IService RetrieveService(string name)

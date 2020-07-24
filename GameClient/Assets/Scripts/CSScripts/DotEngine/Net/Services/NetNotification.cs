@@ -12,6 +12,5 @@ namespace DotEngine.Net.Services
         public const string CLIENT_NET_CONNECTED_SUCCESS = "ClientNetConnectedSuccess";
         public const string CLIENT_NET_CONNECTED_FAILED = "ClientNetConnectedFailed";
         public const string CLIENT_NET_DISCONNECTED = "ClientNetDisconnected";
-
     }
 }

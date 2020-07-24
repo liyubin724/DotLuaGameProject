@@ -17,7 +17,7 @@ namespace DotEditor.Lua.Gen
 
         public List<string> blackDatas = new List<string>();
 
-        private static string GEN_CONFIG_ASSET_PATH = "Assets/XLua/gen_config.asset";
+        private static string GEN_CONFIG_ASSET_PATH = "Assets/Settings/Lua/gen_config.asset";
         public static GenConfig GetConfig(bool createIfNotExist = true)
         {
             GenConfig genConfig = AssetDatabase.LoadAssetAtPath<GenConfig>(GEN_CONFIG_ASSET_PATH);

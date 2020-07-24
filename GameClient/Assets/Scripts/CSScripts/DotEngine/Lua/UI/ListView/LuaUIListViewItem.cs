@@ -1,5 +1,4 @@
-﻿using DotEngine.Lua;
-using DotEngine.Lua.Register;
+﻿using DotEngine.Lua.Register;
 using SuperScrollView;
 using UnityEngine;
 using XLua;
@@ -45,10 +44,15 @@ namespace DotEngine.Lua.UI.ListView
 
         protected virtual void OnInitFinished()
         {
-            registerObjectData.RegisterToLua(bindScript.Env, bindScript.ObjTable);
-            registerBehaviourData.RegisterToLua(bindScript.Env, bindScript.ObjTable);
+            LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
+            if(service.IsValid())
+            {
+                registerObjectData.RegisterToLua(service.Env, bindScript.ObjTable);
+                registerBehaviourData.RegisterToLua(service.Env, bindScript.ObjTable);
 
-            bindScript.ObjTable.Set(ITEM_NAME, this);
+                bindScript.ObjTable.Set(ITEM_NAME, this);
+            }
+            
         }
     }
 }

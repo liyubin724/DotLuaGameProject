@@ -1,3 +1,5 @@
+require("DotLua/Utility/TableUtil")
+
 local LogUtil = CS.DotEngine.Log.LogUtil
 local table = table
 

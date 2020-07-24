@@ -9,7 +9,7 @@ namespace DotEditor.Lua
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight * 3;
+            return EditorGUIUtility.singleLineHeight * 2;
         }
 
         public override bool CanCacheInspectorGUI(SerializedProperty property)
@@ -19,11 +19,7 @@ namespace DotEditor.Lua
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            SerializedProperty envNameProperty = property.FindPropertyRelative("m_EnvName");
             SerializedProperty scriptPathProperty = property.FindPropertyRelative("m_ScriptFilePath");
-
-            Rect nameRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PropertyField(nameRect, envNameProperty);
 
             TextAsset scriptAsset = null;
             string scriptAssetPath = string.Empty;
@@ -39,8 +35,7 @@ namespace DotEditor.Lua
                 }
             }
 
-            Rect scriptRect = nameRect;
-            scriptRect.y += nameRect.height;
+            Rect scriptRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
             TextAsset newScriptAsset = (TextAsset)EditorGUI.ObjectField(scriptRect, "Lua Script", scriptAsset, typeof(TextAsset), false);
 
             scriptRect.y += scriptRect.height;

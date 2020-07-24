@@ -9,11 +9,8 @@ namespace DotEngine.Lua
     public class LuaBindScript
     {
         [SerializeField]
-        private string m_EnvName = string.Empty;
-        [SerializeField]
         private string m_ScriptFilePath = null;
 
-        public LuaEnv Env { get; private set; }
         public LuaTable ObjTable { get; private set; }
 
         private bool m_IsInited = false;
@@ -21,19 +18,15 @@ namespace DotEngine.Lua
         public LuaBindScript()
         { }
 
-        public LuaBindScript(string envName,string filePath)
+        public LuaBindScript(string filePath)
         {
-            m_EnvName = envName;
             m_ScriptFilePath = filePath;
         }
 
         public bool IsValid()
         {
-            if (Env == null || !Env.IsValid() || ObjTable == null)
-            {
-                return false;
-            }
-            return true;
+            LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
+            return service.IsValid() && ObjTable != null;
         }
 
         public bool InitLua(Action initFinished)
@@ -44,16 +37,9 @@ namespace DotEngine.Lua
             }
 
             LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
-            Env = service.GetEnv(m_EnvName);
-            if (Env == null)
-            {
-                LogUtil.LogError(LuaConst.LOGGER_NAME, $"LuaScript::InitLua->LuaEnv is null.");
-                return false;
-            }
-
             if (!string.IsNullOrEmpty(m_ScriptFilePath))
             {
-                ObjTable = LuaUtility.Instance(Env, m_ScriptFilePath);
+                ObjTable = LuaUtility.Instance(service.Env, m_ScriptFilePath);
 
                 if (ObjTable != null)
                 {
@@ -74,7 +60,6 @@ namespace DotEngine.Lua
         {
             ObjTable?.Dispose();
             ObjTable = null;
-            Env = null;
             m_IsInited = false;
         }
 

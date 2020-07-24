@@ -1,38 +1,19 @@
-﻿using DotEngine.Log;
-using DotEngine.Services;
-using System;
-using System.Collections.Generic;
+﻿using DotEngine.Services;
 using XLua;
 
 namespace DotEngine.Lua
 {
-    internal class LuaEnvData
+    public class LuaEnvService : Service,IUpdate
     {
-        public LuaEnv Env { get; private set; }
-        public ScriptLoader Loader { get; private set; }
-        public LuaTable MgrTable { get; private set; }
+        public const string NAME = "LuaService";
 
-        private Action<LuaTable, float> updateAction = null;
+        public float TickInterval { get; set; } = 0;
+        public LuaEnv Env { get; private set; } = null;
 
-        public LuaEnvData(LuaEnv luaEnv, ScriptLoader loader)
+        private float elapsedTime = 0.0f;
+
+        public LuaEnvService() : base(NAME)
         {
-            Env = luaEnv;
-            if (luaEnv != null && loader != null)
-            {
-                luaEnv.AddLoader(loader.LoadScript);
-            }
-        }
-
-        public void SetMgr(LuaTable mgrTable)
-        {
-            MgrTable = mgrTable;
-            if (MgrTable != null)
-            {
-                Action<LuaTable> luaMgrStartAction = mgrTable.Get<Action<LuaTable>>(LuaConst.START_FUNCTION_NAME);
-                luaMgrStartAction?.Invoke(mgrTable);
-
-                updateAction = mgrTable.Get<Action<LuaTable, float>>(LuaConst.UPDATE_FUNCTION_NAME);
-            }
         }
 
         public bool IsValid()
@@ -40,159 +21,78 @@ namespace DotEngine.Lua
             return Env != null && Env.IsValid();
         }
 
-        public void DoUpdate(float deltaTime)
+        public override void DoRegister()
         {
-            if (IsValid() && updateAction != null)
+            InitEnv();
+        }
+
+        protected virtual void InitEnv()
+        {
+            Env = new LuaEnv();
+#if DEBUG
+            Env.Global.Set(LuaConst.IS_DEBUG_FIELD_NAME, true);
+#endif
+
+        }
+
+        public bool RequireScript(string scriptPath)
+        {
+            if(IsValid())
             {
-                updateAction(MgrTable, deltaTime);
+                return LuaUtility.Require(Env, scriptPath);
             }
+            return false;
         }
 
-        public void Tick()
+        public LuaTable InstanceScript(string scriptPath)
         {
-            if (IsValid())
+            if(IsValid())
             {
-                Env.Tick();
-            }
-        }
-
-        public void GC()
-        {
-            if (IsValid())
-            {
-                Env.FullGc();
-            }
-        }
-
-        public void Dispose()
-        {
-            updateAction = null;
-
-            MgrTable?.Dispose();
-            MgrTable = null;
-
-            Env?.Dispose();
-            Env = null;
-
-        }
-    }
-
-    public class LuaEnvService : Service,IUpdate
-    {
-        public const string NAME = "LuaService";
-
-        public const string GLOBAL_MGR_NAME = "EnvMgr";
-
-        public float TickInterval { get; set; } = 0;
-
-        private float elapsedTime = 0.0f;
-        private Dictionary<string, LuaEnvData> envDic = new Dictionary<string, LuaEnvData>();
-
-        public LuaEnvService() : base(NAME)
-        {
-        }
-
-        public override void DoRemove()
-        {
-            foreach(var kvp in envDic)
-            {
-                kvp.Value.Dispose();
-            }
-            envDic.Clear();
-        }
-
-        public LuaEnv GetEnv(string envName)
-        {
-            if(envDic.TryGetValue(envName,out LuaEnvData envData))
-            {
-                if(envData.IsValid())
-                {
-                    return envData.Env;
-                }
+                return LuaUtility.Instance(Env, scriptPath);
             }
             return null;
         }
 
-        public void DisposeEnv(string envName)
+        public virtual void DoUpdate(float deltaTime)
         {
-            if (envDic.TryGetValue(envName, out LuaEnvData envData))
+            if(!Env.IsValid())
             {
-                envData.Dispose();
-
-                envDic.Remove(envName);
-            }
-        }
-
-        public void CreateEnv(string envName,string[] pathFormats,string[] preloadScripts,string mgrScriptPath)
-        {
-            if(envDic.ContainsKey(envName))
-            {
-                LogUtil.LogError(LuaConst.LOGGER_NAME, "");
                 return;
             }
 
-            LuaEnv luaEnv = new LuaEnv();
-
-            FileScriptLoader scriptLoader = new FileScriptLoader(pathFormats);
-            LuaEnvData envData = new LuaEnvData(luaEnv, scriptLoader);
-            envDic.Add(envName, envData);
-
-#if DEBUG
-            luaEnv.Global.Set(LuaConst.IS_DEBUG_FIELD_NAME, true);
-#endif
-
-            if (preloadScripts != null && preloadScripts.Length > 0)
-            {
-                foreach(var script in preloadScripts)
-                {
-                    LuaUtility.Require(luaEnv, script);
-                }
-            }
-
-            if(!string.IsNullOrEmpty(mgrScriptPath))
-            {
-                LuaTable mgrTable = LuaUtility.Instance(luaEnv, mgrScriptPath);
-                if(mgrTable == null)
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaEnvService::CreateEnv->Load mgr Failed.mgrScriptPath = "+mgrScriptPath);
-                }else
-                {
-                    envData.SetMgr(mgrTable);
-
-                    luaEnv.Global.Set(GLOBAL_MGR_NAME, mgrTable);
-                }
-            }
-        }
-
-        public void DoUpdate(float deltaTime)
-        {
-            bool isNeedTick = false;
             if(TickInterval>0)
             {
                 elapsedTime += deltaTime;
                 if(elapsedTime>=TickInterval)
                 {
                     elapsedTime -= TickInterval;
-                    isNeedTick = true;
-                }
-            }
-
-            foreach (var kvp in envDic)
-            {
-                kvp.Value.DoUpdate(deltaTime);
-                if(isNeedTick)
-                {
-                    kvp.Value.Tick();
+                    Env.Tick();
                 }
             }
         }
 
         public void FullGC()
         {
-            foreach (var envData in envDic)
+            if(IsValid())
             {
-                envData.Value.GC();
+                Env.FullGc();
             }
+        }
+
+        public override void DoRemove()
+        {
+            DoDispose();
+        }
+
+        protected virtual void DoDispose()
+        {
+            if (IsValid())
+            {
+                Env.Dispose();
+                Env = null;
+            }
+
+            elapsedTime = 0.0f;
         }
     }
 }

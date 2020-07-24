@@ -2,18 +2,15 @@
 using DotEngine.Log;
 using DotEngine.Lua;
 using DotEngine.Utilities;
+using Game.Lua;
 using UnityEngine;
 
 namespace Game
 {
     public class StartupBehaviour : MonoBehaviour
     {
-        public string luaEnvName = "game";
-        public string[] luaPreloadScripts = new string[]
-        {
-            "DotLua/Startup"
-        };
-        public string luaMgrScript = "Game/GameEnvManager";
+        public string[] luaPreloadScripts = new string[0];
+        public string luaMgrScript = string.Empty;
 
         private void Awake()
         {
@@ -21,9 +18,8 @@ namespace Game
             LogUtil.SetLogger(logger);
 
             Facade facade = GameFacade.GetInstance();
-            LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
-
-            luaEnvService.CreateEnv(luaEnvName, new string[] { LuaConst.GetScriptPathFormat() }, luaPreloadScripts, luaMgrScript);
+            GameLuaEnvService envService = new GameLuaEnvService(new string[] { LuaConst.GetScriptPathFormat() }, luaPreloadScripts, luaMgrScript);
+            facade.RegisterService(envService);
 
             DontDestroyHandler.AddTransform(transform);
         }
