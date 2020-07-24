@@ -1,9 +1,4 @@
 ﻿using DotEngine.Lua;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.Services
 {
@@ -23,7 +18,12 @@ namespace DotEngine.Services
 
         public override void DoRemove()
         {
-            
+            m_BindScript.Dispose();
+        }
+
+        public void CallAction<T>(string funcName,T value)
+        {
+            m_BindScript.CallAction<T>(funcName, value);
         }
     }
 }

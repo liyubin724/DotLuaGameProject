@@ -8,9 +8,11 @@ namespace DotEngine.Net.Services
 {
     public static class NetNotification
     {
-        public const string CLIENT_NET_CONNECDTING = "ClientNetConnecting";
-        public const string CLIENT_NET_CONNECTED_SUCCESS = "ClientNetConnectedSuccess";
-        public const string CLIENT_NET_CONNECTED_FAILED = "ClientNetConnectedFailed";
-        public const string CLIENT_NET_DISCONNECTED = "ClientNetDisconnected";
+        public const string CLIENT_NET_CREATE = "OnNetCreate";
+
+        public const string CLIENT_NET_CONNECDTING = "DoNetConnecting";
+        public const string CLIENT_NET_CONNECTED_SUCCESS = "DoNetConnectedSuccess";
+        public const string CLIENT_NET_CONNECTED_FAILED = "DoNetConnectedFailed";
+        public const string CLIENT_NET_DISCONNECTED = "DoNetDisconnected";
     }
 }

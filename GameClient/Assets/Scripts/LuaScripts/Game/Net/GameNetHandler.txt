@@ -1,0 +1,10 @@
+require('DotLua/Class')
+require("Game/Net/GameNetHandler")
+
+GameNetHandler =
+    Class(
+    ClientNetHandler,
+    function(self)
+        
+    end
+)

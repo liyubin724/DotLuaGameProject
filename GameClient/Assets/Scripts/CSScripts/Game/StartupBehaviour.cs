@@ -1,6 +1,7 @@
 ﻿using DotEngine;
 using DotEngine.Log;
 using DotEngine.Lua;
+using DotEngine.Net.Services;
 using DotEngine.Utilities;
 using Game.Lua;
 using UnityEngine;
@@ -18,8 +19,11 @@ namespace Game
             LogUtil.SetLogger(logger);
 
             Facade facade = GameFacade.GetInstance();
+            
             GameLuaEnvService envService = new GameLuaEnvService(new string[] { LuaConst.GetScriptPathFormat() }, luaPreloadScripts, luaMgrScript);
             facade.RegisterService(envService);
+
+            ClientNetService clientNetService = new ClientNetService("Game/")
 
             DontDestroyHandler.AddTransform(transform);
         }

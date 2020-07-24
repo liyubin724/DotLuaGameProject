@@ -6,19 +6,14 @@ using System.Linq;
 
 namespace DotEngine.Net.Services
 {
-    public class ClientNetService : Service, IUpdate, ILateUpdate
+    public class ClientNetService : LuaHandlerService, IUpdate, ILateUpdate
     {
         public const string NAME = "ClientNetService";
 
-        private Dictionary<int, ClientNet> clientNetDic = null;
+        private Dictionary<int, ClientNet> clientNetDic = new Dictionary<int, ClientNet>();
 
-        public ClientNetService() : base(NAME)
+        public ClientNetService(string scriptPath) : base(NAME,scriptPath)
         {
-        }
-
-        public override void DoRegister()
-        {
-            clientNetDic = new Dictionary<int, ClientNet>();
         }
 
         public override void DoRemove()
@@ -69,22 +64,22 @@ namespace DotEngine.Net.Services
 
         private void HandleNetConnecting(ClientNet net)
         {
-            //SendNotification(NetNotification.CLIENT_NET_CONNECDTING, net.UniqueID);
+            CallAction<int>(NetNotification.CLIENT_NET_CONNECDTING, net.UniqueID);
         }
 
         private void HandleNetConnectedSuccess(ClientNet net)
         {
-            //SendNotification(NetNotification.CLIENT_NET_CONNECTED_SUCCESS, net.UniqueID);
+            CallAction<int>(NetNotification.CLIENT_NET_CONNECTED_SUCCESS, net.UniqueID);
         }
 
         private void HandleNetConnectedFailed(ClientNet net)
         {
-            //SendNotification(NetNotification.CLIENT_NET_CONNECTED_FAILED, net.UniqueID);
+            CallAction<int>(NetNotification.CLIENT_NET_CONNECTED_FAILED, net.UniqueID);
         }
 
         private void HandleNetDisconnected(ClientNet net)
         {
-            //SendNotification(NetNotification.CLIENT_NET_DISCONNECTED, net.UniqueID);
+            CallAction<int>(NetNotification.CLIENT_NET_DISCONNECTED, net.UniqueID);
         }
 
         public void DoLateUpdate(float deltaTime)
