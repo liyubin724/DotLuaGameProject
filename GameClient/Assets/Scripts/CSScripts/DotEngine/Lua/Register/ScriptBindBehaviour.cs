@@ -17,7 +17,10 @@ namespace DotEngine.Lua.Register
 
         public void InitLua()
         {
-            bindScript.InitLua(OnInitFinished);
+            if(bindScript.InitLua())
+            {
+                OnInitFinished();
+            }
         }
 
         protected virtual void OnInitFinished()

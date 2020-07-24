@@ -18,7 +18,7 @@ namespace DotEngine.Services
 
         public override void DoRegister()
         {
-            m_BindScript.InitLua(null);
+            m_BindScript.InitLua();
         }
 
         public override void DoRemove()

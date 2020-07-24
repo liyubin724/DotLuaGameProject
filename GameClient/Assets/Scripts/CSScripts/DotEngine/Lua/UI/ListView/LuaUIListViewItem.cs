@@ -24,8 +24,11 @@ namespace DotEngine.Lua.UI.ListView
 
         protected virtual void Awake()
         {
-            bindScript.InitLua(OnInitFinished);
-            bindScript.CallAction(LuaConst.AWAKE_FUNCTION_NAME);
+            if(bindScript.InitLua())
+            {
+                bindScript.CallAction(LuaConst.AWAKE_FUNCTION_NAME);
+                OnInitFinished();
+            }
         }
 
         protected virtual void Start()

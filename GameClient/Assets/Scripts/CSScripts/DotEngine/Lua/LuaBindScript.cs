@@ -29,7 +29,7 @@ namespace DotEngine.Lua
             return service.IsValid() && ObjTable != null;
         }
 
-        public bool InitLua(Action initFinished)
+        public bool InitLua()
         {
             if(m_IsInited)
             {
