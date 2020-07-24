@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{92A3C239-7338-4F74-977A-7E428D710396}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotTool.ETD</RootNamespace>
+    <AssemblyName>DotTool.ExcelToData</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\libs\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\libs\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\libs\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\libs\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\libs\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Cell.cs" />
+    <Compile Include="Data\Field.cs" />
+    <Compile Include="Data\Line.cs" />
+    <Compile Include="Data\Sheet.cs" />
+    <Compile Include="Data\Workbook.cs" />
+    <Compile Include="Fields\AddressField.cs" />
+    <Compile Include="Fields\BoolField.cs" />
+    <Compile Include="Fields\ErrorField.cs" />
+    <Compile Include="Fields\FieldFactory.cs" />
+    <Compile Include="Fields\FieldTypeUtil.cs" />
+    <Compile Include="Fields\FloatField.cs" />
+    <Compile Include="Fields\IdField.cs" />
+    <Compile Include="Fields\IntField.cs" />
+    <Compile Include="Fields\ListField.cs" />
+    <Compile Include="Fields\LongField.cs" />
+    <Compile Include="Fields\LuaField.cs" />
+    <Compile Include="Fields\RefField.cs" />
+    <Compile Include="Fields\StringField.cs" />
+    <Compile Include="IO\Json\JsonWriter.cs" />
+    <Compile Include="IO\Lua\LuaWriter.cs" />
+    <Compile Include="IO\Ndb\NdbWriter.cs" />
+    <Compile Include="IO\WorkbookConst.cs" />
+    <Compile Include="IO\WorkbookReader.cs" />
+    <Compile Include="Log\LogHandler.cs" />
+    <Compile Include="Log\LogMessage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\AssemblyUtil.cs" />
+    <Compile Include="Validation\BoolValidation.cs" />
+    <Compile Include="Validation\ErrorValidation.cs" />
+    <Compile Include="Validation\FloatValidation.cs" />
+    <Compile Include="Validation\IntValidation.cs" />
+    <Compile Include="Validation\IValidation.cs" />
+    <Compile Include="Validation\ListValidation.cs" />
+    <Compile Include="Validation\LongValidation.cs" />
+    <Compile Include="Validation\MaxLenValidation.cs" />
+    <Compile Include="Validation\NotNullValidation.cs" />
+    <Compile Include="Validation\UniqueValidation.cs" />
+    <Compile Include="Validation\ValidationFactory.cs" />
+    <Compile Include="Verify\IVerify.cs" />
+    <Compile Include="WorkbookAssembly.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Context\DotEngine.Context\DotEngine.Context.csproj">
+      <Project>{973ba58f-3fd4-4a7d-aeee-c9e0f135b12a}</Project>
+      <Name>DotEngine.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotEngine.NDB\DotEngine.NDB.csproj">
+      <Project>{eb608d38-fcc8-44d1-a37a-0ae0397a32d3}</Project>
+      <Name>DotEngine.NDB</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

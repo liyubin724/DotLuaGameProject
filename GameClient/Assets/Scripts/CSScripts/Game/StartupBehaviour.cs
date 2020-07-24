@@ -23,8 +23,6 @@ namespace Game
             GameLuaEnvService envService = new GameLuaEnvService(new string[] { LuaConst.GetScriptPathFormat() }, luaPreloadScripts, luaMgrScript);
             facade.RegisterService(envService);
 
-            ClientNetService clientNetService = new ClientNetService("Game/")
-
             DontDestroyHandler.AddTransform(transform);
         }
 
