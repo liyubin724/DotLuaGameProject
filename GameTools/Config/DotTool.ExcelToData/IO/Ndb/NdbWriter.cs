@@ -1,5 +1,4 @@
 ﻿using DotEngine.Config.Ndb;
-using DotEngine.Utilities;
 using DotTool.ETD.Data;
 using DotTool.ETD.Fields;
 using System;
@@ -31,7 +30,7 @@ namespace DotTool.ETD.IO.Ndb
             header.stringOffset = header.dataOffset + dataBytes.Length;
             header.arrayOffset = header.stringOffset + strBytes.Length;
 
-            byte[] headerBytes = StructUtility.StructToByte(header, NDBHeader.Size);
+            byte[] headerBytes = NDBConst.StructToByte(header, NDBHeader.Size);
 
             using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {

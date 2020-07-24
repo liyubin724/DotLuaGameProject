@@ -14,6 +14,7 @@ namespace ExcelToDataTool
     {
         Ndb,
         Json,
+        Lua,
     }
 
     class Options
