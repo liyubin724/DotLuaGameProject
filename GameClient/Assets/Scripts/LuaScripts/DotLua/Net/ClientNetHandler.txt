@@ -1,0 +1,8 @@
+require('DotLua/Class')
+
+ClientNetHandler =
+    Class(
+    function(self)
+        
+    end
+)

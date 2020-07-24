@@ -1,0 +1,64 @@
+local json = require("DotLua/Json/json")
+----public----
+--将table转换为字符串
+--@param tbl:需要输出的table
+function table.tostring(tbl)
+    if not tbl then
+        return "nil"
+    end
+
+    return json.encode(tbl)
+end
+
+----public----
+--获取table中所有的键，对于数组表示的table键为所在的位置
+--@param tbl:
+function table.keys(tbl)
+    if not tbl then
+        return {}
+    end
+
+    local keys = {}
+    for k, _ in pairs(tbl) do
+        table.insert(keys, k)
+    end
+    return keys
+end
+
+----public----
+--判断table是否是数组
+--@tbl
+function table.isarray(tbl)
+    if type(tbl) ~= "table" then
+        return false
+    end
+
+    local n = #tbl
+    for i, _ in pairs(tbl) do
+        if type(i) ~= "number" then
+            return false
+        end
+
+        if i > n then
+            return false
+        end
+    end
+
+    return true
+end
+
+----public----
+--清空Table的内容
+--@param tbl
+function table.clear(tbl)
+    if not tbl or type(tbl) ~= "table" then
+        return
+    end
+
+    local keys = table.keys(tbl)
+    if keys and #keys > 0 then
+        for index = 1, #keys do
+            tbl[keys[index]] = nil
+        end
+    end
+end
