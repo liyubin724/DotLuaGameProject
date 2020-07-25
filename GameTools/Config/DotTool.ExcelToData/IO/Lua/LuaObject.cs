@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Json2Lua.Lua
 {
@@ -15,6 +16,7 @@ namespace Json2Lua.Lua
         String,
 
         Table,
+        Function,
     }
 
     public class LuaObject
@@ -71,8 +73,14 @@ namespace Json2Lua.Lua
                     }
                     else if (valueType == typeof(string))
                     {
-                        type = ELuaItemType.String;
                         value_str = (string)value;
+                        if(value_str.IndexOf("function")>=0 && value_str.IndexOf("end")>=0)
+                        {
+                            type = ELuaItemType.Function;
+                        }else
+                        {
+                            type = ELuaItemType.String;
+                        }
                     }
                     else if (valueType == typeof(LuaTable))
                     {
@@ -103,6 +111,8 @@ namespace Json2Lua.Lua
                     return value_long.ToString();
                 case ELuaItemType.String:
                     return "[["+ value_str+"]]";
+                case ELuaItemType.Function:
+                    return value_str;
                 case ELuaItemType.Nil:
                     return "nil";
                 default:

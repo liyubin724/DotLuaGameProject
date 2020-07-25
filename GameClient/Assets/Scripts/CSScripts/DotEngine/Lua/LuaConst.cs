@@ -15,8 +15,6 @@ namespace DotEngine.Lua
         public const string UPDATE_FUNCTION_NAME = "DoUpdate";
         public const string DESTROY_FUNCTION_NAME = "DoDestroy";
 
-        public const string IS_DEBUG_FIELD_NAME = "IsDebug";
-
         private const string SCRIPT_ASSET_DIR = "Assets/Scripts/LuaScripts/";
         private const string SCRIPT_DIR = "Scripts/LuaScripts/";
         private const string SCRIPT_EXTENSION = ".txt";

@@ -8,9 +8,9 @@ namespace DotEngine.Lua.UI
     public class EventHandlerData
     {
         [SerializeField]
-        private ScriptBindBehaviour m_BindBehaviour;
+        private ScriptBindBehaviour m_BindBehaviour = null;
         [SerializeField]
-        private string m_FuncName;
+        private string m_FuncName = string.Empty;
 
         public void Invoke()
         {

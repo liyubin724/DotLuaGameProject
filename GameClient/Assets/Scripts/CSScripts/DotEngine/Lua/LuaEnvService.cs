@@ -29,10 +29,6 @@ namespace DotEngine.Lua
         protected virtual void InitEnv()
         {
             Env = new LuaEnv();
-#if DEBUG
-            Env.Global.Set(LuaConst.IS_DEBUG_FIELD_NAME, true);
-#endif
-
         }
 
         public bool RequireScript(string scriptPath)

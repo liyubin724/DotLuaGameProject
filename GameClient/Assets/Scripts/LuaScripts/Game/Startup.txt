@@ -1,8 +1,19 @@
 require ("DotLua/Class")
 require("DotLua/Log/DebugLog")
+require("DotLua/Config/ConfigManager")
 
-if IsDebug then
+if not Game then
+    Game = {}
+end
+
+if Game.IsDebug then
     DebugLog.SetEnable(true,true, true)
 else
     DebugLog.SetEnable(true, false, false)
 end
+
+Game.ConfigMgr = ConfigManager("Game/Config/")
+
+local value = Game.ConfigMgr:GetDataValue("Test",2,"StringField")
+
+DebugLog.Info("Test", value)

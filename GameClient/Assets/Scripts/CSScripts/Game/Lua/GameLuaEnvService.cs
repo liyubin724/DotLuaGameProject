@@ -7,7 +7,9 @@ namespace Game.Lua
 {
     public class GameLuaEnvService : LuaEnvService
     {
-        private const string GLOBAL_MGR_NAME = "EnvMgr";
+        private const string MGR_NAME = "EnvMgr";
+        private const string GLOBAL_GAME_NAME = "Game";
+        private const string IS_DEBUG_FIELD_NAME = "IsDebug";
 
         private string[] m_ScriptFormats = null;
         private string[] m_PreloadScripts = null;
@@ -15,6 +17,8 @@ namespace Game.Lua
         private ScriptLoader m_ScriptLoader = null;
         private LuaTable m_EnvMgr = null;
         private Action<LuaTable, float> m_UpdateAction = null;
+
+        public LuaTable GlobalGameTable { get; private set; }
 
         public GameLuaEnvService(string[] scriptFormats,string[] preloadScripts,string mgrScript)
         {
@@ -29,6 +33,12 @@ namespace Game.Lua
 
             m_ScriptLoader = new FileScriptLoader(m_ScriptFormats);
             Env.AddLoader(m_ScriptLoader.LoadScript);
+
+            GlobalGameTable = Env.NewTable();
+            Env.Global.Set(GLOBAL_GAME_NAME, GlobalGameTable);
+#if DEBUG
+            GlobalGameTable.Set(IS_DEBUG_FIELD_NAME, true);
+#endif
 
             if (m_PreloadScripts != null && m_PreloadScripts.Length > 0)
             {
@@ -55,7 +65,7 @@ namespace Game.Lua
 
                     m_UpdateAction = m_EnvMgr.Get<Action<LuaTable, float>>(LuaConst.UPDATE_FUNCTION_NAME);
 
-                    Env.Global.Set(GLOBAL_MGR_NAME, m_EnvMgr);
+                    GlobalGameTable.Set(MGR_NAME, m_EnvMgr);
                 }
             }
         }
@@ -71,6 +81,9 @@ namespace Game.Lua
             m_UpdateAction = null;
             m_EnvMgr?.Dispose();
             m_EnvMgr = null;
+
+            GlobalGameTable?.Dispose();
+            GlobalGameTable = null;
 
             base.DoDispose();
         }

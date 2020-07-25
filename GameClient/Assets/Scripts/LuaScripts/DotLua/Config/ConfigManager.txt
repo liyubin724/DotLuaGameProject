@@ -1,0 +1,76 @@
+require('DotLua/Class')
+
+ConfigManager =
+    Class(
+    function(self,rootPath)
+        self.configs = {}
+        self.rootPath = rootPath
+    end
+)
+
+----public----
+-- 加载指定名称的配置表，如果表已经存在则直接返回，否则将进行数据加载
+-- @param configName 配置表的名称
+-- @return Table 返回指定的表数据
+function ConfigManager:GetConfig(configName)
+    local config = self.configs[configName]
+    if not config then
+        config = require(self.rootPath .. configName)
+        self.configs[configName] = config
+    end
+
+    return config
+end
+
+----public----
+-- 获取指定数据中指定ID行的数据
+-- @param configName 配置表的名称
+-- @param dataID 数据所在行的ID
+-- @return table 数据指定ID行的表数据
+function ConfigManager:GetData(configName,dataID)
+    local config = self:GetConfig(configName)
+    if not config then
+        return nil
+    end
+
+    return config[dataID]
+end
+
+----public----
+-- 获取指定数据中指定ID行的数据中对应的字段的值
+-- @param configName 配置表的名称
+-- @param dataID 数据所在行的ID
+-- @param fieldName 数据指定列的名称
+-- @return value 返回对应列的数据
+function ConfigManager:GetDataValue(configName,dataID,fieldName)
+    local data = self:GetData(configName, dataID)
+    if not data then
+        return nil
+    end
+
+    return data[fieldName]
+end
+
+----public----
+-- 如果数据表已经加载过的话，将会重新加载指定的数据配置
+-- @param configName 配置表的名称
+function ConfigManager:Reload(configName)
+    local config = self.configs[configName]
+    if config then
+        self.configs[configName] = require(self.rootPath .. configName)
+    end
+end
+
+----public----
+-- 重新加载所有已经加载过的数据配置
+function ConfigManager:ReloadAll()
+    for key, _ in pairs(self.configs) do
+        self:Reload(key)
+    end
+end
+
+----public----
+-- 清理已经加载过的所有的数据配置
+function ConfigManager:Clear()
+    self.configs = {}
+end
