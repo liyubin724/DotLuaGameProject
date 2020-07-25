@@ -3,8 +3,10 @@ using DotEngine.Context;
 using DotTool.ETD.Data;
 using DotTool.ETD.IO;
 using DotTool.ETD.IO.Json;
+using DotTool.ETD.IO.Lua;
 using DotTool.ETD.IO.Ndb;
 using DotTool.ETD.Log;
+using System;
 using System.Drawing;
 using System.IO;
 
@@ -33,6 +35,8 @@ namespace ExcelToDataTool
         {
             CommandLine.Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(RunOptions);
+
+            Console.ReadKey();
         }
         static void RunOptions(Options options)
         {
@@ -88,6 +92,9 @@ namespace ExcelToDataTool
                             }else if(options.Format == OutputFormat.Ndb)
                             {
                                 NdbWriter.WriteTo(sheet, dir);
+                            }else if(options.Format == OutputFormat.Lua)
+                            {
+                                LuaWriter.WriteTo(sheet, dir);
                             }
                         }
                     }

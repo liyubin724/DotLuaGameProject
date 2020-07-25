@@ -81,6 +81,8 @@
     <Compile Include="Fields\RefField.cs" />
     <Compile Include="Fields\StringField.cs" />
     <Compile Include="IO\Json\JsonWriter.cs" />
+    <Compile Include="IO\Lua\LuaObject.cs" />
+    <Compile Include="IO\Lua\LuaTable.cs" />
     <Compile Include="IO\Lua\LuaWriter.cs" />
     <Compile Include="IO\Ndb\NdbWriter.cs" />
     <Compile Include="IO\WorkbookConst.cs" />
@@ -101,7 +103,6 @@
     <Compile Include="Validation\UniqueValidation.cs" />
     <Compile Include="Validation\ValidationFactory.cs" />
     <Compile Include="Verify\IVerify.cs" />
-    <Compile Include="WorkbookAssembly.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

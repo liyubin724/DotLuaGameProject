@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snappy.Net", "Others\Snappy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.NDB", "Config\DotEngine.NDB\DotEngine.NDB.csproj", "{EB608D38-FCC8-44D1-A37A-0AE0397A32D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotTool", "DotTool\DotTool.csproj", "{270292C3-D0D2-4956-B4E9-D9D53479F7EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{EB608D38-FCC8-44D1-A37A-0AE0397A32D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB608D38-FCC8-44D1-A37A-0AE0397A32D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB608D38-FCC8-44D1-A37A-0AE0397A32D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{270292C3-D0D2-4956-B4E9-D9D53479F7EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{270292C3-D0D2-4956-B4E9-D9D53479F7EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{270292C3-D0D2-4956-B4E9-D9D53479F7EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{270292C3-D0D2-4956-B4E9-D9D53479F7EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
