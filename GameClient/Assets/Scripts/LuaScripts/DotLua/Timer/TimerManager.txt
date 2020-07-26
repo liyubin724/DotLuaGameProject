@@ -1,9 +1,73 @@
 require('DotLua/Class')
+require("DotLua/Timer/TimerData")
 
 TimerManager =
     Class(
     function(self)
+        self.timerIndex = 0;
+        self.timers = {}
+
+        self.removedKeys = {}
     end
 )
 
+function TimerManager:DoUpdate(deltaTime)
+    if #self.timers == 0 then
+        return
+    end
+
+    for key, value in pairs(self.timers) do
+        local isValid = value:Tick(deltaTime)
+        if not isValid then
+            table.insert(self.removedKeys, key)
+        end
+    end
+
+    if #(self.removedKeys) > 0 then
+        for index = #(self.removedKeys), 1, -1 do
+            local key = self.removedKeys[index]
+            table.remove(self.removedKeys, index)
+            self.timers[key] = nil
+        end
+    end
+end
+
+function TimerManager:AddTimer(intervalInSec,totalInSec,receiver,intervalFunc,endFunc,userdata)
+    local index = self.timerIndex
+    self.timerIndex = self.timerIndex + 1
+
+    local timerData = TimerData(intervalInSec,totalInSec,receiver,intervalFunc,endFunc,userdata)
+    self.timers[index] = timerData
+
+    return index
+end
+
+function TimerManager:AddIntervalTimer(intervalInSec,receiver,intervalFunc,userdata)
+    local index = self.timerIndex
+    self.timerIndex = self.timerIndex + 1
+
+    local timerData = TimerData(intervalInSec,-1,receiver,intervalFunc,nil,userdata)
+    self.timers[index] = timerData
+
+    return index
+end
+
+function TimerManager:AddEndTimer(totalInSec,receiver,endFunc,userdata)
+    local index = self.timerIndex
+    self.timerIndex = self.timerIndex + 1
+
+    local timerData = TimerData(-1,totalInSec,receiver,nil,endFunc,userdata)
+    self.timers[index] = timerData
+
+    return index
+end
+
+function TimerManager:RemoveTimer(timerIndex)
+    self.timers[timerIndex] = nil
+end
+
+function TimerManager:Clear()
+    self.timers = {}
+    self.timerIndex = 0
+end
 

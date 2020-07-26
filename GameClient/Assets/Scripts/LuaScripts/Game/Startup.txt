@@ -17,9 +17,6 @@ end
 
 Game.ConfigMgr = ConfigManager('Game/Config/')
 Game.TimerMgr = TimerManager()
-Game.AssetMgr = AssetManager()
 Game.EventMgr = EventDispatcher()
+Game.AssetMgr = AssetManager()
 
-local value = Game.ConfigMgr:GetDataValue('Test', 2, 'StringField')
-
-DebugLog.Info('Test', value)

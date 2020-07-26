@@ -6,33 +6,80 @@ TimerData =
     end
 )
 
-function TimerData:SetData(intervalTime, totalTime, receiver, intervalCallback, endCallback, userData)
-    self.intervalTime = intervalTime
-    self.totalTime = totalTime
+function TimerData:SetData(intervalInSec,totalInSec,receiver,intervalFunc,endFunc,userdata)
+    self.intervalInSec = intervalInSec
+    self.totalInSec = totalInSec
     self.receiver = receiver
-    self.intervalCallback = intervalCallback
-    self.endCallback = endCallback
-    self.userData = userData
+    self.intervalFunc = intervalFunc
+    self.endFunc = endFunc
+    self.userdata = userdata
+
+    self.elapseIntervalInSec = 0
+    self.totalIntervalInSec = 0
 end
 
-function TimerData:GetIntervalTime()
-    return self.intervalTime
+function TimerData:GetInterval()
+    return self.intervalInSec
 end
 
-function TimerData:GetTotalTime()
-    return self.totalTime
+function TimerData:GetTotal()
+    return self.totalInSec
 end
 
-function TimerData:GetIntervalCallback()
-    return self.intervalCallback
+function TimerData:GetReceiver()
+    return self.receiver
 end
 
-function TimerData:GetEndCallback()
-    return self.endCallback
+function TimerData:GetIntervalFunc()
+    return self.intervalFunc
 end
 
-function TimerData:GetUserData()
-    return self.userData
+function TimerData:GetEndFunc()
+    return self.endFunc
 end
 
+function TimerData:GetUserdata()
+    return self.userdata
+end
 
+function TimerData:Tick(deltaTime)
+    if self.intervalFunc then
+        self.elapseIntervalInSec = self.elapseIntervalInSec + deltaTime
+
+        if self.elapseIntervalInSec >= self.intervalInSec then
+            self.elapseIntervalInSec = self.elapseIntervalInSec - self.intervalInSec
+            self:InvokeInterval()
+        end
+
+    end
+
+    if self.endFunc then
+        self.elapseTotalInSec = self.elapseTotalInSec + deltaTime
+        if self.elapseTotalInSec >= self.totalInSec then
+            self:InvokeEnd()
+            return false
+        end
+    end
+
+    return true
+end
+
+function TimerData:InvokeInterval()
+    if self.intervalFunc then
+        if self.receiver then
+            self.intervalFunc(self.receiver,self.userdata)
+        else
+            self.intervalFunc(self.userdata)
+        end
+    end
+end
+
+function TimerData:InvokeEnd()
+    if self.endFunc then
+        if self.receiver then
+            self.endFunc(self.receiver,self.userdata)
+        else
+            self.endFunc(self.userdata)
+        end
+    end
+end
