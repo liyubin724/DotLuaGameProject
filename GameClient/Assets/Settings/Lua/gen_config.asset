@@ -14,13 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssemblyNames:
   - Assembly-CSharp
+  - UnityEngine.CoreModule
   callCSharpTypeNames:
   - DotEngine.Log.LogUtil
   - DotEngine.Asset.AssetService
   - Game.GameFacade
   - DotEngine.Facade
-  callLuaTypeNames: []
-  optimizeTypeNames: []
+  - DotEngine.Asset.AssetLoaderPriority
+  - UnityEngine.GameObject
+  - UnityEngine.RectTransform
+  - UnityEngine.Transform
+  - UnityEngine.Object
+  callLuaTypeNames:
+  - DotEngine.Asset.OnAssetLoadComplete
+  - DotEngine.Asset.OnAssetLoadProgress
+  optimizeTypeNames:
+  - DotEngine.Asset.AssetLoaderPriority
   callCSharpGenericTypeNames: []
   callLuaGenericTypeNames:
   - System.Action`2@XLua.LuaTable@System.Single

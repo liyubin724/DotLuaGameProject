@@ -16,9 +16,9 @@ else
 end
 
 Game.EnvMgr = nil
-Game.TimerMgr =nil
+Game.TimerMgr = nil
+Game.AssetMgr = nil
 
 Game.ConfigMgr = ConfigManager('Game/Config/')
 Game.EventMgr = EventDispatcher()
-Game.AssetMgr = AssetManager()
 

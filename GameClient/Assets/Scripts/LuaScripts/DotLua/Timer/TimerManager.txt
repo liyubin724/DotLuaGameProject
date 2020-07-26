@@ -11,6 +11,10 @@ TimerManager =
     end
 )
 
+function TimerManager:DoStart()
+    DebugLog.Info("TimerManager", "TimerMgr start")
+end
+
 function TimerManager:DoUpdate(deltaTime)
     if #self.timers == 0 then
         return

@@ -4,6 +4,18 @@
 
 	<assembly fullname="Assembly-CSharp">
 	    <type fullname="DotEngine.Log.LogUtil" preserve="all"/>
+		<type fullname="DotEngine.Asset.AssetService" preserve="all"/>
+		<type fullname="Game.GameFacade" preserve="all"/>
+		<type fullname="DotEngine.Facade" preserve="all"/>
+		<type fullname="DotEngine.Asset.AssetLoaderPriority" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="UnityEngine.CoreModule">
+	    <type fullname="UnityEngine.GameObject" preserve="all"/>
+		<type fullname="UnityEngine.RectTransform" preserve="all"/>
+		<type fullname="UnityEngine.Transform" preserve="all"/>
+		<type fullname="UnityEngine.Object" preserve="all"/>
 		
 	</assembly>
 

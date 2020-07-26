@@ -108,17 +108,17 @@ namespace DotEditor.Lua.Gen
                             continue;
                         }
 
-                        bool isSelected = genConfig.callLuaGenericTypeNames.IndexOf(fullName) >= 0;
+                        bool isSelected = genConfig.callLuaTypeNames.IndexOf(fullName) >= 0;
                         bool tempIsSelected = EditorGUILayout.ToggleLeft(typeData.Type.FullName, isSelected);
                         if (tempIsSelected != isSelected)
                         {
                             if (tempIsSelected)
                             {
-                                genConfig.callLuaGenericTypeNames.Add(fullName);
+                                genConfig.callLuaTypeNames.Add(fullName);
                             }
                             else
                             {
-                                genConfig.callLuaGenericTypeNames.Remove(fullName);
+                                genConfig.callLuaTypeNames.Remove(fullName);
                             }
                         }
                     }

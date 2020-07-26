@@ -1,4 +1,5 @@
 ﻿using DotEngine;
+using DotEngine.Asset;
 
 namespace Game
 {
@@ -13,11 +14,14 @@ namespace Game
             return instance;
         }
 
+        protected override void InitializeFacade()
+        {
+            base.InitializeFacade();
+        }
+
         protected override void InitializeService()
         {
             base.InitializeService();
-
-            
         }
     }
 }

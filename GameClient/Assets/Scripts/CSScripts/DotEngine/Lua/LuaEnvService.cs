@@ -117,6 +117,15 @@ namespace DotEngine.Lua
             }
         }
 
+        public void CallAction(string funcName)
+        {
+            if(IsValid())
+            {
+                Action<LuaTable> startupAction = m_EnvMgr.Get<Action<LuaTable>>(funcName);
+                startupAction?.Invoke(m_EnvMgr);
+            }
+        }
+
         public override void DoRemove()
         {
             DoDispose();

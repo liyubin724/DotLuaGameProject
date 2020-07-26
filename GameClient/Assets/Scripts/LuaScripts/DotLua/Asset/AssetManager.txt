@@ -1,26 +1,83 @@
 require('DotLua/Class')
+require("DotLua/Asset/AssetData")
 
-local Facade = CS.DotEngine.Facade
 local DebugLog = DebugLog
+local AssetLoaderPriority = CS.DotEngine.Asset.AssetLoaderPriority
 
 AssetManager =
     Class(
     function(self)
-        self.assetService = Facade.GetInstance():RetrieveService("AssetService")
+        self.assetService = nil
 
-        if self.assetService then
-            DebugLog.Info("Test", "Asset Aservice")
-        end
+        self.assetDatas = {}
+        self.assetIndex = 0
     end
 )
 
+function AssetManager:DoStart()
+    DebugLog.Info("AssetManager","assetMgr start")
+end
+
 function AssetManager:ChangeMaxLoadingCount(count)
     self.assetService:ChangeMaxLoadingCount(count)
+end
+
+function AssetManager:LoadAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
+    local assetIndex = self.assetIndex
+    local assetHandler = self.assetService:LoadAssetAsync(
+        address,
+        AssetManager.OnAssetProgress,
+        AssetManager.OnAssetComplete,
+        assetIndex)
+
+    local assetData = AssetData()
+    assetData:SetData(assetIndex,assetHandler,address,receiver,progressFunc,completeFunc,userdata)
+
+    self.assetDatas[self.assetIndex] = assetData
+    self.assetIndex = self.assetIndex + 1
+    return assetIndex
+end
+
+function AssetManager:InstanceAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
+    local assetIndex = self.assetIndex
+    local assetHandler = self.assetService:InstanceAssetAsync(
+        address,
+        AssetManager.OnAssetProgress,
+        AssetManager.OnAssetComplete,
+        AssetLoaderPriority.Default,
+        assetIndex)
+
+    local assetData = AssetData()
+    assetData:SetData(assetIndex,assetHandler,address,receiver,progressFunc,completeFunc,userdata)
+
+    self.assetDatas[self.assetIndex] = assetData
+    self.assetIndex = self.assetIndex + 1
+    return assetIndex
+end
+
+function AssetManager.OnAssetProgress(address,progress,assetIndex)
+    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+    if assetData then
+        assetData:InvokeProgress(progress)
+    end
+end
+
+function AssetManager.OnAssetComplete(address,uObject,assetIndex)
+    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+    if assetData then
+        assetData:InvokeComplete(uObject)
+    end
+end
+
+function AssetManager:UnloadAssetAsync(assetHandlerIndex)
+
 end
 
 function AssetManager:UnloadUnusedAsset()
     self.assetService:UnloadUnusedAsset()
 end
 
-
+function AssetManager:DoDestroy()
+    self.assetService = nil
+end
 

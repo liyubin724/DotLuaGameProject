@@ -2,25 +2,45 @@ require ("DotLua/Class")
 require("DotLua/Delegate")
 
 local DebugLog = DebugLog
-local TimerMgr = Game.TimerMgr
 
 EnvManager =
     Class(
     function(self)
         self.updateDelegate = Delegate()
+        self.startupDelegate = Delegate()
 
         self.updateInterval = 0.1
         self.elapseInterval = 0
     end
 )
 
+function EnvManager:AddUpdateDelegate(receiver,func)
+    self.updateDelegate = self.updateDelegate + {receiver,func}
+end
+
+function EnvManager:RemoveUpdateDelegate(receiver,func)
+    self.updateDelegate = self.updateDelegate - {receiver,func}
+end
+
+function EnvManager:AddStartupDelegate(receiver,func)
+    self.startupDelegate = self.startupDelegate + {receiver,func}
+end
+
+function EnvManager:RemoveStartupDelegate(receiver,func)
+    self.startupDelegate = self.startupDelegate - {receiver,func}
+end
+
 function EnvManager:DoStart()
     DebugLog.Info("EnvMgr", "EnvMgr started")
+end
 
-    if TimerMgr then
-        self:AddUpdateDelegate(TimerMgr, TimerManager.DoUpdate)
+function EnvManager:DoStartup()
+
+    Game.AssetMgr:InstanceAssetAsync("Cube",self,nil,EnvManager.OnCubeLoadComplete)
+
+    if #(self.startupDelegate) > 0 then
+        self.startupDelegate:Invoke()
     end
-
 end
 
 function EnvManager:DoUpdate(deltaTime)
@@ -35,10 +55,11 @@ function EnvManager:DoUpdate(deltaTime)
     end
 end
 
-function EnvManager:AddUpdateDelegate(receiver,func)
-    self.updateDelegate = self.updateDelegate + {receiver,func}
-end
 
-function EnvManager:RemoveUpdateDelegate(receiver,func)
-    self.updateDelegate = self.updateDelegate - {receiver,func}
+--------------------Test---------------------------
+function EnvManager:OnCubeLoadComplete(address,uObject,userdata)
+    DebugLog.Info("EnvManager", "Cube loaded")
+
+    local transform = uObject.transform
+    transform.localPosition = CS.UnityEngine.Vector3.one
 end

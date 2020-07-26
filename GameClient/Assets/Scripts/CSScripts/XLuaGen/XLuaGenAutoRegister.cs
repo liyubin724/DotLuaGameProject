@@ -25,6 +25,30 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(DotEngine.Log.LogUtil), DotEngineLogLogUtilWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(DotEngine.Asset.AssetService), DotEngineAssetAssetServiceWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(Game.GameFacade), GameGameFacadeWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(DotEngine.Facade), DotEngineFacadeWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(DotEngine.Asset.AssetLoaderPriority), DotEngineAssetAssetLoaderPriorityWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(UnityEngine.GameObject), UnityEngineGameObjectWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(UnityEngine.RectTransform), UnityEngineRectTransformWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(UnityEngine.Transform), UnityEngineTransformWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(UnityEngine.Object), UnityEngineObjectWrap.__Register);
+        
+        
         
         }
         

@@ -79,9 +79,6 @@ namespace DotEngine.Lua
                 if(action!=null)
                 {
                     action(ObjTable);
-                }else
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBindScript::CallAction->function not found.name = " + funcName);
                 }
             }
         }
@@ -95,10 +92,6 @@ namespace DotEngine.Lua
                 {
                     action(ObjTable, value);
                 }
-                else
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBindScript::CallAction->function not found.name = " + funcName);
-                }
             }
         }
 
@@ -111,10 +104,6 @@ namespace DotEngine.Lua
                 {
                     action(ObjTable, value1, value2);
                 }
-                else
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBindScript::CallAction->function not found.name = " + funcName);
-                }
             }
         }
 
@@ -126,10 +115,6 @@ namespace DotEngine.Lua
                 if (func != null)
                 {
                     return func(ObjTable);
-                }
-                else
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBindScript::CallFunc->function not found.name = " + funcName);
                 }
             }
             return default(R);
@@ -144,10 +129,6 @@ namespace DotEngine.Lua
                 {
                     return func(ObjTable, value);
                 }
-                else
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBindScript::CallFunc->function not found.name = " + funcName);
-                }
             }
             return default(R);
         }
@@ -160,10 +141,6 @@ namespace DotEngine.Lua
                 if (func != null)
                 {
                     return func(ObjTable, value1,value2);
-                }
-                else
-                {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBindScript::CallFunc->function not found.name = " + funcName);
                 }
             }
             return default(R);

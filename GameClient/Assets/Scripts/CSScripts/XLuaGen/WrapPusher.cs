@@ -34,6 +34,7 @@ namespace XLua
 				translator.RegisterPushAndGetAndUpdate<UnityEngine.Ray>(translator.PushUnityEngineRay, translator.Get, translator.UpdateUnityEngineRay);
 				translator.RegisterPushAndGetAndUpdate<UnityEngine.Bounds>(translator.PushUnityEngineBounds, translator.Get, translator.UpdateUnityEngineBounds);
 				translator.RegisterPushAndGetAndUpdate<UnityEngine.Ray2D>(translator.PushUnityEngineRay2D, translator.Get, translator.UpdateUnityEngineRay2D);
+				translator.RegisterPushAndGetAndUpdate<DotEngine.Asset.AssetLoaderPriority>(translator.PushDotEngineAssetAssetLoaderPriority, translator.Get, translator.UpdateDotEngineAssetAssetLoaderPriority);
 			
 			}
         }
@@ -570,6 +571,90 @@ namespace XLua
             }
         }
         
+        int DotEngineAssetAssetLoaderPriority_TypeID = -1;
+		int DotEngineAssetAssetLoaderPriority_EnumRef = -1;
+        
+        public void PushDotEngineAssetAssetLoaderPriority(RealStatePtr L, DotEngine.Asset.AssetLoaderPriority val)
+        {
+            if (DotEngineAssetAssetLoaderPriority_TypeID == -1)
+            {
+			    bool is_first;
+                DotEngineAssetAssetLoaderPriority_TypeID = getTypeId(L, typeof(DotEngine.Asset.AssetLoaderPriority), out is_first);
+				
+				if (DotEngineAssetAssetLoaderPriority_EnumRef == -1)
+				{
+				    Utils.LoadCSTable(L, typeof(DotEngine.Asset.AssetLoaderPriority));
+				    DotEngineAssetAssetLoaderPriority_EnumRef = LuaAPI.luaL_ref(L, LuaIndexes.LUA_REGISTRYINDEX);
+				}
+				
+            }
+			
+			if (LuaAPI.xlua_tryget_cachedud(L, (int)val, DotEngineAssetAssetLoaderPriority_EnumRef) == 1)
+            {
+			    return;
+			}
+			
+            IntPtr buff = LuaAPI.xlua_pushstruct(L, 4, DotEngineAssetAssetLoaderPriority_TypeID);
+            if (!CopyByValue.Pack(buff, 0, (int)val))
+            {
+                throw new Exception("pack fail fail for DotEngine.Asset.AssetLoaderPriority ,value="+val);
+            }
+			
+			LuaAPI.lua_getref(L, DotEngineAssetAssetLoaderPriority_EnumRef);
+			LuaAPI.lua_pushvalue(L, -2);
+			LuaAPI.xlua_rawseti(L, -2, (int)val);
+			LuaAPI.lua_pop(L, 1);
+			
+        }
+		
+        public void Get(RealStatePtr L, int index, out DotEngine.Asset.AssetLoaderPriority val)
+        {
+		    LuaTypes type = LuaAPI.lua_type(L, index);
+            if (type == LuaTypes.LUA_TUSERDATA )
+            {
+			    if (LuaAPI.xlua_gettypeid(L, index) != DotEngineAssetAssetLoaderPriority_TypeID)
+				{
+				    throw new Exception("invalid userdata for DotEngine.Asset.AssetLoaderPriority");
+				}
+				
+                IntPtr buff = LuaAPI.lua_touserdata(L, index);
+				int e;
+                if (!CopyByValue.UnPack(buff, 0, out e))
+                {
+                    throw new Exception("unpack fail for DotEngine.Asset.AssetLoaderPriority");
+                }
+				val = (DotEngine.Asset.AssetLoaderPriority)e;
+                
+            }
+            else
+            {
+                val = (DotEngine.Asset.AssetLoaderPriority)objectCasters.GetCaster(typeof(DotEngine.Asset.AssetLoaderPriority))(L, index, null);
+            }
+        }
+		
+        public void UpdateDotEngineAssetAssetLoaderPriority(RealStatePtr L, int index, DotEngine.Asset.AssetLoaderPriority val)
+        {
+		    
+            if (LuaAPI.lua_type(L, index) == LuaTypes.LUA_TUSERDATA)
+            {
+			    if (LuaAPI.xlua_gettypeid(L, index) != DotEngineAssetAssetLoaderPriority_TypeID)
+				{
+				    throw new Exception("invalid userdata for DotEngine.Asset.AssetLoaderPriority");
+				}
+				
+                IntPtr buff = LuaAPI.lua_touserdata(L, index);
+                if (!CopyByValue.Pack(buff, 0,  (int)val))
+                {
+                    throw new Exception("pack fail for DotEngine.Asset.AssetLoaderPriority ,value="+val);
+                }
+            }
+			
+            else
+            {
+                throw new Exception("try to update a data with lua type:" + LuaAPI.lua_type(L, index));
+            }
+        }
+        
         
 		// table cast optimze
 		
@@ -629,6 +714,12 @@ namespace XLua
 				translator.PushUnityEngineRay2D(L, array[index]);
 				return true;
 			}
+			else if (type == typeof(DotEngine.Asset.AssetLoaderPriority[]))
+			{
+			    DotEngine.Asset.AssetLoaderPriority[] array = obj as DotEngine.Asset.AssetLoaderPriority[];
+				translator.PushDotEngineAssetAssetLoaderPriority(L, array[index]);
+				return true;
+			}
             return false;
 		}
 		
@@ -680,6 +771,12 @@ namespace XLua
 			else if (type == typeof(UnityEngine.Ray2D[]))
 			{
 			    UnityEngine.Ray2D[] array = obj as UnityEngine.Ray2D[];
+				translator.Get(L, obj_idx, out array[array_idx]);
+				return true;
+			}
+			else if (type == typeof(DotEngine.Asset.AssetLoaderPriority[]))
+			{
+			    DotEngine.Asset.AssetLoaderPriority[] array = obj as DotEngine.Asset.AssetLoaderPriority[];
 				translator.Get(L, obj_idx, out array[array_idx]);
 				return true;
 			}
