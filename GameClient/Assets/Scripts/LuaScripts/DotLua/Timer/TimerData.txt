@@ -1,10 +1,13 @@
 require('DotLua/Class')
 
+----internal----
+-- 用于存储定时器相关的数据
 TimerData =
     Class(
     function(self)
     end
 )
+
 
 function TimerData:SetData(intervalInSec,totalInSec,receiver,intervalFunc,endFunc,userdata)
     self.intervalInSec = intervalInSec

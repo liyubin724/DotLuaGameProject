@@ -1,6 +1,8 @@
 require('DotLua/Class')
 require("DotLua/Callback")
 
+----internal----
+-- 用于记录Lua对资源加载时的数据及加载时处理相关的数据
 AssetData =
     Class(
     function(self)
@@ -13,6 +15,23 @@ AssetData =
     end
 )
 
+----internal----
+-- 获取由C#提供的AssetHandler对象，可以用于读取具体的数据同时可以用于中止加载
+-- @return AssetHandler C#的AssetHandler对象
+function AssetData:GetAssetHandler()
+    return self.assetHandlder
+end
+
+----internal----
+-- 设置数据
+-- @param assetIndex 资源的唯一标识
+-- @param assetHandler C#的AssetHandler对象
+-- @param address 资源地址
+-- @param receiver 接收者，可以为nil
+-- @param progressFunc 用于接收资源加载进度的函数，如果不需要知道进度的话，可以指定为nil
+-- @param completeFunc 用于接收资源加载完成后的函数
+-- @param userdata 自定义参数
+-- @return void
 function AssetData:SetData(assetIndex, assetHandler ,address, receiver, progressFunc, completeFunc,userdata)
     self.assetIndex = assetIndex
     self.address = address
@@ -28,12 +47,20 @@ function AssetData:SetData(assetIndex, assetHandler ,address, receiver, progress
     end
 end
 
+----internal----
+-- 资源加载进度变化后，回调进度的变化
+-- @param progress 资源的加载进度
+-- @return void
 function AssetData:InvokeProgress(progress)
     if self.progressCallback then
         self.progressCallback:Invoke(self.address,progress,self.userdata)
     end
 end
 
+----internal----
+-- 资源加载完成后回调
+-- @param uObject 加载到的Unity资源
+-- @return void
 function AssetData:InvokeComplete(uObject)
     if self.completeCallback then
         self.completeCallback:Invoke(self.address,uObject,self.userdata)

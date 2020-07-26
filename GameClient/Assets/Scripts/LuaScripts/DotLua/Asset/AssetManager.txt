@@ -18,10 +18,21 @@ function AssetManager:DoStart()
     DebugLog.Info("AssetManager","assetMgr start")
 end
 
+----public----
+-- 调整同时可以加载资源的数量
+-- @param count 可以加载的最大数量
 function AssetManager:ChangeMaxLoadingCount(count)
     self.assetService:ChangeMaxLoadingCount(count)
 end
 
+----public----
+-- 进行资源的加载
+-- @param address 资源地址
+-- @param receiver 接收者，可以为nil
+-- @param progressFunc 用于接收资源加载进度的函数，如果不需要知道进度的话，可以指定为nil
+-- @param completeFunc 用于接收资源加载完成后的函数
+-- @param userdata 自定义参数
+-- @return assetIndex 返回资源的唯一标识，如果需要中止加载可以使用此值给函数UnloadAssetAsync
 function AssetManager:LoadAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
     local assetIndex = self.assetIndex
     local assetHandler = self.assetService:LoadAssetAsync(
@@ -38,6 +49,14 @@ function AssetManager:LoadAssetAsync(address,receiver,progressFunc,completeFunc,
     return assetIndex
 end
 
+----public----
+-- 进行资源的加载并实例化
+-- @param address 资源地址
+-- @param receiver 接收者，可以为nil
+-- @param progressFunc 用于接收资源加载进度的函数，如果不需要知道进度的话，可以指定为nil
+-- @param completeFunc 用于接收资源加载完成后的函数
+-- @param userdata 自定义参数
+-- @return assetIndex 返回资源的唯一标识，如果需要中止加载可以使用此值给函数UnloadAssetAsync
 function AssetManager:InstanceAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
     local assetIndex = self.assetIndex
     local assetHandler = self.assetService:InstanceAssetAsync(
@@ -55,24 +74,22 @@ function AssetManager:InstanceAssetAsync(address,receiver,progressFunc,completeF
     return assetIndex
 end
 
-function AssetManager.OnAssetProgress(address,progress,assetIndex)
-    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+
+----public----
+-- 中止指定的资源的加载
+-- @param assetIndex 需要中止的唯一标识
+-- @return void
+function AssetManager:UnloadAssetAsync(assetIndex)
+    local assetData =  self.assetDatas[assetIndex]
     if assetData then
-        assetData:InvokeProgress(progress)
+        self.assetDatas[assetIndex] = nil
+        self.assetService:UnloadAssetAsync(assetData:GetAssetHandler())
     end
 end
 
-function AssetManager.OnAssetComplete(address,uObject,assetIndex)
-    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
-    if assetData then
-        assetData:InvokeComplete(uObject)
-    end
-end
-
-function AssetManager:UnloadAssetAsync(assetHandlerIndex)
-
-end
-
+----public----
+-- 用于清理不再使用的资源
+-- @return void
 function AssetManager:UnloadUnusedAsset()
     self.assetService:UnloadUnusedAsset()
 end
@@ -81,3 +98,20 @@ function AssetManager:DoDestroy()
     self.assetService = nil
 end
 
+----private----
+-- 以静态的函数用于响应资源的加载OnAssetProgress
+function AssetManager.OnAssetProgress(address,progress,assetIndex)
+    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+    if assetData then
+        assetData:InvokeProgress(progress)
+    end
+end
+
+----private----
+-- 以静态的函数用于响应资源的加载OnAssetComplete
+function AssetManager.OnAssetComplete(address,uObject,assetIndex)
+    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+    if assetData then
+        assetData:InvokeComplete(uObject)
+    end
+end

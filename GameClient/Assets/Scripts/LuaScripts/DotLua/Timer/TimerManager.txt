@@ -1,6 +1,9 @@
 require('DotLua/Class')
 require("DotLua/Timer/TimerData")
 
+----public----
+-- Lua的定时器
+-- 通过Game.TimerMgr可以获得全局的定时器
 TimerManager =
     Class(
     function(self)
@@ -36,6 +39,15 @@ function TimerManager:DoUpdate(deltaTime)
     end
 end
 
+----public----
+-- 添加定时器，定时器总时长结束后会自动删除
+-- @param intervalInSec 定时器触发的周期
+-- @param totalInSec 定时器的总时长
+-- @param receiver 接收者
+-- @param intervalFunc 定时器周期性触发时接收函数
+-- @param endFunc 定时器结束时接收函数
+-- @param userdata 自定义数据
+-- @return index(int) 返回定时器唯一的标识（中止时使用)
 function TimerManager:AddTimer(intervalInSec,totalInSec,receiver,intervalFunc,endFunc,userdata)
     local index = self.timerIndex
     self.timerIndex = self.timerIndex + 1
@@ -46,6 +58,13 @@ function TimerManager:AddTimer(intervalInSec,totalInSec,receiver,intervalFunc,en
     return index
 end
 
+----public----
+-- 添加周期性的定时器,如需要停止需要调用RemoveTimer
+-- @param intervalInSec 定时器触发的周期
+-- @param receiver 接收者
+-- @param intervalFunc 定时器周期性触发时接收函数
+-- @param userdata 自定义数据
+-- @return index(int) 返回定时器唯一的标识（中止时使用)
 function TimerManager:AddIntervalTimer(intervalInSec,receiver,intervalFunc,userdata)
     local index = self.timerIndex
     self.timerIndex = self.timerIndex + 1
@@ -56,6 +75,13 @@ function TimerManager:AddIntervalTimer(intervalInSec,receiver,intervalFunc,userd
     return index
 end
 
+----public----
+-- 添加定时器，达到指定时间后会触发,触发后会自动删除
+-- @param totalInSec 定时器的总时长
+-- @param receiver 接收者
+-- @param endFunc 定时器结束时接收函数
+-- @param userdata 自定义数据
+-- @return index(int) 返回定时器唯一的标识（中止时使用)
 function TimerManager:AddEndTimer(totalInSec,receiver,endFunc,userdata)
     local index = self.timerIndex
     self.timerIndex = self.timerIndex + 1
@@ -66,10 +92,16 @@ function TimerManager:AddEndTimer(totalInSec,receiver,endFunc,userdata)
     return index
 end
 
+----public----
+-- 删除指定的定时器
+-- @param timerIndex 定时器唯一标识
+-- @return void
 function TimerManager:RemoveTimer(timerIndex)
     self.timers[timerIndex] = nil
 end
 
+----public----
+-- 清理所有的定时器
 function TimerManager:Clear()
     self.timers = {}
     self.timerIndex = 0
