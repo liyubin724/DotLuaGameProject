@@ -1,22 +1,45 @@
-﻿using DotEngine.Services;
+﻿using DotEngine.Lua;
+using DotEngine.Services;
 using System;
 
 namespace DotEngine.Timer
 {
-    public class TimerService : Service,IUpdate
+    public class TimerService : LuaHandlerService,IUpdate
     {
         public const string NAME = "TimerService";
 
-        private TimerManager timerMgr = null;
+        public float LuaUpdateInterval { get; set; } = 0.1f;
 
-        public TimerService():base(NAME)
+        private TimerManager timerMgr = null;
+        private float luaElapseUpdateInterval = 0.0f;
+        public TimerService() :base(NAME, "TimerMgr", "DotLua/Timer/TimerManager")
         {
+        }
+
+        public override void DoRegister()
+        {
+            base.DoRegister();
             timerMgr = TimerManager.GetInstance();
+        }
+
+        public override void DoRemove()
+        {
+            base.DoRemove();
+
+            timerMgr.DoDispose();
+            timerMgr = null;
         }
 
         public void DoUpdate(float deltaTime)
         {
             timerMgr.DoUpdate(deltaTime);
+
+            luaElapseUpdateInterval += deltaTime;
+            if(luaElapseUpdateInterval >= LuaUpdateInterval)
+            {
+                luaElapseUpdateInterval -= LuaUpdateInterval;
+                CallAction(LuaConst.UPDATE_FUNCTION_NAME, LuaUpdateInterval);
+            }
         }
 
         public void Pause()
@@ -55,12 +78,6 @@ namespace DotEngine.Timer
         public bool RemoveTimer(TimerTaskHandler taskInfo)
         {
             return timerMgr.RemoveTimer(taskInfo);
-        }
-
-        public override void DoRemove()
-        {
-            timerMgr.DoDispose();
-            timerMgr = null;
         }
     }
 }

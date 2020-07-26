@@ -15,8 +15,10 @@ else
     DebugLog.SetEnable(true, false, false)
 end
 
+Game.EnvMgr = nil
+Game.TimerMgr =nil
+
 Game.ConfigMgr = ConfigManager('Game/Config/')
-Game.TimerMgr = TimerManager()
 Game.EventMgr = EventDispatcher()
 Game.AssetMgr = AssetManager()
 

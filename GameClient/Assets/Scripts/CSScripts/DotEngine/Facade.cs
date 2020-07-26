@@ -1,5 +1,6 @@
 ﻿using DotEngine.Asset;
 using DotEngine.GOPool;
+using DotEngine.Lua;
 using DotEngine.Services;
 using DotEngine.Timer;
 using DotEngine.Utilities;
@@ -36,6 +37,9 @@ namespace DotEngine
         protected virtual void InitializeService()
         {
             m_ServiceCenter = new ServiceCenter();
+
+            LuaEnvService luaEnvService = new LuaEnvService();
+            m_ServiceCenter.RegisterService(luaEnvService);
 
             TimerService timerService = new TimerService();
             m_ServiceCenter.RegisterService(timerService);

@@ -6,6 +6,8 @@ namespace DotEngine.Lua
     {
         public const string LOGGER_NAME = "Lua";
 
+        public const string GLOBAL_GAME_NAME = "Game";
+
         public const string CTOR_FUNCTION_NAME = "__call";
 
         public const string AWAKE_FUNCTION_NAME = "DoAwake";

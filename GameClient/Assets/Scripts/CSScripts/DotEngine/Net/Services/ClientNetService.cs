@@ -12,7 +12,7 @@ namespace DotEngine.Net.Services
 
         private Dictionary<int, ClientNet> clientNetDic = new Dictionary<int, ClientNet>();
 
-        public ClientNetService(string scriptPath) : base(NAME,scriptPath)
+        public ClientNetService() : base(NAME, "ClientNetMgr", "")
         {
         }
 
