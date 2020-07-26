@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="PBConfigGUI.View.MessageContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PBConfigGUI.View"
+             mc:Ignorable="d" 
+             Height="180" d:DesignWidth="400">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Enable" VerticalAlignment="Center"/>
+        <CheckBox Name="enableCheckBox" Grid.Row="0" Grid.Column="1" IsChecked="{Binding Path=Enable}" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="ID" VerticalAlignment="Center"/>
+        <TextBox Name="idText" Grid.Row="1" Grid.Column="1" Text="{Binding Path=Id}" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Name" VerticalAlignment="Center"/>
+        <TextBox Name="nameText" Grid.Row="2" Grid.Column="1" Text="{Binding Path=Name}" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Comment" VerticalAlignment="Center"/>
+        <TextBox Name="commentText" Grid.Row="3" Grid.Column="1" Text="{Binding Path=Comment}" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Class Name" VerticalAlignment="Center"/>
+        <TextBox Name="classNameText" Grid.Row="4" Grid.Column="1" Text="{Binding Path=ClassName}" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Compress" VerticalAlignment="Center"/>
+        <ComboBox Name="compressTypeComboBox" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Crypt" VerticalAlignment="Center"/>
+        <ComboBox Name="cryptTypeComboBox" Grid.Row="6" Grid.Column="1" VerticalAlignment="Center"/>
+    </Grid>
+    
+</UserControl>

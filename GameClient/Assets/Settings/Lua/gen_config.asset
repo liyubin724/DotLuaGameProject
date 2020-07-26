@@ -25,6 +25,9 @@ MonoBehaviour:
   - UnityEngine.RectTransform
   - UnityEngine.Transform
   - UnityEngine.Object
+  - DotEngine.UI.UIRoot
+  - DotEngine.UI.UILayerLevel
+  - DotEngine.UI.UILayer
   callLuaTypeNames:
   - DotEngine.Asset.OnAssetLoadComplete
   - DotEngine.Asset.OnAssetLoadProgress

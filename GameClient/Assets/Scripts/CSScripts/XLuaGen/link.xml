@@ -8,6 +8,9 @@
 		<type fullname="Game.GameFacade" preserve="all"/>
 		<type fullname="DotEngine.Facade" preserve="all"/>
 		<type fullname="DotEngine.Asset.AssetLoaderPriority" preserve="all"/>
+		<type fullname="DotEngine.UI.UIRoot" preserve="all"/>
+		<type fullname="DotEngine.UI.UILayerLevel" preserve="all"/>
+		<type fullname="DotEngine.UI.UILayer" preserve="all"/>
 		
 	</assembly>
 

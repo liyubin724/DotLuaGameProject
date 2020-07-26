@@ -92,4 +92,80 @@ namespace XLua.CSObjectWrap
 		}
 	}
     
+    public class DotEngineUIUILayerLevelWrap
+    {
+		public static void __Register(RealStatePtr L)
+        {
+		    ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+		    Utils.BeginObjectRegister(typeof(DotEngine.UI.UILayerLevel), L, translator, 0, 0, 0, 0);
+			Utils.EndObjectRegister(typeof(DotEngine.UI.UILayerLevel), L, translator, null, null, null, null, null);
+			
+			Utils.BeginClassRegister(typeof(DotEngine.UI.UILayerLevel), L, null, 6, 0, 0);
+
+            
+            Utils.RegisterObject(L, translator, Utils.CLS_IDX, "BottomlowestLayer", DotEngine.UI.UILayerLevel.BottomlowestLayer);
+            
+            Utils.RegisterObject(L, translator, Utils.CLS_IDX, "BottomLayer", DotEngine.UI.UILayerLevel.BottomLayer);
+            
+            Utils.RegisterObject(L, translator, Utils.CLS_IDX, "DefaultLayer", DotEngine.UI.UILayerLevel.DefaultLayer);
+            
+            Utils.RegisterObject(L, translator, Utils.CLS_IDX, "TopLayer", DotEngine.UI.UILayerLevel.TopLayer);
+            
+            Utils.RegisterObject(L, translator, Utils.CLS_IDX, "TopmostLayer", DotEngine.UI.UILayerLevel.TopmostLayer);
+            
+
+			Utils.RegisterFunc(L, Utils.CLS_IDX, "__CastFrom", __CastFrom);
+            
+            Utils.EndClassRegister(typeof(DotEngine.UI.UILayerLevel), L, translator);
+        }
+		
+		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int __CastFrom(RealStatePtr L)
+		{
+			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			LuaTypes lua_type = LuaAPI.lua_type(L, 1);
+            if (lua_type == LuaTypes.LUA_TNUMBER)
+            {
+                translator.PushDotEngineUIUILayerLevel(L, (DotEngine.UI.UILayerLevel)LuaAPI.xlua_tointeger(L, 1));
+            }
+			
+            else if(lua_type == LuaTypes.LUA_TSTRING)
+            {
+
+			    if (LuaAPI.xlua_is_eq_str(L, 1, "BottomlowestLayer"))
+                {
+                    translator.PushDotEngineUIUILayerLevel(L, DotEngine.UI.UILayerLevel.BottomlowestLayer);
+                }
+				else if (LuaAPI.xlua_is_eq_str(L, 1, "BottomLayer"))
+                {
+                    translator.PushDotEngineUIUILayerLevel(L, DotEngine.UI.UILayerLevel.BottomLayer);
+                }
+				else if (LuaAPI.xlua_is_eq_str(L, 1, "DefaultLayer"))
+                {
+                    translator.PushDotEngineUIUILayerLevel(L, DotEngine.UI.UILayerLevel.DefaultLayer);
+                }
+				else if (LuaAPI.xlua_is_eq_str(L, 1, "TopLayer"))
+                {
+                    translator.PushDotEngineUIUILayerLevel(L, DotEngine.UI.UILayerLevel.TopLayer);
+                }
+				else if (LuaAPI.xlua_is_eq_str(L, 1, "TopmostLayer"))
+                {
+                    translator.PushDotEngineUIUILayerLevel(L, DotEngine.UI.UILayerLevel.TopmostLayer);
+                }
+				else
+                {
+                    return LuaAPI.luaL_error(L, "invalid string for DotEngine.UI.UILayerLevel!");
+                }
+
+            }
+			
+            else
+            {
+                return LuaAPI.luaL_error(L, "invalid lua type for DotEngine.UI.UILayerLevel! Expect number or string, got + " + lua_type);
+            }
+
+            return 1;
+		}
+	}
+    
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protos namespace = "Game.Net.Proto">
+
+    <c2s name = "C2SProto" namespace = "">
+        <message_group name = "Login">
+            <message name = "C2S_LOGIN" id = "10001" comment = "登录信息" class_name = "LoginRequest" enable = "true" compress_type = "0" crypto_type = "0"/>
+        </message_group>
+        <message_group name = "Shop">
+            <message name = "C2S_SHOP_LIST" id = "10002" comment = "获取商店物品列表" class_name = "ShopListRequest" enable = "true" compress_type = "0" crypto_type = "0"/>
+        </message_group>
+    </c2s>
+
+    <s2c name = "S2CProto" namespace = "">
+        <message_group name = "Login">
+            <message name = "S2C_LOGIN" id = "1" comment = "返回登录结果" class_name = "LoginResponse" enable = "true" compress_type = "0" crypto_type = "0"/>
+        </message_group>
+        <message_group name = "Shop">
+            <message name = "S2C_SHOP_LIST" id = "2" comment = "返回商店物品列表" class_name = "ShopListResponse" enable = "true" compress_type = "0" crypto_type = "0"/>
+        </message_group>
+    </s2c>
+</protos>

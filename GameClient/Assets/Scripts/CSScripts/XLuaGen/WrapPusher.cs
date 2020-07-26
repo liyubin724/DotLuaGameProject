@@ -35,6 +35,7 @@ namespace XLua
 				translator.RegisterPushAndGetAndUpdate<UnityEngine.Bounds>(translator.PushUnityEngineBounds, translator.Get, translator.UpdateUnityEngineBounds);
 				translator.RegisterPushAndGetAndUpdate<UnityEngine.Ray2D>(translator.PushUnityEngineRay2D, translator.Get, translator.UpdateUnityEngineRay2D);
 				translator.RegisterPushAndGetAndUpdate<DotEngine.Asset.AssetLoaderPriority>(translator.PushDotEngineAssetAssetLoaderPriority, translator.Get, translator.UpdateDotEngineAssetAssetLoaderPriority);
+				translator.RegisterPushAndGetAndUpdate<DotEngine.UI.UILayerLevel>(translator.PushDotEngineUIUILayerLevel, translator.Get, translator.UpdateDotEngineUIUILayerLevel);
 			
 			}
         }
@@ -655,6 +656,90 @@ namespace XLua
             }
         }
         
+        int DotEngineUIUILayerLevel_TypeID = -1;
+		int DotEngineUIUILayerLevel_EnumRef = -1;
+        
+        public void PushDotEngineUIUILayerLevel(RealStatePtr L, DotEngine.UI.UILayerLevel val)
+        {
+            if (DotEngineUIUILayerLevel_TypeID == -1)
+            {
+			    bool is_first;
+                DotEngineUIUILayerLevel_TypeID = getTypeId(L, typeof(DotEngine.UI.UILayerLevel), out is_first);
+				
+				if (DotEngineUIUILayerLevel_EnumRef == -1)
+				{
+				    Utils.LoadCSTable(L, typeof(DotEngine.UI.UILayerLevel));
+				    DotEngineUIUILayerLevel_EnumRef = LuaAPI.luaL_ref(L, LuaIndexes.LUA_REGISTRYINDEX);
+				}
+				
+            }
+			
+			if (LuaAPI.xlua_tryget_cachedud(L, (int)val, DotEngineUIUILayerLevel_EnumRef) == 1)
+            {
+			    return;
+			}
+			
+            IntPtr buff = LuaAPI.xlua_pushstruct(L, 4, DotEngineUIUILayerLevel_TypeID);
+            if (!CopyByValue.Pack(buff, 0, (int)val))
+            {
+                throw new Exception("pack fail fail for DotEngine.UI.UILayerLevel ,value="+val);
+            }
+			
+			LuaAPI.lua_getref(L, DotEngineUIUILayerLevel_EnumRef);
+			LuaAPI.lua_pushvalue(L, -2);
+			LuaAPI.xlua_rawseti(L, -2, (int)val);
+			LuaAPI.lua_pop(L, 1);
+			
+        }
+		
+        public void Get(RealStatePtr L, int index, out DotEngine.UI.UILayerLevel val)
+        {
+		    LuaTypes type = LuaAPI.lua_type(L, index);
+            if (type == LuaTypes.LUA_TUSERDATA )
+            {
+			    if (LuaAPI.xlua_gettypeid(L, index) != DotEngineUIUILayerLevel_TypeID)
+				{
+				    throw new Exception("invalid userdata for DotEngine.UI.UILayerLevel");
+				}
+				
+                IntPtr buff = LuaAPI.lua_touserdata(L, index);
+				int e;
+                if (!CopyByValue.UnPack(buff, 0, out e))
+                {
+                    throw new Exception("unpack fail for DotEngine.UI.UILayerLevel");
+                }
+				val = (DotEngine.UI.UILayerLevel)e;
+                
+            }
+            else
+            {
+                val = (DotEngine.UI.UILayerLevel)objectCasters.GetCaster(typeof(DotEngine.UI.UILayerLevel))(L, index, null);
+            }
+        }
+		
+        public void UpdateDotEngineUIUILayerLevel(RealStatePtr L, int index, DotEngine.UI.UILayerLevel val)
+        {
+		    
+            if (LuaAPI.lua_type(L, index) == LuaTypes.LUA_TUSERDATA)
+            {
+			    if (LuaAPI.xlua_gettypeid(L, index) != DotEngineUIUILayerLevel_TypeID)
+				{
+				    throw new Exception("invalid userdata for DotEngine.UI.UILayerLevel");
+				}
+				
+                IntPtr buff = LuaAPI.lua_touserdata(L, index);
+                if (!CopyByValue.Pack(buff, 0,  (int)val))
+                {
+                    throw new Exception("pack fail for DotEngine.UI.UILayerLevel ,value="+val);
+                }
+            }
+			
+            else
+            {
+                throw new Exception("try to update a data with lua type:" + LuaAPI.lua_type(L, index));
+            }
+        }
+        
         
 		// table cast optimze
 		
@@ -720,6 +805,12 @@ namespace XLua
 				translator.PushDotEngineAssetAssetLoaderPriority(L, array[index]);
 				return true;
 			}
+			else if (type == typeof(DotEngine.UI.UILayerLevel[]))
+			{
+			    DotEngine.UI.UILayerLevel[] array = obj as DotEngine.UI.UILayerLevel[];
+				translator.PushDotEngineUIUILayerLevel(L, array[index]);
+				return true;
+			}
             return false;
 		}
 		
@@ -777,6 +868,12 @@ namespace XLua
 			else if (type == typeof(DotEngine.Asset.AssetLoaderPriority[]))
 			{
 			    DotEngine.Asset.AssetLoaderPriority[] array = obj as DotEngine.Asset.AssetLoaderPriority[];
+				translator.Get(L, obj_idx, out array[array_idx]);
+				return true;
+			}
+			else if (type == typeof(DotEngine.UI.UILayerLevel[]))
+			{
+			    DotEngine.UI.UILayerLevel[] array = obj as DotEngine.UI.UILayerLevel[];
 				translator.Get(L, obj_idx, out array[array_idx]);
 				return true;
 			}

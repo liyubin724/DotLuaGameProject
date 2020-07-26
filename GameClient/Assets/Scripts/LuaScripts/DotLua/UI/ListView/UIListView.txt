@@ -1,0 +1,27 @@
+require('DotLua/Class')
+
+UIListView =
+    Class(
+    function(self)
+    end
+)
+
+function UIListView:DoAwake()
+
+end
+
+function UIListView:DoStart()
+
+end
+
+function UIListView:DoDestroy()
+
+end
+
+function UIListView:GetItemName(itemIndex)
+
+end
+
+function UIListView:SetItemData(itemIndex,item)
+
+end

@@ -1,0 +1,11 @@
+require('DotLua/Class')
+
+local uiRoot = CS.DotEngine.UI.UIRoot.Root
+
+UIManager =
+    Class(
+    function(self)
+
+    end
+)
+
