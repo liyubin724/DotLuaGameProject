@@ -1,3 +1,5 @@
+require('DotLua/Class')
+
 ----internal----
 --构造函数
 --@param receiver 接收事件的table，可为空

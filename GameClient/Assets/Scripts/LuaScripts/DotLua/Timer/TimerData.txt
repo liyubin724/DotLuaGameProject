@@ -1,0 +1,38 @@
+require('DotLua/Class')
+
+TimerData =
+    Class(
+    function(self)
+    end
+)
+
+function TimerData:SetData(intervalTime, totalTime, receiver, intervalCallback, endCallback, userData)
+    self.intervalTime = intervalTime
+    self.totalTime = totalTime
+    self.receiver = receiver
+    self.intervalCallback = intervalCallback
+    self.endCallback = endCallback
+    self.userData = userData
+end
+
+function TimerData:GetIntervalTime()
+    return self.intervalTime
+end
+
+function TimerData:GetTotalTime()
+    return self.totalTime
+end
+
+function TimerData:GetIntervalCallback()
+    return self.intervalCallback
+end
+
+function TimerData:GetEndCallback()
+    return self.endCallback
+end
+
+function TimerData:GetUserData()
+    return self.userData
+end
+
+

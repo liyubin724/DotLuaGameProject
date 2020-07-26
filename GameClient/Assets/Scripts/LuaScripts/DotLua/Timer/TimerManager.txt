@@ -1,0 +1,9 @@
+require('DotLua/Class')
+
+TimerManager =
+    Class(
+    function(self)
+    end
+)
+
+

@@ -1,17 +1,27 @@
 require ("DotLua/Class")
+require("DotLua/Delegate")
 
 local DebugLog = DebugLog
 
 EnvManager =
     Class(
     function(self)
+        --self.updateDelegate = Delegate()
     end
 )
 
 function EnvManager:DoStart()
     DebugLog.Info("EnvMgr", "EnvMgr started")
+
+    -- self.updateDelegate = self.updateDelegate + {self,EnvManager.OnUpdate}
+    -- DebugLog.Info("EnvMgr", "Delegate Len = "..tostring(#(self.updateDelegate)))
+
 end
 
 function EnvManager:DoUpdate(deltaTime)
-    
+    --self.updateDelegate:Invoke(deltaTime)
 end
+
+-- function EnvManager:OnUpdate(deltaTime)
+--     DebugLog.Info("EnvManager", "Update deltaTime = "..tostring(deltaTime))
+-- end

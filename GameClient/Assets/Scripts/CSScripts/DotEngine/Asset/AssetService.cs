@@ -358,14 +358,9 @@ namespace DotEngine.Asset
         }
 
         #region UnloadUnusedAsset
-        public void UnloadUnusedAsset(Action callback)
+        public void UnloadUnusedAsset(Action callback = null)
         {
             assetMgr.UnloadUnusedAsset(callback);
-        }
-
-        public void UnloadUnusedAsset()
-        {
-            assetMgr.UnloadUnusedAsset(null);
         }
         #endregion
     }

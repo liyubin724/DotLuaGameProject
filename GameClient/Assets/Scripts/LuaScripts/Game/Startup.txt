@@ -1,19 +1,25 @@
-require ("DotLua/Class")
-require("DotLua/Log/DebugLog")
-require("DotLua/Config/ConfigManager")
+require('DotLua/Class')
+require('DotLua/Log/DebugLog')
+require('DotLua/Config/ConfigManager')
+require('DotLua/Timer/TimerManager')
+require('DotLua/Asset/AssetManager')
+require('DotLua/Event/EventDispatcher')
 
 if not Game then
     Game = {}
 end
 
 if Game.IsDebug then
-    DebugLog.SetEnable(true,true, true)
+    DebugLog.SetEnable(true, true, true)
 else
     DebugLog.SetEnable(true, false, false)
 end
 
-Game.ConfigMgr = ConfigManager("Game/Config/")
+Game.ConfigMgr = ConfigManager('Game/Config/')
+Game.TimerMgr = TimerManager()
+Game.AssetMgr = AssetManager()
+Game.EventMgr = EventDispatcher()
 
-local value = Game.ConfigMgr:GetDataValue("Test",2,"StringField")
+local value = Game.ConfigMgr:GetDataValue('Test', 2, 'StringField')
 
-DebugLog.Info("Test", value)
+DebugLog.Info('Test', value)

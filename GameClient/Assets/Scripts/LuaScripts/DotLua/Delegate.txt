@@ -1,0 +1,112 @@
+require('DotLua/Class')
+require("DotLua/Callback")
+
+local DebugLog = DebugLog
+
+----public----
+-- 代理的实现
+-- example:
+--[[
+    local delegate = Delegate()
+    delegate = delegate + {self,XXXClass.XXXFunction}
+
+    delegate = delegate - {self,XXXClass.XXXFunction}
+
+    delegate:Invoke(value1,value2....valuen)
+--]]
+Delegate =
+    Class(
+    function(self)
+        self.callbacks = {}
+    end
+)
+
+Delegate.__len = function(self)
+    return #(self.callbacks)
+end
+
+----private----
+-- 添加侦听
+-- @param data 格式{self,XXXClass.XXXFunction}/{XXXClass.XXXFunction}
+Delegate.__add = function(self, data)
+    if data then
+        if type(data) == "table" then
+
+            local dataLen = #(data)
+
+            local receiver = nil
+            local func = nil
+
+            if dataLen == 2 then
+                receiver = data[1]
+                func = data[2]
+            elseif dataLen == 1 then
+                func = data[1]
+            end
+
+            if func and type(func) == "function" then
+                local callback = Callback(receiver,func)
+                table.insert(self.callbacks, callback)
+            else
+                DebugLog.Error("Delegate", "data is nil")
+            end
+        else
+            DebugLog.Error("Delegate", "data is not a table")
+        end
+    else
+        DebugLog.Error("Delegate", "data is nil")
+    end
+
+    return self
+end
+
+----private----
+-- 删除侦听
+-- @param data 格式{self,XXXClass.XXXFunction}/{XXXClass.XXXFunction}
+Delegate.__sub = function(self,data)
+    if data then
+        if type(data) == "table" then
+
+            local dataLen = #(data)
+
+            local receiver = nil
+            local func = nil
+
+            if dataLen == 2 then
+                receiver = data[1]
+                func = data[2]
+            elseif dataLen == 1 then
+                func = data[1]
+            end
+
+            if func and type(func) == "function" then
+                for i = #(self.callbacks),1,-1 do
+                    local callback = self.callbacks[i]
+                    if callback:GetReceiver() == receiver and callback:GetFunc() == func then
+                        table.remove(self.callbacks, i)
+                    end
+                end
+            else
+                DebugLog.Error("Delegate", "data is nil")
+            end
+        else
+            DebugLog.Error("Delegate", "data is not a table")
+        end
+    else
+        DebugLog.Error("Delegate", "data is nil")
+    end
+
+    return self
+end
+
+----public----
+-- 调用执行
+function Delegate:Invoke(...)
+    for _, value in ipairs(self.callbacks) do
+        value:Invoke(...)
+    end
+end
+
+function Delegate:Clear()
+    self.callbacks = {}
+end

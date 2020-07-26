@@ -1,0 +1,26 @@
+require('DotLua/Class')
+
+local Facade = CS.DotEngine.Facade
+local DebugLog = DebugLog
+
+AssetManager =
+    Class(
+    function(self)
+        self.assetService = Facade.GetInstance():RetrieveService("AssetService")
+
+        if self.assetService then
+            DebugLog.Info("Test", "Asset Aservice")
+        end
+    end
+)
+
+function AssetManager:ChangeMaxLoadingCount(count)
+    self.assetService:ChangeMaxLoadingCount(count)
+end
+
+function AssetManager:UnloadUnusedAsset()
+    self.assetService:UnloadUnusedAsset()
+end
+
+
+

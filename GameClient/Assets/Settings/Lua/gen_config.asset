@@ -16,6 +16,9 @@ MonoBehaviour:
   - Assembly-CSharp
   callCSharpTypeNames:
   - DotEngine.Log.LogUtil
+  - DotEngine.Asset.AssetService
+  - Game.GameFacade
+  - DotEngine.Facade
   callLuaTypeNames: []
   optimizeTypeNames: []
   callCSharpGenericTypeNames: []
