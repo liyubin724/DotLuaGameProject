@@ -33,6 +33,12 @@ HierarchicalTimerWheel =
     end
 )
 
+----private----
+-- 创建一层的时间轮
+-- @param level 时间轮的层级
+-- @param tick 当前层上一格刻度的时间长度，单位毫秒
+-- @param size 当前层上刻度数量
+-- @return TimerWheel 返回时间轮
 function HierarchicalTimerWheel:CreateWheel(level, tick, size)
     local wheel = TimerWheel(level, tick, size)
     wheel:AddCompleteDelegate(Delegate.CreateListener(self, HierarchicalTimerWheel.OnWheelComplete))
@@ -99,6 +105,10 @@ function HierarchicalTimerWheel:RemoveTask(taskHandler)
     return false
 end
 
+----internal----
+-- 驱动多层时间轮进行轮转
+-- @param deltaTime 流逝的时间
+-- @return void
 function HierarchicalTimerWheel:DoUpdate(deltaTime)
     if #(self.handlers) > 0 then
         self.elapseInMS = self.elapseInMS + math.ceil(deltaTime * 1000)
@@ -112,14 +122,24 @@ function HierarchicalTimerWheel:DoUpdate(deltaTime)
     end
 end
 
+----public----
+-- 终止时间轮的运行
+-- @return void
 function HierarchicalTimerWheel:Pause()
     self.isPaused = true
 end
 
+----public----
+-- 恢复时间轮的运行
+-- @param void
 function HierarchicalTimerWheel:Resume()
     self.isPaused = false
 end
 
+----private----
+-- 对应的level层的时间轮运行一周后的回调
+-- @param level 时间轮的层级
+-- @return void
 function HierarchicalTimerWheel:OnWheelComplete(level)
     local nextLevel = level + 1
     if nextLevel > #(self.wheels) then
@@ -130,6 +150,10 @@ function HierarchicalTimerWheel:OnWheelComplete(level)
     self.wheels[nextLevel]:DoPushWheel(1)
 end
 
+----private----
+-- 某个时间轮上刻度上的定时任务开始执行,如果任务执行完毕，则否会直接删除任务，否则将会重新添加到时间轮上
+-- @param tasks 当前刻度上的任务
+-- @return void
 function HierarchicalTimerWheel:OnWheelSoltTrigger(tasks)
     if tasks and #(tasks) > 0 then
         for _, task in pairs(tasks) do
