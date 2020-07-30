@@ -1,0 +1,25 @@
+require('DotLua/Class')
+
+TimerHandler =
+    Class(
+    function(self)
+        self.index = -1
+        self.wheelIndex = -1
+        self.wheelSlotIndex = -1
+    end
+)
+
+function TimerHandler:IsValid()
+    return self.index > 0 and self.wheelIndex > 0 and self.wheelSlotIndex > 0
+end
+
+function TimerHandler:Clear()
+    self.index = -1
+    self.wheelIndex = -1
+    self.wheelSlotIndex = -1
+end
+
+function TimerHandler:ToString()
+    return string.format("TimerHandler:handlerID=%d,wheelIndex=%d,wheelSlotIndex=%d",
+    self.index,self.wheelIndex,self.wheelSlotIndex);
+end

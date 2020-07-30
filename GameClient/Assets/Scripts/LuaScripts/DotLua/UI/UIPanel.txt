@@ -1,0 +1,8 @@
+require('DotLua/Class')
+
+UIPanel =
+    Class(
+    function(self)
+    end
+)
+

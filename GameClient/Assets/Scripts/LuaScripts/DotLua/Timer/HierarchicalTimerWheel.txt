@@ -1,0 +1,64 @@
+require('DotLua/Class')
+require('DotLua/Timer/TimerWheel')
+require('DotLua/Pool/ObjectPool')
+require('DotLua/Timer/TimerTask')
+require('DotLua/Timer/TimerHandler')
+
+HierarchicalTimerWheel =
+    Class(
+    function(self)
+        self.uniqueIndex = 0
+        
+        self.taskPool = ObjectPool(TimerTask)
+
+        self.isPaused = false
+
+        self.wheels = {}
+        local wheel0 = TimerWheel(0, 100, 10)
+        local wheel1 = TimerWheel(1, wheel0:GetTotalTickInMS(), 60)
+        local wheel2 = TimerWheel(2, wheel1:GetTotalTickInMS(), 60)
+        local wheel3 = TimerWheel(3, wheel2:GetTotalTickInMS(), 24)
+        local wheel4 = TimerWheel(4, wheel3:GetTotalTickInMS(), 30)
+        table.insert(self.wheels, wheel0)
+        table.insert(self.wheels, wheel1)
+        table.insert(self.wheels, wheel2)
+        table.insert(self.wheels, wheel3)
+        table.insert(self.wheels, wheel4)
+    end
+)
+
+function HierarchicalTimerWheel:AddTask(intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
+    self.uniqueIndex = self.uniqueIndex + 1
+    local task = self.taskPool:Get()
+    task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
+
+    local timerHandler = TimerHandler()
+
+    return timerHandler
+end
+
+function HierarchicalTimerWheel:AddIntervalTimer()
+
+end
+
+function HierarchicalTimerWheel:AddEndTimer()
+
+end
+
+function HierarchicalTimerWheel:RemoveTask(taskHandler)
+end
+
+function HierarchicalTimerWheel:DoUpdate(deltaTime)
+end
+
+function HierarchicalTimerWheel:Clear()
+end
+
+
+function HierarchicalTimerWheel:Pause()
+    self.isPaused = true
+end
+
+function HierarchicalTimerWheel:Resume()
+    self.isPaused = false
+end

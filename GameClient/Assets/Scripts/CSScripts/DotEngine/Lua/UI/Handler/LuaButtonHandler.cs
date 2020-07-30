@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace DotEngine.Lua.UI
+namespace DotEngine.Lua.UI.Handler
 {
     [RequireComponent(typeof(Button))]
     public class LuaButtonHandler : MonoBehaviour

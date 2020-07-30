@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace DotEngine.Lua.UI
+namespace DotEngine.Lua.UI.Handler
 {
     [Serializable]
     public class EventHandlerData

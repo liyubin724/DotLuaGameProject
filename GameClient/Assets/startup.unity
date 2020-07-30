@@ -323,9 +323,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e63862edcb217844b89e1e1f101a0e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  luaPreloadScripts:
-  - Game/Startup
-  luaMgrScript: Game/EnvManager
 --- !u!4 &776920645
 Transform:
   m_ObjectHideFlags: 0

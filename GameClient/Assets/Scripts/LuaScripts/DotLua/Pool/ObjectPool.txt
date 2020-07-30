@@ -1,0 +1,33 @@
+require('DotLua/Class')
+require('DotLua/Pool/ObjectPoolItem')
+
+ObjectPool =
+    Class(
+    function(self, itemClass)
+        self.itemClass = itemClass
+
+        self.items = {}
+    end
+)
+
+function ObjectPool:Get()
+    if #(self.items) > 0 then
+        local item = self.items[1]
+        table.remove(self.items,1)
+        return item
+    end
+
+    return self.itemClass()
+end
+
+function ObjectPool:Release(item)
+    if item then
+        item:OnRelease()
+        table.insert(self.items, item)
+    end
+end
+
+function ObjectPool:Clear()
+    self.items = {}
+end
+

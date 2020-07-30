@@ -22,3 +22,4 @@ Game.AssetMgr = nil
 Game.ConfigMgr = ConfigManager('Game/Config/')
 Game.EventMgr = EventDispatcher()
 
+DebugLog.Info("Test", table.tostring(Game.EventMgr))

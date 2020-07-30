@@ -1,0 +1,57 @@
+require('DotLua/Class')
+
+TimerWheel =
+    Class(
+    function(self,level,tickInMS,slotSize)
+        self.level = level
+        self.tickInMS = tickInMS
+        self.slotSize = slotSize
+
+        self.currentSlotIndex = 0
+        self.allTasks = {}
+        for i = 1, self.slotSize do
+            self.allTasks[i] = {}
+        end
+    end
+)
+
+function TimerWheel:GetLevel()
+    return self.level
+end
+
+function TimerWheel:GetTickInMS()
+    return self.tickInMS
+end
+
+function TimerWheel:GetTotalTickInMS()
+    return self.tickInMS * self.slotSize
+end
+
+function TimerWheel:AddTask(task)
+
+end
+
+function TimerWheel:RemoveTask(task)
+
+end
+
+function TimerWheel:DoTurn(turnNum)
+    for i = 1, turnNum do
+
+        local isTrigger = false
+        self.currentSlotIndex = self.currentSlotIndex + 1
+        if self.currentSlotIndex == self.slotSize then
+            self.currentSlotIndex = 0
+            isTrigger = true
+        end
+
+        local tasks = self.allTasks[self.currentSlotIndex]
+        if tasks and #(tasks) > 0 then
+
+        end
+        
+        if isTrigger then
+            
+        end
+    end
+end

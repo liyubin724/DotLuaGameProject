@@ -1,0 +1,74 @@
+require('DotLua/Class')
+
+UIPanelState = {
+    None = 0,
+    Loading = 1,
+    Showing = 2,
+    Hidden = 3,
+    Destroying = 4,
+}
+
+UIPanelMode = {
+    Append = 0,
+    Navigate = 1,
+    Mutex = 2
+}
+
+UIPanelLayer = {
+    Bottomlowest = 0,
+    Bottom = 1,
+    Default = 2,
+    Top = 3,
+    Topmost = 4
+}
+
+UIPanelData =
+    Class(
+    function(self)
+        self.address = nil
+        self.layer = UIPanelLayer.Default
+        self.mode = UIPanelMode.Append
+        self.state = UIPanelState.None
+
+        self.assetIndex = -1
+    end
+)
+
+UIPanelManager =
+    Class(
+    function(self)
+        self.uiRoot = CS.DotEngine.UI.UIRoot.Root
+
+        self.panels = {}
+    end
+)
+
+function UIPanelManager:OpenPanel(address, panelLayer, panelMode)
+    local panelData = self.panels[address]
+    if panelData then
+        return
+    end
+
+    panelData = UIPanelData()
+    panelData.address = address
+    panelData.layer = panelLayer
+    panelData.mode = panelMode
+    panelData.state = UIPanelState.Loading
+
+    self.panels[address] = panelData
+
+    local assetMgr = Game.AssetMgr
+    panelData.assetIndex = assetMgr:InstanceAssetAsync(address,self,nil,UIPanelManager.OnPanelLoadComplete,nil)
+end
+
+function UIPanelManager:OnPanelLoadComplete(address,uObject,userdata)
+    local panelData = self.panels[address]
+    if not panelData then
+        
+    else
+
+    end
+end
+
+function UIPanelManager:ClosePanel()
+end

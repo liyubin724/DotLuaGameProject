@@ -1,0 +1,15 @@
+require('DotLua/Class')
+
+ObjectPoolItem =
+    Class(
+    function(self)
+    end
+)
+
+function ObjectPoolItem:OnGet()
+
+end
+
+function ObjectPoolItem:OnRelease()
+
+end

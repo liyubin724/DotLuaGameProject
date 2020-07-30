@@ -1,11 +1,7 @@
 require('DotLua/Class')
 
-local uiRoot = CS.DotEngine.UI.UIRoot.Root
-
-UIManager =
+UIView =
     Class(
     function(self)
-
     end
 )
-
