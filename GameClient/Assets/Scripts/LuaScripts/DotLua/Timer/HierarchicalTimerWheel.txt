@@ -18,11 +18,11 @@ HierarchicalTimerWheel =
 
         self.isPaused = false
 
-        local wheel0 = self:CreateWheel(0, 100, 10)
-        local wheel1 = self:CreateWheel(1, 100 * 10, 60)
-        local wheel2 = self:CreateWheel(1, 100 * 10 * 60, 60)
-        local wheel3 = self:CreateWheel(1, 100 * 10 * 60 * 60, 24)
-        local wheel4 = self:CreateWheel(1, 100 * 10 * 60 * 60 * 24, 30)
+        local wheel0 = self:CreateWheel(1, 100, 10)
+        local wheel1 = self:CreateWheel(2, 100 * 10, 60)
+        local wheel2 = self:CreateWheel(3, 100 * 10 * 60, 60)
+        local wheel3 = self:CreateWheel(4, 100 * 10 * 60 * 60, 24)
+        local wheel4 = self:CreateWheel(5, 100 * 10 * 60 * 60 * 24, 30)
 
         self.wheels = {wheel0, wheel1, wheel2, wheel3, wheel4}
 
@@ -156,11 +156,13 @@ function HierarchicalTimerWheel:InnerAddTask(task)
         if wheel:GetTotalTickInMS() >= taskLeftTime then
             soltIndex = wheel:AddTask(task)
             wheelIndex = i
+            break
         end
     end
 
     if not handler then
-        handler = TimerHandler(task.GetIndex(), wheelIndex, soltIndex)
+        handler = TimerHandler(task:GetIndex(), wheelIndex, soltIndex)
+        self.handlers[task:GetIndex()] = handler
     else
         handler:SetWheelIndex(wheelIndex)
         handler:SetWheelSoltIndex(soltIndex)

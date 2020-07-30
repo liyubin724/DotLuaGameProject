@@ -26,6 +26,15 @@ end
 function EnvManager:DoStartup()
     Game.EventMgr:Trigger(EventID.Startup)
     Game.AssetMgr:InstanceAssetAsync('Cube', self, nil, EnvManager.OnCubeLoadComplete)
+
+
+    local timerMgr = Game.TimerMgr
+    local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test")
+    DebugLog.Info("Timer Test", tostring(handler))
+end
+
+function EnvManager:OnIntervalTimer(userdata)
+    DebugLog.Info("Timer Test", userdata)
 end
 
 function EnvManager:DoUpdate(deltaTime)
