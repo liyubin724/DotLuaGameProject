@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DotEngine.Net.Services
 {
-    public class ClientNetService : LuaHandlerService, IUpdate, ILateUpdate
+    public class ClientNetService : Service, IUpdate, ILateUpdate
     {
         public const string NAME = "ClientNetService";
 
         private Dictionary<int, ClientNet> clientNetDic = new Dictionary<int, ClientNet>();
 
-        public ClientNetService() : base(NAME, "ClientNetMgr", "")
+        public ClientNetService() : base(NAME)
         {
         }
 
@@ -64,22 +64,22 @@ namespace DotEngine.Net.Services
 
         private void HandleNetConnecting(ClientNet net)
         {
-            CallAction<int>(NetNotification.CLIENT_NET_CONNECDTING, net.UniqueID);
+            //CallAction<int>(NetNotification.CLIENT_NET_CONNECDTING, net.UniqueID);
         }
 
         private void HandleNetConnectedSuccess(ClientNet net)
         {
-            CallAction<int>(NetNotification.CLIENT_NET_CONNECTED_SUCCESS, net.UniqueID);
+            //CallAction<int>(NetNotification.CLIENT_NET_CONNECTED_SUCCESS, net.UniqueID);
         }
 
         private void HandleNetConnectedFailed(ClientNet net)
         {
-            CallAction<int>(NetNotification.CLIENT_NET_CONNECTED_FAILED, net.UniqueID);
+            //CallAction<int>(NetNotification.CLIENT_NET_CONNECTED_FAILED, net.UniqueID);
         }
 
         private void HandleNetDisconnected(ClientNet net)
         {
-            CallAction<int>(NetNotification.CLIENT_NET_DISCONNECTED, net.UniqueID);
+            //CallAction<int>(NetNotification.CLIENT_NET_DISCONNECTED, net.UniqueID);
         }
 
         public void DoLateUpdate(float deltaTime)

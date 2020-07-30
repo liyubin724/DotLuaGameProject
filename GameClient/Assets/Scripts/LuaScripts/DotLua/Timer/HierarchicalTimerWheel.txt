@@ -7,6 +7,9 @@ require('DotLua/Delegate')
 
 local DebugLog = DebugLog
 
+----public----
+-- 多层时间轮定时器
+-- 通过Game.TimerMgr可以获得全局的定时器
 HierarchicalTimerWheel =
     Class(
     function(self)
@@ -37,6 +40,15 @@ function HierarchicalTimerWheel:CreateWheel(level, tick, size)
     return wheel
 end
 
+----public----
+-- 添加定时器，定时器总时长结束后会自动删除
+-- @param intervalInSec 定时器触发的周期
+-- @param totalInSec 定时器的总时长
+-- @param receiver 接收者
+-- @param intervalFunc 定时器周期性触发时接收函数
+-- @param endFunc 定时器结束时接收函数
+-- @param userdata 自定义数据
+-- @return TaskHandler 返回定时器唯一的标识（中止时使用)
 function HierarchicalTimerWheel:AddTask(intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
     self.uniqueIndex = self.uniqueIndex + 1
 
@@ -46,14 +58,32 @@ function HierarchicalTimerWheel:AddTask(intervalInSec, totalInSec, receiver, int
     return self:InnerAddTask(task)
 end
 
+----public----
+-- 添加周期性的定时器,如需要停止需要调用RemoveTimer
+-- @param intervalInSec 定时器触发的周期
+-- @param receiver 接收者
+-- @param intervalFunc 定时器周期性触发时接收函数
+-- @param userdata 自定义数据
+-- @return TaskHandler 返回定时器唯一的标识（中止时使用)
 function HierarchicalTimerWheel:AddIntervalTimer(intervalInSec, receiver, intervalFunc, userdata)
     return self:AddTask(intervalInSec, 0, receiver, intervalFunc, nil, userdata)
 end
 
+----public----
+-- 添加定时器，达到指定时间后会触发,触发后会自动删除
+-- @param totalInSec 定时器的总时长
+-- @param receiver 接收者
+-- @param endFunc 定时器结束时接收函数
+-- @param userdata 自定义数据
+-- @return TaskHandler 返回定时器唯一的标识（中止时使用)
 function HierarchicalTimerWheel:AddEndTimer(totalInSec, receiver, endFunc, userdata)
     return self:AddTask(0, totalInSec, receiver, nil, endFunc, userdata)
 end
 
+----public----
+-- 删除指定的定时器
+-- @param timerIndex 定时器唯一标识
+-- @return bool 返回是否成功删除定时器
 function HierarchicalTimerWheel:RemoveTask(taskHandler)
     if taskHandler and taskHandler:IsValid() then
         self.handlers[taskHandler:GetIndex()] = nil

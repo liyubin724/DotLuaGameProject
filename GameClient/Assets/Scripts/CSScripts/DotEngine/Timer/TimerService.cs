@@ -1,18 +1,16 @@
-﻿using DotEngine.Lua;
-using DotEngine.Services;
+﻿using DotEngine.Services;
 using System;
 
 namespace DotEngine.Timer
 {
-    public class TimerService : LuaHandlerService,IUpdate
+    public class TimerService : Service, IUpdate
     {
         public const string NAME = "TimerService";
 
         public float LuaUpdateInterval { get; set; } = 0.1f;
 
         private TimerManager timerMgr = null;
-        private float luaElapseUpdateInterval = 0.0f;
-        public TimerService() :base(NAME, "TimerMgr", "DotLua/Timer/TimerManager")
+        public TimerService() :base(NAME)
         {
         }
 
@@ -33,13 +31,6 @@ namespace DotEngine.Timer
         public void DoUpdate(float deltaTime)
         {
             timerMgr.DoUpdate(deltaTime);
-
-            luaElapseUpdateInterval += deltaTime;
-            if(luaElapseUpdateInterval >= LuaUpdateInterval)
-            {
-                luaElapseUpdateInterval -= LuaUpdateInterval;
-                CallAction(LuaConst.UPDATE_FUNCTION_NAME, LuaUpdateInterval);
-            }
         }
 
         public void Pause()

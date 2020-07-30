@@ -5,26 +5,19 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Asset
 {
-    public class AssetService : LuaHandlerService, IUpdate
+    public class AssetService : Service, IUpdate
     {
         public const string NAME = "AssetService";
 
         private AssetManager assetMgr = null;
 
-        public AssetService() :base(NAME,"AssetMgr","DotLua/Asset/AssetManager")
+        public AssetService() :base(NAME)
         {
         }
 
         public void DoUpdate(float deltaTime)
         {
             assetMgr?.DoUpdate(deltaTime);
-        }
-
-        public override void DoRegister()
-        {
-            base.DoRegister();
-
-            bindScript.SetValue("assetService", this);
         }
 
         public override void DoRemove()

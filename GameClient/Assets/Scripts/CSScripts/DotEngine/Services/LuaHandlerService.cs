@@ -19,7 +19,7 @@ namespace DotEngine.Services
             if(bindScript.IsValid())
             {
                 LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
-                service.GlobalGameTable.Set(m_HandlerName, bindScript.ObjTable);
+                service.GameTable.Set(m_HandlerName, bindScript.ObjTable);
 
                 bindScript.CallAction(LuaConst.START_FUNCTION_NAME);
             }

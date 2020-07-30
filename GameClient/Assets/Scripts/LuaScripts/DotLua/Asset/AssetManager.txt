@@ -3,26 +3,22 @@ require("DotLua/Asset/AssetData")
 
 local DebugLog = DebugLog
 local AssetLoaderPriority = CS.DotEngine.Asset.AssetLoaderPriority
+local GameFacade = CS.Game.GameFacade
+local AssetService = CS.DotEngine.Asset.AssetService
 
 AssetManager =
     Class(
     function(self)
-        self.assetService = nil
-
         self.assetDatas = {}
         self.assetIndex = 0
     end
 )
 
-function AssetManager:DoStart()
-    DebugLog.Info("AssetManager","assetMgr start")
-end
-
 ----public----
 -- 调整同时可以加载资源的数量
 -- @param count 可以加载的最大数量
 function AssetManager:ChangeMaxLoadingCount(count)
-    self.assetService:ChangeMaxLoadingCount(count)
+    self:GetAssetService():ChangeMaxLoadingCount(count)
 end
 
 ----public----
@@ -35,7 +31,7 @@ end
 -- @return assetIndex 返回资源的唯一标识，如果需要中止加载可以使用此值给函数UnloadAssetAsync
 function AssetManager:LoadAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
     local assetIndex = self.assetIndex
-    local assetHandler = self.assetService:LoadAssetAsync(
+    local assetHandler = self:GetAssetService():LoadAssetAsync(
         address,
         AssetManager.OnAssetProgress,
         AssetManager.OnAssetComplete,
@@ -59,7 +55,7 @@ end
 -- @return assetIndex 返回资源的唯一标识，如果需要中止加载可以使用此值给函数UnloadAssetAsync
 function AssetManager:InstanceAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
     local assetIndex = self.assetIndex
-    local assetHandler = self.assetService:InstanceAssetAsync(
+    local assetHandler = self:GetAssetService():InstanceAssetAsync(
         address,
         AssetManager.OnAssetProgress,
         AssetManager.OnAssetComplete,
@@ -83,7 +79,7 @@ function AssetManager:UnloadAssetAsync(assetIndex)
     local assetData =  self.assetDatas[assetIndex]
     if assetData then
         self.assetDatas[assetIndex] = nil
-        self.assetService:UnloadAssetAsync(assetData:GetAssetHandler())
+        self:GetAssetService():UnloadAssetAsync(assetData:GetAssetHandler())
     end
 end
 
@@ -91,7 +87,7 @@ end
 -- 用于清理不再使用的资源
 -- @return void
 function AssetManager:UnloadUnusedAsset()
-    self.assetService:UnloadUnusedAsset()
+    self:GetAssetService():UnloadUnusedAsset()
 end
 
 function AssetManager:DoDestroy()
@@ -114,4 +110,12 @@ function AssetManager.OnAssetComplete(address,uObject,assetIndex)
     if assetData then
         assetData:InvokeComplete(uObject)
     end
+end
+
+function AssetManager:GetAssetService()
+    if not self.assetService then
+        self.assetService = GameFacade.GetInstance():RetrieveService(AssetService.NAME)
+    end
+
+    return self.assetService
 end

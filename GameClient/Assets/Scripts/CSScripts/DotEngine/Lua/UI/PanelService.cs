@@ -9,11 +9,11 @@ namespace DotEngine.Lua.UI
 {
 
 
-    public class PanelService : LuaHandlerService
+    public class PanelService : Service
     {
         private const string NAME = "PanelService";
 
-        public PanelService() : base(NAME, "PanelMgr", "DotLua/UI/UIPanelManager")
+        public PanelService() : base(NAME)
         {
         }
 
