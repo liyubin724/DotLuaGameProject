@@ -4,6 +4,7 @@ require('DotLua/Config/ConfigManager')
 require('DotLua/Timer/TimerManager')
 require('DotLua/Asset/AssetManager')
 require('DotLua/Event/EventDispatcher')
+require("DotLua/Timer/HierarchicalTimerWheel")
 
 if not Game then
     Game = {}
@@ -21,5 +22,14 @@ Game.AssetMgr = nil
 
 Game.ConfigMgr = ConfigManager('Game/Config/')
 Game.EventMgr = EventDispatcher()
+Game.Timer = HierarchicalTimerWheel()
 
 DebugLog.Info("Test", table.tostring(Game.EventMgr))
+
+require("DotLua/Timer/TimerHandler")
+
+local th = TimerHandler(1,2,3)
+DebugLog.Info("Timer", tostring(th))
+
+local th2 = TimerHandler(1,4,2)
+DebugLog.Info("Timer",tostring(th == th2))

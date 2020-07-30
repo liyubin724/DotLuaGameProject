@@ -2,12 +2,51 @@ require('DotLua/Class')
 
 TimerHandler =
     Class(
-    function(self)
-        self.index = -1
-        self.wheelIndex = -1
-        self.wheelSlotIndex = -1
+    function(self, index, wheelIndex, slotIndex)
+        self.index = index
+        self.wheelIndex = wheelIndex
+        self.wheelSlotIndex = slotIndex
     end
 )
+----private----
+--只要Index相当则表示相同
+TimerHandler.__eq = function(handler1, handler2)
+    if handler1 and handler2 then
+        return handler1.index == handler2.index
+    end
+    return false
+end
+
+----private----
+--输出日志
+TimerHandler.__tostring = function(handler)
+    return string.format(
+        'TimerHandler:handlerID=%d,wheelIndex=%d,wheelSlotIndex=%d',
+        handler.index,
+        handler.wheelIndex,
+        handler.wheelSlotIndex
+    )
+end
+
+function TimerHandler:GetIndex()
+    return self.index
+end
+
+function TimerHandler:GetWheelIndex()
+    return self.wheelIndex
+end
+
+function TimerHandler:SetWheelIndex(index)
+    self.wheelIndex = index
+end
+
+function TimerHandler:SetWheelSoltIndex(index)
+    self.wheelSlotIndex = index
+end
+
+function TimerHandler:GetWheelSoltIndex()
+    return self.wheelSlotIndex
+end
 
 function TimerHandler:IsValid()
     return self.index > 0 and self.wheelIndex > 0 and self.wheelSlotIndex > 0
@@ -17,9 +56,4 @@ function TimerHandler:Clear()
     self.index = -1
     self.wheelIndex = -1
     self.wheelSlotIndex = -1
-end
-
-function TimerHandler:ToString()
-    return string.format("TimerHandler:handlerID=%d,wheelIndex=%d,wheelSlotIndex=%d",
-    self.index,self.wheelIndex,self.wheelSlotIndex);
 end

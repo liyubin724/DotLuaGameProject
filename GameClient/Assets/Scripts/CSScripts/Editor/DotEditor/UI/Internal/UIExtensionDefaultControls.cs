@@ -5,6 +5,7 @@ using System.Reflection;
 using System.IO;
 using DotEngine.UI;
 using DotEngine.Lua.UI;
+using DotEngine.Lua.UI.Handler;
 
 namespace DotEditor.UI
 {

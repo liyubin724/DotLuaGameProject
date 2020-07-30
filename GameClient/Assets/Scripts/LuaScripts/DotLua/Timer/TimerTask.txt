@@ -1,5 +1,5 @@
 require('DotLua/Class')
-require("DotLua/Callback")
+require('DotLua/Callback')
 
 local DebugLog = DebugLog
 
@@ -14,8 +14,7 @@ TimerTask =
         self.endCallback = nil
         self.userdata = nil
 
-        self.remainingInMS = 0
-        self.leftInMS = 0
+        self.triggerLeftInMS = 0
     end
 )
 
@@ -23,44 +22,37 @@ function TimerTask:GetIndex()
     return self.index
 end
 
-function TimerTask:SetData(index,
-                            intervalInSec,
-                            totalInSec,
-                            receiver,
-                            intervalFunc,
-                            endFunc,
-                            userdata)
+function TimerTask:GetTriggerLeftInMS()
+    return self.triggerLeftInMS
+end
+
+function TimerTask:SetTriggerLeftInMS(timeInMS)
+    self.triggerLeftInMS = timeInMS
+end
+
+function TimerTask:SetData(index, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
     self.index = index
 
-    if totalInSec <= 0 then
-        self.totalInMS = 0
-    else
+    if totalInSec > 0 then
         self.totalInMS = math.ceil(totalInSec * 1000)
     end
-    if intervalInSec <= 0 then
-        self.intervalInMS = 0
-    else
+    if intervalInSec > 0 then
         self.intervalInMS = math.ceil(intervalInSec * 1000)
     end
 
+    if self.intervalInMS > 0 then
+        self.triggerLeftInMS = self.intervalInMS
+    else
+        self.triggerLeftInMS = self.totalInMS
+    end
+
     if intervalFunc then
-        self.intervalCallback = Callback(receiver,intervalFunc)
+        self.intervalCallback = Callback(receiver, intervalFunc)
     end
     if endFunc then
-        self.endCallback = Callback(receiver,endFunc)
+        self.endCallback = Callback(receiver, endFunc)
     end
     self.userdata = userdata
-
-    self.remainingInMS = self.intervalInMS
-    self.leftInMS = self.totalInMS
-end
-
-function TimerTask:IsEnd()
-
-end
-
-function TimerTask:ResetTask()
-
 end
 
 function TimerTask:OnTaskInterval()
@@ -84,6 +76,5 @@ function TimerTask:Reset()
     self.endCallback = nil
     self.userdata = nil
 
-    self.remainingInMS = 0
-    self.leftInMS = 0
+    self.triggerLeftInMS = 0
 end

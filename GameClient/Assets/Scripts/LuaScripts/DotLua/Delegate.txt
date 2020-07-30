@@ -110,3 +110,7 @@ end
 function Delegate:Clear()
     self.callbacks = {}
 end
+
+function Delegate.CreateListener(receiver,func)
+    return {receiver,func}
+end

@@ -1,8 +1,9 @@
 require('DotLua/Class')
+require('DotLua/Delegate')
 
 TimerWheel =
     Class(
-    function(self,level,tickInMS,slotSize)
+    function(self, level, tickInMS, slotSize)
         self.level = level
         self.tickInMS = tickInMS
         self.slotSize = slotSize
@@ -12,6 +13,9 @@ TimerWheel =
         for i = 1, self.slotSize do
             self.allTasks[i] = {}
         end
+
+        self.completeDelegate = Delegate()
+        self.soltTriggerDelegate = Delegate()
     end
 )
 
@@ -23,35 +27,66 @@ function TimerWheel:GetTickInMS()
     return self.tickInMS
 end
 
+function TimerWheel:GetSlotSize()
+    return self.slotSize
+end
+
 function TimerWheel:GetTotalTickInMS()
     return self.tickInMS * self.slotSize
 end
 
+function TimerWheel:AddCompleteDelegate(listener)
+    self.completeDelegate = self.completeDelegate + listener
+end
+
+function TimerWheel:RemoveCompleteDelegate(listener)
+    self.completeDelegate = self.completeDelegate - listener
+end
+
+function TimerWheel:AddSoltTriggerDelegate(listener)
+    self.soltTriggerDelegate = self.soltTriggerDelegate + listener
+end
+
+function TimerWheel:RemoveSoltTriggerDelegate(listener)
+    self.soltTriggerDelegate = self.soltTriggerDelegate - listener
+end
+
 function TimerWheel:AddTask(task)
+    local taskLeftTime = task:GetTriggerLeftInMS()
+    local solt = math.floor(taskLeftTime / self.tickInMS)
+    task:SetTriggerLeftInMS(taskLeftTime - self.tickInMS * solt)
 
+    local soltIndex = self.currentSlotIndex + solt
+    self.allTasks[soltIndex][task:GetIndex()] = task
+
+    return soltIndex
 end
 
-function TimerWheel:RemoveTask(task)
+function TimerWheel:RemoveTask(handler)
+    local taskIndex = handler:GetIndex()
+    local wheelSoltIndex = handler:GetWheelSoltIndex()
 
+    local task = self.allTasks[wheelSoltIndex][taskIndex]
+    if task then
+        self.allTasks[wheelSoltIndex][taskIndex] = nil
+    end
+    return task
 end
 
-function TimerWheel:DoTurn(turnNum)
-    for i = 1, turnNum do
-
-        local isTrigger = false
+function TimerWheel:DoPushWheel(pushNum)
+    for i = 1, pushNum do
         self.currentSlotIndex = self.currentSlotIndex + 1
+
         if self.currentSlotIndex == self.slotSize then
             self.currentSlotIndex = 0
-            isTrigger = true
+
+            self.completeRoundDelegate:Invoke(self.level)
         end
 
         local tasks = self.allTasks[self.currentSlotIndex]
         if tasks and #(tasks) > 0 then
-
-        end
-        
-        if isTrigger then
-            
+            self.soltTriggerDelegate:Invoke(tasks)
+            self.allTasks[self.currentSlotIndex] = {}
         end
     end
 end
