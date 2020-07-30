@@ -3,6 +3,16 @@ require('DotLua/Callback')
 
 local DebugLog = DebugLog
 
+----private----
+-- 用于标识定时器的状态
+TimerTaskCategory = {
+    None = 0,
+    Interval = 1,
+    End = 2,
+    IntervalAndEnd = 3
+}
+
+
 TimerTask =
     Class(
     function(self)
@@ -14,6 +24,7 @@ TimerTask =
         self.endCallback = nil
         self.userdata = nil
 
+        self.category = TimerTaskCategory.None
         self.triggerLeftInMS = 0
     end
 )
@@ -33,17 +44,24 @@ end
 function TimerTask:SetData(index, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
     self.index = index
 
-    if totalInSec > 0 then
+    if intervalInSec <= 0 and totalInSec > 0 then
+        self.category = TimerTaskCategory.End
         self.totalInMS = math.ceil(totalInSec * 1000)
-    end
-    if intervalInSec > 0 then
-        self.intervalInMS = math.ceil(intervalInSec * 1000)
-    end
 
-    if self.intervalInMS > 0 then
-        self.triggerLeftInMS = self.intervalInMS
-    else
         self.triggerLeftInMS = self.totalInMS
+    elseif intervalInSec > 0 and totalInSec <= 0 then
+        self.category = TimerTaskCategory.Interval
+        self.intervalInMS = math.ceil(intervalInSec * 1000)
+
+        self.triggerLeftInMS = self.intervalInMS
+    elseif intervalInSec > 0 and totalInSec > 0 then
+       self.category = TimerTaskCategory.IntervalAndEnd
+       self.intervalInMS = math.ceil(intervalInSec * 1000)
+       self.totalInMS = math.ceil(totalInSec * 1000)
+
+       self.triggerLeftInMS = self.intervalInMS
+    else
+        DebugLog.Error("Timer","timer error")
     end
 
     if intervalFunc then
@@ -53,6 +71,38 @@ function TimerTask:SetData(index, intervalInSec, totalInSec, receiver, intervalF
         self.endCallback = Callback(receiver, endFunc)
     end
     self.userdata = userdata
+end
+
+function TimerTask:Trigger()
+    if self.triggerLeftInMS <= 0 then
+        if self.category == TimerTaskCategory.End then
+            self:OnTaskEnd()
+            return true
+        elseif self.category == TimerTaskCategory.Interval then
+            self:OnTaskInterval()
+            return false
+        elseif self.category == TimerTaskCategory.IntervalAndEnd then
+            self:OnTaskInterval()
+            self.totalInMS = self.totalInMS - self.intervalInMS
+            if self.totalInMS <= 0 then
+                self:OnTaskEnd()
+                return true
+            else
+                if self.totalInMS >= self.intervalInMS then
+                    self.triggerLeftInMS = self.intervalInMS
+                    return false
+                else
+                    self.triggerLeftInMS = self.totalInMS
+                    self.category = TimerTaskCategory.End
+                    return false
+                end
+            end
+        end
+
+        return true
+    else
+        return false
+    end
 end
 
 function TimerTask:OnTaskInterval()

@@ -6,9 +6,7 @@ require('DotLua/Asset/AssetManager')
 require('DotLua/Event/EventDispatcher')
 require("DotLua/Timer/HierarchicalTimerWheel")
 
-if not Game then
-    Game = {}
-end
+Game = {}
 
 if Game.IsDebug then
     DebugLog.SetEnable(true, true, true)
@@ -16,13 +14,13 @@ else
     DebugLog.SetEnable(true, false, false)
 end
 
-Game.EnvMgr = nil
-Game.TimerMgr = nil
-Game.AssetMgr = nil
-
 Game.ConfigMgr = ConfigManager('Game/Config/')
 Game.EventMgr = EventDispatcher()
-Game.Timer = HierarchicalTimerWheel()
+Game.TimerMgr = HierarchicalTimerWheel()
+Game.AssetMgr = AssetManager()
+
+Game.EnvMgr = EnvManager()
+
 
 DebugLog.Info("Test", table.tostring(Game.EventMgr))
 

@@ -3,6 +3,7 @@ require('DotLua/Timer/TimerWheel')
 require('DotLua/Pool/ObjectPool')
 require('DotLua/Timer/TimerTask')
 require('DotLua/Timer/TimerHandler')
+require('DotLua/Delegate')
 
 local DebugLog = DebugLog
 
@@ -14,26 +15,31 @@ HierarchicalTimerWheel =
 
         self.isPaused = false
 
-        self.wheels = {}
-        local wheel0 = TimerWheel(0, 100, 10)
-        local wheel1 = TimerWheel(1, wheel0:GetTotalTickInMS(), 60)
-        local wheel2 = TimerWheel(2, wheel1:GetTotalTickInMS(), 60)
-        local wheel3 = TimerWheel(3, wheel2:GetTotalTickInMS(), 24)
-        local wheel4 = TimerWheel(4, wheel3:GetTotalTickInMS(), 30)
-        table.insert(self.wheels, wheel0)
-        table.insert(self.wheels, wheel1)
-        table.insert(self.wheels, wheel2)
-        table.insert(self.wheels, wheel3)
-        table.insert(self.wheels, wheel4)
+        local wheel0 = self:CreateWheel(0, 100, 10)
+        local wheel1 = self:CreateWheel(1, 100 * 10, 60)
+        local wheel2 = self:CreateWheel(1, 100 * 10 * 60, 60)
+        local wheel3 = self:CreateWheel(1, 100 * 10 * 60 * 60, 24)
+        local wheel4 = self:CreateWheel(1, 100 * 10 * 60 * 60 * 24, 30)
+
+        self.wheels = {wheel0, wheel1, wheel2, wheel3, wheel4}
+
+        self.wheel = wheel0
 
         self.handlers = {}
-        self.wheel = wheel0
         self.elapseInMS = 0
     end
 )
 
+function HierarchicalTimerWheel:CreateWheel(level, tick, size)
+    local wheel = TimerWheel(level, tick, size)
+    wheel:AddCompleteDelegate(Delegate.CreateListener(self, HierarchicalTimerWheel.OnWheelComplete))
+    wheel:AddSoltTriggerDelegate(Delegate.CreateListener(self, HierarchicalTimerWheel.OnWheelSoltTrigger))
+    return wheel
+end
+
 function HierarchicalTimerWheel:AddTask(intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
     self.uniqueIndex = self.uniqueIndex + 1
+
     local task = self.taskPool:Get()
     task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
 
@@ -50,13 +56,14 @@ end
 
 function HierarchicalTimerWheel:RemoveTask(taskHandler)
     if taskHandler and taskHandler:IsValid() then
+        self.handlers[taskHandler:GetIndex()] = nil
+
         local task = self.wheels[taskHandler:GetWheelIndex()]:RemoveTask(taskHandler)
+        taskHandler:Clear()
         if task then
             self.taskPool:Release(task)
             return true
         end
-
-        self.handlers[taskHandler:GetIndex()] = nil
     end
 
     return false
@@ -65,11 +72,12 @@ end
 function HierarchicalTimerWheel:DoUpdate(deltaTime)
     if #(self.handlers) > 0 then
         self.elapseInMS = self.elapseInMS + math.ceil(deltaTime * 1000)
+
         if self.elapseInMS >= self.wheel:GetTickInMS() then
             local count = math.floor(self.elapseInMS / self.wheel:GetTickInMS())
             self.wheel:DoPushWheel(count)
 
-            self.elapseInMS =  math.ceil(self.elapseInMS % self.wheel:GetTickInMS())
+            self.elapseInMS = math.ceil(self.elapseInMS % self.wheel:GetTickInMS())
         end
     end
 end
@@ -85,7 +93,7 @@ end
 function HierarchicalTimerWheel:OnWheelComplete(level)
     local nextLevel = level + 1
     if nextLevel > #(self.wheels) then
-        DebugLog.Error("Timer","Timer error")
+        DebugLog.Error('Timer', 'Timer error')
         return
     end
 
@@ -95,7 +103,14 @@ end
 function HierarchicalTimerWheel:OnWheelSoltTrigger(tasks)
     if tasks and #(tasks) > 0 then
         for _, task in pairs(tasks) do
-            
+            if task:Trigger() then
+                local handler = self.handlers[task:GetIndex()]
+                handler:Clear()
+                self.handlers[task:GetIndex()] = nil
+                self.taskPool:Release(task)
+            else
+                self:InnerAddTask(task)
+            end
         end
     end
 end
