@@ -1,6 +1,8 @@
 Game = {}
 require("Debugger/LuaPanda").start("127.0.0.1",8818)
 
+require("DotLua/Utility/math")
+require("DotLua/Utility/table")
 require('DotLua/Class')
 require('DotLua/Log/DebugLog')
 require('DotLua/Config/ConfigManager')
@@ -17,7 +19,6 @@ Game.TimerMgr = HierarchicalTimerWheel()
 Game.AssetMgr = AssetManager()
 
 Game.EnvMgr = EnvManager()
-
 
 ----------------------------------------------------------
 DebugLog.Info("Test", table.tostring(Game.EventMgr))

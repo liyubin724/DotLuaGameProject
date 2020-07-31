@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace DotEngine.Log
 {
@@ -33,27 +34,27 @@ namespace DotEngine.Log
 
         public void LogDebug(string tag, string message)
         {
-            Debug.Log($"[<color=#808080>{tag}]:{message}</color>");
+            Debug.Log($"<color=#808080>{DateTime.Now.ToString("HH:mm:ss:ffff")} [{tag}]:{message}</color>");
         }
 
         public void LogInfo(string tag, string message)
         {
-            Debug.Log($"[<color=#FFFFFF>{tag}]:{message}</color>");
+            Debug.Log($"<color=#FFFFFF>{DateTime.Now.ToString("HH:mm:ss:ffff")} [{tag}]:{message}</color>");
         }
 
         public void LogWarning(string tag, string message)
         {
-            Debug.LogWarning($"[{tag}]:{message}");
+            Debug.LogWarning($"{DateTime.Now.ToString("HH:mm:ss:ffff")} [{tag}]:{message}");
         }
 
         public void LogError(string tag, string message)
         {
-            Debug.LogError($"[{tag}]:{message}");
+            Debug.LogError($"{DateTime.Now.ToString("HH:mm:ss:ffff")} [{tag}]:{message}");
         }
 
         public void LogFatal(string tag, string message)
         {
-            Debug.LogError($"[{tag}]:{message}");
+            Debug.LogError($"{DateTime.Now.ToString("HH:mm:ss:ffff")} [{tag}]:{message}");
         }
 
         public void Close()

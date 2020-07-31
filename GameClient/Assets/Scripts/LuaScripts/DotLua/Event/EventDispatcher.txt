@@ -1,6 +1,6 @@
 require ("DotLua/Class")
 require("DotLua/Event/EventData")
-require("DotLua/Utility/TableUtil")
+require("DotLua/Utility/table")
 
 local Debug = DebugLog
 

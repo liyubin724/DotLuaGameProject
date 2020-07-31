@@ -29,13 +29,21 @@ function EnvManager:DoStartup()
 
 
     local timerMgr = Game.TimerMgr
-    local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test")
+    --local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test Timer")
+    --local handler = timerMgr:AddEndTimer(3,self,EnvManager.OnEndTimer,"Test End Timer")
+    local handler = timerMgr:AddTimer(1,5,self,EnvManager.OnIntervalTimer, EnvManager.OnEndTimer,"Test Interval and End Timer")
     DebugLog.Info("Timer Test", tostring(handler))
 end
 
 function EnvManager:OnIntervalTimer(userdata)
-    DebugLog.Info("Timer Test", userdata)
+    DebugLog.Info("Timer Interval", userdata)
 end
+
+function EnvManager:OnEndTimer(userdata)
+    DebugLog.Info("Timer End", userdata)
+end
+
+
 
 function EnvManager:DoUpdate(deltaTime)
     self.elapseInterval = self.elapseInterval + deltaTime

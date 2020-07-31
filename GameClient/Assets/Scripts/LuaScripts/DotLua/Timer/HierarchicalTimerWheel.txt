@@ -55,7 +55,7 @@ end
 -- @param endFunc 定时器结束时接收函数
 -- @param userdata 自定义数据
 -- @return TaskHandler 返回定时器唯一的标识（中止时使用)
-function HierarchicalTimerWheel:AddTask(intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
+function HierarchicalTimerWheel:AddTimer(intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
     self.uniqueIndex = self.uniqueIndex + 1
 
     local task = self.taskPool:Get()
@@ -72,7 +72,7 @@ end
 -- @param userdata 自定义数据
 -- @return TaskHandler 返回定时器唯一的标识（中止时使用)
 function HierarchicalTimerWheel:AddIntervalTimer(intervalInSec, receiver, intervalFunc, userdata)
-    return self:AddTask(intervalInSec, 0, receiver, intervalFunc, nil, userdata)
+    return self:AddTimer(intervalInSec, 0, receiver, intervalFunc, nil, userdata)
 end
 
 ----public----
@@ -83,7 +83,7 @@ end
 -- @param userdata 自定义数据
 -- @return TaskHandler 返回定时器唯一的标识（中止时使用)
 function HierarchicalTimerWheel:AddEndTimer(totalInSec, receiver, endFunc, userdata)
-    return self:AddTask(0, totalInSec, receiver, nil, endFunc, userdata)
+    return self:AddTimer(0, totalInSec, receiver, nil, endFunc, userdata)
 end
 
 ----public----
@@ -111,13 +111,13 @@ end
 -- @return void
 function HierarchicalTimerWheel:DoUpdate(deltaTime)
     if #(self.handlers) > 0 then
-        self.elapseInMS = self.elapseInMS + math.ceil(deltaTime * 1000)
+        self.elapseInMS = self.elapseInMS + math.round(deltaTime * 1000)
 
         if self.elapseInMS >= self.wheel:GetTickInMS() then
             local count = math.floor(self.elapseInMS / self.wheel:GetTickInMS())
             self.wheel:DoPushWheel(count)
 
-            self.elapseInMS = math.ceil(self.elapseInMS % self.wheel:GetTickInMS())
+            self.elapseInMS = self.elapseInMS % self.wheel:GetTickInMS()
         end
     end
 end
