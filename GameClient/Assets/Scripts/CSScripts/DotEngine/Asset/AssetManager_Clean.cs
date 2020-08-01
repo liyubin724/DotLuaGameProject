@@ -6,7 +6,7 @@ namespace DotEngine.Asset
 {
     public partial class AssetManager
     {
-        private TimerTaskHandler autoCleanTimer = null;
+        private TimerHandler autoCleanTimer = null;
         private float autoCleanInterval = 60;
         /// <summary>
         /// 获取和指定清理资源的周期,默认60秒

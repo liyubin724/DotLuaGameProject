@@ -10,7 +10,7 @@ namespace DotEngine.EventDispatch
     {
         private static ObjectPool<EventData> eventDataPool = null;
         private Dictionary<int, List<EventHandler>> eventHandlerDic = null;
-        private Dictionary<EventData, TimerTaskHandler> delayEventTaskInfo = null;
+        private Dictionary<EventData, TimerHandler> delayEventTaskInfo = null;
 
         public EventDispatcher()
         {
@@ -20,7 +20,7 @@ namespace DotEngine.EventDispatch
             }
 
             eventHandlerDic = new Dictionary<int, List<EventHandler>>();
-            delayEventTaskInfo = new Dictionary<EventData, TimerTaskHandler>();
+            delayEventTaskInfo = new Dictionary<EventData, TimerHandler>();
         }
 
         public void DoReset()
@@ -31,7 +31,8 @@ namespace DotEngine.EventDispatch
             }
             foreach (var kvp in delayEventTaskInfo)
             {
-                TimerManager.GetInstance().RemoveTimer(kvp.Value);
+                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                timerService.RemoveTimer(kvp.Value);
                 eventDataPool.Release(kvp.Key);
             }
             delayEventTaskInfo.Clear();
@@ -91,7 +92,8 @@ namespace DotEngine.EventDispatch
             }
             else
             {
-                TimerTaskHandler handler = TimerManager.GetInstance().AddEndTimer(delayTime, OnDelayEventTrigger, e);
+                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                TimerHandler handler = timerService.AddEndTimer(delayTime, OnDelayEventTrigger, e);
                 delayEventTaskInfo.Add(e, handler);
             }
         }

@@ -16,7 +16,7 @@ namespace DotEngine.GOPool
         private Dictionary<string, GameObjectPoolGroup> groupDic = new Dictionary<string, GameObjectPoolGroup>();
 
         private float cullTimeInterval = 60f;
-        private TimerTaskHandler cullTimerTask = null;
+        private TimerHandler cullTimerTask = null;
 
         public GameObjectPoolService(Func<string, UnityObject, UnityObject> instantiateAsset) : base(NAME)
         {

@@ -1,80 +1,116 @@
-﻿using DotEngine.Utilities;
+﻿using DotEngine.Log;
 using DotEngine.Pool;
 using System;
+using UnityEngine;
 
 namespace DotEngine.Timer
 {
+    public enum TimerTaskCategory
+    {
+        None = 0,
+        Interval,
+        End,
+        IntervalAndEnd,
+    }
+
     public class TimerTask : IObjectPoolItem
     {
-        private long id = -1;
-        public long ID { get => id; }
-        
-        private int intervalInMS = 0;
-        private int totalInMS = 0;
-        private Action<object> onIntervalEvent = null;
-        private Action<object> onEndEvent = null;
-        private object userData = null;
+        internal int Index { get; private set; } = -1;
 
-        internal int RemainingInMS { get; set; } = 0;
-        private int leftInMS = 0;
+        private int m_IntervalInMS = 0;
+        private int m_TotalInMS = 0;
+        private Action<object> m_OnIntervalEvent = null;
+        private Action<object> m_OnEndEvent = null;
+        private object m_UserData = null;
+
+        private TimerTaskCategory m_Category = TimerTaskCategory.None;
+        internal int TriggerLeftInMS { get; set; }
 
         public TimerTask()
         {
         }
 
-        public void SetData(long id, float intervalInSec,
-                                                float totalInSec,
-                                                Action<object> intervalCallback,
-                                                Action<object> endCallback,
-                                                object callbackData)
+        public void SetData(
+            int index,
+            float intervalInSec,
+            float totalInSec,
+            Action<object> intervalCallback,
+            Action<object> endCallback,
+            object callbackData)
         {
-            this.id = id;
-            intervalInMS = MathUtil.CeilToInt(intervalInSec * 1000);
-            if (totalInSec <= 0)
-            {
-                totalInMS = 0;
-            }
-            else
-            {
-                totalInMS = MathUtil.CeilToInt(totalInSec * 1000);
-            }
-            onIntervalEvent = intervalCallback;
-            onEndEvent = endCallback;
-            userData = callbackData;
+            Index = index;
 
-            RemainingInMS = intervalInMS;
-            leftInMS = totalInMS;
-        }
+            if(intervalInSec <=0 && totalInSec > 0)
+            {
+                m_Category = TimerTaskCategory.End;
+                m_TotalInMS = Mathf.RoundToInt(totalInSec * 1000);
 
-        internal bool IsEnd()
-        {
-            if (intervalInMS <= 0)
+                TriggerLeftInMS = m_TotalInMS;
+            }else if(intervalInSec > 0 && totalInSec <= 0)
             {
-                return true;
-            }
-            if(totalInMS <= 0)
+                m_Category = TimerTaskCategory.Interval;
+                m_IntervalInMS = Mathf.RoundToInt(intervalInSec * 1000);
+
+                TriggerLeftInMS = m_IntervalInMS;
+            }else if(intervalInSec>0 && totalInSec > 0)
             {
-                return false;
+                m_Category = TimerTaskCategory.IntervalAndEnd;
+                m_IntervalInMS = Mathf.RoundToInt(intervalInSec * 1000);
+                m_TotalInMS = Mathf.RoundToInt(totalInSec * 1000);
+
+                TriggerLeftInMS = m_IntervalInMS;
             }else
             {
-                return leftInMS > 0;
+                LogUtil.LogError("Timer", "Timer error");
             }
+            m_OnIntervalEvent = intervalCallback;
+            m_OnEndEvent = endCallback;
+            m_UserData = callbackData;
         }
 
-        internal void ResetTask()
+        internal bool Trigger()
         {
-            RemainingInMS = intervalInMS;
-        }
-
-        internal void OnTaskInterval()
-        {
-            leftInMS -= intervalInMS;
-            onIntervalEvent?.Invoke(userData);
-        }
-
-        internal void OnTaskEnd()
-        {
-            onEndEvent?.Invoke(userData);
+            if(TriggerLeftInMS <= 0)
+            {
+                if(m_Category == TimerTaskCategory.End)
+                {
+                    m_OnEndEvent?.Invoke(m_UserData);
+                    return true;
+                }else if(m_Category == TimerTaskCategory.Interval)
+                {
+                    m_OnIntervalEvent?.Invoke(m_UserData);
+                    TriggerLeftInMS = m_IntervalInMS;
+                    return false;
+                }else if(m_Category == TimerTaskCategory.IntervalAndEnd)
+                {
+                    m_OnIntervalEvent?.Invoke(m_UserData);
+                    m_TotalInMS -= m_IntervalInMS;
+                    if(m_TotalInMS <= 0)
+                    {
+                        m_OnEndEvent?.Invoke(m_UserData);
+                        return true;
+                    }else
+                    {
+                        if(m_TotalInMS >= m_IntervalInMS)
+                        {
+                            TriggerLeftInMS = m_IntervalInMS;
+                            return false;
+                        }else
+                        {
+                            m_Category = TimerTaskCategory.End;
+                            TriggerLeftInMS = m_TotalInMS;
+                            return false;
+                        }
+                    }
+                }else
+                {
+                    LogUtil.LogError("Timer", "Timer error");
+                    return true;
+                }
+            }else
+            {
+                return false;
+            }
         }
 
         public void OnNew()
@@ -87,14 +123,14 @@ namespace DotEngine.Timer
 
         public void OnRelease()
         {
-            id = -1;
-            intervalInMS = 0; ;
-            totalInMS = 0;
-            RemainingInMS = 0;
-            leftInMS = 0;
-            onIntervalEvent = null;
-            onEndEvent = null;
-            userData = null;
+            Index = -1;
+            m_IntervalInMS = 0;
+            m_TotalInMS = 0;
+            m_OnEndEvent = null;
+            m_OnIntervalEvent = null;
+            m_UserData = null;
+            m_Category = TimerTaskCategory.None;
+            TriggerLeftInMS = 0;
         }
     }
 }

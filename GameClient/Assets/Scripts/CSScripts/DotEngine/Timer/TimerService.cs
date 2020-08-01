@@ -7,9 +7,7 @@ namespace DotEngine.Timer
     {
         public const string NAME = "TimerService";
 
-        public float LuaUpdateInterval { get; set; } = 0.1f;
-
-        private TimerManager timerMgr = null;
+        private HierarchicalTimerWheel hTimerWheel = null;
         public TimerService() :base(NAME)
         {
         }
@@ -17,58 +15,50 @@ namespace DotEngine.Timer
         public override void DoRegister()
         {
             base.DoRegister();
-            timerMgr = TimerManager.GetInstance();
-        }
-
-        public override void DoRemove()
-        {
-            base.DoRemove();
-
-            timerMgr.DoDispose();
-            timerMgr = null;
+            hTimerWheel = new HierarchicalTimerWheel();
         }
 
         public void DoUpdate(float deltaTime)
         {
-            timerMgr.DoUpdate(deltaTime);
+            hTimerWheel.DoUpdate(deltaTime);
         }
 
         public void Pause()
         {
-            timerMgr.Pause();
+            hTimerWheel.Pause();
         }
 
         public void Resume()
         {
-            timerMgr.Resume();
+            hTimerWheel.Resume();
         }
 
-        public TimerTaskHandler AddTimer(float intervalInSec,
+        public TimerHandler AddTimer(float intervalInSec,
                                                 float totalInSec,
                                                 Action<object> intervalCallback,
                                                 Action<object> endCallback,
                                                 object userData)
         {
-            return timerMgr.AddTimer(intervalInSec, totalInSec, intervalCallback, endCallback, userData);
+            return hTimerWheel.AddTimer(intervalInSec, totalInSec, intervalCallback, endCallback, userData);
         }
 
-        public TimerTaskHandler AddIntervalTimer(float intervalInSec,
+        public TimerHandler AddIntervalTimer(float intervalInSec,
                                                                     Action<object> intervalCallback, 
                                                                     object userData = null)
         {
-            return AddTimer(intervalInSec, 0f, intervalCallback, null, userData);
+            return hTimerWheel.AddIntervalTimer(intervalInSec, intervalCallback, userData);
         }
 
-        public TimerTaskHandler AddEndTimer(float totalInSec,
+        public TimerHandler AddEndTimer(float totalInSec,
                                                                 Action<object> endCallback,
                                                                 object userData = null)
         {
-            return AddTimer(totalInSec, totalInSec, null, endCallback, userData);
+            return hTimerWheel.AddEndTimer(totalInSec, endCallback, userData);
         }
 
-        public bool RemoveTimer(TimerTaskHandler taskInfo)
+        public bool RemoveTimer(TimerHandler taskInfo)
         {
-            return timerMgr.RemoveTimer(taskInfo);
+            return hTimerWheel.RemoveTimer(taskInfo);
         }
     }
 }

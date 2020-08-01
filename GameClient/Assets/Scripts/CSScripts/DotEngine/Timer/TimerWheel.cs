@@ -1,28 +1,27 @@
-﻿using DotEngine.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DotEngine.Timer
 {
-    internal delegate void OnWheelSlotTrigger(int index, TimerTask[] tasks);
-    internal delegate void OnWheelTurnOnce(int index);
+    internal delegate void OnWheelSlotTrigger(TimerTask[] tasks);
+    internal delegate void OnWheelCompleted(int level);
 
     /// <summary>
     /// 时间轮定时器
     /// </summary>
-    internal sealed class TimerWheel
+    internal class TimerWheel
     {
-        //用于多层时间轮层次索引
-        private int index = 0;
-        private int tickInMS = 0;
-        private int slotSize = 0;
-
-        internal int TickInMS { get => tickInMS; }
-        internal int TotalTickInMS{ get => tickInMS * slotSize; }
-
         private int currentSlotIndex = 0;
-        private ListDictionary<long, TimerTask>[] slotTasks = null;
+        private List<Dictionary<int, TimerTask>> m_AllTasks = new List<Dictionary<int, TimerTask>>();
+
+        internal int Level { get; private set; } = -1;
+        internal int TickInMS { get; private set; } = 0;
+        internal int SlotSize { get; private set; } = 0;
+
+        internal int TotalTickInMS { get => TickInMS * SlotSize; }
 
         internal OnWheelSlotTrigger slotTriggerEvent = null;
-        internal OnWheelTurnOnce turnOnceEvent = null;
+        internal OnWheelCompleted completeEvent = null;
 
         /// <summary>
         /// 构造函数
@@ -30,76 +29,58 @@ namespace DotEngine.Timer
         /// <param name="index">时间轮序号</param>
         /// <param name="tickInMS">一刻度的时长，以毫秒计</param>
         /// <param name="slotSize">总的刻度数</param>
-        internal TimerWheel(int index, int tickInMS, int slotSize)
+        internal TimerWheel(int level, int tickInMS, int slotSize)
         {
-            this.index = index;
-            this.tickInMS = tickInMS;
-            this.slotSize = slotSize;
+            Level = level;
+            TickInMS = tickInMS;
+            SlotSize = slotSize;
 
-            slotTasks = new ListDictionary<long, TimerTask>[slotSize];
+            for (int i = 0; i < SlotSize; ++i)
+            {
+                m_AllTasks.Add(new Dictionary<int, TimerTask>());
+            }
         }
 
-        internal int AddTimerTask(TimerTask task)
+        internal int AddTask(TimerTask task)
         {
-            if(task.RemainingInMS>=TotalTickInMS)
-            {
-                return -1;
-            }
+            int slot = task.TriggerLeftInMS / TickInMS;
+            task.TriggerLeftInMS = task.TriggerLeftInMS % TickInMS;
 
-            int slotIndex = task.RemainingInMS / tickInMS;
-            if(slotIndex == 0)
-            {
-                task.RemainingInMS = 0;
-            }else
-            {
-                task.RemainingInMS = task.RemainingInMS % tickInMS;
-            }
-            ++slotIndex;
-            slotIndex = slotIndex % slotSize;
+            int slotIndex = currentSlotIndex + slot;
+            slotIndex %= SlotSize;
 
-            ListDictionary<long, TimerTask> taskDic = slotTasks[slotIndex];
-            if(taskDic == null)
-            {
-                taskDic = new ListDictionary<long, TimerTask>();
-                slotTasks[slotIndex] = taskDic;
-            }
-            taskDic.Add(task.ID, task);
+            m_AllTasks[slotIndex].Add(task.Index, task);
 
             return slotIndex;
         }
 
-        internal bool RemoveTimerTask(int slotIndex,long taskID)
+        internal TimerTask RemoveTask(TimerHandler handler)
         {
-            ListDictionary<long, TimerTask> taskDic = slotTasks[slotIndex];
-            if(taskDic == null)
+            if(m_AllTasks[handler.WheelSlotIndex].TryGetValue(handler.Index,out TimerTask task))
             {
-                return false;
+                m_AllTasks[handler.WheelSlotIndex].Remove(handler.Index);
+                return task;
             }
-            if(taskDic.ContainsKey(taskID))
-            {
-                taskDic.Remove(taskID);
-                return true;
-            }
-            return false;
+            return null;
         }
 
-        internal void DoTimerTurn(int turnNum)
+        internal void DoPushWheel(int pushNum)
         {
-            for(int i =0;i<turnNum;++i)
+            for (int i = 0; i < pushNum; ++i)
             {
                 ++currentSlotIndex;
 
-                ListDictionary<long, TimerTask> taskDic = slotTasks[currentSlotIndex];
-                if(taskDic!=null && taskDic.Count>0)
-                {
-                    slotTriggerEvent?.Invoke(index, taskDic.Values);
-                    taskDic.Clear();
-                }
-
-                if (currentSlotIndex == slotSize)
+                if(currentSlotIndex == SlotSize)
                 {
                     currentSlotIndex = 0;
-                    turnOnceEvent?.Invoke(index);
+                    completeEvent?.Invoke(Level);
+                }
+
+                TimerTask[] tasks = m_AllTasks[currentSlotIndex].Values.ToArray();
+                if(tasks != null && tasks.Length>0)
+                {
+                    m_AllTasks[currentSlotIndex].Clear();
+                    slotTriggerEvent?.Invoke(tasks);
                 }
             }
         }

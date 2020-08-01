@@ -110,6 +110,10 @@ end
 -- @param deltaTime 流逝的时间
 -- @return void
 function HierarchicalTimerWheel:DoUpdate(deltaTime)
+    if self.isPaused then
+        return
+    end
+
     if #(self.handlers) > 0 then
         self.elapseInMS = self.elapseInMS + math.round(deltaTime * 1000)
 
