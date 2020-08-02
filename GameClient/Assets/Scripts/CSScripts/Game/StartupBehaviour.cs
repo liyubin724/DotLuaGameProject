@@ -2,6 +2,7 @@
 using DotEngine.Asset;
 using DotEngine.Log;
 using DotEngine.Lua;
+using DotEngine.Timer;
 using DotEngine.Utilities;
 using UnityEngine;
 
@@ -22,8 +23,22 @@ namespace Game
                 luaEnvService.CallAction(LuaConst.STARTUP_FUNCTION_NAME);
             });
 
+            TimerService timerService = facade.GetService<TimerService>(TimerService.NAME);
+            handler = timerService.AddIntervalTimer(1, (userdata) =>
+            {
+                count++;
+                if(count == 10)
+                {
+                    timerService.RemoveTimer(handler);
+                }
+                LogUtil.LogInfo("Timer Test", "Test Interval"+"   -> "+userdata+"    --  "+count);
+            },"AIT");
+
             DontDestroyHandler.AddTransform(transform);
         }
+
+        private int count = 0;
+        private TimerHandler handler = null;
 
         private void OnDestroy()
         {

@@ -18,6 +18,12 @@ namespace DotEngine.Timer
             hTimerWheel = new HierarchicalTimerWheel();
         }
 
+        public override void DoRemove()
+        {
+            hTimerWheel = null;
+            base.DoRemove();
+        }
+
         public void DoUpdate(float deltaTime)
         {
             hTimerWheel.DoUpdate(deltaTime);
@@ -56,9 +62,9 @@ namespace DotEngine.Timer
             return hTimerWheel.AddEndTimer(totalInSec, endCallback, userData);
         }
 
-        public bool RemoveTimer(TimerHandler taskInfo)
+        public bool RemoveTimer(TimerHandler handler)
         {
-            return hTimerWheel.RemoveTimer(taskInfo);
+            return hTimerWheel.RemoveTimer(handler);
         }
     }
 }

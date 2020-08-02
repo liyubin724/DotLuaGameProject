@@ -61,7 +61,7 @@ function HierarchicalTimerWheel:AddTimer(intervalInSec, totalInSec, receiver, in
     local task = self.taskPool:Get()
     task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
 
-    return self:InnerAddTask(task)
+    return self:AddTask(task,nil)
 end
 
 ----public----
@@ -90,15 +90,16 @@ end
 -- 删除指定的定时器
 -- @param timerIndex 定时器唯一标识
 -- @return bool 返回是否成功删除定时器
-function HierarchicalTimerWheel:RemoveTask(taskHandler)
-    if taskHandler and taskHandler:IsValid() then
-        self.handlers[taskHandler:GetIndex()] = nil
-
-        local task = self.wheels[taskHandler:GetWheelIndex()]:RemoveTask(taskHandler)
-        taskHandler:Clear()
-        if task then
-            self.taskPool:Release(task)
-            return true
+function HierarchicalTimerWheel:RemoveTimer(handler)
+    if handler and self.handlers[handler:GetIndex()] then
+        self.handlers[handler:GetIndex()] = nil
+        if handler:IsValid() then
+            local task = self.wheels[handler:GetWheelIndex()]:RemoveTask(handler)
+            handler:Clear()
+            if task then
+                self.taskPool:Release(task)
+                return true
+            end
         end
     end
 
@@ -161,21 +162,28 @@ end
 function HierarchicalTimerWheel:OnWheelSoltTrigger(tasks)
     if tasks and #(tasks) > 0 then
         for _, task in pairs(tasks) do
-            if task:Trigger() then
-                local handler = self.handlers[task:GetIndex()]
-                handler:Clear()
-                self.handlers[task:GetIndex()] = nil
-                self.taskPool:Release(task)
+            local handler = self.handlers[task:GetIndex()]
+            if handler then
+                if handler:IsValid() then
+                    if task:Trigger() then
+                        handler:Clear()
+                        self.handlers[task:GetIndex()] = nil
+                        self.taskPool:Release(task)
+                    else
+                        self:AddTask(task, handler)
+                    end
+                else
+                    self.handlers[task:GetIndex()] = nil
+                    self.taskPool:Release(task)
+                end
             else
-                self:InnerAddTask(task)
+                self.taskPool:Release(task)
             end
         end
     end
 end
 
-function HierarchicalTimerWheel:InnerAddTask(task)
-    local handler = self.handlers[task:GetIndex()]
-
+function HierarchicalTimerWheel:AddTask(task, handler)
     local wheelIndex = -1
     local soltIndex = -1
     for i = 1, #(self.wheels) do

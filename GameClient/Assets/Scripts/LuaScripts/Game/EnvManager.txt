@@ -31,11 +31,16 @@ function EnvManager:DoStartup()
     local timerMgr = Game.TimerMgr
     --local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test Timer")
     --local handler = timerMgr:AddEndTimer(3,self,EnvManager.OnEndTimer,"Test End Timer")
-    local handler = timerMgr:AddTimer(1,5,self,EnvManager.OnIntervalTimer, EnvManager.OnEndTimer,"Test Interval and End Timer")
-    DebugLog.Info("Timer Test", tostring(handler))
+    self.timerHandler = timerMgr:AddTimer(1,5,self,EnvManager.OnIntervalTimer, EnvManager.OnEndTimer,"Test Interval and End Timer")
+    DebugLog.Info("Timer Test", tostring(self.timerHandler))
+    self.timerIndex = 0
 end
 
 function EnvManager:OnIntervalTimer(userdata)
+    self.timerIndex = self.timerIndex+1
+    if self.timerIndex == 3 then
+        Game.TimerMgr:RemoveTimer(self.timerHandler)
+    end
     DebugLog.Info("Timer Interval", userdata)
 end
 

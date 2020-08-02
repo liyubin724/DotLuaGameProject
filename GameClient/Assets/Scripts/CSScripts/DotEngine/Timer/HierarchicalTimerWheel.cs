@@ -10,7 +10,7 @@ namespace DotEngine.Timer
     /// <summary>
     /// 多层时间轮
     /// </summary>
-    internal sealed class HierarchicalTimerWheel
+    internal class HierarchicalTimerWheel
     {
         private UniqueIntID m_IndexCreator = new UniqueIntID();
         private ObjectPool<TimerTask> m_TaskPool = new ObjectPool<TimerTask>();
@@ -60,7 +60,7 @@ namespace DotEngine.Timer
             TimerTask task = m_TaskPool.Get();
             task.SetData(index, intervalInSec, totalInSec, intervalCallback, endCallback, userdata);
 
-            return AddTask(task);
+            return AddTask(task,null);
         }
 
         public TimerHandler AddIntervalTimer(
@@ -79,22 +79,25 @@ namespace DotEngine.Timer
             return AddTimer(0, totalInSec, null, endCallback, userdata);
         }
 
-        private TimerHandler AddTask(TimerTask task)
+        private TimerHandler AddTask(TimerTask task,TimerHandler handler)
         {
             int wheelIndex = -1;
             int slotIndex = -1;
-            for(int i =0;i<m_Wheels.Count;++i)
+            for (int i = 0; i < m_Wheels.Count; ++i)
             {
                 TimerWheel wheel = m_Wheels[i];
-                if(wheel.TotalTickInMS >= task.TriggerLeftInMS)
+                if (wheel.TotalTickInMS >= task.TriggerLeftInMS)
                 {
                     slotIndex = wheel.AddTask(task);
                     wheelIndex = i;
                     break;
                 }
             }
-
-            if(!m_Handlers.TryGetValue(task.Index, out TimerHandler handler))
+            if(handler!=null)
+            {
+                handler.WheelIndex = wheelIndex;
+                handler.WheelSlotIndex = slotIndex;
+            }else
             {
                 handler = new TimerHandler()
                 {
@@ -103,28 +106,28 @@ namespace DotEngine.Timer
                     WheelSlotIndex = slotIndex,
                 };
                 m_Handlers.Add(task.Index, handler);
-            }else
-            {
-                handler.WheelIndex = wheelIndex;
-                handler.WheelSlotIndex = slotIndex;
             }
+            
             return handler;
         }
 
         public bool RemoveTimer(TimerHandler handler)
         {
-            if(handler!=null && handler.IsValid())
+            if(handler!=null && m_Handlers.ContainsKey(handler.Index))
             {
                 m_Handlers.Remove(handler.Index);
-
-                TimerTask task = m_Wheels[handler.WheelIndex].RemoveTask(handler);
-                handler.Clear();
-                if(task!=null)
+                if (handler.IsValid())
                 {
-                    m_TaskPool.Release(task);
-                    return true;
+                    TimerTask task = m_Wheels[handler.WheelIndex].RemoveTask(handler);
+                    handler.Clear();
+                    if (task != null)
+                    {
+                        m_TaskPool.Release(task);
+                        return true;
+                    }
                 }
             }
+
             return false;
         }
 
@@ -172,16 +175,28 @@ namespace DotEngine.Timer
             {
                 foreach(var task in tasks)
                 {
-                    if(task.Trigger())
+                    if(m_Handlers.TryGetValue(task.Index,out TimerHandler handler))
                     {
-                        TimerHandler handler = m_Handlers[task.Index];
-                        handler.Clear();
-
-                        m_Handlers.Remove(task.Index);
-                        m_TaskPool.Release(task);
+                        if(handler.IsValid())
+                        {
+                            if(task.Trigger())
+                            {
+                                handler.Clear();
+                                m_Handlers.Remove(task.Index);
+                                m_TaskPool.Release(task);
+                            }
+                            else
+                            {
+                                AddTask(task,handler);
+                            }
+                        }else
+                        {
+                            m_Handlers.Remove(task.Index);
+                            m_TaskPool.Release(task);
+                        }
                     }else
                     {
-                        AddTask(task);
+                        m_TaskPool.Release(task);
                     }
                 }
             }
