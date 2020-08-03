@@ -6,10 +6,12 @@ ObjectPoolItem =
     end
 )
 
+----protected----
 function ObjectPoolItem:OnGet()
 
 end
 
+----protected----
 function ObjectPoolItem:OnRelease()
 
 end

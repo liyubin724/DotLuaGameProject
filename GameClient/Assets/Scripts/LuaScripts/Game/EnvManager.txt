@@ -27,6 +27,8 @@ function EnvManager:DoStartup()
     Game.EventMgr:Trigger(EventID.Startup)
     Game.AssetMgr:InstanceAssetAsync('Cube', self, nil, EnvManager.OnCubeLoadComplete)
 
+    local eventMgr = Game.EventMgr
+    eventMgr:RegisterListener(111,self,EnvManager.OnMessage,"EventTest")
 
     local timerMgr = Game.TimerMgr
     --local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test Timer")
@@ -34,12 +36,19 @@ function EnvManager:DoStartup()
     self.timerHandler = timerMgr:AddTimer(1,5,self,EnvManager.OnIntervalTimer, EnvManager.OnEndTimer,"Test Interval and End Timer")
     DebugLog.Info("Timer Test", tostring(self.timerHandler))
     self.timerIndex = 0
+
+end
+
+function EnvManager:OnMessage(eventID,userdata)
+    DebugLog.Info("Event", "message:="..tostring(userdata))
+
+    Game.EventMgr:UnregisterListener(111,self,EnvManager.OnMessage)
 end
 
 function EnvManager:OnIntervalTimer(userdata)
     self.timerIndex = self.timerIndex+1
-    if self.timerIndex == 3 then
-        Game.TimerMgr:RemoveTimer(self.timerHandler)
+    if self.timerIndex%2 == 0 then
+        Game.EventMgr:Trigger(111)
     end
     DebugLog.Info("Timer Interval", userdata)
 end

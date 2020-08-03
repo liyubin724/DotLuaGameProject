@@ -1,70 +1,27 @@
 require('DotLua/Class')
 
+local DebugLog = DebugLog
+
 ----internal----
 --构造函数
 --@param receiver 接收事件的table，可为空
 --@param func 接收事件处理的处理函数
---@param isOnce 是否只接收一次
---@param data 自定义参数
+--@param userdata 自定义参数
 EventData =
     Class(
-    function(self, receiver, func, isOnce, data)
-        self.receiver = receiver
-        self.func = func
-        self.data = data
-        self.isOnce = isOnce
+    function(self)
+        self.receiver = nil
+        self.func = nil
+        self.userdata = nil
     end
 )
 
-----internal----
---返回接收者
---@return
 function EventData:GetReceiver()
     return self.receiver
 end
 
-----internal----
---返回接收函数
---@return
 function EventData:GetFunc()
     return self.func
-end
-
-----internal----
---是否只触发一次
---@return
-function EventData:IsOnce()
-    return self.isOnce
-end
-
-----internal----
---获取携带数据
----- @return
-function EventData:GetData()
-    return self.data
-end
-
-----internal----
---通知事件执行，由EventDispatcher来调用
--- @param ... 多参数
-function EventData:Invoke(...)
-    if self.func then
-        if self.receiver then
-            if self.data then
-                self.func(self.receiver, self.data, ...)
-            else
-                self.func(self.receiver, ...)
-            end
-        else
-            if self.data then
-                self.func(self.data, ...)
-            else
-                self.func(...)
-            end
-        end
-    else
-        DebugLog.LogError("Event",'EventData::Invoke->func is nil')
-    end
 end
 
 ----internal----
@@ -72,15 +29,44 @@ end
 --相同的两种情况：
 --1：两个对象是同一对象
 --2：两个对象中的接收者与处理函数相同
--- @return
-function EventData:Equal(other)
-    if self == other then
-        return true
-    end
-
-    if other == nil then
+-- @return bool
+EventData.__eq = function(data1,data2)
+    if data1 == nil or data2 == nil then
         return false
     end
 
-    return self.receiver == other.receiver and self.func == other.func
+    return data1.receiver == data2.receiver and data1.func == data2.func
+end
+
+function EventData:SetData(receiver, func, userdata)
+    self.receiver = receiver
+    self.func = func
+    self.userdata = userdata
+end
+
+function EventData:OnRelease()
+    self.receiver = nil
+    self.func = nil
+    self.userdata = nil
+end
+
+----internal----
+--通知事件执行，由EventDispatcher来调用
+-- @param ... 多参数
+function EventData:Invoke(eventID, ...)
+    if self.func then
+        if self.receiver then
+            if self.userdata then
+                self.func(self.receiver, eventID, self.userdata, ...)
+            else
+                self.func(self.receiver, eventID, ...)
+            end
+        else
+            if self.userdata then
+                self.func(eventID,self.userdata, ...)
+            else
+                self.func(eventID,...)
+            end
+        end
+    end
 end

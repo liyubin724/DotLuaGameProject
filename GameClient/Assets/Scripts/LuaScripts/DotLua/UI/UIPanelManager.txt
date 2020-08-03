@@ -1,26 +1,6 @@
 require('DotLua/Class')
 
-UIPanelState = {
-    None = 0,
-    Loading = 1,
-    Showing = 2,
-    Hidden = 3,
-    Destroying = 4,
-}
 
-UIPanelMode = {
-    Append = 0,
-    Navigate = 1,
-    Mutex = 2
-}
-
-UIPanelLayer = {
-    Bottomlowest = 0,
-    Bottom = 1,
-    Default = 2,
-    Top = 3,
-    Topmost = 4
-}
 
 UIPanelData =
     Class(

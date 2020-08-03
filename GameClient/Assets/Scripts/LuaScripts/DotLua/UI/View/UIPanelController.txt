@@ -1,0 +1,108 @@
+require('DotLua/Class')
+
+local eventMgr = Game.EventMgr
+
+UIPanelState = {
+    None = 0,
+    Loading = 1,
+    Showing = 2,
+    Hidden = 3,
+    Destroying = 4
+}
+
+UIPanelMode = {
+    Append = 0,
+    Navigate = 1,
+    Mutex = 2
+}
+
+UIPanelLayer = {
+    Bottomlowest = 0,
+    Bottom = 1,
+    Default = 2,
+    Top = 3,
+    Topmost = 4
+}
+
+UIPanelController =
+    Class(
+    function(self)
+        self.address = nil
+        self.state = UIPanelState.None
+        self.mode = nil
+        self.layer = nil
+
+        self.panel = nil
+    end
+)
+
+----public----
+-- Panel被打开时会调用，不管View是否加载成功
+-- @return void
+function UIPanelController:DoOpen()
+    self:RegisterEvents()
+end
+
+----public----
+-- Panel被关闭时会调用，不管View是否加载成功
+-- @return void
+function UIPanelController:DoClose()
+    self:UnregisterEvents()
+end
+
+----public----
+-- Panel被显示时会调用，不管View是否加载成功
+-- @return void
+function UIPanelController:DoShow()
+end
+
+----public----
+-- Panel被隐藏时会调用，不管View是否加载成功
+-- @return void
+function UIPanelController:DoHide()
+end
+
+----public----
+-- Panel被销毁时会调用，不管View是否加载成功
+-- @return void
+function UIPanelController:DoDestroy()
+end
+
+----protected----
+-- 控制器关心的事件的ID号
+-- @return table/nil 消息号的数组
+function UIPanelController:ListInterestEvents()
+    return nil
+end
+
+----protected----
+-- 事件的接收，对于子类来说需要重写以处理不同的消息
+-- @param eventID 触发的消息的ID号
+-- @param ... 多参数
+-- @return void
+function UIPanelController:HandleEvents(eventID, ...)
+end
+
+----private----
+-- 注册消息
+-- @return void
+function UIPanelController:RegisterEvents()
+    local eventIDs = self:ListInterestEvents()
+    if eventIDs and #(eventIDs) > 0 then
+        for i = 1, #(eventIDs), 1 do
+            eventMgr:RegisterListener(eventIDs[i], self, UIPanelController.HandleEvents, false, nil)
+        end
+    end
+end
+
+----private----
+-- 取消注册的消息
+-- @return void
+function UIPanelController:UnregisterEvents()
+    local eventIDs = self:ListInterestEvents()
+    if eventIDs and #(eventIDs) > 0 then
+        for i = 1, #(eventIDs), 1 do
+            eventMgr:UnregisterListener(eventIDs[i], self, UIPanelController.HandleEvents)
+        end
+    end
+end

@@ -1,14 +1,17 @@
-require ("DotLua/Class")
-require("DotLua/Event/EventData")
-require("DotLua/Utility/table")
+require('DotLua/Class')
+require('DotLua/Event/EventData')
+require('DotLua/Utility/table')
+require('DotLua/Pool/ObjectPool')
 
-local Debug = DebugLog
+local DebugLog = DebugLog
 
 ----public----
 --消息机制
+-- 对于全局的消息可以使用Game.EventMgr访问到
 EventDispatcher =
     Class(
     function(self)
+        self.eventPool = ObjectPool(EventData)
         self.events = {}
     end
 )
@@ -20,26 +23,22 @@ EventDispatcher =
 -- @param func 消息处理函数，不可以为nil
 -- @param isOnce 标识消息是否只处理一次，如果为true,触发一次后将会被删除
 -- @param userData 消息可以携带自定义参数
-function EventDispatcher:RegisterListener(eventID,receiver,func,isOnce,userData)
+function EventDispatcher:RegisterListener(eventID, receiver, func, userdata)
     if not func then
-        Debug.Error("Event","LuaEventDispatcher::RegisterListener->func is empty")
+        DebugLog.Error('Event', 'LuaEventDispatcher::RegisterListener->func is empty')
         return
     end
 
-    local eventData = EventData(receiver,func,isOnce,userData)
+    local eventData = self.eventPool:Get()
+    eventData:SetData(receiver, func, userdata)
 
-    if eventData then
-        local eventList = self.events[eventID]
-        if not eventList then
-            eventList = {}
-            self.events[eventID] = eventList
-        end
-
-        table.insert(eventList, eventData)
-    else
-        Debug.LogWarning("Event","LuaEventDispatcher::RegisterListener->data is Nil")
+    local eventList = self.events[eventID]
+    if not eventList then
+        eventList = {}
+        self.events[eventID] = eventList
     end
 
+    table.insert(eventList, eventData)
 end
 
 ----public----
@@ -47,9 +46,9 @@ end
 -- @param eventID 消息ID号
 -- @param receiver 消息接收者
 -- @param func 消息处理函数
-function EventDispatcher:UnregisterListener(eventID,receiver,func)
+function EventDispatcher:UnregisterListener(eventID, receiver, func)
     if not func then
-        Debug.Error("Event","LuaEventDispatcher::UnregisterListener->func is empty")
+        DebugLog.Error('Event', 'LuaEventDispatcher::UnregisterListener->func is empty')
         return
     end
 
@@ -60,14 +59,26 @@ function EventDispatcher:UnregisterListener(eventID,receiver,func)
             if eventData:GetReceiver() == receiver and eventData:GetFunc() == func then
                 table.remove(eventList, i)
 
-                if #(eventList) == 0 then
-                    self.events[eventID] = nil
-                end
-                return
+                self.eventPool:Release(eventData)
+                break
             end
         end
     end
+end
 
+----public----
+-- 取消对应消息ID的所有侦听
+-- @param eventID 消息ID号
+function EventDispatcher:UnregisterAll(eventID)
+    local eventList = self.events[eventID]
+    if eventList then
+        for i = #(eventList), 1, -1 do
+            local eventData = eventList[i]
+
+            table.remove(eventList, i)
+            self.eventPool:Release(eventData)
+        end
+    end
 end
 
 ----public----
@@ -77,31 +88,15 @@ end
 function EventDispatcher:Trigger(eventID, ...)
     local eventList = self.events[eventID]
     if eventList then
-        for i = #(eventList),1,-1 do
-            local eventData = eventList[i]
-
-            eventData:Invoke(...)
-
-            if eventData:IsOnce() then
-                table.remove(eventList, i)
-            end
-        end
-
-        if #(eventList) == 0 then
-            self.events[eventID] = nil
+        for i = #(eventList), 1, -1 do
+            eventList[i]:Invoke(eventID, ...)
         end
     end
-end
-
-----public----
--- 取消对应消息ID的所有侦听
--- @param eventID 消息ID号
-function EventDispatcher:UnregisterAll(eventID)
-    self.events[eventID] = nil
 end
 
 ----public----
 -- 取消所有的侦听
 function EventDispatcher:Clear()
     self.events = {}
+    self.eventPool:Clear()
 end
