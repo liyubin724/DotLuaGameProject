@@ -1,71 +1,94 @@
 require('DotLua/Class')
-
-local eventMgr = Game.EventMgr
-
-UIPanelState = {
-    None = 0,
-    Loading = 1,
-    Showing = 2,
-    Hidden = 3,
-    Destroying = 4
-}
-
-UIPanelMode = {
-    Append = 0,
-    Navigate = 1,
-    Mutex = 2
-}
-
-UIPanelLayer = {
-    Bottomlowest = 0,
-    Bottom = 1,
-    Default = 2,
-    Top = 3,
-    Topmost = 4
-}
+require('DotLua/UI/View/UIViewController')
 
 UIPanelController =
     Class(
-    function(self)
-        self.address = nil
-        self.state = UIPanelState.None
-        self.mode = nil
-        self.layer = nil
+    UIViewController,
+    function(self, name)
+        self._base.init(self, name)
+        self.subControllers = {}
 
-        self.panel = nil
+        self.layer = nil
+        self.layerTransform = nil
+        self.mode = nil
     end
 )
 
-----public----
--- Panel被打开时会调用，不管View是否加载成功
--- @return void
-function UIPanelController:DoOpen()
-    self:RegisterEvents()
+function UIPanelController:SetLayer(layer,layerTransform)
+    self.layer = layer
+    self.layerTransform = layerTransform
 end
 
-----public----
--- Panel被关闭时会调用，不管View是否加载成功
--- @return void
-function UIPanelController:DoClose()
-    self:UnregisterEvents()
+function UIPanelController:GetLayer()
+    return self.layer
 end
 
-----public----
--- Panel被显示时会调用，不管View是否加载成功
--- @return void
-function UIPanelController:DoShow()
+function UIPanelController:SetMode(mode)
+    self.mode = mode
 end
 
-----public----
--- Panel被隐藏时会调用，不管View是否加载成功
--- @return void
-function UIPanelController:DoHide()
+function UIPanelController:GetMode()
+    return self.mode
 end
 
-----public----
--- Panel被销毁时会调用，不管View是否加载成功
--- @return void
+function UIPanelController:AddViewController(viewController)
+    if viewController then
+        local vc = self.subControllers[viewController:GetName()]
+        if not vc then
+            self.subControllers[viewController:GetName()] = viewController
+
+            viewController:DoStart()
+        end
+    end
+end
+
+function UIPanelController:RemoveViewController(viewController)
+    if viewController then
+        self.subControllers[viewController:GetName()] = nil
+        viewController:DoDestroy()
+    end
+end
+
+function UIPanelController:RemoveViewControllerByName(name)
+    local viewController = self.subControllers[name]
+    if viewController then
+        self.subControllers[name] = nil
+        viewController:DoDestroy()
+    end
+end
+
+function UIPanelController:RemoveAllViewController()
+    for index = 1, #(self.subControllers) do
+        self:RemoveViewController(self.subControllers[index])
+    end
+    self.subControllers = {}
+end
+
+function UIPanelController:GetViewControllerByName(name)
+    return self.subControllers[name]
+end
+
+function UIPanelController:DoStart()
+    self._base.DoStart(self)
+end
+
 function UIPanelController:DoDestroy()
+    self:RemoveAllViewController()
+
+    self._base.DoDestroy(self)
+end
+
+function UIPanelController:SetView(view)
+    self._base.SetView(self,view)
+
+    if self.layerTransform then
+        self.view:SetParent(self.layerTransform)
+    end
+end
+
+function UIPanelController:Close()
+    local panelMgr = Game.PanelMgr
+    panelMgr:ClosePanel(self)
 end
 
 ----protected----
@@ -81,28 +104,4 @@ end
 -- @param ... 多参数
 -- @return void
 function UIPanelController:HandleEvents(eventID, ...)
-end
-
-----private----
--- 注册消息
--- @return void
-function UIPanelController:RegisterEvents()
-    local eventIDs = self:ListInterestEvents()
-    if eventIDs and #(eventIDs) > 0 then
-        for i = 1, #(eventIDs), 1 do
-            eventMgr:RegisterListener(eventIDs[i], self, UIPanelController.HandleEvents, false, nil)
-        end
-    end
-end
-
-----private----
--- 取消注册的消息
--- @return void
-function UIPanelController:UnregisterEvents()
-    local eventIDs = self:ListInterestEvents()
-    if eventIDs and #(eventIDs) > 0 then
-        for i = 1, #(eventIDs), 1 do
-            eventMgr:UnregisterListener(eventIDs[i], self, UIPanelController.HandleEvents)
-        end
-    end
 end

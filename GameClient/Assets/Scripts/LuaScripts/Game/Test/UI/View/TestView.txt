@@ -1,9 +1,14 @@
 require('DotLua/Class')
 require('DotLua/UI/View/UIView')
 
-UIPanel =
+TestView =
     Class(
     UIView,
     function(self)
     end
 )
+
+function TestView:SetText(text)
+    self.txt.text = text
+end
+

@@ -1,0 +1,35 @@
+require('DotLua/Class')
+
+UIView =
+    Class(
+    function(self)
+        self.controller = nil
+    end
+)
+
+function UIView:SetController(controller)
+    self.controller = controller
+end
+
+function UIView:SetParent(parentTransform)
+    self.transform:SetParent(parentTransform,false)
+end
+
+function UIView:SetVisible(visible)
+    self.gameObject:SetActive(visible)
+end
+
+function UIView:DoAwake()
+end
+
+function UIView:DoEnable()
+end
+
+function UIView:DoStart()
+end
+
+function UIView:DoDisable()
+end
+
+function UIView:DoDestroy()
+end

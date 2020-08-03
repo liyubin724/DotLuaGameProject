@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.Lua.Register
 {
-    [CustomEditor(typeof(ScriptBindBehaviour))]
+    [CustomEditor(typeof(ScriptBindBehaviour),true)]
     public class ScriptBindBehaviourEditor : Editor
     {
         SerializedProperty bindScriptProperty;

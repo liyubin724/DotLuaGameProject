@@ -20,3 +20,10 @@ MonoBehaviour:
     isScene: 0
     isPreload: 0
     isNeverDestroy: 0
+  - assetAddress: TestText
+    assetPath: Assets/ArtRes/Prefabs/TestText.prefab
+    bundlePath: assets/artres/prefabs
+    labels: []
+    isScene: 0
+    isPreload: 0
+    isNeverDestroy: 0

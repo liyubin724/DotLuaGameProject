@@ -1,54 +1,124 @@
 require('DotLua/Class')
 
+UIPanelMode = {
+    Append = 0,
+    Navigate = 1,
+    Mutex = 2
+}
 
-
-UIPanelData =
-    Class(
-    function(self)
-        self.address = nil
-        self.layer = UIPanelLayer.Default
-        self.mode = UIPanelMode.Append
-        self.state = UIPanelState.None
-
-        self.assetIndex = -1
-    end
-)
+UIPanelLayer = {
+    Bottomlowest = 0,
+    Bottom = 1,
+    Default = 2,
+    Top = 3,
+    Topmost = 4
+}
 
 UIPanelManager =
     Class(
     function(self)
-        self.uiRoot = CS.DotEngine.UI.UIRoot.Root
-
+        self.uiRoot = nil
         self.panels = {}
     end
 )
 
-function UIPanelManager:OpenPanel(address, panelLayer, panelMode)
-    local panelData = self.panels[address]
-    if panelData then
+function UIPanelManager:GetUIRoot()
+    if not self.uiRoot then
+        self.uiRoot = CS.DotEngine.UI.UIRoot.Root
+    end
+    return self.uiRoot
+end
+
+function UIPanelManager:GetLayerTransform(layer)
+    if layer and layer >= UIPanelLayer.Bottomlowest and layer <= UIPanelLayer.Topmost then
+        return self:GetUIRoot():GetLayerTransform(layer)
+    end
+
+    return nil
+end
+
+function UIPanelManager:OpenPanel(panelName, panelControllerClass, panelLayer, panelMode)
+    local layerPanels = self.panels[panelLayer]
+    if not layerPanels then
+        layerPanels = {}
+        self.panels[panelLayer] = layerPanels
+    end
+
+    local controller = panelControllerClass(panelName)
+    controller:SetLayer(panelLayer, self:GetLayerTransform(panelLayer))
+    controller:SetMode(panelMode)
+
+    if panelMode == UIPanelMode.Navigate then
+        for index = #layerPanels, 1, -1 do
+            local pController = layerPanels[index]
+            local pMode = pController:GetMode()
+            pController:SetVisible(false)
+            if pMode ~= UIPanelMode.Append then
+                break
+            end
+        end
+    elseif panelMode == UIPanelMode.Mutex then
+        for index = #layerPanels, 1, -1 do
+            layerPanels[index]:DoDestroy()
+            table.remove(layerPanels, index)
+        end
+    end
+
+    table.insert(layerPanels, controller)
+    controller:DoStart()
+end
+
+function UIPanelManager:ClosePanel(panelController)
+    local panelLayer = panelController:GetLayer()
+    local panelMode = panelController:GetMode()
+
+    local layerPanels = self.panels[panelLayer]
+    if not layerPanels then
+        DebugLog.Error('PanelMgr', 'Error')
         return
     end
 
-    panelData = UIPanelData()
-    panelData.address = address
-    panelData.layer = panelLayer
-    panelData.mode = panelMode
-    panelData.state = UIPanelState.Loading
+    local panelIndex = -1
+    for index = 1, #(layerPanels) do
+        if layerPanels[index] == panelController then
+            panelIndex = index
+            break
+        end
+    end
 
-    self.panels[address] = panelData
+    if panelIndex < 0 then
+        DebugLog.Error('PanelMgr', 'Error')
+        return
+    end
 
-    local assetMgr = Game.AssetMgr
-    panelData.assetIndex = assetMgr:InstanceAssetAsync(address,self,nil,UIPanelManager.OnPanelLoadComplete,nil)
-end
+    if panelIndex < #layerPanels then
+        for index = #layerPanels, panelIndex, -1 do
+            layerPanels[index]:DoDestroy()
+            table.remove(layerPanels, index)
+        end
+    end
 
-function UIPanelManager:OnPanelLoadComplete(address,uObject,userdata)
-    local panelData = self.panels[address]
-    if not panelData then
-        
-    else
+    table.remove(layerPanels, panelIndex)
+    panelController:DoDestroy()
 
+    if panelMode == UIPanelMode.Navigate and #layerPanels > 0 then
+        for index = #layerPanels, 1, -1 do
+            local pController = layerPanels[index]
+            pController:SetVisible(true)
+            local pMode = pController:GetMode()
+            if pMode ~= UIPanelMode.Append then
+                break
+            end
+        end
     end
 end
 
-function UIPanelManager:ClosePanel()
+function UIPanelManager:CloseAllPanelInLayer(panelLayer)
+    local layerPanels = self.panels[panelLayer]
+    if layerPanels and #layerPanels > 0 then
+        for index = #layerPanels, 1, -1 do
+            layerPanels[index]:DoDestroy()
+            table.remove(layerPanels, index)
+        end
+    end
 end

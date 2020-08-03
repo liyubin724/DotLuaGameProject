@@ -27,6 +27,11 @@ function EnvManager:DoStartup()
     Game.EventMgr:Trigger(EventID.Startup)
     Game.AssetMgr:InstanceAssetAsync('Cube', self, nil, EnvManager.OnCubeLoadComplete)
 
+    require("Game/Test/UI/View/TestViewController")
+    local controller = TestViewController("testText")
+    controller:DoStart()
+    controller:LoadView("TestText")
+
     local eventMgr = Game.EventMgr
     eventMgr:RegisterListener(111,self,EnvManager.OnMessage,"EventTest")
 

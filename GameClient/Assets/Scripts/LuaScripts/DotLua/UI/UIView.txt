@@ -1,7 +1,0 @@
-require('DotLua/Class')
-
-UIView =
-    Class(
-    function(self)
-    end
-)

@@ -31,5 +31,11 @@ namespace DotEngine.UI
             }
             return null;
         }
+
+        public RectTransform GetLayerTransform(int layer)
+        {
+            UILayer uiLayer = GetLayer((UILayerLevel)layer);
+            return uiLayer?.LayerTransform;
+        }
     }
 }

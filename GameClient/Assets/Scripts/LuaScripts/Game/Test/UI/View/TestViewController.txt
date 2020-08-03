@@ -1,0 +1,24 @@
+require('DotLua/Class')
+require('DotLua/UI/View/UIViewController')
+
+TestViewController =
+    Class(
+    UIViewController,
+    function(self, name)
+        self._base.init(self,name)
+    end
+)
+
+function TestViewController:OnViewInited()
+    Game.EventMgr:Trigger(12)
+end
+
+function TestViewController:ListInterestEvents()
+    return {12}
+end
+
+function TestViewController:HandleEvents(eventID, ...)
+    if eventID == 12 then
+        self.view:SetText("TTTT")
+    end
+end
