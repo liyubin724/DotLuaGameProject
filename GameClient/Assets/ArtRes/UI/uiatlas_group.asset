@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -326584434, guid: 26a9683362869fb4f97fac8f42f3ed52, type: 3}
+  m_Name: uiatlas_group
+  m_EditorClassIdentifier: 
+  groupName: UI Atlas Group
+  isEnable: 1
+  isMain: 0
+  isPreload: 0
+  isNeverDestroy: 0
+  operation:
+    packMode: 1
+    addressMode: 0
+    labels: []
+  filters:
+  - assetFolder: Assets/ArtRes/UI/Atlas
+    isIncludeSubfolder: 1
+    fileRegex: ^\w*.spriteatlas$

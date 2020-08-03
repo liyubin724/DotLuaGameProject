@@ -19,6 +19,14 @@ function UIView:SetVisible(visible)
     self.gameObject:SetActive(visible)
 end
 
+function UIView:GetTransform()
+    return self.transform
+end
+
+function UIView:GetGameObject()
+    return self.gameObject
+end
+
 function UIView:DoAwake()
 end
 

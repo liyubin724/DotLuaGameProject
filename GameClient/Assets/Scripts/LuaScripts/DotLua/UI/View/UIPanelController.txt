@@ -1,11 +1,14 @@
 require('DotLua/Class')
 require('DotLua/UI/View/UIViewController')
 
+----public----
+
 UIPanelController =
     Class(
     UIViewController,
     function(self, name)
         self._base.init(self, name)
+
         self.subControllers = {}
 
         self.layer = nil
@@ -14,11 +17,19 @@ UIPanelController =
     end
 )
 
-function UIPanelController:SetLayer(layer,layerTransform)
+---internal----
+-- 为Panel设置显示层级
+-- @param layer 显示层级
+-- @param layerTransform 父结点的Transform
+-- @return void
+function UIPanelController:SetLayer(layer, layerTransform)
     self.layer = layer
     self.layerTransform = layerTransform
 end
 
+----internal----
+-- 获取Panel的显示层级
+-- @return UIPanelLayer
 function UIPanelController:GetLayer()
     return self.layer
 end
@@ -79,7 +90,7 @@ function UIPanelController:DoDestroy()
 end
 
 function UIPanelController:SetView(view)
-    self._base.SetView(self,view)
+    self._base.SetView(self, view)
 
     if self.layerTransform then
         self.view:SetParent(self.layerTransform)

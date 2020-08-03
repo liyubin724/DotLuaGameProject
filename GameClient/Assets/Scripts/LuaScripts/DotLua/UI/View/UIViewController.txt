@@ -1,6 +1,7 @@
 require('DotLua/Class')
 
 local CSUIView = CS.DotEngine.Lua.UI.View.LuaUIView
+local CSUnityObject = CS.UnityEngine.Object
 local eventMgr = Game.EventMgr
 local assetMgr = Game.AssetMgr
 local DebugLog = DebugLog
@@ -38,14 +39,23 @@ function UIViewController:DoStart()
     self:RegisterEvents()
 end
 
+----internal----
+-- 准备删除界面
 function UIViewController:DoDestroy()
     self:UnregisterEvents()
     if self.loadingViewIndex>0 then
         assetMgr:UnloadAssetAsync(self.loadingViewIndex)
     end
     self.loadingViewIndex = -1
+    if self.view then
+        CSUnityObject.Destroy(self.view:GetGameObject())
+    end
 end
 
+----public----
+-- 设置显示的View，可以直接指定对应的View或者通过资源地址加载
+-- @param view 绑定到C#的LuaUIView上的Lua的UIView
+-- @return void
 function UIViewController:SetView(view)
     self.view = view
 
@@ -54,6 +64,10 @@ function UIViewController:SetView(view)
     self:OnViewInited()
 end
 
+----public----
+-- 通过指定的address来加载显示资源
+-- @param address 资源地址
+-- @return void
 function UIViewController:LoadView(address)
     if self.loadingViewIndex > 0 then
         DebugLog.Error('View', 'view error')
