@@ -1,0 +1,118 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1492591792, guid: 26a9683362869fb4f97fac8f42f3ed52, type: 3}
+  m_Name: number
+  m_EditorClassIdentifier: 
+  outputAssetDir: Assets/ArtRes/Fonts/BMFonts
+  padding: 2
+  maxSize: 1024
+  fontChars:
+  - fontName: bai
+    charSpace: 0
+    chars: 3000310032003300340035003600370038003900
+    textures:
+    - {fileID: 2800000, guid: bafe5f0ab71b3ec469d4c5ddefe68375, type: 3}
+    - {fileID: 2800000, guid: b0d10e13a8c05494f8b63acdd3fe1095, type: 3}
+    - {fileID: 2800000, guid: 9d1a4bd1aba742f40a6f35dac9cc9d3b, type: 3}
+    - {fileID: 2800000, guid: 7e4044bcf4ef7da44acabde591b84242, type: 3}
+    - {fileID: 2800000, guid: d11445c634dd676478ffdd1208ba80d4, type: 3}
+    - {fileID: 2800000, guid: d4938792be664394fbdb7bd277abed1c, type: 3}
+    - {fileID: 2800000, guid: a296dc1d44cc7c743b1bc10d334de6bb, type: 3}
+    - {fileID: 2800000, guid: aa9f74f41f213054c92afbdeabbd02cd, type: 3}
+    - {fileID: 2800000, guid: 998bfd240aa22794a8ba3f5f34c44eb5, type: 3}
+    - {fileID: 2800000, guid: 6285e80c79353f348bc9b7d7da1b2a4f, type: 3}
+  - fontName: hong
+    charSpace: 0
+    chars: 30003100320033003400350036003700380039002d00
+    textures:
+    - {fileID: 2800000, guid: 9ab99a3bfd9a58f4e8f5a4b8caf60d21, type: 3}
+    - {fileID: 2800000, guid: fa3b7e8d55850ab439fa1a4ddbfc316e, type: 3}
+    - {fileID: 2800000, guid: 2b428d33b97bb8346bbe07d41328fe8f, type: 3}
+    - {fileID: 2800000, guid: d82af1676d4c75e4991316d2b6b2db55, type: 3}
+    - {fileID: 2800000, guid: 9acd7f64de13fa94a992b01d38d8e3c8, type: 3}
+    - {fileID: 2800000, guid: a7f98152669981341afdcfd23eefb4a3, type: 3}
+    - {fileID: 2800000, guid: 914ee18db1a0a4642b507a6764bda58e, type: 3}
+    - {fileID: 2800000, guid: 77cd9c6fc9c055645a7875a7530a1320, type: 3}
+    - {fileID: 2800000, guid: 45902890bbba83447a44ef23380f5306, type: 3}
+    - {fileID: 2800000, guid: 5c092cfe8fb794b4dbc1402f49ba9eeb, type: 3}
+    - {fileID: 2800000, guid: 40644d009649eb245adfa1e0358ccc89, type: 3}
+  - fontName: huang
+    charSpace: 0
+    chars: 3000310032003300340035003600370038003900
+    textures:
+    - {fileID: 2800000, guid: aaeb418df30494447b70fc6c6a0a2909, type: 3}
+    - {fileID: 2800000, guid: 51dcd4a816e815b4095af2f6d8521d40, type: 3}
+    - {fileID: 2800000, guid: 054484932bd06b14c8667ffb0ad30ef3, type: 3}
+    - {fileID: 2800000, guid: 52caf67a9460a8d439b96091fe65e499, type: 3}
+    - {fileID: 2800000, guid: b0717c3302f35564b974853cdd30f01d, type: 3}
+    - {fileID: 2800000, guid: 3ee1bff7960d7fe41a3afc67a03cf75c, type: 3}
+    - {fileID: 2800000, guid: 76c7c3c42dccac842a34f607f3ed6dc6, type: 3}
+    - {fileID: 2800000, guid: 740f35ef6deb91a4fbc75db22be31bcd, type: 3}
+    - {fileID: 2800000, guid: 075a24cc3fa23f241b45d8d0a5a0d6f5, type: 3}
+    - {fileID: 2800000, guid: 65d061daff8de8545b97a8bf054e1382, type: 3}
+  - fontName: jin
+    charSpace: 0
+    chars: 3000310032003300340035003600370038003900
+    textures:
+    - {fileID: 2800000, guid: 4a14be0f4026e5841ae952bbdf08ecd5, type: 3}
+    - {fileID: 2800000, guid: 55df1efa18a375a40b27771cea582558, type: 3}
+    - {fileID: 2800000, guid: 7e4da87146a57b44a821d2d545370ad3, type: 3}
+    - {fileID: 2800000, guid: e0fcc212d1a9655468efc919ab00bb3d, type: 3}
+    - {fileID: 2800000, guid: 51b349ba351c761438034263d3f90f51, type: 3}
+    - {fileID: 2800000, guid: 0b810d02b3b0128419d027e08769181c, type: 3}
+    - {fileID: 2800000, guid: 7d1e639c19911b047a40e010e77cedca, type: 3}
+    - {fileID: 2800000, guid: 3718107c9ba86ad499c337935226fb39, type: 3}
+    - {fileID: 2800000, guid: eee5519d6eaf2294597d66fa29b734cf, type: 3}
+    - {fileID: 2800000, guid: 5e1088b7aae3a3a4d808499992849188, type: 3}
+  - fontName: lan
+    charSpace: 0
+    chars: 3000310032003300340035003600370038003900
+    textures:
+    - {fileID: 2800000, guid: d997c05f58c66c64fbc40a1699ecff83, type: 3}
+    - {fileID: 2800000, guid: d65a6970ec46d3546be0295f128e7fc6, type: 3}
+    - {fileID: 2800000, guid: dd5d64cfdbcfb76418d6cfc8a7e118bc, type: 3}
+    - {fileID: 2800000, guid: 1ee4e0ddf09b4554d8f3c5e580d9f27d, type: 3}
+    - {fileID: 2800000, guid: 50fd0686b34804148bef7eeeba781063, type: 3}
+    - {fileID: 2800000, guid: 191286b7fc771d54da92eb49f545c58b, type: 3}
+    - {fileID: 2800000, guid: 5a11f8698fcbb344a8d46f0a7a06de7c, type: 3}
+    - {fileID: 2800000, guid: 242e7f644a37288449cfe4513b399a42, type: 3}
+    - {fileID: 2800000, guid: 2f508ff41defd9c42b351dbb909c9e22, type: 3}
+    - {fileID: 2800000, guid: 8d8ec4413e47fa54daed7875530fdf07, type: 3}
+  - fontName: lv
+    charSpace: 0
+    chars: 2b003000310032003300340035003600370038003900
+    textures:
+    - {fileID: 2800000, guid: 2c9d54d6e644fca41a4c2509b1d32f94, type: 3}
+    - {fileID: 2800000, guid: acb7d5ec7172c894bb6f9dc9b407272d, type: 3}
+    - {fileID: 2800000, guid: f5cca4a51253fab438ec890145923541, type: 3}
+    - {fileID: 2800000, guid: bb1964996b2ae9947b2e9bc8cecdccd4, type: 3}
+    - {fileID: 2800000, guid: a40c01b44bb930e4dba4dd164a798796, type: 3}
+    - {fileID: 2800000, guid: bcd4f38682a67724b830973b81edbfbe, type: 3}
+    - {fileID: 2800000, guid: 98c25fa91899580438906f7d8796233f, type: 3}
+    - {fileID: 2800000, guid: 9f0d09260df3c3f47b0e3a5127b6b950, type: 3}
+    - {fileID: 2800000, guid: 6f124a4419ce4314ca54f4d595b7f7f7, type: 3}
+    - {fileID: 2800000, guid: 2c9a32c6d58bf3e47915f074a2091454, type: 3}
+    - {fileID: 2800000, guid: 65552303a4826644a98b59f4daf76927, type: 3}
+  - fontName: zi
+    charSpace: 0
+    chars: 3000310032003300340035003600370038003900
+    textures:
+    - {fileID: 2800000, guid: aa9a5188909e10144a23e0b53579143b, type: 3}
+    - {fileID: 2800000, guid: 2bb4ea58fd41b34448f441d8a57b1389, type: 3}
+    - {fileID: 2800000, guid: 3bcfe20700b94364e9ee1180808da314, type: 3}
+    - {fileID: 2800000, guid: 135b81d437c3eb7439b6eac2dec9e50f, type: 3}
+    - {fileID: 2800000, guid: aeb991ddbaed63d40b44dcee7e0bb348, type: 3}
+    - {fileID: 2800000, guid: 3f0d406bac5c550498b263f330b0a7db, type: 3}
+    - {fileID: 2800000, guid: 66ab99c4b5b925641a8a28b17808859b, type: 3}
+    - {fileID: 2800000, guid: f21a91e7649db87429862cf5b1a38542, type: 3}
+    - {fileID: 2800000, guid: c78c68c4aed6f614f9d9ed0259511b0b, type: 3}
+    - {fileID: 2800000, guid: bfe37957dd2a8e24e81ef035d52623c8, type: 3}

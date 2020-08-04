@@ -25,7 +25,7 @@ SpriteAtlas:
       m_BuildTarget: Standalone
       m_MaxTextureSize: 2048
       m_ResizeAlgorithm: 0
-      m_TextureFormat: 4
+      m_TextureFormat: 12
       m_TextureCompression: 1
       m_CompressionQuality: 50
       m_CrunchedCompression: 0
@@ -127,7 +127,7 @@ SpriteAtlas:
     bindAsDefault: 1
     storedHash:
       serializedVersion: 2
-      Hash: a2b5327b5f26ac6bd3bba603ffe760b5
+      Hash: f1fc605cabd842d3559b9b498c623dbe
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 3d923360c06d72c4daa008af21df67ea, type: 3}
