@@ -5,7 +5,7 @@ TestViewController =
     Class(
     UIViewController,
     function(self, name)
-        self._base.init(self,name)
+        
     end
 )
 

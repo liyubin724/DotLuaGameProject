@@ -7,7 +7,7 @@ UIPanelController =
     Class(
     UIViewController,
     function(self, name)
-        self._base.init(self, name)
+        UIViewController.init(self, name)
 
         self.subControllers = {}
 
@@ -80,17 +80,17 @@ function UIPanelController:GetViewControllerByName(name)
 end
 
 function UIPanelController:DoStart()
-    self._base.DoStart(self)
+    UIViewController.DoStart(self)
 end
 
 function UIPanelController:DoDestroy()
     self:RemoveAllViewController()
 
-    self._base.DoDestroy(self)
+    UIViewController.DoDestroy(self)
 end
 
 function UIPanelController:SetView(view)
-    self._base.SetView(self, view)
+    UIViewController.SetView(self, view)
 
     if self.layerTransform then
         self.view:SetParent(self.layerTransform)

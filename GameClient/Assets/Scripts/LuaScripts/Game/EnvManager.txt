@@ -25,12 +25,16 @@ end
 
 function EnvManager:DoStartup()
     Game.EventMgr:Trigger(EventID.Startup)
-    Game.AssetMgr:InstanceAssetAsync('Cube', self, nil, EnvManager.OnCubeLoadComplete)
+    --Game.AssetMgr:InstanceAssetAsync('Cube', self, nil, EnvManager.OnCubeLoadComplete)
 
-    require("Game/Test/UI/View/TestViewController")
-    local controller = TestViewController("testText")
-    controller:DoStart()
-    controller:LoadView("TestText")
+    -- require("Game/Test/UI/View/TestViewController")
+    -- local controller = TestViewController("testText")
+    -- controller:DoStart()
+    -- controller:LoadView("TestText")
+
+    require("Game/Test/UI/View/LoginPanelController")
+    local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",LoginPanelController,UIPanelLayer.Default,UIPanelMode.Append)
+    loginPanelController:LoadView("login_panel")
 
     local eventMgr = Game.EventMgr
     eventMgr:RegisterListener(111,self,EnvManager.OnMessage,"EventTest")

@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -326584434, guid: 26a9683362869fb4f97fac8f42f3ed52, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ab36a6719991c04886ec6804d38e09c, type: 3}
   m_Name: uiprefabs_group
   m_EditorClassIdentifier: 
-  groupName: UI Prefabs Group
+  groupName: UI Prefab Group
   isEnable: 1
   isMain: 1
   isPreload: 0
@@ -23,5 +23,5 @@ MonoBehaviour:
     labels: []
   filters:
   - assetFolder: Assets/ArtRes/UI/Prefabs
-    isIncludeSubfolder: 0
-    fileRegex: \w*.prefab$
+    isIncludeSubfolder: 1
+    fileRegex: ^\w*.prefab$

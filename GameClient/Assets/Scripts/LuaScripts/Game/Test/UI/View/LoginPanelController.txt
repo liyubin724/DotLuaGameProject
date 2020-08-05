@@ -1,1 +1,10 @@
 require('DotLua/Class')
+require('DotLua/UI/View/UIPanelController')
+
+LoginPanelController =
+    Class(
+    UIPanelController,
+    function(self, name)
+        UIPanelController.init(self,name)
+    end
+)

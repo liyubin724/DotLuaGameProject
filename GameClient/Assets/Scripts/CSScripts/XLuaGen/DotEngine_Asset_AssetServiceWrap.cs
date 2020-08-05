@@ -21,10 +21,9 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(DotEngine.Asset.AssetService);
-			Utils.BeginObjectRegister(type, L, translator, 0, 15, 0, 0);
+			Utils.BeginObjectRegister(type, L, translator, 0, 14, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "DoUpdate", _m_DoUpdate);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "DoRegister", _m_DoRegister);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "DoRemove", _m_DoRemove);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "InitDatabaseLoader", _m_InitDatabaseLoader);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "InitBundleLoader", _m_InitBundleLoader);
@@ -103,33 +102,6 @@ namespace XLua.CSObjectWrap
                     float _deltaTime = (float)LuaAPI.lua_tonumber(L, 2);
                     
                     gen_to_be_invoked.DoUpdate( _deltaTime );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_DoRegister(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-                DotEngine.Asset.AssetService gen_to_be_invoked = (DotEngine.Asset.AssetService)translator.FastGetCSObj(L, 1);
-            
-            
-                
-                {
-                    
-                    gen_to_be_invoked.DoRegister(  );
                     
                     
                     

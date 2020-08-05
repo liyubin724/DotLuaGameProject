@@ -83,7 +83,7 @@ end
 function UIViewController:OnLoadViewComplete(address, uObject, userdata)
     self.loadingViewIndex = -1
     if uObject then
-        local view = uObject:GetComponent(typeof(CSUIView))
+        local view = uObject:GetComponent(typeof(CS.DotEngine.Lua.UI.View.LuaUIView))
         if view then
             self:SetView(view.ObjTable)
         end

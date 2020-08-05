@@ -936,7 +936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 91163292085171778}
   - component: {fileID: 2685068379121784966}
-  - component: {fileID: 7631799542735555302}
+  - component: {fileID: 8280272958160564025}
   m_Layer: 5
   m_Name: loginbg
   m_TagString: Untagged
@@ -971,7 +971,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1731787605394127410}
   m_CullTransparentMesh: 0
---- !u!114 &7631799542735555302
+--- !u!114 &8280272958160564025
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -980,7 +980,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1731787605394127410}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3618f017ca5f42aa23569f2c81124, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -996,8 +996,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
-  m_ImageAddress: login_bg3
-  m_IsSetNativeSize: 1
 --- !u!1 &2298706337621821424
 GameObject:
   m_ObjectHideFlags: 0
@@ -1920,10 +1918,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bindScript:
-    m_ScriptFilePath: 
+    m_ScriptFilePath: Game/Test/UI/View/LoginPanel
   registerBehaviourData:
     behaviourDatas: []
     behaviourArrayDatas: []
+  registerObjectData:
+    objectDatas: []
+    objectArrayDatas: []
 --- !u!1 &5327913525060907492
 GameObject:
   m_ObjectHideFlags: 0
@@ -2536,6 +2537,7 @@ GameObject:
   - component: {fileID: 4711387376850896373}
   - component: {fileID: 2730155834698306170}
   - component: {fileID: 1493853501514440215}
+  - component: {fileID: 3842381839356003231}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -2614,6 +2616,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3842381839356003231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7626584309256645975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 986b753d4399d014ab66b52c66526ac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 1493853501514440215}
+  clickHandlerData:
+    m_BindBehaviour: {fileID: 2089503603490207803}
+    m_FuncName: OnGameStartBtnClick
 --- !u!1 &7915087198681496815
 GameObject:
   m_ObjectHideFlags: 0

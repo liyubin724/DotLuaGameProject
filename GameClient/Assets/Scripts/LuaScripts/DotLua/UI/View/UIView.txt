@@ -4,6 +4,9 @@ UIView =
     Class(
     function(self)
         self.controller = nil
+
+        self.gameObject = nil
+        self.transform = nil
     end
 )
 
@@ -12,7 +15,7 @@ function UIView:SetController(controller)
 end
 
 function UIView:SetParent(parentTransform)
-    self.transform:SetParent(parentTransform,false)
+    self.transform:SetParent(parentTransform, false)
 end
 
 function UIView:SetVisible(visible)

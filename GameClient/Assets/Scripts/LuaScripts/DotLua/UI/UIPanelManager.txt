@@ -66,6 +66,8 @@ function UIPanelManager:OpenPanel(panelName, panelControllerClass, panelLayer, p
 
     table.insert(layerPanels, controller)
     controller:DoStart()
+
+    return controller
 end
 
 function UIPanelManager:ClosePanel(panelController)

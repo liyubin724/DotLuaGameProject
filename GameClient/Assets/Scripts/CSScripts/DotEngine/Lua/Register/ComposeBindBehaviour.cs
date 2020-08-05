@@ -7,6 +7,7 @@
 
         protected override void OnInitFinished()
         {
+            base.OnInitFinished();
             LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
             if(service.IsValid())
             {

@@ -1,0 +1,15 @@
+require('DotLua/Class')
+require('DotLua/UI/View/UIPanel')
+
+local DebugLog = DebugLog
+
+LoginPanel =
+    Class(
+    UIPanel,
+    function(self)
+    end
+)
+
+function LoginPanel:OnGameStartBtnClick()
+    DebugLog.Info("LoginPanel","OnGameStartBtnClick")
+end

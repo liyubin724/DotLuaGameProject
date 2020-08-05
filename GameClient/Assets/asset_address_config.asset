@@ -27,3 +27,10 @@ MonoBehaviour:
     isScene: 0
     isPreload: 0
     isNeverDestroy: 0
+  - assetAddress: login_panel
+    assetPath: Assets/ArtRes/UI/Prefabs/login_panel.prefab
+    bundlePath: assets/artres/ui/prefabs/login_panel_prefab
+    labels: []
+    isScene: 0
+    isPreload: 0
+    isNeverDestroy: 0

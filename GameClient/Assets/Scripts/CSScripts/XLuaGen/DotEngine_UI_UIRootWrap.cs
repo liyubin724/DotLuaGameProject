@@ -21,9 +21,10 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(DotEngine.UI.UIRoot);
-			Utils.BeginObjectRegister(type, L, translator, 0, 1, 2, 2);
+			Utils.BeginObjectRegister(type, L, translator, 0, 2, 2, 2);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetLayer", _m_GetLayer);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetLayerTransform", _m_GetLayerTransform);
 			
 			
 			Utils.RegisterFunc(L, Utils.GETTER_IDX, "uiCamera", _g_get_uiCamera);
@@ -94,6 +95,35 @@ namespace XLua.CSObjectWrap
                     DotEngine.UI.UILayerLevel _layerLevel;translator.Get(L, 2, out _layerLevel);
                     
                         DotEngine.UI.UILayer gen_ret = gen_to_be_invoked.GetLayer( _layerLevel );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_GetLayerTransform(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                DotEngine.UI.UIRoot gen_to_be_invoked = (DotEngine.UI.UIRoot)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    int _layer = LuaAPI.xlua_tointeger(L, 2);
+                    
+                        UnityEngine.RectTransform gen_ret = gen_to_be_invoked.GetLayerTransform( _layer );
                         translator.Push(L, gen_ret);
                     
                     
