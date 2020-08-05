@@ -1,6 +1,8 @@
 ﻿using DotEngine.UI.DynAtlas;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,33 +13,55 @@ public class TestDynamicAtlas : MonoBehaviour
     public Texture2D texture3 = null;
     public Texture2D texture4 = null;
 
-    DynamicAtlas dynamicAtlas = null;
-
-    public Texture2D texture;
+    DynamicAtlasSet dynamicAtlasSet = null;
 
     public Image image = null;
     void Start()
     {
-        dynamicAtlas = new DynamicAtlas(1024, "Icon");
-        dynamicAtlas.Write(texture1);
-        dynamicAtlas.Write(texture2);
-        dynamicAtlas.Write(texture3);
-        dynamicAtlas.Write(texture4);
+        dynamicAtlasSet = new DynamicAtlasSet("Icon",2048);
 
-        image.sprite = dynamicAtlas.GetSprite(texture2.name);
-        image.SetNativeSize();
+        string dir = @"D:\WorkSpace\DotLuaGameProject\GameClient\Assets\ArtRes\UI\BG\HighQuality\Alpha";
+        string[] files = Directory.GetFiles(dir, "*.png", SearchOption.TopDirectoryOnly);
+        foreach(var f in files)
+        {
+            Texture2D t = new Texture2D(1, 1);
+            t.LoadImage(File.ReadAllBytes(f), false);
+            t.name = Path.GetFileNameWithoutExtension(f);
+            Sprite sprite = dynamicAtlasSet.AddTexture(t);
+            if(sprite.name == "activity_patern3")
+            {
+                image.sprite = sprite;
+                image.SetNativeSize();
+            }
 
-        dynamicAtlas.Remove(texture4.name);
-        dynamicAtlas.Apply();
+            Destroy(t);
+        }
 
-        texture = dynamicAtlas.Texture;
+        //GC.Collect();
+        //Resources.UnloadUnusedAssets();
+        //GC.Collect(0,GCCollectionMode.Forced);
+        //Resources.UnloadUnusedAssets();
+        //GC.Collect();
+        //GC.Collect();
+        //dynamicAtlasSet.ClearAtlasSet();
 
-        DynamicAtlas.Save(dynamicAtlas, new DynamicAtlas.FileInfo("test", "D:/"));
+        //dynamicAtlasSet.WriteTo("D:/");
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        GC.Collect();
+        Resources.UnloadUnusedAssets();
+    }
+
+    private void OnGUI()
+    {
+        if(GUILayout.Button("Output"))
+        {
+            dynamicAtlasSet.ClearAtlasSet();
+
+            dynamicAtlasSet.WriteTo("D:/");
+        }
     }
 }

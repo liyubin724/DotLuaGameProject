@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.XR.WSA.Input;
 using HeuristicMethod = DotEngine.UI.DynAtlas.MaxRectsBinPack.FreeRectChoiceHeuristic;
 
 namespace DotEngine.UI.DynAtlas
@@ -73,11 +72,11 @@ namespace DotEngine.UI.DynAtlas
 
         Color transparentColor = new Color(0, 0, 0, 0);
 
-        public DynamicAtlas(int size, string name) : this(width: size, height: size, name: name)
+        public DynamicAtlas(string name, int size) : this(width: size, height: size, name: name)
         {
         }
 
-        public DynamicAtlas(int width, int height, string name, HeuristicMethod method = HeuristicMethod.RectBestShortSideFit,TextureFormat format = TextureFormat.RGBA32,int padding = 2)
+        public DynamicAtlas(string name, int width, int height, int padding = 2, TextureFormat format = TextureFormat.RGBA32, HeuristicMethod method = HeuristicMethod.RectBestShortSideFit)
         {
             Texture = new Texture2D(width, height, format, false,false);
             Texture.name = name;
@@ -194,7 +193,7 @@ namespace DotEngine.UI.DynAtlas
             rectsPack.usedRectangles.RemoveAt(index);
             rectsPack.freeRectangles.Add(rect);
 
-#if DYNAMIC_ATLAS_DEBUG
+//#if DYNAMIC_ATLAS_DEBUG
             Color[] colors = new Color[(int)(rect.width * rect.height)];
             for(int i =0;i<colors.Length;i++)
             {
@@ -203,8 +202,15 @@ namespace DotEngine.UI.DynAtlas
             Texture.SetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height, colors);
 
             IsApplied = false;
-#endif
+//#endif
             return true;
+        }
+
+        public void Dispose()
+        {
+            UnityEngine.Object.Destroy(Texture);
+            names.Clear();
+
         }
 
 #region File
