@@ -59,7 +59,7 @@ public class TestDynamicAtlas : MonoBehaviour
     {
         if(GUILayout.Button("Output"))
         {
-            dynamicAtlasSet.ClearAtlasSet();
+            dynamicAtlasSet.UnloadUnused();
 
             dynamicAtlasSet.WriteTo("D:/");
         }

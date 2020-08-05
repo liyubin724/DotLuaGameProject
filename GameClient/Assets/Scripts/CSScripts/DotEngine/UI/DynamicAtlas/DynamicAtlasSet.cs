@@ -148,7 +148,7 @@ namespace DotEngine.UI.DynAtlas
             }
         }
 
-        public void ClearAtlasSet()
+        public void UnloadUnused()
         {
             string[] spriteKeys = spriteDic.Keys.ToArray();
             if(spriteKeys!=null && spriteKeys.Length>0)
