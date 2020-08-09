@@ -1,0 +1,22 @@
+Profiler = {}
+Profiler.__index = Profiler
+
+local profiler = require('perf.profiler')
+local isDebug = Game.IsDebug
+
+function Profiler.Start()
+    if isDebug then
+        profiler.start()
+    end
+end
+
+function Profiler.Stop()
+    if isDebug then
+        local record = profiler.report()
+
+        profiler.stop()
+        return record
+    else
+        return nil
+    end
+end
