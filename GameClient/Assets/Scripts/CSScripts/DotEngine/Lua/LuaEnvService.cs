@@ -95,6 +95,15 @@ namespace DotEngine.Lua
                 Env.FullGc();
             }
         }
+        //返回 Lua 使用的内存总量（以 K 字节为单位）
+        public int GetTotalMemory()
+        {
+            if(IsValid())
+            {
+                return Env.GetTotalMemory();
+            }
+            return 0;
+        }
 
         public void CallAction(string funcName)
         {
