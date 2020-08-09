@@ -9,10 +9,12 @@ namespace XLua
 {
     public static class LuaEnv_Extension
     {
-        public static int GetTotalMemory(this LuaEnv env)
+        public static float GetTotalMemory(this LuaEnv env)
         {
-            int totalMemory = LuaAPI.lua_gc(env.L, LuaGCOptions.LUA_GCCOUNT, 0);
-            return totalMemory;
+            int memoryInK = LuaAPI.lua_gc(env.L, LuaGCOptions.LUA_GCCOUNT, 0);
+            int memoryInB = LuaAPI.lua_gc(env.L, LuaGCOptions.LUA_GCCOUNTB, 0);
+            
+            return memoryInK + (memoryInB / 1024.0f);
         }
     }
 }
