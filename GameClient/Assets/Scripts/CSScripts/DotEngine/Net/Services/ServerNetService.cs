@@ -7,38 +7,29 @@ namespace DotEngine.Net.Services
     public class ServerNetService : Service, IUpdate, ILateUpdate
     {
         public const string NAME = "ServerNetService";
-        private const int SERVER_NET_ID = 1;
 
-        private ServerNetListener serverNetListener = null;
         public ServerNetService() : base(NAME)
         { }
 
-        public bool IsServerRunning()
+        public ServerNetListener CreateNet(int netID,IMessageParser messageParser,int port = 9999)
         {
-            return serverNetListener != null;
-        }
-
-        public ServerNetListener CreateNet(IMessageParser messageParser,int port = 9999)
-        {
+            ServerNetListener serverNetListener = NetManager.GetInstance().GetServerNet(netID);
             if(serverNetListener == null)
             {
-                serverNetListener = NetManager.GetInstance().CreateServerNet(SERVER_NET_ID, port, messageParser);
-            }else
-            {
-
+                serverNetListener = NetManager.GetInstance().CreateServerNet(netID, port, messageParser);
             }
+
             return serverNetListener;
         }
 
-        public ServerNetListener GetNet()
+        public ServerNetListener GetNet(int netID)
         {
-            return serverNetListener;
+            return NetManager.GetInstance().GetServerNet(netID);
         }
 
-        public void DiposeNet()
+        public void DiposeNet(int netID)
         {
-            NetManager.GetInstance().DestroyServerNet(SERVER_NET_ID);
-            serverNetListener = null;
+            NetManager.GetInstance().DestroyServerNet(netID);
         }
 
         public void DoLateUpdate(float deltaTime)
