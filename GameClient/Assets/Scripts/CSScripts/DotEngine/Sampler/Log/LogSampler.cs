@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Sampler.Log
 {
-    public class LogRecorder : ASampler
+    public class LogSampler : ASampler
     {
 
     }

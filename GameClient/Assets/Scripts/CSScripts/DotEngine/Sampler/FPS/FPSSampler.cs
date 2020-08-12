@@ -8,5 +8,6 @@ namespace DotEngine.Sampler.FPS
 {
     public class FPSSampler : ASampler
     {
+        
     }
 }
