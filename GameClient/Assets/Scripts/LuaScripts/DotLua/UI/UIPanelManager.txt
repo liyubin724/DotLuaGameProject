@@ -1,5 +1,7 @@
 require('DotLua/Class')
 
+local Game = Game
+
 UIPanelMode = {
     Append = 0,
     Navigate = 1,
@@ -21,6 +23,17 @@ UIPanelManager =
         self.panels = {}
     end
 )
+
+function UIPanelManager.GetInstance()
+    local panelMgr = Game.PanelMgr
+    if not panelMgr then
+        panelMgr = UIPanelManager()
+
+        Game.PanelMgr = panelMgr
+    end
+
+    return panelMgr
+end
 
 function UIPanelManager:GetUIRoot()
     if not self.uiRoot then
