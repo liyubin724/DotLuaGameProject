@@ -1,6 +1,5 @@
 Game = {}
 Game.IsDebug = true
-require('Debugger/LuaPanda').start('127.0.0.1', 8818)
 
 require('DotLua/Utility/math')
 require('DotLua/Utility/table')
@@ -14,16 +13,21 @@ require('DotLua/UI/UIPanelManager')
 require('Game/EnvManager')
 
 if Game.IsDebug then
+    require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+
     DebugLog.SetEnable(true, true, true)
-    require("DotLua/Debugger/Profiler")
 else
     DebugLog.SetEnable(true, false, false)
 end
 
-Game.ConfigMgr = ConfigManager('Game/Config/')
-Game.EventMgr = EventDispatcher()
-Game.TimerMgr = HierarchicalTimerWheel()
-Game.AssetMgr = AssetManager()
-Game.PanelMgr = UIPanelManager()
+local function InitMgr()
+    ConfigManager.GetInstance():SetRootPath("Game/Config/")
+    EventDispatcher.GetInstance()
+    HierarchicalTimerWheel.GetInstance()
+    AssetManager.GetInstance()
+    UIPanelManager.GetInstance()
 
-Game.EnvMgr = EnvManager()
+    EnvManager.GetInstance()
+end
+
+InitMgr()

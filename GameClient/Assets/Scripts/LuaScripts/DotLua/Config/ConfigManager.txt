@@ -1,12 +1,29 @@
 require('DotLua/Class')
 
+local Game = Game
+
 ConfigManager =
     Class(
-    function(self,rootPath)
+    function(self)
         self.configs = {}
-        self.rootPath = rootPath
+        self.rootPath = nil
     end
 )
+
+function ConfigManager.GetInstance()
+    local configMgr = Game.ConfigMgr
+    if not configMgr then
+        configMgr = ConfigManager()
+
+        Game.ConfigMgr = configMgr
+    end
+
+    return configMgr
+end
+
+function ConfigManager:SetRootPath(rootPath)
+    self.rootPath = rootPath
+end
 
 ----public----
 -- 加载指定名称的配置表，如果表已经存在则直接返回，否则将进行数据加载
@@ -27,7 +44,7 @@ end
 -- @param configName 配置表的名称
 -- @param dataID 数据所在行的ID
 -- @return table 数据指定ID行的表数据
-function ConfigManager:GetData(configName,dataID)
+function ConfigManager:GetData(configName, dataID)
     local config = self:GetConfig(configName)
     if not config then
         return nil
@@ -42,7 +59,7 @@ end
 -- @param dataID 数据所在行的ID
 -- @param fieldName 数据指定列的名称
 -- @return value 返回对应列的数据
-function ConfigManager:GetDataValue(configName,dataID,fieldName)
+function ConfigManager:GetDataValue(configName, dataID, fieldName)
     local data = self:GetData(configName, dataID)
     if not data then
         return nil

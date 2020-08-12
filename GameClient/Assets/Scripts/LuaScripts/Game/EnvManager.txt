@@ -15,6 +15,17 @@ EnvManager =
     end
 )
 
+function EnvManager.GetInstance()
+    local envMgr = Game.EnvMgr
+    if not envMgr then
+        envMgr = EnvManager()
+
+        Game.EnvMgr = envMgr
+    end
+
+    return envMgr
+end
+
 function EnvManager:AddUpdateDelegate(receiver, func)
     self.updateDelegate = self.updateDelegate + {receiver, func}
 end

@@ -1,0 +1,3 @@
+[submodule "GameDepands/lua-protobuf"]
+	path = GameDepands/lua-protobuf
+	url = https://github.com/starwing/lua-protobuf.git
