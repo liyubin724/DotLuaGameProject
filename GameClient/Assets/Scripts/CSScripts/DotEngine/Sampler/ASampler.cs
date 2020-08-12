@@ -4,9 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.Debugger
+namespace DotEngine.Sampler
 {
-    public class RecorderManager
+    public abstract class ASampler
     {
+        protected ASampler()
+        {
+
+        }
+
+
     }
 }

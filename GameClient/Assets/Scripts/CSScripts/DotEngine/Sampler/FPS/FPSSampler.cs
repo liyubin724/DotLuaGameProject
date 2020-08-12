@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.Debugger
+namespace DotEngine.Sampler.FPS
 {
-    public abstract class ARecorder
+    public class FPSSampler : ASampler
     {
-        public int FrameRate { get; set; } = 3;
-
-
     }
 }
