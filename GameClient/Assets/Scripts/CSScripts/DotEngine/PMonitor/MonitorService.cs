@@ -16,7 +16,7 @@ namespace DotEngine.PMonitor
         {
         }
 
-        public void OpenSampler(SamplerCategory category)
+        public bool OpenSampler(SamplerCategory category)
         {
             if(!m_SamplerDic.TryGetValue(category,out var sampler))
             {
@@ -37,17 +37,24 @@ namespace DotEngine.PMonitor
                 if(sampler != null)
                 {
                     m_SamplerDic.Add(category, sampler);
+                    return true;
                 }
+
+                return false;
             }
+            return true;
         }
 
-        public void CloseSampler(SamplerCategory category)
+        public bool CloseSampler(SamplerCategory category)
         {
             if (m_SamplerDic.TryGetValue(category, out var sampler))
             {
                 m_SamplerDic.Remove(category);
                 sampler.Dispose();
+                return true;
             }
+
+            return false;
         }
 
         public void OpenFileRecorder(string logDir)
@@ -58,6 +65,16 @@ namespace DotEngine.PMonitor
         public void CloseFileRecorder()
         {
             m_Recorder.CloseRecorder(RecorderCategory.File);
+        }
+
+        public void OpenProfilerRecorder()
+        {
+            m_Recorder.OpenRecorder(RecorderCategory.Profiler);
+        }
+
+        public void CloseProfilerRecorder()
+        {
+            m_Recorder.CloseRecorder(RecorderCategory.Profiler);
         }
 
         public override void DoRegister()

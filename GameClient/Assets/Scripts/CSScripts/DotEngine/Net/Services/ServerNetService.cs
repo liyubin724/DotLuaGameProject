@@ -11,25 +11,25 @@ namespace DotEngine.Net.Services
         public ServerNetService() : base(NAME)
         { }
 
-        public ServerNetListener CreateNet(int netID,IMessageParser messageParser,int port = 9999)
+        public ServerNetListener CreateNet(int serverID,IMessageParser messageParser,int port = 9999)
         {
-            ServerNetListener serverNetListener = NetManager.GetInstance().GetServerNet(netID);
+            ServerNetListener serverNetListener = NetManager.GetInstance().GetServerNet(serverID);
             if(serverNetListener == null)
             {
-                serverNetListener = NetManager.GetInstance().CreateServerNet(netID, port, messageParser);
+                serverNetListener = NetManager.GetInstance().CreateServerNet(serverID, port, messageParser);
             }
 
             return serverNetListener;
         }
 
-        public ServerNetListener GetNet(int netID)
+        public ServerNetListener GetNet(int serverID)
         {
-            return NetManager.GetInstance().GetServerNet(netID);
+            return NetManager.GetInstance().GetServerNet(serverID);
         }
 
-        public void DiposeNet(int netID)
+        public void DiposeNet(int serverID)
         {
-            NetManager.GetInstance().DestroyServerNet(netID);
+            NetManager.GetInstance().DestroyServerNet(serverID);
         }
 
         public void DoLateUpdate(float deltaTime)
