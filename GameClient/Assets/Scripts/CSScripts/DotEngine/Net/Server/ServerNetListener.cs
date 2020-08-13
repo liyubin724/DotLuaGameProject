@@ -142,11 +142,11 @@ namespace DotEngine.Net.Server
             }
         }
 
-        internal void DoUpdate(float deltaTime)
+        public void DoUpdate(float deltaTime)
         {
         }
 
-        internal void DoLateUpdate()
+        public void DoLateUpdate()
         {
             lock(netDicLock)
             {

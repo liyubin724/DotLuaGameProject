@@ -16,14 +16,40 @@ namespace DotEditor.PMonitor
             MonitorProfilerWindow.GetWindow<MonitorProfilerWindow>().Show();
         }
 
-        ClientNet clientNet;
+        private ClientNet clientNet;
+        private double preUpdateTime;
         private void Awake()
         {
-            ClientNetService clientNetService = Facade.GetInstance().GetService<ClientNetService>(ClientNetService.NAME);
-            clientNet = clientNetService.CreateNet(98, new ProfilerClientMessageParser());
-            ProfilerClientMessageHandler.RegisterHanlder(clientNet);
+            EditorApplication.update += DoUpdate;
+            preUpdateTime = EditorApplication.timeSinceStartup;
 
+            clientNet = new ClientNet(1, new ProfilerClientMessageParser());
+            clientNet.NetConnectedSuccess += (net) =>
+            {
+
+            };
+            clientNet.NetDisconnected += (net) =>
+            {
+
+            };
+            clientNet.NetConnectedFailed += (net) =>
+            {
+
+            };
+            ProfilerClientMessageHandler.RegisterHanlder(clientNet);
             clientNet.Connect("127.0.0.1", 3302);
+        }
+
+        private void DoUpdate()
+        {
+            double deltaTime = EditorApplication.timeSinceStartup - preUpdateTime;
+            preUpdateTime = EditorApplication.timeSinceStartup;
+
+            if(clientNet!=null && clientNet.IsConnected())
+            {
+                clientNet.DoUpdate((float)deltaTime);
+                clientNet.DoLateUpdate();
+            }
         }
 
         private void OnGUI()
@@ -42,6 +68,13 @@ namespace DotEditor.PMonitor
                     category = SamplerCategory.Memory
                 });
             }
+        }
+
+        private void OnDestroy()
+        {
+            EditorApplication.update -= DoUpdate;
+            clientNet?.Dispose();
+            clientNet = null;
         }
     }
 }

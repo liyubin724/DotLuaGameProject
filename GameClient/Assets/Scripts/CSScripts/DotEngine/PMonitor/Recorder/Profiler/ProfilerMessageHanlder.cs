@@ -1,4 +1,5 @@
-﻿using DotEngine.Net.Client;
+﻿using DotEngine.Log;
+using DotEngine.Net.Client;
 using DotEngine.Net.Server;
 using DotEngine.Net.Services;
 using Game;
@@ -15,7 +16,8 @@ namespace DotEngine.PMonitor.Recorder
 
         public static void OnOpenSamplerResponse(int messageID, object message)
         {
-
+            S2C_OpenSamplerResponse response = (S2C_OpenSamplerResponse)message;
+            LogUtil.LogDebug("Profiler", "Result = " + response.result);
         }
 
         public static void OnCloseSamplerResponse(int messageID, object message)

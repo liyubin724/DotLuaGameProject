@@ -68,7 +68,7 @@ namespace DotEngine.Net.Client
             netSession.Disconnect();
         }
 
-        internal void DoUpdate(float deltaTime)
+        public void DoUpdate(float deltaTime)
         {
             ClientNetSessionState currentSessionState = netSession.State;
             if (currentSessionState != sessionState)
@@ -94,7 +94,7 @@ namespace DotEngine.Net.Client
             }
         }
 
-        internal void DoLateUpdate()
+        public void DoLateUpdate()
         {
             if (IsConnected())
             {
