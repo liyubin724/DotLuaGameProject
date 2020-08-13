@@ -11,6 +11,7 @@ namespace DotEngine.Services
         private List<string> lateUpdateServices = null;
         private List<string> fixedUpdateServices = null;
 
+        private List<string> sortedByOrderNames = new List<string>();
         public ServiceCenter()
         {
             serviceDic = new Dictionary<string, IService>();
@@ -85,6 +86,7 @@ namespace DotEngine.Services
             }
 
             serviceDic.Add(service.Name, service);
+            sortedByOrderNames.Add(service.Name);
 
             Type serviceType = service.GetType();
             if (typeof(IUpdate).IsAssignableFrom(serviceType))
@@ -109,12 +111,27 @@ namespace DotEngine.Services
             {
                 servicer.DoRemove();
                 serviceDic.Remove(name);
+
+                sortedByOrderNames.Remove(name);
             }
         }
 
         public IService RetrieveService(string name)
         {
             return serviceDic.TryGetValue(name, out IService servicer) ? servicer : null;
+        }
+
+        public void ClearService()
+        {
+            updateServices.Clear();
+            lateUpdateServices.Clear();
+            fixedUpdateServices.Clear();
+
+            for(int i = sortedByOrderNames.Count-1;i>=0;--i)
+            {
+                RemoveService(sortedByOrderNames[i]);
+            }
+            sortedByOrderNames.Clear();
         }
     }
 }

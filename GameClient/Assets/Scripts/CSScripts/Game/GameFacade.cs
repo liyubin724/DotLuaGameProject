@@ -1,5 +1,6 @@
 ﻿using DotEngine;
-using DotEngine.Asset;
+using DotEngine.PMonitor;
+using DotEngine.PMonitor.Sampler;
 
 namespace Game
 {
@@ -22,6 +23,15 @@ namespace Game
         protected override void InitializeService()
         {
             base.InitializeService();
+
+            MonitorService monitorService = new MonitorService();
+            serviceCenter.RegisterService(monitorService);
+
+            monitorService.OpenSampler(SamplerCategory.Log);
+            monitorService.OpenSampler(SamplerCategory.FPS);
+            monitorService.OpenSampler(SamplerCategory.Memory);
+            monitorService.OpenSampler(SamplerCategory.System);
+            monitorService.OpenFileRecorder("D:/");
         }
     }
 }

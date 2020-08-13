@@ -25,8 +25,13 @@ namespace DotEngine.Lua
 
         public bool IsValid()
         {
-            LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
-            return service.IsValid() && ObjTable != null;
+            Facade facade = Facade.GetInstance();
+            if(facade!=null)
+            {
+                LuaEnvService service = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
+                return service != null && service.IsValid() && ObjTable != null;
+            }
+            return false;
         }
 
         public bool InitLua()

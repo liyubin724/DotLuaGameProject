@@ -43,6 +43,8 @@ namespace Game
         private void OnDestroy()
         {
             LogUtil.DisposeLogger();
+            Facade facade = GameFacade.GetInstance();
+            facade.Dispose();
         }
     }
 }

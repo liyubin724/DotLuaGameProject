@@ -13,14 +13,10 @@ namespace DotEngine
 
         public static Facade GetInstance()
         {
-            if (instance == null)
-            {
-                return instance = new Facade();
-            }
             return instance;
         }
 
-        private ServiceCenter m_ServiceCenter = null;
+        protected ServiceCenter serviceCenter = null;
         protected Facade()
         {
             instance = this;
@@ -36,59 +32,65 @@ namespace DotEngine
 
         protected virtual void InitializeService()
         {
-            m_ServiceCenter = new ServiceCenter();
+            serviceCenter = new ServiceCenter();
 
             LuaEnvService luaEnvService = new LuaEnvService();
-            m_ServiceCenter.RegisterService(luaEnvService);
+            serviceCenter.RegisterService(luaEnvService);
 
             TimerService timerService = new TimerService();
-            m_ServiceCenter.RegisterService(timerService);
+            serviceCenter.RegisterService(timerService);
 
             AssetService assetService = new AssetService();
-            m_ServiceCenter.RegisterService(assetService);
+            serviceCenter.RegisterService(assetService);
 
             GameObjectPoolService poolService = new GameObjectPoolService(assetService.InstantiateAsset);
-            m_ServiceCenter.RegisterService(poolService);
+            serviceCenter.RegisterService(poolService);
         }
 
         public virtual void RegisterService(IService service)
         {
-            m_ServiceCenter.RegisterService(service);
+            serviceCenter.RegisterService(service);
         }
 
         public virtual IService RetrieveService(string name)
         {
-            return m_ServiceCenter.RetrieveService(name);
+            return serviceCenter.RetrieveService(name);
         }
 
         public virtual T GetService<T>(string name) where T : IService
         {
-            return (T)m_ServiceCenter.RetrieveService(name);
+            return (T)serviceCenter.RetrieveService(name);
         }
 
         public virtual void RemoveService(string name)
         {
-            m_ServiceCenter.RemoveService(name);
+            serviceCenter.RemoveService(name);
         }
 
         public virtual bool HasService(string name)
         {
-            return m_ServiceCenter.HasService(name);
+            return serviceCenter.HasService(name);
+        }
+
+        public void Dispose()
+        {
+            serviceCenter.ClearService();
+            instance = null;
         }
 
         internal void DoUpdate(float deltaTime)
         {
-            m_ServiceCenter.DoUpdate(deltaTime);
+            serviceCenter.DoUpdate(deltaTime);
         }
 
         internal void DoLateUpdate(float deltaTime)
         {
-            m_ServiceCenter.DoLateUpdate(deltaTime);
+            serviceCenter.DoLateUpdate(deltaTime);
         }
 
         internal void DoFixedUpdate(float deltaTime)
         {
-            m_ServiceCenter.DoFixedUpdate(deltaTime);
+            serviceCenter.DoFixedUpdate(deltaTime);
         }
     }
 }
