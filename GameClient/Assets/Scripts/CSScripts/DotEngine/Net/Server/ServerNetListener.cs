@@ -157,11 +157,27 @@ namespace DotEngine.Net.Server
             }
         }
 
+        public void SendMessage(int messageID)
+        {
+            foreach(var kvp in netDic)
+            {
+                kvp.Value.SendMessage(messageID);
+            }
+        }
+
         public void SendMessage(int netID,int messageID)
         {
             if (netDic.TryGetValue(netID, out ServerNet serverNet))
             {
                 serverNet.SendMessage(messageID);
+            }
+        }
+
+        public void SendMessage(int messageID,object message)
+        {
+            foreach(var kvp in netDic)
+            {
+                kvp.Value.SendMessage(messageID, message);
             }
         }
 

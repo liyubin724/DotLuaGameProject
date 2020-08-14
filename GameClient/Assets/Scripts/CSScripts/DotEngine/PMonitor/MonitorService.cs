@@ -101,6 +101,8 @@ namespace DotEngine.PMonitor
             {
                 kvp.Value.DoUpdate(deltaTime);
             }
+
+            m_Recorder.DoUpdate(deltaTime);
         }
     }
 }

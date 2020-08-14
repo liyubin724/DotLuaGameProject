@@ -7,6 +7,7 @@ namespace DotEngine.PMonitor.Recorder
     {
         RecorderCategory Category { get; }
         void Init();
+        void DoUpdate(float deltaTime);
         void HandleRecord(SamplerCategory category, Record[] records);
     }
 }

@@ -16,6 +16,11 @@ namespace DotEngine.PMonitor.Recorder
 
         }
 
+        public virtual void DoUpdate(float deltaTime)
+        {
+
+        }
+
         public virtual void Dispose()
         {
             

@@ -1,11 +1,5 @@
 ﻿using DotEngine.Net.Server;
-using DotEngine.Net.Services;
 using DotEngine.PMonitor.Sampler;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.PMonitor.Recorder
 {
@@ -17,20 +11,24 @@ namespace DotEngine.PMonitor.Recorder
         private ServerNetListener m_NetListener = null;
         public ProfilerRecorder() : base(RecorderCategory.Profiler)
         {
-
         }
 
         public override void Init()
         {
-            ServerNetService serverNetService = Facade.GetInstance().GetService<ServerNetService>(ServerNetService.NAME);
-            m_NetListener = serverNetService.CreateNet(SERVER_ID, new ProfilerServerMessageParser(), SERVER_PORT);
+            m_NetListener = new ServerNetListener(SERVER_ID, new ProfilerServerMessageParser());
             ProfilerServerMessageHandler.RegisterHanlder(m_NetListener);
+            m_NetListener.Startup("127.0,0.1", SERVER_PORT,10);
+        }
+
+        public override void DoUpdate(float deltaTime)
+        {
+            m_NetListener.DoUpdate(deltaTime);
+            m_NetListener.DoLateUpdate();
         }
 
         public override void Dispose()
         {
-            ServerNetService serverNetService = Facade.GetInstance().GetService<ServerNetService>(ServerNetService.NAME);
-            serverNetService.DiposeNet(SERVER_ID);
+            m_NetListener?.Dispose();
             m_NetListener = null;
         }
 

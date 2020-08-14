@@ -14,6 +14,14 @@ namespace DotEngine.PMonitor.Recorder
 
         }
 
+        public void DoUpdate(float deltaTime)
+        {
+            foreach (var kvp in m_RecorderDic)
+            {
+                kvp.Value.DoUpdate(deltaTime);
+            }
+        }
+
         public void OpenRecorder(RecorderCategory category,params object[] values)
         {
             if (!m_RecorderDic.TryGetValue(category, out var recorder))

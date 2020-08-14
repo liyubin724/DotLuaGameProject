@@ -1,6 +1,4 @@
-﻿using DotEngine;
-using DotEngine.Net.Client;
-using DotEngine.Net.Services;
+﻿using DotEngine.Net.Client;
 using DotEngine.PMonitor.Recorder;
 using DotEngine.PMonitor.Sampler;
 using UnityEditor;
@@ -56,14 +54,14 @@ namespace DotEditor.PMonitor
         {
             if(GUILayout.Button("Open Log Sampler"))
             {
-                clientNet.SendMessage(C2S_ProfilerMessageID.OPEN_SAMPLER_REQUEST, new C2S_OpenSamplerRequest()
+                clientNet.SendMessage(ProfilerClientMessageID.OPEN_SAMPLER_REQUEST, new C2S_OpenSamplerRequest()
                 {
                     category = SamplerCategory.Log
                 });
             }
             if (GUILayout.Button("Open Memory Sampler"))
             {
-                clientNet.SendMessage(C2S_ProfilerMessageID.OPEN_SAMPLER_REQUEST, new C2S_OpenSamplerRequest()
+                clientNet.SendMessage(ProfilerClientMessageID.OPEN_SAMPLER_REQUEST, new C2S_OpenSamplerRequest()
                 {
                     category = SamplerCategory.Memory
                 });
