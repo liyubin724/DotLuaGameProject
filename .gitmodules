@@ -1,3 +1,6 @@
 [submodule "GameDepands/lua-protobuf"]
 	path = GameDepands/lua-protobuf
 	url = https://github.com/starwing/lua-protobuf.git
+[submodule "GameDepands/Json.Net.Unity3D"]
+	path = GameDepands/Json.Net.Unity3D
+	url = https://github.com/SaladLab/Json.Net.Unity3D.git
