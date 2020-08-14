@@ -34,7 +34,24 @@ namespace DotEngine.PMonitor.Recorder
 
         public override void HandleRecord(SamplerCategory category, Record[] records)
         {
-            
+            int messageID = -1;
+            if(category == SamplerCategory.FPS)
+            {
+                messageID = ProfilerServerMessageID.PUSH_FPS_RECORDS;
+            }else if(category == SamplerCategory.Log)
+            {
+                messageID = ProfilerServerMessageID.PUSH_LOG_RECORDS;
+            }else if(category == SamplerCategory.Memory)
+            {
+                messageID = ProfilerServerMessageID.PUSH_MEMORY_RECORDS;
+            }else if(category == SamplerCategory.System)
+            {
+                messageID = ProfilerServerMessageID.PUSH_SYSTEM_RECORDS;
+            }
+            if(messageID>0)
+            {
+                m_NetListener.SendMessage(messageID, records);
+            }
         }
     }
 }

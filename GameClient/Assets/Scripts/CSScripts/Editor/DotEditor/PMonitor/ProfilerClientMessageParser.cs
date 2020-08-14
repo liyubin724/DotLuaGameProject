@@ -1,6 +1,7 @@
 ﻿using DotEngine.Log;
 using DotEngine.Net.Message;
 using DotEngine.PMonitor.Recorder;
+using DotEngine.PMonitor.Sampler;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,10 @@ namespace DotEditor.PMonitor
         {
             m_DecodeHandlers.Add(ProfilerServerMessageID.OPEN_SAMPLER_RESPONSE, OnOpenSamplerResponse);
             m_DecodeHandlers.Add(ProfilerServerMessageID.CLOSE_SAMPLER_RESPONSE, OnCloseSamplerResponse);
+            m_DecodeHandlers.Add(ProfilerServerMessageID.PUSH_FPS_RECORDS, OnPushFPSRecords);
+            m_DecodeHandlers.Add(ProfilerServerMessageID.PUSH_LOG_RECORDS, OnPushLogRecords);
+            m_DecodeHandlers.Add(ProfilerServerMessageID.PUSH_MEMORY_RECORDS, OnPushMemoryRecords);
+            m_DecodeHandlers.Add(ProfilerServerMessageID.PUSH_SYSTEM_RECORDS, OnPushSystemRecords);
         }
 
         public object DecodeMessage(int messageID, byte[] bytes)
@@ -50,6 +55,23 @@ namespace DotEditor.PMonitor
         private S2C_CloseSamplerResponse OnCloseSamplerResponse(byte[] bytes)
         {
             return OnDecodeMessage<S2C_CloseSamplerResponse>(bytes);
+        }
+
+        private FPSRecord[] OnPushFPSRecords(byte[] bytes)
+        {
+            return OnDecodeMessage<FPSRecord[]>(bytes);
+        }
+        private SystemRecord[] OnPushSystemRecords(byte[] bytes)
+        {
+            return OnDecodeMessage<SystemRecord[]>(bytes);
+        }
+        private MemoryRecord[] OnPushMemoryRecords(byte[] bytes)
+        {
+            return OnDecodeMessage<MemoryRecord[]>(bytes);
+        }
+        private LogRecord[] OnPushLogRecords(byte[] bytes)
+        {
+            return OnDecodeMessage<LogRecord[]>(bytes);
         }
     }
 }

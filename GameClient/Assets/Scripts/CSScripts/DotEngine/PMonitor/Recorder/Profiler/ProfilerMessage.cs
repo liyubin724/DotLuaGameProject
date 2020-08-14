@@ -21,6 +21,4 @@ namespace DotEngine.PMonitor.Recorder
     {
         public bool result;
     }
-
-
 }
