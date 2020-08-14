@@ -10,18 +10,29 @@ namespace Game
 {
     public class StartupBehaviour : MonoBehaviour
     {
-        private void Awake()
+        private void Start()
         {
             DotEngine.Log.ILogger logger = new UnityLogger();
             LogUtil.SetLogger(logger);
 
             Facade facade = GameFacade.GetInstance();
             AssetService assetService = facade.GetService<AssetService>(AssetService.NAME);
+#if UNITY_EDITOR
             assetService.InitDatabaseLoader((result) =>
             {
                 LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
                 luaEnvService.CallAction(LuaConst.STARTUP_FUNCTION_NAME);
             });
+
+
+#else
+            string bundleRootDir = "./bundles";
+            assetService.InitBundleLoader((result) =>
+            {
+                LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
+                luaEnvService.CallAction(LuaConst.STARTUP_FUNCTION_NAME);
+            }, bundleRootDir);
+#endif
 
             TimerService timerService = facade.GetService<TimerService>(TimerService.NAME);
             handler = timerService.AddIntervalTimer(1, (userdata) =>
