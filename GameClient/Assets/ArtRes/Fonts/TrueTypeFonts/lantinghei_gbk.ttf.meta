@@ -1,21 +1,22 @@
 fileFormatVersion: 2
 guid: d0e35ae33bded0543a1abc3a69a8338f
-timeCreated: 1495180191
-licenseType: Pro
 TrueTypeFontImporter:
+  externalObjects: {}
   serializedVersion: 4
   fontSize: 16
   forceTextureCase: -2
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: FZLanTingHei-DB-GBK
+  fontName: Heiti SC
   fontNames:
   - FZLanTingHei-R-GBK
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
   userData: 
-  assetBundleName: fonts/lth
+  assetBundleName: 
   assetBundleVariant: 

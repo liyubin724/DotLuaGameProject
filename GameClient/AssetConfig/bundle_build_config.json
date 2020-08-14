@@ -1,0 +1,8 @@
+{
+  "bundleOutputDir": "F:/Test/Bundles",
+  "cleanupBeforeBuild": false,
+  "pathFormat": 0,
+  "buildTarget": 19,
+  "compression": 1,
+  "bundleOptions": 16
+}
