@@ -17,7 +17,7 @@ namespace DotEngine.PMonitor.Recorder
         {
             m_NetListener = new ServerNetListener(SERVER_ID, new ProfilerServerMessageParser());
             ProfilerServerMessageHandler.RegisterHanlder(m_NetListener);
-            m_NetListener.Startup("127.0,0.1", SERVER_PORT,10);
+            m_NetListener.Startup("127.0.0.1", SERVER_PORT,10);
         }
 
         public override void DoUpdate(float deltaTime)

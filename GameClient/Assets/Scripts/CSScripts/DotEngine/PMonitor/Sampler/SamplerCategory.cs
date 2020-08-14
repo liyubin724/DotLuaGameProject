@@ -7,5 +7,6 @@
         FPS,
         Memory,
         System,
+        XLua,
     }
 }

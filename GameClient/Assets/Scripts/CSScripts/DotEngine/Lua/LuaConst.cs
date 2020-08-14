@@ -47,7 +47,7 @@ namespace DotEngine.Lua
 #if UNITY_EDITOR
             return $"{Application.dataPath}/{SCRIPT_DIR}{{0}}{SCRIPT_EXTENSION}";
 #else
-
+            return $"E:/WorkSpace/DotLuaGameProject/GameClient/{SCRIPT_DIR}{{0}}{SCRIPT_EXTENSION}";
 #endif
         }
     }

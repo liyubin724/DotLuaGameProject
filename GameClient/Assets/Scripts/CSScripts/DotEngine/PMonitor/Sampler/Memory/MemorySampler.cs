@@ -24,10 +24,5 @@ namespace DotEngine.PMonitor.Sampler
             data.TotalUnusedReservedMemoryLong = Profiler.GetTotalUnusedReservedMemoryLong();
 
         }
-
-        protected override void Init()
-        {
-            
-        }
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.PMonitor.Recorder
+namespace DotEngine.PMonitor.Sampler
 {
-    class RemoteRecorder
+    class XLuaSampler
     {
     }
 }

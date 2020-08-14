@@ -14,8 +14,8 @@ namespace DotEngine.PMonitor.Sampler
         private int samplingFrame = 0;
         private float syncElapse = 0.0f;
 
-        protected ObjectPool<T> recordPool = null;
-        protected List<T> cachedRecords = null;
+        protected ObjectPool<T> recordPool = new ObjectPool<T>();
+        protected List<T> cachedRecords = new List<T>();
 
         protected IRecorder recorder = null;
 
@@ -23,22 +23,21 @@ namespace DotEngine.PMonitor.Sampler
         {
             Category = category;
             this.recorder = recorder;
-            recordPool = new ObjectPool<T>();
-            cachedRecords = new List<T>();
-
-            Init();
         }
 
-        protected abstract void Init();
+        public virtual void Init()
+        {
+
+        }
 
         public void DoUpdate(float deltaTime)
         {
-            if(SamplingFrameRate>0)
+            if(SamplingFrameRate > 0)
             {
                 ++samplingFrame;
                 if(samplingFrame%SamplingFrameRate == 0)
                 {
-                    cachedRecords.Add(Sample());
+                    Sample();
                     samplingFrame = 0;
                 }
             }
@@ -53,21 +52,19 @@ namespace DotEngine.PMonitor.Sampler
                 }
             }
 
-            Update(deltaTime);
+            InnerUpdate(deltaTime);
         }
 
-        protected virtual void Update(float deltaTime)
+        protected virtual void InnerUpdate(float deltaTime)
         {
 
         }
 
-        public T Sample()
+        public void Sample()
         {
             T data = recordPool.Get();
-
             DoSample(data);
-
-            return data;
+            cachedRecords.Add(data);
         }
 
         protected abstract void DoSample(T data);
@@ -77,8 +74,9 @@ namespace DotEngine.PMonitor.Sampler
             if(cachedRecords.Count>0)
             {
                 T[] records = cachedRecords.ToArray();
-                recorder?.HandleRecord(Category, cachedRecords.ToArray());
                 cachedRecords.Clear();
+
+                recorder?.HandleRecord(Category, cachedRecords.ToArray());
 
                 foreach(var record in records)
                 {

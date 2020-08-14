@@ -17,9 +17,5 @@ namespace DotEngine.PMonitor.Sampler
             data.DeviceName = SystemInfo.deviceName;
             data.DeviceType = SystemInfo.deviceType;
         }
-
-        protected override void Init()
-        {
-        }
     }
 }

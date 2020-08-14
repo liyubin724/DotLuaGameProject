@@ -36,6 +36,8 @@ namespace DotEngine.PMonitor
 
                 if(sampler != null)
                 {
+                    sampler.Init();
+
                     m_SamplerDic.Add(category, sampler);
                     return true;
                 }

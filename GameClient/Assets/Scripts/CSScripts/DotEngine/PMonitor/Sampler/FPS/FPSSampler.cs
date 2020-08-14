@@ -13,7 +13,7 @@ namespace DotEngine.PMonitor.Sampler
         {
         }
 
-        protected override void Update(float deltaTime)
+        protected override void InnerUpdate(float deltaTime)
         {
             deltaTimeList.Add(deltaTime);
         }
@@ -23,11 +23,8 @@ namespace DotEngine.PMonitor.Sampler
             data.DeltaTime = deltaTimeList.Sum() / deltaTimeList.Count;
             data.FrameIndex = Time.frameCount;
             data.FPS = Mathf.RoundToInt(1 / data.DeltaTime);
-        }
 
-        protected override void Init()
-        {
-            
+            deltaTimeList.Clear();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace DotEngine.PMonitor.Sampler
         {
         }
 
-        protected override void Init()
+        public override void Init()
         {
             Application.logMessageReceived += OnMessageReceived;
         }
