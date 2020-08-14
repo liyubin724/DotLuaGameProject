@@ -76,7 +76,7 @@ namespace DotEngine.PMonitor.Sampler
                 T[] records = cachedRecords.ToArray();
                 cachedRecords.Clear();
 
-                recorder?.HandleRecord(Category, cachedRecords.ToArray());
+                recorder?.HandleRecord(Category, records);
 
                 foreach(var record in records)
                 {

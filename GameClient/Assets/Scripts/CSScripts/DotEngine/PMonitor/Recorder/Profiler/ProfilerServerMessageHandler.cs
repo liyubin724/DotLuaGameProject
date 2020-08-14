@@ -1,20 +1,35 @@
 ﻿using DotEngine.Net.Server;
-using DotEngine.Net.Services;
 using Game;
+using System;
+using System.Collections.Generic;
 
 namespace DotEngine.PMonitor.Recorder
 {
-    public static class ProfilerServerMessageHandler
+    public class ProfilerServerMessageHandler : IServerNetMessageHandler
     {
-        public static void RegisterHanlder(ServerNetListener serverNetListener)
+        public ServerNetListener Listener { get; set ; }
+
+        private Dictionary<int, Action<int, int, object>> messageActionDic = new Dictionary<int, Action<int, int, object>>();
+
+        public ProfilerServerMessageHandler()
         {
-            serverNetListener.RegisterMessageHandler(ProfilerClientMessageID.OPEN_SAMPLER_REQUEST, OnOpenSamplerRequest);
-            serverNetListener.RegisterMessageHandler(ProfilerClientMessageID.CLOSE_SAMPLER_REQUEST, OnCloseSamplerRequest);
+            messageActionDic.Add(ProfilerClientMessageID.OPEN_SAMPLER_REQUEST, OnOpenSamplerRequest);
+            messageActionDic.Add(ProfilerClientMessageID.CLOSE_SAMPLER_REQUEST, OnCloseSamplerRequest);
         }
 
-        public static void OnOpenSamplerRequest(int netID,int messageID, object message)
+        public bool OnMessageHanlder(int netID, int messageID, object message)
         {
-            ServerNetService serverNetService = GameFacade.GetInstance().GetService<ServerNetService>(ServerNetService.NAME);
+            if(messageActionDic.TryGetValue(messageID,out var action))
+            {
+                action?.Invoke(netID, messageID, message);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void OnOpenSamplerRequest(int netID,int messageID, object message)
+        {
             MonitorService monitorService = GameFacade.GetInstance().GetService<MonitorService>(MonitorService.NAME);
             
             C2S_OpenSamplerRequest request = (C2S_OpenSamplerRequest)message;
@@ -25,12 +40,11 @@ namespace DotEngine.PMonitor.Recorder
             {
                 result = result
             };
-            serverNetService.GetNet(ProfilerRecorder.SERVER_ID).SendMessage(netID, ProfilerServerMessageID.OPEN_SAMPLER_RESPONSE, response);
+            Listener.SendMessage(netID, ProfilerServerMessageID.OPEN_SAMPLER_RESPONSE, response);
         }
 
-        public static void OnCloseSamplerRequest(int netID,int messageID, object message)
+        public void OnCloseSamplerRequest(int netID,int messageID, object message)
         {
-            ServerNetService serverNetService = GameFacade.GetInstance().GetService<ServerNetService>(ServerNetService.NAME);
             MonitorService monitorService = GameFacade.GetInstance().GetService<MonitorService>(MonitorService.NAME);
 
             C2S_CloseSamplerRequest request = (C2S_CloseSamplerRequest)message;
@@ -41,7 +55,7 @@ namespace DotEngine.PMonitor.Recorder
             {
                 result = result
             };
-            serverNetService.GetNet(ProfilerRecorder.SERVER_ID).SendMessage(netID, ProfilerServerMessageID.CLOSE_SAMPLER_RESPONSE, response);
+            Listener.SendMessage(netID, ProfilerServerMessageID.CLOSE_SAMPLER_RESPONSE, response);
         }
     }
 }

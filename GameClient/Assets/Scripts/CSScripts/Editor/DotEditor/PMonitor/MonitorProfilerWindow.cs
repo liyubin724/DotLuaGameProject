@@ -34,7 +34,7 @@ namespace DotEditor.PMonitor
             {
 
             };
-            ProfilerClientMessageHandler.RegisterHanlder(clientNet);
+            clientNet.RegisterMessageHandler("Handler", new ProfilerClientMessageHandler());
             clientNet.Connect("127.0.0.1", 3302);
         }
 

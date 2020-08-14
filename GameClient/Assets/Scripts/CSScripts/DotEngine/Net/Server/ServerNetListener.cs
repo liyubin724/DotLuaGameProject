@@ -10,7 +10,11 @@ using System.Threading;
 
 namespace DotEngine.Net.Server
 {
-    public delegate void ServerMessageHandler(int netID, int messageID, object message);
+    public interface IServerNetMessageHandler
+    {
+        ServerNetListener Listener { get; set; }
+        bool OnMessageHanlder(int netID, int messageID, object message);
+    }
 
     public class ServerNetMessageData : IObjectPoolItem
     {
@@ -52,8 +56,7 @@ namespace DotEngine.Net.Server
         private object netDicLock = new object();
         private Dictionary<int, ServerNet> netDic = new Dictionary<int, ServerNet>();
 
-        private Dictionary<int, ServerMessageHandler> messageHandlerDic = new Dictionary<int, ServerMessageHandler>();
-
+        private Dictionary<string, IServerNetMessageHandler> messageHandlerDic = new Dictionary<string, IServerNetMessageHandler>();
         private IMessageParser messageParser = null;
         public ServerNetListener(int id,IMessageParser messageParser)
         {
@@ -120,15 +123,16 @@ namespace DotEngine.Net.Server
 
         private void OnMessageReceived(int netID,int messageID,byte[] msgBytes)
         {
-            if (messageHandlerDic.TryGetValue(messageID, out ServerMessageHandler handler))
+            object message = messageParser.DecodeMessage(messageID, msgBytes);
+
+            foreach(var kvp in messageHandlerDic)
             {
-                object message = messageParser.DecodeMessage(messageID, msgBytes);
-                handler.Invoke(netID, messageID, message);
+                if(kvp.Value.OnMessageHanlder(netID,messageID, message))
+                {
+                    return;
+                }
             }
-            else
-            {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::OnMessageReceived->the handler not found.messageID = {messageID}");
-            }
+            LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::OnMessageReceived->the handler not found.messageID = {messageID}");
         }
 
         private void OnNetDisconnected(int id)
@@ -234,27 +238,28 @@ namespace DotEngine.Net.Server
 
         #region Register Message Handler
 
-        public void RegisterMessageHandler(int messageID, ServerMessageHandler handler)
+        public void RegisterMessageHandler(string name, IServerNetMessageHandler handler)
         {
-            if (!messageHandlerDic.ContainsKey(messageID))
+            if (!messageHandlerDic.ContainsKey(name))
             {
-                messageHandlerDic.Add(messageID, handler);
+                handler.Listener = this;
+                messageHandlerDic.Add(name, handler);
             }
             else
             {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::RegisterMessageHandler->the handler has been added.messageID={messageID}");
+                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::RegisterMessageHandler->the handler has been added.name={name}");
             }
         }
 
-        public void UnregisterMessageHandler(int messageID)
+        public void UnregisterMessageHandler(string name)
         {
-            if (messageHandlerDic.ContainsKey(messageID))
+            if (messageHandlerDic.ContainsKey(name))
             {
-                messageHandlerDic.Remove(messageID);
+                messageHandlerDic.Remove(name);
             }
             else
             {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::UnregisterMessageHandler->The handler not found.messageID={messageID}");
+                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::UnregisterMessageHandler->The handler not found.name={name}");
             }
         }
 

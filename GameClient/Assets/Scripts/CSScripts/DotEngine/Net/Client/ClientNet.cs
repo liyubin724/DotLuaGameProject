@@ -6,9 +6,11 @@ namespace DotEngine.Net.Client
 {
     public delegate void ClientNetStateChanged(ClientNet clientNet);
 
-    public delegate void ClientMessageHandler(int messageID, object message);
-
-    public delegate void ClientFinalMessageHandler(int messageID, byte[] msgDatas);
+    public interface IClientNetMessageHandler
+    {
+        ClientNet Net { get; set; }
+        bool OnMessageHanlder(int messageID, object message);
+    }
 
     public partial class ClientNet //: IDispose
     {
@@ -22,10 +24,8 @@ namespace DotEngine.Net.Client
         private ClientNetSession netSession = null;
         private ClientNetSessionState sessionState = ClientNetSessionState.Unavailable;
 
-        private Dictionary<int, ClientMessageHandler> messageHandlerDic = new Dictionary<int, ClientMessageHandler>();
-
-        public ClientFinalMessageHandler FinalMessageHandler { get; set; } = null;
-
+        private Dictionary<string, IClientNetMessageHandler> messageHandlerDic = new Dictionary<string, IClientNetMessageHandler>();
+        
         public event ClientNetStateChanged NetConnecting;
         public event ClientNetStateChanged NetConnectedSuccess;
         public event ClientNetStateChanged NetConnectedFailed;
@@ -121,22 +121,16 @@ namespace DotEngine.Net.Client
 
         private void OnMessageReceived(int messageID, byte[] datas)
         {
-            if(!messageHandlerDic.TryGetValue(messageID, out ClientMessageHandler messageHandler))
+            object message = messageParser.DecodeMessage(messageID, datas);
+
+            foreach (var kvp in messageHandlerDic)
             {
-                if (FinalMessageHandler != null)
+                if(kvp.Value.OnMessageHanlder(messageID, message))
                 {
-                    LogUtil.LogWarning(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageReceived->the handler not found.messageID = {messageID}");
-                    FinalMessageHandler.Invoke(messageID, datas);
+                    return;
                 }
-                else
-                {
-                    LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageReceived->the handler not found.messageID = {messageID}");
-                }
-            }else
-            {
-                object message = messageParser.DecodeMessage(messageID, datas);
-                messageHandler.Invoke(messageID, message);
             }
+            LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageReceived->the handler not found.messageID = {messageID}");
         }
 
         #region Send Data
@@ -170,27 +164,28 @@ namespace DotEngine.Net.Client
 
         #region Register Message Handler
 
-        public void RegisterMessageHandler(int messageID, ClientMessageHandler handler)
+        public void RegisterMessageHandler(string name, IClientNetMessageHandler handler)
         {
-            if (!messageHandlerDic.ContainsKey(messageID))
+            if (!messageHandlerDic.ContainsKey(name))
             {
-                messageHandlerDic.Add(messageID, handler);
+                handler.Net = this;
+                messageHandlerDic.Add(name, handler);
             }
             else
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::RegisterMessageHandler->the handler has been added.messageID={messageID}");
+                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::RegisterMessageHandler->the handler has been added.name={name}");
             }
         }
 
-        public void UnregisterMessageHandler(int messageID)
+        public void UnregisterMessageHandler(string name)
         {
-            if (messageHandlerDic.ContainsKey(messageID))
+            if (messageHandlerDic.ContainsKey(name))
             {
-                messageHandlerDic.Remove(messageID);
+                messageHandlerDic.Remove(name);
             }
             else
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::UnregisterMessageHandler->The handler not found.messageID={messageID}");
+                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::UnregisterMessageHandler->The handler not found.name={name}");
             }
         }
 

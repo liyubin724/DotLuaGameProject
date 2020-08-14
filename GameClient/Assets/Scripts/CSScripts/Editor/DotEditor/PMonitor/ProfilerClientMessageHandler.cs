@@ -1,26 +1,45 @@
 ﻿using DotEngine.Log;
 using DotEngine.Net.Client;
 using DotEngine.PMonitor.Recorder;
+using System;
+using System.Collections.Generic;
 
 namespace DotEditor.PMonitor
 {
-    public static class ProfilerClientMessageHandler
+    public class ProfilerClientMessageHandler : IClientNetMessageHandler
     {
-        public static void RegisterHanlder(ClientNet clientNet)
+        public ClientNet Net { get; set; }
+
+        private Dictionary<int, Action<int, object>> messageActionDic = new Dictionary<int, Action<int, object>>();
+
+        public ProfilerClientMessageHandler()
         {
-            clientNet.RegisterMessageHandler(ProfilerServerMessageID.OPEN_SAMPLER_RESPONSE, OnOpenSamplerResponse);
-            clientNet.RegisterMessageHandler(ProfilerServerMessageID.CLOSE_SAMPLER_RESPONSE, OnCloseSamplerResponse);
+            messageActionDic.Add(ProfilerServerMessageID.OPEN_SAMPLER_RESPONSE, OnOpenSamplerResponse);
+            messageActionDic.Add(ProfilerServerMessageID.CLOSE_SAMPLER_RESPONSE, OnCloseSamplerResponse);
         }
 
-        public static void OnOpenSamplerResponse(int messageID, object message)
+        public bool OnMessageHanlder(int messageID, object message)
+        {
+            if (messageActionDic.TryGetValue(messageID, out var action))
+            {
+                action?.Invoke(messageID, message);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void OnOpenSamplerResponse(int messageID, object message)
         {
             S2C_OpenSamplerResponse response = (S2C_OpenSamplerResponse)message;
             LogUtil.LogDebug("Profiler", "Result = " + response.result);
         }
 
-        public static void OnCloseSamplerResponse(int messageID, object message)
+        public void OnCloseSamplerResponse(int messageID, object message)
         {
 
         }
+
+        
     }
 }

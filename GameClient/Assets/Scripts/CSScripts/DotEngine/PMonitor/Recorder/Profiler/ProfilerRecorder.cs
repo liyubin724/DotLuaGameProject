@@ -16,7 +16,7 @@ namespace DotEngine.PMonitor.Recorder
         public override void Init()
         {
             m_NetListener = new ServerNetListener(SERVER_ID, new ProfilerServerMessageParser());
-            ProfilerServerMessageHandler.RegisterHanlder(m_NetListener);
+            m_NetListener.RegisterMessageHandler("Handler", new ProfilerServerMessageHandler());
             m_NetListener.Startup("127.0.0.1", SERVER_PORT,10);
         }
 
