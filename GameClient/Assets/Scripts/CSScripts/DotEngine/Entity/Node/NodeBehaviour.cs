@@ -11,31 +11,29 @@ namespace DotEngine.Entity.Node
 
         private Dictionary<NodeType, Dictionary<string, NodeData>> nodeDic = new Dictionary<NodeType, Dictionary<string, NodeData>>();
 
-        public NodeData GetNode(NodeType nodeType, string name)
+        private NodeData GetNode(NodeType nodeType, string name)
         {
-            if (nodeDic.TryGetValue(nodeType, out Dictionary<string, NodeData> dataDic))
+            if (nodeDic.TryGetValue(nodeType, out Dictionary<string, NodeData> dataDic) 
+                && dataDic.TryGetValue(name, out NodeData data))
             {
-                if (dataDic.TryGetValue(name, out NodeData data))
-                {
-                    return data;
-                }
+                return data;
             }
             return null;
         }
 
-        public NodeData GetBindNode(string name)
+        public Transform GetBindTransform(string name)
         {
-            return GetNode(NodeType.BindNode, name);
+            return GetNode(NodeType.BindNode, name)?.transform;
         }
 
-        public NodeData GetBoneNode(string name)
+        public Transform GetBoneTransform(string name)
         {
-            return GetNode(NodeType.BoneNode, name);
+            return GetNode(NodeType.BoneNode, name)?.transform;
         }
 
-        public NodeData GetSMRendererNode(string name)
+        public SkinnedMeshRenderer GetSMRenderer(string name)
         {
-            return GetNode(NodeType.SMRendererNode, name);
+            return GetNode(NodeType.SMRendererNode, name)?.renderer;
         }
 
         public Transform[] GetBoneTransformByNames(string[] names)
@@ -46,7 +44,7 @@ namespace DotEngine.Entity.Node
             Transform[] transforms = new Transform[names.Length];
             for (int i = 0; i < names.Length; i++)
             {
-                transforms[i] = GetNode(NodeType.BoneNode, names[i])?.transform;
+                transforms[i] = GetBoneTransform(names[i]);
             }
             return transforms;
         }
