@@ -109,9 +109,9 @@ namespace DotEditor.Entity.Avatar
 
             AvatarPartData partData = ScriptableObject.CreateInstance<AvatarPartData>();
             partData.name = data.name;
-            partData.partType = data.partType;
+            partData.partName = data.partName;
 
-            List<AvatarPrefabPartData> prefabPartDatas = new List<AvatarPrefabPartData>();
+            List<PrefabPartData> prefabPartDatas = new List<PrefabPartData>();
             foreach (var prefabCreatorData in data.prefabDatas)
             {
                 if (string.IsNullOrEmpty(prefabCreatorData.bindNodeName))
@@ -133,14 +133,14 @@ namespace DotEditor.Entity.Avatar
                     return null;
                 }
 
-                AvatarPrefabPartData prefabPartData = new AvatarPrefabPartData();
-                prefabPartData.bindNodeName = prefabCreatorData.bindNodeName;
+                PrefabPartData prefabPartData = new PrefabPartData();
+                prefabPartData.bindName = prefabCreatorData.bindNodeName;
                 prefabPartData.prefabGO = prefabCreatorData.bindPrefab;
                 prefabPartDatas.Add(prefabPartData);
             }
             partData.prefabParts = prefabPartDatas.ToArray();
 
-            List<AvatarRendererPartData> rendererPartDatas = new List<AvatarRendererPartData>();
+            List<RendererPartData> rendererPartDatas = new List<RendererPartData>();
             foreach (var rendererCreatorData in data.rendererDatas)
             {
                 if (rendererCreatorData.fbx == null)
@@ -159,8 +159,8 @@ namespace DotEditor.Entity.Avatar
                 SkinnedMeshRenderer[] renderers = rendererCreatorData.fbx.GetComponentsInChildren<SkinnedMeshRenderer>(true);
                 foreach (var renderer in renderers)
                 {
-                    AvatarRendererPartData rendererPartData = new AvatarRendererPartData();
-                    rendererPartData.rendererNodeName = renderer.name;
+                    RendererPartData rendererPartData = new RendererPartData();
+                    rendererPartData.rendererName = renderer.name;
                     rendererPartData.rootBoneName = renderer.rootBone.name;
                     rendererPartData.boneNames = (from bone in renderer.bones select bone.name).ToArray();
                     rendererPartData.materials = renderer.sharedMaterials;

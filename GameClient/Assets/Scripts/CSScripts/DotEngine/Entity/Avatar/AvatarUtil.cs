@@ -6,17 +6,17 @@ namespace DotEngine.Entity.Avatar
 {
     public static class AvatarUtil
     {
-        public static AvatarPartInstance AssembleAvatarPart(NodeBehaviour nodeBehaviour, AvatarPartData partData)
+        public static AvatarPartInstance AssemblePart(NodeBehaviour nodeBehaviour, AvatarPartData partData)
         {
             AvatarPartInstance partInstance = new AvatarPartInstance();
-            partInstance.partType = partData.partType;
+            partInstance.partName = partData.partName;
             partInstance.gameObjects = new GameObject[partData.prefabParts.Length];
             for (int i = 0; i < partData.prefabParts.Length; ++i)
             {
                 var prefabData = partData.prefabParts[i];
 
                 GameObject bindGameObject = GameObject.Instantiate(prefabData.prefabGO);
-                Transform bindNodeTran = nodeBehaviour.GetBindTransform(prefabData.bindNodeName);
+                Transform bindNodeTran = nodeBehaviour.GetBindTransform(prefabData.bindName);
                 bindGameObject.transform.SetParent(bindNodeTran, false);
 
                 partInstance.gameObjects[i] = bindGameObject;
@@ -27,7 +27,7 @@ namespace DotEngine.Entity.Avatar
             {
                 var rendererData = partData.rendererParts[i];
 
-                SkinnedMeshRenderer renderer = nodeBehaviour.GetSMRenderer(rendererData.rendererNodeName);
+                SkinnedMeshRenderer renderer = nodeBehaviour.GetSMRenderer(rendererData.rendererName);
                 if (renderer != null)
                 {
                     SkinnedMeshRenderer smRenderer = renderer;
@@ -40,34 +40,37 @@ namespace DotEngine.Entity.Avatar
                 }
                 else
                 {
-                    LogUtil.LogError("AvatarUtil", $"AvatarUtil::AssembleAvatarPart->nodeData not found.rendererNodeName={rendererData.rendererNodeName}");
+                    LogUtil.LogError("AvatarUtil", $"AvatarUtil::AssembleAvatarPart->nodeData not found.rendererNodeName={rendererData.rendererName}");
                 }
             }
 
             return partInstance;
         }
 
-        public static void DisassembleAvatarPart(AvatarPartInstance partInstance, bool isInEditorMode = false)
+        public static void DisassemblePart(AvatarPartInstance partInstance)
         {
             foreach (var go in partInstance.gameObjects)
             {
-                if (isInEditorMode)
+#if UNITY_EDITOR
+                if(Application.isPlaying)
+                {
+                    GameObject.Destroy(go);
+                }else
                 {
                     GameObject.DestroyImmediate(go);
                 }
-                else
-                {
-                    GameObject.Destroy(go);
-                }
+#else
+                GameObject.Destroy(go);
+#endif
             }
             foreach (var smr in partInstance.renderers)
             {
                 if (smr != null)
                 {
-                    smr.sharedMaterials = new Material[0];
                     smr.rootBone = null;
-                    smr.sharedMesh = null;
                     smr.bones = new Transform[0];
+                    smr.sharedMesh = null;
+                    smr.sharedMaterials = new Material[0];
                 }
             }
         }

@@ -11,7 +11,7 @@ namespace DotEditor.Entity.Avatar
         private GameObject avatarInstance = null;
         private NodeBehaviour nodeBehaviour = null;
 
-        private Dictionary<AvatarPartType, AvatarPartInstance> partInstanceDic = new Dictionary<AvatarPartType, AvatarPartInstance>();
+        private Dictionary<string, AvatarPartInstance> partInstanceDic = new Dictionary<string, AvatarPartInstance>();
 
         public AvatarPreviewer()
         {
@@ -60,19 +60,19 @@ namespace DotEditor.Entity.Avatar
             AvatarPartData partData = AssetDatabase.LoadAssetAtPath<AvatarPartData>(partAssetPath);
             if (partData != null)
             {
-                UnloadPart(partData.partType);
+                UnloadPart(partData.partName);
 
-                partInstanceDic.Add(partData.partType, AvatarUtil.AssembleAvatarPart(nodeBehaviour, partData));
-                AvatarUtil.AssembleAvatarPart(nodeBehaviour, partData);
+                partInstanceDic.Add(partData.partName, AvatarUtil.AssemblePart(nodeBehaviour, partData));
+                AvatarUtil.AssemblePart(nodeBehaviour, partData);
             }
         }
 
-        public void UnloadPart(AvatarPartType partType)
+        public void UnloadPart(string partName)
         {
-            if (avatarInstance != null && partInstanceDic.TryGetValue(partType, out AvatarPartInstance partInstance))
+            if (avatarInstance != null && partInstanceDic.TryGetValue(partName, out AvatarPartInstance partInstance))
             {
-                AvatarUtil.DisassembleAvatarPart(partInstance, true);
-                partInstanceDic.Remove(partType);
+                AvatarUtil.DisassemblePart(partInstance);
+                partInstanceDic.Remove(partName);
             }
         }
 

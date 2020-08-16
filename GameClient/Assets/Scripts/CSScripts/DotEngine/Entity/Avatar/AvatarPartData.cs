@@ -1,26 +1,22 @@
 ﻿using DotEngine.NativeDrawer.Property;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DotEngine.Entity.Avatar
 {
     public class AvatarPartData : ScriptableObject
     {
-        [EnumButton]
-        public AvatarPartType partType = AvatarPartType.Feet;
         [Readonly]
-        public AvatarRendererPartData[] rendererParts = new AvatarRendererPartData[0];
+        public string partName = string.Empty;
         [Readonly]
-        public AvatarPrefabPartData[] prefabParts = new AvatarPrefabPartData[0];
+        public RendererPartData[] rendererParts = new RendererPartData[0];
+        [Readonly]
+        public PrefabPartData[] prefabParts = new PrefabPartData[0];
 
         [Serializable]
-        public class AvatarRendererPartData
+        public class RendererPartData
         {
-            public string rendererNodeName = "";
+            public string rendererName = "";
 
             public string rootBoneName = "";
             public string[] boneNames = new string[0];
@@ -30,9 +26,9 @@ namespace DotEngine.Entity.Avatar
         }
 
         [Serializable]
-        public class AvatarPrefabPartData
+        public class PrefabPartData
         {
-            public string bindNodeName = "";
+            public string bindName = "";
             public GameObject prefabGO = null;
         }
     }

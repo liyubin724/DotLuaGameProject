@@ -45,8 +45,7 @@ namespace DotEditor.Entity.Avatar
         public class AvatarPartCreatorData
         {
             public string name = "";
-            [EnumButton]
-            public AvatarPartType partType = AvatarPartType.Body;
+            public string partName = string.Empty;
 
             public List<AvatarPartSMRendererCreatorData> rendererDatas = new List<AvatarPartSMRendererCreatorData>();
             public List<AvatarPartPrefabCreatorData> prefabDatas = new List<AvatarPartPrefabCreatorData>();

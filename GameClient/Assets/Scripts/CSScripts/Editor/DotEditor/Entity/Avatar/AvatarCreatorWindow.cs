@@ -16,7 +16,7 @@ namespace DotEditor.Entity.Avatar
         [MenuItem("Game/Entity/Avatar Creator")]
         static void ShowWin()
         {
-            var win = EditorWindow.GetWindow<AvatarCreatorWindow>();
+            var win = GetWindow<AvatarCreatorWindow>();
             win.titleContent = new GUIContent("Avatar Creator");
             win.Show();
         }
