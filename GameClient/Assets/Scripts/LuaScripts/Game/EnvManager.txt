@@ -15,17 +15,6 @@ EnvManager =
     end
 )
 
-function EnvManager.GetInstance()
-    local envMgr = Game.EnvMgr
-    if not envMgr then
-        envMgr = EnvManager()
-
-        Game.EnvMgr = envMgr
-    end
-
-    return envMgr
-end
-
 function EnvManager:AddUpdateDelegate(receiver, func)
     self.updateDelegate = self.updateDelegate + {receiver, func}
 end
@@ -43,15 +32,15 @@ function EnvManager:DoStartup()
     -- controller:DoStart()
     -- controller:LoadView("TestText")
 
-    local profiler = require("perf.profiler")
-    profiler.start()
+    --local profiler = require("perf.profiler")
+    --profiler.start()
 
     require("Game/Test/UI/View/LoginPanelController")
     local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",LoginPanelController,UIPanelLayer.Default,UIPanelMode.Append)
     loginPanelController:LoadView("login_panel")
 
-    DebugLog.Info("Profiler", profiler.report())
-    profiler.stop()
+    --DebugLog.Info("Profiler", profiler.report())
+    --profiler.stop()
 
     local eventMgr = Game.EventMgr
     eventMgr:RegisterListener(111,self,EnvManager.OnMessage,"EventTest")
@@ -63,6 +52,14 @@ function EnvManager:DoStartup()
     DebugLog.Info("Timer Test", tostring(self.timerHandler))
     self.timerIndex = 0
 
+    local poolMgr = Game.PoolMgr
+    local poolGroup = poolMgr:CreateGroup("TestGroup")
+
+    local emptyGO = CS.UnityEngine.GameObject("entity")
+    local pool = poolGroup:CreatePool("entity",GameObjectPoolTemplateType.RuntimeInstance,emptyGO)
+    pool:SetPreload(30,2)
+    local entity = pool:GetItem()
+    entity.transform:SetParent(nil,false)
 end
 
 function EnvManager:OnMessage(eventID,userdata)

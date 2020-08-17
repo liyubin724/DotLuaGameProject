@@ -15,17 +15,6 @@ AssetManager =
     end
 )
 
-function AssetManager.GetInstance()
-    local assetMgr = Game.AssetMgr
-    if not assetMgr then
-        assetMgr = AssetManager()
-
-        Game.AssetMgr = assetMgr
-    end
-
-    return assetMgr
-end
-
 ----public----
 -- 调整同时可以加载资源的数量
 -- @param count 可以加载的最大数量
@@ -82,6 +71,9 @@ function AssetManager:InstanceAssetAsync(address,receiver,progressFunc,completeF
     return assetIndex
 end
 
+function AssetManager:InstantiateAsset(address,asset)
+    return self:GetAssetService():InstantiateAsset(address,asset)
+end
 
 ----public----
 -- 中止指定的资源的加载

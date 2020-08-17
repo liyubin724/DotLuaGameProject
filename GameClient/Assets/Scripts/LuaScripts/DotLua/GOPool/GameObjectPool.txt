@@ -1,0 +1,226 @@
+require('DotLua/Class')
+
+local DebugLog = DebugLog
+local TimerMgr = Game.TimerMgr
+local AssetMgr = Game.AssetMgr
+local GameObject = CS.UnityEngine.GameObject
+local math = math
+
+----public----
+-- 缓存池模板对象的类型
+-- 不同类型的模板对象在使用时的处理方式上略有不同
+GameObjectPoolTemplateType = {
+    Prefab = 0, -- 使用Prefab做为模板对象
+    PrefabInstance = 1, -- 使用Prefab的实例做为模板对象
+    RuntimeInstance = 2 -- 使用运行时创建的GameObject对象作为模板对象
+}
+
+----private----
+-- GameObject对象的缓存池
+-- @param name 缓存池的名称，一般情况下会使用资源的路径或者唯一地址做为名称
+-- @param parentTransform 上层Transform结点
+-- @param templateType 模板对象的类型
+-- @param templateGameObject 模板对象，类型为GameObject
+GameObjectPool =
+    Class(
+    function(self, name, parentTransform, templateType, templateGameObject)
+        self.name = name
+        self.parentTransform = parentTransform
+
+        self.templateType = templateType
+        self.templateGameObject = templateGameObject
+        if self.templateType ~= GameObjectPoolTemplateType.Prefab then
+            self.templateGameObject:SetActive(false)
+            self.templateGameObject.transform:SetParent(self.parentTransform, false)
+        end
+
+        self.unusedItems = {}
+
+        self.preloadTimerHandler = nil
+
+        self.preloadTotalAmount = 0
+        self.preloadOnceAmount = 1
+
+        self.cullTimerHandler = nil
+
+        self.cullOnceAmount = 0
+        self.cullDelayTime = 60
+
+        self.limitMaxAmount = 0
+        self.limitMinAmount = 0
+    end
+)
+
+----public----
+-- 设置预加载，为了保证初始化的效率问题，可以设置一帧中加载的数量
+-- @param totalAmount 预加载的总的数量
+-- @param onceAmount 一帧中加载的数量,如果值小于等于0，则会一次性加载全部
+-- @return void
+function GameObjectPool:SetPreload(totalAmount, onceAmount)
+    self.preloadTotalAmount = totalAmount
+    self.preloadOnceAmount = onceAmount
+
+    if self.preloadTotalAmount > 0 then
+        self.preloadTimerHandler =
+            TimerMgr:AddTickTimer(self, GameObjectPool.OnPreloadTimerInterval, 'GameObjectPool-Preload')
+    end
+end
+
+----private----
+-- 响应定时器的回调，用于分帧初始化加载的数量
+function GameObjectPool:OnPreloadTimerInterval()
+    if self.preloadTotalAmount > 0 then
+        local amount = self.preloadTotalAmount
+        if self.preloadOnceAmount and self.preloadOnceAmount > 0 then
+            amount = math.min(amount, self.preloadOnceAmount)
+        end
+
+        for i = 1, amount do
+            local item = self:CreateItem()
+            if item then
+                item:SetActive(false)
+                item.transform:SetParent(self.parentTransform, false)
+
+                table.insert(self.unusedItems, item)
+            end
+        end
+
+        self.preloadTotalAmount = self.preloadTotalAmount - amount
+    else
+        TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        self.preloadTimerHandler = nil
+    end
+end
+
+----private----
+-- 创建新的Item对象
+-- @return GameObject
+function GameObjectPool:CreateItem()
+    local item = nil
+    if self.templateType == GameObjectPoolTemplateType.RuntimeInstance then
+        item = GameObject.Instantiate(self.templateGameObject)
+    else
+        item = AssetMgr:InstantiateAsset(self.name, self.templateGameObject)
+    end
+
+    return item
+end
+
+----public----
+-- 设置缓存池裁剪规则
+-- @param onceAmount 一次性裁剪的数量
+-- @param delayTime 设置裁剪规则多久执行一次（单位秒）,如果小于等于0表示不裁剪
+-- @return void
+function GameObjectPool:SetCull(onceAmount, delayTime)
+    self.cullOnceAmount = onceAmount or 0
+    if delayTime and delayTime > 0 then
+        self.cullDelayTime = delayTime
+    else
+        self.cullDelayTime = 0
+    end
+
+    if self.cullDelayTime > 0 then
+        if self.cullTimerHandler then
+            TimerMgr:RemoveTimer(self.cullTimerHandler)
+            self.cullTimerHandler = nil
+        end
+
+        self.cullTimerHandler =
+            TimerMgr:AddIntervalTimer(self.cullDelayTime, self, GameObjectPool.OnCullTimerInterval, nil)
+    end
+end
+
+----private----
+-- 响应定时器的回调，用于裁剪缓存池中的对象
+function GameObjectPool:OnCullTimerInterval()
+    if #self.unusedItems <= self.limitMinAmount then
+        return
+    end
+
+    local cullAmount = #(self.unusedItems) - self.limitMinAmount
+    if self.cullOnceAmount > 0 then
+        cullAmount = math.min(cullAmount, self.cullOnceAmount)
+    end
+
+    for i = 1, cullAmount do
+        table.remove(self.unusedItems, 1)
+    end
+end
+
+----public----
+-- 控制缓存池中的对象的数量
+-- @param minAmout 缓存池中的最小数量，如果此值大于0，则裁剪后剩余的对象数量不会小于指定的值
+-- @param maxAmount 缓存池中最大数量，如果回收时剩余对象的数量超出此值将会立即销毁指定的对象
+-- @return void
+function GameObjectPool:SetLimit(minAmout, maxAmount)
+    self.limitMinAmount = minAmout
+    self.limitMaxAmount = maxAmount
+end
+
+----public----
+-- 从缓存池中获取一个对象
+-- @param isSetActive 是否激活
+-- @return GameObject
+function GameObjectPool:GetItem(isSetActive)
+    isSetActive = isSetActive or true
+
+    local item = nil
+    if #(self.unusedItems) > 0 then
+        item = self.unusedItems[1]
+
+        table.remove(self.unusedItems, 1)
+    else
+        item = self:CreateItem()
+    end
+
+    if item then
+        item:SetActive(isSetActive)
+    end
+
+    return item
+end
+
+----public----
+-- 将不再使用的对象回收到缓存池中
+-- @param item GameObject的对象
+-- @return void
+function GameObjectPool:ReleaseItem(item)
+    if not item then
+        return
+    end
+
+    if #(self.unusedItems) >= self.limitMaxAmount then
+        GameObject.Destroy(item)
+        return
+    end
+
+    item:SetActive(false)
+    item.transform:SetParent(self.parentTransform, false)
+
+    table.insert(self.unusedItems, item)
+end
+
+----internal----
+-- 销毁缓存池,由内部调用管理，只需要从对应的分组中将缓存池删除即可
+function GameObjectPool:Dispose()
+    for i = #(self.unusedItems), 1, -1 do
+        GameObject.Destroy(self.unusedItems[i])
+    end
+    self.unusedItems = nil
+
+    if self.templateType ~= GameObjectPoolTemplateType.Prefab then
+        GameObject.Destroy(self.templateGameObject)
+    end
+    self.templateGameObject = nil
+
+    if self.cullTimerHandler then
+        TimerMgr:RemoveTimer(self.cullTimerHandler)
+        self.cullTimerHandler = nil
+    end
+
+    if self.preloadTimerHandler then
+        TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        self.preloadTimerHandler = nil
+    end
+    self.parentTransform = nil
+end

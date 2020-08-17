@@ -13,7 +13,7 @@
             "luaFileExtension": "txt",
             "connectionPort": 8818,
             "pathCaseSensitivity": true,
-            "stopOnEntry": true,
+            "stopOnEntry": false,
             "useCHook": true,
             "autoPathMode": true,
             "logLevel": 1
@@ -31,7 +31,7 @@
             "packagePath": [],
             "luaFileExtension": "",
             "connectionPort": 8818,
-            "stopOnEntry": true,
+            "stopOnEntry": false,
             "useCHook": true,
             "logLevel": 1
         }

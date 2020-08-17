@@ -1,29 +1,12 @@
 require('DotLua/Class')
 
-local Game = Game
-
 ConfigManager =
     Class(
-    function(self)
+    function(self,rootPath)
         self.configs = {}
-        self.rootPath = nil
+        self.rootPath = rootPath
     end
 )
-
-function ConfigManager.GetInstance()
-    local configMgr = Game.ConfigMgr
-    if not configMgr then
-        configMgr = ConfigManager()
-
-        Game.ConfigMgr = configMgr
-    end
-
-    return configMgr
-end
-
-function ConfigManager:SetRootPath(rootPath)
-    self.rootPath = rootPath
-end
 
 ----public----
 -- 加载指定名称的配置表，如果表已经存在则直接返回，否则将进行数据加载
