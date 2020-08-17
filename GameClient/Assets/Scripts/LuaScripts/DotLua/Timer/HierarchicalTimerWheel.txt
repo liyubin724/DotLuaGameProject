@@ -6,7 +6,6 @@ require('DotLua/Timer/TimerHandler')
 require('DotLua/Delegate')
 
 local DebugLog = DebugLog
-local Game = Game
 
 ----private----
 -- 多层时间轮定时器
@@ -33,17 +32,6 @@ HierarchicalTimerWheel =
         self.elapseInMS = 0
     end
 )
-
-function HierarchicalTimerWheel.GetInstance()
-    local timerMgr = Game.TimerMgr
-    if not timerMgr then
-        timerMgr = HierarchicalTimerWheel()
-
-        Game.TimerMgr = timerMgr
-    end
-
-    return timerMgr
-end
 
 ----private----
 -- 创建一层的时间轮
@@ -85,6 +73,10 @@ end
 -- @return TaskHandler 返回定时器唯一的标识（中止时使用)
 function HierarchicalTimerWheel:AddIntervalTimer(intervalInSec, receiver, intervalFunc, userdata)
     return self:AddTimer(intervalInSec, 0, receiver, intervalFunc, nil, userdata)
+end
+
+function HierarchicalTimerWheel:AddTickTimer(receiver,intervalFunc)
+    return self:AddTimer(self.wheel:GetTickInMS() * 0.001,0,receiver,intervalFunc,nil,nil)
 end
 
 ----public----

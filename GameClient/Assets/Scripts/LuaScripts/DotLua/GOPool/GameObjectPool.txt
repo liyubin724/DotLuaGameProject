@@ -1,0 +1,175 @@
+require("DotLua/Class")
+
+local DebugLog = DebugLog
+local TimerMgr = Game.TimerMgr
+local AssetMgr = Game.AssetMgr
+local GameObject = CS.UnityEngine.GameObject
+local math = math
+
+GameObjectPoolTemplateType = {
+    Prefab = 0,
+    PrefabInstance = 1,
+    RuntimeInstance = 2
+}
+
+GameObjectPool =
+    Class(
+    function(self, name, parentTransform, templateType, templateGameObject)
+        self.name = name
+        self.parentTransform = parentTransform
+
+        self.templateType = templateType
+        self.templateGameObject = templateGameObject
+        if self.templateType ~= GameObjectPoolTemplateType.Prefab then
+            self.templateGameObject:SetActive(false)
+            self.templateGameObject.transform:SetParent(self.parentTransform, false)
+        end
+
+        self.unusedItems = {}
+
+        self.preloadTimerHandler = nil
+
+        self.preloadTotalAmount = 0
+        self.preloadOnceAmount = 1
+
+        self.cullTimerHandler = nil
+
+        self.cullOnceAmount = 0
+        self.cullDelayTime = 60
+
+        self.limitMaxAmount = 0
+        self.limitMinAmount = 0
+    end
+)
+
+function GameObjectPool:SetPreload(totalAmount, onceAmount)
+    self.preloadTotalAmount = totalAmount or 0
+    self.preloadOnceAmount = onceAmount or 1
+
+    if self.preloadTotalAmount > 0 then
+        self.preloadTimerHandler = TimerMgr:AddTickTimer(self, GameObjectPool.OnPreloadTimerInterval)
+    end
+end
+
+function GameObjectPool:OnPreloadTimerInterval()
+    if self.preloadTotalAmount > 0 then
+        local amount = self.preloadOnceAmount
+        if amount > self.preloadTotalAmount then
+            amount = self.preloadTotalAmount
+        end
+
+        for i = 1, amount do
+            local item = self:CreateItem()
+            if item then
+                table.insert(self.unusedItems, item)
+            end
+        end
+
+        self.preloadTotalAmount = self.preloadTotalAmount - amount
+    else
+        TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        self.preloadTimerHandler = nil
+    end
+end
+
+function GameObjectPool:CreateItem()
+    local item = nil
+    if self.templateType == GameObjectPoolTemplateType.RuntimeInstance then
+        item = GameObject.Instantiate(self.templateGameObject)
+    else
+        item = AssetMgr:InstantiateAsset(self.name, self.templateGameObject)
+    end
+    return item
+end
+
+function GameObjectPool:SetCull(onceAmount, delayTime)
+    self.cullOnceAmount = onceAmount or 0
+    if delayTime and delayTime > 0 then
+        self.cullDelayTime = delayTime
+    else
+        self.cullDelayTime = 0
+    end
+
+    if self.cullDelayTime > 0 then
+        self.cullTimerHandler =
+            TimerMgr:AddIntervalTimer(self.cullDelayTime, self, GameObjectPool.OnCullTimerInterval, nil)
+    end
+end
+
+function GameObjectPool:OnCullTimerInterval()
+    if #self.unusedItems <= self.limitMinAmount then
+        return
+    end
+
+    local cullAmount = #(self.unusedItems) - self.limitMinAmount
+    if self.cullOnceAmount > 0 then
+        cullAmount = math.min(cullAmount, self.cullOnceAmount)
+    end
+
+    for i = 1, cullAmount do
+        table.remove(self.unusedItems, 1)
+    end
+end
+
+function GameObjectPool:SetLimit(minAmout, maxAmount)
+    self.limitMinAmount = minAmout
+    self.limitMaxAmount = maxAmount
+end
+
+function GameObjectPool:GetItem(isSetActive)
+    isSetActive = isSetActive or true
+
+    local item = nil
+    if #(self.unusedItems) > 0 then
+        item = self.unusedItems[1]
+
+        table.remove(self.unusedItems, 1)
+    else
+        item = self:CreateItem()
+    end
+
+    if item then
+        item:SetActive(isSetActive)
+    end
+
+    return item
+end
+
+function GameObjectPool:ReleaseItem(item)
+    if not item then
+        return
+    end
+
+    if #(self.unusedItems) >= self.limitMaxAmount then
+        GameObject.Destroy(item)
+        return
+    end
+
+    item:SetActive(false)
+    item.transform:SetParent(self.parentTransform, false)
+
+    table.insert(self.unusedItems, item)
+end
+
+function GameObjectPool:Dispose()
+    for i = #(self.unusedItems), 1, -1 do
+        GameObject.Destroy(self.unusedItems[i])
+    end
+    self.unusedItems = nil
+
+    if self.templateType ~= GameObjectPoolTemplateType.Prefab then
+        GameObject.Destroy(self.templateGameObject)
+    end
+    self.templateGameObject = nil
+
+    if self.cullTimerHandler then
+        TimerMgr:RemoveTimer(self.cullTimerHandler)
+        self.cullTimerHandler = nil
+    end
+
+    if self.preloadTimerHandler then
+        TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        self.preloadTimerHandler = nil
+    end
+    self.parentTransform = nil
+end

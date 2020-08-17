@@ -1,0 +1,46 @@
+require("DotLua/Class")
+require("DotLua/GOPool/GameObjectPoolGroup")
+
+local DontDestroyHandler = CS.DotEngine.Utilities.DontDestroyHandler
+
+GameObjectPoolManager =
+    Class(
+    function(self)
+        self.groups = {}
+        self.rootTransform = DontDestroyHandler.CreateTransform("LuaPoolRoot")
+    end
+)
+
+function GameObjectPoolManager:HasGroup(name)
+    return self.groups[name] ~= nil
+end
+
+function GameObjectPoolManager:GetGroup(name)
+    return self.groups[name]
+end
+
+function GameObjectPoolManager:CreateGroup(name)
+    local group = self.groups[name]
+
+    if not group then
+        group = GameObjectPoolGroup(name, self.rootTransform)
+        self.groups[name] = group
+    end
+
+    return group
+end
+
+function GameObjectPoolManager:DeleteGroup(name)
+    local group = self:GetGroup(name)
+    if group then
+        group:Dispose()
+        self.groups[name] = nil
+    end
+end
+
+function GameObjectPoolManager:ClearAll()
+    for _, group in pairs(self.groups) do
+        group:Dispose()
+    end
+    self.groups = {}
+end

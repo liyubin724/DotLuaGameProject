@@ -1,0 +1,69 @@
+require("DotLua/Class")
+require("DotLua/GOPool/GameObjectPool")
+
+local GameObject = CS.UnityEngine.GameObject
+local isDebug = Game.IsDebug
+
+GameObjectPoolGroup =
+    Class(
+    function(self, name, pTransform)
+        self.name = name
+        self.pools = {}
+        self.rootTransform = pTransform
+        self.groupTransform = nil
+
+        if isDebug then
+            self.groupTransform = GameObject(name).transform
+            self.groupTransform:SetParent(self.rootTransform, false)
+        end
+    end
+)
+
+function GameObjectPoolGroup:GetTransform()
+    if self.groupTransform then
+        return self.groupTransform
+    end
+    return self.rootTransform
+end
+
+function GameObjectPoolGroup:HasPool(name)
+    return self.pools[name] ~= nil
+end
+
+function GameObjectPoolGroup:GetPool(name)
+    return self.pools[name]
+end
+
+function GameObjectPoolGroup:CreatePool(name, templateType, templateGameObject)
+    local pool = self:GetPool(name)
+    if pool then
+        DebugLog.LogError("GOPool", "The pool has been created.name = " .. name)
+        return nil
+    else
+        pool = GameObjectPool(name, self:GetTransform(), templateType, templateGameObject)
+        self.pools[name] = pool
+        return pool
+    end
+end
+
+function GameObjectPoolGroup:DeletePool(name)
+    local pool = self:GetPool(name)
+    if pool then
+        pool:Dispose()
+
+        self.pools[name] = nil
+    end
+end
+
+function GameObjectPoolGroup:Dispose()
+    for _, pool in pairs(self.pools) do
+        pool:Dispose()
+    end
+    self.pools = nil
+
+    if self.groupTransform then
+        GameObject.Destroy(self.groupTransform.gameObject)
+    end
+    self.groupTransform = nil
+    self.parentTransform = nil
+end

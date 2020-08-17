@@ -15,17 +15,6 @@ EnvManager =
     end
 )
 
-function EnvManager.GetInstance()
-    local envMgr = Game.EnvMgr
-    if not envMgr then
-        envMgr = EnvManager()
-
-        Game.EnvMgr = envMgr
-    end
-
-    return envMgr
-end
-
 function EnvManager:AddUpdateDelegate(receiver, func)
     self.updateDelegate = self.updateDelegate + {receiver, func}
 end
@@ -63,6 +52,13 @@ function EnvManager:DoStartup()
     DebugLog.Info("Timer Test", tostring(self.timerHandler))
     self.timerIndex = 0
 
+    local poolMgr = Game.PoolMgr
+    local poolGroup = poolMgr:CreateGroup("TestGroup")
+
+    local emptyGO = CS.UnityEngine.GameObject("entity")
+    local pool = poolGroup:CreatePool("entity",GameObjectPoolTemplateType.RuntimeInstance,emptyGO)
+    local entity = pool:GetItem()
+    entity.transform:SetParent(nil,false)
 end
 
 function EnvManager:OnMessage(eventID,userdata)

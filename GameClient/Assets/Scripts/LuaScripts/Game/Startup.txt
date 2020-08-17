@@ -10,6 +10,7 @@ require('DotLua/Asset/AssetManager')
 require('DotLua/Event/EventDispatcher')
 require('DotLua/Timer/HierarchicalTimerWheel')
 require('DotLua/UI/UIPanelManager')
+require("DotLua/GOPool/GameObjectPoolManager")
 require('Game/EnvManager')
 
 if Game.IsDebug then
@@ -21,13 +22,14 @@ else
 end
 
 local function InitMgr()
-    ConfigManager.GetInstance():SetRootPath("Game/Config/")
-    EventDispatcher.GetInstance()
-    HierarchicalTimerWheel.GetInstance()
-    AssetManager.GetInstance()
-    UIPanelManager.GetInstance()
+    Game.ConfigMgr = ConfigManager("Game/Config/")
+    Game.TimerMgr = HierarchicalTimerWheel()
+    Game.EventMgr = EventDispatcher()
+    Game.AssetMgr = AssetManager()
+    Game.PanelMgr = UIPanelManager()
+    Game.PoolMgr = GameObjectPoolManager()
 
-    EnvManager.GetInstance()
+    Game.EnvMgr = EnvManager()
 end
 
 InitMgr()
