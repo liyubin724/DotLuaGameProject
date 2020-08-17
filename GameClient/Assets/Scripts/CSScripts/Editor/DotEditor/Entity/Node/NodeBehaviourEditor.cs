@@ -1,8 +1,8 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.Entity.Node;
-using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace DotEditor.Entity.Node
@@ -14,150 +14,147 @@ namespace DotEditor.Entity.Node
 
         private Vector2 scrollPos = Vector2.zero;
 
+        private List<NodeData> bindNodes = null;
+        private List<NodeData> boneNodes = null;
+        private List<NodeData> smRendererNodes = null;
+        private ReorderableList bindNodeRList = null;
+        private ReorderableList boneNodeRList = null;
+        private ReorderableList smRendererNodeRList = null;
+
+        private bool isBindNodeFoldout = false;
+        private bool isBoneNodeFoldout = true;
+        private bool isRendererNodeFoldout = true;
+
         void OnEnable()
         {
             nodeBehaviour = (NodeBehaviour)target;
+            bindNodes = new List<NodeData>(nodeBehaviour.bindNodes);
+            boneNodes = new List<NodeData>(nodeBehaviour.boneNodes);
+            smRendererNodes = new List<NodeData>(nodeBehaviour.smRendererNodes);
+        }
+
+        private ReorderableList CreateRList(GUIContent titleContent,NodeType nodeType,List<NodeData> datas)
+        {
+            bool isEditable = nodeType == NodeType.BindNode;
+            ReorderableList reorderableList = new ReorderableList(datas, typeof(NodeData), isEditable, true, isEditable, isEditable);
+            reorderableList.elementHeight = EditorGUIUtility.singleLineHeight * 3;
+            reorderableList.drawHeaderCallback = (rect) =>
+            {
+                EditorGUI.LabelField(rect, titleContent,EGUIStyles.BoldLabelStyle);
+            };
+            reorderableList.drawElementCallback = (rect, index, isActive, isFocused) =>
+            {
+                Rect indexRect = new Rect(rect);
+                indexRect.width = Styles.IndexRectWidth;
+                EditorGUI.LabelField(indexRect, "" + index);
+
+                Rect contentRect = new Rect(rect.x + Styles.IndexRectWidth, rect.y, rect.width - Styles.IndexRectWidth, EditorGUIUtility.singleLineHeight);
+                NodeData data = datas[index];
+                if(nodeType == NodeType.BindNode)
+                {
+                    data.name = EditorGUI.TextField(contentRect, Contents.NameContent, data.name);
+                }
+                else
+                {
+                    EditorGUI.TextField(contentRect, Contents.NameContent, data.name);
+                }
+
+                contentRect.y += contentRect.height;
+                if (nodeType == NodeType.SMRendererNode)
+                {
+                    EditorGUI.ObjectField(contentRect, Contents.RendererContent, data.renderer,typeof(SkinnedMeshRenderer),true);
+                } else if (nodeType == NodeType.BoneNode)
+                {
+                    EditorGUI.ObjectField(contentRect, Contents.TransformContent, data.transform, typeof(Transform), true);
+                } else if (nodeType == NodeType.BindNode)
+                {
+                    data.transform = (Transform)EditorGUI.ObjectField(contentRect, Contents.TransformContent, data.transform, typeof(Transform), true);
+                }
+
+                contentRect.y += contentRect.height;
+                EGUI.DrawHorizontalLine(contentRect);
+            };
+
+            reorderableList.onAddCallback = (list) =>
+            {
+                NodeData data = new NodeData()
+                {
+                    nodeType = nodeType,
+                };
+                datas.Add(data);
+            };
+
+            return reorderableList;
         }
 
         public override void OnInspectorGUI()
         {
+            EGUILayout.DrawScript(nodeBehaviour);
+
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
             {
-                DrawNodeDataArray("Bind Node", NodeType.BindNode, nodeBehaviour.bindNodes, () =>
+                isBindNodeFoldout = EditorGUILayout.Foldout(isBindNodeFoldout, Contents.BindTitleContent, true);
+                if(!isBindNodeFoldout)
                 {
-                    nodeBehaviour.bindNodes = new NodeData[0];
+                    if(bindNodeRList == null)
+                    {
+                        bindNodeRList = CreateRList(Contents.BindTitleContent, NodeType.BindNode, bindNodes);
+                    }
+                    bindNodeRList.DoLayoutList();
+                }
 
-                    EditorGUIUtility.ExitGUI();
-                    Repaint();
-                }, () =>
+                isBoneNodeFoldout = EditorGUILayout.Foldout(isBoneNodeFoldout, Contents.BoneTitleContent, true);
+                if(!isBoneNodeFoldout)
                 {
-                    List<NodeData> datas = new List<NodeData>(nodeBehaviour.bindNodes);
-                    NodeData data = new NodeData();
-                    data.nodeType = NodeType.BindNode;
-                    datas.Add(data);
-                    nodeBehaviour.bindNodes = datas.ToArray();
+                    if(boneNodeRList == null)
+                    {
+                        boneNodeRList = CreateRList(Contents.BoneTitleContent, NodeType.BoneNode, boneNodes);
+                    }
+                    boneNodeRList.DoLayoutList();
+                }
 
-                    EditorGUIUtility.ExitGUI();
-                    Repaint();
-                }, (index) =>
+                isRendererNodeFoldout = EditorGUILayout.Foldout(isRendererNodeFoldout, Contents.RendererTitleContent,true);
+                if (!isRendererNodeFoldout)
                 {
-                    List<NodeData> datas = new List<NodeData>(nodeBehaviour.bindNodes);
-                    datas.RemoveAt(index);
-                    nodeBehaviour.bindNodes = datas.ToArray();
-
-                    EditorGUIUtility.ExitGUI();
-                    Repaint();
-                }, null);
-
-                DrawNodeDataArray("Renderer Node", NodeType.SMRendererNode, nodeBehaviour.smRendererNodes, null, null, null, () =>
-                {
-                    NodeBehaviourUtil.FindSMRendererNodes(nodeBehaviour);
-
-                    EditorGUIUtility.ExitGUI();
-                    Repaint();
-                });
-
-                DrawNodeDataArray("Bone Node", NodeType.BindNode, nodeBehaviour.boneNodes, null, null, null, () =>
-                {
-                    NodeBehaviourUtil.FindBoneNodes(nodeBehaviour);
-
-                    EditorGUIUtility.ExitGUI();
-                    Repaint();
-                });
+                    if (smRendererNodeRList == null)
+                    {
+                        smRendererNodeRList = CreateRList(Contents.RendererTitleContent, NodeType.SMRendererNode, smRendererNodes);
+                    }
+                    smRendererNodeRList.DoLayoutList();
+                }
             }
             EditorGUILayout.EndScrollView();
-
             if (GUI.changed)
             {
+                nodeBehaviour.bindNodes = bindNodes.ToArray();
+                nodeBehaviour.boneNodes = boneNodes.ToArray();
+                nodeBehaviour.smRendererNodes = smRendererNodes.ToArray();
+
                 EditorUtility.SetDirty(target);
             }
-
         }
 
-        private void DrawNodeDataArray(string header, NodeType nodeType, NodeData[] datas,
-            Action clearAction, Action addAction, Action<int> deleteAction, Action findAction)
+        class Contents
         {
-            EditorGUILayout.BeginVertical(EGUIStyles.BoxStyle);
-            {
-                EditorGUILayout.LabelField(GUIContent.none, EditorStyles.toolbar, GUILayout.ExpandWidth(true));
-                Rect lastRect = GUILayoutUtility.GetLastRect();
-                EditorGUI.LabelField(lastRect, header, EGUIStyles.BoldLabelStyle);
+            public static GUIContent BindTitleContent = new GUIContent("Bind Node");
+            public static GUIContent BoneTitleContent = new GUIContent("Bone Node");
+            public static GUIContent RendererTitleContent = new GUIContent("Renderer Node");
 
-                if (clearAction != null)
-                {
-                    Rect clearBtnRect = new Rect(lastRect.x + lastRect.width - 40, lastRect.y, 40, lastRect.height);
-                    if (GUI.Button(clearBtnRect, "C", EditorStyles.toolbarButton))
-                    {
-                        clearAction();
-                        EditorGUIUtility.ExitGUI();
-                    }
-                }
-
-
-                for (int i = 0; i < datas.Length; ++i)
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    {
-                        EditorGUILayout.BeginVertical();
-                        {
-                            DrawNodeData(datas[i]);
-                        }
-                        EditorGUILayout.EndVertical();
-                        if (deleteAction != null)
-                        {
-                            if (GUILayout.Button("-", GUILayout.Width(20)))
-                            {
-                                deleteAction(i);
-                                EditorGUIUtility.ExitGUI();
-                            }
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
-
-                    EGUILayout.DrawHorizontalLine();
-                }
-
-                if (addAction != null || findAction != null)
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    {
-                        GUILayout.FlexibleSpace();
-                        if (addAction != null)
-                        {
-                            if (GUILayout.Button("+", GUILayout.Width(30)))
-                            {
-                                addAction();
-                            }
-                        }
-                        if (findAction != null)
-                        {
-                            if (GUILayout.Button("\u21BB", GUILayout.Width(30)))
-                            {
-                                findAction();
-                            }
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
-                }
-            }
-            EditorGUILayout.EndVertical();
+            public static GUIContent NameContent = new GUIContent("Name");
+            public static GUIContent TransformContent = new GUIContent("Transform");
+            public static GUIContent RendererContent = new GUIContent("Renderer");
         }
-
-        private void DrawNodeData(NodeData data)
+        
+        class Styles
         {
-            EditorGUI.BeginDisabledGroup(data.nodeType != NodeType.BindNode);
+            public static float IndexRectWidth = 40;
+            public static GUIStyle centerLabelStyle = null;
+
+            static Styles()
             {
-                data.name = EditorGUILayout.TextField("name", data.name);
-                if (data.nodeType == NodeType.SMRendererNode)
-                {
-                    data.renderer = (SkinnedMeshRenderer)EditorGUILayout.ObjectField("renderer", data.renderer, typeof(SkinnedMeshRenderer), true);
-                }
-                else
-                {
-                    data.transform = (Transform)EditorGUILayout.ObjectField("transform", data.transform, typeof(Transform), true);
-                }
+                centerLabelStyle = EGUIStyles.MiddleCenterLabel;
             }
-            EditorGUI.EndDisabledGroup();
         }
+
     }
 }
