@@ -5,13 +5,6 @@ require('DotLua/Utility/math')
 require('DotLua/Utility/table')
 require('DotLua/Class')
 require('DotLua/Log/DebugLog')
-require('DotLua/Config/ConfigManager')
-require('DotLua/Asset/AssetManager')
-require('DotLua/Event/EventDispatcher')
-require('DotLua/Timer/HierarchicalTimerWheel')
-require('DotLua/UI/UIPanelManager')
-require("DotLua/GOPool/GameObjectPoolManager")
-require('Game/EnvManager')
 
 if Game.IsDebug then
     require('Debugger/LuaPanda').start('127.0.0.1', 8818)
@@ -22,13 +15,25 @@ else
 end
 
 local function InitMgr()
+    require('DotLua/Config/ConfigManager')
     Game.ConfigMgr = ConfigManager("Game/Config/")
+
+    require('DotLua/Timer/HierarchicalTimerWheel')
     Game.TimerMgr = HierarchicalTimerWheel()
+
+    require('DotLua/Event/EventDispatcher')
     Game.EventMgr = EventDispatcher()
+
+    require('DotLua/Asset/AssetManager')
     Game.AssetMgr = AssetManager()
+
+    require('DotLua/UI/UIPanelManager')
     Game.PanelMgr = UIPanelManager()
+
+    require("DotLua/GOPool/GameObjectPoolManager")
     Game.PoolMgr = GameObjectPoolManager()
 
+    require('Game/EnvManager')
     Game.EnvMgr = EnvManager()
 end
 

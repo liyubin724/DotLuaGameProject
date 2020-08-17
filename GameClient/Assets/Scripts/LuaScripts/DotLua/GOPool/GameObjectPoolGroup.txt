@@ -1,9 +1,14 @@
-require("DotLua/Class")
-require("DotLua/GOPool/GameObjectPool")
+require('DotLua/Class')
+require('DotLua/GOPool/GameObjectPool')
 
 local GameObject = CS.UnityEngine.GameObject
 local isDebug = Game.IsDebug
 
+----private----
+-- 缓存池的分组，在调试模式下将会对分组也创建对应名称的GameObject结点，并将后缓存池中的对象放置到对应的结点下，
+-- 如果在非调试模式下将会不再创建，而是直接放置到根结点下
+-- @param name 分组名称
+-- @param pTransform 管理器的Transform结点
 GameObjectPoolGroup =
     Class(
     function(self, name, pTransform)
@@ -19,6 +24,9 @@ GameObjectPoolGroup =
     end
 )
 
+----private----
+-- 获取存在缓存池中对象的结点
+-- @return Transform
 function GameObjectPoolGroup:GetTransform()
     if self.groupTransform then
         return self.groupTransform
@@ -26,18 +34,32 @@ function GameObjectPoolGroup:GetTransform()
     return self.rootTransform
 end
 
+----public----
+-- 判断是存在指定指定名称的缓存池
+-- @param name 缓存池的名称，一般情况下会使用资源的路径或者唯一地址做为名称
+-- @return bool 返回是否存在指定的缓存池
 function GameObjectPoolGroup:HasPool(name)
     return self.pools[name] ~= nil
 end
 
+----public----
+-- 获取指定名称的缓存池
+-- @param name 缓存池的名称，一般情况下会使用资源的路径或者唯一地址做为名称
+-- @return GameObjectPool 返回指定的缓存池
 function GameObjectPoolGroup:GetPool(name)
     return self.pools[name]
 end
 
+----public----
+-- 创建指定名称的缓存池
+-- @param name 缓存池的名称，一般情况下会使用资源的路径或者唯一地址做为名称
+-- @param templateType 模板对象的类型
+-- @param templateGameObject 模板对象，类型为GameObject
+-- @return GameObjectPool 返回指定的缓存池
 function GameObjectPoolGroup:CreatePool(name, templateType, templateGameObject)
     local pool = self:GetPool(name)
     if pool then
-        DebugLog.LogError("GOPool", "The pool has been created.name = " .. name)
+        DebugLog.LogError('GOPool', 'The pool has been created.name = ' .. name)
         return nil
     else
         pool = GameObjectPool(name, self:GetTransform(), templateType, templateGameObject)
@@ -46,6 +68,10 @@ function GameObjectPoolGroup:CreatePool(name, templateType, templateGameObject)
     end
 end
 
+----public----
+-- 删除指定名称的缓存池
+-- @param name 缓存池的名称，一般情况下会使用资源的路径或者唯一地址做为名称
+-- @return void
 function GameObjectPoolGroup:DeletePool(name)
     local pool = self:GetPool(name)
     if pool then
@@ -55,6 +81,9 @@ function GameObjectPoolGroup:DeletePool(name)
     end
 end
 
+----public----
+-- 释放缓存池
+-- @return void
 function GameObjectPoolGroup:Dispose()
     for _, pool in pairs(self.pools) do
         pool:Dispose()

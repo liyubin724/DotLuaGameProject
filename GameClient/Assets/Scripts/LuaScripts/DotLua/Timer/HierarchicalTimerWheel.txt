@@ -75,8 +75,8 @@ function HierarchicalTimerWheel:AddIntervalTimer(intervalInSec, receiver, interv
     return self:AddTimer(intervalInSec, 0, receiver, intervalFunc, nil, userdata)
 end
 
-function HierarchicalTimerWheel:AddTickTimer(receiver,intervalFunc)
-    return self:AddTimer(self.wheel:GetTickInMS() * 0.001,0,receiver,intervalFunc,nil,nil)
+function HierarchicalTimerWheel:AddTickTimer(receiver,intervalFunc,userdata)
+    return self:AddTimer(self.wheel:GetTickInMS() * 0.001,0,receiver,intervalFunc,nil,userdata)
 end
 
 ----public----
@@ -164,7 +164,7 @@ end
 -- @param tasks 当前刻度上的任务
 -- @return void
 function HierarchicalTimerWheel:OnWheelSoltTrigger(tasks)
-    if tasks and #(tasks) > 0 then
+    if tasks then
         for _, task in pairs(tasks) do
             local handler = self.handlers[task:GetIndex()]
             if handler then
