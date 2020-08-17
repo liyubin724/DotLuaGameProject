@@ -1,8 +1,6 @@
 require('DotLua/Class')
 
 local DebugLog = DebugLog
-local TimerMgr = Game.TimerMgr
-local AssetMgr = Game.AssetMgr
 local GameObject = CS.UnityEngine.GameObject
 local math = math
 
@@ -62,7 +60,7 @@ function GameObjectPool:SetPreload(totalAmount, onceAmount)
 
     if self.preloadTotalAmount > 0 then
         self.preloadTimerHandler =
-            TimerMgr:AddTickTimer(self, GameObjectPool.OnPreloadTimerInterval, 'GameObjectPool-Preload')
+            Game.TimerMgr:AddTickTimer(self, GameObjectPool.OnPreloadTimerInterval, 'GameObjectPool-Preload')
     end
 end
 
@@ -87,7 +85,7 @@ function GameObjectPool:OnPreloadTimerInterval()
 
         self.preloadTotalAmount = self.preloadTotalAmount - amount
     else
-        TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        Game.TimerMgr:RemoveTimer(self.preloadTimerHandler)
         self.preloadTimerHandler = nil
     end
 end
@@ -100,7 +98,7 @@ function GameObjectPool:CreateItem()
     if self.templateType == GameObjectPoolTemplateType.RuntimeInstance then
         item = GameObject.Instantiate(self.templateGameObject)
     else
-        item = AssetMgr:InstantiateAsset(self.name, self.templateGameObject)
+        item = Game.AssetMgr:InstantiateAsset(self.name, self.templateGameObject)
     end
 
     return item
@@ -121,12 +119,12 @@ function GameObjectPool:SetCull(onceAmount, delayTime)
 
     if self.cullDelayTime > 0 then
         if self.cullTimerHandler then
-            TimerMgr:RemoveTimer(self.cullTimerHandler)
+            Game.TimerMgr:RemoveTimer(self.cullTimerHandler)
             self.cullTimerHandler = nil
         end
 
         self.cullTimerHandler =
-            TimerMgr:AddIntervalTimer(self.cullDelayTime, self, GameObjectPool.OnCullTimerInterval, nil)
+            Game.TimerMgr:AddIntervalTimer(self.cullDelayTime, self, GameObjectPool.OnCullTimerInterval, nil)
     end
 end
 

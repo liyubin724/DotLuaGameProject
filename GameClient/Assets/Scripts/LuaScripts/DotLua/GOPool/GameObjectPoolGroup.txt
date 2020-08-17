@@ -2,7 +2,6 @@ require('DotLua/Class')
 require('DotLua/GOPool/GameObjectPool')
 
 local GameObject = CS.UnityEngine.GameObject
-local isDebug = Game.IsDebug
 
 ----private----
 -- 缓存池的分组，在调试模式下将会对分组也创建对应名称的GameObject结点，并将后缓存池中的对象放置到对应的结点下，
@@ -17,7 +16,7 @@ GameObjectPoolGroup =
         self.rootTransform = pTransform
         self.groupTransform = nil
 
-        if isDebug then
+        if Game.IsDebug then
             self.groupTransform = GameObject(name).transform
             self.groupTransform:SetParent(self.rootTransform, false)
         end
