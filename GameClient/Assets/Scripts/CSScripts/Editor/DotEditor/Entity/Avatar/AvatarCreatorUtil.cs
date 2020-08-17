@@ -59,7 +59,7 @@ namespace DotEditor.Entity.Avatar
             instanceNodeBehaviour.FindSMRendererNodes();
             if (cachedNodeBehaviour != null)
             {
-                NodeBehaviourUtil.CopyBindNodes(cachedNodeBehaviour, instanceNodeBehaviour);
+                instanceNodeBehaviour.CopyFrom(cachedNodeBehaviour);
             }
 
             if (instanceNodeBehaviour.smRendererNodes != null && instanceNodeBehaviour.smRendererNodes.Length > 0)

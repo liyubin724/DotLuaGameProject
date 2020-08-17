@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DotEditor.Entity.Node
 {
-    public static class NodeBehaviourUtil
+    public static class NodeBehaviour_Extersion
     {
         public static void FindBoneNodes(this NodeBehaviour nodeBehaviour)
         {
@@ -45,12 +45,16 @@ namespace DotEditor.Entity.Node
             nodeBehaviour.smRendererNodes = datas.ToArray();
         }
 
-        public static void CopyBindNodes(NodeBehaviour from, NodeBehaviour to)
+        public static void CopyFrom(this NodeBehaviour to, NodeBehaviour from)
         {
             if (from == null || to == null || from.bindNodes == null || from.bindNodes.Length == 0)
             {
                 return;
             }
+
+            to.FindBoneNodes();
+            to.FindSMRendererNodes();
+
             NodeData[] fromBindNodes = from.bindNodes;
             List<NodeData> toBindNodes = new List<NodeData>();
             Transform toTran = to.gameObject.transform;
