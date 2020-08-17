@@ -60,21 +60,30 @@ namespace DotEngine.Entity.Node
             nodeDic.Add(NodeType.BindNode, dataDic);
             foreach (var data in bindNodes)
             {
-                dataDic.Add(data.name, data);
+                if(!dataDic.ContainsKey(data.name))
+                {
+                    dataDic.Add(data.name, data);
+                }
             }
 
             dataDic = new Dictionary<string, NodeData>();
             nodeDic.Add(NodeType.BoneNode, dataDic);
             foreach (var data in boneNodes)
             {
-                dataDic.Add(data.name, data);
+                if (!dataDic.ContainsKey(data.name))
+                {
+                    dataDic.Add(data.name, data);
+                }
             }
 
             dataDic = new Dictionary<string, NodeData>();
             nodeDic.Add(NodeType.SMRendererNode, dataDic);
             foreach (var data in smRendererNodes)
             {
-                dataDic.Add(data.name, data);
+                if (!dataDic.ContainsKey(data.name))
+                {
+                    dataDic.Add(data.name, data);
+                }
             }
         }
     }

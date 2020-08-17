@@ -1,6 +1,7 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.Entity.Node;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -48,7 +49,8 @@ namespace DotEditor.Entity.Node
                 indexRect.width = Styles.IndexRectWidth;
                 EditorGUI.LabelField(indexRect, "" + index);
 
-                Rect contentRect = new Rect(rect.x + Styles.IndexRectWidth, rect.y, rect.width - Styles.IndexRectWidth, EditorGUIUtility.singleLineHeight);
+                Rect contentRect = new Rect(rect.x + Styles.IndexRectWidth, rect.y, 
+                                                            rect.width - Styles.IndexRectWidth - Styles.CheckRectWidth, EditorGUIUtility.singleLineHeight);
                 NodeData data = datas[index];
                 if(nodeType == NodeType.BindNode)
                 {
@@ -69,6 +71,28 @@ namespace DotEditor.Entity.Node
                 } else if (nodeType == NodeType.BindNode)
                 {
                     data.transform = (Transform)EditorGUI.ObjectField(contentRect, Contents.TransformContent, data.transform, typeof(Transform), true);
+                }
+
+                Rect checkRect = new Rect(contentRect.x + contentRect.width, rect.y, Styles.CheckRectWidth, Styles.CheckRectWidth);
+                string errorTips = string.Empty;
+                bool isValid = (from d in datas where d.name == data.name select d).ToArray().Length == 1;
+                if(isValid)
+                {
+                    isValid = (nodeType == NodeType.SMRendererNode) ? data.renderer != null : data.transform != null;
+                    if(!isValid)
+                    {
+                        errorTips = Contents.ContentIsNull;
+                    }
+                }else
+                {
+                    errorTips = Contents.NameRepeatStr;
+                }
+                if(!isValid)
+                {
+                    if(GUI.Button(checkRect,new GUIContent(EGUIResources.ErrorIcon,errorTips)))
+                    {
+                        EditorUtility.DisplayDialog("Error", errorTips, "OK");
+                    }
                 }
 
                 contentRect.y += contentRect.height;
@@ -140,6 +164,9 @@ namespace DotEditor.Entity.Node
             public static GUIContent BoneTitleContent = new GUIContent("Bone Node");
             public static GUIContent RendererTitleContent = new GUIContent("Renderer Node");
 
+            public static string NameRepeatStr = "the name of data is repeated!";
+            public static string ContentIsNull = "the content of data is empty";
+
             public static GUIContent NameContent = new GUIContent("Name");
             public static GUIContent TransformContent = new GUIContent("Transform");
             public static GUIContent RendererContent = new GUIContent("Renderer");
@@ -147,7 +174,8 @@ namespace DotEditor.Entity.Node
         
         class Styles
         {
-            public static float IndexRectWidth = 40;
+            public static float IndexRectWidth = 30;
+            public static float CheckRectWidth = 30;
             public static GUIStyle centerLabelStyle = null;
 
             static Styles()
