@@ -1,5 +1,4 @@
 ﻿using DotEngine.Services;
-using DotEngine.Timer;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -11,12 +10,10 @@ namespace DotEngine.GOPool
     public class GameObjectPoolService : Service
     {
         public const string NAME = "GOPoolService";
+        private const string ROOT_NAME = "Root-GOPool";
 
         private Transform rootTransform = null;
         private Dictionary<string, GameObjectPoolGroup> groupDic = new Dictionary<string, GameObjectPoolGroup>();
-
-        private float cullTimeInterval = 60f;
-        private TimerHandler cullTimerTask = null;
 
         public GameObjectPoolService(Func<string, UnityObject, UnityObject> instantiateAsset) : base(NAME)
         {
@@ -25,10 +22,7 @@ namespace DotEngine.GOPool
 
         public override void DoRegister()
         {
-            rootTransform = DontDestroyHandler.CreateTransform(GameObjectPoolConst.MANAGER_NAME);
-
-            TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
-            cullTimerTask = timerService.AddIntervalTimer(cullTimeInterval, OnCullTimerUpdate);
+            rootTransform = DontDestroyHandler.CreateTransform(ROOT_NAME);
         }
 
         /// <summary>
@@ -44,16 +38,11 @@ namespace DotEngine.GOPool
         /// <param name="name"></param>
         /// <param name="autoCreateIfNot"></param>
         /// <returns></returns>
-        public GameObjectPoolGroup GetGroup(string name,bool autoCreateIfNot = false)
+        public GameObjectPoolGroup GetGroup(string name)
         {
             if (groupDic.TryGetValue(name, out GameObjectPoolGroup pool))
             {
                 return pool;
-            }
-
-            if(autoCreateIfNot)
-            {
-                return CreateGroup(name);
             }
             return null;
         }
@@ -65,12 +54,12 @@ namespace DotEngine.GOPool
         /// <returns></returns>
         public GameObjectPoolGroup CreateGroup(string name)
         {
-            if (!groupDic.TryGetValue(name, out GameObjectPoolGroup pool))
+            if (!groupDic.TryGetValue(name, out GameObjectPoolGroup group))
             {
-                pool = new GameObjectPoolGroup(name, rootTransform);
-                groupDic.Add(name, pool);
+                group = new GameObjectPoolGroup(name, rootTransform);
+                groupDic.Add(name, group);
             }
-            return pool;
+            return group;
         }
 
         /// <summary>
@@ -79,18 +68,10 @@ namespace DotEngine.GOPool
         /// <param name="name"></param>
         public void DeleteGroup(string name)
         {
-            if (groupDic.TryGetValue(name, out GameObjectPoolGroup spawn))
+            if (groupDic.TryGetValue(name, out GameObjectPoolGroup group))
             {
                 groupDic.Remove(name);
-                spawn.DestroyGroup();
-            }
-        }
-
-        private void OnCullTimerUpdate(System.Object obj)
-        {
-            foreach(var kvp in groupDic)
-            {
-                kvp.Value.CullGroup(cullTimeInterval);
+                group.Dispose();
             }
         }
 
@@ -100,18 +81,9 @@ namespace DotEngine.GOPool
 
             foreach (var kvp in groupDic)
             {
-                kvp.Value.DestroyGroup();
+                kvp.Value.Dispose();
             }
             groupDic.Clear();
-
-            if (cullTimerTask != null)
-            {
-                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
-                timerService.RemoveTimer(cullTimerTask);
-                cullTimerTask = null;
-            }
-            cullTimerTask = null;
-            groupDic = null;
 
             UnityObject.Destroy(rootTransform);
         }

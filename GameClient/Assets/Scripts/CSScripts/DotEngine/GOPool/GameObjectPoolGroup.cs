@@ -9,17 +9,25 @@ namespace DotEngine.GOPool
     /// </summary>
     public class GameObjectPoolGroup
     {
-        internal string GroupName { get; private set; } = string.Empty;
-        internal Transform GroupTransform { get; private set; } = null;
+        private string name;
+        private Transform parentTransform = null;
+        private Transform groupTransform = null;
 
         private Dictionary<string, GameObjectPool> poolDic = new Dictionary<string, GameObjectPool>();
 
         internal GameObjectPoolGroup(string gName, Transform parentTran)
         {
-            GroupName = gName;
+            name = gName;
+            parentTransform = parentTran;
+#if UNITY_EDITOR
+            groupTransform = new GameObject(string.Format(name)).transform;
+            groupTransform.SetParent(parentTran, false);
+#endif
+        }
 
-            GroupTransform = new GameObject(string.Format(GameObjectPoolConst.GROUP_NAME_FORMAT,GroupName)).transform;
-            GroupTransform.SetParent(parentTran, false);
+        private Transform GetTransform()
+        {
+            return groupTransform == null ? parentTransform : groupTransform;
         }
 
         public bool HasPool(string uniqueName)
@@ -37,6 +45,9 @@ namespace DotEngine.GOPool
             if(poolDic.TryGetValue(uniqueName,out GameObjectPool goPool))
             {
                 return goPool;
+            }else
+            {
+                LogUtil.LogWarning(GameObjectPoolConst.LOGGER_NAME, "The pool is not found.name = " + uniqueName);
             }
 
             return null;
@@ -48,7 +59,7 @@ namespace DotEngine.GOPool
         /// <param name="uniqueName">资源唯一标签，一般使用资源路径</param>
         /// <param name="template">模板GameObject</param>
         /// <returns></returns>
-        public GameObjectPool CreatePool(string uniqueName,GameObject template, PoolTemplateType templateType = PoolTemplateType.Prefab)
+        public GameObjectPool CreatePool(string uniqueName, PoolTemplateType templateType, GameObject template)
         {
             if(template == null)
             {
@@ -62,7 +73,7 @@ namespace DotEngine.GOPool
             }
             else
             {
-                goPool = new GameObjectPool(this, uniqueName, template, templateType);
+                goPool = new GameObjectPool(name,GetTransform(), uniqueName, templateType, template);
                 poolDic.Add(uniqueName, goPool);
             }
 
@@ -80,28 +91,27 @@ namespace DotEngine.GOPool
 
             if(gObjPool!=null)
             {
-                gObjPool.DestroyPool();
+                gObjPool.Dispose();
                 poolDic.Remove(uniqueName);
             }
-        }
-
-        internal void CullGroup(float deltaTime)
-        {
-            foreach(var kvp in poolDic)
+            else
             {
-                kvp.Value.CullPool(deltaTime);
+                LogUtil.LogWarning(GameObjectPoolConst.LOGGER_NAME, "The pool is not found.name = " + uniqueName);
             }
         }
 
-        internal void DestroyGroup()
+        internal void Dispose()
         {
-            foreach(var kvp in poolDic)
+            foreach (var kvp in poolDic)
             {
-                kvp.Value.DestroyPool();
+                kvp.Value.Dispose();
             }
             poolDic.Clear();
 
-            Object.Destroy(GroupTransform.gameObject);
+            if(groupTransform!=null)
+            {
+                Object.Destroy(groupTransform.gameObject);
+            }
         }
     }
 }

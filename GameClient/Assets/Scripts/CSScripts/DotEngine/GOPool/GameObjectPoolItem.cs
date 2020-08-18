@@ -4,8 +4,8 @@ namespace DotEngine.GOPool
 {
     public class GameObjectPoolItem : MonoBehaviour
     {
-        public string AssetPath { get; set; } = string.Empty;
-        public string SpawnName { get; set; } = string.Empty;
+        public string PoolName { get; set; } = string.Empty;
+        public string GroupName { get; set; } = string.Empty;
 
         private Transform cachedTransform = null;
         public Transform CachedTransform
@@ -53,7 +53,7 @@ namespace DotEngine.GOPool
         /// </summary>
         public void ReleaseItem()
         {
-            if (string.IsNullOrEmpty(AssetPath) || string.IsNullOrEmpty(SpawnName))
+            if (string.IsNullOrEmpty(PoolName) || string.IsNullOrEmpty(GroupName))
             {
                 Destroy(CachedGameObject);
                 return;
@@ -61,20 +61,20 @@ namespace DotEngine.GOPool
 
             GameObjectPoolService poolService = Facade.GetInstance().GetService<GameObjectPoolService>(GameObjectPoolService.NAME);
 
-            if (!poolService.HasGroup(SpawnName))
+            if (!poolService.HasGroup(GroupName))
             {
                 Destroy(CachedGameObject);
                 return;
             }
-            GameObjectPoolGroup spawnPool = poolService.GetGroup(SpawnName);
-            GameObjectPool gObjPool = spawnPool.GetPool(AssetPath);
+            GameObjectPoolGroup spawnPool = poolService.GetGroup(GroupName);
+            GameObjectPool gObjPool = spawnPool.GetPool(PoolName);
             if (gObjPool == null)
             {
                 Destroy(CachedGameObject);
                 return;
             }
 
-            gObjPool.ReleasePoolItem(CachedGameObject);
+            gObjPool.ReleaseItem(CachedGameObject);
         }
     }
 }

@@ -55,6 +55,14 @@ namespace DotEngine.Timer
             return hTimerWheel.AddIntervalTimer(intervalInSec, intervalCallback, userData);
         }
 
+        public TimerHandler AddTickTimer(
+            Action<object> intervalCallback,
+            object userdata
+            )
+        {
+            return hTimerWheel.AddTickTimer( intervalCallback, userdata);
+        }
+
         public TimerHandler AddEndTimer(float totalInSec,
                                                                 Action<object> endCallback,
                                                                 object userData = null)
