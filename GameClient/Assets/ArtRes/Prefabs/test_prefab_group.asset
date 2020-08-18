@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ab36a6719991c04886ec6804d38e09c, type: 3}
-  m_Name: Prefabs_group
+  m_Name: test_prefab_group
   m_EditorClassIdentifier: 
-  groupName: Prefabs Group
+  groupName: Test Prefab
   isEnable: 1
   isMain: 1
   isPreload: 0
   isNeverDestroy: 0
   operation:
-    packMode: 0
+    packMode: 1
     addressMode: 2
     labels: []
   filters:

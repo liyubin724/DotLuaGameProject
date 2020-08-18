@@ -12,25 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56befc5964c6e0a4594d01ac4df9fd68, type: 3}
   m_Name: asset_address_config
   m_EditorClassIdentifier: 
-  addressDatas:
-  - assetAddress: Cube
-    assetPath: Assets/ArtRes/Prefabs/Cube.prefab
-    bundlePath: assets/artres/prefabs
-    labels: []
-    isScene: 0
-    isPreload: 0
-    isNeverDestroy: 0
-  - assetAddress: TestText
-    assetPath: Assets/ArtRes/Prefabs/TestText.prefab
-    bundlePath: assets/artres/prefabs
-    labels: []
-    isScene: 0
-    isPreload: 0
-    isNeverDestroy: 0
-  - assetAddress: login_panel
-    assetPath: Assets/ArtRes/UI/Prefabs/login_panel.prefab
-    bundlePath: assets/artres/ui/prefabs/login_panel_prefab
-    labels: []
-    isScene: 0
-    isPreload: 0
-    isNeverDestroy: 0
+  addressDatas: []

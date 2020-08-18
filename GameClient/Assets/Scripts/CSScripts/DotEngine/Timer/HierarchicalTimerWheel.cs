@@ -21,9 +21,9 @@ namespace DotEngine.Timer
         private Dictionary<int, TimerHandler> m_Handlers = new Dictionary<int, TimerHandler>();
         private float m_ElapseInMS = 0.0f;
 
-       /// <summary>
-       /// 初始化多层时间轮，目前默认生成5层
-       /// </summary>
+        /// <summary>
+        /// 初始化多层时间轮，目前默认生成5层
+        /// </summary>
         internal HierarchicalTimerWheel()
         {
             TimerWheel wheel0 = CreateWheel(0, 100, 10);
@@ -40,7 +40,7 @@ namespace DotEngine.Timer
             m_Wheels.Add(wheel4);
         }
 
-        private TimerWheel CreateWheel(int level ,int tick,int size)
+        private TimerWheel CreateWheel(int level, int tick, int size)
         {
             TimerWheel wheel = new TimerWheel(level, tick, size);
             wheel.completeEvent = OnCompleted;
@@ -60,7 +60,7 @@ namespace DotEngine.Timer
             TimerTask task = m_TaskPool.Get();
             task.SetData(index, intervalInSec, totalInSec, intervalCallback, endCallback, userdata);
 
-            return AddTask(task,null);
+            return AddTask(task, null);
         }
 
         public TimerHandler AddIntervalTimer(
@@ -69,6 +69,14 @@ namespace DotEngine.Timer
             object userdata)
         {
             return AddTimer(intervalInSec, 0, intervalCallback, null, userdata);
+        }
+
+        public TimerHandler AddTickTimer(
+            Action<object> intervalCallback,
+            object userdata
+            )
+        {
+            return AddTimer(m_Wheel.TickInMS * 0.001f, 0, intervalCallback, null, userdata);
         }
 
         public TimerHandler AddEndTimer(

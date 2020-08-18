@@ -1,5 +1,6 @@
 ﻿using DotEngine;
 using DotEngine.Asset;
+using DotEngine.GOPool;
 using DotEngine.Log;
 using DotEngine.Lua;
 using DotEngine.Timer;
@@ -20,8 +21,10 @@ namespace Game
 #if UNITY_EDITOR
             assetService.InitDatabaseLoader((result) =>
             {
-                LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
-                luaEnvService.CallAction(LuaConst.STARTUP_FUNCTION_NAME);
+                if(result)
+                {
+                    OnAssetInitialize();
+                }
             });
 
 
@@ -47,6 +50,26 @@ namespace Game
 
             DontDestroyHandler.AddTransform(transform);
         }
+
+        private void OnAssetInitialize()
+        {
+            Facade facade = GameFacade.GetInstance();
+            LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
+            luaEnvService.CallAction(LuaConst.STARTUP_FUNCTION_NAME);
+
+            GameObjectPoolService poolService = facade.GetService<GameObjectPoolService>(GameObjectPoolService.NAME);
+            var group = poolService.CreateGroup("TestGroup");
+
+            AssetService assetService = facade.GetService<AssetService>(AssetService.NAME);
+            assetService.LoadAssetAsync("Cube", (address, uObj, userdata) =>
+            {
+                var pool = group.CreatePool(address, PoolTemplateType.Prefab, (GameObject)uObj);
+                pool.SetPreload(100, 2);
+                pool.SetCull(5, 10);
+                pool.SetLimit(5, 10);
+            });
+        }
+
 
         private int count = 0;
         private TimerHandler handler = null;
