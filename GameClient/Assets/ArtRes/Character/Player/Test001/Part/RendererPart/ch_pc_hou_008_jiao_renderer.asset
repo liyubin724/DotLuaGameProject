@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1230d58ed09d9e4982a69709dc90934, type: 3}
+  m_Name: ch_pc_hou_008_jiao_renderer
+  m_EditorClassIdentifier: 
+  rendererNodeName: ch_pc_hou_008_jiao
+  rootBoneName: Bip001 Pelvis
+  mesh: {fileID: 4300000, guid: 7efba8f9ef3a08e41883a1778a81d5a1, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 8fc89b0dc32eb47ce892320e659ee642, type: 2}
+  boneNames:
+  - Bip001 Tail
+  - Bip001 Pelvis
+  - Bip001 Spine
+  - Bip001 L Thigh
+  - Bip001 R Thigh
+  - Bip001 Xtra01
+  - Bip001 L Calf
+  - Bip001 L Foot
+  - Bip001 L Toe0
+  - Bip001 R Calf
+  - Bip001 R Foot
+  - Bip001 R Toe0

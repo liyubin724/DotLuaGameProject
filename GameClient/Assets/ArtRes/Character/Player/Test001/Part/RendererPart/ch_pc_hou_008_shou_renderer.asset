@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1230d58ed09d9e4982a69709dc90934, type: 3}
+  m_Name: ch_pc_hou_008_shou_renderer
+  m_EditorClassIdentifier: 
+  rendererNodeName: ch_pc_hou_008_shou
+  rootBoneName: Bip001 R Forearm
+  mesh: {fileID: 4300000, guid: 7b6092c908d785243b229fca72a3e431, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 5ebe82d4aaf0a4d11b41140125aa3b8a, type: 2}
+  boneNames:
+  - Bip001 L Forearm
+  - Bip001 L Hand
+  - Bip001 R Finger0
+  - Bip001 R Forearm
+  - Bip001 R Hand
