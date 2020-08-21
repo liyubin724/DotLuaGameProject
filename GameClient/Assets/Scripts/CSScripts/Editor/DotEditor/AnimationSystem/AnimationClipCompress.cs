@@ -1,15 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.AnimationSystem
 {
     public static class AnimationClipCompress
     {
-        public static AnimationClip RemoveScaleCurve(AnimationClip aClip,string newAssetPath)
+        public static void RemoveScaleCurve(AnimationClip clip)
         {
-            AnimationClip clip = UnityObject.Instantiate<AnimationClip>(aClip);
-
             EditorCurveBinding[] curveBindings = AnimationUtility.GetCurveBindings(clip);
             foreach(var curveBinding in curveBindings)
             {
@@ -19,17 +16,10 @@ namespace DotEditor.AnimationSystem
                     AnimationUtility.SetEditorCurve(clip, curveBinding, null);
                 }
             }
-
-            AssetDatabase.CreateAsset(clip, newAssetPath);
-            AssetDatabase.ImportAsset(newAssetPath);
-
-            return clip;
         }
 
-        public static AnimationClip CompressFloatPrecision(AnimationClip aClip,string newAssetPath,int precision)
+        public static void CompressFloatPrecision(AnimationClip clip, int precision)
         {
-            AnimationClip clip = UnityObject.Instantiate<AnimationClip>(aClip);
-
             EditorCurveBinding[] curveBindings = AnimationUtility.GetCurveBindings(clip);
             AnimationClipCurveData[] curves = new AnimationClipCurveData[curveBindings.Length];
             for (int index = 0; index < curves.Length; ++index)
@@ -56,11 +46,6 @@ namespace DotEditor.AnimationSystem
                 curveDate.curve.keys = keyFrames;
                 clip.SetCurve(curveDate.path, curveDate.type, curveDate.propertyName, curveDate.curve);
             }
-
-            AssetDatabase.CreateAsset(clip, newAssetPath);
-            AssetDatabase.ImportAsset(newAssetPath);
-
-            return clip;
         }
     }
 }
