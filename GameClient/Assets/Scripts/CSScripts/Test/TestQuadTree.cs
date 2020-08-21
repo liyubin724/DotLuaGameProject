@@ -6,7 +6,9 @@ using UnityEngine.Profiling;
 
 public class TestCubeQuadObject : IQuadObject
 {
-    public Rect Bounds { get; private set; }
+    public Rect ProjectRect { get; private set; }
+    public Bounds Bounds { get; private set; }
+
     private GameObject cubeGO;
 
     public event BoundsChanged BoundsChangedHandler;
@@ -40,7 +42,8 @@ public class TestCubeQuadObject : IQuadObject
         float sacle = Random.Range(0.1f, 0.2f);
         cubeGO.transform.localScale = new Vector3(sacle, sacle, sacle);
 
-        Bounds = new Rect(pos.x, pos.z, sacle, sacle);
+        ProjectRect = new Rect(pos.x, pos.z, sacle, sacle);
+        Bounds = new Bounds(cubeGO.transform.localPosition, cubeGO.transform.localScale);
     }
 }
 
@@ -108,8 +111,8 @@ public class TestQuadTree : MonoBehaviour
             Gizmos.color = Color.white;
             foreach (var node in nodes)
             {
-                Vector2 center = node.Bounds.center;
-                Vector2 size = node.Bounds.size;
+                Vector2 center = node.ProjectRect.center;
+                Vector2 size = node.ProjectRect.size;
                 Gizmos.DrawWireCube(new Vector3(center.x, 0.0f, center.y), new Vector3(size.x, 1.0f, size.y));
             }
         }

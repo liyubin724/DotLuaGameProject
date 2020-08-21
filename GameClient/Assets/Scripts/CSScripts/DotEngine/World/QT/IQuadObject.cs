@@ -6,7 +6,8 @@ namespace DotEngine.World.QT
 
     public interface IQuadObject
     {
-        Rect Bounds { get; }
+        Rect ProjectRect { get; }
+        Bounds Bounds { get; }
         event BoundsChanged BoundsChangedHandler;
     }
 }

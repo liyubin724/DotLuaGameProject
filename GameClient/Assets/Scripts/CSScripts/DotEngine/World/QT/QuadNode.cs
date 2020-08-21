@@ -60,7 +60,9 @@ namespace DotEngine.World.QT
                 }
             }
         }
-        public Rect Bounds { get; private set; } = Rect.zero;
+        public Rect ProjectRect { get; private set; } = Rect.zero;
+
+        public Bounds Bounds { get; private set; }
 
         public QuadNode ParentNode { get; private set; } = null;
 
@@ -92,16 +94,47 @@ namespace DotEngine.World.QT
         public QuadNode()
         { }
 
-        public void SetData(int depth, QuadDirection direction, Rect bounds)
+        #region SetData
+        public void SetData(int depth, QuadDirection direction, Rect rect)
         {
             Depth = depth;
             Direction = direction;
-            Bounds = bounds;
+            ProjectRect = rect;
+
+            Bounds = new Bounds(new Vector3(rect.center.x, 0.0f, rect.center.y), new Vector3(rect.size.x, 0.0f, rect.size.y));
         }
 
         public void SetData(int depth, QuadDirection direction, float x, float y, float width, float height)
         {
             SetData(depth, direction, new Rect(x, y, width, height));
+        }
+        #endregion
+
+        #region Get Nodes
+
+        public QuadNode GetContainsNode(Rect pRect)
+        {
+            return QueryContainsNode(this, pRect);
+        }
+
+        private QuadNode QueryContainsNode(QuadNode node, Rect projectRect)
+        {
+            if (node.ProjectRect.Contains(projectRect))
+            {
+                if (!node.IsLeaf)
+                {
+                    foreach (var childNode in node.ChildNodes)
+                    {
+                        if (childNode.ProjectRect.Contains(projectRect))
+                        {
+                            return QueryContainsNode(childNode, projectRect);
+                        }
+                    }
+                }
+
+                return node;
+            }
+            return null;
         }
 
         public QuadNode[] GetNodes(bool isIncludeSelf)
@@ -129,6 +162,9 @@ namespace DotEngine.World.QT
             }
         }
 
+        #endregion
+
+        #region Get Objects
         public IQuadObject[] GetObjects()
         {
             QueryObjects(this, m_ReusedObjectList);
@@ -151,9 +187,9 @@ namespace DotEngine.World.QT
             }
         }
 
-        public IQuadObject[] GetInsideObjects(Rect bounds)
+        public IQuadObject[] GetInsideObjects(Rect projectRect)
         {
-            QueryInsideObjects(this, bounds, m_ReusedObjectList);
+            QueryInsideObjects(this, projectRect, m_ReusedObjectList);
 
             IQuadObject[] objects = m_ReusedObjectList.ToArray();
             m_ReusedObjectList.Clear();
@@ -161,13 +197,13 @@ namespace DotEngine.World.QT
             return objects;
         }
 
-        private void QueryInsideObjects(QuadNode node, Rect bounds, List<IQuadObject> objList)
+        private void QueryInsideObjects(QuadNode node, Rect projectRect, List<IQuadObject> objList)
         {
-            if (node.Bounds.IntersectsWith(bounds))
+            if (node.ProjectRect.IntersectsWith(projectRect))
             {
                 foreach (var obj in node.Objects)
                 {
-                    if (bounds.Contains(obj.Bounds))
+                    if (projectRect.Contains(obj.ProjectRect))
                     {
                         objList.Add(obj);
                     }
@@ -177,16 +213,16 @@ namespace DotEngine.World.QT
                 {
                     foreach (var childNode in node.ChildNodes)
                     {
-                        QueryInsideObjects(childNode, bounds, objList);
+                        QueryInsideObjects(childNode, projectRect, objList);
                     }
                 }
 
             }
         }
 
-        public IQuadObject[] GetIntersectedObjects(Rect bounds)
+        public IQuadObject[] GetIntersectedObjects(Rect projectRect)
         {
-            QueryIntersectedObjects(this, bounds, m_ReusedObjectList);
+            QueryIntersectedObjects(this, projectRect, m_ReusedObjectList);
 
             IQuadObject[] objects = m_ReusedObjectList.ToArray();
             m_ReusedObjectList.Clear();
@@ -194,13 +230,13 @@ namespace DotEngine.World.QT
             return objects;
         }
 
-        private void QueryIntersectedObjects(QuadNode node,Rect bounds,List<IQuadObject> objList)
+        private void QueryIntersectedObjects(QuadNode node,Rect projectRect,List<IQuadObject> objList)
         {
-            if (node.Bounds.IntersectsWith(bounds))
+            if (node.ProjectRect.IntersectsWith(projectRect))
             {
                 foreach (var obj in node.Objects)
                 {
-                    if (bounds.IntersectsWith(obj.Bounds))
+                    if (projectRect.IntersectsWith(obj.ProjectRect))
                     {
                         objList.Add(obj);
                     }
@@ -210,37 +246,47 @@ namespace DotEngine.World.QT
                 {
                     foreach (var childNode in node.ChildNodes)
                     {
-                        QueryIntersectedObjects(childNode, bounds, objList);
+                        QueryIntersectedObjects(childNode, projectRect, objList);
                     }
                 }
             }
         }
 
-        public QuadNode GetContainsNode(Rect bounds)
+        public IQuadObject[] GetIntersectedObjects(Plane[] planes)
         {
-            return QueryContainsNode(this,bounds);
+            QueryIntersectedObjects(this, planes, m_ReusedObjectList);
+
+            IQuadObject[] objects = m_ReusedObjectList.ToArray();
+            m_ReusedObjectList.Clear();
+
+            return objects;
         }
 
-        private QuadNode QueryContainsNode(QuadNode node,Rect bounds)
+        private void QueryIntersectedObjects(QuadNode node, Plane[] planes, List<IQuadObject> objList)
         {
-            if(node.Bounds.Contains(bounds))
+            if(GeometryUtility.TestPlanesAABB(planes,Bounds))
             {
+                foreach (var obj in node.Objects)
+                {
+                    if(GeometryUtility.TestPlanesAABB(planes, obj.Bounds))
+                    {
+                        objList.Add(obj);
+                    }
+                }
+
                 if (!node.IsLeaf)
                 {
-                    foreach(var childNode in node.ChildNodes)
+                    foreach (var childNode in node.ChildNodes)
                     {
-                        if(childNode.Bounds.Contains(bounds))
-                        {
-                            return QueryContainsNode(childNode, bounds);
-                        }
+                        QueryIntersectedObjects(childNode, planes, objList);
                     }
                 }
-
-                return node;
             }
-            return null;
         }
 
+        #endregion
+
+        #region Pool Item
         public void OnNew()
         {
         }
@@ -259,10 +305,11 @@ namespace DotEngine.World.QT
             ChildNodes[2] = null;
             ChildNodes[3] = null;
         }
+        #endregion
 
         public override string ToString()
         {
-            return $"{Depth}_{Direction}_({Bounds})";
+            return $"{Depth}_{Direction}_({ProjectRect})";
         }
 
     }

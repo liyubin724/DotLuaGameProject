@@ -52,19 +52,19 @@ namespace DotEngine.World.QT
 
         public void InsertObject(IQuadObject quadObject)
         {
-            Log($"InsertObject::Bounds = {quadObject.Bounds}");
+            Log($"InsertObject::Bounds = {quadObject.ProjectRect}");
 
             InsertObjectToNode(m_Root, quadObject);
         }
 
         private void InsertObjectToNode(QuadNode node,IQuadObject quadObject)
         {
-            if (!node.Bounds.Contains(quadObject.Bounds))
+            if (!node.ProjectRect.Contains(quadObject.ProjectRect))
             {
                 throw new Exception("QuadObject's bounds is not fit within node bounds");
             }
 
-            Log($"InsertObjectToNode::try to add to node({node.ToString()}),object = {quadObject.Bounds}");
+            Log($"InsertObjectToNode::try to add to node({node.ToString()}),object = {quadObject.ProjectRect}");
 
             if (node.IsLeaf && node.ObjectCount >= m_NodeSplitObjectCount && node.Depth < m_MaxDepth)
             {
@@ -76,7 +76,7 @@ namespace DotEngine.World.QT
                 {
                     foreach (var childNode in node.ChildNodes)
                     {
-                        if (childNode.Bounds.Contains(obj.Bounds))
+                        if (childNode.ProjectRect.Contains(obj.ProjectRect))
                         {
                             relocateObjects.Add(obj);
                             break;
@@ -86,7 +86,7 @@ namespace DotEngine.World.QT
 
                 foreach(var obj in relocateObjects)
                 {
-                    Log($"InsertObjectToNode::Relocate Object int to node({node.ToString()}),object = {obj.Bounds}");
+                    Log($"InsertObjectToNode::Relocate Object int to node({node.ToString()}),object = {obj.ProjectRect}");
                     RemoveObjectFromNode(node, obj,false);
                     InsertObjectToNode(node, obj);
                 }
@@ -96,22 +96,22 @@ namespace DotEngine.World.QT
             {
                 foreach (var childNode in node.ChildNodes)
                 {
-                    if (childNode.Bounds.Contains(quadObject.Bounds))
+                    if (childNode.ProjectRect.Contains(quadObject.ProjectRect))
                     {
-                        Log($"InsertObjectToNode::Add Obj into childNode.ParentNode = ({node.ToString()}),childNode = {childNode},object = {quadObject.Bounds}");
+                        Log($"InsertObjectToNode::Add Obj into childNode.ParentNode = ({node.ToString()}),childNode = {childNode},object = {quadObject.ProjectRect}");
                         InsertObjectToNode(childNode, quadObject);
                         return;
                     }
                 }
             }
 
-            Log($"InsertObjectToNode::Add Obj into Node.Node = ({node.ToString()}),object = {quadObject.Bounds}");
+            Log($"InsertObjectToNode::Add Obj into Node.Node = ({node.ToString()}),object = {quadObject.ProjectRect}");
             AddObjectToNode(node, quadObject);
         }
 
         private void AddObjectToNode(QuadNode node, IQuadObject quadObject)
         {
-            Log($"AddObjectToNode::Add Obj into Node.Node = ({node.ToString()}),object = {quadObject.Bounds}");
+            Log($"AddObjectToNode::Add Obj into Node.Node = ({node.ToString()}),object = {quadObject.ProjectRect}");
 
             quadObject.BoundsChangedHandler += OnObjectBoundsChanged;
             node.Objects.Add(quadObject);
@@ -121,7 +121,7 @@ namespace DotEngine.World.QT
 
         private void OnObjectBoundsChanged(IQuadObject quadObject)
         {
-            Log($"OnObjectBoundsChanged::the bounds of object is changed. object = {quadObject.Bounds}");
+            Log($"OnObjectBoundsChanged::the bounds of object is changed. object = {quadObject.ProjectRect}");
 
             RemoveObject(quadObject);
             InsertObject(quadObject);
@@ -129,23 +129,23 @@ namespace DotEngine.World.QT
 
         private void SplitNode(QuadNode node)
         {
-            float width = node.Bounds.width * 0.5f;
-            float height = node.Bounds.height * 0.5f;
+            float width = node.ProjectRect.width * 0.5f;
+            float height = node.ProjectRect.height * 0.5f;
 
             QuadNode childNode = m_NodePool.Get();
-            childNode.SetData(node.Depth + 1, QuadDirection.LB, node.Bounds.xMin, node.Bounds.yMin, width, height);
+            childNode.SetData(node.Depth + 1, QuadDirection.LB, node.ProjectRect.xMin, node.ProjectRect.yMin, width, height);
             node[QuadDirection.LB] = childNode;
 
             childNode = m_NodePool.Get();
-            childNode.SetData(node.Depth + 1, QuadDirection.RB, node.Bounds.center.x, node.Bounds.yMin, width, height);
+            childNode.SetData(node.Depth + 1, QuadDirection.RB, node.ProjectRect.center.x, node.ProjectRect.yMin, width, height);
             node[QuadDirection.RB] = childNode;
 
             childNode = m_NodePool.Get();
-            childNode.SetData(node.Depth + 1, QuadDirection.LT, node.Bounds.xMin, node.Bounds.center.y, width, height); ;
+            childNode.SetData(node.Depth + 1, QuadDirection.LT, node.ProjectRect.xMin, node.ProjectRect.center.y, width, height); ;
             node[QuadDirection.LT] = childNode;
 
             childNode = m_NodePool.Get();
-            childNode.SetData(node.Depth + 1, QuadDirection.RT, node.Bounds.center.x, node.Bounds.center.y, width, height);
+            childNode.SetData(node.Depth + 1, QuadDirection.RT, node.ProjectRect.center.x, node.ProjectRect.center.y, width, height);
             node[QuadDirection.RT] = childNode;
         }
         #endregion
@@ -156,7 +156,7 @@ namespace DotEngine.World.QT
         {
             if(m_ObjectInNodeDic.TryGetValue(quadObject,out var node))
             {
-                Log($"RemoveObject::try to remove object. object = {quadObject.Bounds}");
+                Log($"RemoveObject::try to remove object. object = {quadObject.ProjectRect}");
 
                 RemoveObjectFromNode(node, quadObject, true);
             }
