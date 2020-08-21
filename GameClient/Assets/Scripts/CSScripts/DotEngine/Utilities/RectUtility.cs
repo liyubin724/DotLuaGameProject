@@ -6,10 +6,20 @@ namespace DotEngine.Utilities
     {
         public static bool Contains(this Rect rect,Rect targetRect)
         {
-            return rect.xMin < targetRect.xMin
-                && rect.yMin <= targetRect.yMin
-                && rect.xMax >= targetRect.xMax
-                && rect.yMax >= targetRect.yMax;
+            float xMin1 = rect.xMin;
+            float yMin1 = rect.yMin;
+            float xMax1 = rect.xMax;
+            float yMax1 = rect.yMax;
+
+            float xMin2= targetRect.xMin;
+            float yMin2= targetRect.yMin;
+            float xMax2 = targetRect.xMax;
+            float yMax2 = targetRect.yMax;
+
+            return xMin1 < xMin2
+                && yMin1 <= yMin2
+                && xMax1 >= xMax2
+                && yMax1 >= yMax2;
         }
 
         public static bool IntersectsWith(this Rect rect,Rect targetRect)

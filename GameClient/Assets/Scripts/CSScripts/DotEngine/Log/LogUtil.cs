@@ -17,6 +17,14 @@
             }
         }
 
+        public static bool IsInited
+        {
+            get
+            {
+                return logger != null;
+            }
+        }
+
         private static ILogger logger = null;
         public static void SetLogger(ILogger logger)
         {

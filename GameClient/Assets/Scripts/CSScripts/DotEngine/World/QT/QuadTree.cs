@@ -1,34 +1,34 @@
-﻿using DotEngine.Pool;
+﻿using DotEngine.Log;
+using DotEngine.Pool;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace DotEngine.World.QT
 {
     public class QuadTree
     {
-        private static readonly int LIMIT_MAX_DEPTH = 7;
-
         private ObjectPool<QuadNode> m_NodePool = null;
 
+        private Dictionary<IQuadObject, QuadNode> m_ObjectInNodeDic = new Dictionary<IQuadObject, QuadNode>();
+
         private QuadNode m_Root = null;
-        public QuadNode RootNode { get => m_Root; }
         private int m_MaxDepth = 0;
         private int m_NodeSplitObjectCount = 0;
 
-        private List<IQuadObject> m_ReusedList = new List<IQuadObject>();
+        private List<IQuadObject> m_ReusedObjectList = new List<IQuadObject>();
 
         public QuadTree()
         {
-            m_NodePool = new ObjectPool<QuadNode>((int)Mathf.Pow(2, LIMIT_MAX_DEPTH));
         }
 
-        public void SetData(int maxDepth,int nodeSplitObjectCount,Rect rootRect)
+        public void SetData(int maxDepth, int nodeSplitObjectCount, Rect rootRect)
         {
-            if(maxDepth> LIMIT_MAX_DEPTH)
+            if(m_NodePool == null)
             {
-                throw new Exception("The depth is too large");
+                m_NodePool = new ObjectPool<QuadNode>((int)(Mathf.Pow(2, Mathf.Pow(2, maxDepth) - 1))) ;
             }
 
             m_MaxDepth = maxDepth;
@@ -38,96 +38,93 @@ namespace DotEngine.World.QT
             m_Root.SetData(0, QuadDirection.None, rootRect);
         }
 
-        #region Query
-        public IQuadObject[] Query(Rect bounds)
+        public QuadNode[] GetNodes()
         {
-            QueryObjectFromNode(bounds, m_Root, m_ReusedList);
-
-            IQuadObject[] results = m_ReusedList.ToArray();
-            m_ReusedList.Clear();
-
-            return results;
+            return m_Root.GetNodes(true);
         }
 
-        private void QueryObjectFromNode(Rect bounds, QuadNode node, List<IQuadObject> results)
+        public IQuadObject[] QueryInsideObjects(Rect bounds)
         {
-            if (node == null)
-            {
-                return;
-            }
-
-            if (bounds.IntersectsWith(node.Bounds))
-            {
-                foreach (var quadObject in node.Objects)
-                {
-                    if (bounds.IntersectsWith(quadObject.Bounds))
-                    {
-                        results.Add(quadObject);
-                    }
-                }
-
-                if (!node.IsLeaf)
-                {
-                    foreach (var childNode in node.ChildNodes)
-                    {
-                        QueryObjectFromNode(bounds, childNode, results);
-                    }
-                }
-            }
+            return m_Root?.GetInsideObjects(bounds);
         }
-        #endregion
 
         #region Insert
 
         public void InsertObject(IQuadObject quadObject)
         {
-            InsertObjectToNode(FindInsertTargetNode(m_Root, quadObject),quadObject);
+            Log($"InsertObject::Bounds = {quadObject.Bounds}");
+
+            InsertObjectToNode(m_Root, quadObject);
         }
 
-        private void InsertObjectToNode(QuadNode node, IQuadObject quadObject)
-        {
-            quadObject.BoundsChanged += OnObjectBoundsChanged;
-            node.Objects.Add(quadObject);
-        }
-
-        private void OnObjectBoundsChanged(IQuadObject quadObject)
-        {
-            RemoveObject(quadObject);
-            InsertObject(quadObject);
-        }
-
-        private QuadNode FindInsertTargetNode(QuadNode node, IQuadObject quadObject)
+        private void InsertObjectToNode(QuadNode node,IQuadObject quadObject)
         {
             if (!node.Bounds.Contains(quadObject.Bounds))
             {
                 throw new Exception("QuadObject's bounds is not fit within node bounds");
             }
 
+            Log($"InsertObjectToNode::try to add to node({node.ToString()}),object = {quadObject.Bounds}");
+
             if (node.IsLeaf && node.ObjectCount >= m_NodeSplitObjectCount && node.Depth < m_MaxDepth)
             {
+                Log($"InsertObjectToNode::try to Split node({node.ToString()})");
                 SplitNode(node);
 
-                List<IQuadObject> quadObjects = new List<IQuadObject>(node.Objects);
-                node.Objects.Clear();
-
-                foreach(var qObj in quadObjects)
+                List<IQuadObject> relocateObjects = new List<IQuadObject>();
+                foreach (var obj in node.Objects)
                 {
-                    InsertObjectToNode(FindInsertTargetNode(node, qObj),qObj);
+                    foreach (var childNode in node.ChildNodes)
+                    {
+                        if (childNode.Bounds.Contains(obj.Bounds))
+                        {
+                            relocateObjects.Add(obj);
+                            break;
+                        }
+                    }
+                }
+
+                foreach(var obj in relocateObjects)
+                {
+                    Log($"InsertObjectToNode::Relocate Object int to node({node.ToString()}),object = {obj.Bounds}");
+                    RemoveObjectFromNode(node, obj,false);
+                    InsertObjectToNode(node, obj);
                 }
             }
 
-            if (!node.IsLeaf)
+            if(!node.IsLeaf)
             {
                 foreach (var childNode in node.ChildNodes)
                 {
                     if (childNode.Bounds.Contains(quadObject.Bounds))
                     {
-                        return FindInsertTargetNode(childNode, quadObject);
+                        Log($"InsertObjectToNode::Add Obj into childNode.ParentNode = ({node.ToString()}),childNode = {childNode},object = {quadObject.Bounds}");
+                        InsertObjectToNode(childNode, quadObject);
+                        return;
                     }
                 }
             }
 
-            return node;
+            Log($"InsertObjectToNode::Add Obj into Node.Node = ({node.ToString()}),object = {quadObject.Bounds}");
+            AddObjectToNode(node, quadObject);
+        }
+
+        private void AddObjectToNode(QuadNode node, IQuadObject quadObject)
+        {
+            Log($"AddObjectToNode::Add Obj into Node.Node = ({node.ToString()}),object = {quadObject.Bounds}");
+
+            quadObject.BoundsChangedHandler += OnObjectBoundsChanged;
+            node.Objects.Add(quadObject);
+
+            m_ObjectInNodeDic.Add(quadObject, node);
+        }
+
+        private void OnObjectBoundsChanged(IQuadObject quadObject)
+        {
+            Log($"OnObjectBoundsChanged::the bounds of object is changed. object = {quadObject.Bounds}");
+
+            RemoveObject(quadObject);
+            InsertObject(quadObject);
         }
 
         private void SplitNode(QuadNode node)
@@ -157,44 +154,34 @@ namespace DotEngine.World.QT
 
         public void RemoveObject(IQuadObject quadObject)
         {
-            RemoveObjectFromNode(FindRemoveTargetNode(m_Root, quadObject), quadObject);
+            if(m_ObjectInNodeDic.TryGetValue(quadObject,out var node))
+            {
+                Log($"RemoveObject::try to remove object. object = {quadObject.Bounds}");
+
+                RemoveObjectFromNode(node, quadObject, true);
+            }
         }
 
-        public void RemoveObjectFromNode(QuadNode node,IQuadObject quadObject)
+        private void RemoveObjectFromNode(QuadNode node, IQuadObject quadObject,bool isMergeNode)
         {
+            Log($"RemoveObjectFromNode::remove object. node = {node},object = {quadObject}");
+            quadObject.BoundsChangedHandler -= OnObjectBoundsChanged;
             node.Objects.Remove(quadObject);
-            quadObject.BoundsChanged -= OnObjectBoundsChanged;
+            m_ObjectInNodeDic.Remove(quadObject);
 
-            if(node.ParentNode !=null)
+            if(isMergeNode && node.ParentNode !=null)
             {
+                Log($"RemoveObjectFromNode::Merge node. node = {node}");
                 MergeNode(node.ParentNode);
             }
-        }
-
-        private QuadNode FindRemoveTargetNode(QuadNode node, IQuadObject quadObject)
-        {
-            if(node.Objects.Contains(quadObject))
-            {
-                return node;
-            }
-
-            if (!node.IsLeaf)
-            {
-                foreach(var childNode in node.ChildNodes)
-                {
-                    return FindRemoveTargetNode(childNode, quadObject);
-                }
-            }
-
-            return null;
         }
 
         private void MergeNode(QuadNode node)
         {
             if (node.TotalObjectCount <= m_NodeSplitObjectCount)
             {
-                List<IQuadObject> quadObjects = node.TotalObjects;
-                List<QuadNode> quadNodes = node.TotalChildNodes;
+                IQuadObject[] quadObjects = node.GetObjects();
+                QuadNode[] quadNodes = node.GetNodes(false);
 
                 node.Objects.Clear();
                 node[QuadDirection.LB] = null;
@@ -209,7 +196,13 @@ namespace DotEngine.World.QT
 
                 foreach (var qo in quadObjects)
                 {
-                    InsertObjectToNode(node, qo);
+                    node.Objects.Add(qo);
+                    m_ObjectInNodeDic[qo] = node;
+                }
+
+                if(node.ParentNode!=null)
+                {
+                    MergeNode(node.ParentNode);
                 }
             }
         }
@@ -217,9 +210,18 @@ namespace DotEngine.World.QT
 
         public void Clear()
         {
-            
+
         }
 
-
+        [Conditional("QUAD_TREE_DEBUG")]
+        private void Log(string message)
+        {
+            if(!LogUtil.IsInited)
+            {
+                DotEngine.Log.ILogger logger = new UnityLogger();
+                LogUtil.SetLogger(logger);
+            }
+            LogUtil.LogInfo("QuadTree", message);
+        }
     }
 }
