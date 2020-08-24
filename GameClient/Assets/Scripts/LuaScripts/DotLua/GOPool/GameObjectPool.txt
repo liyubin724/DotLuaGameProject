@@ -1,6 +1,5 @@
 local GameObjectPoolTemplateType = using("DotLua/GOPool/GameObjectPoolTemplateType")
 
-local DebugLog = DebugLog
 local GameObject = CS.UnityEngine.GameObject
 local math = math
 
@@ -64,7 +63,7 @@ function GameObjectPool:OnPreloadTimerInterval()
             amount = math.min(amount, self.preloadOnceAmount)
         end
 
-        for i = 1, amount do
+        for _ = 1, amount do
             local item = self:CreateItem()
             if item then
                 item:SetActive(false)
@@ -85,7 +84,7 @@ end
 -- 创建新的Item对象
 -- @return GameObject
 function GameObjectPool:CreateItem()
-    local item = nil
+    local item
     if self.templateType == GameObjectPoolTemplateType.RuntimeInstance then
         item = GameObject.Instantiate(self.templateGameObject)
     else
@@ -131,7 +130,7 @@ function GameObjectPool:OnCullTimerInterval()
         cullAmount = math.min(cullAmount, self.cullOnceAmount)
     end
 
-    for i = 1, cullAmount do
+    for _ = 1, cullAmount do
         table.remove(self.unusedItems, 1)
     end
 end
@@ -153,7 +152,7 @@ end
 function GameObjectPool:GetItem(isSetActive)
     isSetActive = isSetActive or true
 
-    local item = nil
+    local item
     if #(self.unusedItems) > 0 then
         item = self.unusedItems[1]
 
@@ -203,12 +202,12 @@ function GameObjectPool:Dispose()
     self.templateGameObject = nil
 
     if self.cullTimerHandler then
-        TimerMgr:RemoveTimer(self.cullTimerHandler)
+        Game.TimerMgr:RemoveTimer(self.cullTimerHandler)
         self.cullTimerHandler = nil
     end
 
     if self.preloadTimerHandler then
-        TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        Game.TimerMgr:RemoveTimer(self.preloadTimerHandler)
         self.preloadTimerHandler = nil
     end
     self.parentTransform = nil

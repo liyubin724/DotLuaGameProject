@@ -177,6 +177,9 @@ namespace DotEngine.Lua
 
         protected virtual void DoDispose()
         {
+            m_InstanceFunc = null;
+            m_UsingFunc = null;
+
             m_UpdateAction = null;
             EnvTable?.Dispose();
             EnvTable = null;
