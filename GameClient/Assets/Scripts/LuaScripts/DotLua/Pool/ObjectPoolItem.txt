@@ -1,6 +1,4 @@
-require('DotLua/Class')
-
-ObjectPoolItem =
+local ObjectPoolItem =
     Class(
     function(self)
     end
@@ -15,3 +13,5 @@ end
 function ObjectPoolItem:OnRelease()
 
 end
+
+return ObjectPoolItem

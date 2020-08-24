@@ -1,7 +1,6 @@
-require('DotLua/Class')
-require('DotLua/Pool/ObjectPoolItem')
+local ObjectPoolItem = using('DotLua/Pool/ObjectPoolItem')
 
-ObjectPool =
+local ObjectPool =
     Class(
     function(self, itemClass)
         self.itemClass = itemClass
@@ -31,3 +30,4 @@ function ObjectPool:Clear()
     self.items = {}
 end
 
+return ObjectPool

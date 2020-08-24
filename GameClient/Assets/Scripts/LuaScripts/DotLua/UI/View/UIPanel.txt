@@ -1,9 +1,10 @@
-require('DotLua/Class')
-require('DotLua/UI/View/UIView')
+local UIView = using('DotLua/UI/View/UIView')
 
-UIPanel =
+local UIPanel =
     Class(
     UIView,
     function(self)
     end
 )
+
+return UIPanel

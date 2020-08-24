@@ -1,9 +1,8 @@
-require('DotLua/Class')
-require('DotLua/UI/View/UIViewController')
+local UIViewController = using('DotLua/UI/View/UIViewController')
 
 ----public----
 
-UIPanelController =
+local UIPanelController =
     Class(
     UIViewController,
     function(self, name)
@@ -116,3 +115,5 @@ end
 -- @return void
 function UIPanelController:HandleEvents(eventID, ...)
 end
+
+return UIPanelController

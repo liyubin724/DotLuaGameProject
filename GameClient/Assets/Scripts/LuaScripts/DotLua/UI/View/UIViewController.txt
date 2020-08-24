@@ -1,12 +1,10 @@
-require('DotLua/Class')
-
 local CSUIView = CS.DotEngine.Lua.UI.View.LuaUIView
 local CSUnityObject = CS.UnityEngine.Object
 local eventMgr = Game.EventMgr
 local assetMgr = Game.AssetMgr
 local DebugLog = DebugLog
 
-UIViewController =
+local UIViewController =
     Class(
     function(self, name)
         self.name = name
@@ -133,3 +131,5 @@ function UIViewController:UnregisterEvents()
         end
     end
 end
+
+return UIViewController

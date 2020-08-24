@@ -1,16 +1,14 @@
-require('DotLua/Class')
-require('DotLua/Timer/TimerWheel')
-require('DotLua/Pool/ObjectPool')
-require('DotLua/Timer/TimerTask')
-require('DotLua/Timer/TimerHandler')
-require('DotLua/Delegate')
+local TimerWheel = using('DotLua/Timer/TimerWheel')
+local ObjectPool = using('DotLua/Pool/ObjectPool')
+local TimerTask = using('DotLua/Timer/TimerTask')
+local TimerHandler = using('DotLua/Timer/TimerHandler')
 
 local DebugLog = DebugLog
 
 ----private----
 -- 多层时间轮定时器
 -- 通过Game.TimerMgr可以获得全局的定时器
-HierarchicalTimerWheel =
+local HierarchicalTimerWheel =
     Class(
     function(self)
         self.uniqueIndex = 0
@@ -209,3 +207,5 @@ function HierarchicalTimerWheel:AddTask(task, handler)
     end
     return handler
 end
+
+return HierarchicalTimerWheel

@@ -1,6 +1,4 @@
-require('DotLua/Class')
-require('DotLua/GOPool/GameObjectPoolGroup')
-
+local GameObjectPoolGroup = using('DotLua/GOPool/GameObjectPoolGroup')
 local DontDestroyHandler = CS.DotEngine.Utilities.DontDestroyHandler
 
 ----private----
@@ -18,7 +16,7 @@ local item = pool:GetItem()
 item:SetParent(nil,false)
 
 --]]
-GameObjectPoolManager =
+local GameObjectPoolManager =
     Class(
     function(self)
         self.groups = {}
@@ -112,3 +110,5 @@ function GameObjectPoolManager:ClearAll()
     end
     self.groups = {}
 end
+
+return GameObjectPoolManager

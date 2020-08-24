@@ -1,5 +1,4 @@
-require('DotLua/Class')
-require("DotLua/Asset/AssetData")
+local AssetData = using("DotLua/Asset/AssetData")
 
 local DebugLog = DebugLog
 local AssetLoaderPriority = CS.DotEngine.Asset.AssetLoaderPriority
@@ -7,7 +6,7 @@ local GameFacade = CS.Game.GameFacade
 local AssetService = CS.DotEngine.Asset.AssetService
 local Game = Game
 
-AssetManager =
+local AssetManager =
     Class(
     function(self)
         self.assetDatas = {}
@@ -123,3 +122,5 @@ function AssetManager:GetAssetService()
 
     return self.assetService
 end
+
+return AssetManager

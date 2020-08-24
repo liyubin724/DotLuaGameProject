@@ -1,8 +1,6 @@
-require('DotLua/Class')
-
 ----public----
 -- 添加Timer后得到对于任务的标识
-TimerHandler =
+local TimerHandler =
     Class(
     function(self, index, wheelIndex, slotIndex)
         self.index = index
@@ -83,3 +81,5 @@ function TimerHandler:Clear()
     self.wheelIndex = -1
     self.wheelSlotIndex = -1
 end
+
+return TimerHandler

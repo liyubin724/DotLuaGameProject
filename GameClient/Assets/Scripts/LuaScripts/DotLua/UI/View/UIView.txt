@@ -1,6 +1,4 @@
-require('DotLua/Class')
-
-UIView =
+local UIView =
     Class(
     function(self)
         self.controller = nil
@@ -44,3 +42,5 @@ end
 
 function UIView:DoDestroy()
 end
+
+return UIView

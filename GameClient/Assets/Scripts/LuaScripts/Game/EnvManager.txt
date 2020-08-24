@@ -1,11 +1,12 @@
-require('DotLua/Class')
-require('DotLua/Delegate')
 require('Game/Event/EventID')
+
+local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
+local UIPanelMode = using("DotLua/UI/UIPanelMode")
 
 local DebugLog = DebugLog
 local Game = Game
 
-EnvManager =
+local EnvManager =
     Class(
     function(self)
         self.updateDelegate = Delegate()
@@ -35,7 +36,7 @@ function EnvManager:DoStartup()
     --local profiler = require("perf.profiler")
     --profiler.start()
 
-    require("Game/Test/UI/View/LoginPanelController")
+    local LoginPanelController = using("Game/Test/UI/View/LoginPanelController")
     local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",LoginPanelController,UIPanelLayer.Default,UIPanelMode.Append)
     loginPanelController:LoadView("login_panel")
 
@@ -102,3 +103,5 @@ function EnvManager:OnCubeLoadComplete(address, uObject, userdata)
     local transform = uObject.transform
     transform.localPosition = CS.UnityEngine.Vector3.one
 end
+
+return EnvManager

@@ -44,7 +44,7 @@ namespace DotEngine.Lua
             LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
             if (!string.IsNullOrEmpty(m_ScriptFilePath))
             {
-                ObjTable = LuaUtility.Instance(service.Env, m_ScriptFilePath);
+                ObjTable = service.InstanceScript(m_ScriptFilePath);
 
                 if (ObjTable != null)
                 {

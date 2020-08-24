@@ -1,0 +1,7 @@
+local UIPanelMode = {
+    Append = 0,
+    Navigate = 1,
+    Mutex = 2
+}
+
+return UIPanelMode

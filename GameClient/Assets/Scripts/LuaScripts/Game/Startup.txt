@@ -1,9 +1,9 @@
-Game = {}
+Game = Game or {}
 Game.IsDebug = true
 
 require('DotLua/Utility/math')
 require('DotLua/Utility/table')
-require('DotLua/Class')
+require('DotLua/OOP/OOP')
 require('DotLua/Log/DebugLog')
 
 if Game.IsDebug then
@@ -15,26 +15,13 @@ else
 end
 
 local function InitMgr()
-    require('DotLua/Config/ConfigManager')
-    Game.ConfigMgr = ConfigManager("Game/Config/")
-
-    require('DotLua/Timer/HierarchicalTimerWheel')
-    Game.TimerMgr = HierarchicalTimerWheel()
-
-    require('DotLua/Event/EventDispatcher')
-    Game.EventMgr = EventDispatcher()
-
-    require('DotLua/Asset/AssetManager')
-    Game.AssetMgr = AssetManager()
-
-    require('DotLua/UI/UIPanelManager')
-    Game.PanelMgr = UIPanelManager()
-
-    require("DotLua/GOPool/GameObjectPoolManager")
-    Game.PoolMgr = GameObjectPoolManager()
-
-    require('Game/EnvManager')
-    Game.EnvMgr = EnvManager()
+    Game.ConfigMgr = instanceWithParams('DotLua/Config/ConfigManager', 'Game/Config/')
+    Game.TimerMgr = instance('DotLua/Timer/HierarchicalTimerWheel')
+    Game.EventMgr = instance('DotLua/Event/EventDispatcher')
+    Game.AssetMgr = instance('DotLua/Asset/AssetManager')
+    Game.PanelMgr = instance('DotLua/UI/UIPanelManager')
+    Game.PoolMgr = instance('DotLua/GOPool/GameObjectPoolManager')
+    Game.EnvMgr = instance('Game/EnvManager')
 end
 
 InitMgr()

@@ -1,9 +1,6 @@
-require('DotLua/Class')
-require("DotLua/Callback")
-
 ----internal----
 -- 用于记录Lua对资源加载时的数据及加载时处理相关的数据
-AssetData =
+local AssetData =
     Class(
     function(self)
         self.assetIndex = -1
@@ -66,3 +63,5 @@ function AssetData:InvokeComplete(uObject)
         self.completeCallback:Invoke(self.address,uObject,self.userdata)
     end
 end
+
+return AssetData

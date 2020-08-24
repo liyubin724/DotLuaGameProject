@@ -22,6 +22,9 @@ namespace DotEngine.Lua
         private ScriptLoader m_ScriptLoader = null;
         private Action<LuaTable, float> m_UpdateAction = null;
 
+        private Func<string, LuaTable> m_UsingFunc = null;
+        private Func<string, LuaTable> m_InstanceFunc = null;
+
         public LuaEnvService() : base(NAME)
         {
         }
@@ -41,6 +44,7 @@ namespace DotEngine.Lua
             if (!RequireScript(PreloadScript))
             {
                 LogUtil.LogError(LuaConst.LOGGER_NAME, "Load script failed. path = " + PreloadScript);
+                return;
             }
 
             GameTable = Env.Global.Get<LuaTable>("Game");
@@ -63,9 +67,61 @@ namespace DotEngine.Lua
         {
             if(IsValid())
             {
-                return LuaUtility.Require(Env, scriptPath);
+                if (string.IsNullOrEmpty(scriptPath))
+                {
+                    LogUtil.LogError(LuaConst.LOGGER_NAME, "script is empty");
+                    return false;
+                }
+                string scriptName = GetScriptName(scriptPath);
+                if (string.IsNullOrEmpty(scriptName))
+                {
+                    LogUtil.LogError(LuaConst.LOGGER_NAME, "scriptName is empty");
+                    return false;
+                }
+
+                if (!Env.Global.ContainsKey(scriptName))
+                {
+                    Env.DoString(string.Format("require (\"{0}\")", scriptPath));
+                }
+                return true;
             }
             return false;
+        }
+
+        private string GetScriptName(string script)
+        {
+            if (string.IsNullOrEmpty(script))
+            {
+                LogUtil.LogError(LuaConst.LOGGER_NAME, "script is empty");
+                return null;
+            }
+
+            string scriptName = script;
+            int index = script.LastIndexOf("/");
+            if (index > 0)
+            {
+                scriptName = script.Substring(index + 1);
+            }
+            return scriptName;
+        }
+
+        public LuaTable UsingScript(string scriptPath)
+        {
+            if(m_UsingFunc == null)
+            {
+                m_UsingFunc = Env.Global.Get<Func<string, LuaTable>>("using");
+            }
+            return m_UsingFunc(scriptPath);
+        }
+
+        public LuaTable InstanceScript(string scriptPath)
+        {
+            if(m_InstanceFunc == null)
+            {
+                m_InstanceFunc = Env.Global.Get<Func<string, LuaTable>>("instance");
+            }
+
+            return m_InstanceFunc(scriptPath);
         }
 
         public virtual void DoUpdate(float deltaTime)

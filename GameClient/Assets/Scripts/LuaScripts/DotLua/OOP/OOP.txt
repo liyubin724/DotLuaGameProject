@@ -1,0 +1,5 @@
+require("DotLua/OOP/Assembly")
+require("DotLua/OOP/Callback")
+require("DotLua/OOP/Class")
+require("DotLua/OOP/Delegate")
+require("DotLua/OOP/Import")
