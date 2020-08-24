@@ -1,6 +1,5 @@
-require('DotLua/Class')
 
-ConfigManager =
+local ConfigManager =
     Class(
     function(self,rootPath)
         self.configs = {}
@@ -74,3 +73,5 @@ end
 function ConfigManager:Clear()
     self.configs = {}
 end
+
+return ConfigManager

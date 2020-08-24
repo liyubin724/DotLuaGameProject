@@ -1,0 +1,8 @@
+local UIPanelLayer = {
+    Bottomlowest = 0,
+    Bottom = 1,
+    Default = 2,
+    Top = 3,
+    Topmost = 4
+}
+return UIPanelLayer

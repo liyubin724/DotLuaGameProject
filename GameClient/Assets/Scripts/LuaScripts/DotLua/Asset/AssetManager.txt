@@ -1,13 +1,11 @@
-require('DotLua/Class')
-require("DotLua/Asset/AssetData")
+local AssetData = using("DotLua/Asset/AssetData")
 
-local DebugLog = DebugLog
 local AssetLoaderPriority = CS.DotEngine.Asset.AssetLoaderPriority
 local GameFacade = CS.Game.GameFacade
 local AssetService = CS.DotEngine.Asset.AssetService
 local Game = Game
 
-AssetManager =
+local AssetManager =
     Class(
     function(self)
         self.assetDatas = {}
@@ -100,7 +98,7 @@ end
 
 ----private----
 -- 以静态的函数用于响应资源的加载OnAssetProgress
-function AssetManager.OnAssetProgress(address,progress,assetIndex)
+function AssetManager.OnAssetProgress(_,progress,assetIndex)
     local assetData =  Game.AssetMgr.assetDatas[assetIndex]
     if assetData then
         assetData:InvokeProgress(progress)
@@ -109,7 +107,7 @@ end
 
 ----private----
 -- 以静态的函数用于响应资源的加载OnAssetComplete
-function AssetManager.OnAssetComplete(address,uObject,assetIndex)
+function AssetManager.OnAssetComplete(_,uObject,assetIndex)
     local assetData =  Game.AssetMgr.assetDatas[assetIndex]
     if assetData then
         assetData:InvokeComplete(uObject)
@@ -123,3 +121,5 @@ function AssetManager:GetAssetService()
 
     return self.assetService
 end
+
+return AssetManager

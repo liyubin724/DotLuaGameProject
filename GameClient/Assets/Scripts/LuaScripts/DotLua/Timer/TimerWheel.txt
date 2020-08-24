@@ -1,10 +1,8 @@
-require('DotLua/Class')
-require('DotLua/Delegate')
 require('DotLua/Utility/math')
 
 ----internal----
 -- 时间轮
-TimerWheel =
+local TimerWheel =
     Class(
     function(self, level, tickInMS, slotSize)
         self.level = level
@@ -96,3 +94,5 @@ function TimerWheel:DoPushWheel(pushNum)
         end
     end
 end
+
+return TimerWheel

@@ -1,11 +1,13 @@
-require('DotLua/Class')
-require('DotLua/Delegate')
 require('Game/Event/EventID')
+
+local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
+local UIPanelMode = using("DotLua/UI/UIPanelMode")
+local GameObjectPoolTemplateType = using("DotLua/GOPool/GameObjectPoolTemplateType")
 
 local DebugLog = DebugLog
 local Game = Game
 
-EnvManager =
+local EnvManager =
     Class(
     function(self)
         self.updateDelegate = Delegate()
@@ -35,8 +37,11 @@ function EnvManager:DoStartup()
     --local profiler = require("perf.profiler")
     --profiler.start()
 
-    require("Game/Test/UI/View/LoginPanelController")
-    local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",LoginPanelController,UIPanelLayer.Default,UIPanelMode.Append)
+    local LoginPanelController = using("Game/Test/UI/View/LoginPanelController")
+    local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",
+                                                        LoginPanelController,
+                                                        UIPanelLayer.Default,
+                                                        UIPanelMode.Append)
     loginPanelController:LoadView("login_panel")
 
     --DebugLog.Info("Profiler", profiler.report())
@@ -48,7 +53,12 @@ function EnvManager:DoStartup()
     local timerMgr = Game.TimerMgr
     --local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test Timer")
     --local handler = timerMgr:AddEndTimer(3,self,EnvManager.OnEndTimer,"Test End Timer")
-    self.timerHandler = timerMgr:AddTimer(1,5,self,EnvManager.OnIntervalTimer, EnvManager.OnEndTimer,"Test Interval and End Timer")
+    self.timerHandler = timerMgr:AddTimer(1,
+                                          5,
+                                          self,
+                                          EnvManager.OnIntervalTimer,
+                                          EnvManager.OnEndTimer,
+                                          "Test Interval and End Timer")
     DebugLog.Info("Timer Test", tostring(self.timerHandler))
     self.timerIndex = 0
 
@@ -62,7 +72,7 @@ function EnvManager:DoStartup()
     entity.transform:SetParent(nil,false)
 end
 
-function EnvManager:OnMessage(eventID,userdata)
+function EnvManager:OnMessage(_,userdata)
     DebugLog.Info("Event", "message:="..tostring(userdata))
 
     Game.EventMgr:UnregisterListener(111,self,EnvManager.OnMessage)
@@ -96,9 +106,11 @@ function EnvManager:DoUpdate(deltaTime)
 end
 
 --------------------Test---------------------------
-function EnvManager:OnCubeLoadComplete(address, uObject, userdata)
+function EnvManager:OnCubeLoadComplete(_, uObject, _)
     DebugLog.Info('EnvManager', 'Cube loaded')
 
     local transform = uObject.transform
     transform.localPosition = CS.UnityEngine.Vector3.one
 end
+
+return EnvManager

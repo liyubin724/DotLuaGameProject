@@ -1,7 +1,7 @@
 require('DotLua/Class')
-require('DotLua/UI/View/UIView')
+local UIView = using('DotLua/UI/View/UIView')
 
-TestView =
+local TestView =
     Class(
     UIView,
     function(self)
@@ -11,4 +11,6 @@ TestView =
 function TestView:SetText(text)
     self.txt.text = text
 end
+
+return TestView
 

@@ -1,13 +1,9 @@
-require('DotLua/Class')
-
-local DebugLog = DebugLog
-
 ----internal----
 --构造函数
 --@param receiver 接收事件的table，可为空
 --@param func 接收事件处理的处理函数
 --@param userdata 自定义参数
-EventData =
+local EventData =
     Class(
     function(self)
         self.receiver = nil
@@ -70,3 +66,5 @@ function EventData:Invoke(eventID, ...)
         end
     end
 end
+
+return EventData

@@ -1,0 +1,10 @@
+----public----
+-- 缓存池模板对象的类型
+-- 不同类型的模板对象在使用时的处理方式上略有不同
+local GameObjectPoolTemplateType = {
+    Prefab = 0, -- 使用Prefab做为模板对象
+    PrefabInstance = 1, -- 使用Prefab的实例做为模板对象
+    RuntimeInstance = 2 -- 使用运行时创建的GameObject对象作为模板对象
+}
+
+return GameObjectPoolTemplateType

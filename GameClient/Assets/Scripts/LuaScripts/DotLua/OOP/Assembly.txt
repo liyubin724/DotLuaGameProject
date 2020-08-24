@@ -1,0 +1,53 @@
+Assembly = {}
+Assembly.__index = Assembly
+Assembly.classes = {}
+
+function Assembly:CreateInstance(path)
+    DebugLog.Info("Assembly",path)
+    local targetClass = self:GetOrLoadClass(path)
+    if targetClass then
+        return targetClass()
+    end
+
+    return nil
+end
+
+function Assembly:CreateInstanceWithParams(path, ...)
+    local targetClass = self:GetOrLoadClass(path)
+    if targetClass then
+        return targetClass(...)
+    end
+
+    return nil
+end
+
+function Assembly:GetTypes()
+    return self.classes
+end
+
+function Assembly:GetOrLoadClass(path)
+    local targetClass = self.classes[path]
+    if not targetClass then
+        targetClass = require(path)
+
+        if targetClass then
+            self.classes[path] = targetClass
+        end
+    end
+
+    return targetClass
+end
+
+function Assembly:LoadClass(path)
+    local targetClass = require(path)
+    self.classes[path] = targetClass
+    return targetClass
+end
+
+function Assembly:UnloadType(path)
+    self.classes[path] = nil
+end
+
+function Assembly:UnloadAll()
+    self.classes = {}
+end

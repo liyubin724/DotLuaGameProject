@@ -1,11 +1,9 @@
-require('DotLua/Class')
-require('DotLua/UI/View/UIViewController')
+local UIViewController = using('DotLua/UI/View/UIViewController')
 
-TestViewController =
+local TestViewController =
     Class(
     UIViewController,
     function(self, name)
-        
     end
 )
 
@@ -19,6 +17,8 @@ end
 
 function TestViewController:HandleEvents(eventID, ...)
     if eventID == 12 then
-        self.view:SetText("TTTT")
+        self.view:SetText('TTTT')
     end
 end
+
+return TestViewController

@@ -1,22 +1,9 @@
-require('DotLua/Class')
+local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
+local UIPanelMode = using("DotLua/UI/UIPanelMode")
 
 local Game = Game
 
-UIPanelMode = {
-    Append = 0,
-    Navigate = 1,
-    Mutex = 2
-}
-
-UIPanelLayer = {
-    Bottomlowest = 0,
-    Bottom = 1,
-    Default = 2,
-    Top = 3,
-    Topmost = 4
-}
-
-UIPanelManager =
+local UIPanelManager =
     Class(
     function(self)
         self.uiRoot = nil
@@ -126,3 +113,5 @@ function UIPanelManager:CloseAllPanelInLayer(panelLayer)
         end
     end
 end
+
+return UIPanelManager

@@ -1,6 +1,4 @@
-require('DotLua/Class')
-require('DotLua/GOPool/GameObjectPool')
-
+local GameObjectPool = using('DotLua/GOPool/GameObjectPool')
 local GameObject = CS.UnityEngine.GameObject
 
 ----private----
@@ -8,7 +6,7 @@ local GameObject = CS.UnityEngine.GameObject
 -- 如果在非调试模式下将会不再创建，而是直接放置到根结点下
 -- @param name 分组名称
 -- @param pTransform 管理器的Transform结点
-GameObjectPoolGroup =
+local GameObjectPoolGroup =
     Class(
     function(self, name, pTransform)
         self.name = name
@@ -95,3 +93,5 @@ function GameObjectPoolGroup:Dispose()
     self.groupTransform = nil
     self.parentTransform = nil
 end
+
+return GameObjectPoolGroup
