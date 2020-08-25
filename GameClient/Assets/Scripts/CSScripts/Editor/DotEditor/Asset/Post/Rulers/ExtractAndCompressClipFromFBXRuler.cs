@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace DotEditor.Asset.Post.Rulers
 {
-    [CreateAssetMenu(menuName = "Asset Post/Ruler/Extract&Compress Clip", fileName = "apr_extract&compress_clip")]
+    [AssetPostRulerMenu("Animation Clip/Extract&Compress Clip", "apr_extract_compress_clip")]
     public class ExtractAndCompressClipFromFBXRuler : AssetPostRuler
     {
         public string TargetFolder = "Assets";
+        [Range(3, 6)]
         public int precision = 4;
 
         public override void Execute(StringContext context, string assetPath)

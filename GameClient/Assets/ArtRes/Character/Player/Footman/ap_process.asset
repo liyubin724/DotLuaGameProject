@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f973674ca712a4c878e61a891a4921, type: 3}
+  m_Name: ap_process
+  m_EditorClassIdentifier: 
+  Type: 0
+  Filter:
+    Folder: Assets/ArtRes/Character/Player/Footman/Animations
+    IsIncludeSub: 1
+    FileNameRegex: ^\w*.fbx$
+  Rulers:
+  - {fileID: 1091189422468623977}
+--- !u!114 &1091189422468623977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6c6882e5ea2182449dff75bb9c2f1a2, type: 3}
+  m_Name: apr_extract_compress_clip
+  m_EditorClassIdentifier: 
+  TargetFolder: Assets/ArtRes/Character/Player/Footman/AniClips
+  precision: 4

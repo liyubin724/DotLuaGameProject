@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DotEditor.Asset.Post
 {
-    [CreateAssetMenu(menuName = "Asset Post/Process", fileName = "ap_process",order = 11)]
+    [CreateAssetMenu(menuName = "Asset Post Process", fileName = "ap_process",order = 11)]
     public class AssetPostProcess : ScriptableObject
     {
         [Serializable]
@@ -21,6 +21,11 @@ namespace DotEditor.Asset.Post
             }
         }
 
+        public enum AssetPostType
+        {
+            None,
+        }
+        public AssetPostType Type = AssetPostType.None;
         public AssetPostFilter Filter = new AssetPostFilter();
         public List<AssetPostRuler> Rulers = new List<AssetPostRuler>();
 

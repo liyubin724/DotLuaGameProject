@@ -10,7 +10,7 @@ namespace DotEditor.Asset.Post
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight * 5;
+            return EditorGUIUtility.singleLineHeight * 4;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -34,9 +34,6 @@ namespace DotEditor.Asset.Post
 
             drawRect.y += drawRect.height;
             EditorGUI.PropertyField(drawRect, fileNameRegexProperty);
-
-            Rect lineRect = new Rect(position.x, drawRect.y + drawRect.height, position.width, drawRect.height);
-            EGUI.DrawHorizontalLine(lineRect);
         }
     }
 }
