@@ -1,30 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityObject = UnityEngine.Object;
 
-namespace DotEditor.AnimationSystem
+namespace DotEditor.FBX
 {
     public static class ModelOptimize
     {
-        //[MenuItem("Test/Model Undo Optimize")]
-        //public static void Undooptimize()
-        //{
-        //    UnityObject uObj = Selection.activeObject;
-        //    string assetPath = AssetDatabase.GetAssetPath(uObj);
-
-        //    UnoptimizeGameObjects(assetPath);
-        //}
-
-        //[MenuItem("Test/Model Optimize")]
-        //public static void Optimize()
-        //{
-        //    UnityObject uObj = Selection.activeObject;
-        //    string assetPath = AssetDatabase.GetAssetPath(uObj);
-
-        //    OptimizeGameObjects(assetPath, new string[] { "Bip001 R Toe0" });
-        //}
-
         public static void UnoptimizeGameObjects(string assetPath)
         {
             ModelImporter modelImporter = (ModelImporter)ModelImporter.GetAtPath(assetPath);

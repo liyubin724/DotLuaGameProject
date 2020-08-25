@@ -1,11 +1,57 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
-namespace DotEditor.AnimationSystem
+namespace DotEditor.FBX
 {
     public static class AnimationClipCompress
     {
-        public static void RemoveScaleCurve(AnimationClip clip)
+        public static AnimationClip CreateCompressedClip(AnimationClip clip, int precision = 4)
+        {
+            var newClip = UnityObject.Instantiate<AnimationClip>(clip);
+            string clipAssetPath = AssetDatabase.GetAssetPath(clip);
+
+            AssetDatabase.DeleteAsset(clipAssetPath);
+
+            AnimationClipCompress.RemoveScaleCurve(newClip);
+            AnimationClipCompress.CompressFloatPrecision(newClip, precision);
+
+            AssetDatabase.CreateAsset(newClip, clipAssetPath);
+            AssetDatabase.ImportAsset(clipAssetPath);
+
+            return newClip;
+        }
+
+        public static AnimationClip CreateCompressedScaleCurveClip(AnimationClip clip)
+        {
+            var newClip = UnityObject.Instantiate<AnimationClip>(clip);
+            string clipAssetPath = AssetDatabase.GetAssetPath(clip);
+
+            AssetDatabase.DeleteAsset(clipAssetPath);
+
+            AnimationClipCompress.RemoveScaleCurve(newClip);
+
+            AssetDatabase.CreateAsset(newClip, clipAssetPath);
+            AssetDatabase.ImportAsset(clipAssetPath);
+
+            return newClip;
+        }
+
+        public static AnimationClip CreateCompressPrecisionClip(AnimationClip clip, int precision = 4)
+        {
+            var newClip = UnityObject.Instantiate<AnimationClip>(clip);
+            string clipAssetPath = AssetDatabase.GetAssetPath(clip);
+
+            AssetDatabase.DeleteAsset(clipAssetPath);
+            AnimationClipCompress.CompressFloatPrecision(newClip, precision);
+
+            AssetDatabase.CreateAsset(newClip, clipAssetPath);
+            AssetDatabase.ImportAsset(clipAssetPath);
+
+            return newClip;
+        }
+
+        private static void RemoveScaleCurve(AnimationClip clip)
         {
             EditorCurveBinding[] curveBindings = AnimationUtility.GetCurveBindings(clip);
             foreach(var curveBinding in curveBindings)
@@ -18,7 +64,7 @@ namespace DotEditor.AnimationSystem
             }
         }
 
-        public static void CompressFloatPrecision(AnimationClip clip, int precision)
+        private static void CompressFloatPrecision(AnimationClip clip, int precision)
         {
             EditorCurveBinding[] curveBindings = AnimationUtility.GetCurveBindings(clip);
             AnimationClipCurveData[] curves = new AnimationClipCurveData[curveBindings.Length];
