@@ -1,5 +1,20 @@
-require("DotLua/OOP/Assembly")
-require("DotLua/OOP/Callback")
-require("DotLua/OOP/Class")
-require("DotLua/OOP/Delegate")
-require("DotLua/OOP/Import")
+require('DotLua/OOP/Class')
+require('DotLua/OOP/Assembly')
+require('DotLua/OOP/Callback')
+require('DotLua/OOP/Delegate')
+
+function using(path)
+    return Assembly.GetOrLoadClass(path)
+end
+
+function useless(path)
+    return Assembly.UnloadClass(path)
+end
+
+function instance(path)
+    return Assembly.CreateInstance(path)
+end
+
+function instanceWithParams(path, ...)
+    return Assembly.CreateInstanceWithParams(path, ...)
+end

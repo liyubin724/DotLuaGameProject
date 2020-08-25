@@ -4,7 +4,7 @@
 --@param func 接收事件处理的处理函数
 --@param userdata 自定义参数
 local EventData =
-    Class(
+    class(
     function(self)
         self.receiver = nil
         self.func = nil

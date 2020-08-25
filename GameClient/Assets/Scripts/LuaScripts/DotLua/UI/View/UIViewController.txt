@@ -5,7 +5,7 @@ local assetMgr = Game.AssetMgr
 local DebugLog = DebugLog
 
 local UIViewController =
-    Class(
+    class(
     function(self, name)
         self.name = name
 

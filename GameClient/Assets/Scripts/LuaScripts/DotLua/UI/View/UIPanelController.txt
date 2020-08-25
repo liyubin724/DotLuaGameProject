@@ -3,11 +3,9 @@ local UIViewController = using('DotLua/UI/View/UIViewController')
 ----public----
 
 local UIPanelController =
-    Class(
+    class(
     UIViewController,
     function(self, name)
-        UIViewController.init(self, name)
-
         self.subControllers = {}
 
         self.layer = nil

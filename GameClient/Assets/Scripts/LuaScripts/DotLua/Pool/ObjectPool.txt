@@ -1,7 +1,5 @@
-local ObjectPoolItem = using('DotLua/Pool/ObjectPoolItem')
-
 local ObjectPool =
-    Class(
+    class(
     function(self, itemClass)
         self.itemClass = itemClass
 

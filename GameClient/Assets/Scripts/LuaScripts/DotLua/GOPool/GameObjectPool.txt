@@ -10,7 +10,7 @@ local math = math
 -- @param templateType 模板对象的类型
 -- @param templateGameObject 模板对象，类型为GameObject
 local GameObjectPool =
-    Class(
+    class(
     function(self, name, parentTransform, templateType, templateGameObject)
         self.name = name
         self.parentTransform = parentTransform

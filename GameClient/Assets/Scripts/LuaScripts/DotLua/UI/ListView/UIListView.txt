@@ -1,7 +1,5 @@
-require('DotLua/Class')
-
-UIListView =
-    Class(
+local UIListView =
+    class(
     function(self)
     end
 )
@@ -25,3 +23,5 @@ end
 function UIListView:SetItemData(itemIndex,item)
 
 end
+
+return UIListView

@@ -1,24 +1,19 @@
 require('DotLua/Class')
 
 ClientNetHandler =
-    Class(
+    class(
     function(self)
-        
     end
 )
 
 function ClientNetHandler:DoNetConnecting(uniqueID)
-    
 end
 
 function ClientNetHandler:DoNetConnectedSuccess(uniqueID)
-    
 end
 
 function ClientNetHandler:DoNetConnectedFailed(uniqueID)
-    
 end
 
 function ClientNetHandler:DoNetDisconnected(uniqueID)
-    
 end

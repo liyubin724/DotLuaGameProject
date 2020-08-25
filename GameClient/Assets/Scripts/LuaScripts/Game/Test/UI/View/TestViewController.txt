@@ -1,7 +1,7 @@
 local UIViewController = using('DotLua/UI/View/UIViewController')
 
 local TestViewController =
-    Class(
+    class(
     UIViewController,
     function(self, name)
     end

@@ -1,10 +1,9 @@
 local UIPanelController = using('DotLua/UI/View/UIPanelController')
 
 local LoginPanelController =
-    Class(
+    class(
     UIPanelController,
     function(self, name)
-        UIPanelController.init(self,name)
     end
 )
 

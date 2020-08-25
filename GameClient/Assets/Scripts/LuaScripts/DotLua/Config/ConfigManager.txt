@@ -1,6 +1,6 @@
 
 local ConfigManager =
-    Class(
+    class(
     function(self,rootPath)
         self.configs = {}
         self.rootPath = rootPath

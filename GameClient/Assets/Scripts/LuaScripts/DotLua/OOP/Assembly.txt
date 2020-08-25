@@ -2,9 +2,41 @@ Assembly = {}
 Assembly.__index = Assembly
 Assembly.classes = {}
 
-function Assembly:CreateInstance(path)
-    DebugLog.Info("Assembly",path)
-    local targetClass = self:GetOrLoadClass(path)
+function Assembly.GetClasses()
+    return Assembly.classes
+end
+
+function Assembly.LoadClass(path)
+    local targetClass = require(path)
+
+    Assembly.classes[path] = targetClass
+
+    return targetClass
+end
+
+function Assembly.UnloadClass(path)
+    Assembly.classes[path] = nil
+end
+
+function Assembly.GetOrLoadClass(path)
+    local targetClass = Assembly.classes[path]
+    if not targetClass then
+        targetClass = require(path)
+
+        if targetClass then
+            Assembly.classes[path] = targetClass
+        end
+    end
+
+    return targetClass
+end
+
+function Assembly.HasClass(path)
+    return Assembly.classes[path] ~= nil
+end
+
+function Assembly.CreateInstance(path)
+    local targetClass = Assembly.GetOrLoadClass(path)
     if targetClass then
         return targetClass()
     end
@@ -12,8 +44,8 @@ function Assembly:CreateInstance(path)
     return nil
 end
 
-function Assembly:CreateInstanceWithParams(path, ...)
-    local targetClass = self:GetOrLoadClass(path)
+function Assembly.CreateInstanceWithParams(path, ...)
+    local targetClass = Assembly.GetOrLoadClass(path)
     if targetClass then
         return targetClass(...)
     end
@@ -21,33 +53,6 @@ function Assembly:CreateInstanceWithParams(path, ...)
     return nil
 end
 
-function Assembly:GetTypes()
-    return self.classes
-end
-
-function Assembly:GetOrLoadClass(path)
-    local targetClass = self.classes[path]
-    if not targetClass then
-        targetClass = require(path)
-
-        if targetClass then
-            self.classes[path] = targetClass
-        end
-    end
-
-    return targetClass
-end
-
-function Assembly:LoadClass(path)
-    local targetClass = require(path)
-    self.classes[path] = targetClass
-    return targetClass
-end
-
-function Assembly:UnloadType(path)
-    self.classes[path] = nil
-end
-
-function Assembly:UnloadAll()
-    self.classes = {}
+function Assembly.UnloadAll()
+    Assembly.classes = {}
 end

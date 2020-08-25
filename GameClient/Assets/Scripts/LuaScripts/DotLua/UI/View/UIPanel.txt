@@ -1,7 +1,7 @@
 local UIView = using('DotLua/UI/View/UIView')
 
 local UIPanel =
-    Class(
+    class(
     UIView,
     function(self)
     end

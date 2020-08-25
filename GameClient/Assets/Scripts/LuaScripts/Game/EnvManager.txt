@@ -1,4 +1,4 @@
-require('Game/Event/EventID')
+local EventID = require('Game/Event/EventID')
 
 local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
 local UIPanelMode = using("DotLua/UI/UIPanelMode")
@@ -8,7 +8,7 @@ local DebugLog = DebugLog
 local Game = Game
 
 local EnvManager =
-    Class(
+    class(
     function(self)
         self.updateDelegate = Delegate()
 

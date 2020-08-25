@@ -3,7 +3,7 @@ require('DotLua/Utility/math')
 ----internal----
 -- 时间轮
 local TimerWheel =
-    Class(
+    class(
     function(self, level, tickInMS, slotSize)
         self.level = level
         self.tickInMS = tickInMS
@@ -79,7 +79,7 @@ function TimerWheel:RemoveTask(handler)
 end
 
 function TimerWheel:DoPushWheel(pushNum)
-    for i = 1, pushNum do
+    for _ = 1, pushNum do
         self.currentSlotIndex = self.currentSlotIndex + 1
 
         if self.currentSlotIndex > self.slotSize then

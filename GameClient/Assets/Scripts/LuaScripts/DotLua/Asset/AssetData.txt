@@ -1,7 +1,7 @@
 ----internal----
 -- 用于记录Lua对资源加载时的数据及加载时处理相关的数据
 local AssetData =
-    Class(
+    class(
     function(self)
         self.assetIndex = -1
         self.address = nil

@@ -1,17 +1,15 @@
 local ObjectPoolItem =
-    Class(
+    class(
     function(self)
     end
 )
 
 ----protected----
 function ObjectPoolItem:OnGet()
-
 end
 
 ----protected----
 function ObjectPoolItem:OnRelease()
-
 end
 
 return ObjectPoolItem

@@ -1,10 +1,9 @@
-require('DotLua/Class')
 local UIPanel = using('DotLua/UI/View/UIPanel')
 
 local DebugLog = DebugLog
 
 local LoginPanel =
-    Class(
+    class(
     UIPanel,
     function(self)
     end
