@@ -17,7 +17,7 @@ item:SetParent(nil,false)
 
 --]]
 local GameObjectPoolManager =
-    Class(
+    class(
     function(self)
         self.groups = {}
         self.rootTransform = DontDestroyHandler.CreateTransform('LuaPoolRoot')

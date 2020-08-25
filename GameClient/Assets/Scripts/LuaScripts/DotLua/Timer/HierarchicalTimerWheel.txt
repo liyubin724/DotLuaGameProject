@@ -9,7 +9,7 @@ local DebugLog = DebugLog
 -- 多层时间轮定时器
 -- 通过Game.TimerMgr可以获得全局的定时器
 local HierarchicalTimerWheel =
-    Class(
+    class(
     function(self)
         self.uniqueIndex = 0
         self.taskPool = ObjectPool(TimerTask)

@@ -1,8 +1,7 @@
-require('DotLua/Class')
 local UIView = using('DotLua/UI/View/UIView')
 
 local TestView =
-    Class(
+    class(
     UIView,
     function(self)
     end

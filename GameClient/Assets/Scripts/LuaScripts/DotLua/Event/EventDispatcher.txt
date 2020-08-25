@@ -10,7 +10,7 @@ local Game = Game
 --消息机制
 -- 对于全局的消息可以使用Game.EventMgr访问到
 local EventDispatcher =
-    Class(
+    class(
     function(self)
         self.eventPool = ObjectPool(EventData)
         self.events = {}

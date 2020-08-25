@@ -1,7 +1,5 @@
-require('DotLua/OOP/Class')
-
 Callback =
-    Class(
+    class(
     function(self,receiver,func)
         self.receiver = receiver
         self.func = func

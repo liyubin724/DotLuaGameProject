@@ -4,7 +4,7 @@ max_line_length = 9999
 -- 忽略的符号
 ignore = {
     "using",
-    "Class",
+    "class",
     "instance",
     "instanceWithParams",
     "useless",

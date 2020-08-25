@@ -1,5 +1,5 @@
 local UIView =
-    Class(
+    class(
     function(self)
         self.controller = nil
 

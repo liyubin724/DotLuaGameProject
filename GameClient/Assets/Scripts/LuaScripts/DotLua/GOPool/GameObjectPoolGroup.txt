@@ -7,7 +7,7 @@ local GameObject = CS.UnityEngine.GameObject
 -- @param name 分组名称
 -- @param pTransform 管理器的Transform结点
 local GameObjectPoolGroup =
-    Class(
+    class(
     function(self, name, pTransform)
         self.name = name
         self.pools = {}

@@ -6,7 +6,7 @@ local AssetService = CS.DotEngine.Asset.AssetService
 local Game = Game
 
 local AssetManager =
-    Class(
+    class(
     function(self)
         self.assetDatas = {}
         self.assetIndex = 0

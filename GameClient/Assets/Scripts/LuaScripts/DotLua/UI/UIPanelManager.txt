@@ -4,7 +4,7 @@ local UIPanelMode = using("DotLua/UI/UIPanelMode")
 local Game = Game
 
 local UIPanelManager =
-    Class(
+    class(
     function(self)
         self.uiRoot = nil
         self.panels = {}

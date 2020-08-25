@@ -1,7 +1,7 @@
 ----public----
 -- 添加Timer后得到对于任务的标识
 local TimerHandler =
-    Class(
+    class(
     function(self, index, wheelIndex, slotIndex)
         self.index = index
         self.wheelIndex = wheelIndex
