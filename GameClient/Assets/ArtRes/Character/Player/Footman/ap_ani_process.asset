@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1f973674ca712a4c878e61a891a4921, type: 3}
-  m_Name: ap_clip_process
+  m_Name: ap_ani_process
   m_EditorClassIdentifier: 
   Filter:
-    Folder: Assets
+    Folder: Assets/ArtRes/Character/Player/Footman/Animations
     IsIncludeSub: 1
-    FileNameRegex: 
-  Rulers: []
+    FileNameRegex: ^\w*.fbx$
+  Rulers:
+  - {fileID: 11400000, guid: a02bd7e4739aaad49a78c6b7b054c6d0, type: 2}

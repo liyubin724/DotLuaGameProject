@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c6882e5ea2182449dff75bb9c2f1a2, type: 3}
   m_Name: apr_extract&compress_clip
   m_EditorClassIdentifier: 
-  TargetFolder: Assets
+  TargetFolder: Assets/ArtRes/Character/Player/Footman/AniClips
   precision: 4
