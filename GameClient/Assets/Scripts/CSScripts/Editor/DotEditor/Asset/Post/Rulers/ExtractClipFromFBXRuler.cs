@@ -1,5 +1,7 @@
 ﻿using DotEditor.FBX;
 using DotEngine.Context;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace DotEditor.Asset.Post.Rulers
 {
@@ -8,9 +10,18 @@ namespace DotEditor.Asset.Post.Rulers
     {
         public string TargetFolder = "Assets";
 
-        public override void Execute(StringContext context, string assetPath)
+        [ContextField(AssetPostContextKeys.OPERATE_CLIP_LIST_KEY, ContextUsage.Out)]
+        private List<AnimationClip> clips = null;
+
+        public override void Execute()
         {
-            AnimationClipExtract.ExtractClipFromFBX(assetPath, TargetFolder);
+            clips = new List<AnimationClip>();
+
+            AnimationClip[] extractClips = AnimationClipExtract.ExtractClipFromFBX(assetPath, TargetFolder);
+            if(extractClips!=null && extractClips.Length>0)
+            {
+                clips.AddRange(extractClips);
+            }
         }
     }
 }

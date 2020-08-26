@@ -1,4 +1,5 @@
-﻿using DotEditor.Utilities;
+﻿using DotEditor.GUIExtension;
+using DotEditor.Utilities;
 using DotEngine.Utilities;
 using System;
 using System.Reflection;
@@ -53,6 +54,8 @@ namespace DotEditor.Asset.Post
 
         public override void OnInspectorGUI()
         {
+            EGUILayout.DrawScript(target);
+
             serializedObject.Update();
             {
                 EditorGUILayout.PropertyField(typeProperty);

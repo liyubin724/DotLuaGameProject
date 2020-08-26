@@ -34,22 +34,25 @@ namespace DotEditor.Asset.Post
             string[] assets = Filter.GetResults();
             if (assets != null && assets.Length > 0)
             {
+                StringContext context = new StringContext();
+                context.Add(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, assets,true);
                 foreach (var asset in assets)
                 {
-                    Process(asset);
-                }
-            }
-        }
+                    context.Add(AssetPostContextKeys.CURRENT_ASSET_KEY, asset);
 
-        public void Process(string assetPath)
-        {
-            StringContext context = new StringContext();
-            context.Add("assetPath", assetPath);
-            foreach (var ruler in Rulers)
-            {
-                ruler.Execute(context, assetPath);
+                    foreach (var ruler in Rulers)
+                    {
+                        context.Inject(ruler);
+
+                        ruler.Execute();
+
+                        context.Extract(ruler);
+                    }
+
+                    context.Clear();
+                }
+                context.Clear();
             }
-            context.Clear();
         }
     }
 }
