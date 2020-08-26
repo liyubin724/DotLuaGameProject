@@ -24,11 +24,14 @@ namespace DotEditor.Asset.Post
         public enum AssetPostType
         {
             None,
+            AnimationClip,
+            SpriteAtlas,
         }
-        public AssetPostType Type = AssetPostType.None;
-        public AssetPostFilter Filter = new AssetPostFilter();
-        public List<AssetPostRuler> Rulers = new List<AssetPostRuler>();
 
+        public AssetPostType PostType = AssetPostType.None;
+        public AssetPostFilter Filter = new AssetPostFilter();
+
+        public List<AssetPostRuler> Rulers = new List<AssetPostRuler>();
         public void Process()
         {
             string[] assets = Filter.GetResults();
@@ -36,21 +39,16 @@ namespace DotEditor.Asset.Post
             {
                 StringContext context = new StringContext();
                 context.Add(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, assets,true);
-                foreach (var asset in assets)
+
+                foreach (var ruler in Rulers)
                 {
-                    context.Add(AssetPostContextKeys.CURRENT_ASSET_KEY, asset);
-
-                    foreach (var ruler in Rulers)
+                    context.Inject(ruler);
                     {
-                        context.Inject(ruler);
-
                         ruler.Execute();
-
-                        context.Extract(ruler);
                     }
-
-                    context.Clear();
+                    context.Extract(ruler);
                 }
+
                 context.Clear();
             }
         }

@@ -12,15 +12,18 @@ namespace DotEditor.Asset.Post
     [CustomEditor(typeof(AssetPostProcess))]
     public class AssetPostProcessEditor : Editor
     {
-        private SerializedProperty typeProperty;
+        private SerializedProperty postTypeProperty;
         private SerializedProperty filterProperty;
         private SerializedProperty rulerProperty;
 
         private ReorderableList rulerRList = null;
         private GenericMenu genericMenu = null;
+
+        private Vector2 scrollPos = Vector2.zero;
+
         private void OnEnable()
         {
-            typeProperty = serializedObject.FindProperty("Type");
+            postTypeProperty = serializedObject.FindProperty("PostType");
             filterProperty = serializedObject.FindProperty("Filter");
             rulerProperty = serializedObject.FindProperty("Rulers");
 
@@ -58,44 +61,48 @@ namespace DotEditor.Asset.Post
 
             serializedObject.Update();
             {
-                EditorGUILayout.PropertyField(typeProperty);
-
-                EditorGUILayout.Space();
-
-                EditorGUILayout.PropertyField(filterProperty);
-
-                if(rulerRList == null)
+                scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
                 {
-                    rulerRList = new ReorderableList(serializedObject, rulerProperty, true, true, true,true);
-                    rulerRList.drawElementCallback = (rect, index, isActive, isFocused) =>
+                    EditorGUILayout.PropertyField(postTypeProperty);
+
+                    EditorGUILayout.Space();
+
+                    EditorGUILayout.PropertyField(filterProperty);
+
+                    if (rulerRList == null)
                     {
-                        SerializedProperty property = rulerProperty.GetArrayElementAtIndex(index);
-                        EditorGUI.PropertyField(rect, property);
-                    };
-                    rulerRList.drawHeaderCallback = (rect) =>
-                    {
-                        EditorGUI.LabelField(rect, "Rulers");
-                    };
-                    rulerRList.onAddCallback = (list) =>
-                    {
-                        genericMenu.ShowAsContext();
-                    };
-                    rulerRList.onRemoveCallback = (list) =>
-                    {
-                        var removedObj = rulerProperty.RemoveElementAt(list.index);
-                        if(removedObj!=null)
+                        rulerRList = new ReorderableList(serializedObject, rulerProperty, true, true, true, true);
+                        rulerRList.drawElementCallback = (rect, index, isActive, isFocused) =>
                         {
-                            AssetDatabase.RemoveObjectFromAsset(removedObj);
-                            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(target));
+                            SerializedProperty property = rulerProperty.GetArrayElementAtIndex(index);
+                            EditorGUI.PropertyField(rect, property);
+                        };
+                        rulerRList.drawHeaderCallback = (rect) =>
+                        {
+                            EditorGUI.LabelField(rect, "Rulers");
+                        };
+                        rulerRList.onAddCallback = (list) =>
+                        {
+                            genericMenu.ShowAsContext();
+                        };
+                        rulerRList.onRemoveCallback = (list) =>
+                        {
+                            var removedObj = rulerProperty.RemoveElementAt(list.index);
+                            if (removedObj != null)
+                            {
+                                AssetDatabase.RemoveObjectFromAsset(removedObj);
+                                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(target));
 
-                            EditorUtility.SetDirty(target);
-                        }
-                    };
+                                EditorUtility.SetDirty(target);
+                            }
+                        };
+                    }
+
+                    EditorGUILayout.Space();
+
+                    rulerRList.DoLayoutList();
                 }
-
-                EditorGUILayout.Space();
-
-                rulerRList.DoLayoutList();
+                EditorGUILayout.EndScrollView();
             }
             serializedObject.ApplyModifiedProperties();
             

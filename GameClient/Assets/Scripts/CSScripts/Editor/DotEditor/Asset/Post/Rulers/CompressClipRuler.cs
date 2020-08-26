@@ -12,28 +12,33 @@ namespace DotEditor.Asset.Post.Rulers
         [Range(3,6)]
         public int precision = 4;
 
-        [ContextField(AssetPostContextKeys.OPERATE_CLIP_LIST_KEY, ContextUsage.In)]
-        private List<AnimationClip> clips = null;
+        [ContextField(AssetPostContextKeys.OPERATE_CLIP_RESULT_KEY, ContextUsage.InOut)]
+        private Dictionary<string, List<AnimationClip>> results = null;
 
         public override void Execute()
         {
-            if(clips != null)
+            if(results != null)
             {
-                for (int i = 0; i < clips.Count; ++i)
+                foreach(var kvp in results)
                 {
-                    clips[i] = AnimationClipCompress.CreateCompressedClip(clips[i], precision);
+                    for (int i = 0; i < kvp.Value.Count; ++i)
+                    {
+                        kvp.Value[i] = AnimationClipCompress.CreateCompressedClip(kvp.Value[i], precision);
+                    }
                 }
             }else
             {
-                AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath);
-                if(clip!=null)
+                results = new Dictionary<string, List<AnimationClip>>();
+                foreach(var assetPath in assetPaths)
                 {
-                    AnimationClip newClip = AnimationClipCompress.CreateCompressedClip(clip, precision);
-                    if(clips==null)
+                    AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(assetPath);
+                    if (clip != null)
                     {
-                        clips = new List<AnimationClip>();
+                        AnimationClip newClip = AnimationClipCompress.CreateCompressedClip(clip, precision);
+                        var clips = new List<AnimationClip>();
+                        clips.Add(newClip);
+                        results.Add(assetPath, clips);
                     }
-                    clips.Add(newClip);
                 }
             }
         }

@@ -5,8 +5,8 @@ namespace DotEditor.Asset.Post
 {
     public class AssetPostRuler : ScriptableObject
     {
-        [ContextField(AssetPostContextKeys.CURRENT_ASSET_KEY,ContextUsage.In,false)]
-        protected string assetPath;
+        [ContextField(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, ContextUsage.In, false)]
+        protected string[] assetPaths;
 
         public virtual void Execute() 
         { }

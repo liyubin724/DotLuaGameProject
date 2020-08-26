@@ -10,17 +10,23 @@ namespace DotEditor.Asset.Post.Rulers
     {
         public string TargetFolder = "Assets";
 
-        [ContextField(AssetPostContextKeys.OPERATE_CLIP_LIST_KEY, ContextUsage.Out)]
-        private List<AnimationClip> clips = null;
+        [ContextField(AssetPostContextKeys.OPERATE_CLIP_RESULT_KEY, ContextUsage.Out)]
+        private Dictionary<string, List<AnimationClip>> results = null;
 
         public override void Execute()
         {
-            clips = new List<AnimationClip>();
+            results = new Dictionary<string, List<AnimationClip>>();
 
-            AnimationClip[] extractClips = AnimationClipExtract.ExtractClipFromFBX(assetPath, TargetFolder);
-            if(extractClips!=null && extractClips.Length>0)
+            if (assetPaths!=null && assetPaths.Length>0)
             {
-                clips.AddRange(extractClips);
+                foreach(var assetPath in assetPaths)
+                {
+                    AnimationClip[] extractClips = AnimationClipExtract.ExtractClipFromFBX(assetPath, TargetFolder);
+                    if (extractClips != null && extractClips.Length > 0)
+                    {
+                        results.Add(assetPath, new List<AnimationClip>(extractClips));
+                    }
+                }
             }
         }
     }
