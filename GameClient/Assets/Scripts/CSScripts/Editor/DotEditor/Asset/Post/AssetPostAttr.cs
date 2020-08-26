@@ -2,6 +2,7 @@
 
 namespace DotEditor.Asset.Post
 {
+    [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
     public class AssetPostRulerMenuAttribute:Attribute
     {
         public string MenuName { get; set; }

@@ -38,6 +38,7 @@ namespace DotEditor.Asset.Post
             if (assets != null && assets.Length > 0)
             {
                 StringContext context = new StringContext();
+                context.Add(AssetPostContextKeys.ASSET_FILTER_KEY, Filter);
                 context.Add(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, assets,true);
 
                 foreach (var ruler in Rulers)
