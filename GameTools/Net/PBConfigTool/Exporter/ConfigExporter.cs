@@ -40,20 +40,18 @@ namespace DotTool.NetMessage.Exporter
 
         private string CreateOutputDir()
         {
-            string outputDir = $"{exportData.outputDir}/{exportData.formatType}";
+            LogUtil.LogInfo("Exporter", $"Create outputDir({exportData.outputDir})");
 
-            LogUtil.LogInfo("Exporter", $"Create outputDir({outputDir})");
-
-            if (!Directory.Exists(outputDir))
+            if (!Directory.Exists(exportData.outputDir))
             {
-                DirectoryInfo outputDirInfo = Directory.CreateDirectory(outputDir);
-                if (outputDir == null || !outputDirInfo.Exists)
+                DirectoryInfo outputDirInfo = Directory.CreateDirectory(exportData.outputDir);
+                if (outputDirInfo == null || !outputDirInfo.Exists)
                 {
-                    LogUtil.LogError("Exporter", $"Create outputDir Failed.({outputDir})");
+                    LogUtil.LogError("Exporter", $"Create outputDir Failed.({exportData.outputDir})");
                     return string.Empty;
                 }
             }
-            return outputDir;
+            return exportData.outputDir;
         }
 
         private void ExportMessageID(string outputDir)

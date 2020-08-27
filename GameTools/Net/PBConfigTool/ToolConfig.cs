@@ -25,9 +25,6 @@ namespace DotTool.NetMessage
         [XmlAttribute("message_config")]
         public string messageConfigPath;
 
-        [XmlAttribute("output")]
-        public string outputDir;
-
         [XmlElement("template")]
         public List<TemplateConfig> templateConfigs = new List<TemplateConfig>();
 

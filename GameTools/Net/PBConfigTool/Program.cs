@@ -18,6 +18,9 @@ namespace DotTool.NetMessage
 
             [Option('p', "platform", Required = true, HelpText = "")]
             public OutputPlatformType Platform { get; set; } = OutputPlatformType.All;
+
+            [Option('o', "output-dir", Required = true, HelpText = "")]
+            public string OutputDir { get; set; }
         }
 
         static void Main(string[] args)
@@ -42,17 +45,12 @@ namespace DotTool.NetMessage
                     return;
                 }
 
-                if(!Directory.Exists(toolConfig.outputDir))
-                {
-                    Directory.CreateDirectory(toolConfig.outputDir);
-                }
-
                 ExportData exportData = new ExportData
                 {
                     messageConfig = XMLConfigUtil.ReadConfig<MessageConfig>(toolConfig.messageConfigPath, false),
                     formatType = options.Format,
                     platformType = options.Platform,
-                    outputDir = toolConfig.outputDir,
+                    outputDir = options.OutputDir,
                     idTemplateContent = File.ReadAllText(templateConfig.idTemplateFilePath),
                     parserTemplateContent = File.ReadAllText(templateConfig.parserTemplateFilePath)
                 };
