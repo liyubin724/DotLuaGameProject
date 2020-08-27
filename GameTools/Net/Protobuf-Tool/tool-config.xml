@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configs message_config="configs/proto-config.xml" output="output">
+    <template format="CSharp" template_id="configs/script-template/csharp/pb-template-id.txt" template_parser="configs/script-template/csharp/pb-template-parser.txt" />
+    <template format="Json" template_id="" template_parser="" />
+    <template format="Lua" template_id="" template_parser="" />
+</configs>

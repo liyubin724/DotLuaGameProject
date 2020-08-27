@@ -4,18 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8F50A017-9945-4F13-BDAC-7243BCE33E0D}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>DotTool.NetMessage</RootNamespace>
-    <AssemblyName>PBConfigTool</AssemblyName>
+    <ProjectGuid>{0529DF75-4325-42BD-9833-7CC273955C41}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotEngine.Log</RootNamespace>
+    <AssemblyName>DotEngine.Log</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +24,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,15 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colorful.Console">
-      <HintPath>libs\Colorful.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandLine">
-      <HintPath>libs\CommandLine.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,34 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exporter\ConfigExporter.cs" />
-    <Compile Include="Exporter\ExportData.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="LogUtil.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MessageConfig.cs" />
-    <Compile Include="ToolConfig.cs" />
-    <Compile Include="XMLConfigUtil.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Context\DotEngine.Context\DotEngine.Context.csproj">
-      <Project>{973ba58f-3fd4-4a7d-aeee-c9e0f135b12a}</Project>
-      <Name>DotEngine.Context</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Log\DotEngine.ConsoleLog\DotEngine.ConsoleLog.csproj">
-      <Project>{76de2445-da47-408c-8fb6-74e87695b5dc}</Project>
-      <Name>DotEngine.ConsoleLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Log\DotEngine.Log\DotEngine.Log.csproj">
-      <Project>{0529df75-4325-42bd-9833-7cc273955c41}</Project>
-      <Name>DotEngine.Log</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ScriptGenerate\DotTool.ScriptGenerate\DotTool.ScriptGenerate.csproj">
-      <Project>{f710f578-3d80-475e-bb1b-1cbb966c7c13}</Project>
-      <Name>DotTool.ScriptGenerate</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

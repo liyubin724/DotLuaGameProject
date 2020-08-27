@@ -13,10 +13,6 @@ using DotEngine.Crypto;
 using SnappySharp = Snappy.Sharp.Snappy;
 using Game.Net.Protos;
 
-
-
-
-
 namespace Game.Net.Proto
 {
     public class ClientMessageParser : IMessageParser
@@ -29,9 +25,7 @@ namespace Game.Net.Proto
 
         public ClientMessageParser()
         {
-
-            encodeParserDic.Add(10002,ShopListRequestEncodeParser);
-            encodeParserDic.Add(10001,LoginRequestEncodeParser);
+            encodeParserDic.Add(10002,ShopListRequestEncodeParser);            encodeParserDic.Add(10001,LoginRequestEncodeParser);
 
             decodeParserDic.Add(1,LoginResponseDecodeParser);
             decodeParserDic.Add(2,ShopListResponseDecodeParser);
@@ -56,6 +50,7 @@ namespace Game.Net.Proto
         }
 
 
+        //获取商店物品列表
         private byte[] ShopListRequestEncodeParser(object message)
         {
             IMessage m = (IMessage)message;
@@ -63,12 +58,12 @@ namespace Game.Net.Proto
 
             messageBytes = AESCrypto.Encrypt(messageBytes, SecretKey, SecretVector);
 
-
             messageBytes = SnappySharp.Compress(messageBytes);
 
             return messageBytes;
         }
 
+        //登录信息
         private byte[] LoginRequestEncodeParser(object message)
         {
             IMessage m = (IMessage)message;
@@ -76,32 +71,30 @@ namespace Game.Net.Proto
 
             messageBytes = AESCrypto.Encrypt(messageBytes, SecretKey, SecretVector);
 
-
             messageBytes = SnappySharp.Compress(messageBytes);
 
             return messageBytes;
         }
 
 
-
+        //返回登录结果
         private object LoginResponseDecodeParser(byte[] bytes)
         {
             byte[] messageBytes = bytes;
 
             messageBytes = SnappySharp.Uncompress(messageBytes);
 
-
             messageBytes = AESCrypto.Decrypt(messageBytes, SecretKey, SecretVector);
 
             return LoginResponse.Parser.ParseFrom(messageBytes);
         }
 
+        //返回商店物品列表
         private object ShopListResponseDecodeParser(byte[] bytes)
         {
             byte[] messageBytes = bytes;
 
             messageBytes = SnappySharp.Uncompress(messageBytes);
-
 
             messageBytes = AESCrypto.Decrypt(messageBytes, SecretKey, SecretVector);
 
