@@ -21,6 +21,22 @@ namespace DotEngine.Context
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                return itemDic.Count;
+            }
+        }
+
+        public K[] Keys
+        {
+            get
+            {
+                return itemDic.Keys.ToArray();
+            }
+        }
+
         public void Add(K key, object value)
         {
             Add(key, value, false);
