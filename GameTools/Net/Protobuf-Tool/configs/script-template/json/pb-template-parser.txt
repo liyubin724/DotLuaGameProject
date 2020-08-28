@@ -6,16 +6,20 @@ Please don't change it manually!!!
 -----------------------------------------------
 */
 using DotEngine.Net.Message;
-using System;
-using System.Collections.Generic;
-using Google.Protobuf;
 using DotEngine.Crypto;
 using SnappySharp = Snappy.Sharp.Snappy;
-using Game.Net.Protos;
-
-namespace Game.Net.Proto
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Text;
+<%+using DotTool.NetMessage;%>
+<%string spaceName = context.Get<string>("spaceName");
+string platform = context.Get<string>("platform");
+MessageGroup encodeMessageGroup = context.Get<MessageGroup>("encodeMessageGroup");
+MessageGroup decodeMessageGroup = context.Get<MessageGroup>("decodeMessageGroup");
+%>namespace <%=spaceName%>
 {
-    public class ServerMessageParser : IMessageParser
+    public class <%=platform%>MessageParser : IMessageParser
     {
         public string SecretKey { get; set; }
         public string SecretVector{get;set;}
@@ -23,12 +27,14 @@ namespace Game.Net.Proto
         private Dictionary<int,Func<object,byte[]>> encodeParserDic = new Dictionary<int,Func<object,byte[]>>();
         private Dictionary<int,Func<byte[],object>> decodeParserDic = new Dictionary<int,Func<byte[],object>>();
 
-        public ServerMessageParser()
+        public <%=platform%>MessageParser()
         {
-            encodeParserDic.Add(1,LoginResponseEncodeParser);            encodeParserDic.Add(2,ShopListResponseEncodeParser);
-
-            decodeParserDic.Add(10002,ShopListRequestDecodeParser);
-            decodeParserDic.Add(10001,LoginRequestDecodeParser);
+<%foreach(var message in encodeMessageGroup.Messages){
+%>            encodeParserDic.Add(<%=message.Id%>,<%=message.ClassName%>EncodeParser);<%-
+%><%}%>
+<%foreach(var message in decodeMessageGroup.Messages){%>
+            decodeParserDic.Add(<%=message.Id%>,<%=message.ClassName%>DecodeParser);<%-
+%><%}%>
         }
 
         public byte[] EncodeMessage(int messageID, object message)
@@ -49,57 +55,35 @@ namespace Game.Net.Proto
             return null;
         }
 
-
-        //返回登录结果
-        private byte[] LoginResponseEncodeParser(object message)
+<%foreach(var message in encodeMessageGroup.Messages){%>
+        //<%=message.Comment%>
+        private byte[] <%=message.ClassName%>EncodeParser(object message)
         {
-            IMessage m = (IMessage)message;
-            byte[] messageBytes = m.ToByteArray();
-
+            string jsonStr = JsonConvert.SerializeObject(message, Formatting.None);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(jsonStr);
+<%if(message.IsCrypto){%>
             messageBytes = AESCrypto.Encrypt(messageBytes, SecretKey, SecretVector);
-
+<%}
+if(message.IsCompress){%>
             messageBytes = SnappySharp.Compress(messageBytes);
-
+<%}%>
             return messageBytes;
         }
-
-        //返回商店物品列表
-        private byte[] ShopListResponseEncodeParser(object message)
-        {
-            IMessage m = (IMessage)message;
-            byte[] messageBytes = m.ToByteArray();
-
-            messageBytes = AESCrypto.Encrypt(messageBytes, SecretKey, SecretVector);
-
-            messageBytes = SnappySharp.Compress(messageBytes);
-
-            return messageBytes;
-        }
-
-
-        //获取商店物品列表
-        private object ShopListRequestDecodeParser(byte[] bytes)
+<%}%>
+<%foreach(var message in decodeMessageGroup.Messages){%>
+        //<%=message.Comment%>
+        private object <%=message.ClassName%>DecodeParser(byte[] bytes)
         {
             byte[] messageBytes = bytes;
-
+<%if(message.IsCompress){%>
             messageBytes = SnappySharp.Uncompress(messageBytes);
-
+<%}
+if(message.IsCrypto){%>
             messageBytes = AESCrypto.Decrypt(messageBytes, SecretKey, SecretVector);
-
-            return ShopListRequest.Parser.ParseFrom(messageBytes);
+<%}%>
+            string jsonStr = Encoding.UTF8.GetString(messageBytes);
+            return JsonConvert.DeserializeObject(jsonStr,typeof(<%=message.ClassName%>));
         }
-
-        //登录信息
-        private object LoginRequestDecodeParser(byte[] bytes)
-        {
-            byte[] messageBytes = bytes;
-
-            messageBytes = SnappySharp.Uncompress(messageBytes);
-
-            messageBytes = AESCrypto.Decrypt(messageBytes, SecretKey, SecretVector);
-
-            return LoginRequest.Parser.ParseFrom(messageBytes);
-        }
-
+<%}%>
     }
 }

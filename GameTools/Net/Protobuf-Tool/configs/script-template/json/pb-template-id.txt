@@ -1,0 +1,24 @@
+/*The file was created by tool.
+-----------------------------------------------
+Please don't change it manually!!!
+Please don't change it manually!!!
+Please don't change it manually!!!
+-----------------------------------------------
+*/
+<%+using DotTool.NetMessage;
+%><%string spaceName = context.Get<string>("spaceName");
+%><%MessageGroup messageGroup = context.Get<MessageGroup>("messageGroup");
+%>namespace <%=spaceName%>
+{
+    public static class <%=messageGroup.Name%>_IDs
+    {
+<%for(int i = 0;i<messageGroup.Messages.Count;++i){
+    Message message = messageGroup.Messages[i];
+    if(message.Enable){
+        if(!string.IsNullOrEmpty(message.Comment)){
+%>        //<%=message.Comment%>
+<%}
+%>        public static readonly int <%=message.Name%> = <%=message.Id%>;
+<%}
+}%>    }
+}

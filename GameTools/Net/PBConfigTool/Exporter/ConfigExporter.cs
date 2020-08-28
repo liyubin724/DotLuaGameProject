@@ -129,7 +129,7 @@ namespace DotTool.NetMessage.Exporter
             }
             else if (exportData.formatType == OutputFormatType.Json)
             {
-                return ".json";
+                return ".cs";
             }
             else if (exportData.formatType == OutputFormatType.Lua)
             {
