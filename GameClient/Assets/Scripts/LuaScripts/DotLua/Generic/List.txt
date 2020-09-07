@@ -1,0 +1,103 @@
+List =
+    class(
+    function(self)
+        self.list = {}
+    end
+)
+
+function List:GetCount()
+    return #(self.list)
+end
+
+function List:Add(item)
+    if item then
+        table.insert(self.list, item)
+    end
+end
+
+function List:AddRange(list)
+    if list and #list >0 then
+        for i = 1, #list do
+            self:Add(list[i])
+        end
+    end
+end
+
+function List:Remove(item)
+    for i = 1, #(self.list) do
+        if self.list[i] == item then
+            table.remove(self.list, i)
+            break
+        end
+    end
+end
+
+function List:RemoveAt(index)
+    if index >=1 and index <= #(self.list) then
+        local item = self.list[index]
+        table.remove(self.list, index)
+        return item
+    end
+
+    return nil
+end
+
+function List:GetIndexOf(item)
+    if item then
+        for i = 1, #(self.list) do
+            if self.list[i] == item then
+                return i
+            end
+        end
+    end
+
+    return -1
+end
+
+function List:LastIndexOf(item)
+    if item then
+        for i = #(self.list),1,-1 do
+            if self.list[i] == item then
+                return i
+            end
+        end
+    end
+
+    return -1
+end
+
+function List:Clear()
+    for i = #(self.list), 1,-1 do
+        self.list[i] = nil
+    end
+end
+
+function List:Find(compareFunc)
+    if not compareFunc or type(compareFunc) ~= "function" then
+        error("compareFunc is empty")
+        return nil
+    end
+
+    for i = 1, #(self.list) do
+        local item = self.list[i]
+        if compareFunc(item) then
+            return item
+        end
+    end
+    return nil
+end
+
+function List:Exist(item)
+    if item then
+        for i = 1, #(self.list) do
+            if self.list[i] == item then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+function List:Sort()
+
+end

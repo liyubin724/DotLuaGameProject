@@ -17,12 +17,13 @@ end
 function Callback:Invoke(...)
     if self.func then
         if self.receiver then
-            self.func(self.receiver,...)
+            return self.func(self.receiver,...)
         else
-            self.func(...)
+            return self.func(...)
         end
-
     end
+
+    return nil
 end
 
 function Callback:Equal(otherCallback)
