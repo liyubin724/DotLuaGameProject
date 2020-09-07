@@ -1,0 +1,11 @@
+local Command =
+    class(
+    function(self, name)
+        self.name = name
+    end
+)
+
+function Command:Execute(notification)
+end
+
+return Command

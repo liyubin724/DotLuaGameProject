@@ -1,0 +1,12 @@
+local Notifier = require('DotLua/Framework/Notify/Notifier')
+
+local MacroViewController =
+    class(
+    ViewController,
+    function(self)
+        self.subControllerDic = {}
+    end
+)
+
+
+return MacroViewController

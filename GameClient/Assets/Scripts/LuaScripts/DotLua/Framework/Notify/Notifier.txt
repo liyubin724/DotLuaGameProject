@@ -1,0 +1,11 @@
+local Notifier =
+    class(
+    function(self)
+    end
+)
+
+function Notifier:SendNotification(name,body)
+
+end
+
+return Notifier

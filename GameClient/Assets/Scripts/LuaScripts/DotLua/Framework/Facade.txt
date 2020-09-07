@@ -1,0 +1,117 @@
+local CommandCenter = require('DotLua/Framework/Commands/CommandCenter')
+local ProxyCenter = require('DotLua/Framework/Proxies/ProxyCenter')
+local ServiceCenter = require('DotLua/Framework/Services/ServiceCenter')
+local ObserverCenter = require('DotLua/Framework/Notify/ObserverCenter')
+local ViewControllerCenter = require('DotLua/Framework/Notify/ViewControllerCenter')
+
+local Facade =
+    class(
+    function(self)
+        self.serviceCenter = nil
+        self.observerCenter = nil
+        self.proxyCenter = nil
+        self.commandCenter = nil
+        self.viewControllerCenter = nil
+
+        self:Init()
+    end
+)
+
+function Facade:Init()
+    self.observerCenter = ObserverCenter()
+    self.serviceCenter = ServiceCenter()
+    self.proxyCenter = ProxyCenter()
+    self.commandCenter = CommandCenter()
+    self.viewControllerCenter = ViewControllerCenter()
+
+    self:InitService()
+    self:InitProxy()
+    self:InitCommands()
+    self:InitViewController()
+end
+
+function Facade:InitService()
+end
+
+function Facade:InitProxy()
+end
+
+function Facade:InitViewController()
+end
+
+function Facade:InitCommands()
+end
+
+function Facade:HasCommand(name)
+    return self.commandCenter:HasCommand(name)
+end
+
+function Facade:RegisterCommand(command)
+    self.commandCenter:RegisterCommand(command:GetName(), command)
+end
+
+function Facade:RegisterCommandWithName(name, command)
+    self.commandCenter:RegisterCommand(name, command)
+end
+
+function Facade:RemoveCommand(name)
+    self.commandCenter:RemoveCommand(name)
+end
+
+function Facade:HasProxy(name)
+    return self.proxyCenter:HasProxy(name)
+end
+
+function Facade:RegisterProxy(proxy)
+    self.proxyCenter:RegisterProxy(proxy:GetName(), proxy)
+end
+
+function Facade:RegisterProxyWithName(name, proxy)
+    self.proxyCenter:RegisterProxy(name, proxy)
+end
+
+function Facade:RetrieveProxy(name)
+    return self.proxyCenter:RetrieveProxy(name)
+end
+
+function Facade:RemoveProxy(name)
+    self.proxyCenter:RemoveProxy(name)
+end
+
+function Facade:HasService(name)
+    return self.serviceCenter:HasService(name)
+end
+
+function Facade:RegisterService(service)
+    self.serviceCenter:RegisterService(service:GetName(), service)
+end
+
+function Facade:RegisterServiceWithName(name, service)
+    self.serviceCenter:RegisterService(name, service)
+end
+
+function Facade:RetrieveService(name)
+    return self.serviceCenter:RetrieveService(name)
+end
+
+function Facade:RemoveService(name)
+    self.serviceCenter:RemoveService(name)
+end
+
+function Facade:DoUpdate(deltaTime)
+    self.serviceCenter:DoUpdate(deltaTime)
+end
+
+function Facade:DoUnscaleUpdate(deltaTime)
+    self.serviceCenter:DoUnscaleUpdate(deltaTime)
+end
+
+function Facade:DoLateUpdate(deltaTime)
+    self.serviceCenter:DoLateUpdate(deltaTime)
+end
+
+function Facade:DoFixedUpdate(deltaTime)
+    self.serviceCenter:DoFixedUpdate(deltaTime)
+end
+
+return Facade

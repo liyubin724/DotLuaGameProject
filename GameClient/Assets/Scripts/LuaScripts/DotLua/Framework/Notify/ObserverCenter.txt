@@ -1,0 +1,39 @@
+local ObserverCenter =
+    class(
+    function(self)
+        self.observerDic = {}
+    end
+)
+
+function ObserverCenter:NotifyObserver(notification)
+    local observers = self.observerDic[notification:GetName()]
+    if observers and #observers > 0 then
+        for i = 1, #observers do
+            local observer = observers[i]
+            if type(observer) == 'function' then
+                observer(notification)
+            elseif type(observer) == 'table' then
+                if observer['is_a'] and observer:is_a(Callback) then
+                    observer:Invoke(notification)
+                else
+                    error("not support")
+                end
+            else
+                error("not support")
+            end
+        end
+    end
+end
+
+function ObserverCenter:RegisterObserver(notificationName,observer)
+
+end
+function ObserverCenter:RemoveObserver(notificationName,observer)
+
+end
+
+function ObserverCenter:RemoveAllObserversByName(notificationName)
+
+end
+
+return ObserverCenter

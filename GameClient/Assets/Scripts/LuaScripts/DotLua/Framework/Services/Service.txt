@@ -1,0 +1,33 @@
+local Notifier = require('DotLua/Framework/Notify/Notifier')
+
+local Service =
+    class(
+    Notifier,
+    function(self,name)
+        self.name = name
+    end
+)
+
+function Service:GetName()
+    return self.name
+end
+
+function Service:DoRegister()
+end
+
+function Service:DoRemove()
+end
+
+-- function Service:DoUpdate(deltaTime)
+-- end
+
+-- function Service:DoUnscaleUpdate(deltaTime)
+-- end
+
+-- function Service:DoLateUpdate(deltaTime)
+-- end
+
+-- function Service:DoFixedUpdate(deltaTime)
+-- end
+
+return Service

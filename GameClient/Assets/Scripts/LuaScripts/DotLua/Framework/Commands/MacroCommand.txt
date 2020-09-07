@@ -1,0 +1,22 @@
+local Command = require('DotLua/Framework/Commands/Command')
+local List = require("DotLua/Generic/List")
+
+local MacroCommand =
+    class(
+    Command,
+    function(self, name)
+        self.commands = List()
+    end
+)
+
+function MacroCommand:AddSub(command)
+    self.commands:Add(command)
+end
+
+function MacroCommand:Execute(notification)
+    for i = 1,#(self.commands) do
+        self.commands[i]:Execute(notification)
+    end
+end
+
+return MacroCommand

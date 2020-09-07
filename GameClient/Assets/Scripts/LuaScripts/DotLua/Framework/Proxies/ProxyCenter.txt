@@ -1,0 +1,38 @@
+local ProxyCenter =
+    class(
+    function(self)
+        self.proxyDic = {}
+    end
+)
+
+function ProxyCenter:HasProxy(name)
+    return self.proxyDic[name] ~= nil
+end
+
+function ProxyCenter:RegisterProxy(name,proxy)
+    if not self:HasProxy(name) then
+        self.proxyDic[name] = proxy
+
+        proxy:DoRegister()
+    end
+end
+
+function ProxyCenter:RetrieveProxy(name)
+    return self.proxyDic[name]
+end
+
+function ProxyCenter:RemoveProxy(name)
+    local proxy = self.proxyDic[name]
+    if proxy then
+        self.proxyDic[name] = nil
+
+        proxy:DoRemove()
+    end
+    return proxy
+end
+
+function ProxyCenter:DoDispose()
+
+end
+
+return ProxyCenter

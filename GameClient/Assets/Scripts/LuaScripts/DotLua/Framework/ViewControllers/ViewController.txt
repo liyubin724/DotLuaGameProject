@@ -1,0 +1,23 @@
+local Notifier = require('DotLua/Framework/Notify/Notifier')
+
+local ViewController =
+    class(
+    Notifier,
+    function(self, name)
+        self.name = name
+    end
+)
+
+function ViewController:ListNotificationInterests()
+end
+
+function ViewController:HandNotification(notification)
+end
+
+function ViewController:DoRegister()
+end
+
+function ViewController:DoRemove()
+end
+
+return ViewController
