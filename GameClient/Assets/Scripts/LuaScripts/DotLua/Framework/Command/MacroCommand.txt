@@ -3,7 +3,7 @@ local Notifier = require('DotLua/Framework/Observer/Notifier')
 local MacroCommand =
     class(
     Notifier,
-    function(self,key)
+    function(self)
         self.subcommandCreator = {}
         self:OnInitialized()
     end

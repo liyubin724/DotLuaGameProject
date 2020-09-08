@@ -2,8 +2,8 @@ local Proxy = require('DotLua/Framework/Proxy/Proxy')
 
 local Model =
     class(
-    function(self, key)
-        self.key = key
+    function(self, uniqueID)
+        self.uniqueID = uniqueID
 
         self.proxyMap = {}
 
@@ -11,8 +11,8 @@ local Model =
     end
 )
 
-function Model:GetKey()
-    return self.key
+function Model:GetUniqueID()
+    return self.uniqueID
 end
 
 function Model:OnInitialized()
@@ -23,11 +23,13 @@ function Model:HasProxy(proxyName)
 end
 
 function Model:RegisterProxy(proxy)
-    if proxy and type(proxy) == 'table' and proxy:is_a(Proxy) then
+    if isinstanceof(proxy, Proxy) then
         local proxyName = proxy:GetName()
         if not self.proxyMap[proxyName] then
-            proxy:OnInitialized(self.key)
+            proxy:OnInitialized(self.uniqueID)
+
             self.proxyMap[proxyName] = proxy
+
             proxy:DoRegister()
         else
             error('')
@@ -45,6 +47,8 @@ function Model:RemoveProxy(proxyName)
     local proxy = self.proxyMap[proxyName]
     if proxy then
         self.proxyMap[proxyName] = nil
+
+        proxy:DoRemove()
     end
 
     return proxy

@@ -24,18 +24,19 @@ Framework.Facade = require('DotLua/Framework/Facade')
 
 Framework.facadeMap = {}
 
-function Framework.HasFacade(key)
-    return Framework.facadeMap[key] ~= nil
+function Framework.HasFacade(uniqueID)
+    return Framework.facadeMap[uniqueID] ~= nil
 end
 
-function Framework.GetFacade(key)
-    return Framework.facadeMap[key]
+function Framework.GetFacade(uniqueID)
+    return Framework.facadeMap[uniqueID]
 end
 
 function Framework.AddFacade(facade)
     if isinstanceof(facade, Framework.Facade) then
-        if not Framework.HasFacade(facade:GetKey()) then
-            Framework.facadeMap[facade:GetKey()] = facade
+        local uniqueID = facade:GetUniqueID()
+        if not Framework.HasFacade(uniqueID) then
+            Framework.facadeMap[uniqueID] = facade
         else
             error('')
         end
@@ -44,10 +45,10 @@ function Framework.AddFacade(facade)
     end
 end
 
-function Framework.RemoveFacade(key)
-    local facade = Framework.facadeMap[key]
+function Framework.RemoveFacade(uniqueID)
+    local facade = Framework.facadeMap[uniqueID]
     if facade then
-        Framework.facadeMap[key] = nil
+        Framework.facadeMap[uniqueID] = nil
     end
     return facade
 end

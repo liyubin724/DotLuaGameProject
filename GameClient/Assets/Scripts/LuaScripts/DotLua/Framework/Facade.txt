@@ -1,9 +1,13 @@
 local Notification = require("DotLua/Framework/Observer/Notification")
+local Controller = require('DotLua/Framework/Core/Controller')
+local Model = require('DotLua/Framework/Core/Model')
+local View = require('DotLua/Framework/Core/View')
+local Service = require('DotLua/Framework/Core/Service')
 
 local Facade =
     class(
-    function(self, key)
-        self.key = key
+    function(self, uniqueID)
+        self.uniqueID = uniqueID
 
         self.model = nil
         self.controller = nil
@@ -14,8 +18,12 @@ local Facade =
     end
 )
 
-function Facade:GetKey()
-    return self.key
+function Facade:GetUniqueID()
+    return self.uniqueID
+end
+
+function Facade:GetView()
+    return self.view
 end
 
 function Facade:OnInitialized()
@@ -25,16 +33,20 @@ function Facade:OnInitialized()
     self:InitializeView()
 end
 
+function Facade:InitializeService()
+    self.service = Service(self.uniqueID)
+end
+
 function Facade:InitializeModel()
+    self.model = Model(self.uniqueID)
 end
 
 function Facade:InitializeController()
+    self.controller = Controller(self.uniqueID)
 end
 
 function Facade:InitializeView()
-end
-
-function Facade:InitializeService()
+    self.view = View(self.uniqueID)
 end
 
 function Facade:HasCommand(notificationName)

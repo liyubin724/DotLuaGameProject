@@ -3,7 +3,8 @@ local Servicer = require('DotLua/Framework/Servicer/Servicer')
 
 local Service =
     class(
-    function(self)
+    function(self,uniqueID)
+        self.uniqueID = uniqueID
         self.servicerMap = {}
 
         self.updateServicerList = List()

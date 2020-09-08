@@ -3,8 +3,8 @@ local List = require("DotLua/Generic/List")
 
 local View =
     class(
-    function(self, key)
-        self.key = key
+    function(self, uniqueID)
+        self.uniqueID = uniqueID
 
         self.mediatorMap = {}
         self.observerListMap = {}
@@ -72,8 +72,8 @@ function View:RegisterMediator(mediator)
     if mediator then
         local mediatorName = mediator:GetName()
         if not self:HasMediator(mediatorName) then
-            mediator:OnInitialized(self.key)
             self.mediatorMap[mediatorName] = mediator
+            mediator:OnInitialized(self.uniqueID)
 
             local interests = mediator:ListNotificationInterests()
             if interests and #(interests) > 0 then
