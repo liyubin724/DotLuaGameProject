@@ -49,6 +49,22 @@ function Facade:InitializeView()
     self.view = View(self.uniqueID)
 end
 
+function Facade:HasServicer(servicerName)
+    return self.service:HasServicer(servicerName)
+end
+
+function Facade:RegisterServicer(servicer)
+    self.service:RegisterServicer(servicer)
+end
+
+function Facade:RetrieveServicer(servicerName)
+    return self.service:RetrieveServicer(servicerName)
+end
+
+function Facade:RemoveServicer(servicerName)
+    self.service:RemoveServicer(servicerName)
+end
+
 function Facade:HasCommand(notificationName)
     return self.controller:HasCommand(notificationName)
 end

@@ -1,0 +1,17 @@
+local Framework = require('DotLua/Framework/Framework')
+local HTW = require('DotLua/Timer/HierarchicalTimerWheel')
+
+local GameFacade =
+    class(
+    Framework.Facade,
+    function(self, uniqueID)
+    end
+)
+
+function GameFacade:InitializeService()
+    self._base.InitializeService(self)
+
+    self:RegisterServicer(HTW("HierarchicalTimerWheel"))
+end
+
+return GameFacade

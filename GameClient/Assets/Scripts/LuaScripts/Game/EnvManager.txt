@@ -102,7 +102,7 @@ function EnvManager:DoUpdate(deltaTime)
         end
     end
 
-    Game.TimerMgr:DoUpdate(deltaTime)
+    --Game.TimerMgr:DoUpdate(deltaTime)
 end
 
 --------------------Test---------------------------

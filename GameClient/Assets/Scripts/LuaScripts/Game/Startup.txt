@@ -22,6 +22,12 @@ local function InitMgr()
     Game.PanelMgr = instance('DotLua/UI/UIPanelManager')
     Game.PoolMgr = instance('DotLua/GOPool/GameObjectPoolManager')
     Game.EnvMgr = instance('Game/EnvManager')
+
+
+    local framework = require("DotLua/Framework/Framework")
+    local GameFacade = require("Game/Framework/GameFacade")
+    local gameFacade = GameFacade(1)
+    framework.AddFacade(gameFacade)
 end
 
 InitMgr()

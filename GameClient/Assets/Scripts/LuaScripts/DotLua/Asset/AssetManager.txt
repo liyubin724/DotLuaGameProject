@@ -1,4 +1,4 @@
-local AssetData = using("DotLua/Asset/AssetData")
+local AssetData = require("DotLua/Asset/AssetData")
 
 local AssetLoaderPriority = CS.DotEngine.Asset.AssetLoaderPriority
 local GameFacade = CS.Game.GameFacade

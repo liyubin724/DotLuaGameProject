@@ -1,20 +1,58 @@
 require('DotLua/OOP/Class')
-require('DotLua/OOP/Assembly')
 require('DotLua/OOP/Callback')
 require('DotLua/OOP/Delegate')
 
-function using(path)
-    return Assembly.GetOrLoadClass(path)
-end
-
-function useless(path)
-    return Assembly.UnloadClass(path)
-end
-
 function instance(path)
-    return Assembly.CreateInstance(path)
+    local class = require(path)
+    if class and type(class) == "table" and class["is_a"] then
+        return class()
+    end
+    return nil
 end
 
-function instanceWithParams(path, ...)
-    return Assembly.CreateInstanceWithParams(path, ...)
+function instancewith(path,...)
+    local class = require(path)
+    if class and type(class) == "table" and class["is_a"] then
+        return class(...)
+    end
+    return nil
 end
+
+
+function isinstanceof(instance, class)
+    if not instance or not class then
+        return false
+    end
+
+    if type(instance) ~= 'table' or type(class) ~= 'table' then
+        return false
+    end
+
+    if not instance["is_a"] or not class["is_a"] then
+        return false
+    end
+
+    return instance:is_a(class)
+end
+
+
+
+
+
+-----------------------------------------------
+-- require('DotLua/OOP/Assembly')
+-- function using(path)
+--     return Assembly.GetOrLoadClass(path)
+-- end
+
+-- function useless(path)
+--     return Assembly.UnloadClass(path)
+-- end
+
+-- function instance(path)
+--     return Assembly.CreateInstance(path)
+-- end
+
+-- function instanceWithParams(path, ...)
+--     return Assembly.CreateInstanceWithParams(path, ...)
+-- end

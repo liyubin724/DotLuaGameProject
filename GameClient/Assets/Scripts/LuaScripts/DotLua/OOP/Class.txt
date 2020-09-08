@@ -1,4 +1,4 @@
-function class(base, init)
+function class(base, init,name)
     local c = {} -- a new class instance
 
     if not init and type(base) == 'function' then
@@ -13,6 +13,8 @@ function class(base, init)
     end
 
     c.__index = c
+
+    c._name = name
 
     c._init = function(obj, ...)
         if base and base._init then
@@ -53,18 +55,3 @@ function class(base, init)
     return c
 end
 
-function isinstanceof(instance, class)
-    if not instance or not class then
-        return false
-    end
-
-    if type(instance) ~= 'table' or type(class) ~= 'table' then
-        return false
-    end
-
-    if not instance["is_a"] or not class["is_a"] then
-        return false
-    end
-
-    return instance:is_a(class)
-end

@@ -1,6 +1,6 @@
 require('DotLua/Utility/math')
 
-local ObjectPoolItem = using("DotLua/Pool/ObjectPoolItem")
+local ObjectPoolItem = require("DotLua/Pool/ObjectPoolItem")
 local DebugLog = DebugLog
 
 ----internal----
