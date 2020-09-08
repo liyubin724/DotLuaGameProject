@@ -1,4 +1,4 @@
-local GameObjectPool = using('DotLua/GOPool/GameObjectPool')
+local GameObjectPool = require('DotLua/GOPool/GameObjectPool')
 local GameObject = CS.UnityEngine.GameObject
 
 ----private----

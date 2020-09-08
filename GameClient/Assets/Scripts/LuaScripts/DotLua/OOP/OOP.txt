@@ -34,25 +34,3 @@ function isinstanceof(instance, class)
 
     return instance:is_a(class)
 end
-
-
-
-
-
------------------------------------------------
--- require('DotLua/OOP/Assembly')
--- function using(path)
---     return Assembly.GetOrLoadClass(path)
--- end
-
--- function useless(path)
---     return Assembly.UnloadClass(path)
--- end
-
--- function instance(path)
---     return Assembly.CreateInstance(path)
--- end
-
--- function instanceWithParams(path, ...)
---     return Assembly.CreateInstanceWithParams(path, ...)
--- end

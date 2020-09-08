@@ -3,19 +3,17 @@ max_line_length = 9999
 
 -- 忽略的符号
 ignore = {
-    "using",
-    "class",
-    "instance",
-    "instanceWithParams",
-    "useless",
-    "isinstanceof",
 }
 
 -- 全局变量
 globals = {
+    "class",
+    "instance",
+    "instancewith",
+    "isinstanceof",
+
     "Game",
     "CS",
-    "Assembly",
     "Callback",
     "DebugLog",
     "Delegate",

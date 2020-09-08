@@ -1,5 +1,5 @@
-local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
-local UIPanelMode = using("DotLua/UI/UIPanelMode")
+local UIPanelLayer = require("DotLua/UI/UIPanelLayer")
+local UIPanelMode = require("DotLua/UI/UIPanelMode")
 
 local Game = Game
 

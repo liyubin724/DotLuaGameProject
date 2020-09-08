@@ -1,4 +1,4 @@
-local GameObjectPoolTemplateType = using("DotLua/GOPool/GameObjectPoolTemplateType")
+local GameObjectPoolTemplateType = require("DotLua/GOPool/GameObjectPoolTemplateType")
 
 local GameObject = CS.UnityEngine.GameObject
 local math = math

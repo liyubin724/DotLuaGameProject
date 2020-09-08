@@ -1,4 +1,4 @@
-local UIPanel = using('DotLua/UI/View/UIPanel')
+local UIPanel = require('DotLua/UI/View/UIPanel')
 
 local DebugLog = DebugLog
 

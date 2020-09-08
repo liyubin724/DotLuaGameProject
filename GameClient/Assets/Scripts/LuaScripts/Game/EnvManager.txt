@@ -1,8 +1,8 @@
 local EventID = require('Game/Event/EventID')
 
-local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
-local UIPanelMode = using("DotLua/UI/UIPanelMode")
-local GameObjectPoolTemplateType = using("DotLua/GOPool/GameObjectPoolTemplateType")
+local UIPanelLayer = require("DotLua/UI/UIPanelLayer")
+local UIPanelMode = require("DotLua/UI/UIPanelMode")
+local GameObjectPoolTemplateType = require("DotLua/GOPool/GameObjectPoolTemplateType")
 
 local DebugLog = DebugLog
 local Game = Game
@@ -37,7 +37,7 @@ function EnvManager:DoStartup()
     --local profiler = require("perf.profiler")
     --profiler.start()
 
-    local LoginPanelController = using("Game/Test/UI/View/LoginPanelController")
+    local LoginPanelController = require("Game/Test/UI/View/LoginPanelController")
     local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",
                                                         LoginPanelController,
                                                         UIPanelLayer.Default,

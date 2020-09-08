@@ -1,4 +1,4 @@
-local GameObjectPoolGroup = using('DotLua/GOPool/GameObjectPoolGroup')
+local GameObjectPoolGroup = require('DotLua/GOPool/GameObjectPoolGroup')
 local DontDestroyHandler = CS.DotEngine.Utilities.DontDestroyHandler
 
 ----private----

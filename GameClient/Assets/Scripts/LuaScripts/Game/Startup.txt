@@ -15,7 +15,7 @@ else
 end
 
 local function InitMgr()
-    Game.ConfigMgr = instanceWithParams('DotLua/Config/ConfigManager', 'Game/Config/')
+    Game.ConfigMgr = instancewith('DotLua/Config/ConfigManager', 'Game/Config/')
     Game.TimerMgr = instance('DotLua/Timer/HierarchicalTimerWheel')
     Game.EventMgr = instance('DotLua/Event/EventDispatcher')
     Game.AssetMgr = instance('DotLua/Asset/AssetManager')

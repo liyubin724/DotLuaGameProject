@@ -1,4 +1,4 @@
-local UIViewController = using('DotLua/UI/View/UIViewController')
+local UIViewController = require('DotLua/UI/View/UIViewController')
 
 ----public----
 
