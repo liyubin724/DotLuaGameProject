@@ -1,0 +1,113 @@
+local Observer = require("DotLua/Framework/Observer/Observer")
+local List = require("DotLua/Generic/List")
+
+local View =
+    class(
+    function(self, key)
+        self.key = key
+
+        self.mediatorMap = {}
+        self.observerListMap = {}
+
+        self:OnInitialized()
+    end
+)
+
+function View:OnInitialized()
+end
+
+function View:RegisterObserver(notificationName,observer)
+    if notificationName and type(observer) == 'table' and observer:is_a(Observer) then
+        local observerList = self.observerListMap[notificationName]
+        if not observerList then
+            observerList = List()
+
+            self.observerListMap[notificationName] = observerList
+        end
+        observerList:Add(observer)
+    else
+        error("")
+    end
+end
+
+function View:NotifyObserver(notification)
+    local notificationName = notification:GetName()
+    local observerList = self.observerListMap[notificationName]
+    if observerList then
+        local cloneList = observerList:Copy()
+        for i = 1, #(cloneList) do
+            local observer = cloneList:Get(i)
+            observer:Notify(notification)
+        end
+    else
+        error("")
+    end
+end
+
+function View:RemoveObserver(notificationName,observerTarget,observerFunc)
+    local observerList = self.observerListMap[notificationName]
+    if observerList then
+        for i = 1, #(observerList) do
+            local observer = observerList[i]
+
+            if observer:GetTarget() == observerTarget and observer:GetFunc() == observerFunc then
+                observerList:RemoveAt(i)
+                break
+            end
+        end
+
+        if #(observerList) == 0 then
+            self.observerListMap[notificationName] = nil
+        end
+    else
+        error("")
+    end
+end
+
+function View:HasMediator(mediatorName)
+    return self.mediatorMap[mediatorName] ~= nil
+end
+
+function View:RegisterMediator(mediator)
+    if mediator then
+        local mediatorName = mediator:GetName()
+        if not self:HasMediator(mediatorName) then
+            mediator:OnInitialized(self.key)
+            self.mediatorMap[mediatorName] = mediator
+
+            local interests = mediator:ListNotificationInterests()
+            if interests and #(interests) > 0 then
+                local observer = Observer(mediator.HandleNotification,mediator)
+                for i = 1, #interests do
+                    self:RegisterObserver(interests[i], observer)
+                end
+            end
+
+            mediator:DoRegister()
+        else
+            error("")
+        end
+    else
+        error("")
+    end
+end
+
+function View:RemoveMediator(mediatorName)
+    local mediator = self.mediatorMap[mediatorName]
+    if mediator then
+        self.mediatorMap[mediatorName] = nil
+
+        local interests = mediator:ListNotificationInterests()
+        if interests and #(interests) > 0 then
+            for i = 1, #interests do
+                self:RemoveObserver(interests[i],mediator,mediator.HandleNotification)
+            end
+        end
+
+        mediator:DoRemove()
+    end
+
+    return mediator
+end
+
+return View

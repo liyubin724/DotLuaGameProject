@@ -1,0 +1,111 @@
+local List = require('DotLua/Generic/List')
+local Servicer = require('DotLua/Framework/Servicer/Servicer')
+
+local Service =
+    class(
+    function(self)
+        self.servicerMap = {}
+
+        self.updateServicerList = List()
+        self.unscaleUpdateServicerList = List()
+        self.lateUpdateServicerList = List()
+        self.fixedUpdateServicerList = List()
+    end
+)
+
+function Service:HasServicer(servicerName)
+    return self.servicerMap[servicerName] ~= nil
+end
+
+function Service:RetrieveServicer(servicerName)
+    return self.servicerMap[servicerName]
+end
+
+function Service:RegisterServicer(servicer)
+    if isinstanceof(servicer, Servicer) then
+        local servicerName = servicer:GetName()
+        if not self:HasServicer(servicerName) then
+            self.servicerMap[servicerName] = servicer
+
+            if servicer['DoUpdate'] then
+                self.updateServicerList:Add(servicerName)
+            end
+            if servicer['DoUnscaleUpdate'] then
+                self.unscaleUpdateServicerList:Add(servicerName)
+            end
+            if servicer['DoLateUpdate'] then
+                self.lateUpdateServicerList:Add(servicerName)
+            end
+            if servicer['DoFixedUpdate'] then
+                self.fixedUpdateServicerList:Add(servicerName)
+            end
+
+            servicer:DoRegister()
+        else
+            error('')
+        end
+    else
+        error('')
+    end
+end
+
+function Service:RemoveServicer(servicerName)
+    local servicer = self.servicerMap[servicerName]
+    if servicer then
+        self.servicerMap[servicerName] = nil
+
+        if servicer['DoUpdate'] then
+            self.updateServicerList:Remove(servicerName)
+        end
+        if servicer['DoUnscaleUpdate'] then
+            self.unscaleUpdateServicerList:Remove(servicerName)
+        end
+        if servicer['DoLateUpdate'] then
+            self.lateUpdateServicerList:Remove(servicerName)
+        end
+        if servicer['DoFixedUpdate'] then
+            self.fixedUpdateServicerList:Remove(servicerName)
+        end
+
+        servicer:DoRemove()
+    end
+    return servicer
+end
+
+function Service:DoUpdate(deltaTime)
+    if #(self.updateServicerList) > 0 then
+        for i = 1, #(self.updateServicerList) do
+            local servicerName = self.updateServicerList:Get(i)
+            self.servicerMap[servicerName]:DoUpdate(deltaTime)
+        end
+    end
+end
+
+function Service:DoUnscaleUpdate(deltaTime)
+    if #(self.unscaleUpdateServicerList) > 0 then
+        for i = 1, #(self.unscaleUpdateServicerList) do
+            local servicerName = self.unscaleUpdateServicerList:Get(i)
+            self.servicerMap[servicerName]:DoUnscaleUpdate(deltaTime)
+        end
+    end
+end
+
+function Service:DoLateUpdate(deltaTime)
+    if #(self.lateUpdateServicerList) > 0 then
+        for i = 1, #(self.lateUpdateServicerList) do
+            local servicerName = self.lateUpdateServicerList:Get(i)
+            self.servicerMap[servicerName]:DoLateUpdate(deltaTime)
+        end
+    end
+end
+
+function Service:DoFixedUpdate(deltaTime)
+    if #(self.fixedUpdateServicerList) > 0 then
+        for i = 1, #(self.fixedUpdateServicerList) do
+            local servicerName = self.fixedUpdateServicerList:Get(i)
+            self.servicerMap[servicerName]:DoFixedUpdate(deltaTime)
+        end
+    end
+end
+
+return Service

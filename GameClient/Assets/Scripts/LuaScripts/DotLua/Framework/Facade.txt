@@ -1,117 +1,108 @@
-local CommandCenter = require('DotLua/Framework/Commands/CommandCenter')
-local ProxyCenter = require('DotLua/Framework/Proxies/ProxyCenter')
-local ServiceCenter = require('DotLua/Framework/Services/ServiceCenter')
-local ObserverCenter = require('DotLua/Framework/Notify/ObserverCenter')
-local ViewControllerCenter = require('DotLua/Framework/Notify/ViewControllerCenter')
+local Notification = require("DotLua/Framework/Observer/Notification")
 
 local Facade =
     class(
-    function(self)
-        self.serviceCenter = nil
-        self.observerCenter = nil
-        self.proxyCenter = nil
-        self.commandCenter = nil
-        self.viewControllerCenter = nil
+    function(self, key)
+        self.key = key
 
-        self:Init()
+        self.model = nil
+        self.controller = nil
+        self.view = nil
+        self.service = nil
+
+        self:OnInitialized()
     end
 )
 
-function Facade:Init()
-    self.observerCenter = ObserverCenter()
-    self.serviceCenter = ServiceCenter()
-    self.proxyCenter = ProxyCenter()
-    self.commandCenter = CommandCenter()
-    self.viewControllerCenter = ViewControllerCenter()
-
-    self:InitService()
-    self:InitProxy()
-    self:InitCommands()
-    self:InitViewController()
+function Facade:GetKey()
+    return self.key
 end
 
-function Facade:InitService()
+function Facade:OnInitialized()
+    self:InitializeService()
+    self:InitializeModel()
+    self:InitializeController()
+    self:InitializeView()
 end
 
-function Facade:InitProxy()
+function Facade:InitializeModel()
 end
 
-function Facade:InitViewController()
+function Facade:InitializeController()
 end
 
-function Facade:InitCommands()
+function Facade:InitializeView()
 end
 
-function Facade:HasCommand(name)
-    return self.commandCenter:HasCommand(name)
+function Facade:InitializeService()
 end
 
-function Facade:RegisterCommand(command)
-    self.commandCenter:RegisterCommand(command:GetName(), command)
+function Facade:HasCommand(notificationName)
+    return self.controller:HasCommand(notificationName)
 end
 
-function Facade:RegisterCommandWithName(name, command)
-    self.commandCenter:RegisterCommand(name, command)
+function Facade:RegisterCommand(notificationName,commandCreatorFunc)
+    self.controller:RegisterCommand(notificationName,commandCreatorFunc)
 end
 
-function Facade:RemoveCommand(name)
-    self.commandCenter:RemoveCommand(name)
+function Facade:RemoveCommand(notificationName)
+    self.controller:RemoveCommand(notificationName)
 end
 
-function Facade:HasProxy(name)
-    return self.proxyCenter:HasProxy(name)
+function Facade:HasProxy(proxyName)
+    return self.model:HasProxy(proxyName)
 end
 
 function Facade:RegisterProxy(proxy)
-    self.proxyCenter:RegisterProxy(proxy:GetName(), proxy)
+    self.model:RegisterProxy(proxy)
 end
 
-function Facade:RegisterProxyWithName(name, proxy)
-    self.proxyCenter:RegisterProxy(name, proxy)
+function Facade:RetrieveProxy(proxyName)
+    return self.model:RetrieveProxy(proxyName)
 end
 
-function Facade:RetrieveProxy(name)
-    return self.proxyCenter:RetrieveProxy(name)
+function Facade:RemoveProxy(proxyName)
+    return self.model:RemoveProxy(proxyName)
 end
 
-function Facade:RemoveProxy(name)
-    self.proxyCenter:RemoveProxy(name)
+function Facade:HasMediator(mediatorName)
+    return self.view:HasMediator(mediatorName)
 end
 
-function Facade:HasService(name)
-    return self.serviceCenter:HasService(name)
+function Facade:RegisterMediator(mediator)
+    self.view:RegisterMediator(mediator)
 end
 
-function Facade:RegisterService(service)
-    self.serviceCenter:RegisterService(service:GetName(), service)
+function Facade:RetrieveMediator(mediatorName)
+    return self.view:RetrieveMediator(mediatorName)
 end
 
-function Facade:RegisterServiceWithName(name, service)
-    self.serviceCenter:RegisterService(name, service)
+function Facade:RemoveMediator(mediatorName)
+    self.view:RemoveMediator(mediatorName)
 end
 
-function Facade:RetrieveService(name)
-    return self.serviceCenter:RetrieveService(name)
+function Facade:SendNotification(notificationName,body,userdata)
+    self:NotifyObservers(Notification(notificationName,body,userdata))
 end
 
-function Facade:RemoveService(name)
-    self.serviceCenter:RemoveService(name)
+function Facade:NotifyObservers(notification)
+    self.view:NotifyObserver(notification)
 end
 
 function Facade:DoUpdate(deltaTime)
-    self.serviceCenter:DoUpdate(deltaTime)
+    self.service:DoUpdate(deltaTime)
 end
 
 function Facade:DoUnscaleUpdate(deltaTime)
-    self.serviceCenter:DoUnscaleUpdate(deltaTime)
+    self.service:DoUnscaleUpdate(deltaTime)
 end
 
 function Facade:DoLateUpdate(deltaTime)
-    self.serviceCenter:DoLateUpdate(deltaTime)
+    self.service:DoLateUpdate(deltaTime)
 end
 
 function Facade:DoFixedUpdate(deltaTime)
-    self.serviceCenter:DoFixedUpdate(deltaTime)
+    self.service:DoFixedUpdate(deltaTime)
 end
 
 return Facade

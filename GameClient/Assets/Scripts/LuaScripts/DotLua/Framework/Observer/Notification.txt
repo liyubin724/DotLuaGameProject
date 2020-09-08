@@ -1,8 +1,9 @@
 local Notification =
     class(
-    function(self,name,body)
+    function(self, name, body, userdata)
         self.name = name
         self.body = body
+        self.userdata = userdata
     end
 )
 
@@ -14,8 +15,8 @@ function Notification:GetBody()
     return self.body
 end
 
-function Notification:SetBody(body)
-    self.body = body
+function Notification:GetUserdata()
+    return self.userdata
 end
 
 return Notification

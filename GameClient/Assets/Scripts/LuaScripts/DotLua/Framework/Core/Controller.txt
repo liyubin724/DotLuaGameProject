@@ -1,0 +1,53 @@
+local Controller =
+    class(
+    function(self, key)
+        self.key = key
+
+        self.commandCreatorMap = {}
+
+        self:OnInitialized()
+    end
+)
+
+function Controller:GetKey()
+    return self.key
+end
+
+function Controller:OnInitialized()
+    self.view = nil
+end
+
+function Controller:HasCommand(notificationName)
+    return self.commandCreatorMap[notificationName] ~= nil
+end
+
+function Controller:RegisterCommand(notificationName,commandCreatorFunc)
+    if notificationName and type(commandCreatorFunc) == "function" then
+        if not self:HasCommand(notificationName) then
+
+
+            self.commandCreatorMap[notificationName]= commandCreatorFunc
+        else
+            error("")
+        end
+    else
+        error("")
+    end
+end
+
+function Controller:RemoveCommand(notificationName)
+
+end
+
+function Controller:ExecuteCommand(notification)
+    local commandCreator = self.commandCreatorMap[notification:GetName()]
+    if commandCreator then
+        local command = commandCreator()
+        command:OnInitialized(self:GetKey())
+        command:Execute(notification)
+    else
+        error("")
+    end
+end
+
+return Controller

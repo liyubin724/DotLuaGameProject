@@ -52,3 +52,19 @@ function class(base, init)
 
     return c
 end
+
+function isinstanceof(instance, class)
+    if not instance or not class then
+        return false
+    end
+
+    if type(instance) ~= 'table' or type(class) ~= 'table' then
+        return false
+    end
+
+    if not instance["is_a"] or not class["is_a"] then
+        return false
+    end
+
+    return instance:is_a(class)
+end

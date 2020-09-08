@@ -47,6 +47,14 @@ function List:Contains(item)
     return false
 end
 
+function List:Get(index)
+    if index >= 1 and index <= #(self.list) then
+        return self.list[index]
+    end
+
+    return nil
+end
+
 ----public----
 -- 向List添加元素
 -- 注：无法添加nil到List中
@@ -165,7 +173,7 @@ end
 function List:Copy()
     local result = List()
     for i = 1, #(self.list) do
-        result:Add(self:GetItem(i))
+        result:Add(self.list[i])
     end
     return result
 end

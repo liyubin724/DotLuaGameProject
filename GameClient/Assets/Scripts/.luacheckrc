@@ -8,6 +8,7 @@ ignore = {
     "instance",
     "instanceWithParams",
     "useless",
+    "isinstanceof",
 }
 
 -- 全局变量

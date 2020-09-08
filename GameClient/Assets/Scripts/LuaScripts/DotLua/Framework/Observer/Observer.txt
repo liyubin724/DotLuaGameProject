@@ -1,0 +1,20 @@
+local Observer =
+    class(
+    function(self, target, func)
+        self.notifyCallback = Callback(target, func)
+    end
+)
+
+function Observer:GetTarget()
+    return self.notifyCallback:GetReceiver()
+end
+
+function Observer:GetFunc()
+    return self.notifyCallback:GetFunc()
+end
+
+function Observer:Notify(notification)
+    self.notifyCallback:Invoke(notification)
+end
+
+return Observer

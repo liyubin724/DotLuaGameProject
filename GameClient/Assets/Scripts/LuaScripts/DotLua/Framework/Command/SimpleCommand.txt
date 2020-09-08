@@ -1,0 +1,13 @@
+local Notifier = require('DotLua/Framework/Observer/Notifier')
+
+local SimpleCommand =
+    class(
+    Notifier,
+    function(self)
+    end
+)
+
+function SimpleCommand:Execute(notification)
+end
+
+return SimpleCommand

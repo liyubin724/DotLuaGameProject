@@ -1,0 +1,23 @@
+local Notifier =
+    class(
+    function(self)
+        self.key = nil
+    end
+)
+
+function Notifier:GetKey()
+    return self.key
+end
+
+function Notifier:OnInitialized(key)
+    self.key = key
+end
+
+function Notifier:SendNotification(name,body,userdata)
+    local Framework = require("DotLua/Framework/Framework")
+    local facade = Framework.GetFacade(self.key)
+
+    facade:SendNotification(name,body,userdata)
+end
+
+return Notifier
