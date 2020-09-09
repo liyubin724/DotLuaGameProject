@@ -1,3 +1,4 @@
+local Framework = require('DotLua/Framework/Framework')
 local GameObjectPoolGroup = require('DotLua/GOPool/GameObjectPoolGroup')
 local DontDestroyHandler = CS.DotEngine.Utilities.DontDestroyHandler
 
@@ -18,7 +19,8 @@ item:SetParent(nil,false)
 --]]
 local GameObjectPoolManager =
     class(
-    function(self)
+    Framework.Servicer,
+    function(self,name)
         self.groups = {}
         self.rootTransform = DontDestroyHandler.CreateTransform('LuaPoolRoot')
     end

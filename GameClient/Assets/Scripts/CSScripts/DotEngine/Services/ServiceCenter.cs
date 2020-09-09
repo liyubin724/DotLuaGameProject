@@ -7,63 +7,81 @@ namespace DotEngine.Services
     {
         private Dictionary<string, IService> serviceDic = new Dictionary<string, IService>();
 
-        private List<string> updateServices = null;
-        private List<string> lateUpdateServices = null;
-        private List<string> fixedUpdateServices = null;
+        private List<string> updateServiceNames = null;
+        private List<string> unscaleUpdateServiceNames = null;
+        private List<string> lateUpdateServiceNames = null;
+        private List<string> fixedUpdateServiceNames = null;
 
         private List<string> sortedByOrderNames = new List<string>();
         public ServiceCenter()
         {
             serviceDic = new Dictionary<string, IService>();
-            updateServices = new List<string>();
-            lateUpdateServices = new List<string>();
-            fixedUpdateServices = new List<string>();
+            updateServiceNames = new List<string>();
+            unscaleUpdateServiceNames = new List<string>();
+            lateUpdateServiceNames = new List<string>();
+            fixedUpdateServiceNames = new List<string>();
         }
         
         public void DoUpdate(float deltaTime)
         {
-            for (int i = updateServices.Count - 1; i >= 0; --i)
+            for (int i = updateServiceNames.Count - 1; i >= 0; --i)
             {
-                string name = updateServices[i];
+                string name = updateServiceNames[i];
                 if (serviceDic.TryGetValue(name, out IService value))
                 {
                     ((IUpdate)value).DoUpdate(deltaTime);
                 }
                 else
                 {
-                    updateServices.RemoveAt(i);
+                    updateServiceNames.RemoveAt(i);
+                }
+            }
+        }
+
+        public void DoUnscaleUpdate(float deltaTime)
+        {
+            for (int i = unscaleUpdateServiceNames.Count - 1; i >= 0; --i)
+            {
+                string name = unscaleUpdateServiceNames[i];
+                if (serviceDic.TryGetValue(name, out IService value))
+                {
+                    ((IUnscaleUpdate)value).DoUnscaleUpdate(deltaTime);
+                }
+                else
+                {
+                    unscaleUpdateServiceNames.RemoveAt(i);
                 }
             }
         }
 
         public void DoLateUpdate(float deltaTime)
         {
-            for (int i = lateUpdateServices.Count - 1; i >= 0; --i)
+            for (int i = lateUpdateServiceNames.Count - 1; i >= 0; --i)
             {
-                string name = lateUpdateServices[i];
+                string name = lateUpdateServiceNames[i];
                 if (serviceDic.TryGetValue(name, out IService value))
                 {
                     ((ILateUpdate)value).DoLateUpdate(deltaTime);
                 }
                 else
                 {
-                    lateUpdateServices.RemoveAt(i);
+                    lateUpdateServiceNames.RemoveAt(i);
                 }
             }
         }
 
         public void DoFixedUpdate(float deltaTime)
         {
-            for (int i = fixedUpdateServices.Count - 1; i >= 0; --i)
+            for (int i = fixedUpdateServiceNames.Count - 1; i >= 0; --i)
             {
-                string name = fixedUpdateServices[i];
+                string name = fixedUpdateServiceNames[i];
                 if (serviceDic.TryGetValue(name, out IService value))
                 {
                     ((IFixedUpdate)value).DoFixedUpdate(deltaTime);
                 }
                 else
                 {
-                    fixedUpdateServices.RemoveAt(i);
+                    fixedUpdateServiceNames.RemoveAt(i);
                 }
             }
         }
@@ -91,15 +109,19 @@ namespace DotEngine.Services
             Type serviceType = service.GetType();
             if (typeof(IUpdate).IsAssignableFrom(serviceType))
             {
-                updateServices.Add(service.Name);
+                updateServiceNames.Add(service.Name);
+            }
+            if(typeof(IUnscaleUpdate).IsAssignableFrom(serviceType))
+            {
+                unscaleUpdateServiceNames.Add(service.Name);
             }
             if (typeof(ILateUpdate).IsAssignableFrom(serviceType))
             {
-                lateUpdateServices.Add(service.Name);
+                lateUpdateServiceNames.Add(service.Name);
             }
             if (typeof(IFixedUpdate).IsAssignableFrom(serviceType))
             {
-                fixedUpdateServices.Add(service.Name);
+                fixedUpdateServiceNames.Add(service.Name);
             }
 
             service.DoRegister();
@@ -109,8 +131,9 @@ namespace DotEngine.Services
         {
             if (serviceDic.TryGetValue(name, out IService servicer))
             {
-                servicer.DoRemove();
                 serviceDic.Remove(name);
+
+                servicer.DoRemove();
 
                 sortedByOrderNames.Remove(name);
             }
@@ -123,15 +146,16 @@ namespace DotEngine.Services
 
         public void ClearService()
         {
-            updateServices.Clear();
-            lateUpdateServices.Clear();
-            fixedUpdateServices.Clear();
+            updateServiceNames.Clear();
+            lateUpdateServiceNames.Clear();
+            fixedUpdateServiceNames.Clear();
 
-            for(int i = sortedByOrderNames.Count-1;i>=0;--i)
+            sortedByOrderNames.Reverse();
+            string[] names = sortedByOrderNames.ToArray();
+            foreach(var name in names)
             {
-                RemoveService(sortedByOrderNames[i]);
+                RemoveService(name);
             }
-            sortedByOrderNames.Clear();
         }
     }
 }

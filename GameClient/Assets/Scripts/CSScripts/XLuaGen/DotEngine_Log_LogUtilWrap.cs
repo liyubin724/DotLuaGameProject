@@ -31,7 +31,7 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 8, 2, 2);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 8, 3, 2);
 			Utils.RegisterFunc(L, Utils.CLS_IDX, "SetLogger", _m_SetLogger_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "DisposeLogger", _m_DisposeLogger_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "LogDebug", _m_LogDebug_xlua_st_);
@@ -44,6 +44,7 @@ namespace XLua.CSObjectWrap
             
 			Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "LimitLevel", _g_get_LimitLevel);
             Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "IsEnable", _g_get_IsEnable);
+            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "IsInited", _g_get_IsInited);
             
 			Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "LimitLevel", _s_set_LimitLevel);
             Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "IsEnable", _s_set_IsEnable);
@@ -260,6 +261,18 @@ namespace XLua.CSObjectWrap
 		    try {
             
 			    LuaAPI.lua_pushboolean(L, DotEngine.Log.LogUtil.IsEnable);
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_IsInited(RealStatePtr L)
+        {
+		    try {
+            
+			    LuaAPI.lua_pushboolean(L, DotEngine.Log.LogUtil.IsInited);
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }

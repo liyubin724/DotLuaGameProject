@@ -30,16 +30,6 @@ namespace Game
 
             ClientNetService clientNetService = new ClientNetService();
             serviceCenter.RegisterService(clientNetService);
-
-            MonitorService monitorService = new MonitorService();
-            serviceCenter.RegisterService(monitorService);
-
-            //monitorService.OpenSampler(SamplerCategory.Log);
-            //monitorService.OpenSampler(SamplerCategory.FPS);
-            //monitorService.OpenSampler(SamplerCategory.Memory);
-            //monitorService.OpenSampler(SamplerCategory.System);
-            monitorService.OpenFileRecorder("D:/");
-            monitorService.OpenProfilerRecorder();
         }
     }
 }

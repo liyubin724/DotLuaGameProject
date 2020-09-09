@@ -1,7 +1,9 @@
+local Framework = require('DotLua/Framework/Framework')
 
 local ConfigManager =
     class(
-    function(self,rootPath)
+    Framework.Servicer,
+    function(self, name, rootPath)
         self.configs = {}
         self.rootPath = rootPath
     end

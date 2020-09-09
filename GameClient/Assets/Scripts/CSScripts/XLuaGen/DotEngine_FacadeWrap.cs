@@ -21,12 +21,13 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(DotEngine.Facade);
-			Utils.BeginObjectRegister(type, L, translator, 0, 4, 0, 0);
+			Utils.BeginObjectRegister(type, L, translator, 0, 5, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RegisterService", _m_RegisterService);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RetrieveService", _m_RetrieveService);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RemoveService", _m_RemoveService);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HasService", _m_HasService);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Dispose", _m_Dispose);
 			
 			
 			
@@ -191,6 +192,33 @@ namespace XLua.CSObjectWrap
                     
                     
                     return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Dispose(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                DotEngine.Facade gen_to_be_invoked = (DotEngine.Facade)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    
+                    gen_to_be_invoked.Dispose(  );
+                    
+                    
+                    
+                    return 0;
                 }
                 
             } catch(System.Exception gen_e) {

@@ -83,6 +83,11 @@ namespace DotEngine
             serviceCenter.DoUpdate(deltaTime);
         }
 
+        internal void DoUnscaleUpdate(float deltaTime)
+        {
+            serviceCenter.DoUnscaleUpdate(deltaTime);
+        }
+
         internal void DoLateUpdate(float deltaTime)
         {
             serviceCenter.DoLateUpdate(deltaTime);

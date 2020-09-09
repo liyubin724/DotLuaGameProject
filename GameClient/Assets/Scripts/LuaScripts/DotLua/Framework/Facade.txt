@@ -133,4 +133,7 @@ function Facade:DoFixedUpdate(deltaTime)
     self.service:DoFixedUpdate(deltaTime)
 end
 
+function Facade:DoDispose()
+end
+
 return Facade

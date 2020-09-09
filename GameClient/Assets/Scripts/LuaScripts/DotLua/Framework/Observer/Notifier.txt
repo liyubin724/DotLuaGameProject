@@ -2,6 +2,7 @@ local Notifier =
     class(
     function(self)
         self.uniqueID = nil
+        self.facade = nil
     end
 )
 
@@ -9,13 +10,21 @@ function Notifier:GetUniqueID()
     return self.uniqueID
 end
 
+function Notifier:GetFacade()
+    if not self.facade then
+        local Framework = require('DotLua/Framework/Framework')
+        self.facade = Framework.GetFacade(self.uniqueID)
+    end
+
+    return self.facade
+end
+
 function Notifier:OnInitialized(uniqueID)
     self.uniqueID = uniqueID
 end
 
 function Notifier:SendNotification(name, body, userdata)
-    local Framework = require('DotLua/Framework/Framework')
-    local facade = Framework.GetFacade(self.uniqueID)
+    local facade = self:GetFacade()
     if facade then
         facade:SendNotification(name, body, userdata)
     else

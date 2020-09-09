@@ -1,33 +1,118 @@
-Game = Game or {}
+Game = {}
 Game.IsDebug = true
 
 require('DotLua/Utility/math')
 require('DotLua/Utility/table')
 require('DotLua/OOP/OOP')
 require('DotLua/Log/DebugLog')
+local Framework = require('DotLua/Framework/Framework')
+local GameFacade = require('Game/Framework/GameFacade')
 
-if Game.IsDebug then
-    require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+Game.update = Delegate()
+Game.unscaleUpdate = Delegate()
+Game.lateUpdate = Delegate()
+Game.fixedUpdate = Delegate()
 
-    DebugLog.SetEnable(true, true, true)
-else
-    DebugLog.SetEnable(true, false, false)
+Game.FACADE_DEFAULT_UNIQUE_ID = 1
+
+function Game.DoStart()
+    if Game.IsDebug then
+        require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+        DebugLog.SetEnable(true, true, true)
+    else
+        DebugLog.SetEnable(true, false, false)
+    end
+    DebugLog.Info('Game', 'Game Startup')
+
+    Game.AddUpdateCallback(nil, Framework.DoUpdate)
+    Game.AddUnscaleUpdateCallback(nil, Framework.DoUnscaleUpdate)
+    Game.AddLateUpdateCallback(nil, Framework.DoLateUpdate)
+    Game.AddFixedUpdateCallback(nil, Framework.DoFixedUpdate)
+
+    Game.gameFacade = GameFacade(Game.FACADE_DEFAULT_UNIQUE_ID)
+    Framework.AddFacade(Game.gameFacade)
 end
 
-local function InitMgr()
-    Game.ConfigMgr = instancewith('DotLua/Config/ConfigManager', 'Game/Config/')
-    Game.TimerMgr = instance('DotLua/Timer/HierarchicalTimerWheel')
-    Game.EventMgr = instance('DotLua/Event/EventDispatcher')
-    Game.AssetMgr = instance('DotLua/Asset/AssetManager')
-    Game.PanelMgr = instance('DotLua/UI/UIPanelManager')
-    Game.PoolMgr = instance('DotLua/GOPool/GameObjectPoolManager')
-    Game.EnvMgr = instance('Game/EnvManager')
-
-
-    local framework = require("DotLua/Framework/Framework")
-    local GameFacade = require("Game/Framework/GameFacade")
-    local gameFacade = GameFacade(1)
-    framework.AddFacade(gameFacade)
+function Game.AddUpdateCallback(receiver, func)
+    Game.update = Game.update + {receiver, func}
 end
 
-InitMgr()
+function Game.RemoveUpdateCallback(receiver, func)
+    Game.update = Game.update - {receiver, func}
+end
+
+function Game.DoUpdate(deltaTime)
+    if #(Game.update) > 0 then
+        Game.update:Invoke(deltaTime)
+    end
+end
+
+function Game.AddUnscaleUpdateCallback(receiver, func)
+    Game.unscaleUpdate = Game.unscaleUpdate + {receiver, func}
+end
+
+function Game.RemoveUnscaleUpdateCallback(receiver, func)
+    Game.unscaleUpdate = Game.unscaleUpdate - {receiver, func}
+end
+
+function Game.DoUnuscaleUpdate(deltaTime)
+    if #(Game.unscaleUpdate) > 0 then
+        Game.unscaleUpdate:Invoke(deltaTime)
+    end
+end
+
+function Game.AddLateUpdateCallback(receiver, func)
+    Game.lateUpdate = Game.lateUpdate + {receiver, func}
+end
+
+function Game.RemoveLateUpdateCallback(receiver, func)
+    Game.lateUpdate = Game.lateUpdate - {receiver, func}
+end
+
+function Game.DoLateUpdate(deltaTime)
+    if #(Game.lateUpdate) > 0 then
+        Game.lateUpdate:Invoke(deltaTime)
+    end
+end
+
+function Game.AddFixedUpdateCallback(receiver, func)
+    Game.fixedUpdate = Game.fixedUpdate + {receiver, func}
+end
+
+function Game.RemoveFixedUpdateCallback(receiver, func)
+    Game.fixedUpdate = Game.fixedUpdate - {receiver, func}
+end
+
+function Game.DoFixedUpdate(deltaTime)
+    if #(Game.fixedUpdate) > 0 then
+        Game.fixedUpdate:Invoke(deltaTime)
+    end
+end
+
+function Game.DoDestroy()
+    DebugLog.Info('Game', 'Game Shuntdown')
+
+    Framework.DoDispose()
+
+    Game.RemoveUpdateCallback(nil, Framework.DoUpdate)
+    Game.RemoveUnscaleUpdateCallback(nil, Framework.DoUnscaleUpdate)
+    Game.RemoveLateUpdateCallback(nil, Framework.DoLateUpdate)
+    Game.RemoveFixedUpdateCallback(nil, Framework.DoFixedUpdate)
+
+    Game.update:Clear()
+    Game.unscaleUpdate:Clear()
+    Game.lateUpdate:Clear()
+    Game.fixedUpdate:Clear()
+end
+
+-- local function InitMgr()
+--     Game.ConfigMgr = instancewith('DotLua/Config/ConfigManager', 'Game/Config/')
+--     Game.TimerMgr = instance('DotLua/Timer/HierarchicalTimerWheel')
+--     Game.EventMgr = instance('DotLua/Event/EventDispatcher')
+--     Game.AssetMgr = instance('DotLua/Asset/AssetManager')
+--     Game.PanelMgr = instance('DotLua/UI/UIPanelManager')
+--     Game.PoolMgr = instance('DotLua/GOPool/GameObjectPoolManager')
+--     Game.EnvMgr = instance('Game/EnvManager')
+-- end
+
+-- InitMgr()

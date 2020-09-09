@@ -15,9 +15,10 @@ namespace DotEngine.Lua
         public const string START_FUNCTION_NAME = "DoStart";
         public const string DISABLE_FUNCTION_NAME = "DoDisable";
         public const string UPDATE_FUNCTION_NAME = "DoUpdate";
+        public const string UNSCALEUPDATE_FUNCTION_NAME = "DoUnscaleUpdate";
+        public const string LATEUPDATE_FUNCTION_NAME = "DoLateUpdate";
+        public const string FIXEDUPDATE_FUNCTION_NAME = "DoFixedUpdate";
         public const string DESTROY_FUNCTION_NAME = "DoDestroy";
-
-        public const string STARTUP_FUNCTION_NAME = "DoStartup";
 
         private const string SCRIPT_ASSET_DIR = "Assets/Scripts/LuaScripts/";
         private const string SCRIPT_DIR = "Scripts/LuaScripts/";

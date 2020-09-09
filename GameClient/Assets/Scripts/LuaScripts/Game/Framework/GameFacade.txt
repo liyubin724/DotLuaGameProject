@@ -1,5 +1,10 @@
 local Framework = require('DotLua/Framework/Framework')
-local HTW = require('DotLua/Timer/HierarchicalTimerWheel')
+local ServicerNames = require('Game/Framework/ServicerNames')
+local TimerServicer = require('DotLua/Timer/HierarchicalTimerWheel')
+local ConfigServicer = require('DotLua/Config/ConfigManager')
+local GameObjectPoolServicer = require('DotLua/GOPool/GameObjectPoolManager')
+local AssetServicer = require('DotLua/Asset/AssetManager')
+local UIPanelServicer = require('DotLua/UI/UIPanelManager')
 
 local GameFacade =
     class(
@@ -11,7 +16,11 @@ local GameFacade =
 function GameFacade:InitializeService()
     self._base.InitializeService(self)
 
-    self:RegisterServicer(HTW("HierarchicalTimerWheel"))
+    self:RegisterServicer(TimerServicer(ServicerNames.TIMER_SERVICER_NAME))
+    self:RegisterServicer(ConfigServicer(ServicerNames.CONFIG_SERVICER_NAME, 'Game/Config/'))
+    self:RegisterServicer(GameObjectPoolServicer(ServicerNames.GAMEOBJECT_POOL_SERVICER_NAME))
+    self:RegisterServicer(AssetServicer(ServicerNames.ASSET_SERVICER))
+    self:RegisterServicer(UIPanelServicer(ServicerNames.UI_PANEL_SERVICER))
 end
 
 return GameFacade

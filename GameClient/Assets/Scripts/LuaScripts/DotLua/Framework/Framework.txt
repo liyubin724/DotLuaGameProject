@@ -77,4 +77,11 @@ function Framework.DoFixedUpdate(deltaTime)
     end
 end
 
+function Framework.DoDispose()
+    for _, facade in pairs(Framework.facadeMap) do
+        facade:DoDispose()
+    end
+    Framework.facadeMap = {}
+end
+
 return Framework
