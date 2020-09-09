@@ -30,7 +30,7 @@ namespace DotEngine.PMonitor.Recorder
 
         public void OnOpenSamplerRequest(int netID,int messageID, object message)
         {
-            MonitorService monitorService = GameFacade.GetInstance().GetService<MonitorService>(MonitorService.NAME);
+            MonitorService monitorService = GameFacade.GetInstance().GetServicer<MonitorService>(MonitorService.NAME);
             
             C2S_OpenSamplerRequest request = (C2S_OpenSamplerRequest)message;
 
@@ -45,7 +45,7 @@ namespace DotEngine.PMonitor.Recorder
 
         public void OnCloseSamplerRequest(int netID,int messageID, object message)
         {
-            MonitorService monitorService = GameFacade.GetInstance().GetService<MonitorService>(MonitorService.NAME);
+            MonitorService monitorService = GameFacade.GetInstance().GetServicer<MonitorService>(MonitorService.NAME);
 
             C2S_CloseSamplerRequest request = (C2S_CloseSamplerRequest)message;
 

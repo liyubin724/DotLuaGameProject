@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DotEngine.PMonitor
 {
-    public class MonitorService : Service,IUpdate
+    public class MonitorService : Servicer,IUpdate
     {
         public const string NAME = "MonitorService";
 

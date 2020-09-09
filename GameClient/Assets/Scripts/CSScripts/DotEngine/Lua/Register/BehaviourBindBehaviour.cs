@@ -6,7 +6,7 @@
 
         protected override void OnInitFinished()
         {
-            LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
+            LuaEnvService service = Facade.GetInstance().GetServicer<LuaEnvService>(LuaEnvService.NAME);
             if(service.IsValid())
             {
                 registerBehaviourData.RegisterToLua(service.Env, ObjTable);

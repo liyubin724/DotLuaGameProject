@@ -59,7 +59,7 @@ namespace DotEngine.GOPool
                 return;
             }
 
-            GameObjectPoolService poolService = Facade.GetInstance().GetService<GameObjectPoolService>(GameObjectPoolService.NAME);
+            GameObjectPoolService poolService = Facade.GetInstance().GetServicer<GameObjectPoolService>(GameObjectPoolService.NAME);
 
             if (!poolService.HasGroup(GroupName))
             {

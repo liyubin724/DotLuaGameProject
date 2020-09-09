@@ -26,10 +26,10 @@ namespace Game
             base.InitializeService();
 
             ServerNetService serverNetService = new ServerNetService();
-            serviceCenter.RegisterService(serverNetService);
+            service.RegisterServicer(serverNetService);
 
             ClientNetService clientNetService = new ClientNetService();
-            serviceCenter.RegisterService(clientNetService);
+            service.RegisterServicer(clientNetService);
         }
     }
 }

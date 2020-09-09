@@ -99,7 +99,7 @@ namespace DotEngine.GOPool
 
             preloadCompleteCallback = callback;
 
-            TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+            TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
             if (preloadTimerHandler != null)
             {
                 timerService.RemoveTimer(preloadTimerHandler);
@@ -150,7 +150,7 @@ namespace DotEngine.GOPool
         {
             if (preloadTimerHandler != null)
             {
-                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
                 timerService.RemoveTimer(preloadTimerHandler);
                 preloadTimerHandler = null;
             }
@@ -169,7 +169,7 @@ namespace DotEngine.GOPool
             cullOnceAmount = onceAmount;
             cullDelayTime = delayTime;
 
-            TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+            TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
             if (cullTimerHandler != null)
             {
                 timerService.RemoveTimer(cullTimerHandler);
@@ -366,7 +366,7 @@ namespace DotEngine.GOPool
         internal void Dispose()
         {
             preloadCompleteCallback = null;
-            TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+            TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
             if (preloadTimerHandler != null)
             {
                 timerService.RemoveTimer(preloadTimerHandler);

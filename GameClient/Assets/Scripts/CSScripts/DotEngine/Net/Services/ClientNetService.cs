@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DotEngine.Net.Services
 {
-    public class ClientNetService : Service, IUpdate, ILateUpdate
+    public class ClientNetService : Servicer, IUpdate, ILateUpdate
     {
         public const string NAME = "ClientNetService";
 

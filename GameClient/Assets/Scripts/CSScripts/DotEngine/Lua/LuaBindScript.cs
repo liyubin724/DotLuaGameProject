@@ -28,7 +28,7 @@ namespace DotEngine.Lua
             Facade facade = Facade.GetInstance();
             if(facade!=null)
             {
-                LuaEnvService service = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
+                LuaEnvService service = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
                 return service != null && service.IsValid() && ObjTable != null;
             }
             return false;
@@ -41,7 +41,7 @@ namespace DotEngine.Lua
                 return IsValid();
             }
 
-            LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
+            LuaEnvService service = Facade.GetInstance().GetServicer<LuaEnvService>(LuaEnvService.NAME);
             if (!string.IsNullOrEmpty(m_ScriptFilePath))
             {
                 ObjTable = service.InstanceScript(m_ScriptFilePath);

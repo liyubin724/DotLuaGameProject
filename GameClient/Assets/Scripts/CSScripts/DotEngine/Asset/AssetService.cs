@@ -5,7 +5,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Asset
 {
-    public class AssetService : Service, IUpdate
+    public class AssetService : Servicer, IUpdate
     {
         public const string NAME = "AssetService";
 

@@ -7,7 +7,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.GOPool
 {
-    public class GameObjectPoolService : Service
+    public class GameObjectPoolService : Servicer
     {
         public const string NAME = "GOPoolService";
         private const string ROOT_NAME = "Root-GOPool";

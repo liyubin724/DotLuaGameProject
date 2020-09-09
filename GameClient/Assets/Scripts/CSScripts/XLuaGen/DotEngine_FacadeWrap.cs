@@ -99,9 +99,9 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    DotEngine.Services.IService _service = (DotEngine.Services.IService)translator.GetObject(L, 2, typeof(DotEngine.Services.IService));
+                    DotEngine.Services.IServicer _service = (DotEngine.Services.IServicer)translator.GetObject(L, 2, typeof(DotEngine.Services.IServicer));
                     
-                    gen_to_be_invoked.RegisterService( _service );
+                    gen_to_be_invoked.RegisterServicer( _service );
                     
                     
                     
@@ -129,7 +129,7 @@ namespace XLua.CSObjectWrap
                 {
                     string _name = LuaAPI.lua_tostring(L, 2);
                     
-                        DotEngine.Services.IService gen_ret = gen_to_be_invoked.RetrieveService( _name );
+                        DotEngine.Services.IServicer gen_ret = gen_to_be_invoked.RetrieveServicer( _name );
                         translator.PushAny(L, gen_ret);
                     
                     
@@ -158,7 +158,7 @@ namespace XLua.CSObjectWrap
                 {
                     string _name = LuaAPI.lua_tostring(L, 2);
                     
-                    gen_to_be_invoked.RemoveService( _name );
+                    gen_to_be_invoked.RemoveServicer( _name );
                     
                     
                     
@@ -186,7 +186,7 @@ namespace XLua.CSObjectWrap
                 {
                     string _name = LuaAPI.lua_tostring(L, 2);
                     
-                        bool gen_ret = gen_to_be_invoked.HasService( _name );
+                        bool gen_ret = gen_to_be_invoked.HasServicer( _name );
                         LuaAPI.lua_pushboolean(L, gen_ret);
                     
                     

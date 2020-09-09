@@ -4,7 +4,7 @@ using DotEngine.Services;
 
 namespace DotEngine.Net.Services
 {
-    public class ServerNetService : Service, IUpdate, ILateUpdate
+    public class ServerNetService : Servicer, IUpdate, ILateUpdate
     {
         public const string NAME = "ServerNetService";
 

@@ -5,7 +5,7 @@ using XLua;
 
 namespace DotEngine.Lua
 {
-    public class LuaEnvService : Service,IUpdate,IUnscaleUpdate,ILateUpdate,IFixedUpdate
+    public class LuaEnvService : Servicer,IUpdate,IUnscaleUpdate,ILateUpdate,IFixedUpdate
     {
         public const string NAME = "LuaService";
 

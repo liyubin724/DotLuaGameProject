@@ -20,7 +20,7 @@ namespace DotEngine.Asset
         private AssetService assetService = null;
         public AssetBridge() : this(AssetLoaderPriority.Default)
         {
-            assetService = Facade.GetInstance().GetService<AssetService>(AssetService.NAME);
+            assetService = Facade.GetInstance().GetServicer<AssetService>(AssetService.NAME);
         }
 
         public AssetBridge(AssetLoaderPriority priority)

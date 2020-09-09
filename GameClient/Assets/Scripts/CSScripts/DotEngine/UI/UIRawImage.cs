@@ -58,7 +58,7 @@ namespace DotEngine.UI
         {
             if(Application.isPlaying)
             {
-                AssetService assetService = Facade.GetInstance().GetService<AssetService>(AssetService.NAME);
+                AssetService assetService = Facade.GetInstance().GetServicer<AssetService>(AssetService.NAME);
                 if(assetHandler!=null)
                 {
                     assetService.UnloadAssetAsync(assetHandler);
@@ -108,7 +108,7 @@ namespace DotEngine.UI
         {
             if(assetHandler!=null)
             {
-                AssetService assetService = Facade.GetInstance().GetService<AssetService>(AssetService.NAME);
+                AssetService assetService = Facade.GetInstance().GetServicer<AssetService>(AssetService.NAME);
                 assetService.UnloadAssetAsync(assetHandler);
                 assetHandler = null;
             }

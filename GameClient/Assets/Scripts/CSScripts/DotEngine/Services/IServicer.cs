@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Services
 {
-    public interface IService
+    public interface IServicer
     {
         string Name { get; }
 

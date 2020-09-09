@@ -17,7 +17,7 @@ namespace Game
             LogUtil.SetLogger(logger);
 
             Facade facade = GameFacade.GetInstance();
-            AssetService assetService = facade.GetService<AssetService>(AssetService.NAME);
+            AssetService assetService = facade.GetServicer<AssetService>(AssetService.NAME);
 #if UNITY_EDITOR
             assetService.InitDatabaseLoader((result) =>
             {
@@ -54,7 +54,7 @@ namespace Game
         private void OnAssetInitialize()
         {
             Facade facade = GameFacade.GetInstance();
-            LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
+            LuaEnvService luaEnvService = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
             luaEnvService.CallAction(LuaConst.START_FUNCTION_NAME);
 
             //GameObjectPoolService poolService = facade.GetService<GameObjectPoolService>(GameObjectPoolService.NAME);

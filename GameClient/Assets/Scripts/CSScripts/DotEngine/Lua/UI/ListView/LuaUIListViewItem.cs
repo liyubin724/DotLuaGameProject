@@ -47,7 +47,7 @@ namespace DotEngine.Lua.UI.ListView
 
         protected virtual void OnInitFinished()
         {
-            LuaEnvService service = Facade.GetInstance().GetService<LuaEnvService>(LuaEnvService.NAME);
+            LuaEnvService service = Facade.GetInstance().GetServicer<LuaEnvService>(LuaEnvService.NAME);
             if(service.IsValid())
             {
                 registerObjectData.RegisterToLua(service.Env, bindScript.ObjTable);
