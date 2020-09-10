@@ -12,6 +12,8 @@ local EventDispatcher =
     function(self)
         self.eventPool = ObjectPool(EventData)
         self.events = {}
+
+        self.tempEvents = {}
     end
 )
 
@@ -29,7 +31,7 @@ function EventDispatcher:RegisterListener(eventID, receiver, func, userdata)
     end
 
     local eventData = self.eventPool:Get()
-    eventData:SetData(receiver, func, userdata)
+    eventData:SetData(eventID,receiver, func, userdata)
 
     local eventList = self.events[eventID]
     if not eventList then
@@ -87,8 +89,14 @@ end
 function EventDispatcher:Trigger(eventID, ...)
     local eventList = self.events[eventID]
     if eventList then
-        for i = #(eventList), 1, -1 do
-            eventList[i]:Invoke(eventID, ...)
+        table.copyto(eventList, self.tempEvents)
+
+        for i = #(self.tempEvents), 1, -1 do
+            local eventData = self.tempEvents[i]
+            if eventData and eventData:IsValid() and eventData:GetID() == eventID then
+                eventData:Invoke(...)
+            end
+            table.remove(self.tempEvents, i)
         end
     end
 end
