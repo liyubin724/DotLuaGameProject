@@ -12,7 +12,7 @@ local DebugLog = DebugLog
 local HierarchicalTimerWheel =
     class(
     Framework.Servicer,
-    function(self,name)
+    function(self, name)
         self.uniqueIndex = 0
         self.taskPool = ObjectPool(TimerTask)
 

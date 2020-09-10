@@ -2,8 +2,6 @@ local Framework = require('DotLua/Framework/Framework')
 local UIPanelLayer = require('DotLua/UI/UIPanelLayer')
 local UIPanelMode = require('DotLua/UI/UIPanelMode')
 
-local Game = Game
-
 local UIPanelManager =
     class(
     Framework.Servicer,

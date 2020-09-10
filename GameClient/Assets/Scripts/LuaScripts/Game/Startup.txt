@@ -14,6 +14,15 @@ Game.lateUpdate = Delegate()
 Game.fixedUpdate = Delegate()
 
 Game.FACADE_DEFAULT_UNIQUE_ID = 1
+Game.facade = nil
+
+function Game.GetFacade()
+    return Game.facade
+end
+
+function Game.GetServicer(name)
+    return Game.GetFacade():RetrieveServicer(name)
+end
 
 function Game.DoStart()
     if Game.IsDebug then
@@ -29,8 +38,11 @@ function Game.DoStart()
     Game.AddLateUpdateCallback(nil, Framework.DoLateUpdate)
     Game.AddFixedUpdateCallback(nil, Framework.DoFixedUpdate)
 
-    Game.gameFacade = GameFacade(Game.FACADE_DEFAULT_UNIQUE_ID)
-    Framework.AddFacade(Game.gameFacade)
+    Game.facade = GameFacade(Game.FACADE_DEFAULT_UNIQUE_ID)
+    Framework.AddFacade(Game.facade)
+
+    Game.facade:SendNotification("Startup")
+    
 end
 
 function Game.AddUpdateCallback(receiver, func)
@@ -104,15 +116,3 @@ function Game.DoDestroy()
     Game.lateUpdate:Clear()
     Game.fixedUpdate:Clear()
 end
-
--- local function InitMgr()
---     Game.ConfigMgr = instancewith('DotLua/Config/ConfigManager', 'Game/Config/')
---     Game.TimerMgr = instance('DotLua/Timer/HierarchicalTimerWheel')
---     Game.EventMgr = instance('DotLua/Event/EventDispatcher')
---     Game.AssetMgr = instance('DotLua/Asset/AssetManager')
---     Game.PanelMgr = instance('DotLua/UI/UIPanelManager')
---     Game.PoolMgr = instance('DotLua/GOPool/GameObjectPoolManager')
---     Game.EnvMgr = instance('Game/EnvManager')
--- end
-
--- InitMgr()

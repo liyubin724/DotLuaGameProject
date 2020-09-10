@@ -2,24 +2,36 @@ local ObjectPool =
     class(
     function(self, itemClass)
         self.itemClass = itemClass
-
         self.items = {}
     end
 )
 
 function ObjectPool:Get()
+    local item
+
     if #(self.items) > 0 then
-        local item = self.items[1]
-        table.remove(self.items,1)
-        return item
+        item = self.items[1]
+
+        table.remove(self.items, 1)
+    else
+        item = self.itemClass()
     end
 
-    return self.itemClass()
+    local doGetFunc = item['DoGet']
+    if doGetFunc and type(doGetFunc) == 'function' then
+        doGetFunc(item)
+    end
+
+    return item
 end
 
 function ObjectPool:Release(item)
     if item then
-        item:OnRelease()
+        local doReleaseFunc = item['DoRelease']
+        if doReleaseFunc and type(doReleaseFunc) == 'function' then
+            doReleaseFunc(item)
+        end
+
         table.insert(self.items, item)
     end
 end

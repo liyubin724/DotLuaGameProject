@@ -4,8 +4,6 @@ local EventData = require('DotLua/Event/EventData')
 local ObjectPool = require('DotLua/Pool/ObjectPool')
 
 local DebugLog = DebugLog
-local Game = Game
-
 ----public----
 --消息机制
 -- 对于全局的消息可以使用Game.EventMgr访问到
@@ -16,17 +14,6 @@ local EventDispatcher =
         self.events = {}
     end
 )
-
-function EventDispatcher.GetInstance()
-    local eventMgr = Game.EventMgr
-    if not eventMgr then
-        eventMgr = EventDispatcher()
-
-        Game.EventMgr = eventMgr
-    end
-
-    return eventMgr
-end
 
 ----public----
 -- 注册事件的侦听
