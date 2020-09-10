@@ -1,4 +1,4 @@
-require('DotLua/Util/table')
+require('DotLua/Utility/table')
 
 local Dictionary =
     class(
@@ -81,15 +81,15 @@ function Dictionary:GetEnumerator()
         if index <= count then
             local key = keys[index]
             local value = self.dic[key]
-            return key,value
+            return key, value
         end
-        return nil,nil
+        return nil, nil
     end
 end
 
 function Dictionary:ForEach(func)
     for key, value in pairs(self.dic) do
-        if not func(key,value) then
+        if not func(key, value) then
             break
         end
     end

@@ -1,0 +1,8 @@
+local CSAgent = {}
+
+CSAgent.GameObject = CS.UnityEngine.GameObject
+CSAgent.Transform = CS.UnityEngine.Transform
+
+CSAgent.UIRoot = CS.DotEngine.UI.UIRoot
+
+return CSAgent

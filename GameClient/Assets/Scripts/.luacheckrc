@@ -11,6 +11,7 @@ globals = {
     "instance",
     "instancewith",
     "isinstanceof",
+    "unrequire",
 
     "Game",
     "CS",

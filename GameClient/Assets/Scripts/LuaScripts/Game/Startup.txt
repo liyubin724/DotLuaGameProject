@@ -41,8 +41,7 @@ function Game.DoStart()
     Game.facade = GameFacade(Game.FACADE_DEFAULT_UNIQUE_ID)
     Framework.AddFacade(Game.facade)
 
-    Game.facade:SendNotification("Startup")
-    
+    --Game.facade:SendNotification('Startup')
 end
 
 function Game.AddUpdateCallback(receiver, func)

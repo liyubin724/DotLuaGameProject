@@ -4,20 +4,19 @@ require('DotLua/OOP/Delegate')
 
 function instance(path)
     local class = require(path)
-    if class and type(class) == "table" and class["is_a"] then
+    if class and type(class) == 'table' and class['is_a'] then
         return class()
     end
     return nil
 end
 
-function instancewith(path,...)
+function instancewith(path, ...)
     local class = require(path)
-    if class and type(class) == "table" and class["is_a"] then
+    if class and type(class) == 'table' and class['is_a'] then
         return class(...)
     end
     return nil
 end
-
 
 function isinstanceof(instance, class)
     if not instance or not class then
@@ -28,9 +27,30 @@ function isinstanceof(instance, class)
         return false
     end
 
-    if not instance["is_a"] or not class["is_a"] then
+    if not instance['is_a'] or not class['is_a'] then
         return false
     end
 
     return instance:is_a(class)
+end
+
+function unrequire(path)
+    local isPreloading = false
+
+    for key, _ in pairs(package.preload) do
+        if key == path then
+            package.preload[key] = nil
+            isPreloading = true
+            break
+        end
+    end
+
+    if not isPreloading then
+        for key, _ in pairs(package.loaded) do
+            if key == path then
+                package.loaded[key] = nil
+                break
+            end
+        end
+    end
 end
