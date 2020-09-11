@@ -3,7 +3,7 @@ local Servicer = require('DotLua/Framework/Servicer/Servicer')
 
 local Service =
     class(
-    function(self,uniqueID)
+    function(self, uniqueID)
         self.uniqueID = uniqueID
         self.servicerMap = {}
 
@@ -14,6 +14,10 @@ local Service =
     end
 )
 
+----public----
+-- 判断是否存在指定名称的服务管理者
+-- @param servicerName 服务管理者标识
+-- @return bool
 function Service:HasServicer(servicerName)
     return self.servicerMap[servicerName] ~= nil
 end
@@ -74,38 +78,30 @@ function Service:RemoveServicer(servicerName)
 end
 
 function Service:DoUpdate(deltaTime)
-    if #(self.updateServicerList) > 0 then
-        for i = 1, #(self.updateServicerList) do
-            local servicerName = self.updateServicerList:Get(i)
-            self.servicerMap[servicerName]:DoUpdate(deltaTime)
-        end
+    for i = 1, #(self.updateServicerList) do
+        local servicerName = self.updateServicerList:Get(i)
+        self.servicerMap[servicerName]:DoUpdate(deltaTime)
     end
 end
 
 function Service:DoUnscaleUpdate(deltaTime)
-    if #(self.unscaleUpdateServicerList) > 0 then
-        for i = 1, #(self.unscaleUpdateServicerList) do
-            local servicerName = self.unscaleUpdateServicerList:Get(i)
-            self.servicerMap[servicerName]:DoUnscaleUpdate(deltaTime)
-        end
+    for i = 1, #(self.unscaleUpdateServicerList) do
+        local servicerName = self.unscaleUpdateServicerList:Get(i)
+        self.servicerMap[servicerName]:DoUnscaleUpdate(deltaTime)
     end
 end
 
 function Service:DoLateUpdate(deltaTime)
-    if #(self.lateUpdateServicerList) > 0 then
-        for i = 1, #(self.lateUpdateServicerList) do
-            local servicerName = self.lateUpdateServicerList:Get(i)
-            self.servicerMap[servicerName]:DoLateUpdate(deltaTime)
-        end
+    for i = 1, #(self.lateUpdateServicerList) do
+        local servicerName = self.lateUpdateServicerList:Get(i)
+        self.servicerMap[servicerName]:DoLateUpdate(deltaTime)
     end
 end
 
 function Service:DoFixedUpdate(deltaTime)
-    if #(self.fixedUpdateServicerList) > 0 then
-        for i = 1, #(self.fixedUpdateServicerList) do
-            local servicerName = self.fixedUpdateServicerList:Get(i)
-            self.servicerMap[servicerName]:DoFixedUpdate(deltaTime)
-        end
+    for i = 1, #(self.fixedUpdateServicerList) do
+        local servicerName = self.fixedUpdateServicerList:Get(i)
+        self.servicerMap[servicerName]:DoFixedUpdate(deltaTime)
     end
 end
 

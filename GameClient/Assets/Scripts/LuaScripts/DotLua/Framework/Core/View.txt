@@ -1,32 +1,56 @@
-local Observer = require("DotLua/Framework/Observer/Observer")
-local List = require("DotLua/Generic/List")
+local Observer = require('DotLua/Framework/Observer/Observer')
+local List = require('DotLua/Generic/List')
+local ObjectPool = require("DotLua/Pool/ObjectPool")
 
 local View =
     class(
     function(self, uniqueID)
         self.uniqueID = uniqueID
 
+        self.observerPool = ObjectPool(Observer)
+
         self.mediatorMap = {}
         self.observerListMap = {}
-
-        self:OnInitialized()
     end
 )
 
-function View:OnInitialized()
-end
-
-function View:RegisterObserver(notificationName,observer)
-    if notificationName and type(observer) == 'table' and observer:is_a(Observer) then
+function View:RegisterObserver(notificationName, target, func)
+    if notificationName and func and type(func) == 'function' then
         local observerList = self.observerListMap[notificationName]
         if not observerList then
             observerList = List()
 
             self.observerListMap[notificationName] = observerList
         end
+
+        local observer = self.observerPool:Get()
+        observer:SetData(target,func)
+
         observerList:Add(observer)
     else
-        error("")
+        error('')
+    end
+end
+
+function View:RemoveObserver(notificationName, target, func)
+    local observerList = self.observerListMap[notificationName]
+    if observerList then
+        for i = 1, #(observerList) do
+            local observer = observerList[i]
+
+            if observer:Equal(target,func) then
+                observerList:RemoveAt(i)
+
+                self.observerPool:Release(observer)
+                break
+            end
+        end
+
+        if #(observerList) == 0 then
+            self.observerListMap[notificationName] = nil
+        end
+    else
+        error('')
     end
 end
 
@@ -36,31 +60,10 @@ function View:NotifyObserver(notification)
     if observerList then
         local cloneList = observerList:Copy()
         for i = 1, #(cloneList) do
-            local observer = cloneList:Get(i)
-            observer:Notify(notification)
+            cloneList:Get(i):Notify(notification)
         end
     else
-        error("")
-    end
-end
-
-function View:RemoveObserver(notificationName,observerTarget,observerFunc)
-    local observerList = self.observerListMap[notificationName]
-    if observerList then
-        for i = 1, #(observerList) do
-            local observer = observerList[i]
-
-            if observer:GetTarget() == observerTarget and observer:GetFunc() == observerFunc then
-                observerList:RemoveAt(i)
-                break
-            end
-        end
-
-        if #(observerList) == 0 then
-            self.observerListMap[notificationName] = nil
-        end
-    else
-        error("")
+        error('')
     end
 end
 
@@ -77,18 +80,17 @@ function View:RegisterMediator(mediator)
 
             local interests = mediator:ListNotificationInterests()
             if interests and #(interests) > 0 then
-                local observer = Observer(mediator.HandleNotification,mediator)
                 for i = 1, #interests do
-                    self:RegisterObserver(interests[i], observer)
+                    self:RegisterObserver(interests[i], mediator,mediator.HandleNotification)
                 end
             end
 
             mediator:DoRegister()
         else
-            error("")
+            error('')
         end
     else
-        error("")
+        error('')
     end
 end
 
@@ -100,7 +102,7 @@ function View:RemoveMediator(mediatorName)
         local interests = mediator:ListNotificationInterests()
         if interests and #(interests) > 0 then
             for i = 1, #interests do
-                self:RemoveObserver(interests[i],mediator,mediator.HandleNotification)
+                self:RemoveObserver(interests[i], mediator, mediator.HandleNotification)
             end
         end
 

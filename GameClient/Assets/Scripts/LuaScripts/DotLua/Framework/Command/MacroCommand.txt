@@ -1,8 +1,8 @@
-local Notifier = require('DotLua/Framework/Observer/Notifier')
+local SimpleCommand = require('DotLua/Framework/Command/SimpleCommand')
 
 local MacroCommand =
     class(
-    Notifier,
+    SimpleCommand,
     function(self)
         self.subcommandCreator = {}
         self:OnInitialized()
@@ -25,7 +25,7 @@ function MacroCommand:Execute(notification)
         local creatorFunc = self.subcommandCreator[1]
         if creatorFunc then
             local command = creatorFunc()
-            command:OnInitialized(self:GetKey())
+            command:OnInitialized(self:GetUniqueID())
             command:Execute(notification)
             table.remove(self.subcommandCreator, 1)
         else

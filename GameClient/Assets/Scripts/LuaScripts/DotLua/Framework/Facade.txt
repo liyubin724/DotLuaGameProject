@@ -1,4 +1,4 @@
-local Notification = require("DotLua/Framework/Observer/Notification")
+local Notification = require('DotLua/Framework/Observer/Notification')
 local Controller = require('DotLua/Framework/Core/Controller')
 local Model = require('DotLua/Framework/Core/Model')
 local View = require('DotLua/Framework/Core/View')
@@ -29,8 +29,8 @@ end
 function Facade:OnInitialized()
     self:InitializeService()
     self:InitializeModel()
-    self:InitializeController()
     self:InitializeView()
+    self:InitializeController()
 end
 
 function Facade:InitializeService()
@@ -41,12 +41,12 @@ function Facade:InitializeModel()
     self.model = Model(self.uniqueID)
 end
 
-function Facade:InitializeController()
-    self.controller = Controller(self.uniqueID)
-end
-
 function Facade:InitializeView()
     self.view = View(self.uniqueID)
+end
+
+function Facade:InitializeController()
+    self.controller = Controller(self.uniqueID, self.view)
 end
 
 function Facade:HasServicer(servicerName)
@@ -69,8 +69,8 @@ function Facade:HasCommand(notificationName)
     return self.controller:HasCommand(notificationName)
 end
 
-function Facade:RegisterCommand(notificationName,commandCreatorFunc)
-    self.controller:RegisterCommand(notificationName,commandCreatorFunc)
+function Facade:RegisterCommand(notificationName, commandCreatorFunc)
+    self.controller:RegisterCommand(notificationName, commandCreatorFunc)
 end
 
 function Facade:RemoveCommand(notificationName)
@@ -109,12 +109,8 @@ function Facade:RemoveMediator(mediatorName)
     self.view:RemoveMediator(mediatorName)
 end
 
-function Facade:SendNotification(notificationName,body,userdata)
-    self:NotifyObservers(Notification(notificationName,body,userdata))
-end
-
-function Facade:NotifyObservers(notification)
-    self.view:NotifyObserver(notification)
+function Facade:SendNotification(notificationName, body, userdata)
+    self.view:NotifyObserver(Notification(notificationName, body, userdata))
 end
 
 function Facade:DoUpdate(deltaTime)

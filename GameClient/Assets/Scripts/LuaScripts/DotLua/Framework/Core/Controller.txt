@@ -2,35 +2,17 @@ local Observer = require('DotLua/Framework/Observer/Observer')
 
 local Controller =
     class(
-    function(self, uniqueID)
+    function(self, uniqueID, view)
         self.uniqueID = uniqueID
 
-        self.view = nil
+        self.view = view
 
         self.commandCreatorMap = {}
-
-        self:OnInitialized()
     end
 )
 
 function Controller:GetUniqueID()
     return self.uniqueID
-end
-
-function Controller:GetView()
-    if not self.view then
-        local Framework = require('DotLua/Framework/Framework')
-        local facade = Framework.GetFacade(self.uniqueID)
-        if facade then
-            self.view = facade:GetView()
-        else
-            error('')
-        end
-    end
-    return self.view
-end
-
-function Controller:OnInitialized()
 end
 
 function Controller:HasCommand(notificationName)
@@ -40,7 +22,7 @@ end
 function Controller:RegisterCommand(notificationName, commandCreatorFunc)
     if notificationName and type(commandCreatorFunc) == 'function' then
         if not self:HasCommand(notificationName) then
-            self:GetView():RegisterObserver(notificationName, Observer(self, self.ExecuteCommand))
+            self.view:RegisterObserver(notificationName, self, self.ExecuteCommand)
 
             self.commandCreatorMap[notificationName] = commandCreatorFunc
         else
@@ -55,7 +37,7 @@ function Controller:RemoveCommand(notificationName)
     if self.commandCreatorMap[notificationName] then
         self.commandCreatorMap[notificationName] = nil
 
-        self:GetView():RemoveObserver(notificationName, self, self.ExecuteCommand)
+        self.view:RemoveObserver(notificationName, self, self.ExecuteCommand)
     end
 end
 
@@ -63,7 +45,7 @@ function Controller:ExecuteCommand(notification)
     local commandCreator = self.commandCreatorMap[notification:GetName()]
     if commandCreator then
         local command = commandCreator()
-        command:OnInitialized(self.uniqueID)
+        command:OnInitialized(self:GetUniqueID())
         command:Execute(notification)
     else
         error('')

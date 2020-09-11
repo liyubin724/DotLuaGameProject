@@ -6,16 +6,11 @@ local Model =
         self.uniqueID = uniqueID
 
         self.proxyMap = {}
-
-        self:OnInitialized()
     end
 )
 
 function Model:GetUniqueID()
     return self.uniqueID
-end
-
-function Model:OnInitialized()
 end
 
 function Model:HasProxy(proxyName)
