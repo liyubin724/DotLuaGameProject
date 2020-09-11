@@ -24,6 +24,16 @@ function Game.GetServicer(name)
     return Game.GetFacade():RetrieveServicer(name)
 end
 
+function Game.GetTimerServicer()
+    local ServicerNames = require('Game/Framework/ServicerNames')
+    return Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+end
+
+function Game.GetAssetServicer()
+    local ServicerNames = require('Game/Framework/ServicerNames')
+    return Game.GetServicer(ServicerNames.ASSET_SERVICER)
+end
+
 function Game.DoStart()
     if Game.IsDebug then
         require('Debugger/LuaPanda').start('127.0.0.1', 8818)
@@ -42,6 +52,20 @@ function Game.DoStart()
     Framework.AddFacade(Game.facade)
 
     --Game.facade:SendNotification('Startup')
+
+    ------Test for Pool
+    -- local ServicerNames = require('Game/Framework/ServicerNames')
+    -- local CSAgent = require('DotLua/CSAgent')
+
+    -- local poolMgr = Game.GetServicer(ServicerNames.GAMEOBJECT_POOL_SERVICER_NAME)
+    -- local group = poolMgr:CreateGroup('Test   Group')
+    -- local pool = group:CreatePool('t', 2, CSAgent.GameObject('template'))
+    -- pool:SetPreload(20, 1)
+    -- local go = pool:GetItem()
+    -- go.name = "ssss"
+
+
+
 end
 
 function Game.AddUpdateCallback(receiver, func)
@@ -66,7 +90,7 @@ function Game.RemoveUnscaleUpdateCallback(receiver, func)
     Game.unscaleUpdate = Game.unscaleUpdate - {receiver, func}
 end
 
-function Game.DoUnuscaleUpdate(deltaTime)
+function Game.DoUnscaleUpdate(deltaTime)
     if #(Game.unscaleUpdate) > 0 then
         Game.unscaleUpdate:Invoke(deltaTime)
     end

@@ -1,6 +1,7 @@
-local GameObjectPoolTemplateType = require("DotLua/GOPool/GameObjectPoolTemplateType")
+local GameObjectPoolTemplateType = require('DotLua/GOPool/GameObjectPoolTemplateType')
+local CSAgent = require('DotLua/CSAgent')
 
-local GameObject = CS.UnityEngine.GameObject
+local GameObject = CSAgent.GameObject
 local math = math
 
 ----private----
@@ -15,11 +16,18 @@ local GameObjectPool =
         self.name = name
         self.parentTransform = parentTransform
 
+        self.poolTransform = nil
+        if Game.IsDebug then
+            self.poolTransform = GameObject(name).transform
+            self.poolTransform:SetParent(self.parentTransform, false)
+        end
+
         self.templateType = templateType
         self.templateGameObject = templateGameObject
+
         if self.templateType ~= GameObjectPoolTemplateType.Prefab then
             self.templateGameObject:SetActive(false)
-            self.templateGameObject.transform:SetParent(self.parentTransform, false)
+            self.templateGameObject.transform:SetParent(self:GetTransform(), false)
         end
 
         self.unusedItems = {}
@@ -39,6 +47,16 @@ local GameObjectPool =
     end
 )
 
+----private----
+-- 在调试模式下会生成Pool对应的GameObject结点
+function GameObjectPool:GetTransform()
+    if self.poolTransform then
+        return self.poolTransform
+    end
+
+    return self.parentTransform
+end
+
 ----public----
 -- 设置预加载，为了保证初始化的效率问题，可以设置一帧中加载的数量
 -- @param totalAmount 预加载的总的数量
@@ -50,7 +68,7 @@ function GameObjectPool:SetPreload(totalAmount, onceAmount)
 
     if self.preloadTotalAmount > 0 then
         self.preloadTimerHandler =
-            Game.TimerMgr:AddTickTimer(self, GameObjectPool.OnPreloadTimerInterval, 'GameObjectPool-Preload')
+            Game.GetTimerServicer():AddTickTimer(self, GameObjectPool.OnPreloadTimerInterval, 'GameObjectPool-Preload')
     end
 end
 
@@ -67,7 +85,7 @@ function GameObjectPool:OnPreloadTimerInterval()
             local item = self:CreateItem()
             if item then
                 item:SetActive(false)
-                item.transform:SetParent(self.parentTransform, false)
+                item.transform:SetParent(self:GetTransform(), false)
 
                 table.insert(self.unusedItems, item)
             end
@@ -75,7 +93,7 @@ function GameObjectPool:OnPreloadTimerInterval()
 
         self.preloadTotalAmount = self.preloadTotalAmount - amount
     else
-        Game.TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        Game.GetTimerServicer():RemoveTimer(self.preloadTimerHandler)
         self.preloadTimerHandler = nil
     end
 end
@@ -88,7 +106,7 @@ function GameObjectPool:CreateItem()
     if self.templateType == GameObjectPoolTemplateType.RuntimeInstance then
         item = GameObject.Instantiate(self.templateGameObject)
     else
-        item = Game.AssetMgr:InstantiateAsset(self.name, self.templateGameObject)
+        item = Game.GetAssetServicer():InstantiateAsset(self.name, self.templateGameObject)
     end
 
     return item
@@ -114,7 +132,7 @@ function GameObjectPool:SetCull(onceAmount, delayTime)
         end
 
         self.cullTimerHandler =
-            Game.TimerMgr:AddIntervalTimer(self.cullDelayTime, self, GameObjectPool.OnCullTimerInterval, nil)
+            Game.GetTimerServicer():AddIntervalTimer(self.cullDelayTime, self, GameObjectPool.OnCullTimerInterval, nil)
     end
 end
 
@@ -131,7 +149,8 @@ function GameObjectPool:OnCullTimerInterval()
     end
 
     for _ = 1, cullAmount do
-        table.remove(self.unusedItems, 1)
+        local item = table.remove(self.unusedItems, 1)
+        GameObject.Destroy(item)
     end
 end
 
@@ -183,7 +202,7 @@ function GameObjectPool:ReleaseItem(item)
     end
 
     item:SetActive(false)
-    item.transform:SetParent(self.parentTransform, false)
+    item.transform:SetParent(self:GetTransform(), false)
 
     table.insert(self.unusedItems, item)
 end
@@ -202,13 +221,17 @@ function GameObjectPool:Dispose()
     self.templateGameObject = nil
 
     if self.cullTimerHandler then
-        Game.TimerMgr:RemoveTimer(self.cullTimerHandler)
+        Game.GetTimerServicer():RemoveTimer(self.cullTimerHandler)
         self.cullTimerHandler = nil
     end
 
     if self.preloadTimerHandler then
-        Game.TimerMgr:RemoveTimer(self.preloadTimerHandler)
+        Game.GetTimerServicer():RemoveTimer(self.preloadTimerHandler)
         self.preloadTimerHandler = nil
+    end
+    if self.poolTransform then
+        GameObject.Destroy(self.poolTransform.gameObject)
+        self.poolTransform = nil
     end
     self.parentTransform = nil
 end

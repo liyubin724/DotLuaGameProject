@@ -13,6 +13,8 @@ globals = {
     "isinstanceof",
     "unrequire",
 
+    "typeof",
+
     "Game",
     "CS",
     "Callback",
