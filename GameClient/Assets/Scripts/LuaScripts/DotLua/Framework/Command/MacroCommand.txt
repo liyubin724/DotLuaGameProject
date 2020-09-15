@@ -4,30 +4,30 @@ local MacroCommand =
     class(
     SimpleCommand,
     function(self)
-        self.subcommandCreator = {}
+        self.subCommands = {}
         self:OnInitialized()
-    end
+    end,
+    'MacroCommand'
 )
 
 function MacroCommand:OnInitialized()
 end
 
-function MacroCommand:AddSubCommand(commandCreatorFunc)
-    if type(commandCreatorFunc) == 'function' then
-        table.insert(self.subcommandCreator, commandCreatorFunc)
+function MacroCommand:AddSubCommand(commandClass)
+    if isclass(commandClass) then
+        table.insert(self.subCommands, commandClass)
     else
         error('')
     end
 end
 
 function MacroCommand:Execute(notification)
-    while #(self.subcommandCreator) > 0 do
-        local creatorFunc = self.subcommandCreator[1]
-        if creatorFunc then
-            local command = creatorFunc()
+    while #(self.subCommands) > 0 do
+        local commandClass = table.remove(self.subCommands, 1)
+        if commandClass then
+            local command = commandClass()
             command:OnInitialized(self:GetUniqueID())
             command:Execute(notification)
-            table.remove(self.subcommandCreator, 1)
         else
             error('')
         end

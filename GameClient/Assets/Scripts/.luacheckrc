@@ -9,6 +9,7 @@ ignore = {
 -- 全局变量
 globals = {
     "class",
+    "isclass",
     "instance",
     "instancewith",
     "isinstanceof",

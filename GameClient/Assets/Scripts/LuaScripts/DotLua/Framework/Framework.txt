@@ -1,5 +1,10 @@
 local Framework = {}
 
+Framework.Version = "1.0.0"
+Framework.Author = "erick.li"
+Framework.Email = ""
+Framework.CopyRight = "@"
+
 Framework.ErrorMessage = require('DotLua/Framework/ErrorMessage')
 
 Framework.Notification = require('DotLua/Framework/Observer/Notification')

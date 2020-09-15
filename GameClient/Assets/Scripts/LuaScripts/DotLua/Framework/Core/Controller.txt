@@ -1,14 +1,11 @@
-local Observer = require('DotLua/Framework/Observer/Observer')
-
 local Controller =
     class(
     function(self, uniqueID, view)
         self.uniqueID = uniqueID
-
         self.view = view
-
-        self.commandCreatorMap = {}
-    end
+        self.commandMap = {}
+    end,
+    'Controller'
 )
 
 function Controller:GetUniqueID()
@@ -16,15 +13,15 @@ function Controller:GetUniqueID()
 end
 
 function Controller:HasCommand(notificationName)
-    return self.commandCreatorMap[notificationName] ~= nil
+    return self.commandMap[notificationName] ~= nil
 end
 
-function Controller:RegisterCommand(notificationName, commandCreatorFunc)
-    if notificationName and type(commandCreatorFunc) == 'function' then
+function Controller:RegisterCommand(notificationName, commandClass)
+    if notificationName and isclass(commandClass) then
         if not self:HasCommand(notificationName) then
             self.view:RegisterObserver(notificationName, self, self.ExecuteCommand)
 
-            self.commandCreatorMap[notificationName] = commandCreatorFunc
+            self.commandMap[notificationName] = commandClass
         else
             error('')
         end
@@ -34,17 +31,17 @@ function Controller:RegisterCommand(notificationName, commandCreatorFunc)
 end
 
 function Controller:RemoveCommand(notificationName)
-    if self.commandCreatorMap[notificationName] then
-        self.commandCreatorMap[notificationName] = nil
+    if self.commandMap[notificationName] then
+        self.commandMap[notificationName] = nil
 
         self.view:RemoveObserver(notificationName, self, self.ExecuteCommand)
     end
 end
 
 function Controller:ExecuteCommand(notification)
-    local commandCreator = self.commandCreatorMap[notification:GetName()]
-    if commandCreator then
-        local command = commandCreator()
+    local commandClass = self.commandMap[notification:GetName()]
+    if commandClass then
+        local command = commandClass()
         command:OnInitialized(self:GetUniqueID())
         command:Execute(notification)
     else

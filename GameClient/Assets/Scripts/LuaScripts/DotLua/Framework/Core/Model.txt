@@ -6,7 +6,8 @@ local Model =
         self.uniqueID = uniqueID
 
         self.proxyMap = {}
-    end
+    end,
+    'Model'
 )
 
 function Model:GetUniqueID()
