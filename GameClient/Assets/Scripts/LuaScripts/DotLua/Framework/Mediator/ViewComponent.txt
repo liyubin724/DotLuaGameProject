@@ -1,0 +1,12 @@
+local ViewComponent =
+    class(
+    function(self)
+        self.mediator = nil
+    end
+)
+
+function ViewComponent:SetMediator(mediator)
+    self.mediator = mediator
+end
+
+return ViewComponent

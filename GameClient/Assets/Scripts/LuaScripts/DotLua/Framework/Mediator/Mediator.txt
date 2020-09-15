@@ -5,7 +5,7 @@ local Mediator =
     Notifier,
     function(self, name)
         self.name = name
-        self.viewComponent = nil
+        self.view = nil
     end
 )
 
@@ -13,12 +13,16 @@ function Mediator:GetName()
     return self.name
 end
 
-function Mediator:GetViewComponent()
-    return self.viewComponent
+function Mediator:IsViewValid()
+    return self.view ~= nil
 end
 
-function Mediator:SetViewComponent(viewCom)
-    self.viewComponent = viewCom
+function Mediator:GetView()
+    return self.view
+end
+
+function Mediator:SetView(view)
+    self.view = view
 end
 
 function Mediator:ListNotificationInterests()
