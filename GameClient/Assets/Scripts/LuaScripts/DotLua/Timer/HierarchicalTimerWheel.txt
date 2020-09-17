@@ -4,7 +4,7 @@ local ObjectPool = require('DotLua/Pool/ObjectPool')
 local TimerTask = require('DotLua/Timer/TimerTask')
 local TimerHandler = require('DotLua/Timer/TimerHandler')
 
-local DebugLog = DebugLog
+local Logger = Logger
 
 ----private----
 -- 多层时间轮定时器
@@ -152,7 +152,7 @@ end
 function HierarchicalTimerWheel:OnWheelComplete(level)
     local nextLevel = level + 1
     if nextLevel > #(self.wheels) then
-        DebugLog.Error('Timer', 'Timer error')
+        Logger.Error('Timer', 'Timer error')
         return
     end
 

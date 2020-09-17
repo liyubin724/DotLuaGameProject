@@ -13,7 +13,7 @@ namespace Game
     {
         private void Start()
         {
-            DotEngine.Log.ILogger logger = new UnityLogger();
+            DotEngine.Log.ILogger logger = new CombineLogger();
             LogUtil.SetLogger(logger);
 
             Facade facade = GameFacade.GetInstance();

@@ -53,7 +53,7 @@ function GameObjectPoolManager:CreateGroup(name)
         group = GameObjectPoolGroup(name, self.rootTransform)
         self.groups[name] = group
     else
-        DebugLog.LogWarning('GOPool', 'The group has been created.name = ' .. name)
+        Logger.LogWarning('GOPool', 'The group has been created.name = ' .. name)
     end
 
     return group
@@ -81,11 +81,11 @@ function GameObjectPoolManager:GetPool(groupName, poolName)
     if group then
         local pool = group:GetPool(poolName)
         if not pool then
-            DebugLog.LogError('GOPool', 'Pool is not found.poolName = ' .. poolName)
+            Logger.LogError('GOPool', 'Pool is not found.poolName = ' .. poolName)
         end
         return pool
     else
-        DebugLog.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
+        Logger.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
     end
 end
 
@@ -99,7 +99,7 @@ function GameObjectPoolManager:RemovePool(groupName, poolName)
     if group then
         group:RemovePool(poolName)
     else
-        DebugLog.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
+        Logger.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
     end
 end
 

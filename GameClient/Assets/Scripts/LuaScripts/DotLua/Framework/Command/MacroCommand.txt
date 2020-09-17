@@ -6,8 +6,7 @@ local MacroCommand =
     function(self)
         self.subCommands = {}
         self:OnInitialized()
-    end,
-    'MacroCommand'
+    end
 )
 
 function MacroCommand:OnInitialized()
@@ -17,20 +16,16 @@ function MacroCommand:AddSubCommand(commandClass)
     if isclass(commandClass) then
         table.insert(self.subCommands, commandClass)
     else
-        error('')
+        Logger.Error('Framework', 'The command is not a class')
     end
 end
 
 function MacroCommand:Execute(notification)
     while #(self.subCommands) > 0 do
         local commandClass = table.remove(self.subCommands, 1)
-        if commandClass then
-            local command = commandClass()
-            command:OnInitialized(self:GetUniqueID())
-            command:Execute(notification)
-        else
-            error('')
-        end
+        local command = commandClass()
+        command:OnInitialized(self:GetUniqueID())
+        command:Execute(notification)
     end
 end
 

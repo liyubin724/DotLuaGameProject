@@ -23,4 +23,13 @@ function GameFacade:InitializeService()
     self:RegisterServicer(UIPanelServicer(ServicerNames.UI_PANEL_SERVICER))
 end
 
+function GameFacade:InitializeModel()
+    self._base.InitializeModel(self)
+end
+
+function GameFacade:InitializeController()
+    self._base.InitializeController(self)
+end
+
+
 return GameFacade

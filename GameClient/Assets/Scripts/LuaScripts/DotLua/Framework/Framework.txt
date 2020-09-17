@@ -1,9 +1,9 @@
 local Framework = {}
 
-Framework.Version = "1.0.0"
-Framework.Author = "erick.li"
-Framework.Email = ""
-Framework.CopyRight = "@"
+Framework.Version = '1.0.0'
+Framework.Author = 'erick.li'
+Framework.Email = ''
+Framework.CopyRight = '@'
 
 Framework.ErrorMessage = require('DotLua/Framework/ErrorMessage')
 
@@ -44,10 +44,10 @@ function Framework.AddFacade(facade)
         if not Framework.HasFacade(uniqueID) then
             Framework.facadeMap[uniqueID] = facade
         else
-            error('')
+            Logger.Error('Framework', 'The facade has been added')
         end
     else
-        error('')
+        Logger.Error('Framework', 'The facade is not a instance of Facade')
     end
 end
 

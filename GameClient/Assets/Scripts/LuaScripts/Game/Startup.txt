@@ -1,12 +1,16 @@
 Game = {}
-Game.IsDebug = true
+IsDebug = true
 
 require('DotLua/Utility/math')
 require('DotLua/Utility/table')
 require('DotLua/OOP/OOP')
-require('DotLua/Log/DebugLog')
+require('DotLua/Debugger/Logger')
+
+local UnityLogger = require('DotLua/Log/UnityLogger')
 local Framework = require('DotLua/Framework/Framework')
 local GameFacade = require('Game/Framework/GameFacade')
+local NotifierNames = require('Game/Framework/NotifierNames')
+local ServicerNames = require('Game/Framework/ServicerNames')
 
 Game.update = Delegate()
 Game.unscaleUpdate = Delegate()
@@ -25,23 +29,22 @@ function Game.GetServicer(name)
 end
 
 function Game.GetTimerServicer()
-    local ServicerNames = require('Game/Framework/ServicerNames')
     return Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
 end
 
 function Game.GetAssetServicer()
-    local ServicerNames = require('Game/Framework/ServicerNames')
     return Game.GetServicer(ServicerNames.ASSET_SERVICER)
 end
 
 function Game.DoStart()
-    if Game.IsDebug then
+    if IsDebug then
         require('Debugger/LuaPanda').start('127.0.0.1', 8818)
-        DebugLog.SetEnable(true, true, true)
+        UnityLogger.SetEnable(true, true, true)
     else
-        DebugLog.SetEnable(true, false, false)
+        UnityLogger.SetEnable(true, false, false)
     end
-    DebugLog.Info('Game', 'Game Startup')
+
+    Logger.Info('Game', 'Game Startup')
 
     Game.AddUpdateCallback(nil, Framework.DoUpdate)
     Game.AddUnscaleUpdateCallback(nil, Framework.DoUnscaleUpdate)
@@ -51,21 +54,7 @@ function Game.DoStart()
     Game.facade = GameFacade(Game.FACADE_DEFAULT_UNIQUE_ID)
     Framework.AddFacade(Game.facade)
 
-    --Game.facade:SendNotification('Startup')
-
-    ------Test for Pool
-    -- local ServicerNames = require('Game/Framework/ServicerNames')
-    -- local CSAgent = require('DotLua/CSAgent')
-
-    -- local poolMgr = Game.GetServicer(ServicerNames.GAMEOBJECT_POOL_SERVICER_NAME)
-    -- local group = poolMgr:CreateGroup('Test   Group')
-    -- local pool = group:CreatePool('t', 2, CSAgent.GameObject('template'))
-    -- pool:SetPreload(20, 1)
-    -- local go = pool:GetItem()
-    -- go.name = "ssss"
-
-
-
+    Game.facade:SendNotification(NotifierNames.STARTUP_COMMAND_NAME)
 end
 
 function Game.AddUpdateCallback(receiver, func)
@@ -125,7 +114,7 @@ function Game.DoFixedUpdate(deltaTime)
 end
 
 function Game.DoDestroy()
-    DebugLog.Info('Game', 'Game Shuntdown')
+    Logger.Info('Game', 'Game Shuntdown')
 
     Framework.DoDispose()
 

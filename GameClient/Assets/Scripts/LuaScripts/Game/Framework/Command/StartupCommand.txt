@@ -1,0 +1,14 @@
+local Framework = require('DotLua/Framework/Framework')
+
+local StartupCommand =
+    class(
+    Framework.MacroCommand,
+    function(self)
+    end
+)
+
+function StartupCommand:OnInitialized()
+    
+end
+
+return StartupCommand

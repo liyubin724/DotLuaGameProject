@@ -1,6 +1,7 @@
+local Mediator = require('DotLua/Framework/Mediator/Mediator')
 local Observer = require('DotLua/Framework/Observer/Observer')
 local List = require('DotLua/Generic/List')
-local ObjectPool = require("DotLua/Pool/ObjectPool")
+local ObjectPool = require('DotLua/Pool/ObjectPool')
 
 local View =
     class(
@@ -24,11 +25,11 @@ function View:RegisterObserver(notificationName, target, func)
         end
 
         local observer = self.observerPool:Get()
-        observer:SetData(target,func)
+        observer:SetData(target, func)
 
         observerList:Add(observer)
     else
-        error('')
+        Logger.Error('Framework', 'The name of notification is empty or the func is not a function')
     end
 end
 
@@ -38,7 +39,7 @@ function View:RemoveObserver(notificationName, target, func)
         for i = 1, #(observerList) do
             local observer = observerList[i]
 
-            if observer:Equal(target,func) then
+            if observer:Equal(target, func) then
                 observerList:RemoveAt(i)
 
                 self.observerPool:Release(observer)
@@ -50,7 +51,7 @@ function View:RemoveObserver(notificationName, target, func)
             self.observerListMap[notificationName] = nil
         end
     else
-        error('')
+        Logger.Error('Framework', 'The observer was not found')
     end
 end
 
@@ -63,7 +64,7 @@ function View:NotifyObserver(notification)
             cloneList:Get(i):Notify(notification)
         end
     else
-        error('')
+        Logger.Warning('Framework', 'the observer was not found')
     end
 end
 
@@ -72,7 +73,7 @@ function View:HasMediator(mediatorName)
 end
 
 function View:RegisterMediator(mediator)
-    if mediator then
+    if isinstanceof(mediator, Mediator) then
         local mediatorName = mediator:GetName()
         if not self:HasMediator(mediatorName) then
             self.mediatorMap[mediatorName] = mediator
@@ -81,16 +82,16 @@ function View:RegisterMediator(mediator)
             local interests = mediator:ListNotificationInterests()
             if interests and #(interests) > 0 then
                 for i = 1, #interests do
-                    self:RegisterObserver(interests[i], mediator,mediator.HandleNotification)
+                    self:RegisterObserver(interests[i], mediator, mediator.HandleNotification)
                 end
             end
 
             mediator:DoRegister()
         else
-            error('')
+            Logger.Warning('Framework', 'the mediator has been added')
         end
     else
-        error('')
+        Logger.Warning('Framework', 'the mediator is not a instance of Mediator')
     end
 end
 

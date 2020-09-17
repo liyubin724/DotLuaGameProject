@@ -16,7 +16,7 @@ local GameObjectPoolGroup =
         self.groupTransform = nil
         self.pools = {}
 
-        if Game.IsDebug then
+        if IsDebug then
             self.groupTransform = GameObject(name).transform
             self.groupTransform:SetParent(self.parentTransform, false)
         end
@@ -58,7 +58,7 @@ end
 function GameObjectPoolGroup:CreatePool(name, templateType, templateGameObject)
     local pool = self:GetPool(name)
     if pool then
-        DebugLog.LogError('GOPool', 'The pool has been created.name = ' .. name)
+        Logger.LogError('GOPool', 'The pool has been created.name = ' .. name)
         return nil
     else
         pool = GameObjectPool(name, self:GetTransform(), templateType, templateGameObject)

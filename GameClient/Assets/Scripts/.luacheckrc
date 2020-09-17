@@ -21,6 +21,6 @@ globals = {
     "Game",
     "CS",
     "Callback",
-    "DebugLog",
+    "Logger",
     "Delegate",
 }

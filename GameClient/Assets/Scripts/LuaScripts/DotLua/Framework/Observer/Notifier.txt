@@ -24,12 +24,7 @@ function Notifier:OnInitialized(uniqueID)
 end
 
 function Notifier:SendNotification(name, body, userdata)
-    local facade = self:GetFacade()
-    if facade then
-        facade:SendNotification(name, body, userdata)
-    else
-        error('')
-    end
+    self:GetFacade():SendNotification(name, body, userdata)
 end
 
 return Notifier

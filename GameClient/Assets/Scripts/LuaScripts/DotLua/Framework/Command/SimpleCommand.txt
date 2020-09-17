@@ -4,8 +4,7 @@ local SimpleCommand =
     class(
     Notifier,
     function(self)
-    end,
-    'SimpleCommand'
+    end
 )
 
 function SimpleCommand:Execute(notification)

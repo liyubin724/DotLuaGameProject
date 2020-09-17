@@ -3,7 +3,7 @@ require('DotLua/Utility/table')
 local EventData = require('DotLua/Event/EventData')
 local ObjectPool = require('DotLua/Pool/ObjectPool')
 
-local DebugLog = DebugLog
+local Logger = Logger
 ----public----
 --消息机制
 -- 对于全局的消息可以使用Game.EventMgr访问到
@@ -26,7 +26,7 @@ local EventDispatcher =
 -- @param userData 消息可以携带自定义参数
 function EventDispatcher:RegisterListener(eventID, receiver, func, userdata)
     if not func then
-        DebugLog.Error('Event', 'LuaEventDispatcher::RegisterListener->func is empty')
+        Logger.Error('Event', 'LuaEventDispatcher::RegisterListener->func is empty')
         return
     end
 
@@ -49,7 +49,7 @@ end
 -- @param func 消息处理函数
 function EventDispatcher:UnregisterListener(eventID, receiver, func)
     if not func then
-        DebugLog.Error('Event', 'LuaEventDispatcher::UnregisterListener->func is empty')
+        Logger.Error('Event', 'LuaEventDispatcher::UnregisterListener->func is empty')
         return
     end
 

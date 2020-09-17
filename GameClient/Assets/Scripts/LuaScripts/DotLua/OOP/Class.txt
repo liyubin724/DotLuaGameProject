@@ -1,4 +1,4 @@
-function class(base, init,name)
+function class(base, init)
     local c = {} -- a new class instance
 
     if not init and type(base) == 'function' then
@@ -13,8 +13,6 @@ function class(base, init,name)
     end
 
     c.__index = c
-
-    c._name = name
 
     c._init = function(obj, ...)
         if base and base._init then

@@ -6,7 +6,7 @@ local XLuaProfiler = {}
 XLuaProfiler.isRunning = false
 
 function XLuaProfiler.Start()
-    if Game.IsDebug and not XLuaProfiler.isRunning then
+    if IsDebug and not XLuaProfiler.isRunning then
         profiler.start()
         XLuaProfiler.isRunning = true
     end
@@ -25,14 +25,14 @@ count:调用次数
 对数据结果做了一个封装为Json
 --]]
 function XLuaProfiler.Report()
-    if Game.IsDebug and XLuaProfiler.isRunning then
+    if IsDebug and XLuaProfiler.isRunning then
         return json.encode(profiler.report())
     end
     return ''
 end
 
 function XLuaProfiler.Stop()
-    if Game.IsDebug and XLuaProfiler.isRunning then
+    if IsDebug and XLuaProfiler.isRunning then
         XLuaProfiler.isRunning = false
 
         profiler.stop()

@@ -4,7 +4,7 @@ local UIPanelLayer = require('DotLua/UI/UIPanelLayer')
 local UIPanelMode = require('DotLua/UI/UIPanelMode')
 local GameObjectPoolTemplateType = require('DotLua/GOPool/GameObjectPoolTemplateType')
 
-local DebugLog = DebugLog
+local Logger = Logger
 local Game = Game
 
 local EnvManager =
@@ -42,7 +42,7 @@ function EnvManager:DoStartup()
         Game.PanelMgr:OpenPanel('login_panel', LoginPanelController, UIPanelLayer.Default, UIPanelMode.Append)
     loginPanelController:LoadView('login_panel')
 
-    --DebugLog.Info("Profiler", profiler.report())
+    --Logger.Info("Profiler", profiler.report())
     --profiler.stop()
 
     local eventMgr = Game.EventMgr
@@ -53,7 +53,7 @@ function EnvManager:DoStartup()
     --local handler = timerMgr:AddEndTimer(3,self,EnvManager.OnEndTimer,"Test End Timer")
     self.timerHandler =
         timerMgr:AddTimer(1, 5, self, EnvManager.OnIntervalTimer, EnvManager.OnEndTimer, 'Test Interval and End Timer')
-    DebugLog.Info('Timer Test', tostring(self.timerHandler))
+    Logger.Info('Timer Test', tostring(self.timerHandler))
     self.timerIndex = 0
 
     local poolMgr = Game.PoolMgr
@@ -67,7 +67,7 @@ function EnvManager:DoStartup()
 end
 
 function EnvManager:OnMessage(_, userdata)
-    DebugLog.Info('Event', 'message:=' .. tostring(userdata))
+    Logger.Info('Event', 'message:=' .. tostring(userdata))
 
     Game.EventMgr:UnregisterListener(111, self, EnvManager.OnMessage)
 end
@@ -77,11 +77,11 @@ function EnvManager:OnIntervalTimer(userdata)
     if self.timerIndex % 2 == 0 then
         Game.EventMgr:Trigger(111)
     end
-    DebugLog.Info('Timer Interval', userdata)
+    Logger.Info('Timer Interval', userdata)
 end
 
 function EnvManager:OnEndTimer(userdata)
-    DebugLog.Info('Timer End', userdata)
+    Logger.Info('Timer End', userdata)
 end
 
 function EnvManager:DoUpdate(deltaTime)
@@ -99,7 +99,7 @@ end
 
 --------------------Test---------------------------
 function EnvManager:OnCubeLoadComplete(_, uObject, _)
-    DebugLog.Info('EnvManager', 'Cube loaded')
+    Logger.Info('EnvManager', 'Cube loaded')
 
     local transform = uObject.transform
     transform.localPosition = CS.UnityEngine.Vector3.one

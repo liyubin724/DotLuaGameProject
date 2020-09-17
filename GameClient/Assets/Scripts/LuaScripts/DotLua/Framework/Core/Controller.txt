@@ -4,8 +4,7 @@ local Controller =
         self.uniqueID = uniqueID
         self.view = view
         self.commandMap = {}
-    end,
-    'Controller'
+    end
 )
 
 function Controller:GetUniqueID()
@@ -23,10 +22,13 @@ function Controller:RegisterCommand(notificationName, commandClass)
 
             self.commandMap[notificationName] = commandClass
         else
-            error('')
+            Logger.Error('Framework', 'The notification has been added.name = ' .. notificationName)
         end
     else
-        error('')
+        Logger.Error(
+            'Framework',
+            'The name of notification is nil or the command is not a class. name = ' .. notificationName
+        )
     end
 end
 
@@ -45,7 +47,7 @@ function Controller:ExecuteCommand(notification)
         command:OnInitialized(self:GetUniqueID())
         command:Execute(notification)
     else
-        error('')
+        Logger.Error('Framework', 'the command is not found.name = ' .. notification:GetName())
     end
 end
 

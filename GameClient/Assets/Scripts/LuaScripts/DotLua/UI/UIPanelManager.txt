@@ -65,7 +65,7 @@ function UIPanelManager:ClosePanel(panelController)
 
     local layerPanels = self.panels[panelLayer]
     if not layerPanels then
-        DebugLog.Error('PanelMgr', 'Error')
+        Logger.Error('PanelMgr', 'Error')
         return
     end
 
@@ -78,7 +78,7 @@ function UIPanelManager:ClosePanel(panelController)
     end
 
     if panelIndex < 0 then
-        DebugLog.Error('PanelMgr', 'Error')
+        Logger.Error('PanelMgr', 'Error')
         return
     end
 

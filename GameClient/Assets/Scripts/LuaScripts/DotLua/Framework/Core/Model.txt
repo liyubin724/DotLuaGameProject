@@ -6,8 +6,7 @@ local Model =
         self.uniqueID = uniqueID
 
         self.proxyMap = {}
-    end,
-    'Model'
+    end
 )
 
 function Model:GetUniqueID()
@@ -28,10 +27,10 @@ function Model:RegisterProxy(proxy)
 
             proxy:DoRegister()
         else
-            error('')
+            Logger.Error('Framework', 'The proxy has been added. name = ' .. proxy:GetName())
         end
     else
-        error('')
+        Logger.Error('Framework', 'The proxy is not a instance of Proxy.')
     end
 end
 

@@ -1,6 +1,6 @@
 local UIPanel = require('DotLua/UI/View/UIPanel')
 
-local DebugLog = DebugLog
+local Logger = Logger
 
 local LoginPanel =
     class(
@@ -10,7 +10,7 @@ local LoginPanel =
 )
 
 function LoginPanel:OnGameStartBtnClick()
-    DebugLog.Info("LoginPanel","OnGameStartBtnClick")
+    Logger.Info("LoginPanel","OnGameStartBtnClick")
 end
 
 return LoginPanel

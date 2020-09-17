@@ -17,7 +17,7 @@ local GameObjectPool =
         self.parentTransform = parentTransform
 
         self.poolTransform = nil
-        if Game.IsDebug then
+        if IsDebug then
             self.poolTransform = GameObject(name).transform
             self.poolTransform:SetParent(self.parentTransform, false)
         end

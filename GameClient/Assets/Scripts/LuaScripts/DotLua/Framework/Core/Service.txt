@@ -47,10 +47,10 @@ function Service:RegisterServicer(servicer)
 
             servicer:DoRegister()
         else
-            error('')
+            Logger.Error('Framework', 'The servicer has been added.name = ' .. servicer:GetName())
         end
     else
-        error('')
+        Logger.Error('Framework', 'The servicer is not a instance of Servicer')
     end
 end
 
