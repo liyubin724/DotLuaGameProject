@@ -4,6 +4,12 @@ namespace DotEditor.Utilities
 {
     public static class SerializedPropertyUtility
     {
+        public static bool IsArrayElement(this SerializedProperty property)
+        {
+            string propertyPath = property.propertyPath;
+            return propertyPath.IndexOf("[") > 0 && propertyPath.IndexOf("]") > 0;
+        }
+
         public static void AddElement(this SerializedProperty property,UnityEngine.Object obj)
         {
             property.serializedObject.Update();

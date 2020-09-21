@@ -1,4 +1,5 @@
 ﻿using DotEditor.GUIExtension;
+using DotEditor.Utilities;
 using DotEngine.Lua;
 using System.Collections.Generic;
 using UnityEditor;
@@ -12,21 +13,18 @@ namespace DotEditor.Lua
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
+            float height = EditorGUIUtility.singleLineHeight * 3;
+
+            height += EditorGUIUtility.singleLineHeight;
+
             SerializedProperty paramTypeProperty = property.FindPropertyRelative("paramType");
-            float height = EditorGUIUtility.singleLineHeight * 2;
             if(paramTypeProperty.intValue == (int)LuaOperateParamType.UObject)
             {
                 SerializedProperty gObjectProperty = property.FindPropertyRelative("gObject");
-                if(gObjectProperty.objectReferenceValue == null)
+                if(gObjectProperty.objectReferenceValue != null)
                 {
-                    height += EditorGUIUtility.singleLineHeight;
-                }else
-                {
-                    height += EditorGUIUtility.singleLineHeight * 3;
+                    height += EditorGUIUtility.singleLineHeight *2;
                 }
-            }else
-            {
-                height += EditorGUIUtility.singleLineHeight;
             }
 
             return height;
@@ -39,12 +37,17 @@ namespace DotEditor.Lua
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            bool isArrayElement = property.IsArrayElement();
             Rect propertyDrawRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.LabelField(propertyDrawRect, label);
 
-            propertyDrawRect.y += propertyDrawRect.height;
-            propertyDrawRect.x += 40;
-            propertyDrawRect.width -= 40;
+            if(!isArrayElement)
+            {
+                EditorGUI.LabelField(propertyDrawRect, label);
+
+                propertyDrawRect.y += propertyDrawRect.height;
+                propertyDrawRect.x += 40;
+                propertyDrawRect.width -= 40;
+            }
 
             SerializedProperty nameProperty = property.FindPropertyRelative("name");
             EditorGUI.PropertyField(propertyDrawRect, nameProperty);
@@ -107,7 +110,11 @@ namespace DotEditor.Lua
                     propertyDrawRect.y += propertyDrawRect.height;
                     uObjectProperty.objectReferenceValue = EGUI.DrawPopup<UnityObject>(propertyDrawRect, "Component", names.ToArray(), objects.ToArray(), uObjectProperty.objectReferenceValue);
                 }
-
+            }
+            if (isArrayElement)
+            {
+                propertyDrawRect.y += propertyDrawRect.height;
+                EGUI.DrawHorizontalLine(propertyDrawRect);
             }
         }
     }
