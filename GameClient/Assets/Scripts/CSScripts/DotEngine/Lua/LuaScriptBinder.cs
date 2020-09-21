@@ -10,9 +10,7 @@ namespace DotEngine.Lua
     {
         [SerializeField]
         private string m_ScriptFilePath = null;
-        [SerializeField]
-        private LuaOperateParam[] m_ConstructorParams = new LuaOperateParam[0];
-        
+
         public LuaTable ObjTable { get; private set; }
 
         private bool m_IsInited = false;

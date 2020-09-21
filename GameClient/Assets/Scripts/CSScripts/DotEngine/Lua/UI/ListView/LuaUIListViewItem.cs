@@ -18,7 +18,7 @@ namespace DotEngine.Lua.UI.ListView
             }
         }
 
-        public LuaBindScript bindScript = new LuaBindScript();
+        public LuaScriptBinder bindScript = new LuaScriptBinder();
         public RegisterBehaviourData registerBehaviourData = new RegisterBehaviourData();
         public RegisterObjectData registerObjectData = new RegisterObjectData();
 

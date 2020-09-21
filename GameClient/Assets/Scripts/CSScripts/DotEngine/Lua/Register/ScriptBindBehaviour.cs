@@ -5,7 +5,7 @@ namespace DotEngine.Lua.Register
 {
     public class ScriptBindBehaviour : MonoBehaviour
     {
-        public LuaBindScript bindScript = new LuaBindScript();
+        public LuaScriptBinder bindScript = new LuaScriptBinder();
 
         public LuaTable ObjTable
         {

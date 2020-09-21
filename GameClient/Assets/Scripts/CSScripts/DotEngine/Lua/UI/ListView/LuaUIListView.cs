@@ -13,7 +13,7 @@ namespace DotEngine.Lua.UI.ListView
         private const string GET_ITEM_FUNC_NAME = "GetItemName";
         private const string SET_DATA_FUNC_NAME = "SetItemData";
 
-        public LuaBindScript bindScript = new LuaBindScript();
+        public LuaScriptBinder bindScript = new LuaScriptBinder();
 
         protected virtual void Awake()
         {
