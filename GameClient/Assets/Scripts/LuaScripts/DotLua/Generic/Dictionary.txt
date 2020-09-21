@@ -88,11 +88,28 @@ function Dictionary:GetEnumerator()
 end
 
 function Dictionary:ForEach(func)
+    if not func or type(func) ~= 'function' then
+        error('func is empty')
+        return
+    end
+
     for key, value in pairs(self.dic) do
-        if not func(key, value) then
-            break
+        func(key, value)
+    end
+end
+
+function Dictionary:Find(compareFunc)
+    if not compareFunc or type(compareFunc) ~= 'function' then
+        error('compareFunc is empty')
+        return nil,nil
+    end
+
+    for key, value in pairs(self.dic) do
+        if compareFunc(key, value) then
+            return key, value
         end
     end
+    return nil, nil
 end
 
 return Dictionary
