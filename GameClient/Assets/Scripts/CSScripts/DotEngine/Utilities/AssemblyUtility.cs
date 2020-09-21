@@ -8,6 +8,23 @@ namespace DotEngine.Utilities
 {
     public static class AssemblyUtility
     {
+        public static Type GetType(string typeName)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                Type[] types = assembly.GetTypes();
+                foreach (var type in types)
+                {
+                    if (type.Name == typeName)
+                    {
+                        return type;
+                    }
+                }
+            }
+            return null;
+        }
+
         public static Type GetTypeByFullName(string typeFullName)
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
