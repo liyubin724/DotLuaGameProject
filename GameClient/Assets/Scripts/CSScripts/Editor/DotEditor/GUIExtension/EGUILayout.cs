@@ -1,5 +1,7 @@
-﻿using DotEditor.Utilities;
+﻿using DotEditor.GUIExtension.RList;
+using DotEditor.Utilities;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -413,5 +415,38 @@ namespace DotEditor.GUIExtension
         {
             return UnityEngine.GUILayout.Button(content, EditorStyles.toolbarButton, UnityEngine.GUILayout.Width(width));
         }
+
+        //private static Dictionary<string, WeakReference<ReorderableListProperty>> sm_RListPropertyDic = new Dictionary<string, WeakReference<ReorderableListProperty>>();
+        //public static void DrawRListProperty(SerializedProperty property)
+        //{
+        //    string propertyPath = $"{property.propertyPath}${property.name}";
+            
+        //    if(property.isArray) 
+        //    {
+        //        if(sm_RListPropertyDic.TryGetValue(propertyPath, out var weakRef))
+        //        {
+        //            if(weakRef.TryGetTarget(out var rlProperty))
+        //            {
+        //                rlProperty.OnGUILayout();
+        //                return;
+        //            }
+        //        } 
+
+        //        ReorderableListProperty rlp = new ReorderableListProperty(property);
+        //        if(weakRef!=null)
+        //        {
+        //            weakRef.SetTarget(rlp);
+        //        }else
+        //        {
+        //            sm_RListPropertyDic.Add(propertyPath, new WeakReference<ReorderableListProperty>(rlp));
+        //        }
+        //        rlp.OnGUILayout();
+        //        return;
+        //    }
+        //    else
+        //    {
+        //        GUILayout.Label("Error:the property is not array");
+        //    }
+        //}
     }
 }

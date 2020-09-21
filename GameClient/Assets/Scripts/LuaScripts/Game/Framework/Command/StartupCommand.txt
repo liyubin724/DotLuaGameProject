@@ -8,7 +8,6 @@ local StartupCommand =
 )
 
 function StartupCommand:OnInitialized()
-    
 end
 
 return StartupCommand
