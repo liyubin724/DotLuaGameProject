@@ -30,9 +30,9 @@ namespace DotEngine.Lua.Register
                         LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBehaviour::RegisterLuaBehaviour->behaviour is null.objName = " + behaviourDatas[i].name + "  index = " + i);
                         continue;
                     }
-                    behaviourDatas[i].behaviour.InitLua();
+                    behaviourDatas[i].behaviour.InitBinder();
 
-                    objTable.Set<string, LuaTable>(behaviourDatas[i].name, behaviourDatas[i].behaviour.ObjTable);
+                    objTable.Set<string, LuaTable>(behaviourDatas[i].name, behaviourDatas[i].behaviour.Table);
                 }
             }
         }
@@ -51,7 +51,7 @@ namespace DotEngine.Lua.Register
 
                     LuaTable behTable = luaEnv.NewTable();
 
-                    ScriptBindBehaviour[] behs = behaviourArrayDatas[i].behaviours;
+                    ScriptBinderBehaviour[] behs = behaviourArrayDatas[i].behaviours;
                     if (behs != null && behs.Length > 0)
                     {
                         for (int j = 0; j < behs.Length; j++)
@@ -61,9 +61,9 @@ namespace DotEngine.Lua.Register
                                 LogUtil.LogError(LuaConst.LOGGER_NAME, "LuaBehaviour::RegisterLuaBehaviourArr->behaviour is Null, index = " + j);
                                 continue;
                             }
-                            behs[j].InitLua();
+                            behs[j].InitBinder();
 
-                            behTable.Set<int, LuaTable>(j + 1, behs[j].ObjTable);
+                            behTable.Set<int, LuaTable>(j + 1, behs[j].Table);
                         }
                     }
 
@@ -77,14 +77,14 @@ namespace DotEngine.Lua.Register
         public class BindBehaviourData
         {
             public string name;
-            public ScriptBindBehaviour behaviour;
+            public ScriptBinderBehaviour behaviour;
         }
 
         [Serializable]
         public class BindBehaviourArrayData
         {
             public string name;
-            public ScriptBindBehaviour[] behaviours = new ScriptBindBehaviour[0];
+            public ScriptBinderBehaviour[] behaviours = new ScriptBinderBehaviour[0];
         }
     }
 }

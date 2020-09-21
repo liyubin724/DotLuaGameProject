@@ -1,7 +1,9 @@
 ﻿using DotEngine.Log;
 using DotEngine.Services;
 using System;
+using System.Collections.Generic;
 using XLua;
+using SystemObject = System.Object;
 
 namespace DotEngine.Lua
 {
@@ -24,7 +26,8 @@ namespace DotEngine.Lua
         private Action<float> m_LateUpdateAction = null;
         private Action<float> m_FixedUpdateAction = null;
 
-        private Func<string, LuaTable> m_InstanceFunc = null;
+        private LuaFunction m_InstanceFunc = null;
+        private LuaFunction m_InstanceWithFunc = null;
 
         public LuaEnvService() : base(NAME)
         {
@@ -47,6 +50,9 @@ namespace DotEngine.Lua
                 LogUtil.LogError(LuaConst.LOGGER_NAME, "Load script failed. path = " + PreloadScript);
                 return;
             }
+
+            m_InstanceFunc = Env.Global.Get<LuaFunction>("instance");
+            m_InstanceWithFunc = Env.Global.Get<LuaFunction>("instancewith");
 
             GameTable = Env.Global.Get<LuaTable>(MGR_NAME);
             if(GameTable == null)
@@ -105,12 +111,21 @@ namespace DotEngine.Lua
 
         public LuaTable InstanceScript(string scriptPath)
         {
-            if(m_InstanceFunc == null)
-            {
-                m_InstanceFunc = Env.Global.Get<Func<string, LuaTable>>("instance");
-            }
+            return m_InstanceFunc.Func<string,LuaTable>(scriptPath);
+        }
 
-            return m_InstanceFunc(scriptPath);
+        public LuaTable InstanceScriptWith(string scriptPath,LuaOperateParam[] operateParams)
+        {
+            List<SystemObject> list = new List<SystemObject>();
+            list.Add(scriptPath);
+            if(operateParams!=null && operateParams.Length>0)
+            {
+                foreach(var p in operateParams)
+                {
+                    list.Add(p.GetValue());
+                }
+            }
+            return m_InstanceWithFunc.Func<LuaTable>(list.ToArray());
         }
 
         public virtual void DoUpdate(float deltaTime)

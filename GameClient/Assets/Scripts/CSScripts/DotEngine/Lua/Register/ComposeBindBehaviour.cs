@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Lua.Register
 {
-    public class ComposeBindBehaviour : ScriptBindBehaviour
+    public class ComposeBindBehaviour : ScriptBinderBehaviour
     {
         public RegisterBehaviourData registerBehaviourData = new RegisterBehaviourData();
         public RegisterObjectData registerObjectData = new RegisterObjectData();
@@ -11,8 +11,8 @@
             LuaEnvService service = Facade.GetInstance().GetServicer<LuaEnvService>(LuaEnvService.NAME);
             if(service.IsValid())
             {
-                registerObjectData.RegisterToLua(service.Env, ObjTable);
-                registerBehaviourData.RegisterToLua(service.Env, ObjTable);
+                registerObjectData.RegisterToLua(service.Env, Table);
+                registerBehaviourData.RegisterToLua(service.Env, Table);
             }
         }
     }

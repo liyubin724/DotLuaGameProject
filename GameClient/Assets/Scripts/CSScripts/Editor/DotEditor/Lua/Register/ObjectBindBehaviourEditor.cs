@@ -7,7 +7,7 @@ using UnityEngine;
 namespace DotEditor.Lua.Register
 {
     [CustomEditor(typeof(ObjectBindBehaviour),true)]
-    public class ObjectBindBehaviourEditor : ScriptBindBehaviourEditor
+    public class ObjectBindBehaviourEditor : ScriptBinderBehaviourEditor
     {
         ObjectBindBehaviour bindBehaviour = null;
         NativeDrawerObject objectDataDrawer = null;

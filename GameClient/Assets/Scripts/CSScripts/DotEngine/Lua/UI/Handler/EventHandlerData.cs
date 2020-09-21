@@ -8,7 +8,7 @@ namespace DotEngine.Lua.UI.Handler
     public class EventHandlerData
     {
         [SerializeField]
-        private ScriptBindBehaviour m_BindBehaviour = null;
+        private ScriptBinderBehaviour m_BindBehaviour = null;
         [SerializeField]
         private string m_FuncName = string.Empty;
 
