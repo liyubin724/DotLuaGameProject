@@ -18,6 +18,7 @@ globals = {
 
     "typeof",
 
+    "IsDebug",
     "Game",
     "CS",
     "Callback",
