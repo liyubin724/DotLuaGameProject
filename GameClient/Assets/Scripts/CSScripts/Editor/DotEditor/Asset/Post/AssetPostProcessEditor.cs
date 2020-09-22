@@ -87,7 +87,8 @@ namespace DotEditor.Asset.Post
                         };
                         rulerRList.onRemoveCallback = (list) =>
                         {
-                            var removedObj = rulerProperty.RemoveElementAt(list.index);
+                            var removedObj = rulerProperty.GetArrayElementAtIndex(list.index).objectReferenceValue;
+                            rulerProperty.RemoveElementAt(list.index);
                             if (removedObj != null)
                             {
                                 AssetDatabase.RemoveObjectFromAsset(removedObj);

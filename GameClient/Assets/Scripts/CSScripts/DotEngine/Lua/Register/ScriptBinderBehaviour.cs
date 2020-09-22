@@ -16,16 +16,28 @@ namespace DotEngine.Lua.Register
             get => m_LuaTable;
         }
 
-        public bool IsValid()
+        public LuaEnv Env
         {
-            if (m_IsInited)
+            get
             {
                 Facade facade = Facade.GetInstance();
                 if (facade != null)
                 {
                     LuaEnvService service = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
-                    return service != null && service.IsValid() && m_LuaTable != null;
+                    if(service!=null && service.IsValid())
+                    {
+                        return service.Env;
+                    }
                 }
+                return null;
+            }
+        }
+
+        public bool IsValid()
+        {
+            if (m_IsInited && Env!=null && Table!=null)
+            {
+                return true;
             }
 
             return false;

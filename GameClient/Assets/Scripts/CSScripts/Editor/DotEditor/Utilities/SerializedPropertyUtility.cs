@@ -1,4 +1,7 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
+using UnityEngine;
+using SystemObject = System.Object;
 
 namespace DotEditor.Utilities
 {
@@ -20,24 +23,29 @@ namespace DotEditor.Utilities
             property.serializedObject.ApplyModifiedProperties();
         }
 
-        public static UnityEngine.Object RemoveElementAt(this SerializedProperty property,int index)
+        public static void RemoveElementAt(this SerializedProperty property,int index)
         {
-            UnityEngine.Object removedObject = null;
-            if(index>=0 && index<property.arraySize)
+            if(property == null)
             {
-                property.serializedObject.Update();
-                {
-                    var removedProperty = property.GetArrayElementAtIndex(index);
-                    removedObject = removedProperty.objectReferenceValue;
-                    if (removedObject != null)
-                    {
-                        removedProperty.objectReferenceValue = null;
-                    }
-                    property.DeleteArrayElementAtIndex(index);
-                }
-                property.serializedObject.ApplyModifiedProperties();
+                throw new ArgumentNullException();
             }
-            return removedObject;
+            if(!property.isArray)
+            {
+                throw new ArgumentException("Property isn't an array");
+            }
+            if(index<0 || index>=property.arraySize)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            var removedProperty = property.GetArrayElementAtIndex(index);
+            if (removedProperty.propertyType == SerializedPropertyType.ObjectReference)
+            {
+                removedProperty.objectReferenceValue = null;
+            }
+            property.DeleteArrayElementAtIndex(index);
+
+            property.serializedObject.ApplyModifiedProperties();
         }
+
     }
 }
