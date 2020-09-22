@@ -13,9 +13,7 @@ namespace DotEditor.Lua
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            float height = EditorGUIUtility.singleLineHeight * 3;
-
-            height += EditorGUIUtility.singleLineHeight;
+            float height = EditorGUIUtility.singleLineHeight * 4;
 
             SerializedProperty paramTypeProperty = property.FindPropertyRelative("paramType");
             if(paramTypeProperty.intValue == (int)LuaOperateParamType.UObject)
@@ -37,9 +35,9 @@ namespace DotEditor.Lua
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            bool isArrayElement = property.IsArrayElement();
             Rect propertyDrawRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
+            bool isArrayElement = property.IsArrayElement();
             if(!isArrayElement)
             {
                 EditorGUI.LabelField(propertyDrawRect, label);
@@ -75,11 +73,9 @@ namespace DotEditor.Lua
             else if(paramType == LuaOperateParamType.UObject)
             {
                 SerializedProperty gObjectProperty = property.FindPropertyRelative("gObject");
-                SerializedProperty uObjectProperty = property.FindPropertyRelative("uObject");
-
                 EditorGUI.PropertyField(propertyDrawRect, gObjectProperty);
-                propertyDrawRect.y += propertyDrawRect.height;
 
+                SerializedProperty uObjectProperty = property.FindPropertyRelative("uObject");
                 if(gObjectProperty.objectReferenceValue == null)
                 {
                     uObjectProperty.objectReferenceValue = null;
@@ -91,9 +87,11 @@ namespace DotEditor.Lua
                     }
                     EditorGUI.BeginDisabledGroup(true);
                     {
+                        propertyDrawRect.y += propertyDrawRect.height;
                         EditorGUI.PropertyField(propertyDrawRect, uObjectProperty);
                     }
                     EditorGUI.EndDisabledGroup();
+
                     List<string> names = new List<string>();
                     List<UnityObject> objects = new List<UnityObject>();
                     names.Add("GameObject");
