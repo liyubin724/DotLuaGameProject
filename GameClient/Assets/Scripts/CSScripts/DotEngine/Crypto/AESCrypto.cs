@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
+#pragma warning disable 0168
 namespace DotEngine.Crypto
 {
     public class AESKey
