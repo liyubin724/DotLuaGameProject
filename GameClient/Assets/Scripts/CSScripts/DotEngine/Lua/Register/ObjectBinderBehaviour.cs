@@ -69,7 +69,7 @@ namespace DotEngine.Lua.Register
 
                 for (int j = 0; j < operateParamArray.operateParams.Count; ++j)
                 {
-                    Table.Set(j+1, GetRegistObject(operateParamArray.operateParams[j]));
+                    regTable.Set(j+1, GetRegistObject(operateParamArray.operateParams[j]));
                 }
 
                 Table.Set(operateParamArray.name, regTable);

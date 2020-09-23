@@ -23,6 +23,12 @@ namespace DotEditor.Lua.Register
             registObjectsRLProperty = new ReorderableListProperty(registObjectsProperty);
 
             registArrayObjectsProperty = serializedObject.FindProperty("m_RegistArrayObjects");
+            CreateRegistArrayObjectsRLProperty();
+        }
+
+        private void CreateRegistArrayObjectsRLProperty()
+        {
+            registArrayObjectsRLProperties.Clear();
             for (int i = 0; i < registArrayObjectsProperty.arraySize; ++i)
             {
                 SerializedProperty property = registArrayObjectsProperty.GetArrayElementAtIndex(i);
@@ -30,19 +36,19 @@ namespace DotEditor.Lua.Register
             }
         }
 
-            int deleteIndex = -1;
+        private int m_DeleteArrayObjectIndex = -1;
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            
+
             serializedObject.Update();
             {
-                if (deleteIndex >= 0)
+                if (m_DeleteArrayObjectIndex >= 0)
                 {
-                    registArrayObjectsProperty.RemoveElementAt(deleteIndex);
-                    registArrayObjectsRLProperties.RemoveAt(deleteIndex);
-                    deleteIndex = -1;
-                } 
+                    registArrayObjectsProperty.RemoveElementAt(m_DeleteArrayObjectIndex);
+                    CreateRegistArrayObjectsRLProperty();
+                    m_DeleteArrayObjectIndex = -1;
+                }
 
                 registObjectsRLProperty.OnGUILayout();
 
@@ -54,9 +60,7 @@ namespace DotEditor.Lua.Register
                     if (GUI.Button(addBtnRect, "Add"))
                     {
                         registArrayObjectsProperty.InsertArrayElementAtIndex(registArrayObjectsProperty.arraySize);
-                        SerializedProperty newProperty = registArrayObjectsProperty.GetArrayElementAtIndex(registArrayObjectsProperty.arraySize - 1);
-                        newProperty.FindPropertyRelative("name").stringValue = "SSFFF"+ registArrayObjectsProperty.arraySize;
-                        registArrayObjectsRLProperties.Add(new ReorderableListProperty(newProperty.FindPropertyRelative("operateParams")));
+                        CreateRegistArrayObjectsRLProperty();
                     }
 
                     for (int i = 0; i < registArrayObjectsProperty.arraySize; ++i)
@@ -72,9 +76,9 @@ namespace DotEditor.Lua.Register
                             }
                             EditorGUILayout.EndVertical();
 
-                            if (GUILayout.Button("Delete", GUILayout.Width(80)))
+                            if (GUILayout.Button("Delete", GUILayout.Width(60)))
                             {
-                                deleteIndex = i;
+                                m_DeleteArrayObjectIndex = i;
                             }
                         }
                         EditorGUILayout.EndHorizontal();
@@ -83,7 +87,7 @@ namespace DotEditor.Lua.Register
                 }
                 EditorGUILayout.EndVertical();
 
-                
+
             }
             serializedObject.ApplyModifiedProperties();
         }
