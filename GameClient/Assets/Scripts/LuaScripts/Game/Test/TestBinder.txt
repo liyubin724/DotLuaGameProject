@@ -1,25 +1,28 @@
 local TestBinder =
     class(
-    function(self,name)
+    function(self, name)
         self.name = name
     end
 )
 
 function TestBinder:DoAwake()
-    Logger.Info("TestBinder", self.name)
+    Logger.Info('TestBinder', self.name)
     Logger.Info('TestBinder', self.atlasName)
-    Logger.Info("TestBinder", self.go.name)
-    
+    Logger.Info('TestBinder', self.go.name)
+
     Logger.Info('TestBinder', tostring(#(self.indexes)))
 
     for i = 1, #(self.indexes) do
-        Logger.Info("TestBinder", tostring(self.indexes[i]))
+        Logger.Info('TestBinder', tostring(self.indexes[i]))
     end
 
     for i = 1, #(self.childs) do
         Logger.Info('TestBinder', tostring(self.childs[i].name))
-
     end
+end
+
+function TestBinder:OnBtnClicked(value)
+    Logger.Info('TestBinder', value)
 end
 
 return TestBinder

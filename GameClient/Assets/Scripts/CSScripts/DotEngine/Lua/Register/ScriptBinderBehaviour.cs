@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Boo.Lang;
+using System;
 using UnityEngine;
 using XLua;
+using SystemObject = System.Object;
 
 namespace DotEngine.Lua.Register
 {
@@ -97,6 +99,25 @@ namespace DotEngine.Lua.Register
             if (IsValid())
             {
                 m_LuaTable.Set(name, value);
+            }
+        }
+
+        public void CallActionWithParams(string funcName,params SystemObject[] values)
+        {
+            if(values == null || values.Length == 0)
+            {
+                CallAction(funcName);
+            }else
+            {
+                SystemObject[] paramValues = new SystemObject[values.Length + 1];
+                paramValues[0] = m_LuaTable;
+                Array.Copy(values, 0, paramValues, 1, values.Length);
+                LuaFunction func = m_LuaTable.Get<LuaFunction>(funcName);
+                if(func!=null)
+                {
+                    func.ActionParams(paramValues);
+                }
+                func?.Dispose();
             }
         }
 

@@ -78,5 +78,10 @@ namespace DotEditor.GUIExtension.RList
         {
             m_RList.DoLayoutList();
         }
+
+        public void OnGUI(Rect rect)
+        {
+            m_RList.DoList(rect);
+        }
     }
 }

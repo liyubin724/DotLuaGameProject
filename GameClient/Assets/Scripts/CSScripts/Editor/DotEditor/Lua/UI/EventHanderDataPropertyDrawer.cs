@@ -1,4 +1,4 @@
-﻿using DotEngine.Lua.UI;
+﻿using DotEditor.GUIExtension.RList;
 using DotEngine.Lua.UI.Handler;
 using UnityEditor;
 using UnityEngine;
@@ -8,9 +8,17 @@ namespace DotEditor.Lua.UI
     [CustomPropertyDrawer(typeof(EventHandlerData))]
     public class EventHanderDataPropertyDrawer : PropertyDrawer
     {
+        private static float RLPROPERTY_HEIGHT = 200;
+
+        private ReorderableListProperty m_RLProperty = null;
+        public override bool CanCacheInspectorGUI(SerializedProperty property)
+        {
+            return false;
+        }
+
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight * 3;
+            return EditorGUIUtility.singleLineHeight * 3 + RLPROPERTY_HEIGHT;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -27,6 +35,15 @@ namespace DotEditor.Lua.UI
             SerializedProperty funcNameProperty = property.FindPropertyRelative("m_FuncName");
             EditorGUI.PropertyField(funcNameRect, funcNameProperty);
 
+            Rect rlPropertyRect = funcNameRect;
+            rlPropertyRect.y += funcNameRect.height;
+            rlPropertyRect.height = RLPROPERTY_HEIGHT;
+            if(m_RLProperty == null)
+            {
+                SerializedProperty operateParamProperty = property.FindPropertyRelative("m_OperateParams");
+                m_RLProperty = new ReorderableListProperty(operateParamProperty);
+            }
+            m_RLProperty.OnGUI(rlPropertyRect);
         }
     }
 }
