@@ -14,6 +14,11 @@ namespace DotEditor.Utilities
 {
     public static class AssetDatabaseUtility
     {
+        public static bool IsFolder(UnityObject uObject)
+        {
+            return uObject.GetType() == typeof(DefaultAsset) && ProjectWindowUtil.IsFolder(uObject.GetInstanceID());
+        }
+
         #region FindAssets
 
         /// <summary>

@@ -20,15 +20,6 @@ namespace DotEditor.Asset.Dependency
             win.Show();
         }
 
-        [MenuItem("Game/Asset/Close Dependency Window", priority = 21)]
-        public static void CloseWin()
-        {
-            EditorUtility.ClearProgressBar();
-            AssetDependencyWindow win = EditorWindow.GetWindow<AssetDependencyWindow>();
-            win.titleContent = new GUIContent("Bundle Packer");
-            win.Close();
-        }
-
         private GUIContent[] m_ToolbarContents = new GUIContent[]
         {
             new GUIContent("DependOn"),

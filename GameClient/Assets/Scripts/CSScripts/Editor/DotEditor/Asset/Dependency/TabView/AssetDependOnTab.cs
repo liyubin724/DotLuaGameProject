@@ -11,6 +11,7 @@ namespace DotEditor.Asset.Dependency
         protected override void OnAssetSelectionChanged(string assetPath)
         {
             treeView?.ShowDependency(new string[] { assetPath });
+            treeView.ExpandAll();
         }
     }
 }
