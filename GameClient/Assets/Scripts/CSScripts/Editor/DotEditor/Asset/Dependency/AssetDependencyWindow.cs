@@ -51,5 +51,10 @@ namespace DotEditor.Asset.Dependency
             m_TabViews[m_ToolbarSelectedIndex].OnGUI();
         }
 
+        private void OnDestroy()
+        {
+            m_TabViews[m_ToolbarSelectedIndex].OnDisable();
+        }
+
     }
 }

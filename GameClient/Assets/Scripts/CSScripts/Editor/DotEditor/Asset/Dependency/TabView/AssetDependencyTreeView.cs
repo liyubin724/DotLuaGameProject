@@ -15,6 +15,7 @@ namespace DotEditor.Asset.Dependency
     internal class TreeViewData
     {
         public AssetDependencyData dependencyData = null;
+        public bool isRepeatInTreeView = false;
 
         public static TreeViewData Root
         {
@@ -49,6 +50,11 @@ namespace DotEditor.Asset.Dependency
             return false;
         }
 
+        protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
+        {
+            return base.BuildRows(root);
+        }
+
         protected override void RowGUI(RowGUIArgs args)
         {
             var item = (TreeViewItem<TreeElementWithData<TreeViewData>>)args.item;
@@ -78,7 +84,7 @@ namespace DotEditor.Asset.Dependency
             }
 
             Rect labelRect = new Rect(iconRect.x + iconRect.width, iconRect.y, contentRect.width - iconRect.width, iconRect.height);
-            EditorGUI.LabelField(labelRect, adData.assetPath, EGUIStyles.MiddleLeftLabelStyle);
+            EditorGUI.LabelField(labelRect, adData.assetPath+(item.data.Data.isRepeatInTreeView?"(Repeated)":""), EGUIStyles.MiddleLeftLabelStyle);
 
             if(assetObj is Texture)
             {
@@ -157,6 +163,12 @@ namespace DotEditor.Asset.Dependency
             m_TreeViewElementIndex++;
             treeModel.AddElement(elementData, parentNode, parentNode.hasChildren ? parentNode.children.Count : 0);
 
+            if(IsRepeatInTreeView((TreeElementWithData<TreeViewData>)parentNode.parent,assetPath))
+            {
+                elementData.Data.isRepeatInTreeView = true;
+                return;
+            }
+
             if (data.directlyDepends != null && data.directlyDepends.Length > 0)
             {
                 foreach (var path in data.directlyDepends)
@@ -164,6 +176,22 @@ namespace DotEditor.Asset.Dependency
                     CreateDependencyChildNode(elementData, path);
                 }
             }
+        }
+
+        private bool IsRepeatInTreeView(TreeElementWithData<TreeViewData> parentNode, string assetPath)
+        {
+            if(parentNode == null || parentNode == treeModel.root)
+            {
+                return false;
+            }
+             if(parentNode.Data.dependencyData.assetPath == assetPath)
+            {
+                return true;
+            }else
+            {
+                return IsRepeatInTreeView((TreeElementWithData<TreeViewData>)parentNode.parent, assetPath);
+            }
+
         }
     }
 }
