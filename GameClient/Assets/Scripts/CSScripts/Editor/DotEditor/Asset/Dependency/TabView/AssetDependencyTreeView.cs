@@ -1,6 +1,8 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.TreeGUI;
 using DotEditor.Utilities;
+using DotEngine.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -78,6 +80,13 @@ namespace DotEditor.Asset.Dependency
 
             Rect labelRect = new Rect(iconRect.x + iconRect.width, iconRect.y, contentRect.width - iconRect.width, iconRect.height);
             EditorGUI.LabelField(labelRect, adData.assetPath, EGUIStyles.MiddleLeftLabelStyle);
+
+            if(assetObj is Texture)
+            {
+                Rect memorySizeRect = new Rect(contentRect.x + contentRect.width -60, contentRect.y, 60, contentRect.height);
+                long memorySize = AssetDatabaseUtility.GetTextureStorageSize(assetObj as Texture);
+                EditorGUI.LabelField(memorySizeRect, EditorUtility.FormatBytes(memorySize));
+            }
         }
 
         internal void SetIgnoreAssets(string[] ignoreExt)
@@ -97,7 +106,7 @@ namespace DotEditor.Asset.Dependency
             }
             var extension = Path.GetExtension(assetPath).ToLower();
 
-            return ArrayUtility.IndexOf(m_IgnoreAssetExtensions, extension) >= 0;
+            return Array.IndexOf(m_IgnoreAssetExtensions, extension) >= 0;
         }
 
         public void RefreshDependency()
@@ -124,9 +133,10 @@ namespace DotEditor.Asset.Dependency
             
             if(selectedAssetPaths!=null && selectedAssetPaths.Length>0)
             {
-                int[] selectedItemIds = (from d in m_ElementToAssetPathDic where ArrayUtility.IndexOf(selectedAssetPaths, d.Value) >= 0 select d.Key).ToArray();
+                int[] selectedItemIds = (from d in m_ElementToAssetPathDic where Array.IndexOf(selectedAssetPaths, d.Value) >= 0 select d.Key).ToArray();
                 SetSelection(selectedItemIds, TreeViewSelectionOptions.RevealAndFrame);
             }
+            SetFocus();
             Reload();
         }
 

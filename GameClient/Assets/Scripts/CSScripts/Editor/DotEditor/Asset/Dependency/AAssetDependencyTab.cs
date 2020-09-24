@@ -1,5 +1,4 @@
 ﻿using DotEditor.GUIExtension;
-using DotEditor.GUIExtension.Windows;
 using DotEditor.TreeGUI;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +9,10 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.Asset.Dependency
 {
-    internal abstract class AAssetDependencyTab : AWindowTabView
+    internal abstract class AAssetDependencyTab
     {
+        protected EditorWindow window = null;
+
         protected AssetDependencyTreeView treeView = null;
         private TreeViewState m_TreeViewState = null;
 
@@ -44,11 +45,12 @@ namespace DotEditor.Asset.Dependency
             },
         };
 
-        public AAssetDependencyTab(EditorWindow win) : base(win)
+        public AAssetDependencyTab(EditorWindow win)
         {
+            window = win;
         }
 
-        public override void OnEnable()
+        public virtual void OnEnable()
         {
             Selection.selectionChanged += OnSelectionChanged;
         }
@@ -65,12 +67,12 @@ namespace DotEditor.Asset.Dependency
             }
         }
 
-        public override void OnDisable()
+        public virtual void OnDisable()
         {
             Selection.selectionChanged -= OnSelectionChanged;
         }
         
-        public override void OnGUI()
+        public virtual void OnGUI()
         {
             if (treeView == null)
             {

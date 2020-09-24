@@ -1,5 +1,6 @@
 ﻿using Boo.Lang;
 using DotEditor.Utilities;
+using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -29,7 +30,7 @@ namespace DotEditor.Asset.Dependency
             return allAssetData;
         }
 
-        public static void FindAllAssetData()
+        public static void FindAllAssetData(Action<string, string, float> progressAction = null)
         {
             AllAssetDependencyData data = GetOrCreateAllAssetData();
             data.Clear();
@@ -38,8 +39,6 @@ namespace DotEditor.Asset.Dependency
 
             string assetDirectory = PathUtility.GetDiskPath("Assets");
             string[] allDirectoriesInAsset = Directory.GetDirectories(assetDirectory, "*", SearchOption.AllDirectories);
-
-            EditorUtility.DisplayCancelableProgressBar("Search files", "searchFiles", 0.0f);
             for (int i = 0; i < allDirectoriesInAsset.Length; ++i)
             {
                 string dir = allDirectoriesInAsset[i].Replace("\\", "/");
@@ -47,35 +46,44 @@ namespace DotEditor.Asset.Dependency
                 {
                     continue;
                 }
-                if (EditorUtility.DisplayCancelableProgressBar("Search files", $"Search:{dir}", i / (float)allDirectoriesInAsset.Length))
-                {
-                    return;
-                }
+
+                progressAction?.Invoke("Search files", $"Search:{dir}", i / (float)allDirectoriesInAsset.Length);
 
                 (from file in Directory.GetFiles(dir, "*.*", SearchOption.TopDirectoryOnly)
                  where Path.GetExtension(file).ToLower() != ".meta"
                  select PathUtility.GetAssetPath(file)
                                   ).ToList().ForEach((f) => { assetPaths.Add(f); });
             }
-            EditorUtility.ClearProgressBar();
 
             if (assetPaths.Count > 0)
             {
-                foreach (var assetPath in assetPaths)
+                for(int i =0;i<assetPaths.Count;++i)
                 {
-                    allAssetData.AddData(GetDependencyData(assetPath));
+                    progressAction?.Invoke("Get Dependency", $"GetDependency:{assetPaths[i]}", i / (float)assetPaths.Count);
+                    allAssetData.AddData(GetDependencyData(assetPaths[i]));
                 }
             }
             EditorUtility.SetDirty(allAssetData);
         }
 
-        public static AssetDependencyData[] GetAssetUsedBy(string assetPath)
+        public static AssetDependencyData[] GetAssetUsedBy(string assetPath, Action<string, string, float> progressAction = null)
         {
             AllAssetDependencyData allAssetData = GetOrCreateAllAssetData();
-            return (from data in allAssetData.assetDatas
-                    where ArrayUtility.IndexOf(data.allDepends, assetPath) >= 0 && data.assetPath != assetPath
-                    select data
-                                            ).ToArray();
+
+            List<AssetDependencyData> result = new List<AssetDependencyData>();
+            for (int i =0;i<allAssetData.assetDatas.Count;++i)
+            {
+                AssetDependencyData data = allAssetData.assetDatas[i];
+
+                progressAction?.Invoke("Get Asset Used By ", $"{data.assetPath}", i / (float)allAssetData.assetDatas.Count);
+
+                if (ArrayUtility.IndexOf(data.allDepends, assetPath) >= 0 && data.assetPath != assetPath)
+                {
+                    result.Add(data);
+                }
+            }
+
+            return result.ToArray();
         }
 
         public static AssetDependencyData GetDependencyData(string assetPath, string[] ignoreExt = null)

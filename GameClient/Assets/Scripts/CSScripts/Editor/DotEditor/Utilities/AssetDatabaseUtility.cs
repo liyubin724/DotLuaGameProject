@@ -302,6 +302,10 @@ namespace DotEditor.Utilities
 
         public static long GetAssetRuntimeMemorySize(UnityObject uObj)
         {
+            if(uObj == null)
+            {
+                return 0;
+            }
             return Profiler.GetRuntimeMemorySizeLong(uObj);
         }
 

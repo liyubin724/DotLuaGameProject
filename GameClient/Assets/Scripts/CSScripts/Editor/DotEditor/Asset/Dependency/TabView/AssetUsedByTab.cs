@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,10 +19,13 @@ namespace DotEditor.Asset.Dependency
 
         protected override void OnAssetSelectionChanged(string assetPath)
         {
-            string[] usedDatas = (from data in AssetDependencyUtil.GetAssetUsedBy(assetPath)
-                                  select data.assetPath
-                                            ).ToArray();
+            AssetDependencyData[] datas = AssetDependencyUtil.GetAssetUsedBy(assetPath, (title, message, progress) =>
+            {
+                EditorUtility.DisplayProgressBar(title, message, progress);
+            });
+            EditorUtility.ClearProgressBar();
 
+            string[] usedDatas = (from data in datas select data.assetPath).ToArray();
             treeView?.ShowDependency(usedDatas, new string[] { assetPath });
         }
 
@@ -36,7 +38,12 @@ namespace DotEditor.Asset.Dependency
                 {
                     if (EditorUtility.DisplayDialog("Warning", "This will take a lot of time.Are you sure?", "OK", "Cancel"))
                     {
-                        AssetDependencyUtil.FindAllAssetData();
+                        AssetDependencyUtil.FindAllAssetData((title,message,progress)=>
+                        {
+                            EditorUtility.DisplayProgressBar(title, message, progress);
+                        });
+                        EditorUtility.ClearProgressBar();
+
                         if (!EditorUtility.IsPersistent(m_AllAssetData) && EditorUtility.DisplayDialog("Save As", "Do you want to save it?", "OK"))
                         {
                             string filePath = EditorUtility.SaveFilePanelInProject("save", "all_asset_dependency", "asset", "Save data as a asset");
