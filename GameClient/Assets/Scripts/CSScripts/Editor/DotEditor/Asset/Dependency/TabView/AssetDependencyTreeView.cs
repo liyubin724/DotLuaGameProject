@@ -12,6 +12,8 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.Asset.Dependency
 {
+   
+
     internal class TreeViewData
     {
         public AssetDependencyData dependencyData = null;

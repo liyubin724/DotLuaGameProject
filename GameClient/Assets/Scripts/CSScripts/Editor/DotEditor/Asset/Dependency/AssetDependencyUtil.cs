@@ -1,6 +1,6 @@
-﻿using Boo.Lang;
-using DotEditor.Utilities;
+﻿using DotEditor.Utilities;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -88,12 +88,21 @@ namespace DotEditor.Asset.Dependency
 
         public static AssetDependencyData GetDependencyData(string assetPath, string[] ignoreExt = null)
         {
-            return new AssetDependencyData()
+            AllAssetDependencyData allAssetData = GetOrCreateAllAssetData();
+            AssetDependencyData assetData = allAssetData.GetData(assetPath);
+            if(assetData == null)
             {
-                assetPath = assetPath,
-                directlyDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPath, ignoreExt),
-                allDepends = AssetDatabaseUtility.GetDependencies(assetPath, ignoreExt),
-            };
+                assetData = new AssetDependencyData()
+                {
+                    assetPath = assetPath,
+                    directlyDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPath, ignoreExt),
+                    allDepends = AssetDatabaseUtility.GetDependencies(assetPath, ignoreExt),
+                };
+                allAssetData.AddData(assetData);
+
+                EditorUtility.SetDirty(allAssetData);
+            }
+            return assetData;
         }
     }
 }
