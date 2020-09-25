@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace DotEditor.GUIExtension.ListView
+namespace DotEditor.GUIExtension.TreeGUI
 {
     public delegate void SimpleListViewSelectedChange(int index);
     public delegate void SimpleListViewDrawItem(Rect rect, int index);
