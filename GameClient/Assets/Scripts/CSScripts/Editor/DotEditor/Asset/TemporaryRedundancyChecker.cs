@@ -1,13 +1,10 @@
-﻿using System;
+﻿using DotEditor.Utilities;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEditor;
 using System.IO;
+using System.Linq;
+using UnityEditor;
 using UnityEngine.U2D;
-using DotEditor.Utilities;
 
 namespace DotEditor.Asset
 {
@@ -41,10 +38,14 @@ namespace DotEditor.Asset
 
             Dictionary<string, int> repeatCountDic = GetRepeatUsedAssets();
             List<string> assetKeys = new List<string>(repeatCountDic.Keys);
+            assetKeys.Sort();
             using(StreamWriter sw = new StreamWriter(new FileStream("D:/rc-log.txt", FileMode.Create, FileAccess.Write)))
             {
                 sw.WriteLine("冗余资源数量：" + repeatCountDic.Count);
-
+                foreach(var k in assetKeys)
+                {
+                    sw.WriteLine($"{k}\t\t\t\t{repeatCountDic[k]}");
+                }
                 sw.WriteLine();
                 sw.WriteLine();
 
@@ -151,18 +152,35 @@ namespace DotEditor.Asset
 
                     List<string> depends = new List<string>();
 
-                    string[] dependAssets = AssetDatabaseUtility.GetDependencies(path, new string[] { ".cs",".txt" });
-                    foreach(var dependAsset in dependAssets)
+                    string[] childDepends = AssetDatabaseUtility.GetDirectlyDependencies(path, new string[] { ".cs", ".txt" });
+                    if (childDepends != null && childDepends.Length > 0)
                     {
-                        if (dependAsset != path  && m_BundleAssetPathList.IndexOf(dependAsset) < 0 &&
-                            depends.IndexOf(dependAsset) < 0 && !m_SpriteInAtlasDic.ContainsKey(dependAsset))
+                        foreach (var cd in childDepends)
                         {
-                            depends.Add(dependAsset);
+                            FindDpends(cd, depends);
                         }
                     }
+                    depends.Remove(path);
                     m_BundleDependAssetDic.Add(path, depends);
                 }
             });
+        }
+
+        private void FindDpends(string assetPath,List<string> depends)
+        {
+            if(!depends.Contains(assetPath) && !m_BundleAssetPathList.Contains(assetPath) && !m_SpriteInAtlasDic.ContainsKey(assetPath))
+            {
+                depends.Add(assetPath);
+
+                string[] childDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPath, new string[] { ".cs", ".txt" });
+                if(childDepends!=null && childDepends.Length>0)
+                {
+                    foreach(var cd in childDepends)
+                    {
+                        FindDpends(cd, depends);
+                    }
+                }    
+            }
         }
 
         private Dictionary<string, int> m_AssetUsedCountDic = new Dictionary<string, int>();

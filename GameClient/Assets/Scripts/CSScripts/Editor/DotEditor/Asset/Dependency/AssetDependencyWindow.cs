@@ -1,5 +1,4 @@
 ﻿using DotEditor.GUIExtension;
-using NUnit.Framework.Constraints;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -77,22 +76,13 @@ namespace DotEditor.Asset.Dependency
                 && Selection.activeObject.GetType() != typeof(DefaultAsset)
                 && EditorUtility.IsPersistent(Selection.activeObject))
             {
-                SelectedAsset(Selection.activeObject);
+                m_SelectedAsset = Selection.activeObject;
             }
         }
 
         private void OnDisable()
         {
             Selection.selectionChanged -= OnSelectionChanged;
-        }
-
-        private void SelectedAsset(UnityObject selectedObject)
-        {
-            if (selectedObject != m_SelectedAsset)
-            {
-                m_SelectedAsset = selectedObject;
-                RefreshTreeView();
-            }
         }
 
         private void OnGUI()
@@ -203,11 +193,17 @@ namespace DotEditor.Asset.Dependency
 
         private void DrawSelectedAsset()
         {
-            UnityObject asset = EditorGUILayout.ObjectField("Selected Asset", m_SelectedAsset, typeof(UnityObject), false);
-            if (asset != m_SelectedAsset)
+            EditorGUILayout.BeginHorizontal();
             {
-                Selection.activeObject = asset;
+                m_SelectedAsset = EditorGUILayout.ObjectField("Selected Asset", m_SelectedAsset, typeof(UnityObject), false);
+
+                if(GUILayout.Button("Search ...",GUILayout.Width(80)))
+                {
+                    RefreshTreeView();
+                }
             }
+            EditorGUILayout.EndHorizontal();
+            
         }
 
         private void DrawIngoreAssetExtension()

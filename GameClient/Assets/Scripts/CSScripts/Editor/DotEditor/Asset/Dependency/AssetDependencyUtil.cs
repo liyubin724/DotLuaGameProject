@@ -59,7 +59,7 @@ namespace DotEditor.Asset.Dependency
             {
                 for(int i =0;i<assetPaths.Count;++i)
                 {
-                    progressAction?.Invoke("Get Dependency", $"GetDependency:{assetPaths[i]}", i / (float)assetPaths.Count);
+                    progressAction?.Invoke("Get Dependency", $"{assetPaths[i]}", i / (float)assetPaths.Count);
                     allAssetData.AddData(GetDependencyData(assetPaths[i]));
                 }
             }
