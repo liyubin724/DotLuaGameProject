@@ -40,15 +40,56 @@ namespace DotEditor.Asset
             EditorUtility.ClearProgressBar();
 
             Dictionary<string, int> repeatCountDic = GetRepeatUsedAssets();
-            FileStream fs = new FileStream("D:/rc-log.txt",FileMode.Create,FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
-            foreach(var kvp in repeatCountDic)
+            List<string> assetKeys = new List<string>(repeatCountDic.Keys);
+            using(StreamWriter sw = new StreamWriter(new FileStream("D:/rc-log.txt", FileMode.Create, FileAccess.Write)))
             {
-                sw.WriteLine($"{kvp.Key}  ----    {kvp.Value}");
+                sw.WriteLine("冗余资源数量：" + repeatCountDic.Count);
+
+                sw.WriteLine();
+                sw.WriteLine();
+
+                sw.WriteLine("重复次数最多的前20个资源：");
+                assetKeys.Sort((item1, item2) =>
+                {
+                    return repeatCountDic[item2].CompareTo(repeatCountDic[item1]);
+                });
+
+                for(int i =0;i<20 && i<assetKeys.Count;++i)
+                {
+                    sw.WriteLine($"{assetKeys[i]}\t\t\t{repeatCountDic[assetKeys[i]]}");
+                }
+
+                sw.WriteLine();
+                sw.WriteLine();
+                sw.WriteLine("按文件扩展名进行分类统计：");
+
+                Dictionary<string, int> extensionRepeatCountDic = new Dictionary<string, int>();
+                foreach(var key in assetKeys)
+                {
+                    string extension = Path.GetExtension(key).ToLower();
+                    if(extensionRepeatCountDic.ContainsKey(extension))
+                    {
+                        extensionRepeatCountDic[extension]++;
+                    }
+                    else
+                    {
+                        extensionRepeatCountDic.Add(extension, 1);
+                    }
+                }
+                List<string> extensions = extensionRepeatCountDic.Keys.ToList();
+                extensions.Sort((item1, item2) =>
+                {
+                    return extensionRepeatCountDic[item2].CompareTo(extensionRepeatCountDic[item1]);
+                });
+
+                foreach(var extension in extensions)
+                {
+                    sw.WriteLine($"{extension}\t\t\t{extensionRepeatCountDic[extension]}");
+                }
+
+                sw.Flush();
+                sw.Close();
             }
-            sw.Flush();
-            sw.Close();
-            fs.Close();
         }
 
         private List<string> m_BundleAssetPathList = new List<string>();
