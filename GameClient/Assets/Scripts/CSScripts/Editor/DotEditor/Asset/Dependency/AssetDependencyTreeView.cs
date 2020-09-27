@@ -3,6 +3,7 @@ using DotEditor.GUIExtension.TreeGUI;
 using DotEditor.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -13,19 +14,47 @@ namespace DotEditor.Asset.Dependency
 {
     internal class AssetDependencyTreeViewModel : TreeViewModel
     {
+        private string[] m_IgnoreExtensions = new string[0];
+
         public override bool HasChild(TreeViewData data)
         {
             AssetDependencyData adData = data.GetData<AssetDependencyData>();
-            return adData.directlyDepends!=null && adData.directlyDepends.Length > 0;
+
+            int count = (from d in adData.directlyDepends
+                         where Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(d).ToLower()) < 0
+                         select d).Count();
+
+            return count > 0;
         }
 
-        public int[] ShowAssetDependency(string[] assetPaths)
+        public void SetIgnoreExtension(string[] extensions)
+        {
+            if(extensions!=null && extensions.Length>0)
+            {
+                m_IgnoreExtensions = (from ie in extensions select ie.ToLower()).ToArray();
+            }else
+            {
+                m_IgnoreExtensions = new string[0];
+            }
+        }
+
+        private bool IsAssetIgnored(string assetPath)
+        {
+            return Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(assetPath).ToLower()) >= 0;
+        }
+
+        public int[] ShowDependency(string[] assetPaths)
         {
             Clear();
 
             List<int> ids = new List<int>();
             foreach(var assetPath in assetPaths)
             {
+                if(IsAssetIgnored(assetPath))
+                {
+                    continue;
+                }
+
                 AssetDependencyData adData = AssetDependencyUtil.GetDependencyData(assetPath);
                 TreeViewData viewData = new TreeViewData()
                 {
@@ -39,24 +68,35 @@ namespace DotEditor.Asset.Dependency
             return ids.ToArray();
         }
 
-        public int[] ShowSelectedAssets(string selectedAssetPath)
+        public void ShowSelected(string selectedAssetPath,out List<int> expandIDs,out List<int> selectedIDs)
         {
-            List<int> ids = new List<int>();
-
+            selectedIDs = new List<int>();
+            expandIDs = new List<int>();
             foreach(var child in RootData.Children)
             {
-                CreateSelectedAsset(child, selectedAssetPath, ids);
+                CreateSelectedAsset(child, selectedAssetPath, selectedIDs);
             }
 
-            return ids.Distinct().ToArray();
+            selectedIDs = selectedIDs.Distinct().ToList();
+
+            foreach(var id in selectedIDs)
+            {
+                TreeViewData parentData = Get(id).Parent;
+                while(parentData!= RootData)
+                {
+                    expandIDs.Add(parentData.ID);
+                    parentData = parentData.Parent;
+                }
+            }
+            expandIDs = expandIDs.Distinct().ToList();
         }
 
-        private void CreateSelectedAsset(TreeViewData data,string selectedAssetPath,List<int> ids)
+        private void CreateSelectedAsset(TreeViewData data,string selectedAssetPath,List<int> selectedIDs)
         {
             AssetDependencyData adData = data.GetData<AssetDependencyData>();
             if(adData.assetPath == selectedAssetPath)
             {
-                ids.Add(data.ID);
+                selectedIDs.Add(data.ID);
                 return;
             }
             if (adData.allDepends != null && Array.IndexOf(adData.allDepends, selectedAssetPath) >= 0)
@@ -65,6 +105,10 @@ namespace DotEditor.Asset.Dependency
                 {
                     foreach(var childAssetPath in adData.directlyDepends)
                     {
+                        if(IsAssetIgnored(childAssetPath))
+                        {
+                            continue;
+                        }
                         AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(childAssetPath);
                         TreeViewData viewData = new TreeViewData()
                         {
@@ -78,7 +122,7 @@ namespace DotEditor.Asset.Dependency
 
                 foreach(var childData in data.Children)
                 {
-                    CreateSelectedAsset(childData, selectedAssetPath, ids);
+                    CreateSelectedAsset(childData, selectedAssetPath, selectedIDs);
                 }
             }
         }
@@ -95,6 +139,12 @@ namespace DotEditor.Asset.Dependency
                 for(int i =0;i<adData.directlyDepends.Length;++i)
                 {
                     string assetPath = adData.directlyDepends[i];
+
+                    if (IsAssetIgnored(assetPath))
+                    {
+                        continue;
+                    }
+
                     AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(assetPath);
                     var childData = new TreeViewData()
                     {
@@ -113,12 +163,6 @@ namespace DotEditor.Asset.Dependency
         {
             rowHeight = 32;
             Reload();
-        }
-
-        public void Reload(int[] expandIDs,int[] selectedIDs)
-        {
-            SetExpanded(expandIDs??new int[0]);
-            SetSelection(selectedIDs??new int[0], TreeViewSelectionOptions.FireSelectionChanged);
         }
 
         protected override void DrawTreeViewItem(Rect rect, EGUITreeViewItem item)

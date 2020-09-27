@@ -1,4 +1,5 @@
 ﻿using DotEditor.GUIExtension;
+using NUnit.Framework.Constraints;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -62,7 +63,6 @@ namespace DotEditor.Asset.Dependency
         private int m_ToolbarSelectedIndex = 0;
 
         private AssetDependencyTreeView m_TreeView = null;
-        private TreeViewState m_TreeViewState = null;
 
         private void OnEnable()
         {
@@ -113,8 +113,11 @@ namespace DotEditor.Asset.Dependency
 
         private void InitTreeView()
         {
-            m_TreeViewState = new TreeViewState();
-            m_TreeView = new AssetDependencyTreeView(m_TreeViewState, new AssetDependencyTreeViewModel());
+            TreeViewState treeViewState = new TreeViewState();
+            AssetDependencyTreeViewModel treeViewModel = new AssetDependencyTreeViewModel();
+            treeViewModel.SetIgnoreExtension(GetSelectedIgnoreExtensions());
+
+            m_TreeView = new AssetDependencyTreeView(treeViewState,treeViewModel);
             RefreshTreeView();
         }
 
@@ -128,14 +131,14 @@ namespace DotEditor.Asset.Dependency
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowAssetDependency(new string[0]);
+                int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowDependency(new string[0]);
                 m_TreeView.Reload(expandIDs, null);
             }
             else
             {
                 if (m_ToolbarSelectedIndex == 0)
                 {
-                    int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowAssetDependency(new string[] { assetPath });
+                    int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowDependency(new string[] { assetPath });
                     m_TreeView.Reload(expandIDs, null);
                 }
                 else if (m_ToolbarSelectedIndex == 1)
@@ -151,9 +154,10 @@ namespace DotEditor.Asset.Dependency
                     {
                         usedAssets.AddRange((from data in usedDatas select data.assetPath).ToArray());
                     }
-                    int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowAssetDependency(usedAssets.ToArray());
-                    int[] selectedIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowSelectedAssets(assetPath);
-                    m_TreeView.Reload(expandIDs, selectedIDs);
+                    m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowDependency(usedAssets.ToArray());
+                    m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowSelected(assetPath,out var expandIDs,out var selectedIDs);
+
+                    m_TreeView.Reload(expandIDs.ToArray(), selectedIDs.ToArray());
                 }
             }
         }
@@ -222,18 +226,22 @@ namespace DotEditor.Asset.Dependency
                     }
                     if (EditorGUI.EndChangeCheck())
                     {
-                        string[] selectedExtensions = (from extension in m_IngoreAssetExtensions
-                                                       where extension.isSelected
-                                                       let exts = extension.extension.Split(new char[] { ',' })
-                                                       from ext in exts
-                                                       select ext
-                                                       ).ToArray();
-                        //m_TreeView.SetIgnoreAssets(selectedExtensions);
+                        m_TreeView.GetModel<AssetDependencyTreeViewModel>().SetIgnoreExtension(GetSelectedIgnoreExtensions());
                     }
                 }
                 EGUI.EndIndent();
             }
             EditorGUILayout.EndVertical();
+        }
+
+        private string[] GetSelectedIgnoreExtensions()
+        {
+            return (from extension in m_IngoreAssetExtensions
+                    where extension.isSelected
+                    let exts = extension.extension.Split(new char[] { ',' })
+                    from ext in exts
+                    select ext
+                    ).ToArray();
         }
     }
 }

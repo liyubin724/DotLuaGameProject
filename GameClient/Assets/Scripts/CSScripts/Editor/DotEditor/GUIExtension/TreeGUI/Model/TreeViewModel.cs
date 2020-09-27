@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor.IMGUI.Controls;
 
 namespace DotEditor.GUIExtension.TreeGUI
 {
@@ -22,6 +24,15 @@ namespace DotEditor.GUIExtension.TreeGUI
         {
             m_IDToDataDic.Clear();
             RootData.Children.Clear();
+        }
+
+        public TreeViewData Get(int id)
+        {
+            if(m_IDToDataDic.TryGetValue(id, out var data))
+            {
+                return data;
+            }
+            return null;
         }
 
         public void AddChild(TreeViewData parent, TreeViewData data)

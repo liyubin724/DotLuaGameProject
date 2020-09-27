@@ -23,6 +23,12 @@ namespace DotEditor.GUIExtension.TreeGUI
             return (T)Model;
         }
 
+        public void Reload(int[] expandIDs,int[] selectedIDs)
+        {
+            SetExpanded(expandIDs??new int[0]);
+            SetSelection(selectedIDs ?? new int[0], TreeViewSelectionOptions.FireSelectionChanged);
+        }
+
         protected override TreeViewItem BuildRoot()
         {
             return new EGUITreeViewItem(Model.RootData);
