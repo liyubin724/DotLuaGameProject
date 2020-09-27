@@ -8,29 +8,28 @@ namespace DotEditor.GUIExtension.TreeGUI
 {
     public class EGUITreeView : TreeView
     {
-        public TreeViewModel TreeViewModel { get; private set; }
+        public TreeViewModel Model { get; private set; }
+
         private List<int> m_ExpandIDs = new List<int>();
         public EGUITreeView(TreeViewState state,TreeViewModel model) : base(state)
         {
-            TreeViewModel = model;
+            Model = model;
             showBorder = true;
             showAlternatingRowBackgrounds = true;
-
-            Reload();
         }
 
         protected override TreeViewItem BuildRoot()
         {
-            return new EGUITreeViewItem(TreeViewModel.RootData);
+            return new EGUITreeViewItem(Model.RootData);
         }
 
         protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
         {
             root.children?.Clear();
 
-            var rootData = ((EGUITreeViewItem)root).Data;
+            var rootItemData = ((EGUITreeViewItem)root).ItemData;
 
-            TreeViewData[] childDatas = TreeViewModel.GetChilds(rootData);
+            TreeViewData[] childDatas = Model.GetChilds(rootItemData);
             foreach (var childData in childDatas)
             {
                 BuildItems((EGUITreeViewItem)root, childData);
@@ -49,7 +48,7 @@ namespace DotEditor.GUIExtension.TreeGUI
 
             if(data.IsExpand)
             {
-                if(TreeViewModel.HasChild(data))
+                if(Model.HasChild(data))
                 {
                     foreach (var childData in data.Children)
                     {
@@ -58,7 +57,7 @@ namespace DotEditor.GUIExtension.TreeGUI
                 }
             }else
             {
-                if(TreeViewModel.HasChild(data))
+                if(Model.HasChild(data))
                 {
                     item.children = TreeView.CreateChildListForCollapsedParent();
                 }
@@ -70,10 +69,10 @@ namespace DotEditor.GUIExtension.TreeGUI
             List<int> expandedIDs = state.expandedIDs;
 
             int[] exceptIDs = m_ExpandIDs.Except(expandedIDs).ToArray();
-            TreeViewModel.CollapseDatas(exceptIDs);
+            Model.CollapseDatas(exceptIDs);
 
             exceptIDs = expandedIDs.Except(m_ExpandIDs).ToArray();
-            TreeViewModel.ExpandDatas(exceptIDs);
+            Model.ExpandDatas(exceptIDs);
 
             m_ExpandIDs.Clear();
             m_ExpandIDs.AddRange(expandedIDs);
@@ -94,7 +93,7 @@ namespace DotEditor.GUIExtension.TreeGUI
 
         protected virtual void DrawTreeViewItem(Rect rect,EGUITreeViewItem item)
         {
-            EditorGUI.LabelField(rect, item.Data.GetDisplayName());
+            EditorGUI.LabelField(rect, item.ItemData.GetDisplayName());
         }
     }
 }

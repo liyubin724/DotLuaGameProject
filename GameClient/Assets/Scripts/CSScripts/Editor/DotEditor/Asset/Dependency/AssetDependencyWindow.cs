@@ -61,7 +61,7 @@ namespace DotEditor.Asset.Dependency
         };
         private int m_ToolbarSelectedIndex = 0;
 
-        private AssetDependencyTreeView2 m_TreeView = null;
+        private AssetDependencyTreeView m_TreeView = null;
         private TreeViewState m_TreeViewState = null;
 
         private void OnEnable()
@@ -114,7 +114,7 @@ namespace DotEditor.Asset.Dependency
         private void InitTreeView()
         {
             m_TreeViewState = new TreeViewState();
-            m_TreeView = new AssetDependencyTreeView2(m_TreeViewState);
+            m_TreeView = new AssetDependencyTreeView(m_TreeViewState,new AssetDependencyTreeViewModel());
 
             RefreshTreeView();
         }
@@ -129,13 +129,13 @@ namespace DotEditor.Asset.Dependency
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                m_TreeView.ShowDependency(new string[0]);
+                //m_TreeView.ShowDependency(new string[0]);
             }
             else
             {
                 if (m_ToolbarSelectedIndex == 0)
                 {
-                    m_TreeView.ShowDependency(new string[] { assetPath });
+                   // m_TreeView.ShowDependency(new string[] { assetPath });
                 }
                 else if (m_ToolbarSelectedIndex == 1)
                 {
@@ -151,7 +151,7 @@ namespace DotEditor.Asset.Dependency
                         usedAssets.AddRange((from data in usedDatas select data.assetPath).ToArray());
                     }
 
-                    m_TreeView.ShowDependency(usedAssets.ToArray(), new string[] { assetPath });
+                    //m_TreeView.ShowDependency(usedAssets.ToArray(), new string[] { assetPath });
                 }
             }
         }

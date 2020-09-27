@@ -1,39 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DotEditor.GUIExtension.TreeGUI
 {
     public class TreeViewModel
     {
         public TreeViewData RootData { get; private set; }
-
         private int m_IncreaseDataID = 0;
-        private int GenerateUniqueID()
-        {
-            return ++m_IncreaseDataID;
-        }
-
         private Dictionary<int, TreeViewData> m_IDToDataDic = new Dictionary<int, TreeViewData>();
-        public TreeViewModel(TreeViewData root)
-        {
-            RootData = root;
-            root.IsExpand = true;
 
-            m_IDToDataDic.Add(root.ID, root);
+        public TreeViewModel()
+        {
+            RootData = new TreeViewData()
+            {
+                Depth = -1,
+                ID = -1,
+                IsExpand = true,
+            };
         }
 
-        public void AddChild(TreeViewData parent,TreeViewData data)
+        public void AddChild(TreeViewData parent, TreeViewData data)
         {
             parent.Children.Add(data);
             data.Parent = parent;
 
-            data.ID = GenerateUniqueID();
+            data.ID = ++m_IncreaseDataID;
             data.Depth = parent.Depth + 1;
 
             m_IDToDataDic.Add(data.ID, data);
+        }
+
+        public void RemoveChild(TreeViewData data)
+        {
+            if(data == RootData || data.Parent == null)
+            {
+                return;
+            }
+            foreach(var child in data.Children)
+            {
+                RemoveChild(child);
+            }
+            data.Parent.Children.Remove(data);
+            m_IDToDataDic.Remove(data.ID);
+            data.Parent = null;
         }
 
         public virtual bool HasChild(TreeViewData data)
@@ -43,27 +51,12 @@ namespace DotEditor.GUIExtension.TreeGUI
 
         public virtual TreeViewData[] GetChilds(TreeViewData data)
         {
-            return data.Children.ToArray();
-        }
-
-        public void CollapseDatas(int[] ids)
-        {
-            if(ids!=null && ids.Length>0)
+            if (data.IsExpand)
             {
-                foreach(var id in ids)
-                {
-                    if(m_IDToDataDic.TryGetValue(id, out var data))
-                    {
-                        data.IsExpand = false;
-                        data.Children.Clear();
-                        OnCollapseData(data);
-                    }
-                }
+                return data.Children.ToArray();
             }
+            return new TreeViewData[0];
         }
-
-        protected virtual void OnCollapseData(TreeViewData data)
-        { }
 
         public void ExpandDatas(int[] ids)
         {
@@ -83,6 +76,26 @@ namespace DotEditor.GUIExtension.TreeGUI
         protected virtual void OnExpandData(TreeViewData data)
         { }
 
+        public void CollapseDatas(int[] ids)
+        {
+            if (ids != null && ids.Length > 0)
+            {
+                foreach (var id in ids)
+                {
+                    if (m_IDToDataDic.TryGetValue(id, out var data))
+                    {
+                        data.IsExpand = false;
+                        foreach(var child in data.Children)
+                        {
+                            RemoveChild(child);
+                        }
+                        OnCollapseData(data);
+                    }
+                }
+            }
+        }
 
+        protected virtual void OnCollapseData(TreeViewData data)
+        { }
     }
 }

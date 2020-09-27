@@ -4,15 +4,15 @@ namespace DotEditor.GUIExtension.TreeGUI
 {
     public class EGUITreeViewItem : TreeViewItem
     {
-        public TreeViewData Data { get; private set; }
+        public TreeViewData ItemData { get; private set; }
 
         public EGUITreeViewItem(TreeViewData data)
         {
-            Data = data;
+            ItemData = data;
 
             id = data.ID;
             depth = data.Depth;
-            displayName = data.GetDisplayName();
+            displayName = data.DisplayName;
         }
     }
 }

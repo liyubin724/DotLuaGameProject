@@ -33,7 +33,7 @@ namespace ETest
 
     public class TestTreeViewModel : TreeViewModel
     {
-        public TestTreeViewModel(TestTreeViewData root) : base(root)
+        public TestTreeViewModel() : base()
         {
         }
 
@@ -68,7 +68,7 @@ namespace ETest
         TestTreeViewModel model = null;
         private void Awake()
         {
-            model = new TestTreeViewModel(TestTreeViewData.Root);
+            model = new TestTreeViewModel();
 
             model.AddChild(model.RootData, new TestTreeViewData()
             {
