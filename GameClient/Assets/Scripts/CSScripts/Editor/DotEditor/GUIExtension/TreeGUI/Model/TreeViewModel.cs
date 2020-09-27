@@ -18,6 +18,12 @@ namespace DotEditor.GUIExtension.TreeGUI
             };
         }
 
+        public void Clear()
+        {
+            m_IDToDataDic.Clear();
+            RootData.Children.Clear();
+        }
+
         public void AddChild(TreeViewData parent, TreeViewData data)
         {
             parent.Children.Add(data);
@@ -66,8 +72,8 @@ namespace DotEditor.GUIExtension.TreeGUI
                 {
                     if (m_IDToDataDic.TryGetValue(id, out var data))
                     {
-                        data.IsExpand = true;
                         OnExpandData(data);
+                        data.IsExpand = true;
                     }
                 }
             }
@@ -85,7 +91,8 @@ namespace DotEditor.GUIExtension.TreeGUI
                     if (m_IDToDataDic.TryGetValue(id, out var data))
                     {
                         data.IsExpand = false;
-                        foreach(var child in data.Children)
+                        var childs = data.Children.ToArray();
+                        foreach(var child in childs)
                         {
                             RemoveChild(child);
                         }

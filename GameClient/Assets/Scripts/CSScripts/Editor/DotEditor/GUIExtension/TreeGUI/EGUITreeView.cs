@@ -18,6 +18,11 @@ namespace DotEditor.GUIExtension.TreeGUI
             showAlternatingRowBackgrounds = true;
         }
 
+        public T GetModel<T>() where T: TreeViewModel
+        {
+            return (T)Model;
+        }
+
         protected override TreeViewItem BuildRoot()
         {
             return new EGUITreeViewItem(Model.RootData);

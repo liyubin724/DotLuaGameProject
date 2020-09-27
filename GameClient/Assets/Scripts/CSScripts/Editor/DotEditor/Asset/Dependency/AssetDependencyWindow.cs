@@ -114,8 +114,7 @@ namespace DotEditor.Asset.Dependency
         private void InitTreeView()
         {
             m_TreeViewState = new TreeViewState();
-            m_TreeView = new AssetDependencyTreeView(m_TreeViewState,new AssetDependencyTreeViewModel());
-
+            m_TreeView = new AssetDependencyTreeView(m_TreeViewState, new AssetDependencyTreeViewModel());
             RefreshTreeView();
         }
 
@@ -129,13 +128,15 @@ namespace DotEditor.Asset.Dependency
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                //m_TreeView.ShowDependency(new string[0]);
+                int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowAssetDependency(new string[0]);
+                m_TreeView.Reload(expandIDs, null);
             }
             else
             {
                 if (m_ToolbarSelectedIndex == 0)
                 {
-                   // m_TreeView.ShowDependency(new string[] { assetPath });
+                    int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowAssetDependency(new string[] { assetPath });
+                    m_TreeView.Reload(expandIDs, null);
                 }
                 else if (m_ToolbarSelectedIndex == 1)
                 {
@@ -150,8 +151,9 @@ namespace DotEditor.Asset.Dependency
                     {
                         usedAssets.AddRange((from data in usedDatas select data.assetPath).ToArray());
                     }
-
-                    //m_TreeView.ShowDependency(usedAssets.ToArray(), new string[] { assetPath });
+                    int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowAssetDependency(usedAssets.ToArray());
+                    int[] selectedIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowSelectedAssets(assetPath);
+                    m_TreeView.Reload(expandIDs, selectedIDs);
                 }
             }
         }
@@ -200,7 +202,7 @@ namespace DotEditor.Asset.Dependency
             UnityObject asset = EditorGUILayout.ObjectField("Selected Asset", m_SelectedAsset, typeof(UnityObject), false);
             if (asset != m_SelectedAsset)
             {
-                SelectedAsset(asset);
+                Selection.activeObject = asset;
             }
         }
 

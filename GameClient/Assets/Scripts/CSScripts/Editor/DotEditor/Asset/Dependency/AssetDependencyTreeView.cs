@@ -1,6 +1,9 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.GUIExtension.TreeGUI;
 using DotEditor.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -16,8 +19,76 @@ namespace DotEditor.Asset.Dependency
             return adData.directlyDepends!=null && adData.directlyDepends.Length > 0;
         }
 
+        public int[] ShowAssetDependency(string[] assetPaths)
+        {
+            Clear();
+
+            List<int> ids = new List<int>();
+            foreach(var assetPath in assetPaths)
+            {
+                AssetDependencyData adData = AssetDependencyUtil.GetDependencyData(assetPath);
+                TreeViewData viewData = new TreeViewData()
+                {
+                    UserData = adData,
+                    DisplayName = assetPath,
+                };
+                AddChild(RootData, viewData);
+
+                ids.Add(viewData.ID);
+            }
+            return ids.ToArray();
+        }
+
+        public int[] ShowSelectedAssets(string selectedAssetPath)
+        {
+            List<int> ids = new List<int>();
+
+            foreach(var child in RootData.Children)
+            {
+                CreateSelectedAsset(child, selectedAssetPath, ids);
+            }
+
+            return ids.Distinct().ToArray();
+        }
+
+        private void CreateSelectedAsset(TreeViewData data,string selectedAssetPath,List<int> ids)
+        {
+            AssetDependencyData adData = data.GetData<AssetDependencyData>();
+            if(adData.assetPath == selectedAssetPath)
+            {
+                ids.Add(data.ID);
+                return;
+            }
+            if (adData.allDepends != null && Array.IndexOf(adData.allDepends, selectedAssetPath) >= 0)
+            {
+                if(!data.IsExpand)
+                {
+                    foreach(var childAssetPath in adData.directlyDepends)
+                    {
+                        AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(childAssetPath);
+                        TreeViewData viewData = new TreeViewData()
+                        {
+                            UserData = childADData,
+                            DisplayName = childAssetPath,
+                        };
+                        AddChild(data, viewData);
+                    }
+                    data.IsExpand = true;
+                }
+
+                foreach(var childData in data.Children)
+                {
+                    CreateSelectedAsset(childData, selectedAssetPath, ids);
+                }
+            }
+        }
+
         protected override void OnExpandData(TreeViewData data)
         {
+            if(data.IsExpand)
+            {
+                return;
+            }
             AssetDependencyData adData = data.GetData<AssetDependencyData>();
             if(adData.directlyDepends!=null && adData.directlyDepends.Length>0)
             {
@@ -42,6 +113,12 @@ namespace DotEditor.Asset.Dependency
         {
             rowHeight = 32;
             Reload();
+        }
+
+        public void Reload(int[] expandIDs,int[] selectedIDs)
+        {
+            SetExpanded(expandIDs??new int[0]);
+            SetSelection(selectedIDs??new int[0], TreeViewSelectionOptions.FireSelectionChanged);
         }
 
         protected override void DrawTreeViewItem(Rect rect, EGUITreeViewItem item)
@@ -77,105 +154,5 @@ namespace DotEditor.Asset.Dependency
                 EditorGUI.LabelField(memorySizeRect, EditorUtility.FormatBytes(memorySize));
             }
         }
-
-        //internal void SetIgnoreAssets(string[] ignoreExt)
-        //{
-        //    m_IgnoreAssetExtensions = ignoreExt;
-        //    if(treeModel.root.children != null && treeModel.root.children.Count>0)
-        //    {
-        //        ShowDependency(m_MainAssetPaths, m_SelectedAssetPaths);
-        //    }
-        //}
-
-        //private bool IsIgnoreAsset(string assetPath)
-        //{
-        //    if(m_IgnoreAssetExtensions == null || m_IgnoreAssetExtensions.Length == 0)
-        //    {
-        //        return false;
-        //    }
-        //    var extension = Path.GetExtension(assetPath).ToLower();
-
-        //    return Array.IndexOf(m_IgnoreAssetExtensions, extension) >= 0;
-        //}
-
-        //public void RefreshDependency()
-        //{
-        //    ShowDependency(m_MainAssetPaths, m_SelectedAssetPaths);
-        //}
-
-        //internal void ShowDependency(string[] assetPaths, string[] selectedAssetPaths = null)
-        //{
-        //    m_MainAssetPaths = assetPaths;
-        //    m_SelectedAssetPaths = selectedAssetPaths;
-
-        //    m_ElementToAssetPathDic.Clear();
-        //    treeModel.root.children?.Clear();
-
-        //    if(assetPaths!=null && assetPaths.Length>0)
-        //    {
-        //        foreach(var assetPath in assetPaths)
-        //        {
-        //            CreateDependencyChildNode(treeModel.root, assetPath);
-        //        }
-        //    }
-        //    //ExpandAll();
-            
-        //    if(selectedAssetPaths!=null && selectedAssetPaths.Length>0)
-        //    {
-        //        int[] selectedItemIds = (from d in m_ElementToAssetPathDic where Array.IndexOf(selectedAssetPaths, d.Value) >= 0 select d.Key).ToArray();
-        //        SetSelection(selectedItemIds, TreeViewSelectionOptions.RevealAndFrame);
-        //    }
-        //    SetFocus();
-        //    Reload();
-        //}
-
-        //private void CreateDependencyChildNode(TreeElementWithData<TreeViewData> parentNode, string assetPath)
-        //{
-        //    if(IsIgnoreAsset(assetPath))
-        //    {
-        //        return;
-        //    }
-
-        //    AssetDependencyData data = AssetDependencyUtil.GetDependencyData(assetPath);
-        //    TreeElementWithData<TreeViewData> elementData = new TreeElementWithData<TreeViewData>(new TreeViewData()
-        //    {
-        //        dependencyData = data,
-        //    }, data.assetPath, parentNode.depth + 1, m_TreeViewElementIndex);
-
-        //    m_ElementToAssetPathDic.Add(elementData.id, elementData.name);
-
-        //    m_TreeViewElementIndex++;
-        //    treeModel.AddElement(elementData, parentNode, parentNode.hasChildren ? parentNode.children.Count : 0);
-
-        //    if(IsRepeatInTreeView((TreeElementWithData<TreeViewData>)parentNode.parent,assetPath))
-        //    {
-        //        elementData.Data.isRepeatInTreeView = true;
-        //        return;
-        //    }
-
-        //    if (data.directlyDepends != null && data.directlyDepends.Length > 0)
-        //    {
-        //        foreach (var path in data.directlyDepends)
-        //        {
-        //            CreateDependencyChildNode(elementData, path);
-        //        }
-        //    }
-        //}
-
-        //private bool IsRepeatInTreeView(TreeElementWithData<TreeViewData> parentNode, string assetPath)
-        //{
-        //    if(parentNode == null || parentNode == treeModel.root)
-        //    {
-        //        return false;
-        //    }
-        //     if(parentNode.Data.dependencyData.assetPath == assetPath)
-        //    {
-        //        return true;
-        //    }else
-        //    {
-        //        return IsRepeatInTreeView((TreeElementWithData<TreeViewData>)parentNode.parent, assetPath);
-        //    }
-
-        //}
     }
 }
