@@ -172,7 +172,10 @@ namespace DotEditor.Asset.Dependency
             Rect iconRect = new Rect(rect.x, rect.y, rect.height, rect.height);
             UnityObject assetObj = AssetDatabase.LoadAssetAtPath(adData.assetPath, typeof(UnityObject));
             Texture2D previewIcon = null;
-            if (!AssetPreview.IsLoadingAssetPreview(assetObj.GetInstanceID()))
+            if(assetObj == null)
+            {
+                previewIcon = EGUIResources.ErrorIcon;
+            }else if (!AssetPreview.IsLoadingAssetPreview(assetObj.GetInstanceID()))
             {
                 previewIcon = AssetPreview.GetAssetPreview(assetObj);
             }

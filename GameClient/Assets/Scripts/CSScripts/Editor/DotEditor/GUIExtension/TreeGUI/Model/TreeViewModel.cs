@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor.IMGUI.Controls;
+﻿using System.Collections.Generic;
 
 namespace DotEditor.GUIExtension.TreeGUI
 {
@@ -46,21 +44,6 @@ namespace DotEditor.GUIExtension.TreeGUI
             m_IDToDataDic.Add(data.ID, data);
         }
 
-        public void RemoveChild(TreeViewData data)
-        {
-            if(data == RootData || data.Parent == null)
-            {
-                return;
-            }
-            foreach(var child in data.Children)
-            {
-                RemoveChild(child);
-            }
-            data.Parent.Children.Remove(data);
-            m_IDToDataDic.Remove(data.ID);
-            data.Parent = null;
-        }
-
         public virtual bool HasChild(TreeViewData data)
         {
             return data.Children.Count > 0;
@@ -73,6 +56,22 @@ namespace DotEditor.GUIExtension.TreeGUI
                 return data.Children.ToArray();
             }
             return new TreeViewData[0];
+        }
+
+        private TreeViewData[] GetDeepChilds(TreeViewData data)
+        {
+            List<TreeViewData> dataList = new List<TreeViewData>();
+            dataList.Add(data);
+
+            if(data.IsExpand)
+            {
+                foreach(var child in data.Children)
+                {
+                    dataList.AddRange(GetDeepChilds(child));
+                }
+            }
+
+            return dataList.ToArray();
         }
 
         public void ExpandDatas(int[] ids)
@@ -97,17 +96,25 @@ namespace DotEditor.GUIExtension.TreeGUI
         {
             if (ids != null && ids.Length > 0)
             {
-                foreach (var id in ids)
+                List<TreeViewData> childs = new List<TreeViewData>();
+                foreach(var id in ids)
                 {
                     if (m_IDToDataDic.TryGetValue(id, out var data))
                     {
                         data.IsExpand = false;
-                        var childs = data.Children.ToArray();
-                        foreach(var child in childs)
+                        foreach(var child in data.Children)
                         {
-                            RemoveChild(child);
+                            childs.AddRange(GetDeepChilds(child));
                         }
-                        OnCollapseData(data);
+                        data.Children.Clear();
+                    }
+                }
+
+                foreach(var child in childs)
+                {
+                    if (m_IDToDataDic.ContainsKey(child.ID))
+                    {
+                        m_IDToDataDic.Remove(child.ID);
                     }
                 }
             }
