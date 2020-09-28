@@ -67,6 +67,7 @@ namespace DotEditor.Asset.Dependency
         {
             m_AllAssetData = AssetDependencyUtil.GetOrCreateAllAssetData();
             Selection.selectionChanged += OnSelectionChanged;
+            EditorApplication.update += Repaint;
         }
 
         private void OnSelectionChanged()
@@ -83,6 +84,7 @@ namespace DotEditor.Asset.Dependency
         private void OnDisable()
         {
             Selection.selectionChanged -= OnSelectionChanged;
+            EditorApplication.update -= Repaint;
         }
 
         private void OnGUI()
@@ -91,7 +93,7 @@ namespace DotEditor.Asset.Dependency
             {
                 InitTreeView();
             }
-
+            
             DrawAllAssetDependency();
             DrawSelectedAsset();
             DrawIngoreAssetExtension();
