@@ -169,7 +169,7 @@ namespace DotEditor.Asset.Dependency
             EditorGUILayout.BeginHorizontal();
             {
                 EditorGUILayout.ObjectField("All Asset Data", m_AllAssetData, typeof(AllAssetDependencyData), false);
-                if (GUILayout.Button("Reload", GUILayout.Width(60)))
+                if (GUILayout.Button("Reload", GUILayout.Width(80)))
                 {
                     if (EditorUtility.DisplayDialog("Warning", "This will take a lot of time.Are you sure?", "OK", "Cancel"))
                     {
@@ -203,6 +203,14 @@ namespace DotEditor.Asset.Dependency
                 {
                     RefreshTreeView();
                 }
+                EditorGUI.BeginDisabledGroup(m_ToolbarSelectedIndex != 1);
+                {
+                    if (GUILayout.Button("Selected ...", GUILayout.Width(80)))
+                    {
+                        RefreshTreeView();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
             }
             EditorGUILayout.EndHorizontal();
             
@@ -241,5 +249,10 @@ namespace DotEditor.Asset.Dependency
                     select ext
                     ).ToArray();
         }
+    }
+
+    class Contents
+    {
+
     }
 }

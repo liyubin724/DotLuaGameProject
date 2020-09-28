@@ -165,6 +165,14 @@ namespace DotEditor.Asset.Dependency
             Reload();
         }
 
+        protected override void DoubleClickedItem(int id)
+        {
+            base.DoubleClickedItem(id);
+            AssetDependencyData adData = Model.Get(id).GetData< AssetDependencyData>();
+            SelectionUtility.PingObject(adData.assetPath);
+            SelectionUtility.ActiveObject(adData.assetPath);
+        }
+
         protected override void DrawTreeViewItem(Rect rect, EGUITreeViewItem item)
         {
             AssetDependencyData adData = item.ItemData.GetData<AssetDependencyData>();
@@ -188,7 +196,6 @@ namespace DotEditor.Asset.Dependency
             if (Event.current.type == EventType.MouseUp && iconRect.Contains(Event.current.mousePosition))
             {
                 SelectionUtility.PingObject(assetObj);
-                SetSelection(new int[] { item.id }, TreeViewSelectionOptions.RevealAndFrame);
             }
 
             Rect labelRect = new Rect(iconRect.x + iconRect.width, iconRect.y, rect.width - iconRect.width, iconRect.height);
