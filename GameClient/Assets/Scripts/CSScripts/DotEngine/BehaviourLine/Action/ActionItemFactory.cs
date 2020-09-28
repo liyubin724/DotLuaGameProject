@@ -8,7 +8,7 @@ namespace DotEngine.BehaviourLine.Action
 {
     public class ActionItemFactory
     {
-        private Dictionary<Type, ObjectItemPool> itemPoolDic = new Dictionary<Type, ObjectItemPool>();
+        private Dictionary<Type, FreedomObjectPool> itemPoolDic = new Dictionary<Type, FreedomObjectPool>();
 
         private static ActionItemFactory itemFactory = null;
 
@@ -23,7 +23,7 @@ namespace DotEngine.BehaviourLine.Action
             return itemFactory;
         }
 
-        public void RegisterItemPool(Type dataType, ObjectItemPool itemPool)
+        public void RegisterItemPool(Type dataType, FreedomObjectPool itemPool)
         {
             if (!itemPoolDic.ContainsKey(dataType))
             {
@@ -33,9 +33,9 @@ namespace DotEngine.BehaviourLine.Action
 
         public ActionItem RetainItem(Type dataType)
         {
-            if (itemPoolDic.TryGetValue(dataType, out ObjectItemPool itemPool))
+            if (itemPoolDic.TryGetValue(dataType, out FreedomObjectPool itemPool))
             {
-                return (ActionItem)itemPool.GetItem();
+                return (ActionItem)itemPool.Get();
             }
             return null;
         }
@@ -43,9 +43,9 @@ namespace DotEngine.BehaviourLine.Action
         public void ReleaseItem(ActionItem item)
         {
             Type dataType = item.Data.GetType();
-            if (itemPoolDic.TryGetValue(dataType, out ObjectItemPool itemPool))
+            if (itemPoolDic.TryGetValue(dataType, out FreedomObjectPool itemPool))
             {
-                itemPool.ReleaseItem(item);
+                itemPool.Release(item);
             }
         }
 
@@ -87,7 +87,7 @@ namespace DotEngine.BehaviourLine.Action
 
             foreach (var kvp in dataToItemTypeDic)
             {
-                ObjectItemPool itemPool = new ObjectItemPool(() =>
+                FreedomObjectPool itemPool = new FreedomObjectPool(() =>
                 {
                     return Activator.CreateInstance(kvp.Value);
                 }, null, (actionItem) =>
