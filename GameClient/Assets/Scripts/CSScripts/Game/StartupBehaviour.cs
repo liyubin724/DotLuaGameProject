@@ -65,7 +65,7 @@ namespace Game
             });
 
             MonitorSystem.GetInstance().OpenRecorder(MonitorRecorderType.File, "D:/logs");
-            //MonitorSystem.GetInstance().OpenRecorder(MonitorRecorderType.Console);
+            MonitorSystem.GetInstance().OpenRecorder(MonitorRecorderType.Profiler);
         }
 
         private void OnAssetInitialize()

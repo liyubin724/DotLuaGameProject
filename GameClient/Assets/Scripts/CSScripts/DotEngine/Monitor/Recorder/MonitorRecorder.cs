@@ -13,10 +13,10 @@ namespace DotEngine.Monitor.Recorder
     public enum MonitorRecorderType
     {
         None,
-        File,
         Console,
-        Remote,
+        File,
         Profiler,
+        Remote,
     }
 
     public abstract class MonitorRecorder : IMonitorRecorder

@@ -93,7 +93,7 @@ namespace DotEngine.Monitor.Sampler
         {
         }
 
-        private void Sample()
+        public void Sample()
         {
             R record = recordPool.Get();
             if(OnSample(record))
@@ -107,7 +107,7 @@ namespace DotEngine.Monitor.Sampler
 
         protected abstract bool OnSample(R record);
 
-        private void SyncRecord()
+        public void SyncRecord()
         {
             if(m_CachedRecords.Count>0)
             {

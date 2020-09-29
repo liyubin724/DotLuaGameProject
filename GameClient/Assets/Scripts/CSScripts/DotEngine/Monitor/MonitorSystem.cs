@@ -116,6 +116,9 @@ namespace DotEngine.Monitor
                 case MonitorRecorderType.Console:
                     recorder = new ConsoleRecorder();
                     break;
+                case MonitorRecorderType.Profiler:
+                    recorder = new ProfilerRecorder();
+                    break;
             }
 
             if(recorder!=null)
