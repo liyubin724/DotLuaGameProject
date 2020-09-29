@@ -5,6 +5,7 @@ namespace DotEngine.Monitor.Recorder
 {
     public interface IMonitorRecorder: IDisposable
     {
+        void DoInit();
         void DoUpdate(float deltaTime);
         void HandleRecords(MonitorSamplerType type, MonitorRecord[] records);
     }
@@ -26,7 +27,7 @@ namespace DotEngine.Monitor.Recorder
         {
         }
 
-        protected virtual void DoInited()
+        public virtual void DoInit()
         {
 
         }

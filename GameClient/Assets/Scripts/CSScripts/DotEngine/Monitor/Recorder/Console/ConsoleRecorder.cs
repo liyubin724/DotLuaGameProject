@@ -1,9 +1,6 @@
 ﻿using DotEngine.Monitor.Sampler;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace DotEngine.Monitor.Recorder
 {
@@ -15,7 +12,14 @@ namespace DotEngine.Monitor.Recorder
         {
             if(type!= MonitorSamplerType.Log)
             {
-
+                if (records != null && records.Length > 0)
+                {
+                    foreach (var record in records)
+                    {
+                        string json = JsonConvert.SerializeObject(record, Formatting.None);
+                        Debug.Log(json);
+                    }
+                }
             }
         }
     }

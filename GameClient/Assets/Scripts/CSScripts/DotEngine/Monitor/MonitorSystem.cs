@@ -2,9 +2,6 @@
 using DotEngine.Monitor.Sampler;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.Monitor
 {
@@ -17,6 +14,7 @@ namespace DotEngine.Monitor
             if(sm_MonitorSystem == null)
             {
                 sm_MonitorSystem = new MonitorSystem();
+                sm_MonitorSystem.DoInit();
             }
             return sm_MonitorSystem;
         }
@@ -28,11 +26,26 @@ namespace DotEngine.Monitor
         {
         }
 
+        public void DoInit()
+        {
+        }
+
         public void HandleRecords(MonitorSamplerType type, MonitorRecord[] records)
         {
             foreach(var kvp in m_RecorderDic)
             {
                 kvp.Value.HandleRecords(type, records);
+            }
+        }
+
+        public void OpenSamplers(MonitorSamplerType[] types)
+        {
+            if(types!=null && types.Length>0)
+            {
+                Array.ForEach(types,(t) =>
+                {
+                    OpenSampler(t);
+                });
             }
         }
 
@@ -88,7 +101,7 @@ namespace DotEngine.Monitor
             {
                 return;
             }
-            IMonitorRecorder recorder;
+            IMonitorRecorder recorder = null;
             switch(type)
             {
                 case MonitorRecorderType.File:
@@ -100,6 +113,15 @@ namespace DotEngine.Monitor
                         }
                     }
                     break;
+                case MonitorRecorderType.Console:
+                    recorder = new ConsoleRecorder();
+                    break;
+            }
+
+            if(recorder!=null)
+            {
+                recorder.DoInit();
+                m_RecorderDic.Add(type, recorder);
             }
         }
 

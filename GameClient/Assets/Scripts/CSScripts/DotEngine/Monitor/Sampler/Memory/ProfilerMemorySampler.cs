@@ -6,7 +6,6 @@ namespace DotEngine.Monitor.Sampler
 {
     public class ProfilerMemeoryRecord : MonitorRecord
     {
-        public int FrameIndex { get; set; }
         public int MaxUsedMemory { get; set; }
         public long UsedHeapSizeLong { get; set; }
         public long MonoHeapSizeLong { get; set; }
@@ -25,7 +24,7 @@ namespace DotEngine.Monitor.Sampler
 
         protected override MonitorSamplerType Type => MonitorSamplerType.ProfilerMemory;
 
-        protected override void OnSample(ProfilerMemeoryRecord record)
+        protected override bool OnSample(ProfilerMemeoryRecord record)
         {
             record.FrameIndex = Time.frameCount;
             record.MaxUsedMemory = Profiler.maxUsedMemory;
@@ -36,6 +35,8 @@ namespace DotEngine.Monitor.Sampler
             record.TotalAllocatedMemoryLong = Profiler.GetTotalAllocatedMemoryLong();
             record.TotalReservedMemoryLong = Profiler.GetTotalReservedMemoryLong();
             record.TotalUnusedReservedMemoryLong = Profiler.GetTotalUnusedReservedMemoryLong();
+
+            return true;
         }
     }
 }

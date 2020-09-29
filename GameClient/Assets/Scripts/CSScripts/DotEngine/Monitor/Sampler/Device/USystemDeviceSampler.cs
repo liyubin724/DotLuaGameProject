@@ -19,12 +19,14 @@ namespace DotEngine.Monitor.Sampler
 
         protected override MonitorSamplerType Type => MonitorSamplerType.USystemDevice;
 
-        protected override void OnSample(USystemDeviceRecord record)
+        protected override bool OnSample(USystemDeviceRecord record)
         {
             record.BatteryLevel = SystemInfo.batteryLevel;
             record.BatteryStatus = SystemInfo.batteryStatus;
             record.DeviceName = SystemInfo.deviceName;
             record.DeviceType = SystemInfo.deviceType;
+
+            return true;
         }
     }
 }

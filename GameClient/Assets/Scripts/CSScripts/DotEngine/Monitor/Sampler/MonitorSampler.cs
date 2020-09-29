@@ -1,11 +1,13 @@
 ﻿using DotEngine.Pool;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DotEngine.Monitor.Sampler
 {
     public class MonitorRecord
     {
+        public int FrameIndex { get; set; }
         public DateTime Time { get; set; }
 
         public MonitorRecord() { }
@@ -49,19 +51,22 @@ namespace DotEngine.Monitor.Sampler
             recordPool = new SimpleObjectPool<R>((r) =>
             {
                 r.Time = DateTime.Now;
+                r.FrameIndex = Time.frameCount;
             }, null);
             m_RecordHandleAction = handleAction;
         }
 
         public void DoUpdate(float deltaTime)
         {
+            OnUpdate(deltaTime);
+
             if (SamplingFrameCount > 0)
             {
                 m_ElapseSamplingFrame++;
                 if (m_ElapseSamplingFrame % SamplingFrameCount == 0)
                 {
                     Sample();
-                    SamplingFrameCount = 0;
+                    m_ElapseSamplingFrame = 0;
                 }
             }
             else
@@ -74,19 +79,13 @@ namespace DotEngine.Monitor.Sampler
                 m_ElapseSyncTime += deltaTime;
                 if (m_ElapseSyncTime >= SyncIntervalTime)
                 {
-                    if (m_CachedRecords.Count > 0)
-                    {
-                        SyncRecord();
-                    }
+                    SyncRecord();
                     m_ElapseSyncTime -= SyncIntervalTime;
                 }
             }
             else
             {
-                if (m_CachedRecords.Count > 0)
-                {
-                    SyncRecord();
-                }
+                SyncRecord();
             }
         }
 
@@ -97,17 +96,29 @@ namespace DotEngine.Monitor.Sampler
         private void Sample()
         {
             R record = recordPool.Get();
-            OnSample(record);
-            m_CachedRecords.Add(record);
+            if(OnSample(record))
+            {
+                m_CachedRecords.Add(record);
+            }else
+            {
+                recordPool.Release(record);
+            }
         }
 
-        protected abstract void OnSample(R record);
+        protected abstract bool OnSample(R record);
 
         private void SyncRecord()
         {
             if(m_CachedRecords.Count>0)
             {
-                m_RecordHandleAction?.Invoke(Type, m_CachedRecords.ToArray());
+                R[] records = m_CachedRecords.ToArray();
+                m_RecordHandleAction?.Invoke(Type, records);
+
+                foreach(var r in records)
+                {
+                    recordPool.Release(r);
+                }
+
                 m_CachedRecords.Clear();
             }
         }

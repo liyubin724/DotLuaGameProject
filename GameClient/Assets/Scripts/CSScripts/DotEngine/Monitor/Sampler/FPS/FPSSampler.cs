@@ -7,7 +7,6 @@ namespace DotEngine.Monitor.Sampler
 {
     public class FPSRecord : MonitorRecord
     {
-        public int FrameIndex { get; set; }
         public int FPS { get; set; }
     }
 
@@ -21,12 +20,17 @@ namespace DotEngine.Monitor.Sampler
 
         protected override MonitorSamplerType Type => MonitorSamplerType.FPS;
 
-        protected override void OnSample(FPSRecord record)
+        protected override bool OnSample(FPSRecord record)
         {
-            record.FrameIndex = Time.frameCount;
-            record.FPS = Mathf.RoundToInt(1 / m_DeltaTimes.Sum()/m_DeltaTimes.Count);
+            if(m_DeltaTimes.Count>0)
+            {
+                record.FPS = Mathf.RoundToInt(1 / m_DeltaTimes.Average());
+                
+                m_DeltaTimes.Clear();
 
-            m_DeltaTimes.Clear();
+                return true;
+            }
+            return false;
         }
 
         protected override void OnUpdate(float deltaTime)

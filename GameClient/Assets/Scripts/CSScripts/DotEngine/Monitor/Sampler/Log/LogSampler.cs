@@ -37,10 +37,17 @@ namespace DotEngine.Monitor.Sampler
             });
         }
 
-        protected override void OnSample(LogRecord record)
+        protected override bool OnSample(LogRecord record)
         {
-            record.Datas = m_LogDatas.ToArray();
-            m_LogDatas.Clear();
+            if(m_LogDatas.Count>0)
+            {
+                record.Datas = m_LogDatas.ToArray();
+                
+                m_LogDatas.Clear();
+
+                return true;
+            }
+            return false;
         }
 
         public override void Dispose()

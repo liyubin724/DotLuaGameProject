@@ -23,7 +23,7 @@ namespace DotEngine.Monitor.Recorder
             }
         }
 
-        protected override void DoInited()
+        public override void DoInit()
         {
             if (!Directory.Exists(m_RootDir))
             {

@@ -15,13 +15,15 @@ namespace DotEngine.Monitor.Sampler
 
         protected override MonitorSamplerType Type => MonitorSamplerType.ProcMemory;
 
-        protected override void OnSample(ProcMemoryRecord record)
+        protected override bool OnSample(ProcMemoryRecord record)
         {
 #if UNITY_ANDROID
-
+            
 #else
-            record.ProcInfo = string.Empty;
+            //record.ProcInfo = string.Empty;
 #endif
+
+            return false;
         }
     }
 }
