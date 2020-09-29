@@ -7,21 +7,22 @@ namespace DotEditor.GUIExtension.TreeGUI
     {
         public int ID { get; internal set; } = -1;
         public int Depth { get; internal set; } = -1;
-        public SystemObject UserData { get; set; } = null;
+        public SystemObject Userdata { get; set; } = null;
         public string DisplayName { get; set; } = string.Empty;
 
         internal bool IsExpand { get; set; } = false;
         internal TreeViewData Parent { get; set; } = null;
         internal List<TreeViewData> Children { get;} = new List<TreeViewData>();
 
-        public virtual string GetDisplayName()
+        public TreeViewData(string displayName,SystemObject userdata = null)
         {
-            return GetType().Name;
+            DisplayName = displayName;
+            Userdata = userdata;
         }
 
         public T GetData<T>()
         {
-            return (T)UserData;
+            return (T)Userdata;
         }
     }
 }

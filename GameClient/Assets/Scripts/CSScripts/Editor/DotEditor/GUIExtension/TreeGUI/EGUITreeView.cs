@@ -16,6 +16,8 @@ namespace DotEditor.GUIExtension.TreeGUI
             Model = model;
             showBorder = true;
             showAlternatingRowBackgrounds = true;
+
+            Repaint();
         }
 
         public T GetModel<T>() where T: TreeViewModel
@@ -104,7 +106,7 @@ namespace DotEditor.GUIExtension.TreeGUI
 
         protected virtual void DrawTreeViewItem(Rect rect,EGUITreeViewItem item)
         {
-            EditorGUI.LabelField(rect, item.ItemData.GetDisplayName());
+            EditorGUI.LabelField(rect, item.ItemData.DisplayName);
         }
     }
 }

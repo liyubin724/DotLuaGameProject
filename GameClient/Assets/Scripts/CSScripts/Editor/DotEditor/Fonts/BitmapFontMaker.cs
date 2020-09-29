@@ -33,7 +33,7 @@ namespace DotEditor.Fonts
         }
 
         private List<BitmapFontConfig> fontConfigs = new List<BitmapFontConfig>();
-        private SimpleListView<BitmapFontConfig> fontConfigListView = null;
+        private EGUIListView<BitmapFontConfig> fontConfigListView = null;
 
         private float listViewWidth = 120;
         private int charIDStart = 19968;
@@ -74,7 +74,7 @@ namespace DotEditor.Fonts
         {
             if(fontConfigListView == null)
             {
-                fontConfigListView = new SimpleListView<BitmapFontConfig>();
+                fontConfigListView = new EGUIListView<BitmapFontConfig>();
                 fontConfigListView.AddItems(fontConfigs.ToArray());
                 fontConfigListView.OnSelectedChange = (index) =>
                 {
@@ -178,7 +178,7 @@ namespace DotEditor.Fonts
         {
             if(fontConfigListView == null)
             {
-                fontConfigListView = new SimpleListView<BitmapFontConfig>();
+                fontConfigListView = new EGUIListView<BitmapFontConfig>();
                 fontConfigListView.AddItems(fontConfigs.ToArray());
             }
 

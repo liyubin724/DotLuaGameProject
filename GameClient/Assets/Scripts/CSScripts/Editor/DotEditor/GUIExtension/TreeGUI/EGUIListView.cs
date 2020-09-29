@@ -6,15 +6,15 @@ using UnityEngine;
 
 namespace DotEditor.GUIExtension.TreeGUI
 {
-    public delegate void SimpleListViewSelectedChange(int index);
-    public delegate void SimpleListViewDrawItem(Rect rect, int index);
-    public delegate float SimpleListViewGetItemHeight(int index);
+    public delegate void ListViewSelectedChange(int index);
+    public delegate void ListViewDrawItem(Rect rect, int index);
+    public delegate float ListViewGetItemHeight(int index);
 
-    public class SimpleListView<T>
+    public class EGUIListView<T>
     {
-        public SimpleListViewSelectedChange OnSelectedChange { get; set; }
-        public SimpleListViewDrawItem OnDrawItem { get; set; }
-        public SimpleListViewGetItemHeight GetItemHeight { get; set; }
+        public ListViewSelectedChange OnSelectedChange { get; set; }
+        public ListViewDrawItem OnDrawItem { get; set; }
+        public ListViewGetItemHeight GetItemHeight { get; set; }
 
         public string Header { get; set; } = null;
         public bool ShowSeparator { get; set; } = true;
@@ -23,7 +23,7 @@ namespace DotEditor.GUIExtension.TreeGUI
 
         private SimpleListTreeView<T> listTreeView;
 
-        public SimpleListView()
+        public EGUIListView()
         {
             listTreeView = new SimpleListTreeView<T>(this);
         }
@@ -136,8 +136,8 @@ namespace DotEditor.GUIExtension.TreeGUI
 
     internal class SimpleListTreeView<T> : TreeView
     {
-        private SimpleListView<T> listView = null;
-        public SimpleListTreeView(SimpleListView<T> listView) : base(new TreeViewState())
+        private EGUIListView<T> listView = null;
+        public SimpleListTreeView(EGUIListView<T> listView) : base(new TreeViewState())
         {
             this.listView = listView;
 

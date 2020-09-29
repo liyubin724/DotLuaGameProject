@@ -25,7 +25,7 @@ namespace DotEditor.Entity.Avatar
         private static int DATA_LIST_WIDTH = 200;
         private static int LINE_THINKNESS = 1;
 
-        private SimpleListView<string> dataListView;
+        private EGUIListView<string> dataListView;
 
         private AvatarCreatorData currentCreatorData = null;
         private NativeDrawerObject partOutputDataDrawer = null;
@@ -37,7 +37,7 @@ namespace DotEditor.Entity.Avatar
         {
             string[] assetPaths = AssetDatabaseUtility.FindAssets<AvatarCreatorData>();
 
-            dataListView = new SimpleListView<string>
+            dataListView = new EGUIListView<string>
             {
                 Header = "Data List",
                 OnSelectedChange = OnListViewItemSelected,

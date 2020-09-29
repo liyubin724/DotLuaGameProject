@@ -56,11 +56,7 @@ namespace DotEditor.Asset.Dependency
                 }
 
                 AssetDependencyData adData = AssetDependencyUtil.GetDependencyData(assetPath);
-                TreeViewData viewData = new TreeViewData()
-                {
-                    UserData = adData,
-                    DisplayName = assetPath,
-                };
+                TreeViewData viewData = new TreeViewData(assetPath, adData);
                 AddChild(RootData, viewData);
 
                 ids.Add(viewData.ID);
@@ -110,11 +106,7 @@ namespace DotEditor.Asset.Dependency
                             continue;
                         }
                         AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(childAssetPath);
-                        TreeViewData viewData = new TreeViewData()
-                        {
-                            UserData = childADData,
-                            DisplayName = childAssetPath,
-                        };
+                        TreeViewData viewData = new TreeViewData(childAssetPath, childADData);
                         AddChild(data, viewData);
                     }
                     data.IsExpand = true;
@@ -146,11 +138,7 @@ namespace DotEditor.Asset.Dependency
                     }
 
                     AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(assetPath);
-                    var childData = new TreeViewData()
-                    {
-                        DisplayName = assetPath,
-                        UserData = childADData,
-                    };
+                    var childData = new TreeViewData(assetPath, childADData);
                     AddChild(data, childData);
                 }
             }    

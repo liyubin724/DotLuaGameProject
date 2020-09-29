@@ -10,7 +10,7 @@ namespace DotEditor.GUIExtension.TreeGUI
 
         public TreeViewModel()
         {
-            RootData = new TreeViewData()
+            RootData = new TreeViewData(string.Empty)
             {
                 Depth = -1,
                 ID = -1,
