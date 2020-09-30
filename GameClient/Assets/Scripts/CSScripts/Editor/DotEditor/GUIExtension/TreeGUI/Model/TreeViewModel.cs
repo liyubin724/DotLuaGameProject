@@ -5,6 +5,7 @@ namespace DotEditor.GUIExtension.TreeGUI
     public class TreeViewModel
     {
         public TreeViewData RootData { get; private set; }
+
         private int m_IncreaseDataID = 0;
         private Dictionary<int, TreeViewData> m_IDToDataDic = new Dictionary<int, TreeViewData>();
 
