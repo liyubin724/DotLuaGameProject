@@ -25,6 +25,7 @@ namespace DotEditor.GUIExtension.DataGrid
     public delegate float GetRowHeight(GridViewData itemData);
     public delegate void ItemDoubleClicked(GridViewData itemData);
     public delegate void ItemContextClicked(GridViewData itemData);
+    public delegate void ItemSelectedChanged(GridViewData[] itemDatas);
 
     public class GridTreeView : TreeView
     {
@@ -35,6 +36,7 @@ namespace DotEditor.GUIExtension.DataGrid
         public GetRowHeight OnGetRowHeight { get; set; }
         public ItemContextClicked OnItemContextClicked { get; set; }
         public ItemDoubleClicked OnItemDoubleClicked { get; set; }
+        public ItemSelectedChanged OnItemSelectedChanged { get; set; }
 
         private bool m_HasHeader = false;
         private List<int> m_ExpandIDs = new List<int>();
@@ -104,6 +106,23 @@ namespace DotEditor.GUIExtension.DataGrid
                 {
                     item.children = TreeView.CreateChildListForCollapsedParent();
                 }
+            }
+        }
+
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            if(OnItemSelectedChanged!=null)
+            {
+                GridViewData[] datas = new GridViewData[selectedIds.Count];
+                for(int i =0;i<selectedIds.Count;++i)
+                {
+                    datas[i] = ViewModel.GetDataByID(selectedIds[i]);
+                }
+
+                OnItemSelectedChanged(datas);
+            }else
+            {
+                base.SelectionChanged(selectedIds);
             }
         }
 

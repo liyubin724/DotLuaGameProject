@@ -1,5 +1,6 @@
 ﻿using DotEngine.Generic;
 using System.Collections.Generic;
+using SystemObject = System.Object;
 
 namespace DotEditor.GUIExtension.DataGrid
 {
@@ -32,6 +33,22 @@ namespace DotEditor.GUIExtension.DataGrid
             {
                 return data;
             }
+            return null;
+        }
+
+        public GridViewData GetDataByUserdata(SystemObject sysObj)
+        {
+            if(sysObj!=null)
+            {
+                foreach(var kvp in m_IDToDataDic)
+                {
+                    if(kvp.Value.Userdata == sysObj)
+                    {
+                        return kvp.Value;
+                    }
+                }
+            }
+
             return null;
         }
 

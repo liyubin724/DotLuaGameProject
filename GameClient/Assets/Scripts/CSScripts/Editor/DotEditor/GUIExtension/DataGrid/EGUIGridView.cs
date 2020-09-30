@@ -24,6 +24,7 @@ namespace DotEditor.GUIExtension.DataGrid
                 OnGetRowHeight = GetRowHeight,
                 OnItemContextClicked = OnItemContextClicked,
                 OnItemDoubleClicked  = OnItemDoubleClicked,
+                OnItemSelectedChanged = OnItemSelectedChanged,
             };
             m_TreeView.Reload();
         }
@@ -44,6 +45,10 @@ namespace DotEditor.GUIExtension.DataGrid
         }
 
         protected virtual void OnItemDoubleClicked(GridViewData itemData)
+        {
+
+        }
+        protected virtual void OnItemSelectedChanged(GridViewData[] itemDatas)
         {
 
         }

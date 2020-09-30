@@ -6,24 +6,41 @@ namespace DotEditor.GUIExtension.DataGrid
 {
     public class EGUITreeView
     {
-        private GridTreeView m_TreeView = null;
+        protected GridTreeView treeView = null;
 
         public TreeViewState ViewState { get; private set; }
         public GridViewModel ViewModel { get; private set; }
+
+        protected EGUITreeView() 
+        {
+            ViewState = new TreeViewState();
+            ViewModel = new GridViewModel();
+
+            treeView = new GridTreeView(ViewState, ViewModel)
+            {
+                OnDrawRowItem = OnDrawRowItem,
+                OnGetRowHeight = GetRowHeight,
+                OnItemContextClicked = OnItemContextClicked,
+                OnItemDoubleClicked = OnItemDoubleClicked,
+                OnItemSelectedChanged = OnItemSelectedChanged,
+            };
+            treeView.Reload();
+        }
 
         public EGUITreeView(GridViewModel model)
         {
             ViewState = new TreeViewState();
             ViewModel = model;
 
-            m_TreeView = new GridTreeView(ViewState, ViewModel)
+            treeView = new GridTreeView(ViewState, ViewModel)
             {
                 OnDrawRowItem = OnDrawRowItem,
                 OnGetRowHeight = GetRowHeight,
                 OnItemContextClicked = OnItemContextClicked,
                 OnItemDoubleClicked = OnItemDoubleClicked,
+                OnItemSelectedChanged = OnItemSelectedChanged,
             };
-            m_TreeView.Reload();
+            treeView.Reload();
         }
 
         public T GetViewModel<T>()where T:GridViewModel
@@ -33,8 +50,8 @@ namespace DotEditor.GUIExtension.DataGrid
 
         public void Reload(int[] expandIDs, int[] selectedIDs)
         {
-            m_TreeView?.SetExpanded(expandIDs ?? new int[0]);
-            m_TreeView?.SetSelection(selectedIDs ?? new int[0], TreeViewSelectionOptions.FireSelectionChanged);
+            treeView?.SetExpanded(expandIDs ?? new int[0]);
+            treeView?.SetSelection(selectedIDs ?? new int[0], TreeViewSelectionOptions.FireSelectionChanged);
         }
 
         protected virtual void OnDrawRowItem(Rect rect,GridViewData itemData)
@@ -57,20 +74,25 @@ namespace DotEditor.GUIExtension.DataGrid
 
         }
 
+        protected virtual void OnItemSelectedChanged(GridViewData[] itemDatas)
+        {
+
+        }
+
         public void Reload()
         {
-            m_TreeView?.Reload();
+            treeView?.Reload();
         }
 
         public void OnGUILayout()
         {
             Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-            m_TreeView?.OnGUI(rect);
+            treeView?.OnGUI(rect);
         }
 
         public void OnGUI(Rect rect)
         {
-            m_TreeView?.OnGUI(rect);
+            treeView?.OnGUI(rect);
         }
     }
 }
