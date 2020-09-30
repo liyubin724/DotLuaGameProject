@@ -1,4 +1,5 @@
-﻿using DotEngine.Monitor.Sampler;
+﻿using DotEditor.GUIExtension.DataGrid;
+using DotEngine.Monitor.Sampler;
 using DotEngine.Net.Client;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,14 +8,14 @@ using UnityEngine;
 
 namespace DotEditor.Monitor
 {
-    public class MonitorProfilerWindow : EditorWindow
+    public class ProfilerWindow : EditorWindow
     {
-        public static MonitorProfilerWindow window = null;
+        public static ProfilerWindow window = null;
 
         [MenuItem("Game/Monitor/Profiler Window")]
         public static void ShowWin()
         {
-            var win = GetWindow<MonitorProfilerWindow>();
+            var win = GetWindow<ProfilerWindow>();
             win.wantsMouseMove = true;
             win.titleContent = Contents.titleContent;
             win.Show();
@@ -25,14 +26,19 @@ namespace DotEditor.Monitor
 
         private ClientNet m_ClientNet;
         private double m_PreUpdateTimer;
-        public MonitorProfilerModel Model { get; private set; }
+        public ProfilerModel Model { get; private set; }
 
         private void Awake()
         {
             EditorApplication.update += DoUpdate;
             m_PreUpdateTimer = EditorApplication.timeSinceStartup;
 
-            Model = new MonitorProfilerModel();
+            Model = new ProfilerModel((type)=>
+            {
+                if(type == MonitorSamplerType.FPS)
+                    m_FPSTreeView?.Reload();
+                Repaint();
+            });
 
             window = this;
         }
@@ -51,18 +57,20 @@ namespace DotEditor.Monitor
             Repaint();
         }
 
+        private ProfilerTabTreeView m_FPSTreeView = null;
         private void OnGUI()
         {
             DrawToolbar();
-            MonitorRecord[] records = Model.GetLastRecords(MonitorSamplerType.FPS, -1);
-            if(records.Length>0)
+            if(m_FPSTreeView == null)
             {
-                foreach(var r in records)
-                {
-                    FPSRecord record = (FPSRecord)r;
-                    EditorGUILayout.LabelField($"{record.FrameIndex},{record.FPS}");
-                }
+                m_FPSTreeView = new ProfilerTabTreeView(Model.GetTabModel(MonitorSamplerType.FPS),new string[] {
+                    "Time",
+                    "FrameIndex",
+                    "FPS",
+                });
             }
+
+            m_FPSTreeView.OnGUILayout();
         }
 
         private void DrawToolbar()

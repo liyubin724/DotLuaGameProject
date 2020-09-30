@@ -76,7 +76,7 @@ namespace DotEditor.Monitor
         public void OnRecordsReceived(int messageID,object message)
         {
             ProfilerRecordMessage recordMessage = (ProfilerRecordMessage)message;
-            MonitorProfilerWindow.window?.Model.AddRecordMessage(recordMessage);
+            ProfilerWindow.window?.Model.AddRecordMessage(recordMessage);
         }
 
     }

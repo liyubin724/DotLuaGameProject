@@ -6,9 +6,16 @@ namespace DotEngine.Monitor.Sampler
 {
     public class LogData
     {
+        public int FrameIndex { get; set; }
+        public DateTime Time { get; set; }
         public LogType Type { get; set; }
         public string Message { get; set; }
         public string StackTrace { get; set; }
+
+        public override string ToString()
+        {
+            return $"[{Time}]  [{Type}] {Message}";
+        }
     }
 
     public class LogRecord : MonitorRecord
@@ -31,6 +38,8 @@ namespace DotEngine.Monitor.Sampler
         {
             m_LogDatas.Add(new LogData()
             {
+                FrameIndex = Time.frameCount,
+                Time = DateTime.Now,
                 Type = type,
                 Message = message,
                 StackTrace = stackTrace,
