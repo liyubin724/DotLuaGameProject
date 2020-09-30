@@ -1,22 +1,21 @@
 ﻿using DotEditor.GUIExtension;
-using DotEditor.GUIExtension.TreeGUI;
+using DotEditor.GUIExtension.DataGrid;
 using DotEditor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.Asset.Dependency
 {
-    internal class AssetDependencyTreeViewModel : TreeViewModel
+    internal class AssetDependencyTreeViewModel : GridViewModel
     {
         private string[] m_IgnoreExtensions = new string[0];
 
-        public override bool HasChild(TreeViewData data)
+        public override bool HasChild(GridViewData data)
         {
             AssetDependencyData adData = data.GetData<AssetDependencyData>();
 
@@ -56,8 +55,8 @@ namespace DotEditor.Asset.Dependency
                 }
 
                 AssetDependencyData adData = AssetDependencyUtil.GetDependencyData(assetPath);
-                TreeViewData viewData = new TreeViewData(assetPath, adData);
-                AddChild(RootData, viewData);
+                GridViewData viewData = new GridViewData(assetPath, adData);
+                AddChildData(RootData, viewData);
 
                 ids.Add(viewData.ID);
             }
@@ -77,7 +76,7 @@ namespace DotEditor.Asset.Dependency
 
             foreach(var id in selectedIDs)
             {
-                TreeViewData parentData = Get(id).Parent;
+                GridViewData parentData = GetDataByID(id).Parent;
                 while(parentData!= RootData)
                 {
                     expandIDs.Add(parentData.ID);
@@ -87,7 +86,7 @@ namespace DotEditor.Asset.Dependency
             expandIDs = expandIDs.Distinct().ToList();
         }
 
-        private void CreateSelectedAsset(TreeViewData data,string selectedAssetPath,List<int> selectedIDs)
+        private void CreateSelectedAsset(GridViewData data,string selectedAssetPath,List<int> selectedIDs)
         {
             AssetDependencyData adData = data.GetData<AssetDependencyData>();
             if(adData.assetPath == selectedAssetPath)
@@ -106,8 +105,8 @@ namespace DotEditor.Asset.Dependency
                             continue;
                         }
                         AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(childAssetPath);
-                        TreeViewData viewData = new TreeViewData(childAssetPath, childADData);
-                        AddChild(data, viewData);
+                        GridViewData viewData = new GridViewData(childAssetPath, childADData);
+                        AddChildData(data, viewData);
                     }
                     data.IsExpand = true;
                 }
@@ -119,7 +118,7 @@ namespace DotEditor.Asset.Dependency
             }
         }
 
-        protected override void OnExpandData(TreeViewData data)
+        protected override void OnDataExpand(GridViewData data)
         {
             if(data.IsExpand)
             {
@@ -138,8 +137,8 @@ namespace DotEditor.Asset.Dependency
                     }
 
                     AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(assetPath);
-                    var childData = new TreeViewData(assetPath, childADData);
-                    AddChild(data, childData);
+                    var childData = new GridViewData(assetPath, childADData);
+                    AddChildData(data, childData);
                 }
             }    
         }
@@ -147,23 +146,26 @@ namespace DotEditor.Asset.Dependency
 
     internal class AssetDependencyTreeView : EGUITreeView
     {
-        public AssetDependencyTreeView(TreeViewState state,AssetDependencyTreeViewModel model) : base(state,model)
+        public AssetDependencyTreeView(AssetDependencyTreeViewModel model) : base(model)
         {
-            rowHeight = 32;
             Reload();
         }
 
-        protected override void DoubleClickedItem(int id)
+        protected override float GetRowHeight(GridViewData itemData)
         {
-            base.DoubleClickedItem(id);
-            AssetDependencyData adData = Model.Get(id).GetData< AssetDependencyData>();
+            return 32.0f;
+        }
+
+        protected override void OnItemDoubleClicked(GridViewData itemData)
+        {
+            AssetDependencyData adData = itemData.GetData< AssetDependencyData>();
             SelectionUtility.PingObject(adData.assetPath);
             SelectionUtility.ActiveObject(adData.assetPath);
         }
 
-        protected override void DrawTreeViewItem(Rect rect, EGUITreeViewItem item)
+        protected override void OnDrawRowItem(Rect rect, GridViewData itemData)
         {
-            AssetDependencyData adData = item.ItemData.GetData<AssetDependencyData>();
+            AssetDependencyData adData = itemData.GetData<AssetDependencyData>();
 
             Rect iconRect = new Rect(rect.x, rect.y, rect.height, rect.height);
             UnityObject assetObj = AssetDatabase.LoadAssetAtPath(adData.assetPath, typeof(UnityObject));

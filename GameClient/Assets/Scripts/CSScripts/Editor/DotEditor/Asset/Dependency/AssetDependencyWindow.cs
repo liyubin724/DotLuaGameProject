@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 namespace DotEditor.Asset.Dependency
@@ -105,11 +104,10 @@ namespace DotEditor.Asset.Dependency
 
         private void InitTreeView()
         {
-            TreeViewState treeViewState = new TreeViewState();
             AssetDependencyTreeViewModel treeViewModel = new AssetDependencyTreeViewModel();
             treeViewModel.SetIgnoreExtension(GetSelectedIgnoreExtensions());
 
-            m_TreeView = new AssetDependencyTreeView(treeViewState,treeViewModel);
+            m_TreeView = new AssetDependencyTreeView(treeViewModel);
             RefreshTreeView();
         }
 
@@ -123,14 +121,14 @@ namespace DotEditor.Asset.Dependency
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowDependency(new string[0]);
+                int[] expandIDs = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(new string[0]);
                 m_TreeView.Reload(expandIDs, null);
             }
             else
             {
                 if (m_ToolbarSelectedIndex == 0)
                 {
-                    int[] expandIDs = m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowDependency(new string[] { assetPath });
+                    int[] expandIDs = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(new string[] { assetPath });
                     m_TreeView.Reload(expandIDs, null);
                 }
                 else if (m_ToolbarSelectedIndex == 1)
@@ -146,8 +144,8 @@ namespace DotEditor.Asset.Dependency
                     {
                         usedAssets.AddRange((from data in usedDatas select data.assetPath).ToArray());
                     }
-                    m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowDependency(usedAssets.ToArray());
-                    m_TreeView.GetModel<AssetDependencyTreeViewModel>().ShowSelected(assetPath,out var expandIDs,out var selectedIDs);
+                    m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(usedAssets.ToArray());
+                    m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowSelected(assetPath,out var expandIDs,out var selectedIDs);
 
                     m_TreeView.Reload(expandIDs.ToArray(), selectedIDs.ToArray());
                 }
@@ -232,7 +230,7 @@ namespace DotEditor.Asset.Dependency
                     }
                     if (EditorGUI.EndChangeCheck())
                     {
-                        m_TreeView.GetModel<AssetDependencyTreeViewModel>().SetIgnoreExtension(GetSelectedIgnoreExtensions());
+                        m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().SetIgnoreExtension(GetSelectedIgnoreExtensions());
                     }
                 }
                 EGUI.EndIndent();

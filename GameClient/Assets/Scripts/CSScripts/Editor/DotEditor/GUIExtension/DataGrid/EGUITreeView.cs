@@ -26,6 +26,17 @@ namespace DotEditor.GUIExtension.DataGrid
             m_TreeView.Reload();
         }
 
+        public T GetViewModel<T>()where T:GridViewModel
+        {
+            return (T)ViewModel;
+        }
+
+        public void Reload(int[] expandIDs, int[] selectedIDs)
+        {
+            m_TreeView?.SetExpanded(expandIDs ?? new int[0]);
+            m_TreeView?.SetSelection(selectedIDs ?? new int[0], TreeViewSelectionOptions.FireSelectionChanged);
+        }
+
         protected virtual void OnDrawRowItem(Rect rect,GridViewData itemData)
         {
             EditorGUI.LabelField(rect, itemData.DisplayName);
