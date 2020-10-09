@@ -1,4 +1,5 @@
-﻿using DotEngine.Monitor.Sampler;
+﻿using DotEditor.GUIExtension.DataGrid;
+using DotEngine.Monitor.Sampler;
 using DotEngine.Net.Client;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,13 +52,30 @@ namespace DotEditor.Monitor
             Repaint();
         }
 
+        private EGUISampleListView sampleListView = null;
+        private string selectedItem = string.Empty;
         private void OnGUI()
         {
             DrawToolbar();
+            //if(sampleListView==null)
+            //{
+            //    sampleListView = new EGUISampleListView()
+            //    {
+            //        OnSelectedChange = (name) =>
+            //        {
+            //            selectedItem = (string)name;
+            //        },
+            //    };
+            //    sampleListView.AddItems(new string[] { "A", "B", "C", "D", "E" });
+            //}
+            //sampleListView.OnGUILayout();
+
+            //GUILayout.Label("Selected:" + selectedItem);
+
             MonitorRecord[] records = Model.GetLastRecords(MonitorSamplerType.FPS, -1);
-            if(records.Length>0)
+            if (records.Length > 0)
             {
-                foreach(var r in records)
+                foreach (var r in records)
                 {
                     FPSRecord record = (FPSRecord)r;
                     EditorGUILayout.LabelField($"{record.FrameIndex},{record.FPS}");

@@ -6,8 +6,11 @@ namespace DotEditor.GUIExtension.DataGrid
 {
     public class EGUITreeView
     {
+        private static float HEADER_HEIGHT = 30;
+
         protected GridTreeView treeView = null;
 
+        public string HeaderContent { get; set; } = null;
         public TreeViewState ViewState { get; private set; }
         public GridViewModel ViewModel { get; private set; }
 
@@ -23,6 +26,8 @@ namespace DotEditor.GUIExtension.DataGrid
                 OnItemContextClicked = OnItemContextClicked,
                 OnItemDoubleClicked = OnItemDoubleClicked,
                 OnItemSelectedChanged = OnItemSelectedChanged,
+
+                IsMultiSelect = false,
             };
             treeView.Reload();
         }
@@ -84,14 +89,25 @@ namespace DotEditor.GUIExtension.DataGrid
             treeView?.Reload();
         }
 
-        public void OnGUILayout()
+        public virtual void OnGUILayout()
         {
+            if (!string.IsNullOrEmpty(HeaderContent))
+            {
+                EGUILayout.DrawBoxHeader(HeaderContent, EGUIStyles.BoxedHeaderCenterStyle,GUILayout.ExpandWidth(true));
+            }
             Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
             treeView?.OnGUI(rect);
         }
 
-        public void OnGUI(Rect rect)
+        public virtual void OnGUI(Rect rect)
         {
+            if (!string.IsNullOrEmpty(HeaderContent))
+            {
+                EGUI.DrawBoxHeader(new Rect(rect.x, rect.y, rect.width, HEADER_HEIGHT), HeaderContent, EGUIStyles.BoxedHeaderCenterStyle);
+            }
+
+            rect.height -= HEADER_HEIGHT;
+
             treeView?.OnGUI(rect);
         }
     }

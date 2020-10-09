@@ -80,10 +80,27 @@ namespace DotEditor.GUIExtension.DataGrid
             AddChildData(RootData, data);
         }
 
+        public void InsertData(int index,GridViewData data)
+        {
+            InsertChildData(index, RootData, data);
+        }
+
         public void AddChildData(GridViewData parentData, GridViewData childData)
         {
             parentData.IsExpand = true;
             parentData.Children.Add(childData);
+
+            childData.Parent = parentData;
+            childData.ID = m_IDCreator.NextID;
+            childData.Depth = parentData.Depth + 1;
+
+            m_IDToDataDic.Add(childData.ID, childData);
+        }
+
+        public void InsertChildData(int index,GridViewData parentData,GridViewData childData)
+        {
+            parentData.IsExpand = true;
+            parentData.Children.Insert(index,childData);
 
             childData.Parent = parentData;
             childData.ID = m_IDCreator.NextID;
