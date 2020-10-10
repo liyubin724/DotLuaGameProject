@@ -20,8 +20,8 @@ namespace DotEditor.Examples
 
         private void OnGUI()
         {
-            //OnGUI1();
-            //OnGUI2();
+            OnGUI1();
+            OnGUI2();
             OnGUI3();
         }
 

@@ -55,8 +55,18 @@ namespace DotEditor.GUIExtension.DataGrid
 
         public void Reload(int[] expandIDs, int[] selectedIDs)
         {
-            treeView?.SetExpanded(expandIDs ?? new int[0]);
+            SetExpand(expandIDs);
+            SetSelection(selectedIDs);
+        }
+
+        public void SetSelection(int[] selectedIDs)
+        {
             treeView?.SetSelection(selectedIDs ?? new int[0], TreeViewSelectionOptions.FireSelectionChanged);
+        }
+
+        public void SetExpand(int[] expandIDs)
+        {
+            treeView?.SetExpanded(expandIDs ?? new int[0]);
         }
 
         protected virtual void OnDrawRowItem(Rect rect,GridViewData itemData)

@@ -17,6 +17,11 @@ namespace DotEditor.GUIExtension.DataGrid
         {
         }
 
+        public int Count()
+        {
+            return ViewModel.RootData.Children.Count;
+        }
+
         public void AddItem (SystemObject data)
         {
             ViewModel.AddData(new GridViewData(data.ToString(), data));
@@ -81,6 +86,17 @@ namespace DotEditor.GUIExtension.DataGrid
         {
             ViewModel.Clear();
             Reload();
+        }
+
+        public void SetSelectionByIndex(int index)
+        {
+            var rootChilds = ViewModel.RootData.Children;
+            if (index >= 0 && index < rootChilds.Count)
+            {
+                var item = rootChilds[index];
+
+                SetSelection(new int[] { item.ID });
+            }
         }
 
         protected override void OnDrawRowItem(Rect rect, GridViewData itemData)
