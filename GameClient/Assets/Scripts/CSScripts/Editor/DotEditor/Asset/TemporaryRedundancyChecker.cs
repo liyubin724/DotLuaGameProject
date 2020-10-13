@@ -10,7 +10,7 @@ namespace DotEditor.Asset
 {
     public class TemporaryRedundancyChecker
     {
-        [MenuItem("Game/Asset/TR Checker")]
+        [MenuItem("Game/Asset/Temp/TR Checker")]
         public static void TRChecker()
         {
             new TemporaryRedundancyChecker().Check();
@@ -39,7 +39,8 @@ namespace DotEditor.Asset
             Dictionary<string, int> repeatCountDic = GetRepeatUsedAssets();
             List<string> assetKeys = new List<string>(repeatCountDic.Keys);
             assetKeys.Sort();
-            using(StreamWriter sw = new StreamWriter(new FileStream("D:/rc-log.txt", FileMode.Create, FileAccess.Write)))
+            string logFilePath = $"D:/rc_{DateTime.Now.ToString("yyyy-MM-dd")}.log";
+            using (StreamWriter sw = new StreamWriter(new FileStream(logFilePath, FileMode.Create, FileAccess.Write)))
             {
                 sw.WriteLine("冗余资源数量：" + repeatCountDic.Count);
                 foreach(var k in assetKeys)

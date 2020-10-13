@@ -25,16 +25,22 @@ namespace DotEditor.GUIExtension.DataGrid
     public delegate float GetRowHeight(GridViewData itemData);
     public delegate void ItemDoubleClicked(GridViewData itemData);
     public delegate void ItemContextClicked(GridViewData itemData);
+    public delegate void ItemSelectedChanged(GridViewData[] itemDatas);
+    public delegate bool GetCanMultiSelect(GridViewData itemData);
 
     public class GridTreeView : TreeView
     {
         public GridViewModel ViewModel { get; private set; }
+
+        public bool IsMultiSelect { get; set; } = false;
 
         public DrawRowItem OnDrawRowItem { get; set; }
         public DrawColumnItem OnDrawColumnItem { get; set; }
         public GetRowHeight OnGetRowHeight { get; set; }
         public ItemContextClicked OnItemContextClicked { get; set; }
         public ItemDoubleClicked OnItemDoubleClicked { get; set; }
+        public ItemSelectedChanged OnItemSelectedChanged { get; set; }
+        public GetCanMultiSelect GetCanMultiSelect { get; set; }
 
         private bool m_HasHeader = false;
         private List<int> m_ExpandIDs = new List<int>();
@@ -54,6 +60,8 @@ namespace DotEditor.GUIExtension.DataGrid
 
             showBorder = true;
             showAlternatingRowBackgrounds = true;
+
+            multiColumnHeader.ResizeToFit();
         }
 
         public T GetViewModel<T>() where T:GridViewModel
@@ -107,6 +115,23 @@ namespace DotEditor.GUIExtension.DataGrid
             }
         }
 
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            if(OnItemSelectedChanged!=null)
+            {
+                GridViewData[] datas = new GridViewData[selectedIds.Count];
+                for(int i =0;i<selectedIds.Count;++i)
+                {
+                    datas[i] = ViewModel.GetDataByID(selectedIds[i]);
+                }
+
+                OnItemSelectedChanged(datas);
+            }else
+            {
+                base.SelectionChanged(selectedIds);
+            }
+        }
+
         protected override void ExpandedStateChanged()
         {
             List<int> expandedIDs = state.expandedIDs;
@@ -140,6 +165,19 @@ namespace DotEditor.GUIExtension.DataGrid
             GridViewData data = ((GridTreeViewItem)item).ItemData;
 
             return OnGetRowHeight != null ? OnGetRowHeight(data) : base.GetCustomRowHeight(row, item);
+        }
+
+        protected override bool CanMultiSelect(TreeViewItem item)
+        {
+            if(IsMultiSelect && GetCanMultiSelect != null)
+            {
+                GridViewData data = ((GridTreeViewItem)item).ItemData;
+                return GetCanMultiSelect(data);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         protected override void RowGUI(RowGUIArgs args)

@@ -8,14 +8,14 @@ using UnityEngine;
 
 namespace DotEditor.Monitor
 {
-    public class ProfilerWindow : EditorWindow
+    public class MonitorProfilerWindow : EditorWindow
     {
-        public static ProfilerWindow window = null;
+        public static MonitorProfilerWindow window = null;
 
         [MenuItem("Game/Monitor/Profiler Window")]
         public static void ShowWin()
         {
-            var win = GetWindow<ProfilerWindow>();
+            var win = GetWindow<MonitorProfilerWindow>();
             win.wantsMouseMove = true;
             win.titleContent = Contents.titleContent;
             win.Show();
@@ -26,19 +26,14 @@ namespace DotEditor.Monitor
 
         private ClientNet m_ClientNet;
         private double m_PreUpdateTimer;
-        public ProfilerModel Model { get; private set; }
+        public MonitorProfilerModel Model { get; private set; }
 
         private void Awake()
         {
             EditorApplication.update += DoUpdate;
             m_PreUpdateTimer = EditorApplication.timeSinceStartup;
 
-            Model = new ProfilerModel((type)=>
-            {
-                if(type == MonitorSamplerType.FPS)
-                    m_FPSTreeView?.Reload();
-                Repaint();
-            });
+            Model = new MonitorProfilerModel();
 
             window = this;
         }
@@ -57,20 +52,35 @@ namespace DotEditor.Monitor
             Repaint();
         }
 
-        private ProfilerTabTreeView m_FPSTreeView = null;
+        private EGUISampleListView sampleListView = null;
+        private string selectedItem = string.Empty;
         private void OnGUI()
         {
             DrawToolbar();
-            if(m_FPSTreeView == null)
-            {
-                m_FPSTreeView = new ProfilerTabTreeView(Model.GetTabModel(MonitorSamplerType.FPS),new string[] {
-                    "Time",
-                    "FrameIndex",
-                    "FPS",
-                });
-            }
+            //if(sampleListView==null)
+            //{
+            //    sampleListView = new EGUISampleListView()
+            //    {
+            //        OnSelectedChange = (name) =>
+            //        {
+            //            selectedItem = (string)name;
+            //        },
+            //    };
+            //    sampleListView.AddItems(new string[] { "A", "B", "C", "D", "E" });
+            //}
+            //sampleListView.OnGUILayout();
 
-            m_FPSTreeView.OnGUILayout();
+            //GUILayout.Label("Selected:" + selectedItem);
+
+            MonitorRecord[] records = Model.GetLastRecords(MonitorSamplerType.FPS, -1);
+            if (records.Length > 0)
+            {
+                foreach (var r in records)
+                {
+                    FPSRecord record = (FPSRecord)r;
+                    EditorGUILayout.LabelField($"{record.FrameIndex},{record.FPS}");
+                }
+            }
         }
 
         private void DrawToolbar()

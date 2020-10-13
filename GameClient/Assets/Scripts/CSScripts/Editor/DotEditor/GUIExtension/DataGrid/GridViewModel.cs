@@ -1,5 +1,6 @@
 ﻿using DotEngine.Generic;
 using System.Collections.Generic;
+using SystemObject = System.Object;
 
 namespace DotEditor.GUIExtension.DataGrid
 {
@@ -35,6 +36,22 @@ namespace DotEditor.GUIExtension.DataGrid
             return null;
         }
 
+        public GridViewData GetDataByUserdata(SystemObject sysObj)
+        {
+            if(sysObj!=null)
+            {
+                foreach(var kvp in m_IDToDataDic)
+                {
+                    if(kvp.Value.Userdata == sysObj)
+                    {
+                        return kvp.Value;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public void RemoveData(GridViewData data)
         {
             GridViewData parentData = data.Parent;
@@ -63,10 +80,27 @@ namespace DotEditor.GUIExtension.DataGrid
             AddChildData(RootData, data);
         }
 
+        public void InsertData(int index,GridViewData data)
+        {
+            InsertChildData(index, RootData, data);
+        }
+
         public void AddChildData(GridViewData parentData, GridViewData childData)
         {
             parentData.IsExpand = true;
             parentData.Children.Add(childData);
+
+            childData.Parent = parentData;
+            childData.ID = m_IDCreator.NextID;
+            childData.Depth = parentData.Depth + 1;
+
+            m_IDToDataDic.Add(childData.ID, childData);
+        }
+
+        public void InsertChildData(int index,GridViewData parentData,GridViewData childData)
+        {
+            parentData.IsExpand = true;
+            parentData.Children.Insert(index,childData);
 
             childData.Parent = parentData;
             childData.ID = m_IDCreator.NextID;
