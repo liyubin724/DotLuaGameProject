@@ -17,20 +17,15 @@ public class CPUInfoUtil {
         return ProcCPUInfoUtil.getAverageFrequence();
     }
 
-    public static String getAllCoreFrequence()
+    public static long[] getEveryCoreFrequence()
     {
-        return ProcCPUInfoUtil.getCoreFrequence();
+        return ProcCPUInfoUtil.getEveryCoreFrequence();
     }
 
     public static float getUsageRate() {
         return ProcCPUStatInfoUtil.getUsageRateByCmd();
     }
-
-    public static String getProcCPUInfo()
-    {
-        return ProcCPUInfoUtil.getProcCPUInfo();
-    }
-
+    
     @SuppressLint("DefaultLocale")
     public static String getCPUInfo()
     {

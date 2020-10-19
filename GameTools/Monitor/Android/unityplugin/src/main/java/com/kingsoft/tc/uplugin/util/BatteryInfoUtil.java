@@ -11,7 +11,7 @@ import com.kingsoft.tc.uplugin.UnityUtil;
 
 public class BatteryInfoUtil {
     private static final String RATE_KEY = "rate";
-    private static final String IS_CHARGING_KEY = "isChanging";
+    private static final String CHARGING_Status_KEY = "changingStatus";
     private static final String TEMPERATURE_KEY = "temperature";
 
     private static boolean isInited = false;
@@ -42,14 +42,26 @@ public class BatteryInfoUtil {
         return temperature / 10.0f;
     }
 
+    public static float getRate()
+    {
+        initReceiver();
+        return (level>0&&scale>0)?level/(float)scale:0.0f;
+    }
+
+    public static int getChangingStatus()
+    {
+        initReceiver();
+        return status;
+    }
+
     @SuppressLint("DefaultLocale")
     public static String getBatteryInfo() {
         initReceiver();
 
         return String.format("%s:%f\n%s:%b\n%s:%f",
-                RATE_KEY, (level>0&&scale>0)?level/(float)scale:0.0f,
-                IS_CHARGING_KEY, (status== BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL),
-                TEMPERATURE_KEY, temperature / 10.0f
+                RATE_KEY, getRate(),
+                CHARGING_Status_KEY, getChangingStatus(),
+                TEMPERATURE_KEY, getTemperature()
         );
     }
 

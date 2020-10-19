@@ -57,32 +57,33 @@ public class ProcCPUInfoUtil {
         return freqSum/coreCount;
     }
 
-    public static String getCoreFrequence()
+    public static long[] getEveryCoreFrequence()
     {
         int coreCount = getCoreCount();
-        StringBuilder infoBuilder = new StringBuilder();
+        long[] result = new long[coreCount];
         for(int i =0;i<coreCount;++i)
         {
-            infoBuilder.append(GetCurrentFrequence(i)+" ");
+            result[i] = GetCurrentFrequence(i);
         }
-        return infoBuilder.toString();
+        return  result;
     }
 
-    private static int GetCurrentFrequence(int coreIndex)
+    private static long GetCurrentFrequence(int coreIndex)
     {
         String filePath = String.format(SCALING_CUR_FREQ_FILE_PATH,coreIndex);
+        long freq = 0L;
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line = br.readLine();
             if(line!=null)
             {
                 line = line.trim();
-                return Integer.parseInt(line);
+                freq = Long.parseLong(line);
             }
             br.close();
         } catch (IOException e) {
             Log.e(PlatformPlugin.LOG_TAG, "Read File Error,filePath = " + filePath, e);
         }
-        return 0;
+        return freq;
     }
 }

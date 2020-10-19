@@ -4,13 +4,14 @@ using KSTCEngine.Pool;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
 namespace KSTCEngine.GPerf
 {
     public class GPerfMonitor
     {
         public static GPerfMonitor Monitor = null;
-        public static void Startup()
+        public static GPerfMonitor Startup()
         {
             if(Monitor == null)
             {
@@ -19,7 +20,7 @@ namespace KSTCEngine.GPerf
                 GPerfPlatform.InitPlugin();
 
                 GameObject gObj = new GameObject("GPerfMonitor");
-                GameObject.DontDestroyOnLoad(gObj);
+                UnityObject.DontDestroyOnLoad(gObj);
                 Monitor.m_Behaviour = gObj.AddComponent<GPerfBehaviour>();
 
                 //Monitor.OpenRecorder(RecorderType.File);
@@ -32,6 +33,7 @@ namespace KSTCEngine.GPerf
                 Monitor.OpenSampler(SamplerType.FPS);
                 Monitor.OpenSampler(SamplerType.Memory);
             }
+            return Monitor;
         }
 
         public static void ShuntDown()
