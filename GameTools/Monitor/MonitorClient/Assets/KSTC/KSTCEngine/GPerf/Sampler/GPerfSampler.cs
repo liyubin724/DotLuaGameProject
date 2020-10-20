@@ -3,24 +3,9 @@ using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
-    public enum SamplerType
-    {
-        None = 0,
-        FPS,
-        Device,
-        Memory,
-        CPU,
-        Battery,
-    }
-
-    public enum SamplerFrequencyType
-    {
-        Once = 0,
-        Interval,
-    }
-
     public class Record
     {
+        public SamplerMetricType Type { get; internal set; }
         public DateTime Time { get; set; }
         public int FrameIndex { get; set; }
 
@@ -29,58 +14,44 @@ namespace KSTCEngine.GPerf.Sampler
         public Record() { }
     }
 
-    public interface ISampler
-    {
-        SamplerType SamplerType { get;}
-        SamplerFrequencyType FrequencyType { get; set; }
-        float SamplingInterval { get; set; }
-
-        Record GetRecord(); 
-
-        void DoSample();
-        void DoUpdate(float deltaTime);
-        void DoDispose();
-    }
-
     public abstract class GPerfSampler<T> : ISampler where T : Record,new()
     { 
-        public abstract SamplerType SamplerType { get; }
-        public SamplerFrequencyType FrequencyType { get; set; } = SamplerFrequencyType.Interval;
+        public SamplerMetricType MetricType { get; protected set; }
+        public SamplerFreqType FreqType { get; protected set; }
         public float SamplingInterval { get; set; } = 1.0f;
+        public Action<Record> OnSampleRecord { get; set; }
 
-        private T m_Record;
-        private int m_SamplingCount = 0;
+        protected T RecordData { get; set; }
         private float m_ElapsedTime = 0.0f;
-
-        protected GPerfSampler()
-        {
-            m_Record = new T();
-        }
 
         public Record GetRecord()
         {
-            return m_Record;
+            return RecordData;
+        }
+
+        public void DoStart()
+        {
+            RecordData = new T();
+            OnStart();
         }
 
         public void DoSample()
         {
-            ++m_SamplingCount;
+            RecordData.Type = MetricType;
+            RecordData.FrameIndex = Time.frameCount;
+            RecordData.Time = DateTime.Now;
+            RecordData.ExtensionData = string.Empty;
 
-            m_Record.FrameIndex = Time.frameCount;
-            m_Record.Time = DateTime.Now;
-            m_Record.ExtensionData = string.Empty;
+            OnSample(RecordData);
 
-            Sampling(m_Record);
+            OnSampleRecord?.Invoke(RecordData);
         }
-
-        protected abstract void Sampling(T record);
 
         public virtual void DoUpdate(float deltaTime)
         {
-            if(FrequencyType == SamplerFrequencyType.Once && m_SamplingCount == 0)
-            {
-                DoSample();
-            }else if(FrequencyType == SamplerFrequencyType.Interval)
+            OnUpdate(deltaTime);
+
+            if(FreqType == SamplerFreqType.Interval)
             {
                 m_ElapsedTime += deltaTime;
                 if (m_ElapsedTime >= SamplingInterval)
@@ -92,8 +63,21 @@ namespace KSTCEngine.GPerf.Sampler
             }
         }
 
-        public virtual void DoDispose()
+        public void DoEnd()
         {
+            OnEnd();
         }
+
+
+        public void DoDispose()
+        {
+            OnDispose();
+        }
+
+        protected virtual void OnStart() { }
+        protected abstract void OnSample(T record);
+        protected virtual void OnUpdate(float deltaTime) { }
+        protected virtual void OnEnd() { }
+        protected virtual void OnDispose() { }
     }
 }

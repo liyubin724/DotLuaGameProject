@@ -12,9 +12,11 @@ namespace KSTCEngine.GPerf.Sampler
 
     public class CPUSampler : GPerfSampler<CPURecord>
     {
-        public override SamplerType SamplerType => SamplerType.CPU;
         public CPUSampler() : base()
         {
+            MetricType = SamplerMetricType.CPU;
+            FreqType = SamplerFreqType.Interval;
+            SamplingInterval = 1.0f;
         }
 
         public float GetUsageRate()
@@ -32,7 +34,7 @@ namespace KSTCEngine.GPerf.Sampler
             return SystemInfo.processorCount;
         }
 
-        protected override void Sampling(CPURecord record)
+        protected override void OnSample(CPURecord record)
         {
             record.CoreCount = GetCoreCount();
             record.Frequency = GetFrequency();

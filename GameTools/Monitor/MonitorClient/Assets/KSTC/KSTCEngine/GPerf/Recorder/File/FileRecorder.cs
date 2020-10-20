@@ -1,7 +1,6 @@
 ﻿using KSTCEngine.GPerf.Sampler;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -10,13 +9,11 @@ namespace KSTCEngine.GPerf.Recorder
 {
     public class FileRecorder : GPerfRecorder
     {
-        public override RecorderType Type => RecorderType.File;
-
-        private Dictionary<SamplerType, StreamWriter> m_SamplerStreams = new Dictionary<SamplerType, StreamWriter>();
         private string m_RootDir = null;
-
+        private StreamWriter m_Writer = null;
         public FileRecorder()
         {
+            Type = RecorderType.File;
         }
 
         private string GetRootDir()
@@ -32,7 +29,7 @@ namespace KSTCEngine.GPerf.Recorder
 #endif
         }
 
-        public override void DoInit()
+        public override void DoStart()
         {
             m_RootDir = GetRootDir();
 
@@ -51,46 +48,33 @@ namespace KSTCEngine.GPerf.Recorder
                     }
                 }
             }
-        }
 
-        public override void HandleRecords(Record[] records)
-        {
-            if (records != null && records.Length > 0)
+            try
             {
-                foreach (var record in records)
-                {
-                    if (!string.IsNullOrEmpty(record.ExtensionData))
-                    {
-                        WriteRecord(record);
-                    }
-                }
+                DateTime time = DateTime.Now;
+                string logPath = $"{m_RootDir}gperf_{time.Year}{time.Month}{time.Day}.log";
+                m_Writer = new StreamWriter(logPath, true, Encoding.UTF8);
+                m_Writer.AutoFlush = true;
+            }catch
+            {
+                m_Writer?.Close();
+                m_Writer = null;
             }
         }
 
-        private void WriteRecord(Record record)
+        public override void HandleRecord(Record record)
         {
-            //if (!m_SamplerStreams.TryGetValue(record.Type, out StreamWriter writer))
-            //{
-            //    DateTime time = DateTime.Now;
-            //    string logPath = $"{m_RootDir}log_{time.Year}{time.Month}{time.Day}_{record.Type.ToString().ToLower()}.log";
-            //    writer = new StreamWriter(logPath, true, Encoding.UTF8);
-            //    writer.AutoFlush = true;
-
-            //    m_SamplerStreams[record.Type] = writer;
-            //}
-
-            string json = JsonConvert.SerializeObject(record, Formatting.Indented);
-            //writer.WriteLine(json);
+            if(m_Writer!=null)
+            {
+                string json = JsonConvert.SerializeObject(record, Formatting.Indented);
+                m_Writer.WriteLine(json);
+            }
         }
 
         public override void DoDispose()
         {
-            foreach (var kvp in m_SamplerStreams)
-            {
-                kvp.Value.Flush();
-                kvp.Value.Close();
-            }
-            m_SamplerStreams.Clear();
+            m_Writer?.Close();
+            m_Writer = null;
 
             base.DoDispose();
         }

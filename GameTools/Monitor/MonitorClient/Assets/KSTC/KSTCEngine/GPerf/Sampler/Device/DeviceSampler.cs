@@ -5,20 +5,18 @@ namespace KSTCEngine.GPerf.Sampler
 {
     public class DeviceRecord : Record
     {
-        public string DeviceModel { get; set; } = string.Empty;
-        public string DeviceName { get; set; } = string.Empty;
-        public string DeviceUniqueIdentifier { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string UniqueIdentifier { get; set; } = string.Empty;
     }
 
     public class DeviceSampler : GPerfSampler<DeviceRecord>
     {
-        public override SamplerType SamplerType => SamplerType.Device;
-
-        public DeviceSampler() : base()
+        public DeviceSampler()
         {
-            FrequencyType = SamplerFrequencyType.Once;
+            MetricType = SamplerMetricType.Device;
+            FreqType = SamplerFreqType.Start;
         }
-
 
         public string GetModel()
         {
@@ -35,11 +33,16 @@ namespace KSTCEngine.GPerf.Sampler
             return SystemInfo.deviceUniqueIdentifier;
         }
 
-        protected override void Sampling(DeviceRecord record)
+        protected override void OnStart()
         {
-            record.DeviceModel = GetModel();
-            record.DeviceName = GetName();
-            record.DeviceUniqueIdentifier = GetUniqueIdentifier();
+            DoSample();
+        }
+
+        protected override void OnSample(DeviceRecord record)
+        {
+            record.Model = GetModel();
+            record.Name = GetName();
+            record.UniqueIdentifier = GetUniqueIdentifier();
         }
     }
 }

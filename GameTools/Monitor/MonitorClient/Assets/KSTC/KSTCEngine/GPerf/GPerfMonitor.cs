@@ -1,7 +1,5 @@
 ﻿using KSTCEngine.GPerf.Recorder;
 using KSTCEngine.GPerf.Sampler;
-using KSTCEngine.Pool;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
@@ -10,56 +8,73 @@ namespace KSTCEngine.GPerf
 {
     public class GPerfMonitor
     {
-        public static GPerfMonitor Monitor = null;
-        public static GPerfMonitor Startup()
+        private static GPerfMonitor sm_Instance = null;
+        public static GPerfMonitor GetInstance()
         {
-            if (Monitor == null)
+            if(sm_Instance == null)
             {
-                Monitor = new GPerfMonitor();
+                sm_Instance = new GPerfMonitor();
 
                 GPerfPlatform.InitPlugin();
-
-                GameObject gObj = new GameObject("GPerfMonitor");
-                UnityObject.DontDestroyOnLoad(gObj);
-                Monitor.m_Behaviour = gObj.AddComponent<GPerfBehaviour>();
-
-                //Monitor.OpenRecorder(RecorderType.File);
-                Monitor.OpenRecorder(RecorderType.Console);
-                Monitor.OpenRecorder(RecorderType.Remote);
-
-                Monitor.OpenSampler(SamplerType.Battery);
-                Monitor.OpenSampler(SamplerType.Device);
-                Monitor.OpenSampler(SamplerType.CPU);
-                Monitor.OpenSampler(SamplerType.FPS);
-                Monitor.OpenSampler(SamplerType.Memory);
             }
-            return Monitor;
+            return sm_Instance;
         }
 
-        public static void ShuntDown()
-        {
-            if (Monitor != null)
-            {
-                GameObject.Destroy(Monitor.m_Behaviour.gameObject);
-                Monitor.DoDispose();
-                Monitor = null;
-            }
-        }
-        private GPerfBehaviour m_Behaviour = null;
+        private GameObject m_GObject = null;
 
-        private Dictionary<SamplerType, ISampler> m_SamplerDic = new Dictionary<SamplerType, ISampler>();
+        private Dictionary<SamplerMetricType, ISampler> m_SamplerDic = new Dictionary<SamplerMetricType, ISampler>();
         private Dictionary<RecorderType, IRecorder> m_RecorderDic = new Dictionary<RecorderType, IRecorder>();
+       
+        private bool m_IsRunning = false;
 
         private GPerfMonitor()
         {
         }
 
-        private void OnSamplerRecord(SamplerType samplerType, Record record)
+        public void Startup()
         {
+            if(m_GObject == null)
+            {
+                m_GObject = new GameObject("GPerfMonitor");
+                m_GObject.AddComponent<GPerfBehaviour>();
 
+                UnityObject.DontDestroyOnLoad(m_GObject);
+            }
+            m_IsRunning = true;
         }
 
-        public void OpenSampler(SamplerType type)
+        public void Shuntdown()
+        {
+            if(m_IsRunning)
+            {
+                foreach (var kvp in m_SamplerDic)
+                {
+                    ISampler sampler = kvp.Value;
+                    if(sampler.FreqType == SamplerFreqType.End)
+                    {
+                        sampler.DoSample();
+                    }
+                }
+
+                foreach(var kvp in m_RecorderDic)
+                {
+                    kvp.Value.DoEnd();
+                }
+            }
+
+            m_IsRunning = false;
+        }
+
+        public Record GetSamplerRecord(SamplerMetricType metricType)
+        {
+            if(m_SamplerDic.TryGetValue(metricType,out ISampler sampler))
+            {
+                return sampler.GetRecord();
+            }
+            return null;
+        }
+
+        public void OpenSampler(SamplerMetricType type)
         {
             if (m_SamplerDic.ContainsKey(type))
             {
@@ -68,32 +83,36 @@ namespace KSTCEngine.GPerf
             ISampler sampler = null;
             switch (type)
             {
-                case SamplerType.FPS:
+                case SamplerMetricType.FPS:
                     sampler = new FPSSampler();
                     break;
-                case SamplerType.Memory:
+                case SamplerMetricType.Memory:
                     sampler = new MemorySampler();
                     break;
-                case SamplerType.Device:
+                case SamplerMetricType.Device:
                     sampler = new DeviceSampler();
                     break;
-                case SamplerType.Battery:
+                case SamplerMetricType.Battery:
                     sampler = new BatterySampler();
                     break;
-                case SamplerType.CPU:
+                case SamplerMetricType.CPU:
                     sampler = new CPUSampler();
                     break;
                 default:
                     sampler = null;
                     break;
             }
+
             if (sampler != null)
             {
+                sampler.OnSampleRecord = OnHandleRecord;
+
+                sampler.DoStart();
                 m_SamplerDic.Add(type, sampler);
             }
         }
 
-        public void CloseSampler(SamplerType type)
+        public void CloseSampler(SamplerMetricType type)
         {
             if (m_SamplerDic.TryGetValue(type, out var sampler))
             {
@@ -117,12 +136,16 @@ namespace KSTCEngine.GPerf
                 case RecorderType.Console:
                     recorder = new ConsoleRecorder();
                     break;
+                case RecorderType.Remote:
+                    recorder = new RemoteRecorder();
+                    break;
             }
 
             if (recorder != null)
             {
                 recorder.SetUserInfo();
-                recorder.DoInit();
+
+                recorder.DoStart();
                 m_RecorderDic.Add(type, recorder);
             }
         }
@@ -136,9 +159,27 @@ namespace KSTCEngine.GPerf
             }
         }
 
+        private void OnHandleRecord(Record record)
+        {
+            foreach(var kvp in m_RecorderDic)
+            {
+                kvp.Value.HandleRecord(record);
+            }
+        }
+
         public void DoUpdate(float deltaTime)
         {
+            if(!m_IsRunning)
+            {
+                return;
+            }
+
             foreach (var kvp in m_SamplerDic)
+            {
+                kvp.Value.DoUpdate(deltaTime);
+            }
+
+            foreach(var kvp in m_RecorderDic)
             {
                 kvp.Value.DoUpdate(deltaTime);
             }

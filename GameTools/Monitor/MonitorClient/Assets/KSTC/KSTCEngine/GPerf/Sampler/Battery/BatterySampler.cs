@@ -12,10 +12,11 @@ namespace KSTCEngine.GPerf.Sampler
 
     public class BatterySampler : GPerfSampler<BatteryRecord>
     {
-        public override SamplerType SamplerType => SamplerType.Battery;
-
-        public BatterySampler() : base()
+        public BatterySampler()
         {
+            MetricType = SamplerMetricType.Battery;
+            FreqType = SamplerFreqType.Interval;
+            SamplingInterval = 60.0f;
         }
 
         public float GetTemperature()
@@ -33,7 +34,7 @@ namespace KSTCEngine.GPerf.Sampler
             return SystemInfo.batteryLevel;
         }
 
-        protected override void Sampling(BatteryRecord record)
+        protected override void OnSample(BatteryRecord record)
         {
             record.Temperature = GetTemperature();
             record.Status = GetStatus();

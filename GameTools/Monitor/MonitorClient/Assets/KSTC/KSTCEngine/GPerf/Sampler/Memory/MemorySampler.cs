@@ -19,16 +19,17 @@ namespace KSTCEngine.GPerf.Sampler
         public const string MEMORY_IS_LOW_KEY = "lowMemory";
         public const string MEMORY_PSS_KEY = "PSS";
 
-        public override SamplerType SamplerType => SamplerType.Memory;
-
         private long m_TotalMem = 0L;
         private long m_AvailableMem = 0L;
         private long m_Threshold = 0L;
         private bool m_IsLowMem = false;
         private long m_PssMem = 0L;
 
-        public MemorySampler() : base()
+        public MemorySampler()
         {
+            MetricType = SamplerMetricType.Memory;
+            FreqType = SamplerFreqType.Interval;
+            SamplingInterval = 10.0f;
         }
 
         public long GetTotalMem()
@@ -56,7 +57,7 @@ namespace KSTCEngine.GPerf.Sampler
             return m_PssMem;
         }
 
-        protected override void Sampling(MemoryRecord record)
+        protected override void OnSample(MemoryRecord record)
         {
             string memoryInfo = GPerfPlatform.GetMemoryInfo();
             if(!string.IsNullOrEmpty(memoryInfo))

@@ -6,18 +6,12 @@ namespace KSTCEngine.GPerf
     {
         private void Update()
         {
-            if(GPerfMonitor.Monitor!=null)
-            {
-                GPerfMonitor.Monitor.DoUpdate(Time.unscaledDeltaTime);
-            }
+            GPerfMonitor.GetInstance().DoUpdate(Time.deltaTime);
         }
 
         private void OnDestroy()
         {
-            if (GPerfMonitor.Monitor != null)
-            {
-                GPerfMonitor.ShuntDown();
-            }
+            GPerfMonitor.GetInstance().DoDispose();
         }
     }
 }

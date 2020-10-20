@@ -4,10 +4,9 @@ namespace KSTCEngine.GPerf.Recorder
 {
     public enum RecorderType
     {
-        None,
+        None = 0,
         Console,
         File,
-        Profiler,
         Remote,
     }
 
@@ -17,27 +16,38 @@ namespace KSTCEngine.GPerf.Recorder
        
         void SetUserInfo();
 
-        void DoInit();
+        void DoStart();
+        void DoUpdate(float deltaTime);
+        void DoEnd();
         void DoDispose();
 
-        void HandleRecords(Record[] records);
+        void HandleRecord(Record record);
     }
 
     public abstract class GPerfRecorder : IRecorder
     {
-        public abstract RecorderType Type { get; }
+        public RecorderType Type { get; protected set; }
 
         public void SetUserInfo() { }
 
-        public virtual void DoInit()
+        public virtual void DoStart()
         {
         }
 
-        public abstract void HandleRecords(Record[] records);
+        public virtual void DoUpdate(float deltaTime)
+        {
+
+        }
+
+        public virtual void DoEnd()
+        {
+
+        }
+
+        public abstract void HandleRecord(Record record);
 
         public virtual void DoDispose()
         {
-
         }
     }
 }
