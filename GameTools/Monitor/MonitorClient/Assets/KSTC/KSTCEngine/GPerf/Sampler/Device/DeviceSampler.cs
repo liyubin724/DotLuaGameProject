@@ -1,25 +1,45 @@
-﻿using KSTCEngine.GPerf.Metric;
+﻿using System;
+using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
-    public class DeviceSampler : GPerfSampler
+    public class DeviceRecord : Record
     {
-        private GPerfDeviceMetric m_DeviceMetric = null;
+        public string DeviceModel { get; set; } = string.Empty;
+        public string DeviceName { get; set; } = string.Empty;
+        public string DeviceUniqueIdentifier { get; set; } = string.Empty;
+    }
+
+    public class DeviceSampler : GPerfSampler<DeviceRecord>
+    {
+        public override SamplerType SamplerType => SamplerType.Device;
+
         public DeviceSampler() : base()
         {
-            m_DeviceMetric = new GPerfDeviceMetric();
+            FrequencyType = SamplerFrequencyType.Once;
         }
 
-        public override SamplerType Type => SamplerType.Device;
 
-        protected override bool Sample(Record record)
+        public string GetModel()
         {
-            if (m_DeviceMetric != null)
-            {
-                record.Data = m_DeviceMetric.GetMetricInfo();
-                return true;
-            }
-            return false;
+            return SystemInfo.deviceModel;
+        }
+
+        public string GetName()
+        {
+            return SystemInfo.deviceName;
+        }
+
+        public string GetUniqueIdentifier()
+        {
+            return SystemInfo.deviceUniqueIdentifier;
+        }
+
+        protected override void Sampling(DeviceRecord record)
+        {
+            record.DeviceModel = GetModel();
+            record.DeviceName = GetName();
+            record.DeviceUniqueIdentifier = GetUniqueIdentifier();
         }
     }
 }

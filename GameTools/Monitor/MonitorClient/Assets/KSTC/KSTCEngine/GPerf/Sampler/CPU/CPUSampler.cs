@@ -1,29 +1,42 @@
-﻿using KSTCEngine.GPerf.Metric;
+﻿using System;
+using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
-    public class CPUSampler : GPerfSampler
+    public class CPURecord:Record
     {
-        private GPerfProcessorMetric m_ProcessorMetric = null;
+        public float UsageRate { get; set; } = 0.0f;
+        public float Frequency { get; set; } = 0.0f;
+        public int CoreCount { get; set; } = 1;
+    }
+
+    public class CPUSampler : GPerfSampler<CPURecord>
+    {
+        public override SamplerType SamplerType => SamplerType.CPU;
         public CPUSampler() : base()
         {
-#if UNITY_ANDROID
-            m_ProcessorMetric = new GPerfAndroidProcessorMetric();
-#elif UNITY_IPHONE
-
-#endif
         }
 
-        public override SamplerType Type => SamplerType.CPU;
-
-        protected override bool Sample(Record record)
+        public float GetUsageRate()
         {
-            if (m_ProcessorMetric != null)
-            {
-                record.Data = m_ProcessorMetric.GetMetricInfo();
-                return true;
-            }
-            return false;
+            return GPerfPlatform.GetCPUUsageRate();
+        }
+
+        public float GetFrequency()
+        {
+            return SystemInfo.processorFrequency;
+        }
+
+        public int GetCoreCount()
+        {
+            return SystemInfo.processorCount;
+        }
+
+        protected override void Sampling(CPURecord record)
+        {
+            record.CoreCount = GetCoreCount();
+            record.Frequency = GetFrequency();
+            record.UsageRate = GetUsageRate();
         }
     }
 }

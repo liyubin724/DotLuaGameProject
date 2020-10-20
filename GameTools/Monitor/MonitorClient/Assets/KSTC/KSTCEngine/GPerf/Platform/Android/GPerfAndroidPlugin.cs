@@ -24,7 +24,7 @@ namespace KSTCEngine.GPerf
             m_PluginClass = new AndroidJavaClass(PLUGIN_CLASS_NAME);
             if (m_PluginClass == null)
             {
-                Debug.LogError($"{GPerfConst.LOG_NAME}::GPerfAndroidPlugin->PluginClass not found");
+                Debug.LogError($"{GPerfUtil.LOG_NAME}::GPerfAndroidPlugin->PluginClass not found");
             }
         }
 

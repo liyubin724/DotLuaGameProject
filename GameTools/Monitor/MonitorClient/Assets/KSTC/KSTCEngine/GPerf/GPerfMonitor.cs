@@ -13,7 +13,7 @@ namespace KSTCEngine.GPerf
         public static GPerfMonitor Monitor = null;
         public static GPerfMonitor Startup()
         {
-            if(Monitor == null)
+            if (Monitor == null)
             {
                 Monitor = new GPerfMonitor();
 
@@ -38,33 +38,25 @@ namespace KSTCEngine.GPerf
 
         public static void ShuntDown()
         {
-            if(Monitor!=null)
+            if (Monitor != null)
             {
                 GameObject.Destroy(Monitor.m_Behaviour.gameObject);
                 Monitor.DoDispose();
                 Monitor = null;
-            }    
+            }
         }
-        public float SampleInterval { get; set; } = 10.0f;
-
         private GPerfBehaviour m_Behaviour = null;
 
         private Dictionary<SamplerType, ISampler> m_SamplerDic = new Dictionary<SamplerType, ISampler>();
         private Dictionary<RecorderType, IRecorder> m_RecorderDic = new Dictionary<RecorderType, IRecorder>();
 
-        private List<Record> recordList = new List<Record>();
-        private SimpleObjectPool<Record> recordPool = null;
-        private float m_ElapsedTime = 0.0f;
-
         private GPerfMonitor()
         {
-            recordPool = new SimpleObjectPool<Record>(null, (record)=>{
-                record.Type = SamplerType.None;
-                record.Time = DateTime.Now;
-                record.FrameIndex = Time.frameCount;
+        }
 
-                record.Data = string.Empty;
-            },3);
+        private void OnSamplerRecord(SamplerType samplerType, Record record)
+        {
+
         }
 
         public void OpenSampler(SamplerType type)
@@ -149,41 +141,6 @@ namespace KSTCEngine.GPerf
             foreach (var kvp in m_SamplerDic)
             {
                 kvp.Value.DoUpdate(deltaTime);
-            }
-
-            m_ElapsedTime += deltaTime;
-            if(m_ElapsedTime>=SampleInterval)
-            {
-                bool isFailed = false;
-                foreach (var kvp in m_SamplerDic)
-                {
-                    Record record = recordPool.Get();
-                    if(kvp.Value.DoSample(record))
-                    {
-                        recordList.Add(record);
-                    }else
-                    {
-                        isFailed = true;
-                        break;
-                    }
-                }
-
-                if(!isFailed)
-                {
-                    Record[] records = recordList.ToArray();
-                    foreach (var kvp in m_RecorderDic)
-                    {
-                        kvp.Value.HandleRecords(records);
-                    }
-                }
-
-                foreach(var record in recordList)
-                {
-                    recordPool.Release(record);
-                }
-                recordList.Clear();
-
-                m_ElapsedTime -= SampleInterval;
             }
         }
 

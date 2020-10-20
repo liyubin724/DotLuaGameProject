@@ -1,29 +1,43 @@
-﻿using KSTCEngine.GPerf.Metric;
+﻿using System;
+using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
-    public class BatterySampler : GPerfSampler
+    public class BatteryRecord : Record
     {
-        private GPerfBatteryMetric m_BatteryMetric = null;
-        public BatterySampler()
+        public float Temperature { get; set; } = 0.0f;
+        public int Status { get; set; } = 0;
+        public float Rate { get; set; } = 0.0f;
+    }
+
+    public class BatterySampler : GPerfSampler<BatteryRecord>
+    {
+        public override SamplerType SamplerType => SamplerType.Battery;
+
+        public BatterySampler() : base()
         {
-#if UNITY_ANDROID
-            m_BatteryMetric = new GPerfAndroidBatteryMetric();
-#else
-            m_BatteryMetric = new GPerfBatteryMetric();
-#endif
         }
 
-        public override SamplerType Type => SamplerType.Battery;
-
-        protected override bool Sample(Record record)
+        public float GetTemperature()
         {
-            if(m_BatteryMetric!=null)
-            {
-                record.Data = m_BatteryMetric.GetMetricInfo();
-                return true;
-            }
-            return false;
+            return GPerfPlatform.GetBatteryTemperature(); 
+        }
+
+        public int GetStatus()
+        {
+            return (int)SystemInfo.batteryStatus;
+        }
+
+        public float GetRate()
+        {
+            return SystemInfo.batteryLevel;
+        }
+
+        protected override void Sampling(BatteryRecord record)
+        {
+            record.Temperature = GetTemperature();
+            record.Status = GetStatus();
+            record.Rate = GetRate();
         }
     }
 }

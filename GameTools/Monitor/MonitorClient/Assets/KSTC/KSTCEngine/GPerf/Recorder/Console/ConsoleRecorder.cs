@@ -15,14 +15,14 @@ namespace KSTCEngine.GPerf.Recorder
             {   
                 foreach(var record in records)
                 {
-                    if(!string.IsNullOrEmpty(record.Data))
+                    if(!string.IsNullOrEmpty(record.ExtensionData))
                     {
                         string json = JsonConvert.SerializeObject(record, Formatting.Indented);
                         m_RecordSB.AppendLine(json);
                     }
                 }
 
-                UnityEngine.Debug.Log($"{GPerfConst.LOG_NAME}::ConsoleRecorder->{m_RecordSB.ToString()}");
+                UnityEngine.Debug.Log($"{GPerfUtil.LOG_NAME}::ConsoleRecorder->{m_RecordSB.ToString()}");
                 m_RecordSB.Clear();
             }
         }

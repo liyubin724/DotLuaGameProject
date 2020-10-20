@@ -59,7 +59,7 @@ namespace KSTCEngine.GPerf.Recorder
             {
                 foreach (var record in records)
                 {
-                    if (!string.IsNullOrEmpty(record.Data))
+                    if (!string.IsNullOrEmpty(record.ExtensionData))
                     {
                         WriteRecord(record);
                     }
@@ -69,18 +69,18 @@ namespace KSTCEngine.GPerf.Recorder
 
         private void WriteRecord(Record record)
         {
-            if (!m_SamplerStreams.TryGetValue(record.Type, out StreamWriter writer))
-            {
-                DateTime time = DateTime.Now;
-                string logPath = $"{m_RootDir}log_{time.Year}{time.Month}{time.Day}_{record.Type.ToString().ToLower()}.log";
-                writer = new StreamWriter(logPath, true, Encoding.UTF8);
-                writer.AutoFlush = true;
+            //if (!m_SamplerStreams.TryGetValue(record.Type, out StreamWriter writer))
+            //{
+            //    DateTime time = DateTime.Now;
+            //    string logPath = $"{m_RootDir}log_{time.Year}{time.Month}{time.Day}_{record.Type.ToString().ToLower()}.log";
+            //    writer = new StreamWriter(logPath, true, Encoding.UTF8);
+            //    writer.AutoFlush = true;
 
-                m_SamplerStreams[record.Type] = writer;
-            }
+            //    m_SamplerStreams[record.Type] = writer;
+            //}
 
             string json = JsonConvert.SerializeObject(record, Formatting.Indented);
-            writer.WriteLine(json);
+            //writer.WriteLine(json);
         }
 
         public override void DoDispose()

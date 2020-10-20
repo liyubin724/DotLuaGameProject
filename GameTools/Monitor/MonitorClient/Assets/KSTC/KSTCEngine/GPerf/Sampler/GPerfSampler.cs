@@ -13,46 +13,87 @@ namespace KSTCEngine.GPerf.Sampler
         Battery,
     }
 
+    public enum SamplerFrequencyType
+    {
+        Once = 0,
+        Interval,
+    }
+
     public class Record
     {
-        public SamplerType Type { get; set; }
         public DateTime Time { get; set; }
         public int FrameIndex { get; set; }
-        public String Data { get; set; }= string.Empty;
+
+        public String ExtensionData { get; set; }= string.Empty;
 
         public Record() { }
     }
 
     public interface ISampler
     {
-        SamplerType Type { get; }
-        bool DoSample(Record record);
+        SamplerType SamplerType { get;}
+        SamplerFrequencyType FrequencyType { get; set; }
+        float SamplingInterval { get; set; }
+
+        Record GetRecord(); 
+
+        void DoSample();
         void DoUpdate(float deltaTime);
         void DoDispose();
     }
 
-    public abstract class GPerfSampler : ISampler
-    {
-        public abstract SamplerType Type { get; }
+    public abstract class GPerfSampler<T> : ISampler where T : Record,new()
+    { 
+        public abstract SamplerType SamplerType { get; }
+        public SamplerFrequencyType FrequencyType { get; set; } = SamplerFrequencyType.Interval;
+        public float SamplingInterval { get; set; } = 1.0f;
+
+        private T m_Record;
+        private int m_SamplingCount = 0;
+        private float m_ElapsedTime = 0.0f;
+
         protected GPerfSampler()
         {
+            m_Record = new T();
         }
 
-        public bool DoSample(Record record)
+        public Record GetRecord()
         {
-            record.Type = Type;
-            return Sample(record);
+            return m_Record;
         }
 
-        protected abstract bool Sample(Record record);
+        public void DoSample()
+        {
+            ++m_SamplingCount;
+
+            m_Record.FrameIndex = Time.frameCount;
+            m_Record.Time = DateTime.Now;
+            m_Record.ExtensionData = string.Empty;
+
+            Sampling(m_Record);
+        }
+
+        protected abstract void Sampling(T record);
 
         public virtual void DoUpdate(float deltaTime)
         {
+            if(FrequencyType == SamplerFrequencyType.Once && m_SamplingCount == 0)
+            {
+                DoSample();
+            }else if(FrequencyType == SamplerFrequencyType.Interval)
+            {
+                m_ElapsedTime += deltaTime;
+                if (m_ElapsedTime >= SamplingInterval)
+                {
+                    m_ElapsedTime -= SamplingInterval;
+
+                    DoSample();
+                }
+            }
         }
 
-        public void DoDispose()
+        public virtual void DoDispose()
         {
         }
-
     }
 }

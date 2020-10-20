@@ -10,7 +10,10 @@ public class Test : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 60;
-        GPerfMonitor.Startup();
+        //GPerfMonitor.Startup();
+
+        GPerfUtil.GetKeyValue("KKTT  :  ", out var name, out var value);
+        Debug.LogError($"--------Name ={name}-----Value ={value}");
 
         //AndroidJavaClass ajc = new AndroidJavaClass("com.kingsoft.tc.uplugin.util.ProcCPUStatInfoUtil");
         //content = ajc.CallStatic<string>("getUsageRateByCmd");
