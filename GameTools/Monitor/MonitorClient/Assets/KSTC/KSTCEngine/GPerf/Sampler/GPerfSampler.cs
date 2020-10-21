@@ -1,13 +1,12 @@
 ﻿using System;
-using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
     public class Record
     {
-        public SamplerMetricType Type { get; internal set; }
-        public DateTime Time { get; set; }
-        public int FrameIndex { get; set; }
+        public SamplerMetricType MetricType { get; internal set; }
+        //public DateTime Time { get; set; }
+        //public int FrameIndex { get; set; }
 
         public String ExtensionData { get; set; }= string.Empty;
 
@@ -21,30 +20,30 @@ namespace KSTCEngine.GPerf.Sampler
         public float SamplingInterval { get; set; } = 1.0f;
         public Action<Record> OnSampleRecord { get; set; }
 
-        protected T RecordData { get; set; }
+        protected T record { get; set; }
         private float m_ElapsedTime = 0.0f;
 
         public Record GetRecord()
         {
-            return RecordData;
+            return record;
         }
 
         public void DoStart()
         {
-            RecordData = new T();
+            record = new T();
             OnStart();
         }
 
         public void DoSample()
         {
-            RecordData.Type = MetricType;
-            RecordData.FrameIndex = Time.frameCount;
-            RecordData.Time = DateTime.Now;
-            RecordData.ExtensionData = string.Empty;
+            record.MetricType = MetricType;
+            //RecordData.FrameIndex = Time.frameCount;
+            //RecordData.Time = DateTime.Now;
+            record.ExtensionData = string.Empty;
 
-            OnSample(RecordData);
+            OnSample();
 
-            OnSampleRecord?.Invoke(RecordData);
+            OnSampleRecord?.Invoke(record);
         }
 
         public virtual void DoUpdate(float deltaTime)
@@ -80,7 +79,7 @@ namespace KSTCEngine.GPerf.Sampler
         }
 
         protected virtual void OnStart() { }
-        protected abstract void OnSample(T record);
+        protected abstract void OnSample();
         protected virtual void OnUpdate(float deltaTime) { }
         protected virtual void OnEnd() { }
         protected virtual void OnDispose() { }

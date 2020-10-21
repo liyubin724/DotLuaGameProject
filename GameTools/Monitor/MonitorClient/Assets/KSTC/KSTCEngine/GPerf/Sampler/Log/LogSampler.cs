@@ -27,7 +27,7 @@ namespace KSTCEngine.GPerf.Sampler
             Application.logMessageReceived += OnLogMessageReceived;
         }
 
-        protected override void OnSample(LogRecord record)
+        protected override void OnSample()
         {
         }
 

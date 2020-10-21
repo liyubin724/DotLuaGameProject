@@ -25,7 +25,7 @@ namespace KSTCEngine.GPerf.Sampler
             m_FPSList.Add(1.0f / deltaTime);
         }
 
-        protected override void OnSample(FPSRecord record)
+        protected override void OnSample()
         {
             record.FPS = Mathf.RoundToInt(m_FPSList.Average());
             m_FPSList.Clear();

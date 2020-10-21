@@ -34,7 +34,7 @@ namespace KSTCEngine.GPerf.Sampler
             return SystemInfo.processorCount;
         }
 
-        protected override void OnSample(CPURecord record)
+        protected override void OnSample()
         {
             record.CoreCount = GetCoreCount();
             record.Frequency = GetFrequency();

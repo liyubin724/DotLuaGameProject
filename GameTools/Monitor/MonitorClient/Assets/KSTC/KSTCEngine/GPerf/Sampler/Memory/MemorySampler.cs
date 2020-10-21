@@ -57,7 +57,7 @@ namespace KSTCEngine.GPerf.Sampler
             return m_PssMem;
         }
 
-        protected override void OnSample(MemoryRecord record)
+        protected override void OnSample()
         {
             string memoryInfo = GPerfPlatform.GetMemoryInfo();
             if(!string.IsNullOrEmpty(memoryInfo))

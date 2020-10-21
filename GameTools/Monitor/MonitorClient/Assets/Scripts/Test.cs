@@ -8,6 +8,8 @@ public class Test : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 60;
+
+        Debug.LogError(Application.unityVersion);
     }
 
     private bool m_IsRunning = false;
@@ -29,7 +31,9 @@ public class Test : MonoBehaviour
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Memory);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.ProfilerMemory);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Device);
+                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.App);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
+                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FrameTime);
 
                     GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
                     GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Console);

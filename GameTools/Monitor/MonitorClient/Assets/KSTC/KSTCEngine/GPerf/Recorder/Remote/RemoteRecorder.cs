@@ -32,11 +32,12 @@ namespace KSTCEngine.GPerf.Recorder
             session.Device.Id = deviceRecord.UniqueIdentifier;
             session.Device.Model = deviceRecord.Model;
 
+            AppRecord appRecord = (AppRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.App);
             session.App = new GPerfApp();
-            session.App.Id = "com.ks.tc.monitor";
-            session.App.Version = "1.0.0";
-            session.App.Engine = "unity";
-            session.App.EngineVersion = "8.8";
+            session.App.Id = appRecord.ID;
+            session.App.Version = appRecord.Version;
+            session.App.Engine = appRecord.Engine;
+            session.App.EngineVersion = appRecord.EngineVersion;
         }
 
         public override void DoUpdate(float deltaTime)
@@ -64,6 +65,10 @@ namespace KSTCEngine.GPerf.Recorder
                 sample.Battery.Power = (int)(batteryRecord.Rate * 100);
                 sample.Battery.Charging = batteryRecord.Status;
                 sample.Battery.Temperature = batteryRecord.Temperature;
+
+                FrameTimeRecord frameTimeRecord = (FrameTimeRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.FrameTime);
+                sample.GameTimeMs = frameTimeRecord.PlayerLoopTime;
+                sample.DrawTimeMs = frameTimeRecord.RenderingTime;
 
                 sample.FrameCounter = Time.frameCount;
 

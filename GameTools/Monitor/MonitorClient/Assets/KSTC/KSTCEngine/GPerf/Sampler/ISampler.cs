@@ -6,6 +6,7 @@ namespace KSTCEngine.GPerf.Sampler
     {
         None = 0,
         FPS,
+        FrameTime,
         Memory,
         ProfilerMemory,
         CPU,

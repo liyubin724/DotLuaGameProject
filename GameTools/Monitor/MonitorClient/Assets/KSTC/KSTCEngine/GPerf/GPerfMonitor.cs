@@ -2,6 +2,7 @@
 using KSTCEngine.GPerf.Sampler;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityObject = UnityEngine.Object;
 
 namespace KSTCEngine.GPerf
@@ -104,11 +105,17 @@ namespace KSTCEngine.GPerf
                 case SamplerMetricType.Device:
                     sampler = new DeviceSampler();
                     break;
+                case SamplerMetricType.App:
+                    sampler = new AppSampler();
+                    break;
                 case SamplerMetricType.Battery:
                     sampler = new BatterySampler();
                     break;
                 case SamplerMetricType.CPU:
                     sampler = new CPUSampler();
+                    break;
+                case SamplerMetricType.FrameTime:
+                    sampler = new FrameTimeSampler();
                     break;
                 default:
                     sampler = null;

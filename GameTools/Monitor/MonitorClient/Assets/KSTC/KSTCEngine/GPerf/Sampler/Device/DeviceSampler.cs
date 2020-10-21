@@ -38,7 +38,7 @@ namespace KSTCEngine.GPerf.Sampler
             DoSample();
         }
 
-        protected override void OnSample(DeviceRecord record)
+        protected override void OnSample()
         {
             record.Model = GetModel();
             record.Name = GetName();

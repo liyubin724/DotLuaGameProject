@@ -22,7 +22,7 @@ namespace KSTCEngine.GPerf.Sampler
             SamplingInterval = 1.0f;
         }
 
-        protected override void OnSample(ProfilerMemoryRecord record)
+        protected override void OnSample()
         {
             record.MonoHeapSize = Profiler.GetMonoHeapSizeLong();
             record.MonoUsedSize = Profiler.GetMonoUsedSizeLong();

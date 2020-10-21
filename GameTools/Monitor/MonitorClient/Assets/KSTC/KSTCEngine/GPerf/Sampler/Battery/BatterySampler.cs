@@ -34,7 +34,7 @@ namespace KSTCEngine.GPerf.Sampler
             return SystemInfo.batteryLevel;
         }
 
-        protected override void OnSample(BatteryRecord record)
+        protected override void OnSample()
         {
             record.Temperature = GetTemperature();
             record.Status = GetStatus();
