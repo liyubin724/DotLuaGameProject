@@ -40,6 +40,19 @@ namespace KSTCEngine.GPerf
 
                 UnityObject.DontDestroyOnLoad(m_GObject);
             }
+
+            if(!m_IsRunning)
+            {
+                foreach(var kvp in m_RecorderDic)
+                {
+                    kvp.Value.DoStart();
+                }
+
+                foreach (var kvp in m_SamplerDic)
+                {
+                    kvp.Value.DoStart();
+                }
+            }
             m_IsRunning = true;
         }
 
@@ -49,11 +62,7 @@ namespace KSTCEngine.GPerf
             {
                 foreach (var kvp in m_SamplerDic)
                 {
-                    ISampler sampler = kvp.Value;
-                    if(sampler.FreqType == SamplerFreqType.End)
-                    {
-                        sampler.DoSample();
-                    }
+                    kvp.Value.DoEnd();
                 }
 
                 foreach(var kvp in m_RecorderDic)
@@ -88,6 +97,9 @@ namespace KSTCEngine.GPerf
                     break;
                 case SamplerMetricType.Memory:
                     sampler = new MemorySampler();
+                    break;
+                case SamplerMetricType.ProfilerMemory:
+                    sampler = new ProfilerMemorySampler();
                     break;
                 case SamplerMetricType.Device:
                     sampler = new DeviceSampler();
@@ -147,6 +159,14 @@ namespace KSTCEngine.GPerf
 
                 recorder.DoStart();
                 m_RecorderDic.Add(type, recorder);
+
+                foreach (var kvp in m_SamplerDic)
+                {
+                    if(kvp.Value.FreqType == SamplerFreqType.Start)
+                    {
+                        recorder.HandleRecord(kvp.Value.GetRecord());
+                    }
+                }
             }
         }
 

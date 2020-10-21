@@ -65,6 +65,11 @@ namespace KSTCEngine.GPerf.Sampler
 
         public void DoEnd()
         {
+            if(FreqType == SamplerFreqType.End)
+            {
+                DoSample();
+            }
+
             OnEnd();
         }
 

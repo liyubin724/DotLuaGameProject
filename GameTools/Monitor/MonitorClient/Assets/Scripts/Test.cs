@@ -27,6 +27,7 @@ public class Test : MonoBehaviour
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Battery);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FPS);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Memory);
+                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.ProfilerMemory);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Device);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
 

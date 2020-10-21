@@ -7,11 +7,13 @@ namespace KSTCEngine.GPerf.Sampler
         None = 0,
         FPS,
         Memory,
+        ProfilerMemory,
         CPU,
         Battery,
 
         Device,
         App,
+        Log,
     }
      
     public enum SamplerFreqType

@@ -6,13 +6,12 @@ using System.IO;
 using System.Net;
 using System.Text;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace KSTCEngine.GPerf.Recorder
 {
     public class RemoteRecorder : GPerfRecorder
     {
-        private DateTime m_OrgTime = new DateTime(1970, 1, 1);
+        private DateTime m_OrgTime;
         public float RecordInterval { get; set; } = 1.0f;
         
         private GPerfSession session = null;
@@ -20,6 +19,7 @@ namespace KSTCEngine.GPerf.Recorder
 
         public RemoteRecorder()
         {
+            m_OrgTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
             Type = RecorderType.Remote;
         }
 

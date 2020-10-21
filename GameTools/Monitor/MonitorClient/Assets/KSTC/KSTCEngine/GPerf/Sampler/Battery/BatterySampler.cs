@@ -16,7 +16,7 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.Battery;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 60.0f;
+            SamplingInterval = 1.0f;
         }
 
         public float GetTemperature()
