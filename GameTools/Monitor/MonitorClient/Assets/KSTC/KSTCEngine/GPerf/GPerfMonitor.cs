@@ -117,6 +117,9 @@ namespace KSTCEngine.GPerf
                 case SamplerMetricType.FrameTime:
                     sampler = new FrameTimeSampler();
                     break;
+                case SamplerMetricType.Log:
+                    sampler = new LogSampler();
+                    break;
                 default:
                     sampler = null;
                     break;

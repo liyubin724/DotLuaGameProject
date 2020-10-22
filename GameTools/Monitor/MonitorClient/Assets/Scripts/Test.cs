@@ -34,12 +34,18 @@ public class Test : MonoBehaviour
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.App);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
                     GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FrameTime);
+                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Log);
 
                     GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
                     GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Console);
 
                 }
                 m_IsRunning = !m_IsRunning;
+            }
+
+            if(GUILayout.Button("PrintLog"))
+            {
+                Debug.Log("Test LOg");
             }
         }
         GUILayout.EndArea();

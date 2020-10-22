@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
     public class LogRecord : Record
     {
-        public string Condition { get; set; } = string.Empty;
-        public string StackTrace { get; set; } = string.Empty;
-        public LogType LogType { get; set; } = LogType.Log;
+        public string FilePath { get; set; } = null;
     }
 
     public class LogSampler : GPerfSampler<LogRecord>
     {
+        private StreamWriter m_Writer = null;
         public LogSampler()
         {
             MetricType = SamplerMetricType.Log;
@@ -25,6 +22,42 @@ namespace KSTCEngine.GPerf.Sampler
         protected override void OnStart()
         {
             Application.logMessageReceived += OnLogMessageReceived;
+            string rootDir = GPerfUtil.GeRootDir();
+
+            if (!string.IsNullOrEmpty(rootDir))
+            {
+                string[] files = Directory.GetFiles(rootDir, "log_*.log", SearchOption.TopDirectoryOnly);
+                if (files != null && files.Length > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        File.Delete(file);
+                    }
+                }
+
+                try
+                {
+                    DateTime time = DateTime.Now;
+                    string logPath = $"{rootDir}log_{time.Year}{time.Month}{time.Day}.log";
+                    m_Writer = new StreamWriter(logPath, true, Encoding.UTF8);
+                    m_Writer.AutoFlush = true;
+
+                    record.FilePath = logPath;
+                }
+                catch
+                {
+                    m_Writer?.Close();
+                    m_Writer = null;
+                }
+            }
+        }
+
+        protected override void OnEnd()
+        {
+            Application.logMessageReceived -= OnLogMessageReceived;
+            m_Writer?.Flush();
+            m_Writer?.Close();
+            m_Writer = null;
         }
 
         protected override void OnSample()
@@ -33,12 +66,17 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnDispose()
         {
-            Application.logMessageReceived += OnLogMessageReceived;
+            OnEnd();
         }
 
         private void OnLogMessageReceived(string condition, string stackTrace, LogType type)
         {
+            if(condition.IndexOf(GPerfUtil.LOG_NAME)>=0 || m_Writer == null)
+            {
+                return;
+            }
 
+            m_Writer.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss fff} {type.ToString()}\n{condition}\n{stackTrace}");
         }
     }
 }

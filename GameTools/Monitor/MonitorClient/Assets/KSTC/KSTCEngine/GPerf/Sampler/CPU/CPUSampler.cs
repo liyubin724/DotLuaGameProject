@@ -6,7 +6,7 @@ namespace KSTCEngine.GPerf.Sampler
     public class CPURecord:Record
     {
         public float UsageRate { get; set; } = 0.0f;
-        public float Frequency { get; set; } = 0.0f;
+        public int Frequency { get; set; } = 0;
         public int CoreCount { get; set; } = 1;
     }
 
@@ -24,7 +24,7 @@ namespace KSTCEngine.GPerf.Sampler
             return GPerfPlatform.GetCPUUsageRate();
         }
 
-        public float GetFrequency()
+        public int GetFrequency()
         {
             return SystemInfo.processorFrequency;
         }
