@@ -18,10 +18,12 @@ namespace KSTCEngine.GPerf
         private List<GPerfNetData> m_NetDatas = new List<GPerfNetData>();
         private string m_NetUrl = "https://pirates-dev-api.shiyou.kingsoft.com:8443/gperf/api/UploadStats";
         private bool m_IsSending = false;
+        private bool m_IsUploadLog = false;
 
-        public void SetNetUrl(string url)
+        public void SetData(string url,bool isUploadLog)
         {
             m_NetUrl = url;
+            m_IsUploadLog = isUploadLog;
         }
 
         public void AddNetData(GPerfSession session,string log)
@@ -42,8 +44,12 @@ namespace KSTCEngine.GPerf
             m_IsSending = false;
             if(request.responseCode == 200)
             {
-                string jsonText = request.downloadHandler.text;
-                Debug.Log("SendSuccess->" + jsonText);
+                if(m_IsUploadLog)
+                {
+                    string jsonText = request.downloadHandler.text;
+                    Debug.Log("SendSuccess->" + jsonText);
+
+                }
             }else
             {
                 Debug.LogError($"GPerfBehaviour::PostMessage->request failed.code = {request.responseCode}");

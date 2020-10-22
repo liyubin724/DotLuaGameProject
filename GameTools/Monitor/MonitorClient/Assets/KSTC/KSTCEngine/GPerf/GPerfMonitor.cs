@@ -2,7 +2,6 @@
 using KSTCEngine.GPerf.Sampler;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityObject = UnityEngine.Object;
 
 namespace KSTCEngine.GPerf

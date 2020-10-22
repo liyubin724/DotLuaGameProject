@@ -1,10 +1,6 @@
-﻿using Google.Protobuf;
-using Gperf;
+﻿using Gperf;
 using KSTCEngine.GPerf.Sampler;
 using System;
-using System.IO;
-using System.Net;
-using System.Text;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Recorder
