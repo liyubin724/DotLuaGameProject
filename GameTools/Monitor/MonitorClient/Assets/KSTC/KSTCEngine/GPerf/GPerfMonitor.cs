@@ -22,6 +22,11 @@ namespace KSTCEngine.GPerf
         }
 
         private GameObject m_GObject = null;
+        private GPerfBehaviour m_Behaviour = null;
+        internal GPerfBehaviour Behaviour
+        {
+            get { return m_Behaviour; }
+        }
 
         private Dictionary<SamplerMetricType, ISampler> m_SamplerDic = new Dictionary<SamplerMetricType, ISampler>();
         private Dictionary<RecorderType, IRecorder> m_RecorderDic = new Dictionary<RecorderType, IRecorder>();
@@ -37,7 +42,7 @@ namespace KSTCEngine.GPerf
             if(m_GObject == null)
             {
                 m_GObject = new GameObject("GPerfMonitor");
-                m_GObject.AddComponent<GPerfBehaviour>();
+                m_Behaviour = m_GObject.AddComponent<GPerfBehaviour>();
 
                 UnityObject.DontDestroyOnLoad(m_GObject);
             }
@@ -217,6 +222,9 @@ namespace KSTCEngine.GPerf
 
         public void DoDispose()
         {
+            m_GObject = null;
+            m_Behaviour = null;
+
             foreach (var kvp in m_SamplerDic)
             {
                 kvp.Value.DoDispose();

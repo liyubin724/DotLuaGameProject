@@ -17,11 +17,7 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.Log;
             FreqType = SamplerFreqType.End;
-        }
 
-        protected override void OnStart()
-        {
-            Application.logMessageReceived += OnLogMessageReceived;
             string rootDir = GPerfUtil.GeRootDir();
 
             if (!string.IsNullOrEmpty(rootDir))
@@ -34,7 +30,14 @@ namespace KSTCEngine.GPerf.Sampler
                         File.Delete(file);
                     }
                 }
-
+            }
+        }
+        protected override void OnStart()
+        {
+            Application.logMessageReceived += OnLogMessageReceived;
+            string rootDir = GPerfUtil.GeRootDir();
+            if (!string.IsNullOrEmpty(rootDir))
+            {
                 try
                 {
                     DateTime time = DateTime.Now;

@@ -78,23 +78,8 @@ namespace KSTCEngine.GPerf.Recorder
 
         public override void DoEnd()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.CreateHttp("https://pirates-dev-api.shiyou.kingsoft.com:8443/gperf/api/UploadStats");
-            request.ContentType = "application/x-protobuf";
-            request.Method = "POST";
-            request.Timeout = 2000;
-
-            byte[] data = session.ToByteArray();
-            request.ContentLength = data.Length;
-            Stream writer = request.GetRequestStream();
-            writer.Write(data, 0, data.Length);
-            writer.Close();
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8);
-            string result = reader.ReadToEnd();
-            response.Close();
-
-            Debug.LogError("SSSSSSSS->" + result);
+            LogRecord logRecord = (LogRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Log);
+            GPerfMonitor.GetInstance().Behaviour.AddNetData(session, logRecord.FilePath);
         }
 
         public override void HandleRecord(Record record)
