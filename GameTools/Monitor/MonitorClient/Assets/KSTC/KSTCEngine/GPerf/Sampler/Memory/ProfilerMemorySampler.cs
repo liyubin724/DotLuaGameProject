@@ -4,13 +4,13 @@ namespace KSTCEngine.GPerf.Sampler
 {
     public class ProfilerMemoryRecord : Record
     {
-        public long MonoHeapSize { get; set; } = 0L;
-        public long MonoUsedSize { get; set; } = 0L;
-        public long TempAllocatorSize { get; set; } = 0L;
-        public long TotalAllocatorSize { get; set; } = 0L;
-        public long TotalReservedMemorySize{get;set;} = 0L;
-        public long TotalUnusedReservedMemorySize { get; set; } = 0L;
-        public long AllocatedMemoryForGraphicsDriver { get; set; } = 0L;
+        public long MonoHeapSizeInKB { get; set; } = 0L;
+        public long MonoUsedSizeInKB { get; set; } = 0L;
+        public long TempAllocatorSizeInKB { get; set; } = 0L;
+        public long TotalAllocatorSizeInKB { get; set; } = 0L;
+        public long TotalReservedMemorySizeInKB{get;set;} = 0L;
+        public long TotalUnusedReservedMemorySizeInKB { get; set; } = 0L;
+        public long AllocatedMemoryForGraphicsDriverInKB { get; set; } = 0L;
     }
 
     public class ProfilerMemorySampler : GPerfSampler<ProfilerMemoryRecord>
@@ -24,13 +24,13 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnSample()
         {
-            record.MonoHeapSize = Profiler.GetMonoHeapSizeLong();
-            record.MonoUsedSize = Profiler.GetMonoUsedSizeLong();
-            record.TempAllocatorSize = Profiler.GetTempAllocatorSize();
-            record.TotalAllocatorSize = Profiler.GetTotalAllocatedMemoryLong();
-            record.TotalReservedMemorySize = Profiler.GetTotalReservedMemoryLong();
-            record.TotalUnusedReservedMemorySize = Profiler.GetTotalUnusedReservedMemoryLong();
-            record.AllocatedMemoryForGraphicsDriver = Profiler.GetAllocatedMemoryForGraphicsDriver();
+            record.MonoHeapSizeInKB = Profiler.GetMonoHeapSizeLong() / GPerfUtil.BYTE_TO_MB_SIZE;
+            record.MonoUsedSizeInKB = Profiler.GetMonoUsedSizeLong() / GPerfUtil.BYTE_TO_MB_SIZE;
+            record.TempAllocatorSizeInKB = Profiler.GetTempAllocatorSize() / GPerfUtil.BYTE_TO_MB_SIZE;
+            record.TotalAllocatorSizeInKB = Profiler.GetTotalAllocatedMemoryLong() / GPerfUtil.BYTE_TO_MB_SIZE;
+            record.TotalReservedMemorySizeInKB = Profiler.GetTotalReservedMemoryLong() / GPerfUtil.BYTE_TO_MB_SIZE;
+            record.TotalUnusedReservedMemorySizeInKB = Profiler.GetTotalUnusedReservedMemoryLong() / GPerfUtil.BYTE_TO_MB_SIZE;
+            record.AllocatedMemoryForGraphicsDriverInKB = Profiler.GetAllocatedMemoryForGraphicsDriver() / GPerfUtil.BYTE_TO_MB_SIZE;
         }
     }
 }

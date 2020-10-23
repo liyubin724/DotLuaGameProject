@@ -13,16 +13,19 @@ namespace KSTCEngine.GPerf.Sampler
     public class LogSampler : GPerfSampler<LogRecord>
     {
         private StreamWriter m_Writer = null;
+        private int m_SamplingCount = 0;
+        private string m_RootDir = string.Empty;
+
         public LogSampler()
         {
             MetricType = SamplerMetricType.Log;
             FreqType = SamplerFreqType.End;
 
-            string rootDir = GPerfUtil.GeRootDir();
+            m_RootDir = GPerfUtil.GeRootDir();
 
-            if (!string.IsNullOrEmpty(rootDir))
+            if (!string.IsNullOrEmpty(m_RootDir))
             {
-                string[] files = Directory.GetFiles(rootDir, "log_*.log", SearchOption.TopDirectoryOnly);
+                string[] files = Directory.GetFiles(m_RootDir, "log_*.log", SearchOption.TopDirectoryOnly);
                 if (files != null && files.Length > 0)
                 {
                     foreach (var file in files)
@@ -35,17 +38,18 @@ namespace KSTCEngine.GPerf.Sampler
         protected override void OnStart()
         {
             Application.logMessageReceived += OnLogMessageReceived;
-            string rootDir = GPerfUtil.GeRootDir();
-            if (!string.IsNullOrEmpty(rootDir))
+
+            if (!string.IsNullOrEmpty(m_RootDir))
             {
                 try
                 {
                     DateTime time = DateTime.Now;
-                    string logPath = $"{rootDir}log_{time.Year}{time.Month}{time.Day}.log";
+                    string logPath = $"{m_RootDir}log_{time.Year}{time.Month}{time.Day}_{m_SamplingCount}.log";
                     m_Writer = new StreamWriter(logPath, true, Encoding.UTF8);
                     m_Writer.AutoFlush = true;
 
                     record.FilePath = logPath;
+                    m_SamplingCount++;
                 }
                 catch
                 {
@@ -58,6 +62,7 @@ namespace KSTCEngine.GPerf.Sampler
         protected override void OnEnd()
         {
             Application.logMessageReceived -= OnLogMessageReceived;
+
             m_Writer?.Flush();
             m_Writer?.Close();
             m_Writer = null;

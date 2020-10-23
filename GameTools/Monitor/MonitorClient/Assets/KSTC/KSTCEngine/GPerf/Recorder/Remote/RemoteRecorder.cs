@@ -34,8 +34,17 @@ namespace KSTCEngine.GPerf.Recorder
 
             DeviceRecord deviceRecord = (DeviceRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Device);
             session.Device = new GPerfDevice();
-            session.Device.UniqueIdentifier = deviceRecord.UniqueIdentifier;
+            session.Device.Name = deviceRecord.Name;
             session.Device.Model = deviceRecord.Model;
+            session.Device.UniqueIdentifier = deviceRecord.UniqueIdentifier;
+
+            session.Device.GraphicsName = deviceRecord.GraphicsName;
+            session.Device.GraphicsType = deviceRecord.GraphicsType;
+            session.Device.GraphicsVendor = deviceRecord.GraphicsVendor;
+            session.Device.GraphicsVersion = deviceRecord.GraphicsVersion;
+            session.Device.GraphicsMemoryInMb = deviceRecord.GraphicsMemoryInMB;
+
+            session.Device.SystemMemoryInMb = deviceRecord.SystemMemorySize;
 
         }
 
@@ -52,12 +61,14 @@ namespace KSTCEngine.GPerf.Recorder
                 FPSRecord fpsRecord = (FPSRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.FPS);
                 sample.Fps = new GPerfFPS();
                 sample.Fps.Fps = fpsRecord.FPS;
+                sample.Fps.DeltaTimeInMS = fpsRecord.DeltaTimeInMS;
                 
                 CPURecord cpuRecord = (CPURecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.CPU);
                 sample.Cpu = new GPerfCPU();
                 sample.Cpu.CoreCount = cpuRecord.CoreCount;
                 sample.Cpu.Frequency = cpuRecord.Frequency;
                 sample.Cpu.UsageRate = cpuRecord.UsageRate;
+                sample.Cpu.CoreFrequency.AddRange(cpuRecord.CoreFrequency);
 
                 SystemMemoryRecord memoryRecord = (SystemMemoryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.SystemMemory);
                 sample.SystemMemory = new GPerfSystemMemory();

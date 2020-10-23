@@ -27,69 +27,73 @@ namespace Gperf.U3D {
             "Cg9ncGVyZi11M2QucHJvdG8SCWdwZXJmLnUzZCJyCghHUGVyZkFwcBISCgpp",
             "ZGVudGlmaWVyGAEgASgJEhQKDGluc3RhbGxfbmFtZRgCIAEoCRIUCgxwcm9k",
             "dWN0X25hbWUYAyABKAkSDwoHdmVyc2lvbhgEIAEoCRIVCg11bml0eV92ZXJz",
-            "aW9uGAUgASgJIkUKC0dQZXJmRGV2aWNlEg0KBW1vZGVsGAEgASgJEgwKBG5h",
-            "bWUYAiABKAkSGQoRdW5pcXVlX2lkZW50aWZpZXIYAyABKAkikAEKEUdQZXJm",
-            "U3lzdGVtTWVtb3J5EhMKC3RvdGFsX2luX2tiGAEgASgDEhcKD2F2YWlsYWJs",
-            "ZV9pbl9rYhgCIAEoAxIXCg90aHJlc2hvbGRfaW5fa2IYAyABKAMSDgoGaXNf",
-            "bG93GAQgASgIEhEKCXBzc19pbl9rYhgFIAEoAxIRCglyc3NfaW5fa2IYBiAB",
-            "KAMikgIKE0dQZXJmUHJvZmlsZXJNZW1vcnkSHAoUbW9ub19oZWFwX3NpemVf",
-            "aW5fa2IYASABKAMSHAoUbW9ub191c2VkX3NpemVfaW5fa2IYAiABKAMSIQoZ",
-            "dGVtcF9hbGxvY2F0b3Jfc2l6ZV9pbl9rYhgDIAEoAxIiChp0b3RhbF9hbGxv",
-            "Y2F0b3Jfc2l6ZV9pbl9rYhgEIAEoAxIhChl0b3RhbF9yZXNlcnZlZF9zaXpl",
-            "X2luX2tiGAUgASgDEigKIHRvdGFsX3VudXNlZF9yZXNlcnZlZF9zaXplX2lu",
-            "X2tiGAYgASgDEisKI2FsbG9jYXRlZF9mb3JfZ3JhcGhpY3NfZHJpdmVyX2lu",
-            "X2tiGAcgASgDIh8KDkdQZXJmTHVhTWVtb3J5Eg0KBXRvdGFsGAEgASgCIkEK",
-            "DEdQZXJmQmF0dGVyeRITCgt0ZW1wZXJhdHVyZRgBIAEoAhIOCgZzdGF0dXMY",
-            "AiABKAUSDAoEcmF0ZRgDIAEoAiJdCghHUGVyZkNQVRISCgpjb3JlX2NvdW50",
-            "GAEgASgFEhEKCWZyZXF1ZW5jeRgCIAEoBRISCgp1c2FnZV9yYXRlGAMgASgC",
-            "EhYKDmNvcmVfZnJlcXVlbmN5GAQgAygFIhcKCEdQZXJmRlBTEgsKA2ZwcxgB",
-            "IAEoBSKpAQoOR1BlcmZGcmFtZVRpbWUSGAoQcGxheWVyX2xvb3BfdGltZRgB",
-            "IAEoAhIWCg5yZW5kZXJpbmdfdGltZRgCIAEoAhITCgtzY3JpcHRfdGltZRgD",
-            "IAEoAhIUCgxwaHlzaWNzX3RpbWUYBCABKAISFgoOYW5pbWF0aW9uX3RpbWUY",
-            "BSABKAISEAoIY3B1X3RpbWUYBiABKAISEAoIZ3B1X3RpbWUYByABKAIigAEK",
-            "DUdQZXJmR2FtZUluZm8SPAoKZXh0ZW5zaW9ucxgBIAMoCzIoLmdwZXJmLnUz",
-            "ZC5HUGVyZkdhbWVJbmZvLkV4dGVuc2lvbnNFbnRyeRoxCg9FeHRlbnNpb25z",
-            "RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKAAQoNR1Bl",
-            "cmZVc2VySW5mbxI8CgpleHRlbnNpb25zGAEgAygLMiguZ3BlcmYudTNkLkdQ",
-            "ZXJmVXNlckluZm8uRXh0ZW5zaW9uc0VudHJ5GjEKD0V4dGVuc2lvbnNFbnRy",
-            "eRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIq0DCgtHUGVyZlNh",
-            "bXBsZRIRCgl0aW1lc3RhbXAYASABKAcSEwoLZnJhbWVfaW5kZXgYAiABKAUS",
-            "KwoJdXNlcl9pbmZvGAMgASgLMhguZ3BlcmYudTNkLkdQZXJmVXNlckluZm8S",
-            "MwoNc3lzdGVtX21lbW9yeRgEIAEoCzIcLmdwZXJmLnUzZC5HUGVyZlN5c3Rl",
-            "bU1lbW9yeRI3Cg9wcm9maWxlcl9tZW1vcnkYBSABKAsyHi5ncGVyZi51M2Qu",
-            "R1BlcmZQcm9maWxlck1lbW9yeRItCgpsdWFfbWVtb3J5GAYgASgLMhkuZ3Bl",
-            "cmYudTNkLkdQZXJmTHVhTWVtb3J5EigKB2JhdHRlcnkYByABKAsyFy5ncGVy",
-            "Zi51M2QuR1BlcmZCYXR0ZXJ5EiAKA2NwdRgIIAEoCzITLmdwZXJmLnUzZC5H",
-            "UGVyZkNQVRIgCgNmcHMYCSABKAsyEy5ncGVyZi51M2QuR1BlcmZGUFMSLQoK",
-            "ZnJhbWVfdGltZRgKIAEoCzIZLmdwZXJmLnUzZC5HUGVyZkZyYW1lVGltZRIP",
-            "CgdzZXNzaW9uGAsgASgJItQDCgxHUGVyZlNlc3Npb24SIAoDYXBwGAEgASgL",
-            "MhMuZ3BlcmYudTNkLkdQZXJmQXBwEiYKBmRldmljZRgCIAEoCzIWLmdwZXJm",
-            "LnUzZC5HUGVyZkRldmljZRIrCglnYW1lX2luZm8YAyABKAsyGC5ncGVyZi51",
-            "M2QuR1BlcmZHYW1lSW5mbxInCgdzYW1wbGVzGAQgAygLMhYuZ3BlcmYudTNk",
-            "LkdQZXJmU2FtcGxlEjsKCmV4dGVuc2lvbnMYBSADKAsyJy5ncGVyZi51M2Qu",
-            "R1BlcmZTZXNzaW9uLkV4dGVuc2lvbnNFbnRyeRIhCgRsb2dzGAYgASgLMhMu",
-            "Z3BlcmYudTNkLkdQZXJmTG9nEhUKDXJhd19ibG9iX3NpemUYByABKAUSEQoJ",
-            "dGltZXN0YW1wGAggASgJEgwKBGZyb20YCSABKAMSCgoCdG8YCiABKAMSEAoI",
-            "ZHVyYXRpb24YCyABKAMSDwoHc2Vzc2lvbhgMIAEoCRIqCghvdmVydmlldxgN",
-            "IAEoCzIYLmdwZXJmLnUzZC5HUGVyZk92ZXJ2aWV3GjEKD0V4dGVuc2lvbnNF",
-            "bnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpwBCg1HUGVy",
-            "Zk92ZXJ2aWV3Eg8KB2F2Z19mcHMYASABKAISFwoPcGVha19tZW1fcHNzX2ti",
-            "GAIgASgCEhoKEnBlYWtfbWVtX3Bzc19ieXRlcxgDIAEoAhIVCg1tYXhfZHJh",
-            "d19jYWxsGAQgASgCEhUKDW1heF90cmlhbmdsZXMYBSABKAISFwoPbWF4X3Rl",
-            "bXBlcmF0dXJlGAYgASgCIhcKCEdQZXJmTG9nEgsKA3VybBgBIAEoCUI6CiJj",
-            "b20ua2luZ3NvZnQuc2hpeW91LmluZnJhLmdwZXJmLnBiQhBHUGVyZlVuaXR5",
-            "UHJvdG9zSAFQAGIGcHJvdG8z"));
+            "aW9uGAUgASgJIuIBCgtHUGVyZkRldmljZRINCgVtb2RlbBgBIAEoCRIMCgRu",
+            "YW1lGAIgASgJEhkKEXVuaXF1ZV9pZGVudGlmaWVyGAMgASgJEhUKDWdyYXBo",
+            "aWNzX25hbWUYBCABKAkSFQoNZ3JhcGhpY3NfdHlwZRgFIAEoCRIXCg9ncmFw",
+            "aGljc192ZW5kb3IYBiABKAkSGAoQZ3JhcGhpY3NfdmVyc2lvbhgHIAEoCRId",
+            "ChVncmFwaGljc19tZW1vcnlfaW5fbWIYCCABKAUSGwoTc3lzdGVtX21lbW9y",
+            "eV9pbl9tYhgJIAEoBSKQAQoRR1BlcmZTeXN0ZW1NZW1vcnkSEwoLdG90YWxf",
+            "aW5fa2IYASABKAMSFwoPYXZhaWxhYmxlX2luX2tiGAIgASgDEhcKD3RocmVz",
+            "aG9sZF9pbl9rYhgDIAEoAxIOCgZpc19sb3cYBCABKAgSEQoJcHNzX2luX2ti",
+            "GAUgASgDEhEKCXJzc19pbl9rYhgGIAEoAyKSAgoTR1BlcmZQcm9maWxlck1l",
+            "bW9yeRIcChRtb25vX2hlYXBfc2l6ZV9pbl9rYhgBIAEoAxIcChRtb25vX3Vz",
+            "ZWRfc2l6ZV9pbl9rYhgCIAEoAxIhChl0ZW1wX2FsbG9jYXRvcl9zaXplX2lu",
+            "X2tiGAMgASgDEiIKGnRvdGFsX2FsbG9jYXRvcl9zaXplX2luX2tiGAQgASgD",
+            "EiEKGXRvdGFsX3Jlc2VydmVkX3NpemVfaW5fa2IYBSABKAMSKAogdG90YWxf",
+            "dW51c2VkX3Jlc2VydmVkX3NpemVfaW5fa2IYBiABKAMSKwojYWxsb2NhdGVk",
+            "X2Zvcl9ncmFwaGljc19kcml2ZXJfaW5fa2IYByABKAMiHwoOR1BlcmZMdWFN",
+            "ZW1vcnkSDQoFdG90YWwYASABKAIiQQoMR1BlcmZCYXR0ZXJ5EhMKC3RlbXBl",
+            "cmF0dXJlGAEgASgCEg4KBnN0YXR1cxgCIAEoBRIMCgRyYXRlGAMgASgCIl0K",
+            "CEdQZXJmQ1BVEhIKCmNvcmVfY291bnQYASABKAUSEQoJZnJlcXVlbmN5GAIg",
+            "ASgFEhIKCnVzYWdlX3JhdGUYAyABKAISFgoOY29yZV9mcmVxdWVuY3kYBCAD",
+            "KAUiMQoIR1BlcmZGUFMSGAoQZGVsdGFfdGltZV9pbl9NUxgBIAEoAhILCgNm",
+            "cHMYAiABKAUiqQEKDkdQZXJmRnJhbWVUaW1lEhgKEHBsYXllcl9sb29wX3Rp",
+            "bWUYASABKAISFgoOcmVuZGVyaW5nX3RpbWUYAiABKAISEwoLc2NyaXB0X3Rp",
+            "bWUYAyABKAISFAoMcGh5c2ljc190aW1lGAQgASgCEhYKDmFuaW1hdGlvbl90",
+            "aW1lGAUgASgCEhAKCGNwdV90aW1lGAYgASgCEhAKCGdwdV90aW1lGAcgASgC",
+            "IoABCg1HUGVyZkdhbWVJbmZvEjwKCmV4dGVuc2lvbnMYASADKAsyKC5ncGVy",
+            "Zi51M2QuR1BlcmZHYW1lSW5mby5FeHRlbnNpb25zRW50cnkaMQoPRXh0ZW5z",
+            "aW9uc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEigAEK",
+            "DUdQZXJmVXNlckluZm8SPAoKZXh0ZW5zaW9ucxgBIAMoCzIoLmdwZXJmLnUz",
+            "ZC5HUGVyZlVzZXJJbmZvLkV4dGVuc2lvbnNFbnRyeRoxCg9FeHRlbnNpb25z",
+            "RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKtAwoLR1Bl",
+            "cmZTYW1wbGUSEQoJdGltZXN0YW1wGAEgASgHEhMKC2ZyYW1lX2luZGV4GAIg",
+            "ASgFEisKCXVzZXJfaW5mbxgDIAEoCzIYLmdwZXJmLnUzZC5HUGVyZlVzZXJJ",
+            "bmZvEjMKDXN5c3RlbV9tZW1vcnkYBCABKAsyHC5ncGVyZi51M2QuR1BlcmZT",
+            "eXN0ZW1NZW1vcnkSNwoPcHJvZmlsZXJfbWVtb3J5GAUgASgLMh4uZ3BlcmYu",
+            "dTNkLkdQZXJmUHJvZmlsZXJNZW1vcnkSLQoKbHVhX21lbW9yeRgGIAEoCzIZ",
+            "LmdwZXJmLnUzZC5HUGVyZkx1YU1lbW9yeRIoCgdiYXR0ZXJ5GAcgASgLMhcu",
+            "Z3BlcmYudTNkLkdQZXJmQmF0dGVyeRIgCgNjcHUYCCABKAsyEy5ncGVyZi51",
+            "M2QuR1BlcmZDUFUSIAoDZnBzGAkgASgLMhMuZ3BlcmYudTNkLkdQZXJmRlBT",
+            "Ei0KCmZyYW1lX3RpbWUYCiABKAsyGS5ncGVyZi51M2QuR1BlcmZGcmFtZVRp",
+            "bWUSDwoHc2Vzc2lvbhgLIAEoCSLUAwoMR1BlcmZTZXNzaW9uEiAKA2FwcBgB",
+            "IAEoCzITLmdwZXJmLnUzZC5HUGVyZkFwcBImCgZkZXZpY2UYAiABKAsyFi5n",
+            "cGVyZi51M2QuR1BlcmZEZXZpY2USKwoJZ2FtZV9pbmZvGAMgASgLMhguZ3Bl",
+            "cmYudTNkLkdQZXJmR2FtZUluZm8SJwoHc2FtcGxlcxgEIAMoCzIWLmdwZXJm",
+            "LnUzZC5HUGVyZlNhbXBsZRI7CgpleHRlbnNpb25zGAUgAygLMicuZ3BlcmYu",
+            "dTNkLkdQZXJmU2Vzc2lvbi5FeHRlbnNpb25zRW50cnkSIQoEbG9ncxgGIAEo",
+            "CzITLmdwZXJmLnUzZC5HUGVyZkxvZxIVCg1yYXdfYmxvYl9zaXplGAcgASgF",
+            "EhEKCXRpbWVzdGFtcBgIIAEoCRIMCgRmcm9tGAkgASgDEgoKAnRvGAogASgD",
+            "EhAKCGR1cmF0aW9uGAsgASgDEg8KB3Nlc3Npb24YDCABKAkSKgoIb3ZlcnZp",
+            "ZXcYDSABKAsyGC5ncGVyZi51M2QuR1BlcmZPdmVydmlldxoxCg9FeHRlbnNp",
+            "b25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKcAQoN",
+            "R1BlcmZPdmVydmlldxIPCgdhdmdfZnBzGAEgASgCEhcKD3BlYWtfbWVtX3Bz",
+            "c19rYhgCIAEoAhIaChJwZWFrX21lbV9wc3NfYnl0ZXMYAyABKAISFQoNbWF4",
+            "X2RyYXdfY2FsbBgEIAEoAhIVCg1tYXhfdHJpYW5nbGVzGAUgASgCEhcKD21h",
+            "eF90ZW1wZXJhdHVyZRgGIAEoAiIXCghHUGVyZkxvZxILCgN1cmwYASABKAlC",
+            "OgoiY29tLmtpbmdzb2Z0LnNoaXlvdS5pbmZyYS5ncGVyZi5wYkIQR1BlcmZV",
+            "bml0eVByb3Rvc0gBUABiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfApp), global::Gperf.U3D.GPerfApp.Parser, new[]{ "Identifier", "InstallName", "ProductName", "Version", "UnityVersion" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfDevice), global::Gperf.U3D.GPerfDevice.Parser, new[]{ "Model", "Name", "UniqueIdentifier" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfDevice), global::Gperf.U3D.GPerfDevice.Parser, new[]{ "Model", "Name", "UniqueIdentifier", "GraphicsName", "GraphicsType", "GraphicsVendor", "GraphicsVersion", "GraphicsMemoryInMb", "SystemMemoryInMb" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfSystemMemory), global::Gperf.U3D.GPerfSystemMemory.Parser, new[]{ "TotalInKb", "AvailableInKb", "ThresholdInKb", "IsLow", "PssInKb", "RssInKb" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfProfilerMemory), global::Gperf.U3D.GPerfProfilerMemory.Parser, new[]{ "MonoHeapSizeInKb", "MonoUsedSizeInKb", "TempAllocatorSizeInKb", "TotalAllocatorSizeInKb", "TotalReservedSizeInKb", "TotalUnusedReservedSizeInKb", "AllocatedForGraphicsDriverInKb" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfLuaMemory), global::Gperf.U3D.GPerfLuaMemory.Parser, new[]{ "Total" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfBattery), global::Gperf.U3D.GPerfBattery.Parser, new[]{ "Temperature", "Status", "Rate" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfCPU), global::Gperf.U3D.GPerfCPU.Parser, new[]{ "CoreCount", "Frequency", "UsageRate", "CoreFrequency" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfFPS), global::Gperf.U3D.GPerfFPS.Parser, new[]{ "Fps" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfFPS), global::Gperf.U3D.GPerfFPS.Parser, new[]{ "DeltaTimeInMS", "Fps" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfFrameTime), global::Gperf.U3D.GPerfFrameTime.Parser, new[]{ "PlayerLoopTime", "RenderingTime", "ScriptTime", "PhysicsTime", "AnimationTime", "CpuTime", "GpuTime" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfGameInfo), global::Gperf.U3D.GPerfGameInfo.Parser, new[]{ "Extensions" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfUserInfo), global::Gperf.U3D.GPerfUserInfo.Parser, new[]{ "Extensions" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
@@ -372,6 +376,12 @@ namespace Gperf.U3D {
       model_ = other.model_;
       name_ = other.name_;
       uniqueIdentifier_ = other.uniqueIdentifier_;
+      graphicsName_ = other.graphicsName_;
+      graphicsType_ = other.graphicsType_;
+      graphicsVendor_ = other.graphicsVendor_;
+      graphicsVersion_ = other.graphicsVersion_;
+      graphicsMemoryInMb_ = other.graphicsMemoryInMb_;
+      systemMemoryInMb_ = other.systemMemoryInMb_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -413,6 +423,72 @@ namespace Gperf.U3D {
       }
     }
 
+    /// <summary>Field number for the "graphics_name" field.</summary>
+    public const int GraphicsNameFieldNumber = 4;
+    private string graphicsName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string GraphicsName {
+      get { return graphicsName_; }
+      set {
+        graphicsName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "graphics_type" field.</summary>
+    public const int GraphicsTypeFieldNumber = 5;
+    private string graphicsType_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string GraphicsType {
+      get { return graphicsType_; }
+      set {
+        graphicsType_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "graphics_vendor" field.</summary>
+    public const int GraphicsVendorFieldNumber = 6;
+    private string graphicsVendor_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string GraphicsVendor {
+      get { return graphicsVendor_; }
+      set {
+        graphicsVendor_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "graphics_version" field.</summary>
+    public const int GraphicsVersionFieldNumber = 7;
+    private string graphicsVersion_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string GraphicsVersion {
+      get { return graphicsVersion_; }
+      set {
+        graphicsVersion_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "graphics_memory_in_mb" field.</summary>
+    public const int GraphicsMemoryInMbFieldNumber = 8;
+    private int graphicsMemoryInMb_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int GraphicsMemoryInMb {
+      get { return graphicsMemoryInMb_; }
+      set {
+        graphicsMemoryInMb_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "system_memory_in_mb" field.</summary>
+    public const int SystemMemoryInMbFieldNumber = 9;
+    private int systemMemoryInMb_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int SystemMemoryInMb {
+      get { return systemMemoryInMb_; }
+      set {
+        systemMemoryInMb_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as GPerfDevice);
@@ -429,6 +505,12 @@ namespace Gperf.U3D {
       if (Model != other.Model) return false;
       if (Name != other.Name) return false;
       if (UniqueIdentifier != other.UniqueIdentifier) return false;
+      if (GraphicsName != other.GraphicsName) return false;
+      if (GraphicsType != other.GraphicsType) return false;
+      if (GraphicsVendor != other.GraphicsVendor) return false;
+      if (GraphicsVersion != other.GraphicsVersion) return false;
+      if (GraphicsMemoryInMb != other.GraphicsMemoryInMb) return false;
+      if (SystemMemoryInMb != other.SystemMemoryInMb) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -438,6 +520,12 @@ namespace Gperf.U3D {
       if (Model.Length != 0) hash ^= Model.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (UniqueIdentifier.Length != 0) hash ^= UniqueIdentifier.GetHashCode();
+      if (GraphicsName.Length != 0) hash ^= GraphicsName.GetHashCode();
+      if (GraphicsType.Length != 0) hash ^= GraphicsType.GetHashCode();
+      if (GraphicsVendor.Length != 0) hash ^= GraphicsVendor.GetHashCode();
+      if (GraphicsVersion.Length != 0) hash ^= GraphicsVersion.GetHashCode();
+      if (GraphicsMemoryInMb != 0) hash ^= GraphicsMemoryInMb.GetHashCode();
+      if (SystemMemoryInMb != 0) hash ^= SystemMemoryInMb.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -463,6 +551,30 @@ namespace Gperf.U3D {
         output.WriteRawTag(26);
         output.WriteString(UniqueIdentifier);
       }
+      if (GraphicsName.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(GraphicsName);
+      }
+      if (GraphicsType.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteString(GraphicsType);
+      }
+      if (GraphicsVendor.Length != 0) {
+        output.WriteRawTag(50);
+        output.WriteString(GraphicsVendor);
+      }
+      if (GraphicsVersion.Length != 0) {
+        output.WriteRawTag(58);
+        output.WriteString(GraphicsVersion);
+      }
+      if (GraphicsMemoryInMb != 0) {
+        output.WriteRawTag(64);
+        output.WriteInt32(GraphicsMemoryInMb);
+      }
+      if (SystemMemoryInMb != 0) {
+        output.WriteRawTag(72);
+        output.WriteInt32(SystemMemoryInMb);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -479,6 +591,24 @@ namespace Gperf.U3D {
       }
       if (UniqueIdentifier.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(UniqueIdentifier);
+      }
+      if (GraphicsName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(GraphicsName);
+      }
+      if (GraphicsType.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(GraphicsType);
+      }
+      if (GraphicsVendor.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(GraphicsVendor);
+      }
+      if (GraphicsVersion.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(GraphicsVersion);
+      }
+      if (GraphicsMemoryInMb != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(GraphicsMemoryInMb);
+      }
+      if (SystemMemoryInMb != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(SystemMemoryInMb);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -499,6 +629,24 @@ namespace Gperf.U3D {
       }
       if (other.UniqueIdentifier.Length != 0) {
         UniqueIdentifier = other.UniqueIdentifier;
+      }
+      if (other.GraphicsName.Length != 0) {
+        GraphicsName = other.GraphicsName;
+      }
+      if (other.GraphicsType.Length != 0) {
+        GraphicsType = other.GraphicsType;
+      }
+      if (other.GraphicsVendor.Length != 0) {
+        GraphicsVendor = other.GraphicsVendor;
+      }
+      if (other.GraphicsVersion.Length != 0) {
+        GraphicsVersion = other.GraphicsVersion;
+      }
+      if (other.GraphicsMemoryInMb != 0) {
+        GraphicsMemoryInMb = other.GraphicsMemoryInMb;
+      }
+      if (other.SystemMemoryInMb != 0) {
+        SystemMemoryInMb = other.SystemMemoryInMb;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -521,6 +669,30 @@ namespace Gperf.U3D {
           }
           case 26: {
             UniqueIdentifier = input.ReadString();
+            break;
+          }
+          case 34: {
+            GraphicsName = input.ReadString();
+            break;
+          }
+          case 42: {
+            GraphicsType = input.ReadString();
+            break;
+          }
+          case 50: {
+            GraphicsVendor = input.ReadString();
+            break;
+          }
+          case 58: {
+            GraphicsVersion = input.ReadString();
+            break;
+          }
+          case 64: {
+            GraphicsMemoryInMb = input.ReadInt32();
+            break;
+          }
+          case 72: {
+            SystemMemoryInMb = input.ReadInt32();
             break;
           }
         }
@@ -1640,6 +1812,7 @@ namespace Gperf.U3D {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public GPerfFPS(GPerfFPS other) : this() {
+      deltaTimeInMS_ = other.deltaTimeInMS_;
       fps_ = other.fps_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1649,8 +1822,19 @@ namespace Gperf.U3D {
       return new GPerfFPS(this);
     }
 
+    /// <summary>Field number for the "delta_time_in_MS" field.</summary>
+    public const int DeltaTimeInMSFieldNumber = 1;
+    private float deltaTimeInMS_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float DeltaTimeInMS {
+      get { return deltaTimeInMS_; }
+      set {
+        deltaTimeInMS_ = value;
+      }
+    }
+
     /// <summary>Field number for the "fps" field.</summary>
-    public const int FpsFieldNumber = 1;
+    public const int FpsFieldNumber = 2;
     private int fps_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Fps {
@@ -1673,6 +1857,7 @@ namespace Gperf.U3D {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(DeltaTimeInMS, other.DeltaTimeInMS)) return false;
       if (Fps != other.Fps) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1680,6 +1865,7 @@ namespace Gperf.U3D {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (DeltaTimeInMS != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(DeltaTimeInMS);
       if (Fps != 0) hash ^= Fps.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1694,8 +1880,12 @@ namespace Gperf.U3D {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+      if (DeltaTimeInMS != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(DeltaTimeInMS);
+      }
       if (Fps != 0) {
-        output.WriteRawTag(8);
+        output.WriteRawTag(16);
         output.WriteInt32(Fps);
       }
       if (_unknownFields != null) {
@@ -1706,6 +1896,9 @@ namespace Gperf.U3D {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (DeltaTimeInMS != 0F) {
+        size += 1 + 4;
+      }
       if (Fps != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Fps);
       }
@@ -1719,6 +1912,9 @@ namespace Gperf.U3D {
     public void MergeFrom(GPerfFPS other) {
       if (other == null) {
         return;
+      }
+      if (other.DeltaTimeInMS != 0F) {
+        DeltaTimeInMS = other.DeltaTimeInMS;
       }
       if (other.Fps != 0) {
         Fps = other.Fps;
@@ -1734,7 +1930,11 @@ namespace Gperf.U3D {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
+          case 13: {
+            DeltaTimeInMS = input.ReadFloat();
+            break;
+          }
+          case 16: {
             Fps = input.ReadInt32();
             break;
           }

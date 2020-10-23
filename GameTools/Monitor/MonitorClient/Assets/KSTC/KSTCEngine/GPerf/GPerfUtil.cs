@@ -7,6 +7,7 @@ namespace KSTCEngine.GPerf
     public static class GPerfUtil
     {
         public const string LOG_NAME = "GPerf-Log";
+        public const int BYTE_TO_MB_SIZE = 1024;
 
         public static string GeRootDir()
         {

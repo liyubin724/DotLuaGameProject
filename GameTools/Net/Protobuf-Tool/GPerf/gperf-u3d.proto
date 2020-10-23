@@ -20,6 +20,14 @@ message GPerfDevice{
     string model = 1;
     string name = 2;
     string unique_identifier = 3;
+
+    string graphics_name = 4;
+    string graphics_type = 5;
+    string graphics_vendor = 6;
+    string graphics_version = 7;
+    int32 graphics_memory_in_mb = 8;
+
+    int32 system_memory_in_mb = 9;
 }
 
 message GPerfSystemMemory{
@@ -62,7 +70,8 @@ message GPerfCPU{
 }
 
 message GPerfFPS{
-    int32 fps = 1;
+    float delta_time_in_MS = 1;
+    int32 fps = 2;
 }
 
 message GPerfFrameTime{

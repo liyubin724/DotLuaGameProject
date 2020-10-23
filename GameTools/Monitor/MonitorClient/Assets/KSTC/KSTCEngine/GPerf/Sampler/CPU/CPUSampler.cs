@@ -8,6 +8,8 @@ namespace KSTCEngine.GPerf.Sampler
         public float UsageRate { get; set; } = 0.0f;
         public int Frequency { get; set; } = 0;
         public int CoreCount { get; set; } = 1;
+
+        public int[] CoreFrequency { get; set; } = new int[0];
     }
 
     public class CPUSampler : GPerfSampler<CPURecord>

@@ -74,7 +74,7 @@ namespace KSTCEngine.GPerf.Sampler
                             {
                                 m_TotalMemInKB = 0L;
                             }
-                            m_TotalMemInKB /= 1024;
+                            m_TotalMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
                         }
                         else if (name == MEMORY_AVAILABLE_KEY)
                         {
@@ -82,7 +82,7 @@ namespace KSTCEngine.GPerf.Sampler
                             {
                                 m_AvailableMemInKB = 0L;
                             }
-                            m_AvailableMemInKB /= 1024;
+                            m_AvailableMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
                         }
                         else if (name == MEMORY_THRESHOLD_KEY)
                         {
@@ -90,7 +90,7 @@ namespace KSTCEngine.GPerf.Sampler
                             {
                                 m_ThresholdInKB = 0L;
                             }
-                            m_ThresholdInKB /= 1024;
+                            m_ThresholdInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
                         }
                         else if(name == MEMORY_IS_LOW_KEY)
                         {
@@ -104,7 +104,7 @@ namespace KSTCEngine.GPerf.Sampler
                             {
                                 m_PssMemInKB = 0L;
                             }
-                            m_PssMemInKB /= 1024;
+                            m_PssMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
                         }
                     }
                 }

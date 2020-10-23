@@ -58,7 +58,7 @@ namespace KSTCEngine.GPerf
 
         private void Update()
         {
-            GPerfMonitor.GetInstance().DoUpdate(Time.deltaTime);
+            GPerfMonitor.GetInstance().DoUpdate(Time.unscaledDeltaTime);
 
             if(!m_IsSending&&m_NetDatas.Count>0)
             {
