@@ -9,18 +9,16 @@ namespace KSTCEngine.GPerf.Recorder
     public class FileRecorder : GPerfRecorder
     {
         private StreamWriter m_Writer = null;
+        private int m_RecordCount = 0;
+        private string m_RootDir = string.Empty;
+
         public FileRecorder()
         {
             Type = RecorderType.File;
-        }
-
-        public override void DoStart()
-        {
-            string rootDir = GPerfUtil.GeRootDir();
-
-            if(!string.IsNullOrEmpty(rootDir))
+            m_RootDir = GPerfUtil.GeRootDir();
+            if (!string.IsNullOrEmpty(m_RootDir))
             {
-                string[] files = Directory.GetFiles(rootDir, "gperf_*.log", SearchOption.TopDirectoryOnly);
+                string[] files = Directory.GetFiles(m_RootDir, "gperf_*.log", SearchOption.TopDirectoryOnly);
                 if (files != null && files.Length > 0)
                 {
                     foreach (var file in files)
@@ -28,13 +26,21 @@ namespace KSTCEngine.GPerf.Recorder
                         File.Delete(file);
                     }
                 }
+            }
+        }
 
+        public override void DoStart()
+        {
+            if(!string.IsNullOrEmpty(m_RootDir))
+            {
                 try
                 {
                     DateTime time = DateTime.Now;
-                    string logPath = $"{rootDir}gperf_{time.Year}{time.Month}{time.Day}.log";
+                    string logPath = $"{m_RootDir}gperf_{time.Year}{time.Month}{time.Day}_{m_RecordCount}.log";
                     m_Writer = new StreamWriter(logPath, true, Encoding.UTF8);
                     m_Writer.AutoFlush = true;
+
+                    m_RecordCount++;
                 }
                 catch
                 {
