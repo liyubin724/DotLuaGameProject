@@ -71,31 +71,40 @@ namespace KSTCEngine.GPerf.Sampler
         protected override void OnStart()
         {
             mFrameTimings = new FrameTiming[2];
+            if(Debug.isDebugBuild)
+            {
+                RecorerdInit(in mPlayerLoopSamplerNames, out mPlayerLoopRecorders);
+                RecorerdInit(in mRenderingSamplerNames, out mRenderingRecorders);
+                RecorerdInit(in mScriptsSamplerNames, out mScriptsSamplerRecorders);
+                RecorerdInit(in mPhysicsSamplerNames, out mPhysicsSamplerRecorders);
+                RecorerdInit(in mAnimationSamplerNames, out mAnimationSamplerRecorders);
+            }
 
-            RecorerdInit(in mPlayerLoopSamplerNames, out mPlayerLoopRecorders);
-            RecorerdInit(in mRenderingSamplerNames, out mRenderingRecorders);
-            RecorerdInit(in mScriptsSamplerNames, out mScriptsSamplerRecorders);
-            RecorerdInit(in mPhysicsSamplerNames, out mPhysicsSamplerRecorders);
-            RecorerdInit(in mAnimationSamplerNames, out mAnimationSamplerRecorders);
         }
 
         protected override void OnUpdate(float deltaTime)
         {
-            FrameTimingManager.CaptureFrameTimings();
-            FrameTimingManager.GetLatestTimings((uint)mFrameTimings.Length, mFrameTimings);
+            if (Debug.isDebugBuild)
+            {
+                FrameTimingManager.CaptureFrameTimings();
+                FrameTimingManager.GetLatestTimings((uint)mFrameTimings.Length, mFrameTimings);
+            }
         }
 
         protected override void OnSample()
         {
-            record.PlayerLoopTime = GetRecordersTime(mPlayerLoopRecorders);
+            if(Debug.isDebugBuild)
+            {
+                record.PlayerLoopTime = GetRecordersTime(mPlayerLoopRecorders);
 
-            record.RenderingTime = GetRecordersTime(mRenderingRecorders);
-            record.ScriptTime = GetRecordersTime(mScriptsSamplerRecorders);
-            record.PhysicsTime = GetRecordersTime(mPhysicsSamplerRecorders);
-            record.AnimationTime = GetRecordersTime(mAnimationSamplerRecorders);
+                record.RenderingTime = GetRecordersTime(mRenderingRecorders);
+                record.ScriptTime = GetRecordersTime(mScriptsSamplerRecorders);
+                record.PhysicsTime = GetRecordersTime(mPhysicsSamplerRecorders);
+                record.AnimationTime = GetRecordersTime(mAnimationSamplerRecorders);
 
-            record.CPUFrameTime = (float)mFrameTimings[0].cpuFrameTime;
-            record.GPUFrameTime = (float)mFrameTimings[0].gpuFrameTime;
+                record.CPUFrameTime = (float)mFrameTimings[0].cpuFrameTime;
+                record.GPUFrameTime = (float)mFrameTimings[0].gpuFrameTime;
+            }
         }
 
         private void RecorerdInit(in string[] samplerNames, out ProfilerRecorder[] recorders)
