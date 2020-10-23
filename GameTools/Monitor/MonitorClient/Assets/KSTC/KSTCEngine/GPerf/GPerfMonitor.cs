@@ -20,6 +20,12 @@ namespace KSTCEngine.GPerf
             return sm_Instance;
         }
 
+        [RuntimeInitializeOnLoadMethod]
+        private static void OnRuntimeLoaded()
+        {
+            GPerfMonitor.GetInstance().DoInit();
+        }
+
         private GameObject m_GObject = null;
         private GPerfBehaviour m_Behaviour = null;
         internal GPerfBehaviour Behaviour
@@ -36,16 +42,15 @@ namespace KSTCEngine.GPerf
         {
         }
 
+        public void DoInit()
+        {
+            m_GObject = new GameObject("GPerfMonitor");
+            m_Behaviour = m_GObject.AddComponent<GPerfBehaviour>();
+            UnityObject.DontDestroyOnLoad(m_GObject);
+        }
+
         public void Startup()
         {
-            if(m_GObject == null)
-            {
-                m_GObject = new GameObject("GPerfMonitor");
-                m_Behaviour = m_GObject.AddComponent<GPerfBehaviour>();
-
-                UnityObject.DontDestroyOnLoad(m_GObject);
-            }
-
             if(!m_IsRunning)
             {
                 foreach(var kvp in m_RecorderDic)
@@ -79,6 +84,17 @@ namespace KSTCEngine.GPerf
             m_IsRunning = false;
         }
 
+        public void SetSamplerSamplingInterval(SamplerMetricType metricType,float interval)
+        {
+            if(m_SamplerDic.TryGetValue(metricType,out var sampler))
+            {
+                if(sampler.FreqType == SamplerFreqType.Interval)
+                {
+                    sampler.SamplingInterval = interval;
+                }
+            }
+        }
+
         public Record GetSamplerRecord(SamplerMetricType metricType)
         {
             if(m_SamplerDic.TryGetValue(metricType,out ISampler sampler))
@@ -100,8 +116,8 @@ namespace KSTCEngine.GPerf
                 case SamplerMetricType.FPS:
                     sampler = new FPSSampler();
                     break;
-                case SamplerMetricType.Memory:
-                    sampler = new MemorySampler();
+                case SamplerMetricType.SystemMemory:
+                    sampler = new SystemMemorySampler();
                     break;
                 case SamplerMetricType.ProfilerMemory:
                     sampler = new ProfilerMemorySampler();

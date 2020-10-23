@@ -5,8 +5,8 @@ namespace KSTCEngine.GPerf.Sampler
 {
     public class DeviceRecord : Record
     {
-        public string Model { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;//用户定义的设备名称
+        public string Model { get; set; } = string.Empty;//设备型号
         public string UniqueIdentifier { get; set; } = string.Empty;
     }
 

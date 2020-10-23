@@ -1,5 +1,5 @@
 ﻿using Google.Protobuf;
-using Gperf;
+using Gperf.U3D;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +16,7 @@ namespace KSTCEngine.GPerf
     public class GPerfBehaviour : MonoBehaviour
     {
         private List<GPerfNetData> m_NetDatas = new List<GPerfNetData>();
-        private string m_NetUrl = "https://pirates-dev-api.shiyou.kingsoft.com:8443/gperf/api/UploadStats";
+        private string m_NetUrl = "http://hb.ix2.cn:16408/u3d/uploadStats";
         private bool m_IsSending = false;
         private bool m_IsUploadLog = false;
 

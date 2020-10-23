@@ -4,10 +4,10 @@ namespace KSTCEngine.GPerf.Sampler
 {
     public class AppRecord : Record
     {
-        public string ID { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public string Identifier { get; set; } = string.Empty;
+        public string InstallName { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
         public string Version { get; set; } = string.Empty;
-        public string Engine { get; set; } = "Unity3D";
         public string EngineVersion { get; set; } = string.Empty;
     }
 
@@ -21,8 +21,9 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnStart()
         {
-            record.ID = Application.identifier;
-            record.Name = Application.productName;
+            record.Identifier = Application.identifier;
+            record.InstallName = Application.installerName;
+            record.ProductName = Application.productName;
             record.Version = Application.version;
             record.EngineVersion = Application.unityVersion;
         }

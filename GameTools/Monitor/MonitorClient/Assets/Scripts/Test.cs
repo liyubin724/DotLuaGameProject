@@ -9,7 +9,18 @@ public class Test : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        Debug.LogError(Application.unityVersion);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Battery);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FPS);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.SystemMemory);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.ProfilerMemory);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Device);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.App);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FrameTime);
+        GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Log);
+
+        GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
+        GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Console);
     }
 
     private bool m_IsRunning = false;
@@ -26,18 +37,7 @@ public class Test : MonoBehaviour
                 else
                 {
                     GPerfMonitor.GetInstance().Startup();
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Battery);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FPS);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Memory);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.ProfilerMemory);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Device);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.App);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FrameTime);
-                    GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Log);
-
-                    GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
-                    GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Console);
+                    
 
                 }
                 m_IsRunning = !m_IsRunning;

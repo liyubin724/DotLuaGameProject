@@ -5,15 +5,15 @@ namespace KSTCEngine.GPerf.Sampler
 {
     public class FrameTimeRecord:Record
     {
-        public long PlayerLoopTime { get; set; } = 0L;
+        public float PlayerLoopTime { get; set; } = 0L;
 
-        public long RenderingTime { get; set; } = 0L;
-        public long ScriptTime { get; set; } = 0L;
-        public long PhysicsTime { get; set; } = 0L;
-        public long AnimationTime { get; set; } = 0L;
+        public float RenderingTime { get; set; } = 0L;
+        public float ScriptTime { get; set; } = 0L;
+        public float PhysicsTime { get; set; } = 0L;
+        public float AnimationTime { get; set; } = 0L;
 
-        public double CPUFrameTime { get; set; } = 0.0f;
-        public double GPUFrameTime { get; set; } = 0.0f;
+        public float CPUFrameTime { get; set; } = 0.0f;
+        public float GPUFrameTime { get; set; } = 0.0f;
     }
 
     public class FrameTimeSampler : GPerfSampler<FrameTimeRecord>
@@ -94,8 +94,8 @@ namespace KSTCEngine.GPerf.Sampler
             record.PhysicsTime = GetRecordersTime(mPhysicsSamplerRecorders);
             record.AnimationTime = GetRecordersTime(mAnimationSamplerRecorders);
 
-            record.CPUFrameTime = mFrameTimings[0].cpuFrameTime;
-            record.GPUFrameTime = mFrameTimings[0].gpuFrameTime;
+            record.CPUFrameTime = (float)mFrameTimings[0].cpuFrameTime;
+            record.GPUFrameTime = (float)mFrameTimings[0].gpuFrameTime;
         }
 
         private void RecorerdInit(in string[] samplerNames, out ProfilerRecorder[] recorders)
@@ -107,14 +107,14 @@ namespace KSTCEngine.GPerf.Sampler
             }
         }
 
-        private long GetRecordersTime(ProfilerRecorder[] recorders)
+        private float GetRecordersTime(ProfilerRecorder[] recorders)
         {
             long t = 0;
             foreach (var recorder in recorders)
             {
                 t += recorder.elapsedNanoseconds;
             }
-            return t / 1000000;
+            return t / 1000000.0f;
         }
     }
 }

@@ -2,16 +2,16 @@
 
 namespace KSTCEngine.GPerf.Sampler
 {
-    public class MemoryRecord : Record
+    public class SystemMemoryRecord : Record
     {
-        public long TotalMem { get; set; } = 0L;
-        public long AvailableMem { get; set; } = 0L;
-        public long Threshold { get; set; } = 0L;
+        public long TotalMemInKB { get; set; } = 0;
+        public long AvailableMemInKB { get; set; } = 0;
+        public long ThresholdInKB { get; set; } = 0;
         public bool IsLowMem { get; set; } = false;
-        public long PSSMem { get; set; } = 0L;
+        public long PSSMemInKB { get; set; } = 0;
     }
 
-    public class MemorySampler : GPerfSampler<MemoryRecord>
+    public class SystemMemorySampler : GPerfSampler<SystemMemoryRecord>
     {
         public const string MEMORY_TOTAL_KEY = "totalMem";
         public const string MEMORY_AVAILABLE_KEY = "availMem";
@@ -19,42 +19,42 @@ namespace KSTCEngine.GPerf.Sampler
         public const string MEMORY_IS_LOW_KEY = "lowMemory";
         public const string MEMORY_PSS_KEY = "PSS";
 
-        private long m_TotalMem = 0L;
-        private long m_AvailableMem = 0L;
-        private long m_Threshold = 0L;
-        private bool m_IsLowMem = false;
-        private long m_PssMem = 0L;
+        private long m_TotalMemInKB = 0L;
+        private long m_AvailableMemInKB = 0L;
+        private long m_ThresholdInKB = 0L;
+        private bool m_IsLowMemInKB = false;
+        private long m_PssMemInKB = 0L;
 
-        public MemorySampler()
+        public SystemMemorySampler()
         {
-            MetricType = SamplerMetricType.Memory;
+            MetricType = SamplerMetricType.SystemMemory;
             FreqType = SamplerFreqType.Interval;
             SamplingInterval = 10.0f;
         }
 
         public long GetTotalMem()
         {
-            return m_TotalMem;
+            return m_TotalMemInKB;
         }
 
         public long GetAvailableMem()
         {
-            return m_AvailableMem;
+            return m_AvailableMemInKB;
         }
 
         public long GetThreshold()
         {
-            return m_Threshold;
+            return m_ThresholdInKB;
         }
 
         public bool IsLowMem()
         {
-            return m_IsLowMem;
+            return m_IsLowMemInKB;
         }
 
         public long GetPssMem()
         {
-            return m_PssMem;
+            return m_PssMemInKB;
         }
 
         protected override void OnSample()
@@ -70,47 +70,51 @@ namespace KSTCEngine.GPerf.Sampler
                         GPerfUtil.GetKeyValue(line, out var name, out var value);
                         if (name == MEMORY_TOTAL_KEY)
                         {
-                            if(!long.TryParse(value,out m_TotalMem))
+                            if(!long.TryParse(value,out m_TotalMemInKB))
                             {
-                                m_TotalMem = 0L;
+                                m_TotalMemInKB = 0L;
                             }
+                            m_TotalMemInKB /= 1024;
                         }
                         else if (name == MEMORY_AVAILABLE_KEY)
                         {
-                            if (!long.TryParse(value, out m_AvailableMem))
+                            if (!long.TryParse(value, out m_AvailableMemInKB))
                             {
-                                m_AvailableMem = 0L;
+                                m_AvailableMemInKB = 0L;
                             }
+                            m_AvailableMemInKB /= 1024;
                         }
                         else if (name == MEMORY_THRESHOLD_KEY)
                         {
-                            if (!long.TryParse(value, out m_Threshold))
+                            if (!long.TryParse(value, out m_ThresholdInKB))
                             {
-                                m_Threshold = 0L;
+                                m_ThresholdInKB = 0L;
                             }
+                            m_ThresholdInKB /= 1024;
                         }
                         else if(name == MEMORY_IS_LOW_KEY)
                         {
-                            if(!bool.TryParse(value,out m_IsLowMem))
+                            if(!bool.TryParse(value,out m_IsLowMemInKB))
                             {
-                                m_IsLowMem = false;
+                                m_IsLowMemInKB = false;
                             }
                         }else if(name == MEMORY_PSS_KEY)
                         {
-                            if(!long.TryParse(value,out m_PssMem))
+                            if(!long.TryParse(value,out m_PssMemInKB))
                             {
-                                m_PssMem = 0L;
+                                m_PssMemInKB = 0L;
                             }
+                            m_PssMemInKB /= 1024;
                         }
                     }
                 }
             }
 
-            record.TotalMem = m_TotalMem;
-            record.AvailableMem = m_TotalMem;
-            record.IsLowMem = m_IsLowMem;
-            record.Threshold = m_Threshold;
-            record.PSSMem = m_PssMem;
+            record.TotalMemInKB =m_TotalMemInKB;
+            record.AvailableMemInKB = m_AvailableMemInKB;
+            record.IsLowMem = m_IsLowMemInKB;
+            record.ThresholdInKB = m_ThresholdInKB;
+            record.PSSMemInKB = m_PssMemInKB;
         }
     }
 }
