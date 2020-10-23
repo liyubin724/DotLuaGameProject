@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.Profiling;
 
 namespace KSTCEngine.GPerf.Sampler
 {
@@ -41,9 +42,13 @@ namespace KSTCEngine.GPerf.Sampler
             //RecordData.Time = DateTime.Now;
             record.ExtensionData = string.Empty;
 
+            Profiler.BeginSample($"GPerfSampler:{MetricType}");
             OnSample();
+            Profiler.EndSample();
 
+            Profiler.BeginSample("GPerfRecorder:handleRecord");
             OnSampleRecord?.Invoke(record);
+            Profiler.EndSample();
         }
 
         public virtual void DoUpdate(float deltaTime)
