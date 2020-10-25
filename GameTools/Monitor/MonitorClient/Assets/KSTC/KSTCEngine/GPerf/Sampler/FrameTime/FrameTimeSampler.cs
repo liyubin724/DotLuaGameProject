@@ -79,7 +79,6 @@ namespace KSTCEngine.GPerf.Sampler
                 RecorerdInit(in mPhysicsSamplerNames, out mPhysicsSamplerRecorders);
                 RecorerdInit(in mAnimationSamplerNames, out mAnimationSamplerRecorders);
             }
-
         }
 
         protected override void OnUpdate(float deltaTime)

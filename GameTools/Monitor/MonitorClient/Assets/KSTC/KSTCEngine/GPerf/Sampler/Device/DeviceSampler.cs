@@ -70,11 +70,6 @@ namespace KSTCEngine.GPerf.Sampler
             return SystemInfo.systemMemorySize;
         }
 
-        protected override void OnStart()
-        {
-            DoSample();
-        }
-
         protected override void OnSample()
         {
             record.Model = GetModel();

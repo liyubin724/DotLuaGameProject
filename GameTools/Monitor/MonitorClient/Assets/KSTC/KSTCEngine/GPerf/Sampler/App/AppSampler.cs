@@ -19,17 +19,13 @@ namespace KSTCEngine.GPerf.Sampler
             FreqType = SamplerFreqType.Start;
         }
 
-        protected override void OnStart()
+        protected override void OnSample()
         {
             record.Identifier = Application.identifier;
             record.InstallName = Application.installerName;
             record.ProductName = Application.productName;
             record.Version = Application.version;
             record.EngineVersion = Application.unityVersion;
-        }
-
-        protected override void OnSample()
-        {
         }
     }
 }
