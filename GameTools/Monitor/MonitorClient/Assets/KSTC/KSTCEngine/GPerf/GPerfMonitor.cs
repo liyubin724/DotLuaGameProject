@@ -1,8 +1,11 @@
 ﻿using KSTCEngine.GPerf.Recorder;
 using KSTCEngine.GPerf.Sampler;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
+using SystemObject = System.Object;
+using System;
 
 namespace KSTCEngine.GPerf
 {
@@ -33,13 +36,28 @@ namespace KSTCEngine.GPerf
             get { return m_Behaviour; }
         }
 
+        private Dictionary<string, Action<GPerfMonitorAction>> m_ActionDic = new Dictionary<string, Action<GPerfMonitorAction>>();
+
+        private object m_MonitorLock = new object();
+        private bool m_IsRunning = false;
+        private List<GPerfMonitorAction> m_Actions = new List<GPerfMonitorAction>();
         private Dictionary<SamplerMetricType, ISampler> m_SamplerDic = new Dictionary<SamplerMetricType, ISampler>();
         private Dictionary<RecorderType, IRecorder> m_RecorderDic = new Dictionary<RecorderType, IRecorder>();
-       
-        private bool m_IsRunning = false;
+
+        private Thread m_MonitorThread = null;
+
+        public int FrameRate { get; set; } = 10;
+        private float m_FrameIntervalInS = 1.0f;
+        private int m_FrameIntervalInMS = 1000;
 
         private GPerfMonitor()
         {
+            m_ActionDic.Add(GPerfMonitorAction.START_ACTION, OnStartAction);
+            m_ActionDic.Add(GPerfMonitorAction.END_ACTION, OnEndAction);
+            m_ActionDic.Add(GPerfMonitorAction.OPEN_SAMPLER_ACTION,OnOpenSamplerAction);
+            m_ActionDic.Add(GPerfMonitorAction.CLOSE_SAMPLER_ACTION, OnCloseSamplerAction);
+            m_ActionDic.Add(GPerfMonitorAction.OPEN_RECORDER_ACTION, OnOpenRecorderAction);
+            m_ActionDic.Add(GPerfMonitorAction.CLOSE_RECORDER_ACTION, OnCloseRecorderAction);
         }
 
         public void DoInit()
@@ -47,55 +65,129 @@ namespace KSTCEngine.GPerf
             m_GObject = new GameObject("GPerfMonitor");
             m_Behaviour = m_GObject.AddComponent<GPerfBehaviour>();
             UnityObject.DontDestroyOnLoad(m_GObject);
+
+            m_FrameIntervalInS = 1.0f / FrameRate;
+
+            m_FrameIntervalInMS = (int)(m_FrameIntervalInS * 1000);
+            m_MonitorThread = new Thread(OnThreadUpdate);
+            m_MonitorThread.Start();
         }
 
         public void Startup()
         {
-            if(!m_IsRunning)
+            lock (m_MonitorLock)
             {
-                foreach(var kvp in m_RecorderDic)
+                m_Actions.Add(new GPerfMonitorAction()
                 {
-                    kvp.Value.DoStart();
-                }
-
-                foreach (var kvp in m_SamplerDic)
-                {
-                    kvp.Value.DoStart();
-                }
+                    ActionName = GPerfMonitorAction.START_ACTION,
+                });
             }
-            m_IsRunning = true;
         }
 
         public void Shuntdown()
         {
-            if(m_IsRunning)
+            lock (m_MonitorLock)
             {
-                foreach (var kvp in m_SamplerDic)
+                m_Actions.Add(new GPerfMonitorAction()
                 {
-                    kvp.Value.DoEnd();
+                    ActionName = GPerfMonitorAction.END_ACTION,
+                });
+            }
+        }
+        
+        private void OnThreadUpdate()
+        {
+            while(true)
+            {
+                lock(m_MonitorLock)
+                {
+                    while(m_Actions.Count>0)
+                    {
+                        GPerfMonitorAction mAction = m_Actions[0];
+                        m_Actions.RemoveAt(0);
+
+                        if (m_ActionDic.TryGetValue(mAction.ActionName, out var action))
+                        {
+                            action.Invoke(mAction);
+                        }
+                    }
                 }
 
-                foreach(var kvp in m_RecorderDic)
+                Thread.Sleep(m_FrameIntervalInMS);
+
+                if(m_IsRunning)
                 {
-                    kvp.Value.DoEnd();
+                    foreach (var kvp in m_SamplerDic)
+                    {
+                        kvp.Value.DoUpdate(m_FrameIntervalInS);
+                    }
+
+                    foreach (var kvp in m_RecorderDic)
+                    {
+                        //kvp.Value.DoUpdate(deltaTime);
+                    }
                 }
             }
+        }
 
+        private void OnStartAction(GPerfMonitorAction action)
+        {
+            if(m_IsRunning)
+            {
+                return;
+            }
+
+            foreach (var kvp in m_RecorderDic)
+            {
+                kvp.Value.DoStart();
+            }
+            foreach (var kvp in m_SamplerDic)
+            {
+                kvp.Value.DoStart();
+            }
+            m_IsRunning = true;
+        }
+
+        private void OnEndAction(GPerfMonitorAction action)
+        {
+            if(!m_IsRunning)
+            {
+                return;
+            }
+
+            foreach (var kvp in m_SamplerDic)
+            {
+                kvp.Value.DoEnd();
+            }
+
+            foreach (var kvp in m_RecorderDic)
+            {
+                kvp.Value.DoEnd();
+            }
             m_IsRunning = false;
         }
 
-        public void SetSamplerSamplingInterval(SamplerMetricType metricType,float interval)
+        private void OnOpenSamplerAction(GPerfMonitorAction action)
         {
-            if(m_SamplerDic.TryGetValue(metricType,out var sampler))
-            {
-                if(sampler.FreqType == SamplerFreqType.Interval)
-                {
-                    sampler.SamplingInterval = interval;
-                }
-            }
+
+        }
+        private void OnCloseSamplerAction(GPerfMonitorAction action)
+        {
+
+        }
+        private void OnOpenRecorderAction(GPerfMonitorAction action)
+        {
+
+        }
+        private void OnCloseRecorderAction(GPerfMonitorAction action)
+        {
+
         }
 
-        public Record GetSamplerRecord(SamplerMetricType metricType)
+
+
+
+        internal Record GetSamplerRecord(SamplerMetricType metricType)
         {
             if(m_SamplerDic.TryGetValue(metricType,out ISampler sampler))
             {
@@ -110,41 +202,7 @@ namespace KSTCEngine.GPerf
             {
                 return;
             }
-            ISampler sampler = null;
-            switch (type)
-            {
-                case SamplerMetricType.FPS:
-                    sampler = new FPSSampler();
-                    break;
-                case SamplerMetricType.SystemMemory:
-                    sampler = new SystemMemorySampler();
-                    break;
-                case SamplerMetricType.ProfilerMemory:
-                    sampler = new ProfilerMemorySampler();
-                    break;
-                case SamplerMetricType.Device:
-                    sampler = new DeviceSampler();
-                    break;
-                case SamplerMetricType.App:
-                    sampler = new AppSampler();
-                    break;
-                case SamplerMetricType.Battery:
-                    sampler = new BatterySampler();
-                    break;
-                case SamplerMetricType.CPU:
-                    sampler = new CPUSampler();
-                    break;
-                case SamplerMetricType.FrameTime:
-                    sampler = new FrameTimeSampler();
-                    break;
-                case SamplerMetricType.Log:
-                    sampler = new LogSampler();
-                    break;
-                default:
-                    sampler = null;
-                    break;
-            }
-
+            ISampler sampler = GPerfSamplerFactory.GetSampler(type);
             if (sampler != null)
             {
                 sampler.OnSampleRecord = OnHandleRecord;
@@ -169,24 +227,9 @@ namespace KSTCEngine.GPerf
             {
                 return;
             }
-            IRecorder recorder = null;
-            switch (type)
-            {
-                case RecorderType.File:
-                    recorder = new FileRecorder();
-                    break;
-                case RecorderType.Console:
-                    recorder = new ConsoleRecorder();
-                    break;
-                case RecorderType.Remote:
-                    recorder = new RemoteRecorder();
-                    break;
-            }
-
+            IRecorder recorder = GPerfRecorderFactory.GetRecorder(type);
             if (recorder != null)
             {
-                recorder.SetUserInfo();
-
                 recorder.DoStart();
                 m_RecorderDic.Add(type, recorder);
 
@@ -194,7 +237,7 @@ namespace KSTCEngine.GPerf
                 {
                     if(kvp.Value.FreqType == SamplerFreqType.Start)
                     {
-                        recorder.HandleRecord(kvp.Value.GetRecord());
+                        //recorder.HandleRecord(kvp.Value.GetRecord());
                     }
                 }
             }
@@ -213,7 +256,7 @@ namespace KSTCEngine.GPerf
         {
             foreach(var kvp in m_RecorderDic)
             {
-                kvp.Value.HandleRecord(record);
+                //kvp.Value.HandleRecord(record);
             }
         }
 
@@ -231,7 +274,7 @@ namespace KSTCEngine.GPerf
 
             foreach(var kvp in m_RecorderDic)
             {
-                kvp.Value.DoUpdate(deltaTime);
+                //kvp.Value.DoUpdate(deltaTime);
             }
         }
 

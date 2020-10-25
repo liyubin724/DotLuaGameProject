@@ -6,15 +6,14 @@ using System.Text;
 
 namespace KSTCEngine.GPerf.Recorder
 {
-    public class FileRecorder : GPerfRecorder
+    public class FileRecorder : GPerfHandleRecorder
     {
         private StreamWriter m_Writer = null;
         private int m_RecordCount = 0;
         private string m_RootDir = string.Empty;
 
-        public FileRecorder()
+        public FileRecorder():base(RecorderType.File)
         {
-            Type = RecorderType.File;
             m_RootDir = GPerfUtil.GeRootDir();
             if (!string.IsNullOrEmpty(m_RootDir))
             {

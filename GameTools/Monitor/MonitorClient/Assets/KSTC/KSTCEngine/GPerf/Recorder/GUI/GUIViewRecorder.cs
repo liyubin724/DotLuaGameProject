@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KSTCEngine.GPerf.Recorder
 {
-    public class GUIViewRecorder : GPerfRecorder
+    public class GUIViewRecorder : GPerfHandleRecorder
     {
         public GUIViewRecorder()
         {

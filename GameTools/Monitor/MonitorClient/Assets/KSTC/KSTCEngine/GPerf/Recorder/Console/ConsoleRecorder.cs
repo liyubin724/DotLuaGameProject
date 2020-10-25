@@ -3,11 +3,10 @@ using Newtonsoft.Json;
 
 namespace KSTCEngine.GPerf.Recorder
 {
-    public class ConsoleRecorder : GPerfRecorder
+    public class ConsoleRecorder : GPerfHandleRecorder
     {
-        public ConsoleRecorder()
+        public ConsoleRecorder():base(RecorderType.Console)
         {
-            Type = RecorderType.Console;
         }
 
         public override void HandleRecord(Record record)
