@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace KSTCEngine.GPerf.Recorder
 {
-    public class GUIViewRecorder : GPerfHandleRecorder
+    public class GUIViewRecorder
     {
         public GUIViewRecorder()
         {
         }
 
-        public override void HandleRecord(Record record)
+        public void HandleRecord(Record record)
         {
             
         }

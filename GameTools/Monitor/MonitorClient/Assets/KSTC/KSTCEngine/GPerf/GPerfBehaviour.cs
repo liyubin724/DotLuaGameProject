@@ -1,21 +1,19 @@
-﻿using Google.Protobuf;
-using Gperf.U3D;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
+﻿using UnityEngine;
 
 namespace KSTCEngine.GPerf
 {
-    
-
     public class GPerfBehaviour : MonoBehaviour
     {
-        private int m_FPS = 0;
+        private void Update()
+        {
+            GPerfMonitor.GetInstance().DoUpdate(Time.unscaledDeltaTime);
+        }
 
-        public int FPS { get; }
-
-
+        private void OnDestroy()
+        {
+            StopAllCoroutines();
+            GPerfMonitor.GetInstance().DoDispose();
+        }
 
 
         //private List<GPerfNetData> m_NetDatas = new List<GPerfNetData>();
