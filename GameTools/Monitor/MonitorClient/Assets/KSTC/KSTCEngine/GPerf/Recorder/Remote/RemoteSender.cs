@@ -87,7 +87,7 @@ namespace KSTCEngine.GPerf.Recorder
 
             }
             response.Close();
-
+            m_IsSending = false;
         }
 
         public void SendLogToServer(string url,string logPath)

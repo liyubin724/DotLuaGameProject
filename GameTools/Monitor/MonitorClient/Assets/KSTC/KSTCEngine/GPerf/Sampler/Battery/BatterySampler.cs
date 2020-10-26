@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -36,9 +37,17 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnSample()
         {
-            record.Temperature = GetTemperature();
             record.Status = GetStatus();
             record.Rate = GetRate();
+
+            ThreadPool.QueueUserWorkItem((value) =>
+            {
+                AndroidJNI.AttachCurrentThread();
+                {
+                    record.Temperature = GPerfPlatform.GetBatteryTemperature();
+                }
+                AndroidJNI.DetachCurrentThread();
+            });
         }
     }
 }

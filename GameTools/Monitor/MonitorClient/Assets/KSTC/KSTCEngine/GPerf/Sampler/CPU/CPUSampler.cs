@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -40,7 +41,14 @@ namespace KSTCEngine.GPerf.Sampler
         {
             record.CoreCount = GetCoreCount();
             record.Frequency = GetFrequency();
-            record.UsageRate = GetUsageRate();
+            ThreadPool.QueueUserWorkItem((value) =>
+            {
+                AndroidJNI.AttachCurrentThread();
+                {
+                    record.UsageRate = GPerfPlatform.GetCPUUsageRate();
+                }
+                AndroidJNI.DetachCurrentThread();
+            });
         }
     }
 }

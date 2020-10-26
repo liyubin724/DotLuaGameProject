@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
 {
@@ -29,7 +31,7 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.SystemMemory;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 10.0f;
+            SamplingInterval = 1.0f;
         }
 
         public long GetTotalMem()
@@ -59,62 +61,70 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnSample()
         {
-            string memoryInfo = GPerfPlatform.GetMemoryInfo();
-            if(!string.IsNullOrEmpty(memoryInfo))
+            ThreadPool.QueueUserWorkItem((obj) =>
             {
-                string[] lines = memoryInfo.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-                if(lines !=null && lines.Length>0)
+                AndroidJNI.AttachCurrentThread();
                 {
-                    foreach(var line in lines)
+                    string memoryInfo = GPerfPlatform.GetMemoryInfo();
+                    if (!string.IsNullOrEmpty(memoryInfo))
                     {
-                        GPerfUtil.GetKeyValue(line, out var name, out var value);
-                        if (name == MEMORY_TOTAL_KEY)
+                        string[] lines = memoryInfo.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (lines != null && lines.Length > 0)
                         {
-                            if(!long.TryParse(value,out m_TotalMemInKB))
+                            foreach (var line in lines)
                             {
-                                m_TotalMemInKB = 0L;
+                                GPerfUtil.GetKeyValue(line, out var name, out var value);
+                                if (name == MEMORY_TOTAL_KEY)
+                                {
+                                    if (!long.TryParse(value, out m_TotalMemInKB))
+                                    {
+                                        m_TotalMemInKB = 0L;
+                                    }
+                                    m_TotalMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
+                                }
+                                else if (name == MEMORY_AVAILABLE_KEY)
+                                {
+                                    if (!long.TryParse(value, out m_AvailableMemInKB))
+                                    {
+                                        m_AvailableMemInKB = 0L;
+                                    }
+                                    m_AvailableMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
+                                }
+                                else if (name == MEMORY_THRESHOLD_KEY)
+                                {
+                                    if (!long.TryParse(value, out m_ThresholdInKB))
+                                    {
+                                        m_ThresholdInKB = 0L;
+                                    }
+                                    m_ThresholdInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
+                                }
+                                else if (name == MEMORY_IS_LOW_KEY)
+                                {
+                                    if (!bool.TryParse(value, out m_IsLowMemInKB))
+                                    {
+                                        m_IsLowMemInKB = false;
+                                    }
+                                }
+                                else if (name == MEMORY_PSS_KEY)
+                                {
+                                    if (!long.TryParse(value, out m_PssMemInKB))
+                                    {
+                                        m_PssMemInKB = 0L;
+                                    }
+                                    m_PssMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
+                                }
                             }
-                            m_TotalMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
-                        }
-                        else if (name == MEMORY_AVAILABLE_KEY)
-                        {
-                            if (!long.TryParse(value, out m_AvailableMemInKB))
-                            {
-                                m_AvailableMemInKB = 0L;
-                            }
-                            m_AvailableMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
-                        }
-                        else if (name == MEMORY_THRESHOLD_KEY)
-                        {
-                            if (!long.TryParse(value, out m_ThresholdInKB))
-                            {
-                                m_ThresholdInKB = 0L;
-                            }
-                            m_ThresholdInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
-                        }
-                        else if(name == MEMORY_IS_LOW_KEY)
-                        {
-                            if(!bool.TryParse(value,out m_IsLowMemInKB))
-                            {
-                                m_IsLowMemInKB = false;
-                            }
-                        }else if(name == MEMORY_PSS_KEY)
-                        {
-                            if(!long.TryParse(value,out m_PssMemInKB))
-                            {
-                                m_PssMemInKB = 0L;
-                            }
-                            m_PssMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
                         }
                     }
-                }
-            }
 
-            record.TotalMemInKB =m_TotalMemInKB;
-            record.AvailableMemInKB = m_AvailableMemInKB;
-            record.IsLowMem = m_IsLowMemInKB;
-            record.ThresholdInKB = m_ThresholdInKB;
-            record.PSSMemInKB = m_PssMemInKB;
+                    record.TotalMemInKB = m_TotalMemInKB;
+                    record.AvailableMemInKB = m_AvailableMemInKB;
+                    record.IsLowMem = m_IsLowMemInKB;
+                    record.ThresholdInKB = m_ThresholdInKB;
+                    record.PSSMemInKB = m_PssMemInKB;
+                }
+                AndroidJNI.DetachCurrentThread();
+            });
         }
     }
 }
