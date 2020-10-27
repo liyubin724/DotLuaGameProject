@@ -1,8 +1,10 @@
 ﻿using KSTCEngine.GPerf.Sampler;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace KSTCEngine.GPerf.Recorder
 {
@@ -11,6 +13,10 @@ namespace KSTCEngine.GPerf.Recorder
         private StreamWriter m_Writer = null;
         private int m_RecordCount = 0;
         private string m_RootDir = string.Empty;
+
+        private List<string> m_CachedMessage = new List<string>();
+        private Thread m_WriterThread = null;
+        private object m_Locker = new object();
 
         public FileRecorder():base(RecorderType.File)
         {
@@ -40,6 +46,27 @@ namespace KSTCEngine.GPerf.Recorder
                     m_Writer.AutoFlush = true;
 
                     m_RecordCount++;
+
+                    m_WriterThread = new Thread(() =>
+                    {
+                        while(true)
+                        {
+                            lock (m_Locker)
+                            {
+                                if (m_CachedMessage.Count > 0)
+                                {
+                                    foreach (var line in m_CachedMessage)
+                                    {
+                                        m_Writer.WriteLine(line);
+                                    }
+                                    m_CachedMessage.Clear();
+                                }
+                            }
+                            Thread.Sleep(3000);
+                        }
+                    });
+                    m_WriterThread.IsBackground = true;
+                    m_WriterThread.Start();
                 }
                 catch
                 {
@@ -51,17 +78,30 @@ namespace KSTCEngine.GPerf.Recorder
 
         public override void HandleRecord(Record record)
         {
-            if(m_Writer!=null)
+            if(m_Writer==null)
+            {
+                return;
+            }
+            lock (m_Locker)
             {
                 string json = JsonConvert.SerializeObject(record, Formatting.Indented);
-                m_Writer.WriteLine(json);
+                m_CachedMessage.Add(json);
             }
         }
 
         public override void DoDispose()
         {
+            if (m_WriterThread != null)
+            {
+                m_WriterThread.Abort();
+            }
+            m_WriterThread = null;
+
+            m_Writer?.Flush();
             m_Writer?.Close();
             m_Writer = null;
+
+            m_CachedMessage.Clear();
 
             base.DoDispose();
         }

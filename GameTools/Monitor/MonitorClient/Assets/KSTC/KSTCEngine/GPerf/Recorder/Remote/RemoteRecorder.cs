@@ -3,6 +3,9 @@ using Gperf.U3D;
 using KSTCEngine.GPerf.Sampler;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Recorder
@@ -117,30 +120,60 @@ namespace KSTCEngine.GPerf.Recorder
 
         private async void SendToServer(GPerfSession session,string logPath)
         {
-            var result = await HttpClientUtil.PostAsync(m_URL, session.ToByteArray(), "application/x-protobuf");
+            var result = await RemoteUtil.PostSessionAsync(m_URL, session.ToByteArray(), "application/x-protobuf");
 
-            Debug.Log("SSSSSSSSS++++" + result);
-
-            if(!string.IsNullOrEmpty(result))
+            /*{"message":"OK",
+             * "uploadLogs":{
+             *  "url":"http://hb.ix2.cn:8008/rog2/s3logs/client/1970/1/19/580fe550929721ef0c93f1e089f5c8fa.gz?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20201027T103655Z&X-Amz-SignedHeaders=content-type%3Bhost%3Bx-amz-acl&X-Amz-Expires=600&X-Amz-Credential=test-key%2F20201027%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=a82e7cb10e469ea54da0fea1013878d9129777e3e60f55b28b9ca7951d331afa",
+             *  "method":"PUT",
+             *  "headers":{"x-amz-acl":"public-read","host":"hb.ix2.cn:8008","content-type":"application/gzip"},
+             *  "compression":"GZIP",
+             *  "expires":1603795615}}
+            */
+            if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(logPath) && File.Exists(logPath))
             {
-                try
-                {
-                    JObject resultJsonObj = JObject.Parse(result);
+                Debug.Log($"{GPerfUtil.LOG_NAME}::SendToServer->Send Log to Server.result = {result}");
+                SendLogToServer(result,logPath);
+            }
+        }
 
-                    JToken messageToken = resultJsonObj["message"];
-                    if(messageToken!=null && messageToken.Value<string>() == "ok")
+        private async void SendLogToServer(string result,string logPath)
+        {
+            try
+            {
+                JObject resultJsonObj = JObject.Parse(result);
+
+                JToken messageToken = resultJsonObj["message"];
+                if (messageToken != null && messageToken.Value<string>() == "OK")
+                {
+                    var uploadLogInfo = resultJsonObj["uploadLogs"];
+                    if (uploadLogInfo != null)
                     {
-                        string logUrl = resultJsonObj["url"].Value<string>();
-                        string method = resultJsonObj["method"].Value<string>();
-                        string gzip = resultJsonObj["gzip"].Value<string>();
+                        var logBytes = await RemoteUtil.GZipFileAsync(logPath);
+                        if(logBytes!=null && logBytes.Length>0)
+                        {
+                            var headerInfo = uploadLogInfo["headers"];
 
-                        
+                            var url = uploadLogInfo["url"].Value<string>();
+                            var method = uploadLogInfo["method"].Value<string>();
+                            var compression = uploadLogInfo["compression"].Value<string>();
 
+                            Dictionary<string, string> headerDic = new Dictionary<string, string>();
+                            var header = headerInfo.Next;
+                            while(header != null)
+                            {
+                                headerDic.Add(header.Path, header.Value<string>());
+                            }
+
+                            var response = await RemoteUtil.PutLogAsync(url, logBytes, 5, headerDic);
+                            Debug.Log("SSSS+++++" + response);
+                        }
                     }
-                }catch
-                {
-
                 }
+            }
+            catch(Exception e)
+            {
+                Debug.LogError("RemoteRecorder::SendLogToServer->" + e.Message);
             }
         }
     }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Boo.Lang;
+using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -16,6 +18,9 @@ namespace KSTCEngine.GPerf.Sampler
         private int m_SamplingCount = 0;
         private string m_RootDir = string.Empty;
 
+        private List<string> m_CachedMessage = new List<string>();
+        private Thread m_WriterThread = null;
+        private object m_Locker = new object();
         public LogSampler()
         {
             MetricType = SamplerMetricType.Log;
@@ -50,6 +55,27 @@ namespace KSTCEngine.GPerf.Sampler
 
                     record.FilePath = logPath;
                     m_SamplingCount++;
+
+                    m_WriterThread = new Thread(() =>
+                    {
+                        while (true)
+                        {
+                            lock (m_Locker)
+                            {
+                                if (m_CachedMessage.Count > 0)
+                                {
+                                    foreach (var line in m_CachedMessage)
+                                    {
+                                        m_Writer.WriteLine(line);
+                                    }
+                                    m_CachedMessage.Clear();
+                                }
+                            }
+                            Thread.Sleep(2000);
+                        }
+                    });
+                    m_WriterThread.IsBackground = true;
+                    m_WriterThread.Start();
                 }
                 catch
                 {
@@ -62,10 +88,16 @@ namespace KSTCEngine.GPerf.Sampler
         protected override void OnEnd()
         {
             Application.logMessageReceived -= OnLogMessageReceived;
-
+            if(m_WriterThread!=null)
+            {
+                m_WriterThread.Abort();
+            }
+            m_WriterThread = null;
             m_Writer?.Flush();
             m_Writer?.Close();
             m_Writer = null;
+
+            m_CachedMessage.Clear();
         }
 
         protected override void OnSample()
@@ -79,12 +111,15 @@ namespace KSTCEngine.GPerf.Sampler
 
         private void OnLogMessageReceived(string condition, string stackTrace, LogType type)
         {
-            if(condition.IndexOf(GPerfUtil.LOG_NAME)>=0 || m_Writer == null)
+            if (condition.IndexOf(GPerfUtil.LOG_NAME) >= 0 || m_Writer == null)
             {
                 return;
             }
 
-            m_Writer.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss fff} {type.ToString()}\n{condition}\n{stackTrace}");
+            lock (m_Locker)
+            {
+                m_CachedMessage.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss fff} {type.ToString()}\n{condition}\n{stackTrace}");
+            }
         }
     }
 }
