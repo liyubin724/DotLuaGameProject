@@ -35,7 +35,7 @@ namespace KSTCEngine.GPerf.Sampler
             record = new T();
             OnStart();
 
-            if(FreqType == SamplerFreqType.Start)
+            if(FreqType == SamplerFreqType.Start || FreqType == SamplerFreqType.Interval)
             {
                 DoSample();
             }
