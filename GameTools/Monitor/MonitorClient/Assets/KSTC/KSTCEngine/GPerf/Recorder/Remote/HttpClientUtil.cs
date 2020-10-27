@@ -9,7 +9,7 @@ namespace KSTCEngine.GPerf.Recorder
 {
     public static class HttpClientUtil
     {
-        public static async Task<string> PostAsync(string url, byte[] datas, string contentType, int timeOut = 8, Dictionary<string, string> headers = null)
+        public static async Task<string> PostAsync(string url, byte[] datas, string contentType, int timeOut = 5, Dictionary<string, string> headers = null)
         {
             using(HttpClient httpClient = new HttpClient())
             {
@@ -36,7 +36,7 @@ namespace KSTCEngine.GPerf.Recorder
                     }
                     catch (Exception e)
                     {
-                        Debug.Log("HttpClientUtil::" + e.Message);
+                        Debug.LogError("HttpClientUtil::PostAsync->" + e.Message);
                         return null;
                     }
                 }

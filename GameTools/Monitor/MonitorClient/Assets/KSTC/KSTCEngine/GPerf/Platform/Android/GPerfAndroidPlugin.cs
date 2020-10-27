@@ -15,6 +15,7 @@ namespace KSTCEngine.GPerf
         private const string MEMORY_INFO_METHOD = "getMemoryInfo";
 
         private const string CPU_USAGE_RATE_METHOD = "getCPUUsageRate";
+        private const string CPU_CORE_FREQ_METHOD = "getCPUCoreFrequence";
         private const string CPU_INFO_METHOD = "getCPUInfo";
 
         private AndroidJavaClass m_PluginClass = null;
@@ -73,6 +74,11 @@ namespace KSTCEngine.GPerf
         public override float GetCPUUsageRate()
         {
             return CallPluginStaticMethod<float>(CPU_USAGE_RATE_METHOD, 0.0f);
+        }
+
+        public override long[] GetCPUCoreFrequence()
+        {
+            return CallPluginStaticMethod<long[]>(CPU_CORE_FREQ_METHOD, new long[0]);
         }
 
         public override string GetCPUInfo()

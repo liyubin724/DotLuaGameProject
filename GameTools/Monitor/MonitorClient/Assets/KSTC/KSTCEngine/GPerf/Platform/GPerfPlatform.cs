@@ -22,6 +22,15 @@
             return 0.0f;
         }
 
+        public static long[] GetCPUCoreFrequence()
+        {
+            if (sm_PlatformPlugin != null)
+            {
+                return sm_PlatformPlugin.GetCPUCoreFrequence();
+            }
+            return new long[0];
+        }
+
         public static string GetMemoryInfo()
         {
             if (sm_PlatformPlugin != null)

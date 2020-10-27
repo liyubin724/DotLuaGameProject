@@ -41,6 +41,10 @@ public class PlatformPlugin {
         return CPUInfoUtil.getUsageRate();
     }
 
+    public static long[] getCPUCoreFrequence() {
+        return CPUInfoUtil.getEveryCoreFrequence();
+    }
+
     public static String getCPUInfo() {
         return CPUInfoUtil.getCPUInfo();
     }

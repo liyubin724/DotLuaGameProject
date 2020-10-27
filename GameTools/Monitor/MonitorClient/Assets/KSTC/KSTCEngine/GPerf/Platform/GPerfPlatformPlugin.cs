@@ -32,6 +32,11 @@
             return 0.0f;
         }
 
+        public virtual long[] GetCPUCoreFrequence()
+        {
+            return new long[0];
+        }
+
         public virtual string GetCPUInfo()
         {
             return string.Empty;

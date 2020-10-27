@@ -25,6 +25,16 @@ namespace KSTCEngine.GPerf
         private static void OnRuntimeLoaded()
         {
             GPerfMonitor.GetInstance().DoInit();
+
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Battery);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FPS);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.SystemMemory);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.ProfilerMemory);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Device);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.App);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FrameTime);
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Log);
         }
 
         private GameObject m_GObject = null;

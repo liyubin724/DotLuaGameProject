@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.CodeDom.Compiler;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -26,18 +27,6 @@ namespace KSTCEngine.GPerf.Sampler
             return GPerfPlatform.GetCPUUsageRate();
         }
 
-        private async void GetUsageRateAsync()
-        {
-            var task = Task.Run(() =>
-            {
-                AndroidJNI.AttachCurrentThread();
-                float temp = GPerfPlatform.GetCPUUsageRate();
-                AndroidJNI.DetachCurrentThread();
-                return temp;
-            });
-            record.UsageRate = await task;
-        }
-
         public int GetFrequency()
         {
             return SystemInfo.processorFrequency;
@@ -53,7 +42,36 @@ namespace KSTCEngine.GPerf.Sampler
             record.CoreCount = GetCoreCount();
             record.Frequency = GetFrequency();
 
-            GetUsageRateAsync();
+            GetDataAsync();
+        }
+
+        private async void GetDataAsync()
+        {
+            var task = Task.Run(() =>
+            {
+                AndroidJNI.AttachCurrentThread();
+                float temp = GPerfPlatform.GetCPUUsageRate();
+                AndroidJNI.DetachCurrentThread();
+                return temp;
+            });
+            record.UsageRate = await task;
+
+            var coreFreqTask = Task.Run(() =>
+            {
+                AndroidJNI.AttachCurrentThread();
+                long[] temp = GPerfPlatform.GetCPUCoreFrequence();
+                AndroidJNI.DetachCurrentThread();
+                return temp;
+            });
+            long[] coreFreq = await coreFreqTask;
+            if(coreFreq!=null && coreFreq.Length>0)
+            {
+                record.CoreFrequency = new int[coreFreq.Length];
+                for(int i =0;i<coreFreq.Length;++i)
+                {
+                    record.CoreFrequency[i] = (int)(coreFreq[i] / 1000);
+                }
+            }
         }
     }
 }
