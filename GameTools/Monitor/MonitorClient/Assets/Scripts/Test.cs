@@ -1,6 +1,10 @@
-﻿using KSTCEngine.GPerf;
+﻿using ICSharpCode.SharpZipLib.GZip;
+using KSTCEngine.GPerf;
 using KSTCEngine.GPerf.Recorder;
 using KSTCEngine.GPerf.Sampler;
+using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -24,43 +28,32 @@ public class Test : MonoBehaviour
         //GPerfMonitor.GetInstance().OpenRecorder(RecorderType.File);
 
         //GPerfPlatform.InitPlugin();
+        //string values = "Test for Today";
+        //byte[] bytes = Encoding.UTF8.GetBytes(values);
+        //MemoryStream orgMS = new MemoryStream(bytes);
+
+        //MemoryStream outMS = new MemoryStream();
+        //GZip.Compress(orgMS, outMS, false);
+        //byte[] rBytes = outMS.ToArray();
+        //orgMS.Close();
+        //outMS.Close();
+
+        //File.WriteAllBytes("D:/t.bytes", rBytes);
+
+        //byte[] cBytes = File.ReadAllBytes("D:/t.bytes");
+        //using(MemoryStream cInMS = new MemoryStream(cBytes))
+        //{
+        //    using(MemoryStream oInMS = new MemoryStream())
+        //    {
+        //        GZip.Decompress(cInMS, oInMS, false);
+        //        byte[] r = oInMS.ToArray();
+
+        //        var rs = Encoding.UTF8.GetString(r);
+        //        Debug.Log("SSSSSSSS+" + rs);
+        //    }
+        //}
 
     }
-
-    //private async void AsyncMethod()
-    //{
-    //    Debug.Log("SSSSSSSSSSSSSSSSSSSS");
-    //    var value = await GetUsageRate();
-    //    Debug.Log("DDDDD----"+value);
-    //}
-
-    //private void OnGUI()
-    //{
-    //    GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
-    //    {
-    //        if(GUILayout.Button("Test",GUILayout.Height(60),GUILayout.ExpandWidth(true)))
-    //        {
-    //            AsyncMethod();
-    //        }
-    //    }
-    //    GUILayout.EndArea();
-    //}
-
-    //private async Task<float> GetUsageRate()
-    //{
-    //    float usageRate = 0.0f;
-    //    Task task = Task.Run(() =>
-    //    {
-    //        AndroidJNI.AttachCurrentThread();
-
-    //        usageRate = GPerfPlatform.GetCPUUsageRate();
-
-    //        AndroidJNI.DetachCurrentThread();
-    //    });
-    //    await task;
-
-    //    return usageRate;
-    //}
 
     private bool m_IsRunning = false;
     private void OnGUI()

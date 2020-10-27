@@ -28,7 +28,6 @@ namespace KSTCEngine.GPerf.Recorder
             m_Session.App.Version = appRecord.Version;
             m_Session.App.UnityVersion = appRecord.EngineVersion;
 
-
             DeviceRecord deviceRecord = (DeviceRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Device);
             m_Session.Device = new GPerfDevice();
             m_Session.Device.Name = deviceRecord.Name;
@@ -69,6 +68,16 @@ namespace KSTCEngine.GPerf.Recorder
             sample.SystemMemory.ThresholdInKb = memoryRecord.ThresholdInKB;
             sample.SystemMemory.IsLow = memoryRecord.IsLowMem;
             sample.SystemMemory.PssInKb = memoryRecord.PSSMemInKB;
+
+            ProfilerMemoryRecord profilerMemoryRecord = (ProfilerMemoryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.ProfilerMemory);
+            sample.ProfilerMemory = new GPerfProfilerMemory();
+            sample.ProfilerMemory.MonoHeapSizeInKb = profilerMemoryRecord.MonoHeapSizeInKB;
+            sample.ProfilerMemory.MonoUsedSizeInKb = profilerMemoryRecord.MonoUsedSizeInKB;
+            sample.ProfilerMemory.TempAllocatorSizeInKb = profilerMemoryRecord.TempAllocatorSizeInKB;
+            sample.ProfilerMemory.TotalAllocatorSizeInKb = profilerMemoryRecord.TotalAllocatorSizeInKB;
+            sample.ProfilerMemory.TotalReservedSizeInKb = profilerMemoryRecord.TotalReservedSizeInKB;
+            sample.ProfilerMemory.TotalUnusedReservedSizeInKb = profilerMemoryRecord.TotalUnusedReservedSizeInKB;
+            sample.ProfilerMemory.AllocatedForGraphicsDriverInKb = profilerMemoryRecord.AllocatedForGraphicsDriverInKB;
 
             BatteryRecord batteryRecord = (BatteryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Battery);
             sample.Battery = new GPerfBattery();

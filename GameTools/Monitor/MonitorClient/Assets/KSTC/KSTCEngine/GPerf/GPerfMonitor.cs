@@ -2,6 +2,7 @@
 using KSTCEngine.GPerf.Sampler;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityObject = UnityEngine.Object;
 
 namespace KSTCEngine.GPerf
@@ -147,7 +148,15 @@ namespace KSTCEngine.GPerf
                 IRecorder recorder = kvp.Value;
                 if(typeof(IHandleRecorder).IsAssignableFrom(recorder.GetType()))
                 {
-                    ((IHandleRecorder)recorder).HandleRecord(record);
+                    if(Debug.isDebugBuild)
+                    {
+                        Profiler.BeginSample($"GPerfSampler-HandleRecord:{recorder.Type}");
+                        ((IHandleRecorder)recorder).HandleRecord(record);
+                        Profiler.EndSample();
+                    }else
+                    {
+                        ((IHandleRecorder)recorder).HandleRecord(record);
+                    }
                 }
             }
         }

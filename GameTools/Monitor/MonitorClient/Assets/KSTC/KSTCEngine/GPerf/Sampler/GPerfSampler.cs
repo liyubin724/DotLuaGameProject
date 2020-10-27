@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -46,14 +47,18 @@ namespace KSTCEngine.GPerf.Sampler
             //RecordData.FrameIndex = Time.frameCount;
             //RecordData.Time = DateTime.Now;
             record.ExtensionData = string.Empty;
+            if(Debug.isDebugBuild)
+            {
+                Profiler.BeginSample($"GPerfSampler:{MetricType}");
+                OnSample();
+                Profiler.EndSample();
+            }
+            else
+            {
+                OnSample();
+            }
 
-            Profiler.BeginSample($"GPerfSampler:{MetricType}");
-            OnSample();
-            Profiler.EndSample();
-
-            Profiler.BeginSample("GPerfRecorder:handleRecord");
             OnSampleRecord?.Invoke(record);
-            Profiler.EndSample();
         }
 
         public virtual void DoUpdate(float deltaTime)

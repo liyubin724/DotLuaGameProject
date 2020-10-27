@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -59,9 +60,9 @@ namespace KSTCEngine.GPerf.Sampler
             return m_PssMemInKB;
         }
 
-        protected override void OnSample()
+        private async void GetMemoryAsync()
         {
-            ThreadPool.QueueUserWorkItem((obj) =>
+            var task = Task.Run(() =>
             {
                 AndroidJNI.AttachCurrentThread();
                 {
@@ -116,15 +117,22 @@ namespace KSTCEngine.GPerf.Sampler
                             }
                         }
                     }
-
-                    record.TotalMemInKB = m_TotalMemInKB;
-                    record.AvailableMemInKB = m_AvailableMemInKB;
-                    record.IsLowMem = m_IsLowMemInKB;
-                    record.ThresholdInKB = m_ThresholdInKB;
-                    record.PSSMemInKB = m_PssMemInKB;
                 }
                 AndroidJNI.DetachCurrentThread();
             });
+
+            await task;
+
+            record.TotalMemInKB = m_TotalMemInKB;
+            record.AvailableMemInKB = m_AvailableMemInKB;
+            record.IsLowMem = m_IsLowMemInKB;
+            record.ThresholdInKB = m_ThresholdInKB;
+            record.PSSMemInKB = m_PssMemInKB;
+        }
+
+        protected override void OnSample()
+        {
+            GetMemoryAsync();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -25,6 +24,18 @@ namespace KSTCEngine.GPerf.Sampler
             return GPerfPlatform.GetBatteryTemperature(); 
         }
 
+        private async void GetTemperatureAsync()
+        {
+            var task = Task.Run(() =>
+            {
+                AndroidJNI.AttachCurrentThread();
+                float temp = GPerfPlatform.GetBatteryTemperature();
+                AndroidJNI.DetachCurrentThread();
+                return temp;
+            });
+            record.Temperature = await task;
+        }
+
         public int GetStatus()
         {
             return (int)SystemInfo.batteryStatus;
@@ -39,15 +50,8 @@ namespace KSTCEngine.GPerf.Sampler
         {
             record.Status = GetStatus();
             record.Rate = GetRate();
-
-            ThreadPool.QueueUserWorkItem((value) =>
-            {
-                AndroidJNI.AttachCurrentThread();
-                {
-                    record.Temperature = GPerfPlatform.GetBatteryTemperature();
-                }
-                AndroidJNI.DetachCurrentThread();
-            });
+            record.Temperature = GetTemperature();
+            //GetTemperatureAsync();
         }
     }
 }
