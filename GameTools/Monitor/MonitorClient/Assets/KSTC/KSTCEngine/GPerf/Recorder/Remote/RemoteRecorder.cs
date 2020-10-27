@@ -1,5 +1,7 @@
-﻿using Gperf.U3D;
+﻿using Google.Protobuf;
+using Gperf.U3D;
 using KSTCEngine.GPerf.Sampler;
+using Newtonsoft.Json.Linq;
 using System;
 using UnityEngine;
 
@@ -9,11 +11,11 @@ namespace KSTCEngine.GPerf.Recorder
     {
         private DateTime m_OrgTime;
         private GPerfSession m_Session = null;
-        private RemoteSender m_Sender = null;
+
+        private string m_URL = "http://hb.ix2.cn:16408/u3d/uploadStats";
         public RemoteRecorder():base(RecorderType.Remote)
         {
             m_OrgTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-            m_Sender = new RemoteSender();
         }
 
         public override void DoStart()
@@ -103,12 +105,43 @@ namespace KSTCEngine.GPerf.Recorder
         public override void DoEnd()
         {
             LogRecord logRecord = (LogRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Log);
-            m_Sender.AddNetData(m_Session, logRecord.FilePath);
+            //m_Sender.AddNetData(m_Session, logRecord.FilePath);
+
+            SendToServer(m_Session, logRecord.FilePath);
         }
 
         public override void DoDispose()
         {
             
+        }
+
+        private async void SendToServer(GPerfSession session,string logPath)
+        {
+            var result = await HttpClientUtil.PostAsync(m_URL, session.ToByteArray(), "application/x-protobuf");
+
+            Debug.Log("SSSSSSSSS++++" + result);
+
+            if(!string.IsNullOrEmpty(result))
+            {
+                try
+                {
+                    JObject resultJsonObj = JObject.Parse(result);
+
+                    JToken messageToken = resultJsonObj["message"];
+                    if(messageToken!=null && messageToken.Value<string>() == "ok")
+                    {
+                        string logUrl = resultJsonObj["url"].Value<string>();
+                        string method = resultJsonObj["method"].Value<string>();
+                        string gzip = resultJsonObj["gzip"].Value<string>();
+
+                        
+
+                    }
+                }catch
+                {
+
+                }
+            }
         }
     }
 }

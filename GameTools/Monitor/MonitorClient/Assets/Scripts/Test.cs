@@ -58,9 +58,9 @@ public class Test : MonoBehaviour
     private bool m_IsRunning = false;
     private void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
+        GUILayout.BeginArea(new Rect(0, 60, Screen.width, Screen.height));
         {
-            if (GUILayout.Button(m_IsRunning ? "Stop" : "Start", GUILayout.Height(40)))
+            if (GUILayout.Button(m_IsRunning ? "Stop" : "Start", GUILayout.Height(80)))
             {
                 if (m_IsRunning)
                 {
@@ -75,7 +75,7 @@ public class Test : MonoBehaviour
                 m_IsRunning = !m_IsRunning;
             }
 
-            if (GUILayout.Button("PrintLog"))
+            if (GUILayout.Button("PrintLog", GUILayout.Height(80)))
             {
                 Debug.Log("Test LOg");
             }
