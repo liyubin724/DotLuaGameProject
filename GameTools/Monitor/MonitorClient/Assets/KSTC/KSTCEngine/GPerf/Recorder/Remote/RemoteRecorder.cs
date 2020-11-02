@@ -88,6 +88,7 @@ namespace KSTCEngine.GPerf.Recorder
             sample.Battery = new GPerfBattery();
             sample.Battery.Temperature = batteryRecord.Temperature;
             sample.Battery.Status = batteryRecord.Status;
+            sample.Battery.StatusDesc = batteryRecord.StatusDesc;
             sample.Battery.Rate = batteryRecord.Rate;
 
             FrameTimeRecord frameTimeRecord = (FrameTimeRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.FrameTime);

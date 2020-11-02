@@ -16,7 +16,7 @@ public class Test : MonoBehaviour
 
         GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
         //GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Console);
-        //GPerfMonitor.GetInstance().OpenRecorder(RecorderType.File);
+        GPerfMonitor.GetInstance().OpenRecorder(RecorderType.File);
 
         //GPerfPlatform.InitPlugin();
         //string values = "Test for Today";

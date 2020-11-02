@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -7,11 +8,13 @@ namespace KSTCEngine.GPerf.Sampler
     {
         public float Temperature { get; set; } = 0.0f;
         public int Status { get; set; } = 0;
+        public string StatusDesc { get; set; } = string.Empty;
         public float Rate { get; set; } = 0.0f;
     }
 
     public class BatterySampler : GPerfSampler<BatteryRecord>
     {
+        private Dictionary<BatteryStatus, string> m_StatusDescDic = new Dictionary<BatteryStatus, string>();
         public BatterySampler()
         {
             MetricType = SamplerMetricType.Battery;
@@ -41,6 +44,17 @@ namespace KSTCEngine.GPerf.Sampler
             return (int)SystemInfo.batteryStatus;
         }
 
+        public string GetStatusDesc()
+        {
+            BatteryStatus bs = SystemInfo.batteryStatus;
+            if(!m_StatusDescDic.TryGetValue(bs,out string desc))
+            {
+                desc = bs.ToString();
+                m_StatusDescDic.Add(bs, desc);
+            }
+            return desc;
+        }
+
         public float GetRate()
         {
             return SystemInfo.batteryLevel;
@@ -51,6 +65,7 @@ namespace KSTCEngine.GPerf.Sampler
             record.Status = GetStatus();
             record.Rate = GetRate();
             record.Temperature = GetTemperature();
+            record.StatusDesc = GetStatusDesc();
             //GetTemperatureAsync();
         }
     }

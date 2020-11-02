@@ -42,47 +42,47 @@ namespace Gperf.U3D {
             "EiEKGXRvdGFsX3Jlc2VydmVkX3NpemVfaW5fa2IYBSABKAMSKAogdG90YWxf",
             "dW51c2VkX3Jlc2VydmVkX3NpemVfaW5fa2IYBiABKAMSKwojYWxsb2NhdGVk",
             "X2Zvcl9ncmFwaGljc19kcml2ZXJfaW5fa2IYByABKAMiHwoOR1BlcmZMdWFN",
-            "ZW1vcnkSDQoFdG90YWwYASABKAIiQQoMR1BlcmZCYXR0ZXJ5EhMKC3RlbXBl",
-            "cmF0dXJlGAEgASgCEg4KBnN0YXR1cxgCIAEoBRIMCgRyYXRlGAMgASgCIl0K",
-            "CEdQZXJmQ1BVEhIKCmNvcmVfY291bnQYASABKAUSEQoJZnJlcXVlbmN5GAIg",
-            "ASgFEhIKCnVzYWdlX3JhdGUYAyABKAISFgoOY29yZV9mcmVxdWVuY3kYBCAD",
-            "KAUiMQoIR1BlcmZGUFMSGAoQZGVsdGFfdGltZV9pbl9NUxgBIAEoAhILCgNm",
-            "cHMYAiABKAUiqQEKDkdQZXJmRnJhbWVUaW1lEhgKEHBsYXllcl9sb29wX3Rp",
-            "bWUYASABKAISFgoOcmVuZGVyaW5nX3RpbWUYAiABKAISEwoLc2NyaXB0X3Rp",
-            "bWUYAyABKAISFAoMcGh5c2ljc190aW1lGAQgASgCEhYKDmFuaW1hdGlvbl90",
-            "aW1lGAUgASgCEhAKCGNwdV90aW1lGAYgASgCEhAKCGdwdV90aW1lGAcgASgC",
-            "IoABCg1HUGVyZkdhbWVJbmZvEjwKCmV4dGVuc2lvbnMYASADKAsyKC5ncGVy",
-            "Zi51M2QuR1BlcmZHYW1lSW5mby5FeHRlbnNpb25zRW50cnkaMQoPRXh0ZW5z",
-            "aW9uc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEigAEK",
-            "DUdQZXJmVXNlckluZm8SPAoKZXh0ZW5zaW9ucxgBIAMoCzIoLmdwZXJmLnUz",
-            "ZC5HUGVyZlVzZXJJbmZvLkV4dGVuc2lvbnNFbnRyeRoxCg9FeHRlbnNpb25z",
-            "RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKtAwoLR1Bl",
-            "cmZTYW1wbGUSEQoJdGltZXN0YW1wGAEgASgHEhMKC2ZyYW1lX2luZGV4GAIg",
-            "ASgFEisKCXVzZXJfaW5mbxgDIAEoCzIYLmdwZXJmLnUzZC5HUGVyZlVzZXJJ",
-            "bmZvEjMKDXN5c3RlbV9tZW1vcnkYBCABKAsyHC5ncGVyZi51M2QuR1BlcmZT",
-            "eXN0ZW1NZW1vcnkSNwoPcHJvZmlsZXJfbWVtb3J5GAUgASgLMh4uZ3BlcmYu",
-            "dTNkLkdQZXJmUHJvZmlsZXJNZW1vcnkSLQoKbHVhX21lbW9yeRgGIAEoCzIZ",
-            "LmdwZXJmLnUzZC5HUGVyZkx1YU1lbW9yeRIoCgdiYXR0ZXJ5GAcgASgLMhcu",
-            "Z3BlcmYudTNkLkdQZXJmQmF0dGVyeRIgCgNjcHUYCCABKAsyEy5ncGVyZi51",
-            "M2QuR1BlcmZDUFUSIAoDZnBzGAkgASgLMhMuZ3BlcmYudTNkLkdQZXJmRlBT",
-            "Ei0KCmZyYW1lX3RpbWUYCiABKAsyGS5ncGVyZi51M2QuR1BlcmZGcmFtZVRp",
-            "bWUSDwoHc2Vzc2lvbhgLIAEoCSLUAwoMR1BlcmZTZXNzaW9uEiAKA2FwcBgB",
-            "IAEoCzITLmdwZXJmLnUzZC5HUGVyZkFwcBImCgZkZXZpY2UYAiABKAsyFi5n",
-            "cGVyZi51M2QuR1BlcmZEZXZpY2USKwoJZ2FtZV9pbmZvGAMgASgLMhguZ3Bl",
-            "cmYudTNkLkdQZXJmR2FtZUluZm8SJwoHc2FtcGxlcxgEIAMoCzIWLmdwZXJm",
-            "LnUzZC5HUGVyZlNhbXBsZRI7CgpleHRlbnNpb25zGAUgAygLMicuZ3BlcmYu",
-            "dTNkLkdQZXJmU2Vzc2lvbi5FeHRlbnNpb25zRW50cnkSIQoEbG9ncxgGIAEo",
-            "CzITLmdwZXJmLnUzZC5HUGVyZkxvZxIVCg1yYXdfYmxvYl9zaXplGAcgASgF",
-            "EhEKCXRpbWVzdGFtcBgIIAEoCRIMCgRmcm9tGAkgASgDEgoKAnRvGAogASgD",
-            "EhAKCGR1cmF0aW9uGAsgASgDEg8KB3Nlc3Npb24YDCABKAkSKgoIb3ZlcnZp",
-            "ZXcYDSABKAsyGC5ncGVyZi51M2QuR1BlcmZPdmVydmlldxoxCg9FeHRlbnNp",
-            "b25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASKcAQoN",
-            "R1BlcmZPdmVydmlldxIPCgdhdmdfZnBzGAEgASgCEhcKD3BlYWtfbWVtX3Bz",
-            "c19rYhgCIAEoAhIaChJwZWFrX21lbV9wc3NfYnl0ZXMYAyABKAISFQoNbWF4",
-            "X2RyYXdfY2FsbBgEIAEoAhIVCg1tYXhfdHJpYW5nbGVzGAUgASgCEhcKD21h",
-            "eF90ZW1wZXJhdHVyZRgGIAEoAiIXCghHUGVyZkxvZxILCgN1cmwYASABKAlC",
-            "OgoiY29tLmtpbmdzb2Z0LnNoaXlvdS5pbmZyYS5ncGVyZi5wYkIQR1BlcmZV",
-            "bml0eVByb3Rvc0gBUABiBnByb3RvMw=="));
+            "ZW1vcnkSDQoFdG90YWwYASABKAIiVgoMR1BlcmZCYXR0ZXJ5EhMKC3RlbXBl",
+            "cmF0dXJlGAEgASgCEg4KBnN0YXR1cxgCIAEoBRITCgtzdGF0dXNfZGVzYxgD",
+            "IAEoCRIMCgRyYXRlGAQgASgCIl0KCEdQZXJmQ1BVEhIKCmNvcmVfY291bnQY",
+            "ASABKAUSEQoJZnJlcXVlbmN5GAIgASgFEhIKCnVzYWdlX3JhdGUYAyABKAIS",
+            "FgoOY29yZV9mcmVxdWVuY3kYBCADKAUiMQoIR1BlcmZGUFMSGAoQZGVsdGFf",
+            "dGltZV9pbl9NUxgBIAEoAhILCgNmcHMYAiABKAUiqQEKDkdQZXJmRnJhbWVU",
+            "aW1lEhgKEHBsYXllcl9sb29wX3RpbWUYASABKAISFgoOcmVuZGVyaW5nX3Rp",
+            "bWUYAiABKAISEwoLc2NyaXB0X3RpbWUYAyABKAISFAoMcGh5c2ljc190aW1l",
+            "GAQgASgCEhYKDmFuaW1hdGlvbl90aW1lGAUgASgCEhAKCGNwdV90aW1lGAYg",
+            "ASgCEhAKCGdwdV90aW1lGAcgASgCIoABCg1HUGVyZkdhbWVJbmZvEjwKCmV4",
+            "dGVuc2lvbnMYASADKAsyKC5ncGVyZi51M2QuR1BlcmZHYW1lSW5mby5FeHRl",
+            "bnNpb25zRW50cnkaMQoPRXh0ZW5zaW9uc0VudHJ5EgsKA2tleRgBIAEoCRIN",
+            "CgV2YWx1ZRgCIAEoCToCOAEigAEKDUdQZXJmVXNlckluZm8SPAoKZXh0ZW5z",
+            "aW9ucxgBIAMoCzIoLmdwZXJmLnUzZC5HUGVyZlVzZXJJbmZvLkV4dGVuc2lv",
+            "bnNFbnRyeRoxCg9FeHRlbnNpb25zRW50cnkSCwoDa2V5GAEgASgJEg0KBXZh",
+            "bHVlGAIgASgJOgI4ASKtAwoLR1BlcmZTYW1wbGUSEQoJdGltZXN0YW1wGAEg",
+            "ASgHEhMKC2ZyYW1lX2luZGV4GAIgASgFEisKCXVzZXJfaW5mbxgDIAEoCzIY",
+            "LmdwZXJmLnUzZC5HUGVyZlVzZXJJbmZvEjMKDXN5c3RlbV9tZW1vcnkYBCAB",
+            "KAsyHC5ncGVyZi51M2QuR1BlcmZTeXN0ZW1NZW1vcnkSNwoPcHJvZmlsZXJf",
+            "bWVtb3J5GAUgASgLMh4uZ3BlcmYudTNkLkdQZXJmUHJvZmlsZXJNZW1vcnkS",
+            "LQoKbHVhX21lbW9yeRgGIAEoCzIZLmdwZXJmLnUzZC5HUGVyZkx1YU1lbW9y",
+            "eRIoCgdiYXR0ZXJ5GAcgASgLMhcuZ3BlcmYudTNkLkdQZXJmQmF0dGVyeRIg",
+            "CgNjcHUYCCABKAsyEy5ncGVyZi51M2QuR1BlcmZDUFUSIAoDZnBzGAkgASgL",
+            "MhMuZ3BlcmYudTNkLkdQZXJmRlBTEi0KCmZyYW1lX3RpbWUYCiABKAsyGS5n",
+            "cGVyZi51M2QuR1BlcmZGcmFtZVRpbWUSDwoHc2Vzc2lvbhgLIAEoCSLUAwoM",
+            "R1BlcmZTZXNzaW9uEiAKA2FwcBgBIAEoCzITLmdwZXJmLnUzZC5HUGVyZkFw",
+            "cBImCgZkZXZpY2UYAiABKAsyFi5ncGVyZi51M2QuR1BlcmZEZXZpY2USKwoJ",
+            "Z2FtZV9pbmZvGAMgASgLMhguZ3BlcmYudTNkLkdQZXJmR2FtZUluZm8SJwoH",
+            "c2FtcGxlcxgEIAMoCzIWLmdwZXJmLnUzZC5HUGVyZlNhbXBsZRI7CgpleHRl",
+            "bnNpb25zGAUgAygLMicuZ3BlcmYudTNkLkdQZXJmU2Vzc2lvbi5FeHRlbnNp",
+            "b25zRW50cnkSIQoEbG9ncxgGIAEoCzITLmdwZXJmLnUzZC5HUGVyZkxvZxIV",
+            "Cg1yYXdfYmxvYl9zaXplGAcgASgFEhEKCXRpbWVzdGFtcBgIIAEoCRIMCgRm",
+            "cm9tGAkgASgDEgoKAnRvGAogASgDEhAKCGR1cmF0aW9uGAsgASgDEg8KB3Nl",
+            "c3Npb24YDCABKAkSKgoIb3ZlcnZpZXcYDSABKAsyGC5ncGVyZi51M2QuR1Bl",
+            "cmZPdmVydmlldxoxCg9FeHRlbnNpb25zRW50cnkSCwoDa2V5GAEgASgJEg0K",
+            "BXZhbHVlGAIgASgJOgI4ASKcAQoNR1BlcmZPdmVydmlldxIPCgdhdmdfZnBz",
+            "GAEgASgCEhcKD3BlYWtfbWVtX3Bzc19rYhgCIAEoAhIaChJwZWFrX21lbV9w",
+            "c3NfYnl0ZXMYAyABKAISFQoNbWF4X2RyYXdfY2FsbBgEIAEoAhIVCg1tYXhf",
+            "dHJpYW5nbGVzGAUgASgCEhcKD21heF90ZW1wZXJhdHVyZRgGIAEoAiIXCghH",
+            "UGVyZkxvZxILCgN1cmwYASABKAlCOgoiY29tLmtpbmdzb2Z0LnNoaXlvdS5p",
+            "bmZyYS5ncGVyZi5wYkIQR1BlcmZVbml0eVByb3Rvc0gBUABiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -91,7 +91,7 @@ namespace Gperf.U3D {
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfSystemMemory), global::Gperf.U3D.GPerfSystemMemory.Parser, new[]{ "TotalInKb", "AvailableInKb", "ThresholdInKb", "IsLow", "PssInKb", "RssInKb" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfProfilerMemory), global::Gperf.U3D.GPerfProfilerMemory.Parser, new[]{ "MonoHeapSizeInKb", "MonoUsedSizeInKb", "TempAllocatorSizeInKb", "TotalAllocatorSizeInKb", "TotalReservedSizeInKb", "TotalUnusedReservedSizeInKb", "AllocatedForGraphicsDriverInKb" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfLuaMemory), global::Gperf.U3D.GPerfLuaMemory.Parser, new[]{ "Total" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfBattery), global::Gperf.U3D.GPerfBattery.Parser, new[]{ "Temperature", "Status", "Rate" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfBattery), global::Gperf.U3D.GPerfBattery.Parser, new[]{ "Temperature", "Status", "StatusDesc", "Rate" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfCPU), global::Gperf.U3D.GPerfCPU.Parser, new[]{ "CoreCount", "Frequency", "UsageRate", "CoreFrequency" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfFPS), global::Gperf.U3D.GPerfFPS.Parser, new[]{ "DeltaTimeInMS", "Fps" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Gperf.U3D.GPerfFrameTime), global::Gperf.U3D.GPerfFrameTime.Parser, new[]{ "PlayerLoopTime", "RenderingTime", "ScriptTime", "PhysicsTime", "AnimationTime", "CpuTime", "GpuTime" }, null, null, null, null),
@@ -1423,6 +1423,7 @@ namespace Gperf.U3D {
     public GPerfBattery(GPerfBattery other) : this() {
       temperature_ = other.temperature_;
       status_ = other.status_;
+      statusDesc_ = other.statusDesc_;
       rate_ = other.rate_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1454,8 +1455,19 @@ namespace Gperf.U3D {
       }
     }
 
+    /// <summary>Field number for the "status_desc" field.</summary>
+    public const int StatusDescFieldNumber = 3;
+    private string statusDesc_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string StatusDesc {
+      get { return statusDesc_; }
+      set {
+        statusDesc_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "rate" field.</summary>
-    public const int RateFieldNumber = 3;
+    public const int RateFieldNumber = 4;
     private float rate_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Rate {
@@ -1480,6 +1492,7 @@ namespace Gperf.U3D {
       }
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Temperature, other.Temperature)) return false;
       if (Status != other.Status) return false;
+      if (StatusDesc != other.StatusDesc) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Rate, other.Rate)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1489,6 +1502,7 @@ namespace Gperf.U3D {
       int hash = 1;
       if (Temperature != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Temperature);
       if (Status != 0) hash ^= Status.GetHashCode();
+      if (StatusDesc.Length != 0) hash ^= StatusDesc.GetHashCode();
       if (Rate != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Rate);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1511,8 +1525,12 @@ namespace Gperf.U3D {
         output.WriteRawTag(16);
         output.WriteInt32(Status);
       }
+      if (StatusDesc.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(StatusDesc);
+      }
       if (Rate != 0F) {
-        output.WriteRawTag(29);
+        output.WriteRawTag(37);
         output.WriteFloat(Rate);
       }
       if (_unknownFields != null) {
@@ -1528,6 +1546,9 @@ namespace Gperf.U3D {
       }
       if (Status != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Status);
+      }
+      if (StatusDesc.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(StatusDesc);
       }
       if (Rate != 0F) {
         size += 1 + 4;
@@ -1548,6 +1569,9 @@ namespace Gperf.U3D {
       }
       if (other.Status != 0) {
         Status = other.Status;
+      }
+      if (other.StatusDesc.Length != 0) {
+        StatusDesc = other.StatusDesc;
       }
       if (other.Rate != 0F) {
         Rate = other.Rate;
@@ -1571,7 +1595,11 @@ namespace Gperf.U3D {
             Status = input.ReadInt32();
             break;
           }
-          case 29: {
+          case 26: {
+            StatusDesc = input.ReadString();
+            break;
+          }
+          case 37: {
             Rate = input.ReadFloat();
             break;
           }

@@ -59,7 +59,8 @@ message GPerfLuaMemory{
 message GPerfBattery{
     float temperature = 1;
     int32 status = 2;
-    float rate = 3;
+    string status_desc = 3;
+    float rate = 4;
 }
 
 message GPerfCPU{
