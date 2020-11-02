@@ -17,7 +17,7 @@ namespace KSTCEngine.GPerf.Recorder
         private List<string> m_CachedMessage = new List<string>();
         private Thread m_WriterThread = null;
         private object m_Locker = new object();
-
+        private CancellationTokenSource m_TokenSource = new CancellationTokenSource();
         public FileRecorder():base(RecorderType.File)
         {
             m_RootDir = GPerfUtil.GeRootDir();
@@ -51,6 +51,11 @@ namespace KSTCEngine.GPerf.Recorder
                     {
                         while(true)
                         {
+                            if (m_TokenSource.Token.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
                             lock (m_Locker)
                             {
                                 if (m_CachedMessage.Count > 0)
@@ -91,10 +96,7 @@ namespace KSTCEngine.GPerf.Recorder
 
         public override void DoDispose()
         {
-            if (m_WriterThread != null)
-            {
-                m_WriterThread.Abort();
-            }
+            m_TokenSource.Cancel();
             m_WriterThread = null;
 
             m_Writer?.Flush();

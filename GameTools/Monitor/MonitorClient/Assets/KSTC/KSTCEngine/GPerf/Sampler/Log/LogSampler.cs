@@ -21,6 +21,7 @@ namespace KSTCEngine.GPerf.Sampler
         private List<string> m_CachedMessage = new List<string>();
         private Thread m_WriterThread = null;
         private object m_Locker = new object();
+        private CancellationTokenSource m_TokenSource = new CancellationTokenSource();
         public LogSampler()
         {
             MetricType = SamplerMetricType.Log;
@@ -60,6 +61,11 @@ namespace KSTCEngine.GPerf.Sampler
                     {
                         while (true)
                         {
+                            if(m_TokenSource.Token.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
                             lock (m_Locker)
                             {
                                 if (m_CachedMessage.Count > 0)
@@ -88,10 +94,7 @@ namespace KSTCEngine.GPerf.Sampler
         protected override void OnEnd()
         {
             Application.logMessageReceived -= OnLogMessageReceived;
-            if(m_WriterThread!=null)
-            {
-                m_WriterThread.Abort();
-            }
+            m_TokenSource.Cancel();
             m_WriterThread = null;
             m_Writer?.Flush();
             m_Writer?.Close();

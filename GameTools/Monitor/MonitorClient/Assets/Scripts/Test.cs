@@ -16,34 +16,7 @@ public class Test : MonoBehaviour
 
         GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
         //GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Console);
-        GPerfMonitor.GetInstance().OpenRecorder(RecorderType.File);
-
-        //GPerfPlatform.InitPlugin();
-        //string values = "Test for Today";
-        //byte[] bytes = Encoding.UTF8.GetBytes(values);
-        //MemoryStream orgMS = new MemoryStream(bytes);
-
-        //MemoryStream outMS = new MemoryStream();
-        //GZip.Compress(orgMS, outMS, false);
-        //byte[] rBytes = outMS.ToArray();
-        //orgMS.Close();
-        //outMS.Close();
-
-        //File.WriteAllBytes("D:/t.bytes", rBytes);
-
-        //byte[] cBytes = File.ReadAllBytes("D:/t.bytes");
-        //using(MemoryStream cInMS = new MemoryStream(cBytes))
-        //{
-        //    using(MemoryStream oInMS = new MemoryStream())
-        //    {
-        //        GZip.Decompress(cInMS, oInMS, false);
-        //        byte[] r = oInMS.ToArray();
-
-        //        var rs = Encoding.UTF8.GetString(r);
-        //        Debug.Log("SSSSSSSS+" + rs);
-        //    }
-        //}
-
+        //GPerfMonitor.GetInstance().OpenRecorder(RecorderType.File);
     }
 
     private bool m_IsRunning = false;

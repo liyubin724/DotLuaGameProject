@@ -38,7 +38,7 @@ namespace KSTCEngine.GPerf.Recorder
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("HttpClientUtil::PostAsync->" + e.Message);
+                        Debug.LogError($"HttpClientUtil::PostAsync->message = {e.Message},innerMessage={e.InnerException.Message}");
                         return null;
                     }
                 }
@@ -68,7 +68,7 @@ namespace KSTCEngine.GPerf.Recorder
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("HttpClientUtil::PostAsync->" + e.Message);
+                        Debug.LogError($"HttpClientUtil::PutLogAsync->message = {e.Message},innerMessage={e.InnerException.Message}");
                         return null;
                     }
                 }

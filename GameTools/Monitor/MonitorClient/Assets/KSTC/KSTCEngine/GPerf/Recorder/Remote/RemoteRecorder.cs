@@ -14,7 +14,7 @@ namespace KSTCEngine.GPerf.Recorder
         private DateTime m_OrgTime;
         private GPerfSession m_Session = null;
 
-        private string m_URL = "http://hb.ix2.cn:16409/u3d/uploadStats";
+        private string m_URL = "http://hb.ix2.cn:16408/u3d/uploadStats";
         public RemoteRecorder():base(RecorderType.Remote)
         {
             m_OrgTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
