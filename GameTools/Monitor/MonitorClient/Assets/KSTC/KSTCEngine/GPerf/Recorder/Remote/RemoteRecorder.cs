@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Recorder
@@ -15,7 +14,7 @@ namespace KSTCEngine.GPerf.Recorder
         private DateTime m_OrgTime;
         private GPerfSession m_Session = null;
 
-        private string m_URL = "http://hb.ix2.cn:16408/u3d/uploadStats";
+        private string m_URL = "http://hb.ix2.cn:16409/u3d/uploadStats";
         public RemoteRecorder():base(RecorderType.Remote)
         {
             m_OrgTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
@@ -165,9 +164,11 @@ namespace KSTCEngine.GPerf.Recorder
                             {
                                 headerDic.Add(header.Path, header.Value<string>());
                             }
-
-                            var response = await RemoteUtil.PutLogAsync(url, logBytes, 5, headerDic);
-                            Debug.Log("SSSS+++++" + response);
+                            //Debug.Log($"{GPerfUtil.LOG_NAME}::RemoteRecorder->upload log file");
+                            //目前服务器没有给返回值，只要通过地址能拿到压缩的日志文件即可认为成功
+                            //var response = 
+                            await RemoteUtil.PutLogAsync(url, logBytes, 5, headerDic);
+                            //Debug.Log($"{GPerfUtil.LOG_NAME}::RemoteRecorder->upload Finished.result = {response}");
                         }
                     }
                 }
