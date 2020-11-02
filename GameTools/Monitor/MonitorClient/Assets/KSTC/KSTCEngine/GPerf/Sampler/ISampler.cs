@@ -9,6 +9,7 @@ namespace KSTCEngine.GPerf.Sampler
         FrameTime,
         SystemMemory,
         ProfilerMemory,
+        XLuaMemory,
         CPU,
         Battery,
 
