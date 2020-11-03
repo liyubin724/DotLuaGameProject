@@ -1,5 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 
 namespace KSTCEngine.GPerf.Sampler
@@ -49,18 +48,27 @@ namespace KSTCEngine.GPerf.Sampler
         {
             var task = Task.Run(() =>
             {
+#if !UNITY_EDITOR && UNITY_ANDROID
                 AndroidJNI.AttachCurrentThread();
                 float temp = GPerfPlatform.GetCPUUsageRate();
                 AndroidJNI.DetachCurrentThread();
+#else
+                float temp = GPerfPlatform.GetCPUUsageRate();
+#endif
                 return temp;
             });
             record.UsageRate = await task;
 
             var coreFreqTask = Task.Run(() =>
             {
+                long[] temp;
+#if !UNITY_EDITOR && UNITY_ANDROID
                 AndroidJNI.AttachCurrentThread();
-                long[] temp = GPerfPlatform.GetCPUCoreFrequence();
+                temp = GPerfPlatform.GetCPUCoreFrequence();
                 AndroidJNI.DetachCurrentThread();
+#else
+                temp = GPerfPlatform.GetCPUCoreFrequence();
+#endif
                 return temp;
             });
             long[] coreFreq = await coreFreqTask;

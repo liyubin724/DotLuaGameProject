@@ -31,9 +31,14 @@ namespace KSTCEngine.GPerf.Sampler
         {
             var task = Task.Run(() =>
             {
+#if !UNITY_EDITOR && UNITY_ANDROID
                 AndroidJNI.AttachCurrentThread();
                 float temp = GPerfPlatform.GetBatteryTemperature();
                 AndroidJNI.DetachCurrentThread();
+#else
+                float temp = GPerfPlatform.GetBatteryTemperature();
+#endif
+
                 return temp;
             });
             record.Temperature = await task;

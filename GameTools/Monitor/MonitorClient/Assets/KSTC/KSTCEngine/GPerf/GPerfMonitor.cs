@@ -21,6 +21,7 @@ namespace KSTCEngine.GPerf
             return sm_Instance;
         }
 
+#if UNITY_EDITOR_WIN || UNITY_ANDROID
         [RuntimeInitializeOnLoadMethod]
         private static void OnRuntimeLoaded()
         {
@@ -41,6 +42,7 @@ namespace KSTCEngine.GPerf
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FrameTime);
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Log);
         }
+#endif
 
         private GameObject m_GObject = null;
         private GPerfBehaviour m_Behaviour = null;
@@ -58,13 +60,11 @@ namespace KSTCEngine.GPerf
         }
 
 #if GPERF_XLUA
-
         public LuaEnv XLuaEnv { get; private set; }
         public void SetLuaEnv(XLua.LuaEnv luaEnv)
         {
             XLuaEnv = luaEnv;
         }
-
 #endif
 
         public void DoInit()

@@ -1,4 +1,6 @@
-﻿namespace KSTCEngine.GPerf
+﻿using KSTCEngine.GPerf.Platform;
+
+namespace KSTCEngine.GPerf
 {
     public static class GPerfPlatform
     {
@@ -6,11 +8,25 @@
 
         public static void InitPlugin()
         {
+#if UNITY_EDITOR
+
+#if UNITY_EDITOR_WIN
+            sm_PlatformPlugin = new GPerfWinPlugin();
+#endif
+
+#else
+
 #if UNITY_ANDROID
             sm_PlatformPlugin = new GPerfAndroidPlugin();
 #elif UNITY_IPHONE
 
+#elif UNITY_STANDALONE_WIN
+            sm_PlatformPlugin = new GPerfWinPlugin();
 #endif
+
+#endif
+
+
         }
 
         public static float GetCPUUsageRate()
