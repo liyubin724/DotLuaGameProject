@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#if GPERF_XLUA
+using XLua;
+#endif
 
 namespace KSTCEngine.GPerf.Sampler
 {
@@ -22,7 +20,13 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnSample()
         {
-            
+#if GPERF_XLUA
+            LuaEnv luaEnv = GPerfMonitor.GetInstance().XLuaEnv;
+            if(luaEnv!=null)
+            {
+                record.TotalMem = luaEnv.GetTotalMemory();
+            }
+#endif
         }
     }
 }

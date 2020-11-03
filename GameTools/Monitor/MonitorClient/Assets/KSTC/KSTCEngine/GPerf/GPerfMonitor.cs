@@ -28,8 +28,13 @@ namespace KSTCEngine.GPerf
 
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Battery);
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.FPS);
+
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.SystemMemory);
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.ProfilerMemory);
+#if GPERF_XLUA
+            GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.XLuaMemory);
+#endif
+
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.Device);
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.App);
             GPerfMonitor.GetInstance().OpenSampler(SamplerMetricType.CPU);
@@ -51,6 +56,16 @@ namespace KSTCEngine.GPerf
         private GPerfMonitor()
         {
         }
+
+#if GPERF_XLUA
+
+        public LuaEnv XLuaEnv { get; private set; }
+        public void SetLuaEnv(XLua.LuaEnv luaEnv)
+        {
+            XLuaEnv = luaEnv;
+        }
+
+#endif
 
         public void DoInit()
         {

@@ -83,6 +83,13 @@ namespace KSTCEngine.GPerf.Recorder
             sample.ProfilerMemory.TotalUnusedReservedSizeInKb = profilerMemoryRecord.TotalUnusedReservedSizeInKB;
             sample.ProfilerMemory.AllocatedForGraphicsDriverInKb = profilerMemoryRecord.AllocatedForGraphicsDriverInKB;
 
+            XLuaMemoryRecord luaMemoryRecord = (XLuaMemoryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.XLuaMemory);
+            if (luaMemoryRecord != null)
+            {
+                sample.LuaMemory = new GPerfLuaMemory();
+                sample.LuaMemory.Total = luaMemoryRecord.TotalMem;
+            }
+
             BatteryRecord batteryRecord = (BatteryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Battery);
             sample.Battery = new GPerfBattery();
             sample.Battery.Temperature = batteryRecord.Temperature;

@@ -16,6 +16,9 @@
                 case SamplerMetricType.ProfilerMemory:
                     sampler = new ProfilerMemorySampler();
                     break;
+                case SamplerMetricType.XLuaMemory:
+                    sampler = new XLuaMemorySampler();
+                    break;
                 case SamplerMetricType.Device:
                     sampler = new DeviceSampler();
                     break;
