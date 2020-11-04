@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
-namespace KSTCEngine.GPerf.Platform
+namespace KSTCEngine.GPerf
 {
     public class GPerfWinPlugin : GPerfPlatformPlugin
     {

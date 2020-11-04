@@ -1,5 +1,4 @@
-﻿using KSTCEngine.GPerf.Platform;
-
+﻿
 namespace KSTCEngine.GPerf
 {
     public static class GPerfPlatform

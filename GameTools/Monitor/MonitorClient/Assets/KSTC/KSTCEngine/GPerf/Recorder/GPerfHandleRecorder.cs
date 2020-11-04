@@ -69,7 +69,7 @@ namespace KSTCEngine.GPerf.Recorder
             m_ElapsedTime += deltaTime;
             if(m_ElapsedTime>= RecordInterval)
             {
-                m_ElapsedTime -= RecordInterval;
+                m_ElapsedTime = 0f;
 
                 DoRecord();
             }

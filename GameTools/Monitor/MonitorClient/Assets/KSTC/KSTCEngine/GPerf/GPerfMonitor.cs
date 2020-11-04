@@ -60,7 +60,7 @@ namespace KSTCEngine.GPerf
         }
 
 #if GPERF_XLUA
-        public LuaEnv XLuaEnv { get; private set; }
+        public XLua.LuaEnv XLuaEnv { get; private set; }
         public void SetLuaEnv(XLua.LuaEnv luaEnv)
         {
             XLuaEnv = luaEnv;

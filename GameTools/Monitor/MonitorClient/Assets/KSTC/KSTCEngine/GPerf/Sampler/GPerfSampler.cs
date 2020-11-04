@@ -70,7 +70,7 @@ namespace KSTCEngine.GPerf.Sampler
                 m_ElapsedTime += deltaTime;
                 if (m_ElapsedTime >= SamplingInterval)
                 {
-                    m_ElapsedTime -= SamplingInterval;
+                    m_ElapsedTime =0f;
 
                     DoSample();
                 }

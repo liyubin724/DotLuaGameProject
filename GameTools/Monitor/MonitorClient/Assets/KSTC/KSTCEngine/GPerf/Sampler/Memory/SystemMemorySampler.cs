@@ -108,7 +108,6 @@ namespace KSTCEngine.GPerf.Sampler
                             {
                                 m_PssMemInKB = 0L;
                             }
-                            m_PssMemInKB /= GPerfUtil.BYTE_TO_MB_SIZE;
                         }
                     }
                 }

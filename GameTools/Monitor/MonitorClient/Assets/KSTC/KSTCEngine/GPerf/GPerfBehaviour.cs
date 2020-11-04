@@ -8,6 +8,10 @@ namespace KSTCEngine.GPerf
         private void Start()
         {
             GPerfMonitor.GetInstance().OpenRecorder(RecorderType.Remote);
+#if GPERF_XLUA
+            XLua.LuaEnv env = wt.framework.XLuaManager.Instance.GetLuaEnv();
+            GPerfMonitor.GetInstance().SetLuaEnv(env);
+#endif
         }
 
         private void Update()
