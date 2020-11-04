@@ -16,7 +16,6 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.FPS;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 1.0f;
         }
 
         protected override void OnUpdate(float deltaTime)
@@ -27,7 +26,7 @@ namespace KSTCEngine.GPerf.Sampler
 
         protected override void OnSample()
         {
-            record.FPS = Mathf.RoundToInt(m_FrameCount / SamplingInterval);
+            record.FPS = Mathf.RoundToInt(m_FrameCount / m_DeltaTime);
             record.DeltaTimeInMS = m_DeltaTime * 1000 / m_FrameCount;
 
             m_FrameCount = 0;

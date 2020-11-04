@@ -65,7 +65,6 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.FrameTime;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 1.0f;
         }
 
         protected override void OnStart()

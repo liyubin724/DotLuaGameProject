@@ -19,7 +19,6 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.ProfilerMemory;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 1.0f;
         }
 
         protected override void OnSample()

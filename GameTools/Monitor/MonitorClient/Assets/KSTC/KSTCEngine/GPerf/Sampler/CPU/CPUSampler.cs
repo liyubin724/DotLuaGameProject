@@ -18,7 +18,6 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.CPU;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 1.0f;
         }
 
         public float GetUsageRate()

@@ -55,6 +55,10 @@ namespace KSTCEngine.GPerf
         private Dictionary<SamplerMetricType, ISampler> m_SamplerDic = new Dictionary<SamplerMetricType, ISampler>();
         private Dictionary<RecorderType, IRecorder> m_RecorderDic = new Dictionary<RecorderType, IRecorder>();
 
+
+        public float SamplingInterval { get; set; } = 1.0f;
+        private float m_ElapsedTime = 0.0f;
+
         private GPerfMonitor()
         {
         }
@@ -193,17 +197,32 @@ namespace KSTCEngine.GPerf
                 return;
             }
 
+            bool isNeedSampling = false;
+            m_ElapsedTime += deltaTime;
+            if (m_ElapsedTime >= SamplingInterval)
+            {
+                isNeedSampling = true;
+                m_ElapsedTime = 0.0f;
+            }
+
             foreach (var kvp in m_SamplerDic)
             {
                 kvp.Value.DoUpdate(deltaTime);
-            }
-
-            foreach(var kvp in m_RecorderDic)
-            {
-                IRecorder recorder = kvp.Value;
-                if (typeof(IIntervalRecorder).IsAssignableFrom(recorder.GetType()))
+                if(isNeedSampling && kvp.Value.FreqType == SamplerFreqType.Interval)
                 {
-                    ((IIntervalRecorder)recorder).DoUpdate(deltaTime);
+                    kvp.Value.DoSample();
+                } 
+            }
+            foreach (var kvp in m_RecorderDic)
+            {
+                if (kvp.Value is IIntervalRecorder recorder)
+                {
+                    recorder.DoUpdate(deltaTime);
+
+                    if(isNeedSampling)
+                    {
+                        recorder.DoRecord();
+                    }
                 }
             }
         }

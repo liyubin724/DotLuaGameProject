@@ -21,8 +21,6 @@ namespace KSTCEngine.GPerf.Recorder
 
     public interface IIntervalRecorder : IRecorder
     {
-        float RecordInterval { get; set; }
-
         void DoRecord();
         void DoUpdate(float deltaTime);
     }
@@ -54,25 +52,14 @@ namespace KSTCEngine.GPerf.Recorder
 
     public abstract class GPerfIntervalRecorder : GPerfRecorder, IIntervalRecorder
     {
-        public float RecordInterval { get; set; } = 1.0f;
-
-        private float m_ElapsedTime = 0.0f;
-
         protected GPerfIntervalRecorder(RecorderType type) : base(type)
         {
         }
 
         public abstract void DoRecord();
 
-        public void DoUpdate(float deltaTime)
+        public virtual void DoUpdate(float deltaTime)
         {
-            m_ElapsedTime += deltaTime;
-            if(m_ElapsedTime>= RecordInterval)
-            {
-                m_ElapsedTime = 0f;
-
-                DoRecord();
-            }
         }
     }
     public abstract class GPerfHandleRecorder : GPerfRecorder, IHandleRecorder

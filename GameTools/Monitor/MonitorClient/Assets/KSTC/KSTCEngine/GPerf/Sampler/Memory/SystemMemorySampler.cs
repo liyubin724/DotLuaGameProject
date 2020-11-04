@@ -32,7 +32,6 @@ namespace KSTCEngine.GPerf.Sampler
         {
             MetricType = SamplerMetricType.SystemMemory;
             FreqType = SamplerFreqType.Interval;
-            SamplingInterval = 1.0f;
         }
 
         public long GetTotalMem()

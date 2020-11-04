@@ -7,9 +7,6 @@ namespace KSTCEngine.GPerf.Sampler
     public class Record
     {
         public SamplerMetricType MetricType { get; internal set; }
-        //public DateTime Time { get; set; }
-        //public int FrameIndex { get; set; }
-
         public String ExtensionData { get; set; }= string.Empty;
 
         public Record() { }
@@ -19,12 +16,9 @@ namespace KSTCEngine.GPerf.Sampler
     { 
         public SamplerMetricType MetricType { get; protected set; }
         public SamplerFreqType FreqType { get; protected set; }
-        public float SamplingInterval { get; set; } = 1.0f;
         public Action<Record> OnSampleRecord { get; set; }
 
         protected T record { get; set; }
-        private float m_ElapsedTime = 0.0f;
-
         public Record GetRecord()
         {
             return record;
@@ -33,6 +27,7 @@ namespace KSTCEngine.GPerf.Sampler
         public void DoStart()
         {
             record = new T();
+            record.MetricType = MetricType;
             OnStart();
 
             if(FreqType == SamplerFreqType.Start || FreqType == SamplerFreqType.Interval)
@@ -43,9 +38,6 @@ namespace KSTCEngine.GPerf.Sampler
 
         public void DoSample()
         {
-            record.MetricType = MetricType;
-            //RecordData.FrameIndex = Time.frameCount;
-            //RecordData.Time = DateTime.Now;
             record.ExtensionData = string.Empty;
             if(Debug.isDebugBuild)
             {
@@ -64,17 +56,6 @@ namespace KSTCEngine.GPerf.Sampler
         public virtual void DoUpdate(float deltaTime)
         {
             OnUpdate(deltaTime);
-
-            if(FreqType == SamplerFreqType.Interval)
-            {
-                m_ElapsedTime += deltaTime;
-                if (m_ElapsedTime >= SamplingInterval)
-                {
-                    m_ElapsedTime =0f;
-
-                    DoSample();
-                }
-            }
         }
 
         public void DoEnd()

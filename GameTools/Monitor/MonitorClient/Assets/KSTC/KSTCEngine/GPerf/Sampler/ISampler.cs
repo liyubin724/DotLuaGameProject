@@ -31,8 +31,6 @@ namespace KSTCEngine.GPerf.Sampler
         SamplerFreqType FreqType { get; }
         Action<Record> OnSampleRecord { get; set; }
 
-        float SamplingInterval { get; set; }
-
         Record GetRecord();
 
         void DoStart();

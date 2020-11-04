@@ -95,10 +95,13 @@ namespace KSTCEngine.GPerf.Sampler
         {
             Application.logMessageReceived -= OnLogMessageReceived;
             m_TokenSource.Cancel();
-            m_WriterThread = null;
-            m_Writer?.Flush();
-            m_Writer?.Close();
+            lock (m_Locker)
+            {
+                m_Writer?.Flush();
+                m_Writer?.Close();
+            }
             m_Writer = null;
+            m_WriterThread = null;
 
             m_CachedMessage.Clear();
         }

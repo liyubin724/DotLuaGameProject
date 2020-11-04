@@ -97,14 +97,15 @@ namespace KSTCEngine.GPerf.Recorder
         public override void DoDispose()
         {
             m_TokenSource.Cancel();
+            lock (m_Locker)
+            {
+                m_Writer?.Flush();
+                m_Writer?.Close();
+            }
             m_WriterThread = null;
-
-            m_Writer?.Flush();
-            m_Writer?.Close();
             m_Writer = null;
 
             m_CachedMessage.Clear();
-
             base.DoDispose();
         }
     }
