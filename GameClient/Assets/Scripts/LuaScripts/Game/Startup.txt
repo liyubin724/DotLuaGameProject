@@ -1,27 +1,130 @@
-Game = Game or {}
-Game.IsDebug = true
+Game = {}
+IsDebug = true
 
 require('DotLua/Utility/math')
 require('DotLua/Utility/table')
 require('DotLua/OOP/OOP')
-require('DotLua/Log/DebugLog')
+require('DotLua/Debugger/Logger')
 
-if Game.IsDebug then
-    require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+local UnityLogger = require('DotLua/Log/UnityLogger')
+local Framework = require('DotLua/Framework/Framework')
+local GameFacade = require('Game/Framework/GameFacade')
+local NotifierNames = require('Game/Framework/NotifierNames')
+local ServicerNames = require('Game/Framework/ServicerNames')
 
-    DebugLog.SetEnable(true, true, true)
-else
-    DebugLog.SetEnable(true, false, false)
+Game.update = Delegate()
+Game.unscaleUpdate = Delegate()
+Game.lateUpdate = Delegate()
+Game.fixedUpdate = Delegate()
+
+Game.FACADE_DEFAULT_UNIQUE_ID = 1
+Game.facade = nil
+
+function Game.GetFacade()
+    return Game.facade
 end
 
-local function InitMgr()
-    Game.ConfigMgr = instanceWithParams('DotLua/Config/ConfigManager', 'Game/Config/')
-    Game.TimerMgr = instance('DotLua/Timer/HierarchicalTimerWheel')
-    Game.EventMgr = instance('DotLua/Event/EventDispatcher')
-    Game.AssetMgr = instance('DotLua/Asset/AssetManager')
-    Game.PanelMgr = instance('DotLua/UI/UIPanelManager')
-    Game.PoolMgr = instance('DotLua/GOPool/GameObjectPoolManager')
-    Game.EnvMgr = instance('Game/EnvManager')
+function Game.GetServicer(name)
+    return Game.GetFacade():RetrieveServicer(name)
 end
 
-InitMgr()
+function Game.GetTimerServicer()
+    return Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+end
+
+function Game.GetAssetServicer()
+    return Game.GetServicer(ServicerNames.ASSET_SERVICER)
+end
+
+function Game.DoStart()
+    if IsDebug then
+        require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+        UnityLogger.SetEnable(true, true, true)
+    else
+        UnityLogger.SetEnable(true, false, false)
+    end
+
+    Logger.Info('Game', 'Game Startup')
+
+    Game.AddUpdateCallback(nil, Framework.DoUpdate)
+    Game.AddUnscaleUpdateCallback(nil, Framework.DoUnscaleUpdate)
+    Game.AddLateUpdateCallback(nil, Framework.DoLateUpdate)
+    Game.AddFixedUpdateCallback(nil, Framework.DoFixedUpdate)
+
+    Game.facade = GameFacade(Game.FACADE_DEFAULT_UNIQUE_ID)
+    Framework.AddFacade(Game.facade)
+
+    Game.facade:SendNotification(NotifierNames.STARTUP_COMMAND_NAME)
+end
+
+function Game.AddUpdateCallback(receiver, func)
+    Game.update = Game.update + {receiver, func}
+end
+
+function Game.RemoveUpdateCallback(receiver, func)
+    Game.update = Game.update - {receiver, func}
+end
+
+function Game.DoUpdate(deltaTime)
+    if #(Game.update) > 0 then
+        Game.update:Invoke(deltaTime)
+    end
+end
+
+function Game.AddUnscaleUpdateCallback(receiver, func)
+    Game.unscaleUpdate = Game.unscaleUpdate + {receiver, func}
+end
+
+function Game.RemoveUnscaleUpdateCallback(receiver, func)
+    Game.unscaleUpdate = Game.unscaleUpdate - {receiver, func}
+end
+
+function Game.DoUnscaleUpdate(deltaTime)
+    if #(Game.unscaleUpdate) > 0 then
+        Game.unscaleUpdate:Invoke(deltaTime)
+    end
+end
+
+function Game.AddLateUpdateCallback(receiver, func)
+    Game.lateUpdate = Game.lateUpdate + {receiver, func}
+end
+
+function Game.RemoveLateUpdateCallback(receiver, func)
+    Game.lateUpdate = Game.lateUpdate - {receiver, func}
+end
+
+function Game.DoLateUpdate(deltaTime)
+    if #(Game.lateUpdate) > 0 then
+        Game.lateUpdate:Invoke(deltaTime)
+    end
+end
+
+function Game.AddFixedUpdateCallback(receiver, func)
+    Game.fixedUpdate = Game.fixedUpdate + {receiver, func}
+end
+
+function Game.RemoveFixedUpdateCallback(receiver, func)
+    Game.fixedUpdate = Game.fixedUpdate - {receiver, func}
+end
+
+function Game.DoFixedUpdate(deltaTime)
+    if #(Game.fixedUpdate) > 0 then
+        Game.fixedUpdate:Invoke(deltaTime)
+    end
+end
+
+function Game.DoDestroy()
+    Logger.Info('Game', 'Game Shuntdown')
+
+    Framework.DoDispose()
+
+    Game.RemoveUpdateCallback(nil, Framework.DoUpdate)
+    Game.RemoveUnscaleUpdateCallback(nil, Framework.DoUnscaleUpdate)
+    Game.RemoveLateUpdateCallback(nil, Framework.DoLateUpdate)
+    Game.RemoveFixedUpdateCallback(nil, Framework.DoFixedUpdate)
+
+    Game.update:Clear()
+    Game.unscaleUpdate:Clear()
+    Game.lateUpdate:Clear()
+    Game.fixedUpdate:Clear()
+end

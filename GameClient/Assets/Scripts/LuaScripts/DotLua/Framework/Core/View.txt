@@ -1,0 +1,116 @@
+local Mediator = require('DotLua/Framework/Mediator/Mediator')
+local Observer = require('DotLua/Framework/Observer/Observer')
+local List = require('DotLua/Generic/List')
+local ObjectPool = require('DotLua/Pool/ObjectPool')
+
+local View =
+    class(
+    function(self, uniqueID)
+        self.uniqueID = uniqueID
+
+        self.observerPool = ObjectPool(Observer)
+
+        self.mediatorMap = {}
+        self.observerListMap = {}
+    end
+)
+
+function View:RegisterObserver(notificationName, target, func)
+    if notificationName and func and type(func) == 'function' then
+        local observerList = self.observerListMap[notificationName]
+        if not observerList then
+            observerList = List()
+
+            self.observerListMap[notificationName] = observerList
+        end
+
+        local observer = self.observerPool:Get()
+        observer:SetData(target, func)
+
+        observerList:Add(observer)
+    else
+        Logger.Error('Framework', 'The name of notification is empty or the func is not a function')
+    end
+end
+
+function View:RemoveObserver(notificationName, target, func)
+    local observerList = self.observerListMap[notificationName]
+    if observerList then
+        for i = 1, #(observerList) do
+            local observer = observerList[i]
+
+            if observer:Equal(target, func) then
+                observerList:RemoveAt(i)
+
+                self.observerPool:Release(observer)
+                break
+            end
+        end
+
+        if #(observerList) == 0 then
+            self.observerListMap[notificationName] = nil
+        end
+    else
+        Logger.Error('Framework', 'The observer was not found')
+    end
+end
+
+function View:NotifyObserver(notification)
+    local notificationName = notification:GetName()
+    local observerList = self.observerListMap[notificationName]
+    if observerList then
+        local cloneList = observerList:Copy()
+        for i = 1, #(cloneList) do
+            cloneList:Get(i):Notify(notification)
+        end
+    else
+        Logger.Warning('Framework', 'the observer was not found')
+    end
+end
+
+function View:HasMediator(mediatorName)
+    return self.mediatorMap[mediatorName] ~= nil
+end
+
+function View:RegisterMediator(mediator)
+    if isinstanceof(mediator, Mediator) then
+        local mediatorName = mediator:GetName()
+        if not self:HasMediator(mediatorName) then
+            self.mediatorMap[mediatorName] = mediator
+            mediator:OnInitialized(self.uniqueID)
+
+            local interests = mediator:ListNotificationInterests()
+            if interests and #(interests) > 0 then
+                for i = 1, #interests do
+                    self:RegisterObserver(interests[i], mediator, mediator.HandleNotification)
+                end
+            end
+
+            mediator:DoRegister()
+        else
+            Logger.Warning('Framework', 'the mediator has been added')
+        end
+    else
+        Logger.Warning('Framework', 'the mediator is not a instance of Mediator')
+    end
+end
+
+function View:RemoveMediator(mediatorName)
+    local mediator = self.mediatorMap[mediatorName]
+    if mediator then
+        self.mediatorMap[mediatorName] = nil
+
+        local interests = mediator:ListNotificationInterests()
+        if interests and #(interests) > 0 then
+            for i = 1, #interests do
+                self:RemoveObserver(interests[i], mediator, mediator.HandleNotification)
+            end
+        end
+
+        mediator:DoRemove()
+    end
+
+    return mediator
+end
+
+return View

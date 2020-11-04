@@ -2,7 +2,7 @@
 
 namespace DotEngine.Config
 {
-    public class NDBService : Service
+    public class NDBService : Servicer
     {
         public const string NAME = "NDBService";
 

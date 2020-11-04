@@ -35,7 +35,7 @@ namespace DotEngine.Asset
             }
             else if (autoCleanInterval > 0)
             {
-                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
                 autoCleanTimer = timerService.AddIntervalTimer(autoCleanInterval, (userData) => assetLoader?.UnloadUnusedAsset());
             }
         }
@@ -43,7 +43,7 @@ namespace DotEngine.Asset
         {
             if (autoCleanTimer != null)
             {
-                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
                 timerService.RemoveTimer(autoCleanTimer);
                 autoCleanTimer = null;
             }

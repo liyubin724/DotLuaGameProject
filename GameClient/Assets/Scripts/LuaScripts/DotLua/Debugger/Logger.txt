@@ -1,0 +1,25 @@
+require('DotLua/Utility/table')
+
+Logger = {}
+
+Logger.errorDelegate = Delegate()
+Logger.warningDelegate = Delegate()
+Logger.infoDelegate = Delegate()
+
+function Logger.Error(tag, data)
+    if #(Logger.errorDelegate) > 0 then
+        Logger.errorDelegate:Invoke(tag, table.tostring(data))
+    end
+end
+
+function Logger.Warning(tag, data)
+    if #(Logger.warningDelegate) > 0 then
+        Logger.warningDelegate:Invoke(tag, table.tostring(data))
+    end
+end
+
+function Logger.Info(tag, data)
+    if #(Logger.infoDelegate) > 0 then
+        Logger.infoDelegate:Invoke(tag, table.tostring(data))
+    end
+end

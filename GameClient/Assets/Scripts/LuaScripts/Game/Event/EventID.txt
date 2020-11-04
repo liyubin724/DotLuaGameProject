@@ -1,5 +1,0 @@
-local EventID = {
-    Startup = 1,
-}
-
-return EventID

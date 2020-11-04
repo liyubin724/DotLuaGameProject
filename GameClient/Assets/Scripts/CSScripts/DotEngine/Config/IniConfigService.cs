@@ -3,7 +3,7 @@ using DotEngine.Services;
 
 namespace DotEngine.Config
 {
-    public class IniConfigService : Service
+    public class IniConfigService : Servicer
     {
         public const string NAME = "IniConfigService";
 

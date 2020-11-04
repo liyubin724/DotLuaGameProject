@@ -1,0 +1,36 @@
+local Notifier = require('DotLua/Framework/Observer/Notifier')
+
+local Servicer =
+    class(
+    Notifier,
+    function(self, name)
+        self.name = name
+    end
+)
+
+function Servicer:GetName()
+    return self.name
+end
+
+function Servicer:DoRegister()
+end
+
+function Servicer:DoRemove()
+end
+
+
+----public----
+-- 子类中通过添加此名的函数可以响应到Update的调用
+-- function Servicer:DoUpdate(deltaTime)
+-- end
+
+-- function Servicer:DoUnscaleUpdate(deltaTime)
+-- end
+
+-- function Servicer:DoLateUpdate(deltaTime)
+-- end
+
+-- function Servicer:DoFixedUpdate(deltaTime)
+-- end
+
+return Servicer

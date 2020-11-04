@@ -1,0 +1,9 @@
+Library
+Temp
+obj
+bin
+.vs
+
+*.sln
+*.csproj
+*.csproj.user

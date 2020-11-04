@@ -1,0 +1,11 @@
+local CSAgent = {}
+
+CSAgent.GameObject = CS.UnityEngine.GameObject
+CSAgent.Transform = CS.UnityEngine.Transform
+
+CSAgent.UIRoot = CS.DotEngine.UI.UIRoot
+CSAgent.DontDestroyHandler = CS.DotEngine.Utilities.DontDestroyHandler
+
+CSAgent.LuaUIView = CS.DotEngine.Lua.UI.View.LuaUIView
+
+return CSAgent

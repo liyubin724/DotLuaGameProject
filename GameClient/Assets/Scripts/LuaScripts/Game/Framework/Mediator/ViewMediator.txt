@@ -1,0 +1,172 @@
+local Framework = require('DotLua/Framework/Framework')
+local ServicerNames = require('Game/Framework/ServicerNames')
+local ObjectPool = require('DotLua/Pool/ObjectPool')
+local ObjectPoolItem = require('DotLua/Pool/ObjectPoolItem')
+local Dictionary = require('DotLua/Generic/Dictionary')
+
+local TimerType = {
+    None = 0,
+    Interval = 1,
+    End = 2,
+    IntervalAndEnd = 3
+}
+
+local TimerData =
+    class(
+    ObjectPoolItem,
+    function(self)
+        self:DoRelease()
+    end
+)
+
+function TimerData:SetData(id, timerType, intervalFunc, endFunc, userdata, handler)
+    self.id = id
+    self.timerType = timerType
+    self.intervalFunc = intervalFunc
+    self.endFunc = endFunc
+    self.userdata = userdata
+    self.handler = handler
+end
+
+function TimerData:DoRelease()
+    self.id = -1
+    self.timerType = TimerType.None
+    self.intervalFunc = nil
+    self.endFunc = nil
+    self.userdata = nil
+    self.handler = nil
+end
+
+local ViewMediator =
+    class(
+    Framework.Mediator,
+    function(self, name)
+        self.timerDataPool = ObjectPool(TimerData)
+
+        self.timerDataDic = Dictionary()
+        self.timerMaxID = 1
+    end
+)
+
+function ViewMediator:AddTimer(intervalInSec, totalInSec, intervalFunc, endFunc, userdata)
+    local id = self.timerMaxID
+
+    local timer = Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+    local handler = timer:AddTimer(intervalInSec, totalInSec, self, self.OnTimerInterval, self.OnTimerEnd, id)
+
+    local timerData = self.timerDataPool:Get()
+    timerData:SetData(id, TimerType.IntervalAndEnd, intervalFunc, endFunc, userdata, handler)
+    self.timerDataDic:Add(id, timerData)
+
+    self.timerMaxID = self.timerMaxID + 1
+end
+
+function ViewMediator:AddIntervalTimer(intervalInSec, intervalFunc, userdata)
+    local id = self.timerMaxID
+
+    local timer = Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+    local handler = timer:AddIntervalTimer(intervalInSec, self, self.OnTimerInterval, id)
+
+    local timerData = self.timerDataPool:Get()
+    timerData:SetData(id, TimerType.Interval, intervalFunc, nil, userdata, handler)
+    self.timerDataDic:Add(id, timerData)
+
+    self.timerMaxID = self.timerMaxID + 1
+end
+
+function ViewMediator:AddTickTimer(intervalFunc, userdata)
+    local id = self.timerMaxID
+
+    local timer = Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+    local handler = timer:AddTickTimer(self, self.OnTimerInterval, id)
+
+    local timerData = self.timerDataPool:Get()
+    timerData:SetData(id, TimerType.Interval, intervalFunc, nil, userdata, handler)
+    self.timerDataDic:Add(id, timerData)
+
+    self.timerMaxID = self.timerMaxID + 1
+end
+
+function ViewMediator:AddEndTimer(totalInSec, endFunc, userdata)
+    local id = self.timerMaxID
+
+    local timer = Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+    local handler = timer:AddEndTimer(totalInSec, self, self.OnTimerEnd, id)
+
+    local timerData = self.timerDataPool:Get()
+    timerData:SetData(id, TimerType.End, nil, endFunc, userdata, handler)
+    self.timerDataDic:Add(id, timerData)
+
+    self.timerMaxID = self.timerMaxID + 1
+end
+
+function ViewMediator:RemoveTimer(intervalFunc, endFunc, userdata)
+    local timerData
+
+    self.timerDataDic:ForEach(
+        function(_, value)
+            local timerType = value.timerType
+            if timerType == TimerType.Interval then
+                if endFunc == nil and value.intervalFunc == intervalFunc and value.userdata == userdata then
+                    timerData = value
+                    return false
+                end
+            elseif timerType == TimerType.End then
+                if intervalFunc == nil and value.endFunc == endFunc and value.userdata == userdata then
+                    timerData = value
+                    return false
+                end
+            elseif timerType == TimerType.IntervalAndEnd then
+                if value.intervalFunc == intervalFunc and value.endFunc == endFunc and value.userdata == userdata then
+                    timerData = value
+                    return false
+                end
+            end
+            return true
+        end
+    )
+
+    if timerData then
+        self.timerDataDic:Remove(timerData.id)
+
+        local timer = Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+        timer:RemoveTimer(timerData.timerHandler)
+
+        self.timerDataPool:Release(timerData)
+    end
+end
+
+function ViewMediator:OnTimerInterval(userdata)
+    local timerData = self.timerDataDic:Get(userdata)
+    if timerData then
+        timerData.intervalFunc(self, timerData.userdata)
+    end
+end
+
+function ViewMediator:OnTimerEnd(userdata)
+    local timerData = self.timerDataDic:Get(userdata)
+    if timerData then
+        self.timerDataDic:Remove(userdata)
+
+        timerData.endFunc(self, timerData.userdata)
+
+        self.timerDataPool:Release(timerData)
+    end
+end
+
+function ViewMediator:DoRemove()
+    local keys = self.timerDataDic:GetKeys()
+
+    local timer = Game.GetServicer(ServicerNames.TIMER_SERVICER_NAME)
+    for i = 1, #(keys) do
+        local timerData = self.timerDataDic:Get(keys[i])
+
+        self.timerDataDic:Remove(keys[i])
+
+        timer:RemoveTimer(timerData.timerHandler)
+    end
+
+    self.timerDataPool:Clear()
+end
+
+return ViewMediator

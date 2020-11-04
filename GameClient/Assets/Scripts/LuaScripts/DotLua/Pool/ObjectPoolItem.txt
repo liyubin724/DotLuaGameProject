@@ -4,12 +4,12 @@ local ObjectPoolItem =
     end
 )
 
-----protected----
-function ObjectPoolItem:OnGet()
-end
+-- ----protected----
+-- function ObjectPoolItem:DoGet()
+-- end
 
-----protected----
-function ObjectPoolItem:OnRelease()
-end
+-- ----protected----
+-- function ObjectPoolItem:DoRelease()
+-- end
 
 return ObjectPoolItem

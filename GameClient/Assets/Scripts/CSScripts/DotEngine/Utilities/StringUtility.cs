@@ -78,6 +78,21 @@ namespace DotEngine.Utilities
             return value.Split(new char[] { splitChar }, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        private static string[] units = new string[] { "B", "KB", "MB", "GB", "TB", "PB" };
+        public static String FormatByteSize(long size)
+        {
+            float result = size;
+            int mod = 1024;
+            int i = 0;
+            while (result >= mod)
+            {
+                result /= mod;
+                i++;
+            }
+
+            return $"{result.ToString("f2")}{units[i]}";
+        }
+
         /// <summary>
         /// 计算字符串的time33的值
         /// </summary>

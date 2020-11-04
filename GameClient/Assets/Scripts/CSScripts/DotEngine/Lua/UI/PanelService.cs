@@ -9,7 +9,7 @@ namespace DotEngine.Lua.UI
 {
 
 
-    public class PanelService : Service
+    public class PanelService : Servicer
     {
         private const string NAME = "PanelService";
 

@@ -1,0 +1,9 @@
+local ServicerNames = {}
+
+ServicerNames.CONFIG_SERVICER_NAME = 'ConfigServicer'
+ServicerNames.TIMER_SERVICER_NAME = 'TimerServicer'
+ServicerNames.GAMEOBJECT_POOL_SERVICER_NAME = 'GameObjectPoolServicer'
+ServicerNames.ASSET_SERVICER = 'AssetServicer'
+ServicerNames.UI_PANEL_SERVICER = "UIPanelServicer"
+
+return ServicerNames

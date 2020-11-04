@@ -1,5 +1,5 @@
 ﻿using DotEditor.GUIExtension;
-using DotEditor.GUIExtension.ListView;
+using DotEditor.GUIExtension.TreeGUI;
 using DotEditor.NativeDrawer;
 using System.Collections.Generic;
 using UnityEditor;
@@ -10,7 +10,7 @@ namespace DotEditor.Asset.AssetAddress
     [CustomEditor(typeof(AssetAddressGroup))]
     public class AssetAddressGroupEditor :  NativeDrawerEditor
     {
-        private SimpleListView<string> listViewer = null;
+        private EGUIListView<string> listViewer = null;
 
         protected override bool IsShowScroll()
         {
@@ -41,7 +41,7 @@ namespace DotEditor.Asset.AssetAddress
                         files.AddRange(filter.Filter());
                     }
 
-                    listViewer = new SimpleListView<string>();
+                    listViewer = new EGUIListView<string>();
                     listViewer.Header = "Asset List";
                     listViewer.OnDrawItem = (rect, index) =>
                     {

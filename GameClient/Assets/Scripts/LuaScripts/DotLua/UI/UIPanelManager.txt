@@ -1,11 +1,11 @@
-local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
-local UIPanelMode = using("DotLua/UI/UIPanelMode")
-
-local Game = Game
+local Framework = require('DotLua/Framework/Framework')
+local UIPanelLayer = require('DotLua/UI/UIPanelLayer')
+local UIPanelMode = require('DotLua/UI/UIPanelMode')
 
 local UIPanelManager =
     class(
-    function(self)
+    Framework.Servicer,
+    function(self, name)
         self.uiRoot = nil
         self.panels = {}
     end
@@ -65,7 +65,7 @@ function UIPanelManager:ClosePanel(panelController)
 
     local layerPanels = self.panels[panelLayer]
     if not layerPanels then
-        DebugLog.Error('PanelMgr', 'Error')
+        Logger.Error('PanelMgr', 'Error')
         return
     end
 
@@ -78,7 +78,7 @@ function UIPanelManager:ClosePanel(panelController)
     end
 
     if panelIndex < 0 then
-        DebugLog.Error('PanelMgr', 'Error')
+        Logger.Error('PanelMgr', 'Error')
         return
     end
 

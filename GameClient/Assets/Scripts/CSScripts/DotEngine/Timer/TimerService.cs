@@ -3,7 +3,7 @@ using System;
 
 namespace DotEngine.Timer
 {
-    public class TimerService : Service, IUpdate
+    public class TimerService : Servicer, IUpdate
     {
         public const string NAME = "TimerService";
 

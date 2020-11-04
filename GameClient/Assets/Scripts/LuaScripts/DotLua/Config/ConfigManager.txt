@@ -1,9 +1,15 @@
+local Framework = require('DotLua/Framework/Framework')
+local Dictionary = require('DotLua/Generic/Dictionary')
 
+----internal----
+-- 由Framework的Service进行管理
 local ConfigManager =
     class(
-    function(self,rootPath)
-        self.configs = {}
+    Framework.Servicer,
+    function(self, name, rootPath)
         self.rootPath = rootPath
+
+        self.configDic = Dictionary()
     end
 )
 
@@ -12,10 +18,11 @@ local ConfigManager =
 -- @param configName 配置表的名称
 -- @return Table 返回指定的表数据
 function ConfigManager:GetConfig(configName)
-    local config = self.configs[configName]
+    local config = self.configDic:Get(configName)
+
     if not config then
         config = require(self.rootPath .. configName)
-        self.configs[configName] = config
+        self.configDic:Add(configName, config)
     end
 
     return config
@@ -54,24 +61,29 @@ end
 -- 如果数据表已经加载过的话，将会重新加载指定的数据配置
 -- @param configName 配置表的名称
 function ConfigManager:Reload(configName)
-    local config = self.configs[configName]
+    local config = self.configDic:Get(configName)
     if config then
-        self.configs[configName] = require(self.rootPath .. configName)
+        local configPath = self.rootPath .. configName
+        unrequire(configPath)
+
+        self.configDic:AddOrUpdate(configName, require(configPath))
     end
 end
 
 ----public----
 -- 重新加载所有已经加载过的数据配置
 function ConfigManager:ReloadAll()
-    for key, _ in pairs(self.configs) do
-        self:Reload(key)
+    local configNames = self.configDic:GetKeys()
+
+    for i = 1, #configNames do
+        self:Reload(configNames[i])
     end
 end
 
 ----public----
 -- 清理已经加载过的所有的数据配置
 function ConfigManager:Clear()
-    self.configs = {}
+    self.configDic:Clear()
 end
 
 return ConfigManager

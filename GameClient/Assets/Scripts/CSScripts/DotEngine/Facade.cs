@@ -7,7 +7,7 @@ using DotEngine.Utilities;
 
 namespace DotEngine
 {
-    public class Facade
+    public abstract class Facade
     {
         protected static Facade instance = null;
 
@@ -16,7 +16,7 @@ namespace DotEngine
             return instance;
         }
 
-        protected ServiceCenter serviceCenter = null;
+        protected Service service = null;
         protected Facade()
         {
             instance = this;
@@ -32,65 +32,70 @@ namespace DotEngine
 
         protected virtual void InitializeService()
         {
-            serviceCenter = new ServiceCenter();
+            service = new Service();
 
             LuaEnvService luaEnvService = new LuaEnvService();
-            serviceCenter.RegisterService(luaEnvService);
+            service.RegisterServicer(luaEnvService);
 
             TimerService timerService = new TimerService();
-            serviceCenter.RegisterService(timerService);
+            service.RegisterServicer(timerService);
 
             AssetService assetService = new AssetService();
-            serviceCenter.RegisterService(assetService);
+            service.RegisterServicer(assetService);
 
             GameObjectPoolService poolService = new GameObjectPoolService(assetService.InstantiateAsset);
-            serviceCenter.RegisterService(poolService);
+            service.RegisterServicer(poolService);
         }
 
-        public virtual void RegisterService(IService service)
+        public virtual void RegisterServicer(IServicer servicer)
         {
-            serviceCenter.RegisterService(service);
+            this.service.RegisterServicer(servicer);
         }
 
-        public virtual IService RetrieveService(string name)
+        public virtual IServicer RetrieveServicer(string name)
         {
-            return serviceCenter.RetrieveService(name);
+            return service.RetrieveServicer(name);
         }
 
-        public virtual T GetService<T>(string name) where T : IService
+        public virtual T GetServicer<T>(string name) where T : IServicer
         {
-            return (T)serviceCenter.RetrieveService(name);
+            return (T)service.RetrieveServicer(name);
         }
 
-        public virtual void RemoveService(string name)
+        public virtual void RemoveServicer(string name)
         {
-            serviceCenter.RemoveService(name);
+            service.RemoveServicer(name);
         }
 
-        public virtual bool HasService(string name)
+        public virtual bool HasServicer(string name)
         {
-            return serviceCenter.HasService(name);
+            return service.HasServicer(name);
         }
 
         public void Dispose()
         {
-            serviceCenter.ClearService();
+            service.ClearServicer();
             instance = null;
         }
 
         internal void DoUpdate(float deltaTime)
         {
-            serviceCenter.DoUpdate(deltaTime);
+            service.DoUpdate(deltaTime);
+        }
+
+        internal void DoUnscaleUpdate(float deltaTime)
+        {
+            service.DoUnscaleUpdate(deltaTime);
         }
 
         internal void DoLateUpdate(float deltaTime)
         {
-            serviceCenter.DoLateUpdate(deltaTime);
+            service.DoLateUpdate(deltaTime);
         }
 
         internal void DoFixedUpdate(float deltaTime)
         {
-            serviceCenter.DoFixedUpdate(deltaTime);
+            service.DoFixedUpdate(deltaTime);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace DotEngine.EventDispatch
             }
             foreach (var kvp in delayEventTaskInfo)
             {
-                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
                 timerService.RemoveTimer(kvp.Value);
                 eventDataPool.Release(kvp.Key);
             }
@@ -92,7 +92,7 @@ namespace DotEngine.EventDispatch
             }
             else
             {
-                TimerService timerService = Facade.GetInstance().GetService<TimerService>(TimerService.NAME);
+                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
                 TimerHandler handler = timerService.AddEndTimer(delayTime, OnDelayEventTrigger, e);
                 delayEventTaskInfo.Add(e, handler);
             }

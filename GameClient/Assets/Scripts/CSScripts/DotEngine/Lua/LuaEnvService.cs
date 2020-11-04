@@ -1,29 +1,33 @@
 ﻿using DotEngine.Log;
 using DotEngine.Services;
 using System;
+using System.Collections.Generic;
 using XLua;
+using SystemObject = System.Object;
 
 namespace DotEngine.Lua
 {
-    public class LuaEnvService : Service,IUpdate
+    public class LuaEnvService : Servicer,IUpdate,IUnscaleUpdate,ILateUpdate,IFixedUpdate
     {
         public const string NAME = "LuaService";
 
-        private const string MGR_NAME = "EnvMgr";
+        private const string MGR_NAME = "Game";
         private const string PreloadScript = "Game/Startup";
 
         public float TickInterval { get; set; } = 0;
         public LuaEnv Env { get; private set; } = null;
-
         public LuaTable GameTable { get; private set; } = null;
-        public LuaTable EnvTable { get; private set; } = null;
 
         private float elapsedTime = 0.0f;
         private ScriptLoader m_ScriptLoader = null;
-        private Action<LuaTable, float> m_UpdateAction = null;
 
-        private Func<string, LuaTable> m_UsingFunc = null;
-        private Func<string, LuaTable> m_InstanceFunc = null;
+        private Action<float> m_UpdateAction = null;
+        private Action<float> m_UnscaleUpdateAction = null;
+        private Action<float> m_LateUpdateAction = null;
+        private Action<float> m_FixedUpdateAction = null;
+
+        private LuaFunction m_InstanceFunc = null;
+        private LuaFunction m_InstanceWithFunc = null;
 
         public LuaEnvService() : base(NAME)
         {
@@ -47,19 +51,19 @@ namespace DotEngine.Lua
                 return;
             }
 
-            GameTable = Env.Global.Get<LuaTable>("Game");
+            m_InstanceFunc = Env.Global.Get<LuaFunction>("instance");
+            m_InstanceWithFunc = Env.Global.Get<LuaFunction>("instancewith");
+
+            GameTable = Env.Global.Get<LuaTable>(MGR_NAME);
             if(GameTable == null)
             {
                 LogUtil.LogError(LuaConst.LOGGER_NAME, "the table which name game is not found. ");
-            }
-
-            EnvTable = GameTable.Get<LuaTable>(MGR_NAME);
-            if(EnvTable == null)
-            {
-                LogUtil.LogError(LuaConst.LOGGER_NAME, "the table which name EnvMgr is not found. ");
             }else
             {
-                m_UpdateAction = EnvTable.Get<Action<LuaTable, float>>(LuaConst.UPDATE_FUNCTION_NAME);
+                m_UpdateAction = GameTable.Get<Action<float>>(LuaConst.UPDATE_FUNCTION_NAME);
+                m_UnscaleUpdateAction = GameTable.Get<Action<float>>(LuaConst.UNSCALEUPDATE_FUNCTION_NAME);
+                m_LateUpdateAction = GameTable.Get<Action<float>>(LuaConst.LATEUPDATE_FUNCTION_NAME);
+                m_FixedUpdateAction = GameTable.Get<Action<float>>(LuaConst.FIXEDUPDATE_FUNCTION_NAME);
             }
         }
 
@@ -105,23 +109,23 @@ namespace DotEngine.Lua
             return scriptName;
         }
 
-        public LuaTable UsingScript(string scriptPath)
-        {
-            if(m_UsingFunc == null)
-            {
-                m_UsingFunc = Env.Global.Get<Func<string, LuaTable>>("using");
-            }
-            return m_UsingFunc(scriptPath);
-        }
-
         public LuaTable InstanceScript(string scriptPath)
         {
-            if(m_InstanceFunc == null)
-            {
-                m_InstanceFunc = Env.Global.Get<Func<string, LuaTable>>("instance");
-            }
+            return m_InstanceFunc.Func<string,LuaTable>(scriptPath);
+        }
 
-            return m_InstanceFunc(scriptPath);
+        public LuaTable InstanceScriptWith(string scriptPath,LuaOperateParam[] operateParams)
+        {
+            List<SystemObject> list = new List<SystemObject>();
+            list.Add(scriptPath);
+            if(operateParams!=null && operateParams.Length>0)
+            {
+                foreach(var p in operateParams)
+                {
+                    list.Add(p.GetValue());
+                }
+            }
+            return m_InstanceWithFunc.Func<LuaTable>(list.ToArray());
         }
 
         public virtual void DoUpdate(float deltaTime)
@@ -131,7 +135,7 @@ namespace DotEngine.Lua
                 return;
             }
 
-            m_UpdateAction?.Invoke(EnvTable, deltaTime);
+            m_UpdateAction?.Invoke(deltaTime);
 
             if (TickInterval>0)
             {
@@ -142,6 +146,33 @@ namespace DotEngine.Lua
                     Env.Tick();
                 }
             }
+        }
+
+        public void DoUnscaleUpdate(float deltaTime)
+        {
+            if (!Env.IsValid())
+            {
+                return;
+            }
+            m_UnscaleUpdateAction?.Invoke(deltaTime);
+        }
+
+        public void DoFixedUpdate(float deltaTime)
+        {
+            if (!Env.IsValid())
+            {
+                return;
+            }
+            m_FixedUpdateAction?.Invoke(deltaTime);
+        }
+
+        public void DoLateUpdate(float deltaTime)
+        {
+            if (!Env.IsValid())
+            {
+                return;
+            }
+            m_LateUpdateAction?.Invoke(deltaTime);
         }
 
         public void FullGC()
@@ -165,24 +196,26 @@ namespace DotEngine.Lua
         {
             if(IsValid())
             {
-                Action<LuaTable> action = EnvTable.Get<Action<LuaTable>>(funcName);
-                action?.Invoke(EnvTable);
+                Action action = GameTable.Get<Action>(funcName);
+                action?.Invoke();
             }
         }
 
         public override void DoRemove()
         {
+            CallAction(LuaConst.DESTROY_FUNCTION_NAME);
+
             DoDispose();
         }
 
         protected virtual void DoDispose()
         {
             m_InstanceFunc = null;
-            m_UsingFunc = null;
 
             m_UpdateAction = null;
-            EnvTable?.Dispose();
-            EnvTable = null;
+            m_UnscaleUpdateAction = null;
+            m_LateUpdateAction = null;
+            m_FixedUpdateAction = null;
 
             GameTable?.Dispose();
             GameTable = null;
@@ -195,5 +228,7 @@ namespace DotEngine.Lua
 
             elapsedTime = 0.0f;
         }
+
+        
     }
 }

@@ -7,6 +7,7 @@ namespace DotEngine
         private void Update()
         {
             Facade.GetInstance().DoUpdate(Time.deltaTime);
+            Facade.GetInstance().DoUnscaleUpdate(Time.unscaledDeltaTime);
         }
 
         private void LateUpdate()

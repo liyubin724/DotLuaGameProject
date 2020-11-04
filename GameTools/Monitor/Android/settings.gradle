@@ -1,0 +1,4 @@
+include ':unityplugin'
+include ':tcplugin'
+include ':app'
+rootProject.name = "KSTCApp"

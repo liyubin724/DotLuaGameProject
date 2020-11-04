@@ -1,0 +1,5 @@
+local NotifierNames = {}
+
+NotifierNames.STARTUP_COMMAND_NAME = "Startup"
+
+return NotifierNames
