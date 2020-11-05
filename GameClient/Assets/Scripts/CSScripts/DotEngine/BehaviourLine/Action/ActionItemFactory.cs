@@ -8,7 +8,7 @@ namespace DotEngine.BehaviourLine.Action
 {
     public class ActionItemFactory
     {
-        private Dictionary<Type, FreedomObjectPool> itemPoolDic = new Dictionary<Type, FreedomObjectPool>();
+        private Dictionary<Type, ObjectPool> itemPoolDic = new Dictionary<Type, ObjectPool>();
 
         private static ActionItemFactory itemFactory = null;
 
@@ -23,7 +23,7 @@ namespace DotEngine.BehaviourLine.Action
             return itemFactory;
         }
 
-        public void RegisterItemPool(Type dataType, FreedomObjectPool itemPool)
+        public void RegisterItemPool(Type dataType, ObjectPool itemPool)
         {
             if (!itemPoolDic.ContainsKey(dataType))
             {
@@ -33,7 +33,7 @@ namespace DotEngine.BehaviourLine.Action
 
         public ActionItem RetainItem(Type dataType)
         {
-            if (itemPoolDic.TryGetValue(dataType, out FreedomObjectPool itemPool))
+            if (itemPoolDic.TryGetValue(dataType, out ObjectPool itemPool))
             {
                 return (ActionItem)itemPool.Get();
             }
@@ -43,7 +43,7 @@ namespace DotEngine.BehaviourLine.Action
         public void ReleaseItem(ActionItem item)
         {
             Type dataType = item.Data.GetType();
-            if (itemPoolDic.TryGetValue(dataType, out FreedomObjectPool itemPool))
+            if (itemPoolDic.TryGetValue(dataType, out ObjectPool itemPool))
             {
                 itemPool.Release(item);
             }
@@ -87,7 +87,7 @@ namespace DotEngine.BehaviourLine.Action
 
             foreach (var kvp in dataToItemTypeDic)
             {
-                FreedomObjectPool itemPool = new FreedomObjectPool(() =>
+                ObjectPool itemPool = new ObjectPool(() =>
                 {
                     return Activator.CreateInstance(kvp.Value);
                 }, null, (actionItem) =>

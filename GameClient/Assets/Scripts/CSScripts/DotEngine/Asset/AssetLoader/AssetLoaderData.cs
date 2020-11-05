@@ -152,9 +152,5 @@ namespace DotEngine.Asset
 
             State = AssetLoaderDataState.None;
         }
-
-        public void OnNew()
-        {
-        }
     }
 }

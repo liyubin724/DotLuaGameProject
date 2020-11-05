@@ -139,10 +139,6 @@ namespace DotEngine.Asset
             {
             }
 
-            public void OnNew()
-            {
-            }
-
             public void OnRelease()
             {
                 uniqueID = -1;
