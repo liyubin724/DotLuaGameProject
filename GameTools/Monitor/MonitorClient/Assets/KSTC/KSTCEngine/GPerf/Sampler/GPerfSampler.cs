@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -10,6 +12,19 @@ namespace KSTCEngine.GPerf.Sampler
         public String ExtensionData { get; set; }= string.Empty;
 
         public Record() { }
+
+        public override string ToString()
+        {
+            StringBuilder descSB = new StringBuilder();
+
+            PropertyInfo[] propertyInfos = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach(var p in propertyInfos)
+            {
+                descSB.Append($"{p.Name}:{p.GetValue(this)}; ");
+            }
+
+            return descSB.ToString();
+        }
     }
 
     public abstract class GPerfSampler<T> : ISampler where T : Record,new()

@@ -12,7 +12,7 @@ namespace KSTCEngine.GPerf
         private static GPerfMonitor sm_Instance = null;
         public static GPerfMonitor GetInstance()
         {
-            if(sm_Instance == null)
+            if (sm_Instance == null)
             {
                 sm_Instance = new GPerfMonitor();
 
@@ -55,7 +55,6 @@ namespace KSTCEngine.GPerf
         private Dictionary<SamplerMetricType, ISampler> m_SamplerDic = new Dictionary<SamplerMetricType, ISampler>();
         private Dictionary<RecorderType, IRecorder> m_RecorderDic = new Dictionary<RecorderType, IRecorder>();
 
-
         public float SamplingInterval { get; set; } = 1.0f;
         private float m_ElapsedTime = 0.0f;
 
@@ -70,6 +69,47 @@ namespace KSTCEngine.GPerf
             XLuaEnv = luaEnv;
         }
 #endif
+
+        internal Dictionary<string, string> CustomGameInfoDic { get; } = new Dictionary<string, string>();
+        internal Dictionary<string, string> CustomSamplingInfoDic { get; } = new Dictionary<string, string>();
+        public void AddCustomGameInfo<T>(string name,T value)
+        {
+            if(CustomGameInfoDic.ContainsKey(name))
+            {
+                CustomGameInfoDic[name] = value.ToString();
+            }else
+            {
+                CustomGameInfoDic.Add(name, value.ToString());
+            }
+        }
+
+        public void AddCustomSamplingInfo<T>(string name,T value)
+        {
+            if (CustomSamplingInfoDic.ContainsKey(name))
+            {
+                CustomSamplingInfoDic[name] = value.ToString();
+            }
+            else
+            {
+                CustomSamplingInfoDic.Add(name, value.ToString());
+            }
+        }
+
+        public void RemoveCustomGameInfo(string name)
+        {
+            if (CustomGameInfoDic.ContainsKey(name))
+            {
+                CustomGameInfoDic.Remove(name);
+            }
+        }
+
+        public void RemoveCustomSamplingInfo(string name)
+        {
+            if (CustomSamplingInfoDic.ContainsKey(name))
+            {
+                CustomSamplingInfoDic.Remove(name);
+            }
+        }
 
         public void DoInit()
         {

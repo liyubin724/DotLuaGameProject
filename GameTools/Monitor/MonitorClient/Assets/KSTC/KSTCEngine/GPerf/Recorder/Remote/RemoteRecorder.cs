@@ -23,29 +23,6 @@ namespace KSTCEngine.GPerf.Recorder
         public override void DoStart()
         {
             m_Session = new GPerfSession();
-
-            AppRecord appRecord = (AppRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.App);
-            m_Session.App = new GPerfApp();
-            m_Session.App.Identifier = appRecord.Identifier;
-            m_Session.App.InstallName = appRecord.InstallName;
-            m_Session.App.ProductName = appRecord.ProductName;
-            m_Session.App.Version = appRecord.Version;
-            m_Session.App.UnityVersion = appRecord.EngineVersion;
-
-            DeviceRecord deviceRecord = (DeviceRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Device);
-            m_Session.Device = new GPerfDevice();
-            m_Session.Device.Name = deviceRecord.Name;
-            m_Session.Device.Model = deviceRecord.Model;
-            m_Session.Device.UniqueIdentifier = deviceRecord.UniqueIdentifier;
-
-            m_Session.Device.GraphicsName = deviceRecord.GraphicsName;
-            m_Session.Device.GraphicsType = deviceRecord.GraphicsType;
-            m_Session.Device.GraphicsVendor = deviceRecord.GraphicsVendor;
-            m_Session.Device.GraphicsVersion = deviceRecord.GraphicsVersion;
-            m_Session.Device.GraphicsMemoryInMb = deviceRecord.GraphicsMemoryInMB;
-
-            m_Session.Device.SystemMemoryInMb = deviceRecord.SystemMemorySize;
-
         }
 
         public override void DoRecord()
@@ -54,34 +31,46 @@ namespace KSTCEngine.GPerf.Recorder
             sample.Timestamp = (uint)((DateTime.Now - m_OrgTime).Ticks / 10000000);
 
             FPSRecord fpsRecord = (FPSRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.FPS);
-            sample.Fps = new GPerfFPS();
-            sample.Fps.Fps = fpsRecord.FPS;
-            sample.Fps.DeltaTimeInMS = fpsRecord.DeltaTimeInMS;
+            if(fpsRecord!=null)
+            {
+                sample.Fps = new GPerfFPS();
+                sample.Fps.Fps = fpsRecord.FPS;
+                sample.Fps.DeltaTimeInMS = fpsRecord.DeltaTimeInMS;
+            }
 
             CPURecord cpuRecord = (CPURecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.CPU);
-            sample.Cpu = new GPerfCPU();
-            sample.Cpu.CoreCount = cpuRecord.CoreCount;
-            sample.Cpu.Frequency = cpuRecord.Frequency;
-            sample.Cpu.UsageRate = cpuRecord.UsageRate;
-            sample.Cpu.CoreFrequency.AddRange(cpuRecord.CoreFrequency);
+            if(cpuRecord!=null)
+            {
+                sample.Cpu = new GPerfCPU();
+                sample.Cpu.CoreCount = cpuRecord.CoreCount;
+                sample.Cpu.Frequency = cpuRecord.Frequency;
+                sample.Cpu.UsageRate = cpuRecord.UsageRate;
+                sample.Cpu.CoreFrequency.AddRange(cpuRecord.CoreFrequency);
+            }
 
             SystemMemoryRecord memoryRecord = (SystemMemoryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.SystemMemory);
-            sample.SystemMemory = new GPerfSystemMemory();
-            sample.SystemMemory.TotalInKb = memoryRecord.TotalMemInKB;
-            sample.SystemMemory.AvailableInKb = memoryRecord.AvailableMemInKB;
-            sample.SystemMemory.ThresholdInKb = memoryRecord.ThresholdInKB;
-            sample.SystemMemory.IsLow = memoryRecord.IsLowMem;
-            sample.SystemMemory.PssInKb = memoryRecord.PSSMemInKB;
+            if(memoryRecord!=null)
+            {
+                sample.SystemMemory = new GPerfSystemMemory();
+                sample.SystemMemory.TotalInKb = memoryRecord.TotalMemInKB;
+                sample.SystemMemory.AvailableInKb = memoryRecord.AvailableMemInKB;
+                sample.SystemMemory.ThresholdInKb = memoryRecord.ThresholdInKB;
+                sample.SystemMemory.IsLow = memoryRecord.IsLowMem;
+                sample.SystemMemory.PssInKb = memoryRecord.PSSMemInKB;
+            }
 
             ProfilerMemoryRecord profilerMemoryRecord = (ProfilerMemoryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.ProfilerMemory);
-            sample.ProfilerMemory = new GPerfProfilerMemory();
-            sample.ProfilerMemory.MonoHeapSizeInKb = profilerMemoryRecord.MonoHeapSizeInKB;
-            sample.ProfilerMemory.MonoUsedSizeInKb = profilerMemoryRecord.MonoUsedSizeInKB;
-            sample.ProfilerMemory.TempAllocatorSizeInKb = profilerMemoryRecord.TempAllocatorSizeInKB;
-            sample.ProfilerMemory.TotalAllocatorSizeInKb = profilerMemoryRecord.TotalAllocatorSizeInKB;
-            sample.ProfilerMemory.TotalReservedSizeInKb = profilerMemoryRecord.TotalReservedSizeInKB;
-            sample.ProfilerMemory.TotalUnusedReservedSizeInKb = profilerMemoryRecord.TotalUnusedReservedSizeInKB;
-            sample.ProfilerMemory.AllocatedForGraphicsDriverInKb = profilerMemoryRecord.AllocatedForGraphicsDriverInKB;
+            if(profilerMemoryRecord!=null)
+            {
+                sample.ProfilerMemory = new GPerfProfilerMemory();
+                sample.ProfilerMemory.MonoHeapSizeInKb = profilerMemoryRecord.MonoHeapSizeInKB;
+                sample.ProfilerMemory.MonoUsedSizeInKb = profilerMemoryRecord.MonoUsedSizeInKB;
+                sample.ProfilerMemory.TempAllocatorSizeInKb = profilerMemoryRecord.TempAllocatorSizeInKB;
+                sample.ProfilerMemory.TotalAllocatorSizeInKb = profilerMemoryRecord.TotalAllocatorSizeInKB;
+                sample.ProfilerMemory.TotalReservedSizeInKb = profilerMemoryRecord.TotalReservedSizeInKB;
+                sample.ProfilerMemory.TotalUnusedReservedSizeInKb = profilerMemoryRecord.TotalUnusedReservedSizeInKB;
+                sample.ProfilerMemory.AllocatedForGraphicsDriverInKb = profilerMemoryRecord.AllocatedForGraphicsDriverInKB;
+            }
 
             XLuaMemoryRecord luaMemoryRecord = (XLuaMemoryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.XLuaMemory);
             if (luaMemoryRecord != null)
@@ -91,21 +80,34 @@ namespace KSTCEngine.GPerf.Recorder
             }
 
             BatteryRecord batteryRecord = (BatteryRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Battery);
-            sample.Battery = new GPerfBattery();
-            sample.Battery.Temperature = batteryRecord.Temperature;
-            sample.Battery.Status = batteryRecord.Status;
-            sample.Battery.StatusDesc = batteryRecord.StatusDesc;
-            sample.Battery.Rate = batteryRecord.Rate;
+            if(batteryRecord!=null)
+            {
+                sample.Battery = new GPerfBattery();
+                sample.Battery.Temperature = batteryRecord.Temperature;
+                sample.Battery.Status = batteryRecord.Status;
+                sample.Battery.StatusDesc = batteryRecord.StatusDesc;
+                sample.Battery.Rate = batteryRecord.Rate;
+            }
 
             FrameTimeRecord frameTimeRecord = (FrameTimeRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.FrameTime);
-            sample.FrameTime = new GPerfFrameTime();
-            sample.FrameTime.PlayerLoopTime = frameTimeRecord.PlayerLoopTime;
-            sample.FrameTime.RenderingTime = frameTimeRecord.RenderingTime;
-            sample.FrameTime.ScriptTime = frameTimeRecord.ScriptTime;
-            sample.FrameTime.PhysicsTime = frameTimeRecord.PhysicsTime;
-            sample.FrameTime.AnimationTime = frameTimeRecord.AnimationTime;
-            sample.FrameTime.CpuTime = frameTimeRecord.CPUFrameTime;
-            sample.FrameTime.GpuTime = frameTimeRecord.GPUFrameTime;
+            if(frameTimeRecord!=null)
+            {
+                sample.FrameTime = new GPerfFrameTime();
+                sample.FrameTime.PlayerLoopTime = frameTimeRecord.PlayerLoopTime;
+                sample.FrameTime.RenderingTime = frameTimeRecord.RenderingTime;
+                sample.FrameTime.ScriptTime = frameTimeRecord.ScriptTime;
+                sample.FrameTime.PhysicsTime = frameTimeRecord.PhysicsTime;
+                sample.FrameTime.AnimationTime = frameTimeRecord.AnimationTime;
+                sample.FrameTime.CpuTime = frameTimeRecord.CPUFrameTime;
+                sample.FrameTime.GpuTime = frameTimeRecord.GPUFrameTime;
+            }
+
+            Dictionary<string, string> customSamplingInfo = GPerfMonitor.GetInstance().CustomSamplingInfoDic;
+            if(customSamplingInfo.Count>0)
+            {
+                sample.UserInfo = new GPerfUserInfo();
+                sample.UserInfo.Extensions.Add(customSamplingInfo);
+            }
 
             sample.FrameIndex = Time.frameCount;
 
@@ -114,15 +116,47 @@ namespace KSTCEngine.GPerf.Recorder
 
         public override void DoEnd()
         {
-            LogRecord logRecord = (LogRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Log);
-            //m_Sender.AddNetData(m_Session, logRecord.FilePath);
+            AppRecord appRecord = (AppRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.App);
+            if (appRecord != null)
+            {
+                m_Session.App = new GPerfApp();
+                m_Session.App.Identifier = appRecord.Identifier;
+                m_Session.App.InstallName = appRecord.InstallName;
+                m_Session.App.ProductName = appRecord.ProductName;
+                m_Session.App.Version = appRecord.Version;
+                m_Session.App.UnityVersion = appRecord.EngineVersion;
+            }
 
-            SendToServer(m_Session, logRecord.FilePath);
+            DeviceRecord deviceRecord = (DeviceRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Device);
+            if (deviceRecord != null)
+            {
+                m_Session.Device = new GPerfDevice();
+                m_Session.Device.Name = deviceRecord.Name;
+                m_Session.Device.Model = deviceRecord.Model;
+                m_Session.Device.UniqueIdentifier = deviceRecord.UniqueIdentifier;
+
+                m_Session.Device.GraphicsName = deviceRecord.GraphicsName;
+                m_Session.Device.GraphicsType = deviceRecord.GraphicsType;
+                m_Session.Device.GraphicsVendor = deviceRecord.GraphicsVendor;
+                m_Session.Device.GraphicsVersion = deviceRecord.GraphicsVersion;
+                m_Session.Device.GraphicsMemoryInMb = deviceRecord.GraphicsMemoryInMB;
+
+                m_Session.Device.SystemMemoryInMb = deviceRecord.SystemMemorySize;
+            }
+
+            Dictionary<string, string> customGameInfo = GPerfMonitor.GetInstance().CustomSamplingInfoDic;
+            if (customGameInfo.Count > 0)
+            {
+                m_Session.GameInfo = new GPerfGameInfo();
+                m_Session.GameInfo.Extensions.Add(customGameInfo);
+            }
+
+            LogRecord logRecord = (LogRecord)GPerfMonitor.GetInstance().GetSamplerRecord(SamplerMetricType.Log);
+            SendToServer(m_Session, logRecord?.FilePath);
         }
 
         public override void DoDispose()
         {
-            
         }
 
         private async void SendToServer(GPerfSession session,string logPath)
