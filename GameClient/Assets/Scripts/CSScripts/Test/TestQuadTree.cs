@@ -1,7 +1,10 @@
 ﻿using DotEngine;
 using DotEngine.Generic;
 using DotEngine.Log;
+using DotEngine.Pool;
 using DotEngine.World.QT;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TestCubeQuadObject : MonoBehaviour,IQuadObject
@@ -12,7 +15,7 @@ public class TestCubeQuadObject : MonoBehaviour,IQuadObject
 
     public float Speed { get; set; } = 5.0f;
  
-    public event System.Action<QuadObjectBoundChangeEventArgs> OnBoundsChanged;
+    public event System.Action<IQuadObject, AABB2D, AABB2D> OnBoundsChanged;
 
     void Update()
     {
@@ -29,7 +32,7 @@ public class TestCubeQuadObject : MonoBehaviour,IQuadObject
 
             Bounds = newBounds;
 
-            OnBoundsChanged.Invoke(new QuadObjectBoundChangeEventArgs(this, oldBounds, newBounds));
+            OnBoundsChanged.Invoke(this, oldBounds, newBounds);
 
             if(Vector3.Distance(transform.position,m_TargetPosition)< 0.1f)
             {
@@ -61,7 +64,7 @@ public class TestCubeQuadObject : MonoBehaviour,IQuadObject
 
     public void OnEnterView()
     {
-        GetComponent<MeshRenderer>().material.color = Color.blue;
+        GetComponent<MeshRenderer>().material.color = Color.red;
     }
 
     public void OnExitView()
@@ -90,11 +93,10 @@ public class TestQuadTree : MonoBehaviour
     {
         float randomCenterX = Random.Range(21, 370);
         float randomCenterY = Random.Range(21, 370);
-        float randomExtentsX = Random.Range(0.1f, 1);
-        float randomExtentsY = Random.Range(0.1f, 1);
+        float randomExtents = Random.Range(0.3f, 2);
 
 
-        AABB2D bounds = new AABB2D(new Vector2(randomCenterX, randomCenterY), new Vector2(randomExtentsX, randomExtentsY));
+        AABB2D bounds = new AABB2D(new Vector2(randomCenterX, randomCenterY), new Vector2(randomExtents, randomExtents));
 
         GameObject gObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         TestCubeQuadObject qObject = gObj.AddComponent<TestCubeQuadObject>();
@@ -104,11 +106,32 @@ public class TestQuadTree : MonoBehaviour
         gObj.transform.localScale = new Vector3(bounds.Size.x, 1, bounds.Size.y);
         gObj.transform.position = new Vector3(bounds.Center.x, 0, bounds.Center.y);
 
-        qObject.OnEnterView();
+        //qObject.OnEnterView();
 
         return qObject;
     }
 
+    private void OnDrawGizmos()
+    {
+        if(isMouseDown)
+        {
+            Vector2 lbPoint = showBounds.LBPoint;
+            Vector2 rtPoint = showBounds.RTPoint;
+
+            Color color = Gizmos.color;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(new Vector3(lbPoint.x, 0, lbPoint.y), new Vector3(lbPoint.x, 0, rtPoint.y));
+            Gizmos.DrawLine(new Vector3(lbPoint.x, 0, lbPoint.y), new Vector3(rtPoint.x, 0, lbPoint.y));
+
+            Gizmos.DrawLine(new Vector3(rtPoint.x, 0, rtPoint.y), new Vector3(lbPoint.x, 0, rtPoint.y));
+            Gizmos.DrawLine(new Vector3(rtPoint.x, 0, rtPoint.y), new Vector3(rtPoint.x, 0, lbPoint.y));
+            Gizmos.color = color;
+        }
+    }
+
+    private bool isMouseDown = false;
+    private AABB2D showBounds;
+    private IQuadObject[] selectedObjects = null;
     private void OnGUI()
     {
         Random.InitState((int)System.DateTime.Now.Ticks);
@@ -128,7 +151,49 @@ public class TestQuadTree : MonoBehaviour
             }
 
         }
-        if(Input.GetMouseButtonUp(0))
+
+        if(Event.current.type == EventType.MouseDown && Event.current.button == 0)
+        {
+            isMouseDown = true;
+        }
+        if(isMouseDown )
+        {
+            Vector3 wPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            showBounds = new AABB2D(new Vector2(wPosition.x, wPosition.z), new Vector2(50, 50));
+
+            List<IQuadObject> list1 = ListPool<IQuadObject>.Get();
+            if(selectedObjects!=null)
+            {
+                list1.AddRange(selectedObjects);
+            }
+            
+            IQuadObject[] currentObjects = tree.QueryIntersectsObjects(showBounds);
+            List<IQuadObject> list2 = ListPool<IQuadObject>.Get();
+            list2.AddRange(currentObjects);
+
+            var dis1 = list1.Except(list2).ToArray();
+            foreach(var obj in dis1)
+            {
+                obj.OnExitView();
+            }
+
+            var dis2 = list2.Except(list1).ToArray();
+            foreach (var obj in dis2)
+            {
+                obj.OnEnterView();
+            }
+
+            selectedObjects = currentObjects;
+
+            ListPool<IQuadObject>.Release(list1);
+            ListPool<IQuadObject>.Release(list2);
+        }
+        if(isMouseDown && Event.current.type == EventType.MouseUp)
+        {
+            isMouseDown = false;
+        }
+        
+        if(Input.GetKeyUp(KeyCode.Delete))
         {
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitInfo, float.MaxValue))
             {

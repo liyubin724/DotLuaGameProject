@@ -9,8 +9,8 @@ namespace DotEngine.World.QT
     {
         public const string LOGGER_NAME = "QuadTree";
 
-        private int m_MaxDepth = 7;
-        private int m_NodeSplitThreshold = 10;
+        private int m_MaxDepth = 7;//最大深度
+        private int m_NodeSplitThreshold = 10;//进行分裂的数量
 
         private ObjectPool<QuadNode> m_NodePool = new ObjectPool<QuadNode>();
         
@@ -125,9 +125,9 @@ namespace DotEngine.World.QT
             ListPool<IQuadObject>.Release(nodeObjects);
         }
 
-        private void OnHandleObjectBoundsChanged(QuadObjectBoundChangeEventArgs quadObject)
+        private void OnHandleObjectBoundsChanged(IQuadObject quadObject,AABB2D oldBounds,AABB2D newBounds)
         {
-            UpdateObject(quadObject.Target);
+            UpdateObject(quadObject);
         }
 
         #endregion
@@ -189,12 +189,12 @@ namespace DotEngine.World.QT
         #endregion
 
         #region Query QuadObject
-        public IQuadObject[] QueryIntersectObjects(AABB2D bounds)
+        public IQuadObject[] QueryIntersectsObjects(AABB2D bounds)
         {
-            return QueryIntersectObjectsFromNode(Root, bounds);
+            return QueryIntersectsObjectsFromNode(Root, bounds);
         }
 
-        private IQuadObject[] QueryIntersectObjectsFromNode(QuadNode node,AABB2D bounds)
+        private IQuadObject[] QueryIntersectsObjectsFromNode(QuadNode node,AABB2D bounds)
         {
             if (!node.Bounds.Intersects(bounds))
             {
@@ -218,7 +218,7 @@ namespace DotEngine.World.QT
                 {
                     if (childNode.Bounds.Intersects(bounds))
                     {
-                        objects.AddRange(QueryInsideObjectsFromNode(childNode, bounds));
+                        objects.AddRange(QueryContainsObjectsFromNode(childNode, bounds));
                     }
                 }
             }
@@ -228,12 +228,12 @@ namespace DotEngine.World.QT
             return result;
         }
 
-        public IQuadObject[] QueryInsideObjects(AABB2D bounds)
+        public IQuadObject[] QueryContainsObjects(AABB2D bounds)
         {
-            return QueryInsideObjectsFromNode(Root, bounds);
+            return QueryContainsObjectsFromNode(Root, bounds);
         }
 
-        private IQuadObject[] QueryInsideObjectsFromNode(QuadNode node,AABB2D bounds)
+        private IQuadObject[] QueryContainsObjectsFromNode(QuadNode node,AABB2D bounds)
         {
             if(!node.Bounds.Intersects(bounds))
             {
@@ -257,7 +257,7 @@ namespace DotEngine.World.QT
                 {
                     if(childNode.Bounds.Intersects(bounds))
                     {
-                        objects.AddRange(QueryInsideObjectsFromNode(childNode, bounds));
+                        objects.AddRange(QueryContainsObjectsFromNode(childNode, bounds));
                     }
                 }
             }
