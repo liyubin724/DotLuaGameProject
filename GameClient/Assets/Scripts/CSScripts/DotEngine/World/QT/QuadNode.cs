@@ -1,4 +1,5 @@
 ﻿using DotEngine.Pool;
+using System;
 using System.Collections.Generic;
 
 namespace DotEngine.World.QT
@@ -19,12 +20,13 @@ namespace DotEngine.World.QT
         public QuadNodeDirection Direction { get; private set; } = QuadNodeDirection.None;
         public AABB2D Bounds { get; private set; }
 
-        private List<IQuadObject> m_Objects = new List<IQuadObject>();
+        public QuadNode ParentNode { get; private set; } = null;
+        internal QuadNode[] ChildNodes { get;} = new QuadNode[4];
+        internal List<IQuadObject> InsideObjects { get; } = new List<IQuadObject>();
 
-        internal QuadNode ParentNode { get; private set; } = null;
-        private QuadNode[] m_ChildNodes = new QuadNode[4];
-
-        public bool IsLeaf => m_ChildNodes[0] == null;
+        public int ObjectCount => InsideObjects.Count;
+        
+        public bool IsLeaf => ChildNodes[0] == null;
 
         public QuadNode this[QuadNodeDirection direction]
         {
@@ -34,11 +36,11 @@ namespace DotEngine.World.QT
                 {
                     return null;
                 }
-                return m_ChildNodes[(int)direction - 1];
+                return ChildNodes[(int)direction - 1];
             }
             set
             {
-                m_ChildNodes[(int)direction - 1] = value;
+                ChildNodes[(int)direction - 1] = value;
 
                 if(value!=null)
                 {
@@ -58,20 +60,20 @@ namespace DotEngine.World.QT
             Direction = direction;
         }
 
-        public int GetObjectCount(bool isIncludeChildNode)
+        public int GetTotalObjectCount()
         {
-            return GetNodeObjectCount(this,isIncludeChildNode);
+            return GetNodeObjectCount(this, true);
         }
 
         private int GetNodeObjectCount(QuadNode node, bool isIncludeChildNode)
         {
             if(node.IsLeaf || !isIncludeChildNode)
             {
-                return node.m_Objects.Count;
+                return node.InsideObjects.Count;
             }
 
-            int count = node.m_Objects.Count;
-            foreach (var childNode in node.m_ChildNodes)
+            int count = node.InsideObjects.Count;
+            foreach (var childNode in node.ChildNodes)
             {
                 count += GetNodeObjectCount(childNode, true);
             }
@@ -79,10 +81,23 @@ namespace DotEngine.World.QT
             return count;
         }
 
-        public QuadNode[] GetChildNodes(bool isIncludeChildNode)
+        public QuadNode[] GetChildNodes()
+        {
+            if (IsLeaf)
+            {
+                return null;
+            }else
+            {
+                QuadNode[] result = new QuadNode[ChildNodes.Length];
+                Array.Copy(ChildNodes, result, ChildNodes.Length);
+                return result;
+            }
+        }
+
+        public QuadNode[] GetTotalChildNodes()
         {
             List<QuadNode> nodeList = QuadPool.GetNodeList();
-            SearchNodes(this, nodeList, false, isIncludeChildNode);
+            SearchNodes(this, nodeList, false, true);
             QuadNode[] result = nodeList.ToArray();
             QuadPool.ReleaseNodeList(nodeList);
             return result;
@@ -98,20 +113,25 @@ namespace DotEngine.World.QT
             {
                 return;
             }
-            nodeList.AddRange(node.m_ChildNodes);
+            nodeList.AddRange(node.ChildNodes);
             if(isIncludeChildNode)
             {
-                foreach (var childNode in node.m_ChildNodes)
+                foreach (var childNode in node.ChildNodes)
                 {
                     SearchNodes(childNode, nodeList, false, isIncludeChildNode);
                 }
             }
         }
 
-        public IQuadObject[] GetObjects(bool isIncludeChildNode)
+        public IQuadObject[] GetObjects()
+        {
+            return InsideObjects.ToArray();
+        }
+
+        public IQuadObject[] GetTotalObjects()
         {
             List<IQuadObject> objectList = QuadPool.GetObjectList();
-            SearchObjects(this, objectList, isIncludeChildNode);
+            SearchObjects(this, objectList, true);
             IQuadObject[] result = objectList.ToArray();
             QuadPool.ReleaseObjectList(objectList);
             return result;
@@ -119,14 +139,14 @@ namespace DotEngine.World.QT
 
         private void SearchObjects(QuadNode node,List<IQuadObject> objectList,bool isIncludeChildNode)
         {
-            objectList.AddRange(node.m_Objects);
+            objectList.AddRange(node.InsideObjects);
 
             if(node.IsLeaf || !isIncludeChildNode)
             {
                 return;
             }else
             {
-                foreach (var childNode in node.m_ChildNodes)
+                foreach (var childNode in node.ChildNodes)
                 {
                     SearchObjects(childNode, objectList, isIncludeChildNode);
                 }
@@ -135,14 +155,19 @@ namespace DotEngine.World.QT
 
         internal void ClearObjects()
         {
-            m_Objects.Clear();
+            InsideObjects.Clear();
+        }
+
+        internal void InsertObject(IQuadObject obj)
+        {
+            InsideObjects.Add(obj);
         }
 
         internal bool TryInsertObject(IQuadObject obj)
         {
             if(Bounds.Contains(obj.Bounds))
             {
-                m_Objects.Add(obj);
+                InsideObjects.Add(obj);
                 return true;
             }
             return false;
@@ -150,7 +175,7 @@ namespace DotEngine.World.QT
 
         internal void RemoveObject(IQuadObject obj)
         {
-            m_Objects.Remove(obj);
+            InsideObjects.Remove(obj);
         }
 
         public void OnGet()
@@ -159,19 +184,19 @@ namespace DotEngine.World.QT
 
         public void OnRelease()
         {
-            for(int i =0;i<m_ChildNodes.Length;++i)
+            for(int i =0;i<ChildNodes.Length;++i)
             {
-                m_ChildNodes[i] = null;
+                ChildNodes[i] = null;
             }
 
-            m_Objects.Clear();
+            InsideObjects.Clear();
 
             ParentNode = null;
         }
 
         public override string ToString()
         {
-            return $"QuadNode[{Depth}][{Direction}] : Bounds = {Bounds},isLeft = {IsLeaf},objectCount={GetObjectCount(false)}";
+            return $"QuadNode[{Depth}][{Direction}] : Bounds = {Bounds},isLeft = {IsLeaf},objectCount={ObjectCount}";
         }
     }
 }

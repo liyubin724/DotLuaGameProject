@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DotEngine.World.QT
@@ -36,7 +32,7 @@ namespace DotEngine.World.QT
         {
             Color oldColor = Gizmos.color;
 
-            IQuadObject[] objects = node.GetObjects(false);
+            List<IQuadObject> objects = node.InsideObjects;
             foreach (var obj in objects)
             {
                 DrawAABB2D(obj.Bounds, Color.blue);
@@ -64,7 +60,7 @@ namespace DotEngine.World.QT
                 Gizmos.DrawLine(new Vector3(lbPoint.x, 0, lbPoint.y+extents.y), new Vector3(rtPoint.x, 0, lbPoint.y+extents.y));
                 Gizmos.DrawLine(new Vector3(lbPoint.x+ extents.x, 0, lbPoint.y), new Vector3(lbPoint.x+extents.x, 0, rtPoint.y));
 
-                QuadNode[] childNodes = node.GetChildNodes(false);
+                QuadNode[] childNodes = node.ChildNodes;
                 foreach (var childNode in childNodes)
                 {
                     DrawQuadNode(childNode);
