@@ -14,7 +14,8 @@ public class TestCubeQuadObject : MonoBehaviour,IQuadObject
     public AABB2D Bounds { get; set; }
 
     public float Speed { get; set; } = 5.0f;
- 
+    public bool IsBoundsChangeable { get; set; } = false;
+
     public event System.Action<IQuadObject, AABB2D, AABB2D> OnBoundsChanged;
 
     void Update()
@@ -138,18 +139,17 @@ public class TestQuadTree : MonoBehaviour
 
         if(GUILayout.Button("CLICK"))
         {
-            for(int i =0;i<40;++i)
+            for(int i =0;i<10;++i)
             {
                 TestCubeQuadObject quadObject = CreateObject();
-                tree.InsertObject(quadObject);
-
                 float value = Random.Range(0.0f, 1.0f);
                 if (value > 0.5f)
                 {
+                    quadObject.IsBoundsChangeable = true;
                     quadObject.RandomMove();
                 }
+                tree.InsertObject(quadObject);
             }
-
         }
 
         if(Event.current.type == EventType.MouseDown && Event.current.button == 0)

@@ -1,5 +1,4 @@
-﻿using Boo.Lang;
-using System;
+﻿using System;
 using UnityEngine;
 using XLua;
 using SystemObject = System.Object;

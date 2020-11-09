@@ -1,5 +1,4 @@
 ﻿using DotEngine.Pool;
-using System;
 using System.Collections.Generic;
 
 namespace DotEngine.World.QT
@@ -61,15 +60,20 @@ namespace DotEngine.World.QT
 
         public int GetObjectCount(bool isIncludeChildNode)
         {
-            if(IsLeaf || !isIncludeChildNode)
+            return GetNodeObjectCount(this,isIncludeChildNode);
+        }
+
+        private int GetNodeObjectCount(QuadNode node, bool isIncludeChildNode)
+        {
+            if(node.IsLeaf || !isIncludeChildNode)
             {
-                return m_Objects.Count;
+                return node.m_Objects.Count;
             }
 
-            int count = m_Objects.Count;
-            foreach (var childNode in m_ChildNodes)
+            int count = node.m_Objects.Count;
+            foreach (var childNode in node.m_ChildNodes)
             {
-                count += childNode.GetObjectCount(true);
+                count += GetNodeObjectCount(childNode, true);
             }
 
             return count;
@@ -77,60 +81,61 @@ namespace DotEngine.World.QT
 
         public QuadNode[] GetChildNodes(bool isIncludeChildNode)
         {
-            if(IsLeaf)
-            {
-                return new QuadNode[0];
-            }
+            List<QuadNode> nodeList = QuadPool.GetNodeList();
+            SearchNodes(this, nodeList, false, isIncludeChildNode);
+            QuadNode[] result = nodeList.ToArray();
+            QuadPool.ReleaseNodeList(nodeList);
+            return result;
+        }
 
-            if(!isIncludeChildNode)
+        private void SearchNodes(QuadNode node,List<QuadNode> nodeList,bool isIncludeSelf,bool isIncludeChildNode)
+        {
+            if(isIncludeSelf)
             {
-                QuadNode[] result = new QuadNode[4];
-                Array.Copy(m_ChildNodes, result, result.Length);
-                return result;
+                nodeList.Add(node);
             }
-            else
+            if(node.IsLeaf)
             {
-
-                List<QuadNode> nodes = ListPool<QuadNode>.Get();
-                foreach(var node in m_ChildNodes)
+                return;
+            }
+            nodeList.AddRange(node.m_ChildNodes);
+            if(isIncludeChildNode)
+            {
+                foreach (var childNode in node.m_ChildNodes)
                 {
-                    nodes.Add(node);
-                    nodes.AddRange(node.GetChildNodes(true));
+                    SearchNodes(childNode, nodeList, false, isIncludeChildNode);
                 }
-
-                QuadNode[] result = nodes.ToArray();
-                ListPool<QuadNode>.Release(nodes);
-                return result;
             }
         }
 
         public IQuadObject[] GetObjects(bool isIncludeChildNode)
         {
-            if(IsLeaf || !isIncludeChildNode)
-            {
-                return m_Objects.ToArray();
-            }
-
-            List<IQuadObject> objects = ListPool<IQuadObject>.Get();
-            objects.AddRange(m_Objects);
-            foreach (var node in m_ChildNodes)
-            {
-                objects.AddRange(node.GetObjects(true));
-            }
-
-            IQuadObject[] result = objects.ToArray();
-            ListPool<IQuadObject>.Release(objects);
-
+            List<IQuadObject> objectList = QuadPool.GetObjectList();
+            SearchObjects(this, objectList, isIncludeChildNode);
+            IQuadObject[] result = objectList.ToArray();
+            QuadPool.ReleaseObjectList(objectList);
             return result;
         }
 
-        internal IQuadObject[] ClearObjects()
+        private void SearchObjects(QuadNode node,List<IQuadObject> objectList,bool isIncludeChildNode)
         {
-            IQuadObject[] objs = m_Objects.ToArray();
+            objectList.AddRange(node.m_Objects);
 
+            if(node.IsLeaf || !isIncludeChildNode)
+            {
+                return;
+            }else
+            {
+                foreach (var childNode in node.m_ChildNodes)
+                {
+                    SearchObjects(childNode, objectList, isIncludeChildNode);
+                }
+            }
+        }
+
+        internal void ClearObjects()
+        {
             m_Objects.Clear();
-
-            return objs;
         }
 
         internal bool TryInsertObject(IQuadObject obj)

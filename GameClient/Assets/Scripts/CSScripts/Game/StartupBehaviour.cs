@@ -29,13 +29,12 @@ namespace Game
                 }
             });
 
-
 #else
             string bundleRootDir = "./bundles";
             assetService.InitBundleLoader((result) =>
             {
-                LuaEnvService luaEnvService = facade.GetService<LuaEnvService>(LuaEnvService.NAME);
-                luaEnvService.CallAction(LuaConst.STARTUP_FUNCTION_NAME);
+                LuaEnvService luaEnvService = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
+                luaEnvService.CallAction(LuaConst.START_FUNCTION_NAME);
             }, bundleRootDir);
 #endif
 

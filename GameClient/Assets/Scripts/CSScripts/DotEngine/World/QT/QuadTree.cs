@@ -92,7 +92,8 @@ namespace DotEngine.World.QT
 
         private void ResetNodeObjects(QuadNode node)
         {
-            IQuadObject[] objects = node.ClearObjects();
+            IQuadObject[] objects = node.GetObjects(false);
+            node.ClearObjects();
             List<IQuadObject> nodeObjects = ListPool<IQuadObject>.Get();
             foreach (var obj in objects)
             {
