@@ -1,5 +1,4 @@
-﻿using DotEngine;
-using DotEngine.Generic;
+﻿using DotEngine.Generic;
 using DotEngine.Log;
 using DotEngine.Pool;
 using DotEngine.World.QT;
@@ -116,17 +115,7 @@ public class TestQuadTree : MonoBehaviour
     {
         if(isMouseDown)
         {
-            Vector2 lbPoint = showBounds.LBPoint;
-            Vector2 rtPoint = showBounds.RTPoint;
-
-            Color color = Gizmos.color;
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(new Vector3(lbPoint.x, 0, lbPoint.y), new Vector3(lbPoint.x, 0, rtPoint.y));
-            Gizmos.DrawLine(new Vector3(lbPoint.x, 0, lbPoint.y), new Vector3(rtPoint.x, 0, lbPoint.y));
-
-            Gizmos.DrawLine(new Vector3(rtPoint.x, 0, rtPoint.y), new Vector3(lbPoint.x, 0, rtPoint.y));
-            Gizmos.DrawLine(new Vector3(rtPoint.x, 0, rtPoint.y), new Vector3(rtPoint.x, 0, lbPoint.y));
-            Gizmos.color = color;
+            QuadTreeUtil.DrawGizmoAABBBorder(showBounds, Color.yellow);
         }
     }
 

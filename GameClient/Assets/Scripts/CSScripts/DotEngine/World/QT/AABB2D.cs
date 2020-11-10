@@ -23,22 +23,11 @@ namespace DotEngine.World.QT
         /// AABB的长度及宽度
         /// </summary>
         public Vector2 Size => Extents * 2;
-        /// <summary>
-        /// 左下点坐标
-        /// </summary>
-        public Vector2 LBPoint => Center - Extents;
-        /// <summary>
-        /// 右下点坐标
-        /// </summary>
-        public Vector2 RBPoint => Center + new Vector2(Extents.x, -Extents.y);
-        /// <summary>
-        /// 左上点坐标
-        /// </summary>
-        public Vector2 LTPoint => Center + new Vector2(-Extents.x, Extents.y);
-        /// <summary>
-        ///右上点坐标
-        /// </summary>
-        public Vector2 RTPoint => Center + Extents;
+
+        public float MinX => Center.x - Extents.x;
+        public float MaxX => Center.x + Extents.y;
+        public float MinY => Center.y - Extents.y;
+        public float MaxY => Center.y + Extents.y;
 
         public AABB2D(Vector2 center,Vector2 extents)
         {

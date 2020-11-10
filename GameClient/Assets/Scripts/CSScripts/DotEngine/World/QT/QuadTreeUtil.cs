@@ -22,5 +22,41 @@ namespace DotEngine.World.QT
         {
             return GizmosColors[depth % GizmosColors.Length];
         }
+
+        public static void DrawGizmoAABBBorder(AABB2D bounds,Color color)
+        {
+            Color oldColor = Gizmos.color;
+            Gizmos.color = color;
+
+            float minX = bounds.MinX;
+            float maxX = bounds.MaxX;
+            float minY = bounds.MinY;
+            float maxY = bounds.MaxY;
+
+            Gizmos.DrawLine(new Vector3(minX, 0, minY), new Vector3(maxX, 0, minY));
+            Gizmos.DrawLine(new Vector3(minX, 0, maxY), new Vector3(maxX, 0, maxY));
+            Gizmos.DrawLine(new Vector3(minX, 0, minY), new Vector3(minX, 0, maxY));
+            Gizmos.DrawLine(new Vector3(maxX, 0, minY), new Vector3(maxX, 0, maxY));
+
+            Gizmos.color = oldColor;
+        }
+
+        public static void DrawGizmoAABBCross(AABB2D bounds,Color color)
+        {
+            Color oldColor = Gizmos.color;
+            Gizmos.color = color;
+
+            float minX = bounds.MinX;
+            float maxX = bounds.MaxX;
+            float minY = bounds.MinY;
+            float maxY = bounds.MaxY;
+            float extentX = bounds.Extents.x;
+            float extentY = bounds.Extents.y;
+
+            Gizmos.DrawLine(new Vector3(minX, 0, minY + extentY), new Vector3(maxX, 0, minY + extentY));
+            Gizmos.DrawLine(new Vector3(minX + extentX, 0, minY), new Vector3(minX + extentX, 0, maxY));
+
+            Gizmos.color = oldColor;
+        }
     }
 }
