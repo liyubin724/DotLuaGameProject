@@ -85,7 +85,7 @@ public class TestQuadTree : MonoBehaviour
 
         LogUtil.SetLogger(new UnityLogger());
 
-        tree = new QuadTree(7, 1, new AABB2D(0, 0, 400, 400));
+        tree = new QuadTree(7, 3, new AABB2D(0, 0, 400, 400));
 
         drawer = QuadTreeGizmosDrawer.DrawGizmos(tree);
     }
@@ -139,7 +139,7 @@ public class TestQuadTree : MonoBehaviour
 
         if(GUILayout.Button("CLICK"))
         {
-            for(int i =0;i<1;++i)
+            for(int i =0;i<10;++i)
             {
                 TestCubeQuadObject quadObject = CreateObject();
                 float value = Random.Range(0.0f, 1.0f);

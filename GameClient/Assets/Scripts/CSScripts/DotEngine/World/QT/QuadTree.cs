@@ -194,7 +194,7 @@ namespace DotEngine.World.QT
 
         private void MergeNode(QuadNode mergedNode)
         {
-            if(mergedNode == null || mergedNode.GetTotalObjectCount() >= m_NodeSplitThreshold)
+            if(mergedNode == null)
             {
                 return;
             }
@@ -210,7 +210,7 @@ namespace DotEngine.World.QT
                 targetNode = targetNode.ParentNode;
             }
 
-            if(targetNode!=null)
+            if(targetNode!=null&&!targetNode.IsLeaf)
             {
                 QuadNode[] childNodes = targetNode.GetTotalChildNodes();
                 IQuadObject[] objects = targetNode.GetTotalObjects();
@@ -316,5 +316,9 @@ namespace DotEngine.World.QT
         }
         #endregion
 
+        public void Clear()
+        {
+            
+        }
     }
 }
