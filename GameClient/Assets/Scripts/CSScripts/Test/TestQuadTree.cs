@@ -132,7 +132,8 @@ public class TestQuadTree : MonoBehaviour
 
     private bool isMouseDown = false;
     private AABB2D showBounds;
-    private IQuadObject[] selectedObjects = null;
+    private List<IQuadObject> selectedObjects = new List<IQuadObject>();
+    private List<IQuadObject> tempObjects = new List<IQuadObject>();
     private void OnGUI()
     {
         Random.InitState((int)System.DateTime.Now.Ticks);
@@ -166,10 +167,11 @@ public class TestQuadTree : MonoBehaviour
             {
                 list1.AddRange(selectedObjects);
             }
-            
-            IQuadObject[] currentObjects = tree.QueryIntersectsObjects(showBounds);
+
+            tempObjects.Clear();
+            tree.QueryIntersectsObjects(showBounds,ref tempObjects);
             List<IQuadObject> list2 = ListPool<IQuadObject>.Get();
-            list2.AddRange(currentObjects);
+            list2.AddRange(tempObjects);
 
             var dis1 = list1.Except(list2).ToArray();
             foreach(var obj in dis1)
@@ -183,7 +185,8 @@ public class TestQuadTree : MonoBehaviour
                 obj.OnEnterView();
             }
 
-            selectedObjects = currentObjects;
+            selectedObjects.Clear();
+            selectedObjects.AddRange(tempObjects);
 
             ListPool<IQuadObject>.Release(list1);
             ListPool<IQuadObject>.Release(list2);

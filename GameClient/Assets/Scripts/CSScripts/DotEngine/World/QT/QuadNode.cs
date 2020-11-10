@@ -129,6 +129,19 @@ namespace DotEngine.World.QT
                 return result;
             }
         }
+
+        public void GetChildNodes(ref List<QuadNode> nodeList)
+        {
+            if(IsLeaf)
+            {
+                return;
+            }
+            else
+            {
+                nodeList.AddRange(ChildNodes);
+            }
+        }
+
         /// <summary>
         /// 获取结点的所有的子结点（包括子结点的子结点，但不包括当前结点）
         /// </summary>
@@ -140,6 +153,11 @@ namespace DotEngine.World.QT
             QuadNode[] result = nodeList.ToArray();
             QuadPool.ReleaseNodeList(nodeList);
             return result;
+        }
+
+        public void GetTotalChildNodes(ref List<QuadNode> nodeList)
+        {
+            SearchNodes(this, nodeList, false, true);
         }
 
         private void SearchNodes(QuadNode node,List<QuadNode> nodeList,bool isIncludeSelf,bool isIncludeChildNode)
@@ -169,6 +187,11 @@ namespace DotEngine.World.QT
         {
             return InsideObjects.ToArray();
         }
+
+        public void GetObjects(ref List<IQuadObject> objectList)
+        {
+            objectList.AddRange(InsideObjects);
+        }
         /// <summary>
         /// 获取结点及子结点（包括子结点的子结点）中存储的所有的对象
         /// </summary>
@@ -180,6 +203,11 @@ namespace DotEngine.World.QT
             IQuadObject[] result = objectList.ToArray();
             QuadPool.ReleaseObjectList(objectList);
             return result;
+        }
+
+        public void GetTotalObjects(ref List<IQuadObject> objectList)
+        {
+            SearchObjects(this, objectList, true);
         }
 
         private void SearchObjects(QuadNode node,List<IQuadObject> objectList,bool isIncludeChildNode)
