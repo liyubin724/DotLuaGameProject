@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace DotEngine.World.QT
 {
+    /// <summary>
+    /// 四叉树实现
+    /// </summary>
     public class QuadTree
     {
         public const string LOGGER_NAME = "QuadTree";
@@ -15,7 +18,9 @@ namespace DotEngine.World.QT
         private ObjectPool<QuadNode> m_NodePool = new ObjectPool<QuadNode>();
         
         private Dictionary<IQuadObject, QuadNode> m_ObjectToNodeDic = new Dictionary<IQuadObject, QuadNode>();
-
+        /// <summary>
+        /// 根结点
+        /// </summary>
         public QuadNode Root { get; private set; }
 
         public QuadTree(int maxDepth,int splitThreshold,AABB2D bounds)
@@ -28,6 +33,10 @@ namespace DotEngine.World.QT
         }
 
         #region insert QuadObject
+        /// <summary>
+        /// 向树中插入对象
+        /// </summary>
+        /// <param name="quadObject"></param>
         public void InsertObject(IQuadObject quadObject)
         {
             if(quadObject.IsBoundsChangeable)
@@ -68,7 +77,7 @@ namespace DotEngine.World.QT
 
             return node;
         }
-
+        //结点达到分裂的限定，进行结点的分裂
         private void SplitNode(QuadNode node)
         {
             AABB2D bounds = node.Bounds;
@@ -91,7 +100,7 @@ namespace DotEngine.World.QT
             childNode.SetData(node.Depth + 1, QuadNodeDirection.RT, new AABB2D(bounds.Center + childNodeExtents, childNodeExtents));
             node[QuadNodeDirection.RT] = childNode;
         }
-
+        //结点分裂后重新整理原来的对象
         private void ResetNodeObjects(QuadNode node)
         {
             IQuadObject[] objects = node.GetObjects();
@@ -137,6 +146,10 @@ namespace DotEngine.World.QT
         #endregion
 
         #region Update QuadObject
+        /// <summary>
+        /// 更新指定的对象（一般情况下，由于对象发生了位置变化造成AABB变化后需要更新）
+        /// </summary>
+        /// <param name="quadObject"></param>
         public void UpdateObject(IQuadObject quadObject)
         {
             if(m_ObjectToNodeDic.TryGetValue(quadObject,out var node))
@@ -172,6 +185,10 @@ namespace DotEngine.World.QT
         #endregion
 
         #region Remove QuadObject
+        /// <summary>
+        /// 删除指定的对象
+        /// </summary>
+        /// <param name="quadObject"></param>
         public void RemoveObject(IQuadObject quadObject)
         {
             if(m_ObjectToNodeDic.TryGetValue(quadObject,out var node))
@@ -191,7 +208,7 @@ namespace DotEngine.World.QT
             m_ObjectToNodeDic.Remove(quadObject);
             node.RemoveObject(quadObject);
         }
-
+        //对象删除或更新后，需要对旧的结点进行合并操作
         private void MergeNode(QuadNode mergedNode)
         {
             if(mergedNode == null || mergedNode.ObjectCount>=m_NodeSplitThreshold)
@@ -239,62 +256,64 @@ namespace DotEngine.World.QT
         #region Query QuadObject
         public IQuadObject[] QueryIntersectsObjects(AABB2D bounds)
         {
-            return QueryIntersectsObjectsFromNode(Root, bounds);
+            List<IQuadObject> objects = QuadPool.GetObjectList();
+            QueryIntersectsObjectsFromNode(Root, bounds, objects);
+            IQuadObject[] result = objects.ToArray();
+            QuadPool.ReleaseObjectList(objects);
+            return result;
         }
 
-        private IQuadObject[] QueryIntersectsObjectsFromNode(QuadNode node,AABB2D bounds)
+        private void QueryIntersectsObjectsFromNode(QuadNode node, AABB2D bounds, List<IQuadObject> objectList)
         {
             if (!node.Bounds.Intersects(bounds))
             {
-                return new IQuadObject[0];
+                return;
             }
 
-            List<IQuadObject> objects = QuadPool.GetObjectList();
             List<IQuadObject> objectsInNode = node.InsideObjects;
             foreach (var obj in objectsInNode)
             {
                 if (bounds.Intersects(obj.Bounds))
                 {
-                    objects.Add(obj);
+                    objectList.Add(obj);
                 }
             }
 
-            if (!node.IsLeaf)
+            if(!node.IsLeaf)
             {
                 QuadNode[] childNodes = node.ChildNodes;
                 foreach (var childNode in childNodes)
                 {
                     if (childNode.Bounds.Intersects(bounds))
                     {
-                        objects.AddRange(QueryContainsObjectsFromNode(childNode, bounds));
+                        QueryIntersectsObjectsFromNode(childNode, bounds, objectList);
                     }
                 }
             }
+        }
 
+        public IQuadObject[] QueryContainsObjects(AABB2D bounds)
+        {
+            List<IQuadObject> objects = QuadPool.GetObjectList();
+            QueryContainsObjectsFromNode(Root, bounds, objects);
             IQuadObject[] result = objects.ToArray();
             QuadPool.ReleaseObjectList(objects);
             return result;
         }
 
-        public IQuadObject[] QueryContainsObjects(AABB2D bounds)
-        {
-            return QueryContainsObjectsFromNode(Root, bounds);
-        }
-
-        private IQuadObject[] QueryContainsObjectsFromNode(QuadNode node,AABB2D bounds)
+        private void QueryContainsObjectsFromNode(QuadNode node,AABB2D bounds, List<IQuadObject> objectList)
         {
             if(!node.Bounds.Intersects(bounds))
             {
-                return new IQuadObject[0];
+                return;
             }
 
-            List<IQuadObject> objects = QuadPool.GetObjectList();
             List<IQuadObject> objectsInNode = node.InsideObjects;
             foreach(var obj in objectsInNode)
             {
                 if(bounds.Contains(obj.Bounds))
                 {
-                    objects.Add(obj);
+                    objectList.Add(obj);
                 }
             }
 
@@ -305,14 +324,10 @@ namespace DotEngine.World.QT
                 {
                     if(childNode.Bounds.Intersects(bounds))
                     {
-                        objects.AddRange(QueryContainsObjectsFromNode(childNode, bounds));
+                        QueryContainsObjectsFromNode(childNode, bounds,objectList);
                     }
                 }
             }
-
-            IQuadObject[] result = objects.ToArray();
-            QuadPool.ReleaseObjectList(objects);
-            return result;
         }
         #endregion
 

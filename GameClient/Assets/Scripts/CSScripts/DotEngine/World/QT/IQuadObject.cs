@@ -2,6 +2,9 @@
 
 namespace DotEngine.World.QT
 {
+    /// <summary>
+    /// 需要添加到四叉树中对象需要实现对应的接口
+    /// </summary>
     public interface IQuadObject
     {
         int UniqueID { get; }

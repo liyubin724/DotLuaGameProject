@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace DotEngine.World.QT
 {
+    /// <summary>
+    /// 为减少频繁的内存的申请，创建缓存池用于循环使用
+    /// </summary>
     internal static class QuadPool
     {
         private static GenericObjectPool<List<IQuadObject>> sm_ObjectListPool = null;

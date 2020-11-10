@@ -3,19 +3,41 @@ using UnityEngine;
 
 namespace DotEngine.World.QT
 {
+    /// <summary>
+    /// 四叉树范围AABB
+    /// </summary>
     [Serializable]
     public struct AABB2D
     {
+        /// <summary>
+        /// AABB中心坐标
+        /// </summary>
         public Vector2 Center { get; set; }
+        /// <summary>
+        /// AABB的扩展
+        /// </summary>
         public Vector2 Extents { get; set; }
 
         public Vector2 HalfExtents => Extents * 0.5f;
-
+        /// <summary>
+        /// AABB的长度及宽度
+        /// </summary>
         public Vector2 Size => Extents * 2;
-
+        /// <summary>
+        /// 左下点坐标
+        /// </summary>
         public Vector2 LBPoint => Center - Extents;
+        /// <summary>
+        /// 右下点坐标
+        /// </summary>
         public Vector2 RBPoint => Center + new Vector2(Extents.x, -Extents.y);
+        /// <summary>
+        /// 左上点坐标
+        /// </summary>
         public Vector2 LTPoint => Center + new Vector2(-Extents.x, Extents.y);
+        /// <summary>
+        ///右上点坐标
+        /// </summary>
         public Vector2 RTPoint => Center + Extents;
 
         public AABB2D(Vector2 center,Vector2 extents)
@@ -29,7 +51,11 @@ namespace DotEngine.World.QT
             Extents = new Vector2(width, height) * 0.5f;
             Center = new Vector2(minX, minY) + Extents;
         }
-
+        /// <summary>
+        /// 判断AABB是否包含指定的点
+        /// </summary>
+        /// <param name="point">二维点</param>
+        /// <returns></returns>
         public bool Contains(Vector2 point)
         {
             if (point.x < Center.x - Extents.x)
@@ -52,7 +78,11 @@ namespace DotEngine.World.QT
 
             return true;
         }
-
+        /// <summary>
+        /// 判断是否完全包含指定的AABB
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public bool Contains(AABB2D b)
         {
             return Contains(b.Center + new Vector2(-b.Extents.x, -b.Extents.y)) &&
@@ -60,7 +90,11 @@ namespace DotEngine.World.QT
                     Contains(b.Center + new Vector2(b.Extents.x, -b.Extents.y)) &&
                     Contains(b.Center + new Vector2(b.Extents.x, b.Extents.y));
         }
-
+        /// <summary>
+        /// 判断是否与指定的AABB有交集
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public bool Intersects(AABB2D b)
         {
             return (Mathf.Abs(Center.x - b.Center.x) < (Extents.x + b.Extents.x)) &&
