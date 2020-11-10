@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Build.Pipeline;
+using UnityEngine;
 
 namespace DotEngine.Generic
 {
     public partial class MathLib
     {
-        public static Vector2 GetClosedPointOnLine(Vector2 linePoint1,Vector2 linePoint2,Vector2 point)
+        public static Vector2 GetPointProjectInLine(Vector2 linePoint1,Vector2 linePoint2,Vector2 point)
         {
             float a1 = linePoint2.y - linePoint1.y;
             float b1 = linePoint1.x - linePoint2.x;
@@ -25,5 +26,6 @@ namespace DotEngine.Generic
             }
             return new Vector2(cx, cy);
         }
+
     }
 }
