@@ -154,7 +154,7 @@ namespace DotEngine.World.QT
                 }
                 if(targetNode != null)
                 {
-                    InsertObjectToNode(targetNode, quadObject);
+                    targetNode = InsertObjectToNode(targetNode, quadObject);
 
                     if(targetNode!=node)
                     {
@@ -194,7 +194,7 @@ namespace DotEngine.World.QT
 
         private void MergeNode(QuadNode mergedNode)
         {
-            if(mergedNode == null)
+            if(mergedNode == null || mergedNode.ObjectCount>=m_NodeSplitThreshold)
             {
                 return;
             }
