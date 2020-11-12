@@ -47,7 +47,7 @@ namespace DotEngine.Lua
 
             if (!RequireScript(PreloadScript))
             {
-                LogUtil.LogError(LuaConst.LOGGER_NAME, "Load script failed. path = " + PreloadScript);
+                LogUtil.Error(LuaConst.LOGGER_NAME, "Load script failed. path = " + PreloadScript);
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace DotEngine.Lua
             GameTable = Env.Global.Get<LuaTable>(MGR_NAME);
             if(GameTable == null)
             {
-                LogUtil.LogError(LuaConst.LOGGER_NAME, "the table which name game is not found. ");
+                LogUtil.Error(LuaConst.LOGGER_NAME, "the table which name game is not found. ");
             }else
             {
                 m_UpdateAction = GameTable.Get<Action<float>>(LuaConst.UPDATE_FUNCTION_NAME);
@@ -73,13 +73,13 @@ namespace DotEngine.Lua
             {
                 if (string.IsNullOrEmpty(scriptPath))
                 {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "script is empty");
+                    LogUtil.Error(LuaConst.LOGGER_NAME, "script is empty");
                     return false;
                 }
                 string scriptName = GetScriptName(scriptPath);
                 if (string.IsNullOrEmpty(scriptName))
                 {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "scriptName is empty");
+                    LogUtil.Error(LuaConst.LOGGER_NAME, "scriptName is empty");
                     return false;
                 }
 
@@ -96,7 +96,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(script))
             {
-                LogUtil.LogError(LuaConst.LOGGER_NAME, "script is empty");
+                LogUtil.Error(LuaConst.LOGGER_NAME, "script is empty");
                 return null;
             }
 

@@ -61,7 +61,7 @@ namespace DotEngine.Timer
                 TriggerLeftInMS = m_IntervalInMS;
             }else
             {
-                LogUtil.LogError("Timer", "Timer error");
+                LogUtil.Error("Timer", "Timer error");
             }
             m_OnIntervalEvent = intervalCallback;
             m_OnEndEvent = endCallback;
@@ -104,7 +104,7 @@ namespace DotEngine.Timer
                     }
                 }else
                 {
-                    LogUtil.LogError("Timer", "Timer error");
+                    LogUtil.Error("Timer", "Timer error");
                     return true;
                 }
             }else

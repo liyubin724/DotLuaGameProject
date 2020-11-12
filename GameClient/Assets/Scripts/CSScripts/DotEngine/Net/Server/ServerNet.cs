@@ -42,7 +42,7 @@ namespace DotEngine.Net.Server
 
         private void OnMessageError(MessageErrorCode code)
         {
-            LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNet::OnMessageError->message error.code = {code}");
+            LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNet::OnMessageError->message error.code = {code}");
 
             Dispose();
         }

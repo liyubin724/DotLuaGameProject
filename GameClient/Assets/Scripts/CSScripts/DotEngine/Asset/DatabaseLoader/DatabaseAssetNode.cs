@@ -22,7 +22,7 @@ namespace DotEngine.Asset
                 return uObject;
             }else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "Asset is null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "Asset is null");
                 return null;
             }
         }
@@ -34,7 +34,7 @@ namespace DotEngine.Asset
                 return UnityObject.Instantiate(uObject);
             }else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "State is not finished or object is null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "State is not finished or object is null");
                 return null;
             }
         }

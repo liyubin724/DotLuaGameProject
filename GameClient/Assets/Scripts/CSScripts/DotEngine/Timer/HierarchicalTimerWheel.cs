@@ -170,7 +170,7 @@ namespace DotEngine.Timer
             int nextLevel = level + 1;
             if(nextLevel >= m_Wheels.Count)
             {
-                LogUtil.LogError("Timer", "Timer Error");
+                LogUtil.Error("Timer", "Timer Error");
                 return;
             }
 

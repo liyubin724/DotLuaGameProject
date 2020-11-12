@@ -82,7 +82,7 @@ namespace DotEngine.Net.Server
             }
             catch (Exception e)
             {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::Receive->Receive message cased a error.message = {e.Message}");
+                LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::Receive->Receive message cased a error.message = {e.Message}");
                 Disconnect();
             }
         }
@@ -124,7 +124,7 @@ namespace DotEngine.Net.Server
                     }
                     catch (Exception e)
                     {
-                        LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::Disconnect->e = {e.Message}");
+                        LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::Disconnect->e = {e.Message}");
                     }
                     finally
                     {
@@ -160,7 +160,7 @@ namespace DotEngine.Net.Server
                     ProcessDisconnect(socketEvent);
                     break;
                 default:
-                    LogUtil.LogWarning(NetConst.SERVER_LOGGER_TAG, $"ClientNetSession::OnHandleSocketEvent->received unkown event.opration = {socketEvent.LastOperation}");
+                    LogUtil.Warning(NetConst.SERVER_LOGGER_TAG, $"ClientNetSession::OnHandleSocketEvent->received unkown event.opration = {socketEvent.LastOperation}");
                     break;
             }
         }
@@ -176,7 +176,7 @@ namespace DotEngine.Net.Server
             }
             else
             {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::ProcessSend->send message error.error = {socketEvent.SocketError}");
+                LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::ProcessSend->send message error.error = {socketEvent.SocketError}");
                 Disconnect();
             }
         }
@@ -196,7 +196,7 @@ namespace DotEngine.Net.Server
                     return;
                 }
             }
-            LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::ProcessReceive->Receive message error.error = {socketEvent.SocketError}");
+            LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::ProcessReceive->Receive message error.error = {socketEvent.SocketError}");
             Disconnect();
         }
 
@@ -235,7 +235,7 @@ namespace DotEngine.Net.Server
                     }
                     catch (Exception e)
                     {
-                        LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::DoLateUpdate->e = {e.Message}");
+                        LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetSession::DoLateUpdate->e = {e.Message}");
                         Disconnect();
                     }
                 }

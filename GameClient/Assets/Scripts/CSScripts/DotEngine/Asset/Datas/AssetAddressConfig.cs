@@ -26,7 +26,7 @@ namespace DotEngine.Asset.Datas
             {
                 if (addressToDataDic.ContainsKey(data.assetAddress))
                 {
-                    LogUtil.LogError(typeof(AssetAddressConfig).Name, $"The address is repeated. address = {data.assetAddress}");
+                    LogUtil.Error(typeof(AssetAddressConfig).Name, $"The address is repeated. address = {data.assetAddress}");
                     continue;
                 }
                 else
@@ -36,7 +36,7 @@ namespace DotEngine.Asset.Datas
 
                 if (pathToDataDic.ContainsKey(data.assetPath))
                 {
-                    LogUtil.LogError(typeof(AssetAddressConfig).Name, $"The path is repeated. path = {data.assetPath}");
+                    LogUtil.Error(typeof(AssetAddressConfig).Name, $"The path is repeated. path = {data.assetPath}");
                     continue;
                 }
                 else
@@ -71,7 +71,7 @@ namespace DotEngine.Asset.Datas
             {
                 return data.isScene;
             }
-            LogUtil.LogError(typeof(AssetAddressConfig).Name, $"data is not found.path={path}!");
+            LogUtil.Error(typeof(AssetAddressConfig).Name, $"data is not found.path={path}!");
             return false;
         }
 
@@ -87,7 +87,7 @@ namespace DotEngine.Asset.Datas
                 return data.assetPath;
             }
 
-            LogUtil.LogError(typeof(AssetAddressConfig).Name, $"Path is not found.address={address}!");
+            LogUtil.Error(typeof(AssetAddressConfig).Name, $"Path is not found.address={address}!");
             return null;
         }
 
@@ -123,7 +123,7 @@ namespace DotEngine.Asset.Datas
             {
                 return addressList.ToArray();
             }
-            LogUtil.LogError(typeof(AssetAddressConfig).Name, $"address is not found.label={label}!");
+            LogUtil.Error(typeof(AssetAddressConfig).Name, $"address is not found.label={label}!");
             return null;
         }
 
@@ -138,7 +138,7 @@ namespace DotEngine.Asset.Datas
             {
                 return data.bundlePath;
             }
-            LogUtil.LogError(typeof(AssetAddressConfig).Name, $"bundle is not found.path={path}!");
+            LogUtil.Error(typeof(AssetAddressConfig).Name, $"bundle is not found.path={path}!");
             return null;
         }
 

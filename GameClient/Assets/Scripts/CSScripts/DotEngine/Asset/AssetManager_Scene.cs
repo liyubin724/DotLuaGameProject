@@ -40,7 +40,7 @@ namespace DotEngine.Asset
         {
             if(sceneLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::LoadSceneAsync->loader hasn't been inited");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::LoadSceneAsync->loader hasn't been inited");
                 return null;
             }
 
@@ -62,7 +62,7 @@ namespace DotEngine.Asset
         {
             if (sceneLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::UnloadSceneAsync->loader hasn't been inited");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::UnloadSceneAsync->loader hasn't been inited");
                 return null;
             }
             return sceneLoader.UnloadSceneAsync(address, progress, complete, userData);

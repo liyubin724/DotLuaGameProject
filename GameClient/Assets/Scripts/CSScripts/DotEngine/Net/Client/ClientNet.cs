@@ -115,7 +115,7 @@ namespace DotEngine.Net.Client
 
         private void OnMessageError(MessageErrorCode code)
         {
-            LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageError->message error.code = {code}");
+            LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageError->message error.code = {code}");
             Dispose();
         }
 
@@ -130,7 +130,7 @@ namespace DotEngine.Net.Client
                     return;
                 }
             }
-            LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageReceived->the handler not found.messageID = {messageID}");
+            LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::OnMessageReceived->the handler not found.messageID = {messageID}");
         }
 
         #region Send Data
@@ -173,7 +173,7 @@ namespace DotEngine.Net.Client
             }
             else
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::RegisterMessageHandler->the handler has been added.name={name}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::RegisterMessageHandler->the handler has been added.name={name}");
             }
         }
 
@@ -185,7 +185,7 @@ namespace DotEngine.Net.Client
             }
             else
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::UnregisterMessageHandler->The handler not found.name={name}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNet::UnregisterMessageHandler->The handler not found.name={name}");
             }
         }
 

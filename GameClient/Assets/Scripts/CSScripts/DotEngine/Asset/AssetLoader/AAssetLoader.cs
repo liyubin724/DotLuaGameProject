@@ -97,29 +97,29 @@ namespace DotEngine.Asset
             if(!string.IsNullOrEmpty(label))
             {
                 addresses = addressConfig.GetAddressesByLabel(label);
-                LogUtil.LogDebug(AssetConst.LOGGER_NAME, $"AssetLoader::LoadBatchAssetAsync->Load asset by label.label = {label},addresses = {string.Join(",",addresses)}");
+                LogUtil.Debug(AssetConst.LOGGER_NAME, $"AssetLoader::LoadBatchAssetAsync->Load asset by label.label = {label},addresses = {string.Join(",",addresses)}");
             }
 
             if (addresses == null || addresses.Length == 0)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AAssetLoader::LoadBatchAssetAsync->addresses is null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AAssetLoader::LoadBatchAssetAsync->addresses is null");
                 return null;
             }
             //获取资源真实的路径
             string[] paths = addressConfig.GetPathsByAddresses(addresses);
             if(paths == null || paths.Length == 0)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetLoader::LoadBatchAssetAsync->paths is null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetLoader::LoadBatchAssetAsync->paths is null");
                 return null;
             }else
             {
-                LogUtil.LogDebug(AssetConst.LOGGER_NAME, $"AssetLoader::LoadBatchAssetAsync->find assetPath by address.addresses = {string.Join(",", addresses)},path = {string.Join(",",paths)}");
+                LogUtil.Debug(AssetConst.LOGGER_NAME, $"AssetLoader::LoadBatchAssetAsync->find assetPath by address.addresses = {string.Join(",", addresses)},path = {string.Join(",",paths)}");
             }
 
             if (dataWaitingQueue.Count >= dataWaitingQueue.MaxSize)
             {
                 dataWaitingQueue.Resize(dataWaitingQueue.MaxSize * 2);
-                LogUtil.LogDebug(AssetConst.LOGGER_NAME, "AssetLoader::LoadBatchAssetAsync->Reset the queue size.");
+                LogUtil.Debug(AssetConst.LOGGER_NAME, "AssetLoader::LoadBatchAssetAsync->Reset the queue size.");
             }
 
             AssetLoaderData data = dataPool.Get();
@@ -139,11 +139,11 @@ namespace DotEngine.Asset
 
                 if(State == AssetLoaderState.Running)
                 {
-                    LogUtil.LogDebug(AssetConst.LOGGER_NAME, "AssetLoader::DoUpdate->Loader init success.");
+                    LogUtil.Debug(AssetConst.LOGGER_NAME, "AssetLoader::DoUpdate->Loader init success.");
                     initCallback?.Invoke(true);
                 }else if(State == AssetLoaderState.Error)
                 {
-                    LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetLoader::DoUpdate->Loader init failed.");
+                    LogUtil.Error(AssetConst.LOGGER_NAME, "AssetLoader::DoUpdate->Loader init failed.");
                     initCallback?.Invoke(false);
                 }
                 return;
@@ -167,7 +167,7 @@ namespace DotEngine.Asset
                 data.State = AssetLoaderDataState.Loading;
                 dataLoadingList.Add(data);
 
-                LogUtil.LogDebug(AssetConst.LOGGER_NAME, $"AssetLoader::DoWaitingDataUpdate->Start Load Data.data = {data}");
+                LogUtil.Debug(AssetConst.LOGGER_NAME, $"AssetLoader::DoWaitingDataUpdate->Start Load Data.data = {data}");
             }
         }
 
@@ -282,7 +282,7 @@ namespace DotEngine.Asset
         {
             if(unloadUnusedCallback!=null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "UnloadUnusedAsset is running!!");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "UnloadUnusedAsset is running!!");
                 return;
             }
 

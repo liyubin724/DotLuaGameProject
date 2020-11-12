@@ -32,7 +32,7 @@ namespace DotEngine.Asset
                     return;
                 }
             }
-            LogUtil.LogError(AssetConst.LOGGER_NAME, "Address config is null");
+            LogUtil.Error(AssetConst.LOGGER_NAME, "Address config is null");
             State = AssetLoaderState.Error;
         }
 

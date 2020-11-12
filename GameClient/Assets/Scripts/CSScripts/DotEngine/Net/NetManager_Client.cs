@@ -17,7 +17,7 @@ namespace DotEngine.Net
             }
             if (clientNetDic.ContainsKey(netID))
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"NetMananger::CreateClientNet->the net has been created.netID={netID}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"NetMananger::CreateClientNet->the net has been created.netID={netID}");
                 return null;
             }
 

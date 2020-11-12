@@ -1,80 +1,126 @@
-﻿namespace DotEngine.Log
+﻿using DotEngine.Log.Appender;
+using System.Collections.Generic;
+
+namespace DotEngine.Log
 {
     public static class LogUtil
     {
-        public static LogLevelType LimitLevel { get; set; } = LogLevelType.Debug;
+        public static LogLevel GlobalLogLevel { get; set; } = LogLevel.On;
 
-        private static bool isEnable = true;
-        public static bool IsEnable
-        {
-            get
-            {
-                return logger != null && isEnable;
-            }
-            set
-            {
-                isEnable = value;
-            }
-        }
+        private readonly static Dictionary<string, Logger> sm_Loggers = new Dictionary<string, Logger>();
+        private readonly static Dictionary<string, ALogAppender> sm_Appenders = new Dictionary<string, ALogAppender>();
 
-        public static bool IsInited
+        private static Logger sm_DefaultLogger = new Logger("Logger", LogLevel.On, OnLogMessage);
+
+        public static void AddAppender(ALogAppender appender)
         {
-            get
+            if(!sm_Appenders.ContainsKey(appender.Name))
             {
-                return logger != null;
+                sm_Appenders.Add(appender.Name, appender);
             }
         }
 
-        private static ILogger logger = null;
-        public static void SetLogger(ILogger logger)
+        public static void RemoveAppender(string name)
         {
-            LogUtil.logger = logger;
-        }
-
-        public static void DisposeLogger()
-        {
-            logger?.Close();
-            logger = null;
-        }
-        
-        public static void LogDebug(string tag,string message)
-        {
-            if(IsEnable && LimitLevel <= LogLevelType.Debug)
+            if(sm_Appenders.TryGetValue(name,out var appender))
             {
-                logger.LogDebug(tag, message);
+                appender.Dispose();
+
+                sm_Appenders.Remove(name);
             }
         }
 
-        public static void LogInfo(string tag,string message)
+        public static Logger GetLogger(string name,LogLevel logLevel = LogLevel.Trace)
         {
-            if (IsEnable && LimitLevel <= LogLevelType.Info)
+            if(!sm_Loggers.TryGetValue(name,out var logger))
             {
-                logger.LogInfo(tag, message);
+                logger = new Logger(name, logLevel, OnLogMessage);
+                sm_Loggers.Add(name, logger);
+            }
+            return logger;
+        }
+
+        private static void OnLogMessage(Logger logger, LogLevel level, string message)
+        {
+            if (level < GlobalLogLevel)
+            {
+                return;
+            }
+
+            foreach (var kvp in sm_Appenders)
+            {
+                kvp.Value.OnLogReceived(level, logger.Name, message);
             }
         }
 
-        public static void LogWarning(string tag,string message)
+        public static void Reset()
         {
-            if(IsEnable && LimitLevel <= LogLevelType.Warning)
+            foreach (var kvp in sm_Appenders)
             {
-                logger.LogWarning(tag, message);
+                kvp.Value.Dispose();
             }
+            sm_Appenders.Clear();
+            sm_Loggers.Clear();
         }
 
-        public static void LogError(string tag,string message)
+        public static void Trace(string message)
         {
-            if(IsEnable && LimitLevel <= LogLevelType.Error)
-            {
-                logger.LogError(tag, message);
-            }
+            sm_DefaultLogger.Trace(message);
         }
 
-        public static void LogFatal(string tag,string message)
+        public static void Trace(string tag,string message)
         {
-            if(IsEnable && LimitLevel<=LogLevelType.Fatal)
-            {
-                logger.LogFatal(tag, message);
-            }
+            GetLogger(tag)?.Trace(message);
+        }
+
+        public static void Debug(string message)
+        {
+            sm_DefaultLogger.Debug(message);
+        }
+
+        public static void Debug(string tag,string message)
+        {
+            GetLogger(tag)?.Debug(message);
+        }
+
+        public static void Info(string message)
+        {
+            sm_DefaultLogger.Info(message);
+        }
+
+        public static void Info(string tag,string message)
+        {
+            GetLogger(tag)?.Info(message);
+        }
+
+        public static void Warning(string message)
+        {
+            sm_DefaultLogger.Warning(message);
+        }
+
+        public static void Warning(string tag,string message)
+        {
+            GetLogger(tag)?.Warning(message);
+        }
+
+        public static void Error(string message)
+        {
+            sm_DefaultLogger.Error(message);
+        }
+
+        public static void Error(string tag,string message)
+        {
+            GetLogger(tag)?.Error(message);
+        }
+
+        public static void Fatal(string message)
+        {
+            sm_DefaultLogger.Fatal(message);
+        }
+
+        public static void Fatal(string tag,string message)
+        {
+            GetLogger(tag)?.Fatal(message);
         }
     }
 }

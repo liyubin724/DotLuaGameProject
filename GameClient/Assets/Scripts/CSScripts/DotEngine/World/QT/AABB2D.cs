@@ -9,20 +9,23 @@ namespace DotEngine.World.QT
     [Serializable]
     public struct AABB2D
     {
+        public static AABB2D zero = new AABB2D(0, 0, 0, 0);
+
         /// <summary>
         /// AABB中心坐标
         /// </summary>
         public Vector2 Center { get; set; }
-        /// <summary>
-        /// AABB的扩展
-        /// </summary>
-        public Vector2 Extents { get; set; }
-
-        public Vector2 HalfExtents => Extents * 0.5f;
+        
         /// <summary>
         /// AABB的长度及宽度
         /// </summary>
         public Vector2 Size => Extents * 2;
+
+        /// <summary>
+        /// AABB的扩展
+        /// </summary>
+        public Vector2 Extents { get; set; }
+        public Vector2 HalfExtents => Extents * 0.5f;
 
         public float MinX => Center.x - Extents.x;
         public float MaxX => Center.x + Extents.y;

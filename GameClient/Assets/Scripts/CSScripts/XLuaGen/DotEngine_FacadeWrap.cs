@@ -23,10 +23,10 @@ namespace XLua.CSObjectWrap
 			System.Type type = typeof(DotEngine.Facade);
 			Utils.BeginObjectRegister(type, L, translator, 0, 5, 0, 0);
 			
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RegisterService", _m_RegisterService);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RetrieveService", _m_RetrieveService);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RemoveService", _m_RemoveService);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HasService", _m_HasService);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RegisterServicer", _m_RegisterServicer);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RetrieveServicer", _m_RetrieveServicer);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RemoveServicer", _m_RemoveServicer);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HasServicer", _m_HasServicer);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Dispose", _m_Dispose);
 			
 			
@@ -87,7 +87,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_RegisterService(RealStatePtr L)
+        static int _m_RegisterServicer(RealStatePtr L)
         {
 		    try {
             
@@ -99,9 +99,9 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    DotEngine.Services.IServicer _service = (DotEngine.Services.IServicer)translator.GetObject(L, 2, typeof(DotEngine.Services.IServicer));
+                    DotEngine.Services.IServicer _servicer = (DotEngine.Services.IServicer)translator.GetObject(L, 2, typeof(DotEngine.Services.IServicer));
                     
-                    gen_to_be_invoked.RegisterServicer( _service );
+                    gen_to_be_invoked.RegisterServicer( _servicer );
                     
                     
                     
@@ -115,7 +115,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_RetrieveService(RealStatePtr L)
+        static int _m_RetrieveServicer(RealStatePtr L)
         {
 		    try {
             
@@ -144,7 +144,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_RemoveService(RealStatePtr L)
+        static int _m_RemoveServicer(RealStatePtr L)
         {
 		    try {
             
@@ -172,7 +172,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_HasService(RealStatePtr L)
+        static int _m_HasServicer(RealStatePtr L)
         {
 		    try {
             

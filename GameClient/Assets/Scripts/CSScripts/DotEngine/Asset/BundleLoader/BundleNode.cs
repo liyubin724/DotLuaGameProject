@@ -94,11 +94,11 @@ namespace DotEngine.Asset
                 }
                 else if (!isDone)
                 {
-                    LogUtil.LogError(AssetConst.LOGGER_NAME,"BundleNode::IsScene->AssetBundle has not been loaded,you should call IsDone at first");
+                    LogUtil.Error(AssetConst.LOGGER_NAME,"BundleNode::IsScene->AssetBundle has not been loaded,you should call IsDone at first");
                 }
                 else
                 {
-                    LogUtil.LogError(AssetConst.LOGGER_NAME, "BundleNode::IsScene->AssetBundle Load failed");
+                    LogUtil.Error(AssetConst.LOGGER_NAME, "BundleNode::IsScene->AssetBundle Load failed");
                 }
                 return false;
             }

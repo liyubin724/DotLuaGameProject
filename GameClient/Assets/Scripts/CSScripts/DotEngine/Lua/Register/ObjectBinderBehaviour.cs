@@ -39,14 +39,14 @@ namespace DotEngine.Lua.Register
                     LuaOperateParam operateParam = m_RegistObjects[i];
                     if (string.IsNullOrEmpty(operateParam.name))
                     {
-                        LogUtil.LogError(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the name of param is empty");
+                        LogUtil.Error(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the name of param is empty");
                         continue;
                     }
 
                     SystemObject regObject = GetRegistObject(operateParam);
                     if (regObject == null)
                     {
-                        LogUtil.LogError(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the registerObject is null");
+                        LogUtil.Error(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the registerObject is null");
                         continue;
                     }
                     Table.Set(m_RegistObjects[i].name, regObject);
@@ -61,7 +61,7 @@ namespace DotEngine.Lua.Register
                 LuaOperateParamArray operateParamArray = m_RegistArrayObjects[i];
                 if (string.IsNullOrEmpty(operateParamArray.name))
                 {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::RegistObjectArrayToTable->the name is empty");
+                    LogUtil.Error(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::RegistObjectArrayToTable->the name is empty");
                     continue;
                 }
 
@@ -84,7 +84,7 @@ namespace DotEngine.Lua.Register
                 SystemObject regObject = operateParam.GetValue();
                 if (regObject == null)
                 {
-                    LogUtil.LogError(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the registerObject is null");
+                    LogUtil.Error(LuaConst.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the registerObject is null");
                 }
                 else
                 {

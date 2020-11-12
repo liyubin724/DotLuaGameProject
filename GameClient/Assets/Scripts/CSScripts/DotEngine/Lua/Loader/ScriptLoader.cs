@@ -25,7 +25,7 @@ namespace DotEngine.Lua
                     }
                 }
             }
-            LogUtil.LogWarning(LuaConst.LOGGER_NAME, $"ScriptLoader::LoadScript->Script not found.filePath = {filePath}");
+            LogUtil.Warning(LuaConst.LOGGER_NAME, $"ScriptLoader::LoadScript->Script not found.filePath = {filePath}");
 
             return null;
         }

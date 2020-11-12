@@ -92,12 +92,12 @@ namespace DotEngine.UI.DynAtlas
         {
             if(texture == null)
             {
-                LogUtil.LogError("DynamicAtlas", "texture is null");
+                LogUtil.Error("DynamicAtlas", "texture is null");
                 return null;
             }
             if(!texture.isReadable)
             {
-                LogUtil.LogError("DynamicAtlas", "texture is not readable.");
+                LogUtil.Error("DynamicAtlas", "texture is not readable.");
                 return null;
             }
             name = name ?? texture.name;
@@ -138,7 +138,7 @@ namespace DotEngine.UI.DynAtlas
 
                 if(spriteData == null)
                 {
-                    LogUtil.LogError("DynamicAtlas", "spriteData is null.name = "+name);
+                    LogUtil.Error("DynamicAtlas", "spriteData is null.name = "+name);
                     return null;
                 }else
                 {

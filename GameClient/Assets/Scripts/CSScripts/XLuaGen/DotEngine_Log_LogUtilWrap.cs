@@ -31,23 +31,23 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 8, 3, 2);
-			Utils.RegisterFunc(L, Utils.CLS_IDX, "SetLogger", _m_SetLogger_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "DisposeLogger", _m_DisposeLogger_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "LogDebug", _m_LogDebug_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "LogInfo", _m_LogInfo_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "LogWarning", _m_LogWarning_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "LogError", _m_LogError_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "LogFatal", _m_LogFatal_xlua_st_);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 11, 1, 1);
+			Utils.RegisterFunc(L, Utils.CLS_IDX, "AddAppender", _m_AddAppender_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "RemoveAppender", _m_RemoveAppender_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "GetLogger", _m_GetLogger_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Reset", _m_Reset_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Trace", _m_Trace_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Debug", _m_Debug_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Info", _m_Info_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Warning", _m_Warning_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Error", _m_Error_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Fatal", _m_Fatal_xlua_st_);
             
 			
             
-			Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "LimitLevel", _g_get_LimitLevel);
-            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "IsEnable", _g_get_IsEnable);
-            Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "IsInited", _g_get_IsInited);
+			Utils.RegisterFunc(L, Utils.CLS_GETTER_IDX, "GlobalLogLevel", _g_get_GlobalLogLevel);
             
-			Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "LimitLevel", _s_set_LimitLevel);
-            Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "IsEnable", _s_set_IsEnable);
+			Utils.RegisterFunc(L, Utils.CLS_SETTER_IDX, "GlobalLogLevel", _s_set_GlobalLogLevel);
             
 			
 			Utils.EndClassRegister(type, L, translator);
@@ -67,7 +67,7 @@ namespace XLua.CSObjectWrap
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_SetLogger_xlua_st_(RealStatePtr L)
+        static int _m_AddAppender_xlua_st_(RealStatePtr L)
         {
 		    try {
             
@@ -77,9 +77,9 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    DotEngine.Log.ILogger _logger = (DotEngine.Log.ILogger)translator.GetObject(L, 1, typeof(DotEngine.Log.ILogger));
+                    DotEngine.Log.Appender.ALogAppender _appender = (DotEngine.Log.Appender.ALogAppender)translator.GetObject(L, 1, typeof(DotEngine.Log.Appender.ALogAppender));
                     
-                    DotEngine.Log.LogUtil.SetLogger( _logger );
+                    DotEngine.Log.LogUtil.AddAppender( _appender );
                     
                     
                     
@@ -93,7 +93,74 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_DisposeLogger_xlua_st_(RealStatePtr L)
+        static int _m_RemoveAppender_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    string _name = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.RemoveAppender( _name );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_GetLogger_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& translator.Assignable<DotEngine.Log.LogLevel>(L, 2)) 
+                {
+                    string _name = LuaAPI.lua_tostring(L, 1);
+                    DotEngine.Log.LogLevel _logLevel;translator.Get(L, 2, out _logLevel);
+                    
+                        DotEngine.Log.Logger gen_ret = DotEngine.Log.LogUtil.GetLogger( _name, _logLevel );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _name = LuaAPI.lua_tostring(L, 1);
+                    
+                        DotEngine.Log.Logger gen_ret = DotEngine.Log.LogUtil.GetLogger( _name );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.GetLogger!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Reset_xlua_st_(RealStatePtr L)
         {
 		    try {
             
@@ -102,7 +169,7 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                    DotEngine.Log.LogUtil.DisposeLogger(  );
+                    DotEngine.Log.LogUtil.Reset(  );
                     
                     
                     
@@ -116,118 +183,30 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LogDebug_xlua_st_(RealStatePtr L)
+        static int _m_Trace_xlua_st_(RealStatePtr L)
         {
 		    try {
             
             
             
-                
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
                 {
-                    string _tag = LuaAPI.lua_tostring(L, 1);
-                    string _message = LuaAPI.lua_tostring(L, 2);
+                    string _message = LuaAPI.lua_tostring(L, 1);
                     
-                    DotEngine.Log.LogUtil.LogDebug( _tag, _message );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LogInfo_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    string _tag = LuaAPI.lua_tostring(L, 1);
-                    string _message = LuaAPI.lua_tostring(L, 2);
-                    
-                    DotEngine.Log.LogUtil.LogInfo( _tag, _message );
+                    DotEngine.Log.LogUtil.Trace( _message );
                     
                     
                     
                     return 0;
                 }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LogWarning_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    string _tag = LuaAPI.lua_tostring(L, 1);
-                    string _message = LuaAPI.lua_tostring(L, 2);
-                    
-                    DotEngine.Log.LogUtil.LogWarning( _tag, _message );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LogError_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    string _tag = LuaAPI.lua_tostring(L, 1);
-                    string _message = LuaAPI.lua_tostring(L, 2);
-                    
-                    DotEngine.Log.LogUtil.LogError( _tag, _message );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LogFatal_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
                 {
                     string _tag = LuaAPI.lua_tostring(L, 1);
                     string _message = LuaAPI.lua_tostring(L, 2);
                     
-                    DotEngine.Log.LogUtil.LogFatal( _tag, _message );
+                    DotEngine.Log.LogUtil.Trace( _tag, _message );
                     
                     
                     
@@ -238,41 +217,214 @@ namespace XLua.CSObjectWrap
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }
             
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.Trace!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Debug_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _message = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.Debug( _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _tag = LuaAPI.lua_tostring(L, 1);
+                    string _message = LuaAPI.lua_tostring(L, 2);
+                    
+                    DotEngine.Log.LogUtil.Debug( _tag, _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.Debug!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Info_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _message = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.Info( _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _tag = LuaAPI.lua_tostring(L, 1);
+                    string _message = LuaAPI.lua_tostring(L, 2);
+                    
+                    DotEngine.Log.LogUtil.Info( _tag, _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.Info!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Warning_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _message = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.Warning( _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _tag = LuaAPI.lua_tostring(L, 1);
+                    string _message = LuaAPI.lua_tostring(L, 2);
+                    
+                    DotEngine.Log.LogUtil.Warning( _tag, _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.Warning!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Error_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _message = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.Error( _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _tag = LuaAPI.lua_tostring(L, 1);
+                    string _message = LuaAPI.lua_tostring(L, 2);
+                    
+                    DotEngine.Log.LogUtil.Error( _tag, _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.Error!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Fatal_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _message = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.Fatal( _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)) 
+                {
+                    string _tag = LuaAPI.lua_tostring(L, 1);
+                    string _message = LuaAPI.lua_tostring(L, 2);
+                    
+                    DotEngine.Log.LogUtil.Fatal( _tag, _message );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.Fatal!");
+            
         }
         
         
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_LimitLevel(RealStatePtr L)
+        static int _g_get_GlobalLogLevel(RealStatePtr L)
         {
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			    translator.Push(L, DotEngine.Log.LogUtil.LimitLevel);
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 1;
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_IsEnable(RealStatePtr L)
-        {
-		    try {
-            
-			    LuaAPI.lua_pushboolean(L, DotEngine.Log.LogUtil.IsEnable);
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 1;
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_IsInited(RealStatePtr L)
-        {
-		    try {
-            
-			    LuaAPI.lua_pushboolean(L, DotEngine.Log.LogUtil.IsInited);
+			    translator.Push(L, DotEngine.Log.LogUtil.GlobalLogLevel);
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }
@@ -282,25 +434,12 @@ namespace XLua.CSObjectWrap
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _s_set_LimitLevel(RealStatePtr L)
+        static int _s_set_GlobalLogLevel(RealStatePtr L)
         {
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			DotEngine.Log.LogLevelType gen_value;translator.Get(L, 1, out gen_value);
-				DotEngine.Log.LogUtil.LimitLevel = gen_value;
-            
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 0;
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _s_set_IsEnable(RealStatePtr L)
-        {
-		    try {
-                
-			    DotEngine.Log.LogUtil.IsEnable = LuaAPI.lua_toboolean(L, 1);
+			DotEngine.Log.LogLevel gen_value;translator.Get(L, 1, out gen_value);
+				DotEngine.Log.LogUtil.GlobalLogLevel = gen_value;
             
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);

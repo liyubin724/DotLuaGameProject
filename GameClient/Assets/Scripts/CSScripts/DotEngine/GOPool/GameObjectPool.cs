@@ -315,7 +315,7 @@ namespace DotEngine.GOPool
         {
             if(item == null)
             {
-                LogUtil.LogError(GameObjectPoolConst.LOGGER_NAME, "GameObjectPool::ReleaseItem->Item is Null");
+                LogUtil.Error(GameObjectPoolConst.LOGGER_NAME, "GameObjectPool::ReleaseItem->Item is Null");
                 return;
             }
 

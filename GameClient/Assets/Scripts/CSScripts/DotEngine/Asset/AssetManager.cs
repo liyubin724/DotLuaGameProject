@@ -86,7 +86,7 @@ namespace DotEngine.Asset
         {
             loaderMode = mode;
 
-            LogUtil.LogInfo(AssetConst.LOGGER_NAME, $"AssetManager::InitManager->Start init mgr.mode = {mode.ToString()},assetRootDir = {assetRootDir}");
+            LogUtil.Info(AssetConst.LOGGER_NAME, $"AssetManager::InitManager->Start init mgr.mode = {mode.ToString()},assetRootDir = {assetRootDir}");
 
             if(loaderMode == AssetLoaderMode.AssetBundle)
             {
@@ -101,7 +101,7 @@ namespace DotEngine.Asset
 
             if(assetLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetLoader is Null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetLoader is Null");
                 initCallback?.Invoke(false);
             }else
             {
@@ -109,10 +109,10 @@ namespace DotEngine.Asset
                 {
                     if(!result)
                     {
-                        LogUtil.LogError((string)AssetConst.LOGGER_NAME, "AssetManager::InitManager->init failed");
+                        LogUtil.Error((string)AssetConst.LOGGER_NAME, "AssetManager::InitManager->init failed");
                     }
 
-                    LogUtil.LogInfo((string)AssetConst.LOGGER_NAME, "AssetManager::InitManager->init Success");
+                    LogUtil.Info((string)AssetConst.LOGGER_NAME, "AssetManager::InitManager->init Success");
 
                     if (loaderMode == AssetLoaderMode.AssetBundle)
                     {
@@ -143,11 +143,11 @@ namespace DotEngine.Asset
         {
             if(assetLoader!=null)
             {
-                LogUtil.LogInfo(AssetConst.LOGGER_NAME, $"AssetManager::ChangeMaxLoadingCount->Change Count from {assetLoader.MaxLoadingCount} to {count}");
+                LogUtil.Info(AssetConst.LOGGER_NAME, $"AssetManager::ChangeMaxLoadingCount->Change Count from {assetLoader.MaxLoadingCount} to {count}");
                 assetLoader.MaxLoadingCount = count;
             }else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::ChangeMaxLoadingCount->assetloader is null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::ChangeMaxLoadingCount->assetloader is null");
             }
         }
 
@@ -238,7 +238,7 @@ namespace DotEngine.Asset
         {
             if(assetLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::LoadBatchAssetAsync->assetLoader is Null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::LoadBatchAssetAsync->assetLoader is Null");
                 return null;
             }
 
@@ -258,7 +258,7 @@ namespace DotEngine.Asset
         {
             if (assetLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::UnloadAssetAsync->assetLoader is Null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::UnloadAssetAsync->assetLoader is Null");
                 return;
             }
 
@@ -276,7 +276,7 @@ namespace DotEngine.Asset
         {
             if (assetLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::InstantiateAsset->assetLoader is Null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::InstantiateAsset->assetLoader is Null");
                 return null;
             }
 

@@ -47,7 +47,7 @@ namespace DotEngine.GOPool
                 return goPool;
             }else
             {
-                LogUtil.LogWarning(GameObjectPoolConst.LOGGER_NAME, "The pool is not found.name = " + uniqueName);
+                LogUtil.Warning(GameObjectPoolConst.LOGGER_NAME, "The pool is not found.name = " + uniqueName);
             }
 
             return null;
@@ -63,13 +63,13 @@ namespace DotEngine.GOPool
         {
             if(template == null)
             {
-                LogUtil.LogError(GameObjectPoolConst.LOGGER_NAME, "GameObjectPoolGroup::CreatePool->Template is Null");
+                LogUtil.Error(GameObjectPoolConst.LOGGER_NAME, "GameObjectPoolGroup::CreatePool->Template is Null");
                 return null;
             }
 
             if (poolDic.TryGetValue(uniqueName, out GameObjectPool goPool))
             {
-                LogUtil.LogWarning(GameObjectPoolConst.LOGGER_NAME, "GameObjectPoolGroup::CreatePool->The pool has been created.uniqueName = " + uniqueName);
+                LogUtil.Warning(GameObjectPoolConst.LOGGER_NAME, "GameObjectPoolGroup::CreatePool->The pool has been created.uniqueName = " + uniqueName);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace DotEngine.GOPool
         /// <param name="uniqueName">资源唯一标签，一般使用资源路径</param>
         public void DeletePool(string uniqueName)
         {
-            LogUtil.LogInfo(GameObjectPoolConst.LOGGER_NAME, $"GameObjectPoolGroup::DeletePool->Try to delete pool.uniqueName ={uniqueName}");
+            LogUtil.Info(GameObjectPoolConst.LOGGER_NAME, $"GameObjectPoolGroup::DeletePool->Try to delete pool.uniqueName ={uniqueName}");
             
             GameObjectPool gObjPool = GetPool(uniqueName);
 
@@ -96,7 +96,7 @@ namespace DotEngine.GOPool
             }
             else
             {
-                LogUtil.LogWarning(GameObjectPoolConst.LOGGER_NAME, "The pool is not found.name = " + uniqueName);
+                LogUtil.Warning(GameObjectPoolConst.LOGGER_NAME, "The pool is not found.name = " + uniqueName);
             }
         }
 

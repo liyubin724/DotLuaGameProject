@@ -32,7 +32,7 @@ namespace DotEngine.Asset
                 string scenePath = assetLoader.GetAssetPathByAddress(address);
                 if(string.IsNullOrEmpty(scenePath))
                 {
-                    LogUtil.LogError(AssetConst.LOGGER_NAME, "scenePath is null.address = " + address);
+                    LogUtil.Error(AssetConst.LOGGER_NAME, "scenePath is null.address = " + address);
                     return null;
                 }
                 SceneLoaderData data = new SceneLoaderData();
@@ -42,7 +42,7 @@ namespace DotEngine.Asset
                 return data.handler;
             }else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "assetloader is not init");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "assetloader is not init");
                 return null;
             }
         }
@@ -57,7 +57,7 @@ namespace DotEngine.Asset
                 string scenePath = assetLoader.GetAssetPathByAddress(address);
                 if (string.IsNullOrEmpty(scenePath))
                 {
-                    LogUtil.LogError(AssetConst.LOGGER_NAME, "scenePath is null.address = " + address);
+                    LogUtil.Error(AssetConst.LOGGER_NAME, "scenePath is null.address = " + address);
                     return null;
                 }
                 SceneLoaderData data = new SceneLoaderData();
@@ -68,7 +68,7 @@ namespace DotEngine.Asset
             }
             else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "assetloader is not init");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "assetloader is not init");
                 return null;
             }
         }
@@ -93,7 +93,7 @@ namespace DotEngine.Asset
                     Scene scene = SceneManager.GetSceneByName(sceneName);
                     if(scene.isLoaded)
                     {
-                        LogUtil.LogError(AssetConst.LOGGER_NAME, "scene has been loaded");
+                        LogUtil.Error(AssetConst.LOGGER_NAME, "scene has been loaded");
                         return;
                     }
                 }else if(data.state == SceneLoaderDataState.Unload)
@@ -101,7 +101,7 @@ namespace DotEngine.Asset
                     Scene scene = SceneManager.GetSceneByName(sceneName);
                     if (!scene.isLoaded)
                     {
-                        LogUtil.LogError(AssetConst.LOGGER_NAME, "the scene has not been loaded");
+                        LogUtil.Error(AssetConst.LOGGER_NAME, "the scene has not been loaded");
                         return;
                     }
                 }

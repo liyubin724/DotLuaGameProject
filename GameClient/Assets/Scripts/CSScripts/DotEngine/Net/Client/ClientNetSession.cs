@@ -76,20 +76,20 @@ namespace DotEngine.Net.Client
         {
             if (string.IsNullOrEmpty(ipAddress))
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::Connect->ipAddress is empty");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::Connect->ipAddress is empty");
                 return false;
             }
 
             string[] splitStrArr = ipAddress.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             if (splitStrArr == null || splitStrArr.Length != 2)
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->The lenght of ip is not correct.ipAddress = {ipAddress}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->The lenght of ip is not correct.ipAddress = {ipAddress}");
                 return false;
             }
 
             if (!int.TryParse(splitStrArr[1], out int port) || port<=0)
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->the port is not a int.port = {splitStrArr[1]}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->the port is not a int.port = {splitStrArr[1]}");
                 return false;
             }
 
@@ -100,13 +100,13 @@ namespace DotEngine.Net.Client
         {
             if(string.IsNullOrEmpty(ip) || port<=0)
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->The ip is empty or the port is not correct.ip = {ip},port={port}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->The ip is empty or the port is not correct.ip = {ip},port={port}");
                 return false;
             }
 
             if(!Regex.IsMatch(ip,IP_ADDRESS_REGEX))
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->The format of ip is not correct.ip = {ip}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->The format of ip is not correct.ip = {ip}");
                 return false;
             }
 
@@ -129,20 +129,20 @@ namespace DotEngine.Net.Client
                     };
                     connectAsyncEvent.Completed += OnHandleSocketEvent;
 
-                    LogUtil.LogInfo(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->Begin connecting... (Address = {Address})");
+                    LogUtil.Info(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->Begin connecting... (Address = {Address})");
 
                     socket.ConnectAsync(connectAsyncEvent);
                     return true;
                 }catch(Exception e)
                 {
-                    LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->{e.Message}");
+                    LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Connect->{e.Message}");
                     State = ClientNetSessionState.ConnectedFailed;
                     socket = null;
                     return false;
                 }
             }else
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::Connect->The socket has been created.");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::Connect->The socket has been created.");
             }
             return false;
         }
@@ -151,7 +151,7 @@ namespace DotEngine.Net.Client
         {
             if(string.IsNullOrEmpty(ip) || port<=0)
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Reconnect->the ip is empty,or the port is not correct.");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Reconnect->the ip is empty,or the port is not correct.");
                 return false;
             }
 
@@ -160,7 +160,7 @@ namespace DotEngine.Net.Client
                 return Connect(ip, port);
             }
 
-            LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Reconnect->the net is connected or the net is connecting.{State}");
+            LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Reconnect->the net is connected or the net is connecting.{State}");
 
             return false;
         }
@@ -193,14 +193,14 @@ namespace DotEngine.Net.Client
                 }
             }catch(Exception e)
             {
-                LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Receive->{e.Message}");
+                LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::Receive->{e.Message}");
                 Disconnect();
             }
         }
 
         private void Close()
         {
-            LogUtil.LogInfo(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::Close->Closed Session");
+            LogUtil.Info(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::Close->Closed Session");
             if (sendAsyncEvent != null)
             {
                 sendAsyncEvent.Completed -= OnHandleSocketEvent;
@@ -260,7 +260,7 @@ namespace DotEngine.Net.Client
                     ProcessDisconnect(socketEvent);
                     break;
                 default:
-                    LogUtil.LogWarning(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::OnHandleSocketEvent->received unkown event.opration = {socketEvent.LastOperation}");
+                    LogUtil.Warning(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::OnHandleSocketEvent->received unkown event.opration = {socketEvent.LastOperation}");
                     break;
             }
         }
@@ -273,7 +273,7 @@ namespace DotEngine.Net.Client
             {
                 State = ClientNetSessionState.Normal;
 
-                LogUtil.LogInfo(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::ProcessConnect->Connect success");
+                LogUtil.Info(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::ProcessConnect->Connect success");
 
                 receiveAsyncEvent = new SocketAsyncEventArgs();
                 receiveAsyncEvent.SetBuffer(new byte[NetConst.BUFFER_SIZE], 0, NetConst.BUFFER_SIZE);
@@ -282,7 +282,7 @@ namespace DotEngine.Net.Client
                 Receive();
             }else
             {
-                LogUtil.LogInfo(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::ProcessConnect->Connect failed.error = {socketEvent.SocketError}");
+                LogUtil.Info(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::ProcessConnect->Connect failed.error = {socketEvent.SocketError}");
                 Close();
                 State = ClientNetSessionState.ConnectedFailed;
             }
@@ -292,7 +292,7 @@ namespace DotEngine.Net.Client
         {
             if(socketEvent.SocketError == SocketError.Success)
             {
-                LogUtil.LogInfo(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::ProcessSend->Send success");
+                LogUtil.Info(NetConst.CLIENT_LOGGER_TAG, "ClientNetSession::ProcessSend->Send success");
                 lock (sendingLock)
                 {
                     isSending = false;
@@ -309,7 +309,7 @@ namespace DotEngine.Net.Client
             {
                 if(socketEvent.BytesTransferred>0)
                 {
-                    LogUtil.LogInfo(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::ProcessReceive->Received message.length = {socketEvent.BytesTransferred}");
+                    LogUtil.Info(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::ProcessReceive->Received message.length = {socketEvent.BytesTransferred}");
                     lock (receiverLock)
                     {
                         messageReader.OnDataReceived(socketEvent.Buffer, socketEvent.BytesTransferred);
@@ -356,7 +356,7 @@ namespace DotEngine.Net.Client
                     }
                     catch (Exception e)
                     {
-                        LogUtil.LogError(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::DoLateUpdate->e = {e.Message}");
+                        LogUtil.Error(NetConst.CLIENT_LOGGER_TAG, $"ClientNetSession::DoLateUpdate->e = {e.Message}");
                         Disconnect();
                     }
                 }

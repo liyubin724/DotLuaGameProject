@@ -1,5 +1,6 @@
 ﻿using DotEngine.Generic;
 using DotEngine.Log;
+using DotEngine.Log.Appender;
 using DotEngine.Pool;
 using DotEngine.World.QT;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ public class TestQuadTree : MonoBehaviour
     private void Start()
     {
 
-        LogUtil.SetLogger(new UnityLogger());
+        LogUtil.AddAppender(new UnityConsoleAppender());
 
         tree = new QuadTree(7, 3, new AABB2D(0, 0, 400, 400));
 
@@ -117,6 +118,11 @@ public class TestQuadTree : MonoBehaviour
         {
             QuadTreeUtil.DrawGizmoAABBBorder(showBounds, Color.yellow);
         }
+    }
+
+    private void OnDestroy()
+    {
+        LogUtil.Reset();
     }
 
     private bool isMouseDown = false;

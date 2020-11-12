@@ -71,7 +71,7 @@ namespace DotEngine.Net.Server
             IPAddress ipAddress = IPAddress.Parse(ip);
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
 
-            LogUtil.LogInfo(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::Startup->address = {ipAddress.ToString()}");
+            LogUtil.Info(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::Startup->address = {ipAddress.ToString()}");
 
             Socket listener = new Socket(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
@@ -86,7 +86,7 @@ namespace DotEngine.Net.Server
                     while (true)
                     {
                         allDone.Reset();
-                        LogUtil.LogInfo("ServerNet", "Waiting for a connection...");
+                        LogUtil.Info("ServerNet", "Waiting for a connection...");
 
                         listener.BeginAccept(
                             new AsyncCallback(AcceptCallback),
@@ -99,7 +99,7 @@ namespace DotEngine.Net.Server
             }
             catch (Exception e)
             {
-                LogUtil.LogInfo("ServerNet", e.ToString());
+                LogUtil.Info("ServerNet", e.ToString());
             }
         }
 
@@ -132,7 +132,7 @@ namespace DotEngine.Net.Server
                     return;
                 }
             }
-            LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::OnMessageReceived->the handler not found.messageID = {messageID}");
+            LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::OnMessageReceived->the handler not found.messageID = {messageID}");
         }
 
         private void OnNetDisconnected(int id)
@@ -220,7 +220,7 @@ namespace DotEngine.Net.Server
                     }
                     catch (Exception e)
                     {
-                        LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::Disconnect->e = {e.Message}");
+                        LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::Disconnect->e = {e.Message}");
                     }
                     finally
                     {
@@ -247,7 +247,7 @@ namespace DotEngine.Net.Server
             }
             else
             {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::RegisterMessageHandler->the handler has been added.name={name}");
+                LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::RegisterMessageHandler->the handler has been added.name={name}");
             }
         }
 
@@ -259,7 +259,7 @@ namespace DotEngine.Net.Server
             }
             else
             {
-                LogUtil.LogError(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::UnregisterMessageHandler->The handler not found.name={name}");
+                LogUtil.Error(NetConst.SERVER_LOGGER_TAG, $"ServerNetListener::UnregisterMessageHandler->The handler not found.name={name}");
             }
         }
 

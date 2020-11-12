@@ -53,7 +53,7 @@ namespace DotEngine.Asset
                 return;
             }
 
-            LogUtil.LogError(AssetConst.LOGGER_NAME, "config is Null");
+            LogUtil.Error(AssetConst.LOGGER_NAME, "config is Null");
             State = AssetLoaderState.Error;
         }
 
@@ -267,7 +267,7 @@ namespace DotEngine.Asset
             }
             else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "BundleLoader::UnloadAsset->asset not found by address,assetPath = " + assetPath);
+                LogUtil.Error(AssetConst.LOGGER_NAME, "BundleLoader::UnloadAsset->asset not found by address,assetPath = " + assetPath);
             }
         }
 

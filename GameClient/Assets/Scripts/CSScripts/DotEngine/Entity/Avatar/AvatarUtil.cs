@@ -40,7 +40,7 @@ namespace DotEngine.Entity.Avatar
                 }
                 else
                 {
-                    LogUtil.LogError("AvatarUtil", $"AvatarUtil::AssembleAvatarPart->nodeData not found.rendererNodeName={rendererData.rendererName}");
+                    LogUtil.Error("AvatarUtil", $"AvatarUtil::AssembleAvatarPart->nodeData not found.rendererNodeName={rendererData.rendererName}");
                 }
             }
 

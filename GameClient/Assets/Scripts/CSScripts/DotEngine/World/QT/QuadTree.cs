@@ -50,7 +50,7 @@ namespace DotEngine.World.QT
         {
             if(!node.Bounds.Contains(quadObject.Bounds))
             {
-                LogUtil.LogError(LOGGER_NAME, "QuadTree::InsertObjectToNode->Object's bounds is not fit within node bounds");
+                LogUtil.Error(LOGGER_NAME, "QuadTree::InsertObjectToNode->Object's bounds is not fit within node bounds");
                 return null;
             }
 
@@ -178,11 +178,11 @@ namespace DotEngine.World.QT
                     }
                 }else
                 {
-                    LogUtil.LogError(QuadTree.LOGGER_NAME, "the object hasn't been added to tree");
+                    LogUtil.Error(QuadTree.LOGGER_NAME, "the object hasn't been added to tree");
                 }
             }else
             {
-                LogUtil.LogError(QuadTree.LOGGER_NAME, "the object hasn't been added to tree");
+                LogUtil.Error(QuadTree.LOGGER_NAME, "the object hasn't been added to tree");
             }
         }
         #endregion

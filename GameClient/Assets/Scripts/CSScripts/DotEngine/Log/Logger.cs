@@ -1,36 +1,67 @@
 ﻿namespace DotEngine.Log
 {
-    public abstract class Logger : ILogger
+    public delegate void LogMessage(Logger logger, LogLevel level, string message);
+
+    public class Logger
     {
-        public void Log(LogLevelType levelType, string tag, string message)
+        public string Name { get; private set; }
+        public LogLevel MinLogLevel { get; private set; }
+
+        private LogMessage m_OnLog;
+
+        internal Logger(string name, LogLevel minLevel, LogMessage onLogMessage)
         {
-            if (levelType == LogLevelType.Debug)
+            Name = name;
+            MinLogLevel = minLevel;
+            m_OnLog = onLogMessage;
+        }
+
+        public void Trace(string message)
+        {
+            if(MinLogLevel<LogLevel.Trace)
             {
-                LogDebug(tag, message);
-            }
-            else if (levelType == LogLevelType.Info)
-            {
-                LogInfo(tag, message);
-            }
-            else if (levelType == LogLevelType.Warning)
-            {
-                LogWarning(tag, message);
-            }
-            else if (levelType == LogLevelType.Error)
-            {
-                LogError(tag, message);
-            }
-            else if (levelType == LogLevelType.Fatal)
-            {
-                LogFatal(tag, message);
+                m_OnLog?.Invoke(this, LogLevel.Trace, message);
             }
         }
 
-        public abstract void Close();
-        public abstract void LogDebug(string tag, string message);
-        public abstract void LogError(string tag, string message);
-        public abstract void LogFatal(string tag, string message);
-        public abstract void LogInfo(string tag, string message);
-        public abstract void LogWarning(string tag, string message);
+        public void Debug(string message)
+        {
+            if (MinLogLevel < LogLevel.Debug)
+            {
+                m_OnLog?.Invoke(this, LogLevel.Debug, message);
+            }
+        }
+
+        public void Info(string message)
+        {
+            if (MinLogLevel < LogLevel.Info)
+            {
+                m_OnLog?.Invoke(this, LogLevel.Info, message);
+            }
+        }
+
+        public void Warning(string message)
+        {
+            if (MinLogLevel < LogLevel.Warning)
+            {
+                m_OnLog?.Invoke(this, LogLevel.Warning, message);
+            }
+        }
+
+        public void Error(string message)
+        {
+            if (MinLogLevel < LogLevel.Error)
+            {
+                m_OnLog?.Invoke(this, LogLevel.Error, message);
+            }
+        }
+
+        public void Fatal(string message)
+        {
+            if (MinLogLevel < LogLevel.Fatal)
+            {
+                m_OnLog?.Invoke(this, LogLevel.Fatal, message);
+            }
+        }
     }
 }

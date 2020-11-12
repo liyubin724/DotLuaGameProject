@@ -57,7 +57,7 @@ namespace DotEngine.Asset
         {
             if (assetLoader == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "AssetManager::UnloadUnusedAsset->assetLoader is Null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "AssetManager::UnloadUnusedAsset->assetLoader is Null");
                 return;
             }
 

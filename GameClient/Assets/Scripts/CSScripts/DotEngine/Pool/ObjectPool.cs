@@ -49,7 +49,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                LogUtil.LogError("ObjectPool", "The element has been push into pool!");
+                LogUtil.Error("ObjectPool", "The element has been push into pool!");
                 return;
             }
 #endif
@@ -108,7 +108,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                LogUtil.LogError("ObjectPool", "The element has been push into pool!");
+                LogUtil.Error("ObjectPool", "The element has been push into pool!");
                 return;
             }
 #endif
@@ -171,7 +171,7 @@ namespace DotEngine.Pool
 #if DEBUG
                 if (m_Stack.Contains(element))
                 {
-                    LogUtil.LogError("ObjectPool", "The element has been push into pool!");
+                    LogUtil.Error("ObjectPool", "The element has been push into pool!");
                     return;
                 }
 #endif

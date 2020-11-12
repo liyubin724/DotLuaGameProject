@@ -2,6 +2,7 @@
 using DotEngine.Asset;
 using DotEngine.GOPool;
 using DotEngine.Log;
+using DotEngine.Log.Appender;
 using DotEngine.Lua;
 using DotEngine.Timer;
 using DotEngine.Utilities;
@@ -15,8 +16,7 @@ namespace Game
         {
             Application.targetFrameRate = 30;
 
-            DotEngine.Log.ILogger logger = new CombineLogger();
-            LogUtil.SetLogger(logger);
+            LogUtil.AddAppender(new UnityConsoleAppender());
 
             Facade facade = GameFacade.GetInstance();
             AssetService assetService = facade.GetServicer<AssetService>(AssetService.NAME);
@@ -81,7 +81,8 @@ namespace Game
 
         private void OnDestroy()
         {
-            LogUtil.DisposeLogger();
+            LogUtil.Reset();
+
             Facade facade = GameFacade.GetInstance();
             facade.Dispose();
         }

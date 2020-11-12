@@ -61,7 +61,7 @@ namespace DotEngine.Asset
             }
             if (bundleNode.IsScene)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME,"AssetNode::GetInstance->bundle is scene.can't Instance it");
+                LogUtil.Error(AssetConst.LOGGER_NAME,"AssetNode::GetInstance->bundle is scene.can't Instance it");
                 return null;
             }
 

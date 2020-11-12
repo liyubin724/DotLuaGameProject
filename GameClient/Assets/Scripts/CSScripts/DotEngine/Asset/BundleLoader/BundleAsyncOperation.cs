@@ -29,7 +29,7 @@ namespace DotEngine.Asset
         {
             if (getFilePath == null)
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "BundleAsyncOperation::CreateOperation->getFilePath is Null");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "BundleAsyncOperation::CreateOperation->getFilePath is Null");
                 State = OperationState.Finished;
                 return;
             }
@@ -54,7 +54,7 @@ namespace DotEngine.Asset
             }
             else
             {
-                LogUtil.LogError(AssetConst.LOGGER_NAME, "BundleAsyncOperation::GetAsset->bundle is not loaded");
+                LogUtil.Error(AssetConst.LOGGER_NAME, "BundleAsyncOperation::GetAsset->bundle is not loaded");
                 return null;
             }
         }

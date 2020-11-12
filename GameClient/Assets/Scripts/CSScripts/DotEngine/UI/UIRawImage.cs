@@ -88,7 +88,7 @@ namespace DotEngine.UI
                 }
             }else
             {
-                LogUtil.LogError("UIRawImage", "UIRawImage::OnLoadComplete->uObject is null.address = " + address);
+                LogUtil.Error("UIRawImage", "UIRawImage::OnLoadComplete->uObject is null.address = " + address);
             }
         }
 
