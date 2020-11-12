@@ -135,6 +135,7 @@ public class TestQuadTree : MonoBehaviour
 
         if(GUILayout.Button("CLICK"))
         {
+            LogUtil.Trace("SSSSSSSS");
             for(int i =0;i<10;++i)
             {
                 TestCubeQuadObject quadObject = CreateObject();

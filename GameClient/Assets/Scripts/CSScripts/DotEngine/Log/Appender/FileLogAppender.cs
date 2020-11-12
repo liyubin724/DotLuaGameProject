@@ -10,6 +10,7 @@ namespace DotEngine.Log.Appender
         public static readonly string NAME = "FileLog";
 
         private StreamWriter m_Writer = null;
+        private bool m_IsDisposed = false;
 
         public FileLogAppender(ILogFormatter formatter) : base(NAME, formatter)
         {
@@ -46,16 +47,35 @@ namespace DotEngine.Log.Appender
         {
         }
 
+        ~FileLogAppender()
+        {
+            Dispose(false);
+        }
+
         protected override void DoLogMessage(LogLevel level, string message)
         {
             m_Writer?.WriteLine(message);
         }
 
-        protected override void OnDisposed()
+        public override void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (m_IsDisposed) return;
+
+            if (disposing)
+            {
+                
+            }
             m_Writer?.Flush();
             m_Writer?.Close();
             m_Writer = null;
+
+            m_IsDisposed = true;
         }
     }
 }
