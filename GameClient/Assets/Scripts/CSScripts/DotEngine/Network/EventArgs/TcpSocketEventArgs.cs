@@ -5,13 +5,11 @@ namespace DotEngine.Network
 {
     public class TcpSocketEventArgs : EventArgs
     {
-        public Socket socket { get { return _socket; } }
-
-        readonly Socket _socket;
+        public Socket socket { get; private set; }
 
         public TcpSocketEventArgs(Socket socket)
         {
-            _socket = socket;
+            this.socket = socket;
         }
     }
 }
