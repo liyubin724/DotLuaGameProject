@@ -8,10 +8,16 @@ namespace DotEngine.Log.Appender
         public string Name { get; protected set; }
         protected ILogFormatter logFormatter;
 
+        private bool m_IsDisposed = false;
         protected ALogAppender(string name,ILogFormatter formatter)
         {
             Name = name;
             logFormatter = formatter;
+        }
+
+        ~ALogAppender()
+        {
+            Dispose(false);
         }
 
         public void OnLogReceived(LogLevel level, string tag, string message)
@@ -24,7 +30,18 @@ namespace DotEngine.Log.Appender
 
         public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (m_IsDisposed) return;
+            if(disposing)
+            {
+                OnDisposed();
+            }
+            m_IsDisposed = true;
         }
 
         protected virtual void OnDisposed()
