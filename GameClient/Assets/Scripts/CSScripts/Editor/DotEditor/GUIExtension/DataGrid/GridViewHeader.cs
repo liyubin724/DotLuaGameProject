@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using static UnityEditor.IMGUI.Controls.MultiColumnHeaderState;
@@ -16,6 +12,7 @@ namespace DotEditor.GUIExtension.DataGrid
         public bool AutoResize { get; set; } = true;
         public int MaxWidth { get; set; } = int.MaxValue;
         public int MinWidth { get; set; } = 40;
+        public int Width { get; set; }
 
         public GridViewColumn(string title)
         {
@@ -34,11 +31,22 @@ namespace DotEditor.GUIExtension.DataGrid
             {
                 canSort = false,
                 headerContent = new GUIContent(column.Title, column.Tooltip),
-                autoResize = column.AutoResize,
+                autoResize = column.AutoResize,                
                 headerTextAlignment = TextAlignment.Center,
-                maxWidth = column.MaxWidth,
-                minWidth = column.MinWidth,
             };
+            if(column.Width>0)
+            {
+                c.width = column.Width;
+            }
+            if(column.MaxWidth>0)
+            {
+                c.maxWidth = column.MaxWidth;
+            }
+            if(column.MinWidth >0)
+            {
+                c.minWidth = column.MinWidth;
+            }
+
 
             return c;
         }
@@ -63,6 +71,11 @@ namespace DotEditor.GUIExtension.DataGrid
         public void AddColumn(string title,string tooltip = "")
         {
             m_Columns.Add(new GridViewColumn(title, tooltip));
+        }
+
+        public void AddColumn(GridViewColumn column)
+        {
+            m_Columns.Add(column);
         }
 
         public string GetColumnTitle(int index)

@@ -26,7 +26,7 @@ namespace DotEngine.Log.Appender
             m_serverSocket.Listen(PORT);
         }
 
-        public ServerLogSocketAppender():this(new DefaultLogFormatter())
+        public ServerLogSocketAppender():this(new JsonLogFormatter())
         {
         }
 

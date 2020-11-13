@@ -8,7 +8,7 @@ namespace DotEditor.GUIExtension.DataGrid
     {
         private static float HEADER_HEIGHT = 30;
 
-        private GridTreeView m_TreeView = null;
+        protected GridTreeView treeView = null;
 
         public string HeaderContent { get; set; } = null;
 
@@ -22,16 +22,16 @@ namespace DotEditor.GUIExtension.DataGrid
             ViewModel = model;
             ViewHeader = new GridViewHeader(columnTitles);
 
-            m_TreeView = new GridTreeView(ViewState, ViewHeader.GetTreeViewHeader(), ViewModel)
+            treeView = new GridTreeView(ViewState, ViewHeader.GetTreeViewHeader(), ViewModel)
             {
                 OnDrawColumnItem = OnDrawColumnItem,
                 OnGetRowHeight = GetRowHeight,
                 OnItemContextClicked = OnItemContextClicked,
                 OnItemDoubleClicked = OnItemDoubleClicked,
             };
-            m_TreeView.Reload();
+            treeView.Reload();
 
-            m_TreeView.multiColumnHeader.ResizeToFit();
+            treeView.multiColumnHeader.ResizeToFit();
         }
 
         public EGUIGridView(GridViewModel model,GridViewHeader header)
@@ -40,7 +40,7 @@ namespace DotEditor.GUIExtension.DataGrid
             ViewModel = model;
             ViewHeader = header;
 
-            m_TreeView = new GridTreeView(ViewState, header.GetTreeViewHeader(), ViewModel)
+            treeView = new GridTreeView(ViewState, header.GetTreeViewHeader(), ViewModel)
             {
                 OnDrawColumnItem = OnDrawColumnItem,
                 OnGetRowHeight = GetRowHeight,
@@ -51,8 +51,8 @@ namespace DotEditor.GUIExtension.DataGrid
                 IsMultiSelect = false,
             };
 
-            m_TreeView.Reload();
-            m_TreeView.multiColumnHeader.ResizeToFit();
+            treeView.Reload();
+            treeView.multiColumnHeader.ResizeToFit();
         }
 
         protected virtual void OnDrawColumnItem(Rect rect,int columnIndex,GridViewData columnItemData)
@@ -81,7 +81,7 @@ namespace DotEditor.GUIExtension.DataGrid
 
         public void Reload()
         {
-            m_TreeView?.Reload();
+            treeView?.Reload();
         }
 
         public void OnGUILayout()
@@ -91,7 +91,7 @@ namespace DotEditor.GUIExtension.DataGrid
                 EGUILayout.DrawBoxHeader(HeaderContent, EGUIStyles.BoxedHeaderCenterStyle, GUILayout.ExpandWidth(true));
             }
             Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-            m_TreeView?.OnGUI(rect);
+            treeView?.OnGUI(rect);
         }
 
         public void OnGUI(Rect rect)
@@ -103,7 +103,7 @@ namespace DotEditor.GUIExtension.DataGrid
 
             rect.height -= HEADER_HEIGHT;
 
-            m_TreeView?.OnGUI(rect);
+            treeView?.OnGUI(rect);
         }
     }
 }
