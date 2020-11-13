@@ -11,87 +11,85 @@ namespace DotEngine.Network
         public event EventHandler<TcpSocketEventArgs> OnClientConnect;
         public event EventHandler<TcpSocketEventArgs> OnClientDisconnect;
 
-        public int connectedClients { get { return _clients.Count; } }
+        public int ConnectedClients { get { return clients.Count; } }
 
-        readonly List<Socket> _clients;
+        private List<Socket> clients;
 
         public TcpServerSocket()
         {
-            _log = LogUtil.GetLogger(GetType().Name);
-            _clients = new List<Socket>();
+            logger = LogUtil.GetLogger(GetType().Name,LogLevel.Error);
+
+            clients = new List<Socket>();
         }
 
         public void Listen(int port)
         {
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             try
             {
-                _socket.Bind(new IPEndPoint(IPAddress.Any, port));
-                _socket.Listen(100);
-                isConnected = true;
-                _log.Info(string.Format("Listening on port {0}...", port));
-                accept();
+                socket.Bind(new IPEndPoint(IPAddress.Any, port));
+                socket.Listen(100);
+                IsConnected = true;
+                logger.Info(string.Format("Listening on port {0}...", port));
+                Accept();
             }
             catch (Exception ex)
             {
-                _socket = null;
-                _log.Warning(ex.Message);
+                socket = null;
+                logger.Warning(ex.Message);
             }
         }
 
-        void accept()
+        void Accept()
         {
-            _socket.BeginAccept(onAccepted, _socket);
+            socket.BeginAccept(OnAccepted, socket);
         }
 
-        void onAccepted(IAsyncResult ar)
+        void OnAccepted(IAsyncResult ar)
         {
-            if (isConnected)
+            if (IsConnected)
             {
                 var server = (Socket)ar.AsyncState;
-                acceptedClientConnection(server.EndAccept(ar));
-                accept();
+                AcceptedClientConnection(server.EndAccept(ar));
+                Accept();
             }
         }
 
-        void acceptedClientConnection(Socket client)
+        void AcceptedClientConnection(Socket client)
         {
-            _clients.Add(client);
-            IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
-            _log.Info(string.Format("New client connection accepted ({0}:{1})",
-                clientEndPoint.Address, clientEndPoint.Port));
-            if (OnClientConnect != null)
-            {
-                OnClientConnect(this, new TcpSocketEventArgs(client));
-            }
+            clients.Add(client);
 
-            startReceiving(client);
+            IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
+
+            logger.Info(string.Format("New client connection accepted ({0}:{1})", clientEndPoint.Address, clientEndPoint.Port));
+
+            OnClientConnect?.Invoke(this, new TcpSocketEventArgs(client));
+
+            StartReceiving(client);
         }
 
-        protected override void disconnectedByRemote(Socket socket)
+        protected override void DisconnectedByRemote(Socket socket)
         {
             try
             {
                 IPEndPoint clientEndPoint = (IPEndPoint)socket.RemoteEndPoint;
-                _log.Info(string.Format("Client disconnected ({0}:{1})",
-                    clientEndPoint.Address, clientEndPoint.Port));
+
+                logger.Info(string.Format("Client disconnected ({0}:{1})",clientEndPoint.Address, clientEndPoint.Port));
             }
             catch (Exception)
             {
-                _log.Info("Client disconnected.");
+                logger.Info("Client disconnected.");
             }
+
             socket.Close();
-            _clients.Remove(socket);
-            if (OnClientDisconnect != null)
-            {
-                OnClientDisconnect(this, new TcpSocketEventArgs(socket));
-            }
+            clients.Remove(socket);
+            OnClientDisconnect?.Invoke(this, new TcpSocketEventArgs(socket));
         }
 
         public override void Send(byte[] bytes)
         {
-            foreach (var client in _clients)
+            foreach (var client in clients)
             {
                 SendWith(client, bytes);
             }
@@ -99,29 +97,29 @@ namespace DotEngine.Network
 
         public override void Disconnect()
         {
-            foreach (var client in _clients)
+            foreach (var client in clients)
             {
-                client.BeginDisconnect(false, onClientDisconnected, client);
+                client.BeginDisconnect(false, OnClientDisconnected, client);
             }
 
-            if (isConnected)
+            if (IsConnected)
             {
-                _log.Info("Stopped listening.");
-                isConnected = false;
-                _socket.Close();
-                triggerOnDisconnect();
+                logger.Info("Stopped listening.");
+                IsConnected = false;
+                socket.Close();
+                TriggerOnDisconnect();
             }
             else
             {
-                _log.Info("Already diconnected.");
+                logger.Info("Already diconnected.");
             }
         }
 
-        void onClientDisconnected(IAsyncResult ar)
+        void OnClientDisconnected(IAsyncResult ar)
         {
             var client = (Socket)ar.AsyncState;
             client.EndDisconnect(ar);
-            disconnectedByRemote(client);
+            DisconnectedByRemote(client);
         }
     }
 }

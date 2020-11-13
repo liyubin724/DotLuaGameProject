@@ -47,8 +47,8 @@ namespace DotEngine.Lua
         {
 #if UNITY_EDITOR
             return $"{Application.dataPath}/{SCRIPT_DIR}{{0}}{SCRIPT_EXTENSION}";
-#elif UNITY_STANDALONE
-            return $"./{SCRIPT_DIR}{{0}}{SCRIPT_EXTENSION}";
+#else
+           return $"{Application.dataPath}/{SCRIPT_DIR}{{0}}{SCRIPT_EXTENSION}";
 #endif
         }
     }

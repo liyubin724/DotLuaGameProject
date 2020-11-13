@@ -1,26 +1,35 @@
-﻿namespace DotEngine.Log
+﻿using System.Diagnostics;
+
+namespace DotEngine.Log
 {
-    public delegate void LogMessage(Logger logger, LogLevel level, string message);
+    public delegate void LogMessage(Logger logger, LogLevel level, string message,string stackTrace);
 
     public class Logger
     {
         public string Name { get; private set; }
-        public LogLevel MinLogLevel { get; private set; }
+        public LogLevel MinLogLevel { get; set; } = LogLevel.On;
+        public LogLevel StackTraceLogLevel { get; set; } = LogLevel.Error;
+        public LogMessage OnLogMessage { get; set; }
 
-        private LogMessage m_OnLog;
-
-        internal Logger(string name, LogLevel minLevel, LogMessage onLogMessage)
+        internal Logger(string name)
         {
             Name = name;
-            MinLogLevel = minLevel;
-            m_OnLog = onLogMessage;
+        }
+
+        private string GetStackTrace(LogLevel level)
+        {
+            if(level< StackTraceLogLevel)
+            {
+                return string.Empty;
+            }
+            return new StackTrace(3,true).ToString();
         }
 
         public void Trace(string message)
         {
             if(MinLogLevel<LogLevel.Trace)
             {
-                m_OnLog?.Invoke(this, LogLevel.Trace, message);
+                OnLogMessage?.Invoke(this, LogLevel.Trace, message, GetStackTrace(LogLevel.Trace));
             }
         }
 
@@ -28,7 +37,7 @@
         {
             if (MinLogLevel < LogLevel.Debug)
             {
-                m_OnLog?.Invoke(this, LogLevel.Debug, message);
+                OnLogMessage?.Invoke(this, LogLevel.Debug, message, GetStackTrace(LogLevel.Debug));
             }
         }
 
@@ -36,7 +45,7 @@
         {
             if (MinLogLevel < LogLevel.Info)
             {
-                m_OnLog?.Invoke(this, LogLevel.Info, message);
+                OnLogMessage?.Invoke(this, LogLevel.Info, message, GetStackTrace(LogLevel.Info));
             }
         }
 
@@ -44,7 +53,7 @@
         {
             if (MinLogLevel < LogLevel.Warning)
             {
-                m_OnLog?.Invoke(this, LogLevel.Warning, message);
+                OnLogMessage?.Invoke(this, LogLevel.Warning, message, GetStackTrace(LogLevel.Warning));
             }
         }
 
@@ -52,7 +61,7 @@
         {
             if (MinLogLevel < LogLevel.Error)
             {
-                m_OnLog?.Invoke(this, LogLevel.Error, message);
+                OnLogMessage?.Invoke(this, LogLevel.Error, message, GetStackTrace(LogLevel.Error));
             }
         }
 
@@ -60,7 +69,7 @@
         {
             if (MinLogLevel < LogLevel.Fatal)
             {
-                m_OnLog?.Invoke(this, LogLevel.Fatal, message);
+                OnLogMessage?.Invoke(this, LogLevel.Fatal, message, GetStackTrace(LogLevel.Fatal));
             }
         }
     }

@@ -11,72 +11,76 @@ namespace DotEngine.Network
 
         public TcpClientSocket()
         {
-            _log = LogUtil.GetLogger(GetType().Name);
+            logger = LogUtil.GetLogger(GetType().Name,LogLevel.Error);
         }
 
         public void Connect(IPAddress ip, int port)
         {
-            _log.Debug(string.Format("Connecting to {0}:{1}...", ip, port));
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _socket.BeginConnect(ip, port, onConnected, _socket);
+            logger.Debug(string.Format("Connecting to {0}:{1}...", ip, port));
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.BeginConnect(ip, port, OnConnected, socket);
         }
 
-        void onConnected(IAsyncResult ar)
+        void OnConnected(IAsyncResult ar)
         {
             var socket = (Socket)ar.AsyncState;
             try
             {
                 socket.EndConnect(ar);
-                isConnected = true;
+                IsConnected = true;
+
                 IPEndPoint clientEndPoint = (IPEndPoint)socket.RemoteEndPoint;
-                _log.Info(string.Format("Connected to {0}:{1}",
-                    clientEndPoint.Address, clientEndPoint.Port));
-                if (OnConnect != null)
-                {
-                    OnConnect(this, null);
-                }
-                startReceiving(socket);
+
+                logger.Info(string.Format("Connected to {0}:{1}", clientEndPoint.Address, clientEndPoint.Port));
+
+                OnConnect?.Invoke(this, null);
+
+                StartReceiving(socket);
             }
             catch (Exception ex)
             {
-                _log.Warning(ex.Message);
-                triggerOnDisconnect();
+                logger.Warning(ex.Message);
+
+                TriggerOnDisconnect();
             }
         }
 
         public override void Send(byte[] bytes)
         {
-            SendWith(_socket, bytes);
+            SendWith(socket, bytes);
         }
 
-        protected override void disconnectedByRemote(Socket socket)
+        protected override void DisconnectedByRemote(Socket socket)
         {
-            _log.Info("Disconnected by remote.");
+            logger.Info("Disconnected by remote.");
             Disconnect();
         }
 
         public override void Disconnect()
         {
-            if (isConnected)
+            if (IsConnected)
             {
-                _log.Debug("Disconnecting...");
-                isConnected = false;
-                _socket.BeginDisconnect(false, onDisconnected, _socket);
+                logger.Debug("Disconnecting...");
+                IsConnected = false;
+                socket.BeginDisconnect(false, OnDisconnected, socket);
             }
             else
             {
-                _log.Debug("Already diconnected.");
+                logger.Debug("Already diconnected.");
             }
         }
 
-        void onDisconnected(IAsyncResult ar)
+        void OnDisconnected(IAsyncResult ar)
         {
             var socket = (Socket)ar.AsyncState;
             socket.EndDisconnect(ar);
             socket.Close();
-            _socket = null;
-            _log.Debug("Disconnected.");
-            triggerOnDisconnect();
+
+            base.socket = null;
+            
+            logger.Debug("Disconnected.");
+
+            TriggerOnDisconnect();
         }
     }
 }

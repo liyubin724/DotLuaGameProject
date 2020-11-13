@@ -14,9 +14,9 @@ namespace DotEngine.Log.Appender
             logFormatter = formatter;
         }
 
-        public void OnLogReceived(LogLevel level, string tag, string message)
+        public void OnLogReceived(LogLevel level, string tag, string message,string stackTrace)
         {
-            string logMessage = logFormatter.FormatMessage(level, tag, message);
+            string logMessage = logFormatter.FormatMessage(level, tag, message, stackTrace);
             DoLogMessage(level, logMessage);
         }
 

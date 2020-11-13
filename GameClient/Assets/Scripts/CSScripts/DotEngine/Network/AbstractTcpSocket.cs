@@ -15,82 +15,74 @@ namespace DotEngine.Network
         public event EventHandler<ReceiveEventArgs> OnReceive;
         public event EventHandler OnDisconnect;
 
-        public bool isConnected { get; protected set; }
+        public bool IsConnected { get; protected set; }
 
-        protected Logger _log;
-        protected Socket _socket;
+        protected Logger logger;
+        protected Socket socket;
 
-        protected void triggerOnReceive(ReceiveVO receiveVO, int bytesReceived)
+        protected void TriggerOnReceive(ReceiveVO receiveVO, int bytesReceived)
         {
-            if (OnReceive != null)
-            {
-                OnReceive(this, new ReceiveEventArgs(receiveVO.socket,
-                    trimmedBuffer(receiveVO.buffer, bytesReceived)));
-            }
+            OnReceive?.Invoke(this, new ReceiveEventArgs(receiveVO.socket, TrimmedBuffer(receiveVO.buffer, bytesReceived)));
         }
 
-        protected void triggerOnDisconnect()
+        protected void TriggerOnDisconnect()
         {
-            if (OnDisconnect != null)
-            {
-                OnDisconnect(this, null);
-            }
+            OnDisconnect?.Invoke(this, null);
         }
 
-        protected void startReceiving(Socket socket)
+        protected void StartReceiving(Socket socket)
         {
             var receiveVO = new ReceiveVO
             {
                 socket = socket,
                 buffer = new byte[socket.ReceiveBufferSize]
             };
-            receive(receiveVO);
+            Receive(receiveVO);
         }
 
-        protected void receive(ReceiveVO receiveVO)
+        protected void Receive(ReceiveVO receiveVO)
         {
-            receiveVO.socket.BeginReceive(receiveVO.buffer, 0,
-                receiveVO.buffer.Length, SocketFlags.None, onReceived, receiveVO);
+            receiveVO.socket.BeginReceive(receiveVO.buffer, 0, receiveVO.buffer.Length, SocketFlags.None, OnReceived, receiveVO);
         }
 
-        protected void onReceived(IAsyncResult ar)
+        protected void OnReceived(IAsyncResult ar)
         {
             var receiveVO = (ReceiveVO)ar.AsyncState;
-            if (isConnected)
+            if (IsConnected)
             {
                 var bytesReceived = receiveVO.socket.EndReceive(ar);
 
                 if (bytesReceived == 0)
                 {
-                    disconnectedByRemote(receiveVO.socket);
+                    DisconnectedByRemote(receiveVO.socket);
                 }
                 else
                 {
-                    _log.Debug(string.Format("Received {0} bytes.", bytesReceived));
-                    triggerOnReceive(receiveVO, bytesReceived);
+                    logger.Debug(string.Format("Received {0} bytes.", bytesReceived));
+                    TriggerOnReceive(receiveVO, bytesReceived);
 
-                    receive(receiveVO);
+                    Receive(receiveVO);
                 }
             }
         }
 
         public void SendWith(Socket socket, byte[] bytes)
         {
-            if (isConnected && socket.Connected)
+            if (IsConnected && socket.Connected)
             {
-                socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, onSent, socket);
+                socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, OnSended, socket);
             }
         }
 
-        void onSent(IAsyncResult ar)
+        void OnSended(IAsyncResult ar)
         {
             var socket = (Socket)ar.AsyncState;
             socket.EndSend(ar);
         }
 
-        protected abstract void disconnectedByRemote(Socket socket);
+        protected abstract void DisconnectedByRemote(Socket socket);
 
-        protected byte[] trimmedBuffer(byte[] buffer, int length)
+        protected byte[] TrimmedBuffer(byte[] buffer, int length)
         {
             var trimmed = new byte[length];
             Array.Copy(buffer, trimmed, length);

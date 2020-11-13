@@ -10,7 +10,12 @@ namespace DotEngine.Log
         private readonly static Dictionary<string, Logger> sm_Loggers = new Dictionary<string, Logger>();
         private readonly static Dictionary<string, ALogAppender> sm_Appenders = new Dictionary<string, ALogAppender>();
 
-        private static Logger sm_DefaultLogger = new Logger("Logger", LogLevel.On, OnLogMessage);
+        private static Logger sm_DefaultLogger = new Logger("Logger")
+        {
+            OnLogMessage = OnLogMessage,
+            MinLogLevel = LogLevel.On,
+            StackTraceLogLevel = LogLevel.Error,
+        };
 
         public static void AddAppender(ALogAppender appender)
         {
@@ -30,17 +35,22 @@ namespace DotEngine.Log
             }
         }
 
-        public static Logger GetLogger(string name,LogLevel logLevel = LogLevel.Trace)
+        public static Logger GetLogger(string name,LogLevel logLevel = LogLevel.Trace,LogLevel stackTraceLevel = LogLevel.Error)
         {
             if(!sm_Loggers.TryGetValue(name,out var logger))
             {
-                logger = new Logger(name, logLevel, OnLogMessage);
+                logger = new Logger(name)
+                {
+                    OnLogMessage = OnLogMessage,
+                    MinLogLevel = logLevel,
+                    StackTraceLogLevel = stackTraceLevel,
+                };
                 sm_Loggers.Add(name, logger);
             }
             return logger;
         }
 
-        private static void OnLogMessage(Logger logger, LogLevel level, string message)
+        private static void OnLogMessage(Logger logger, LogLevel level, string message,string stackTrace)
         {
             if (level < GlobalLogLevel)
             {
@@ -49,7 +59,7 @@ namespace DotEngine.Log
 
             foreach (var kvp in sm_Appenders)
             {
-                kvp.Value.OnLogReceived(level, logger.Name, message);
+                kvp.Value.OnLogReceived(level, logger.Name, message,stackTrace);
             }
         }
 
