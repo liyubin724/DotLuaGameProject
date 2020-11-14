@@ -78,24 +78,19 @@ namespace DotEngine
             instance = null;
         }
 
-        internal void DoUpdate(float deltaTime)
+        internal void DoUpdate(float deltaTime,float unscaleDeltaTime)
         {
-            service.DoUpdate(deltaTime);
+            service.DoUpdate(deltaTime,unscaleDeltaTime);
         }
 
-        internal void DoUnscaleUpdate(float deltaTime)
+        internal void DoLateUpdate(float deltaTime, float unscaleDeltaTime)
         {
-            service.DoUnscaleUpdate(deltaTime);
+            service.DoLateUpdate(deltaTime, unscaleDeltaTime);
         }
 
-        internal void DoLateUpdate(float deltaTime)
+        internal void DoFixedUpdate(float deltaTime, float unscaleDeltaTime)
         {
-            service.DoLateUpdate(deltaTime);
-        }
-
-        internal void DoFixedUpdate(float deltaTime)
-        {
-            service.DoFixedUpdate(deltaTime);
+            service.DoFixedUpdate(deltaTime, unscaleDeltaTime);
         }
     }
 }

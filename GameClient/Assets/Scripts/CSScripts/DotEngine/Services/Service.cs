@@ -8,7 +8,6 @@ namespace DotEngine.Services
         private Dictionary<string, IServicer> m_ServicerDic = new Dictionary<string, IServicer>();
 
         private List<string> m_UpdateServicerNames = null;
-        private List<string> m_UnscaleUpdateServicerNames = null;
         private List<string> m_LateUpdateServicerNames = null;
         private List<string> m_FixedUpdateServicerNames = null;
 
@@ -17,19 +16,18 @@ namespace DotEngine.Services
         {
             m_ServicerDic = new Dictionary<string, IServicer>();
             m_UpdateServicerNames = new List<string>();
-            m_UnscaleUpdateServicerNames = new List<string>();
             m_LateUpdateServicerNames = new List<string>();
             m_FixedUpdateServicerNames = new List<string>();
         }
         
-        public void DoUpdate(float deltaTime)
+        public void DoUpdate(float deltaTime,float unscaleDeltaTime)
         {
             for (int i = m_UpdateServicerNames.Count - 1; i >= 0; --i)
             {
                 string name = m_UpdateServicerNames[i];
                 if (m_ServicerDic.TryGetValue(name, out IServicer value))
                 {
-                    ((IUpdate)value).DoUpdate(deltaTime);
+                    ((IUpdate)value).DoUpdate(deltaTime,unscaleDeltaTime);
                 }
                 else
                 {
@@ -37,31 +35,15 @@ namespace DotEngine.Services
                 }
             }
         }
-
-        public void DoUnscaleUpdate(float deltaTime)
-        {
-            for (int i = m_UnscaleUpdateServicerNames.Count - 1; i >= 0; --i)
-            {
-                string name = m_UnscaleUpdateServicerNames[i];
-                if (m_ServicerDic.TryGetValue(name, out IServicer value))
-                {
-                    ((IUnscaleUpdate)value).DoUnscaleUpdate(deltaTime);
-                }
-                else
-                {
-                    m_UnscaleUpdateServicerNames.RemoveAt(i);
-                }
-            }
-        }
-
-        public void DoLateUpdate(float deltaTime)
+        
+        public void DoLateUpdate(float deltaTime,float unscaleDeltaTime)
         {
             for (int i = m_LateUpdateServicerNames.Count - 1; i >= 0; --i)
             {
                 string name = m_LateUpdateServicerNames[i];
                 if (m_ServicerDic.TryGetValue(name, out IServicer value))
                 {
-                    ((ILateUpdate)value).DoLateUpdate(deltaTime);
+                    ((ILateUpdate)value).DoLateUpdate(deltaTime, unscaleDeltaTime);
                 }
                 else
                 {
@@ -70,14 +52,14 @@ namespace DotEngine.Services
             }
         }
 
-        public void DoFixedUpdate(float deltaTime)
+        public void DoFixedUpdate(float deltaTime, float unscaleDeltaTime)
         {
             for (int i = m_FixedUpdateServicerNames.Count - 1; i >= 0; --i)
             {
                 string name = m_FixedUpdateServicerNames[i];
                 if (m_ServicerDic.TryGetValue(name, out IServicer value))
                 {
-                    ((IFixedUpdate)value).DoFixedUpdate(deltaTime);
+                    ((IFixedUpdate)value).DoFixedUpdate(deltaTime, unscaleDeltaTime);
                 }
                 else
                 {
@@ -110,10 +92,6 @@ namespace DotEngine.Services
             if (typeof(IUpdate).IsAssignableFrom(serviceType))
             {
                 m_UpdateServicerNames.Add(servicer.Name);
-            }
-            if(typeof(IUnscaleUpdate).IsAssignableFrom(serviceType))
-            {
-                m_UnscaleUpdateServicerNames.Add(servicer.Name);
             }
             if (typeof(ILateUpdate).IsAssignableFrom(serviceType))
             {

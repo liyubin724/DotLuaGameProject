@@ -6,18 +6,17 @@ namespace DotEngine
     {
         private void Update()
         {
-            Facade.GetInstance().DoUpdate(Time.deltaTime);
-            Facade.GetInstance().DoUnscaleUpdate(Time.unscaledDeltaTime);
+            Facade.GetInstance().DoUpdate(Time.deltaTime, Time.unscaledDeltaTime);
         }
 
         private void LateUpdate()
         {
-            Facade.GetInstance().DoLateUpdate(Time.deltaTime);
+            Facade.GetInstance().DoLateUpdate(Time.deltaTime, Time.unscaledDeltaTime);
         }
 
         private void FixedUpdate()
         {
-            Facade.GetInstance().DoFixedUpdate(Time.fixedDeltaTime);
+            Facade.GetInstance().DoFixedUpdate(Time.fixedDeltaTime, Time.fixedUnscaledDeltaTime);
         }
     }
 }

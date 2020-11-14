@@ -32,12 +32,12 @@ namespace DotEngine.Net.Services
             NetManager.GetInstance().DestroyServerNet(serverID);
         }
 
-        public void DoLateUpdate(float deltaTime)
+        public void DoLateUpdate(float deltaTime, float unscaleDeltaTime)
         {
             NetManager.GetInstance().DoLateUpdate_Server(deltaTime);
         }
 
-        public void DoUpdate(float deltaTime)
+        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
             NetManager.GetInstance().DoUpdate_Server(deltaTime);
         }

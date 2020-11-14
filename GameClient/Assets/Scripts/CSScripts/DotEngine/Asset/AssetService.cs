@@ -15,7 +15,7 @@ namespace DotEngine.Asset
         {
         }
 
-        public void DoUpdate(float deltaTime)
+        public void DoUpdate(float deltaTime,float unscaleDeltaTime)
         {
             assetMgr?.DoUpdate(deltaTime);
         }

@@ -24,7 +24,7 @@ namespace DotEngine.Timer
             base.DoRemove();
         }
 
-        public void DoUpdate(float deltaTime)
+        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
             hTimerWheel.DoUpdate(deltaTime);
         }

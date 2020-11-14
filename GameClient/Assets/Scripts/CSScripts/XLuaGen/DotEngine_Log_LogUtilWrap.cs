@@ -127,6 +127,19 @@ namespace XLua.CSObjectWrap
             
 			    int gen_param_count = LuaAPI.lua_gettop(L);
             
+                if(gen_param_count == 3&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& translator.Assignable<DotEngine.Log.LogLevel>(L, 2)&& translator.Assignable<DotEngine.Log.LogLevel>(L, 3)) 
+                {
+                    string _name = LuaAPI.lua_tostring(L, 1);
+                    DotEngine.Log.LogLevel _logLevel;translator.Get(L, 2, out _logLevel);
+                    DotEngine.Log.LogLevel _stackTraceLevel;translator.Get(L, 3, out _stackTraceLevel);
+                    
+                        DotEngine.Log.Logger gen_ret = DotEngine.Log.LogUtil.GetLogger( _name, _logLevel, _stackTraceLevel );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
                 if(gen_param_count == 2&& (LuaAPI.lua_isnil(L, 1) || LuaAPI.lua_type(L, 1) == LuaTypes.LUA_TSTRING)&& translator.Assignable<DotEngine.Log.LogLevel>(L, 2)) 
                 {
                     string _name = LuaAPI.lua_tostring(L, 1);

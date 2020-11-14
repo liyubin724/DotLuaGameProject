@@ -7,7 +7,7 @@ using SystemObject = System.Object;
 
 namespace DotEngine.Lua
 {
-    public class LuaEnvService : Servicer,IUpdate,IUnscaleUpdate,ILateUpdate,IFixedUpdate
+    public class LuaEnvService : Servicer,IUpdate,ILateUpdate,IFixedUpdate
     {
         public const string NAME = "LuaService";
 
@@ -128,7 +128,7 @@ namespace DotEngine.Lua
             return m_InstanceWithFunc.Func<LuaTable>(list.ToArray());
         }
 
-        public virtual void DoUpdate(float deltaTime)
+        public virtual void DoUpdate(float deltaTime,float unscaleDeltaTime)
         {
             if(!Env.IsValid())
             {
@@ -146,18 +146,11 @@ namespace DotEngine.Lua
                     Env.Tick();
                 }
             }
+
+            m_UnscaleUpdateAction?.Invoke(unscaleDeltaTime);
         }
 
-        public void DoUnscaleUpdate(float deltaTime)
-        {
-            if (!Env.IsValid())
-            {
-                return;
-            }
-            m_UnscaleUpdateAction?.Invoke(deltaTime);
-        }
-
-        public void DoFixedUpdate(float deltaTime)
+        public void DoFixedUpdate(float deltaTime,float unscaleDeltaTime)
         {
             if (!Env.IsValid())
             {
@@ -166,7 +159,7 @@ namespace DotEngine.Lua
             m_FixedUpdateAction?.Invoke(deltaTime);
         }
 
-        public void DoLateUpdate(float deltaTime)
+        public void DoLateUpdate(float deltaTime,float unscaleDeltaTime)
         {
             if (!Env.IsValid())
             {
