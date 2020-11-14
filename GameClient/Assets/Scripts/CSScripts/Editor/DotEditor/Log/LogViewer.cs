@@ -1,30 +1,10 @@
 ﻿using DotEditor.GUIExtension;
-using DotEditor.GUIExtension.DataGrid;
 using DotEngine.Log;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.Log
 {
-    public class LogData
-    {
-        public LogLevel Level { get; set; }
-        public DateTime Time { get; set; }
-        public string Tag { get; set; }
-        public string Message { get; set; }
-        public string StackTrace { get; set; }
-    }
-
-    public class LogLevelBtnState
-    {
-        public LogLevel Level { get; set; }
-        public bool IsEnable { get; set; } = true;
-    }
-
     public class LogViewer : EditorWindow
     {
         [MenuItem("Game/Log/Viewer")]
@@ -38,43 +18,29 @@ namespace DotEditor.Log
 
         public static readonly int PORT = 8899;
 
+        public static LogViewer Viewer = null;
+
         [SerializeField]
         private string ipAddressString = "127.0.0.1";
 
         private LogClientStatus clientStatus = LogClientStatus.None;
         private LogClientSocket clientSocket = null;
 
-        private List<LogData> logDatas = new List<LogData>();
-        private GridViewModel gridViewModel;
+        private LogViewerData viewerData = new LogViewerData();
+        private LogViewerSetting viewerSetting = new LogViewerSetting();
+
         private LogGridView gridView = null;
 
-        private LogData selectedLogData = null;
         private string selectedLogDataText = string.Empty;
         private Vector2 selectedLogDataScrollPos = Vector2.zero;
 
         private ToolbarSearchField searchField = null;
-        private string[] searchCategories = new string[]
-        {
-            "all",
-            "tag",
-            "message",
-            "stacktrace"
-        };
-        private string searchCategory = "all";
-        private string searchText = string.Empty;
-
-        private Dictionary<LogLevel, bool> levelBtnEnableStateDic = new Dictionary<LogLevel, bool>();
-        private Dictionary<LogLevel, int> levelLogCountDic = new Dictionary<LogLevel, int>();
-
         private void OnEnable()
         {
-            gridViewModel = new GridViewModel();
-            for(int i =(int)LogLevel.On+1;i<(int)LogLevel.Off; ++i)
-            {
-                levelBtnEnableStateDic.Add((LogLevel)i, true);
-                levelLogCountDic.Add((LogLevel)i, 0);
-            }
+            Viewer = this;
 
+            viewerData = new LogViewerData();
+            viewerData.OnLogDataChanged = OnLogDataChanged;
             EditorApplication.update += OnUpdate;
         }
 
@@ -83,29 +49,29 @@ namespace DotEditor.Log
             EditorApplication.update -= OnUpdate;
         }
 
+        private void OnDestroy()
+        {
+            Viewer = null;
+        }
+
+        private void OnLogDataChanged()
+        {
+            gridView?.Reload();
+        }
+
         private void OnGUI()
         {
             if(gridView == null)
             {
-                gridView = new LogGridView(gridViewModel);
+                gridView = new LogGridView(viewerData.GridViewModel);
                 gridView.OnSelectedChanged += (logData) =>
                 {
-                    selectedLogData = logData;
                     selectedLogDataScrollPos = Vector2.zero;
-                    if (selectedLogData!=null)
+                    viewerData.SelectedLogData = logData;
+                    if(viewerData.SelectedLogData!=null)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine($"Level:{selectedLogData.Level}");
-                        sb.AppendLine($"Time:{selectedLogData.Time}");
-                        sb.AppendLine($"Tag:{selectedLogData.Tag}");
-                        sb.AppendLine($"Message:{selectedLogData.Message}");
-                        if(!string.IsNullOrEmpty(selectedLogData.StackTrace))
-                        {
-                            sb.AppendLine($"StackTrace:\n{selectedLogData.StackTrace}");
-                        }
-                        selectedLogDataText = sb.ToString();
-                    }
-                    else
+                        selectedLogDataText = viewerData.SelectedLogData.ToString();
+                    }else
                     {
                         selectedLogDataText = string.Empty;
                     }
@@ -122,61 +88,19 @@ namespace DotEditor.Log
             EditorGUILayout.EndScrollView();
         }
 
-        void FilterLogDatas()
-        {
-            Debug.Log("SSSSSSSSSSSSSS====" + Thread.CurrentThread.ManagedThreadId);
-
-            gridViewModel.Clear();
-
-            foreach(var key in levelLogCountDic.Keys)
-            {
-                levelLogCountDic[key] = 0;
-            }
-
-            foreach(var logData in logDatas)
-            {
-                levelLogCountDic[logData.Level] += 1;
-                if(!levelBtnEnableStateDic[logData.Level])
-                {
-                    continue;
-                }
-
-                if (string.IsNullOrEmpty(searchText))
-                {
-                    gridViewModel.AddData(new GridViewData("", logData));
-                }else
-                {
-                    if((searchCategory == "all" || searchCategory == "tag") && logData.Tag.ToLower().IndexOf(searchText)>=0)
-                    {
-                        gridViewModel.AddData(new GridViewData("", logData));
-                    }else if((searchCategory == "all" || searchCategory == "message") && logData.Message.ToLower().IndexOf(searchText) >= 0)
-                    {
-                        gridViewModel.AddData(new GridViewData("", logData));
-                    }
-                    else if ((searchCategory == "all" || searchCategory == "stacktrace") && logData.StackTrace.ToLower().IndexOf(searchText) >= 0)
-                    {
-                        gridViewModel.AddData(new GridViewData("", logData));
-                    }
-                }
-            }
-            gridView.Reload();
-        }
-
         void DrawToolbar()
         {
             if(searchField == null)
             {
                 searchField = new ToolbarSearchField((text)=>
                 {
-                    searchText = text;
-                    FilterLogDatas();
+                    viewerData.SearchText = text;
                 },(category)=> {
-                    searchCategory = category;
-                    FilterLogDatas();
+                    viewerData.SearchCategory = category;
                 });
-                searchField.Categories = searchCategories;
                 searchField.CategoryIndex = 0;
-                searchField.Text = searchText;
+                searchField.Categories = viewerData.SearchCategories;
+                searchField.Text = viewerData.SearchText;
             }
 
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -207,21 +131,42 @@ namespace DotEditor.Log
                     }
                 }
 
+                GUILayout.Space(10);
+                if(GUILayout.Button("Clear",EditorStyles.toolbarButton))
+                {
+                    selectedLogDataText = string.Empty;
+                    selectedLogDataScrollPos = Vector2.zero;
+                    viewerData.Reset();
+                }
+
                 GUILayout.FlexibleSpace();
 
                 Color oldBGColor = GUI.color;
                 for (int i = (int)LogLevel.On + 1; i < (int)LogLevel.Off; ++i)
                 {
-                    GUI.color = levelBtnEnableStateDic[(LogLevel)i] ? Color.cyan : oldBGColor;
-                    if (GUILayout.Button(((LogLevel)i).ToString()+"("+levelLogCountDic[(LogLevel)i]+")", EditorStyles.toolbarButton))
+                    LogLevel level = (LogLevel)i;
+
+                    GUI.color = viewerData.GetIsLogLevelEnable(level) ? Color.cyan : oldBGColor;
+                    if (GUILayout.Button(level.ToString()+"("+viewerData.GetLogLevelCount(level)+")", EditorStyles.toolbarButton))
                     {
-                        levelBtnEnableStateDic[(LogLevel)i] = !levelBtnEnableStateDic[(LogLevel)i];
+                        viewerData.ReverseIsLogLevelEnable(level);
                     }
                 }
                 GUI.color = oldBGColor;
 
                 GUILayout.Space(10);
                 searchField.OnGUILayout();
+
+                EditorGUI.BeginDisabledGroup(clientSocket == null);
+                {
+                    if (GUILayout.Button("Setting", EditorStyles.toolbarButton))
+                    {
+                        Vector2 pos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
+                        GUIExtension.Windows.PopupWindow.ShowWin(new Rect(pos.x, pos.y, 250, 400), new LogViewerSettingPopContent(viewerSetting), false, true);
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -240,7 +185,7 @@ namespace DotEditor.Log
 
         private void OnUpdate()
         {
-            if(clientSocket!=null)
+            if (clientSocket!=null)
             {
                 LogClientStatus curStatus = clientSocket.Status;
                 if(curStatus!= clientStatus)
@@ -270,9 +215,7 @@ namespace DotEditor.Log
                     LogData[] datas = clientSocket.LogDatas;
                     if(datas!=null && datas.Length>0)
                     {
-                        logDatas.AddRange(datas);
-
-                        FilterLogDatas();
+                        viewerData.AddLogDatas(datas);
                     }
 
                     Repaint();

@@ -11,7 +11,7 @@ namespace DotEngine.Log.Appender
         public static readonly int PORT = 8899;
 
         public event Action<string> OnNetMessageReceived;
-        public event Action OnNetConnected;
+        public event Action OnClientNetConnected;
         public event Action OnNetDisconnected;
 
         private TcpServerSocket m_serverSocket;
@@ -20,7 +20,7 @@ namespace DotEngine.Log.Appender
         protected ServerLogSocketAppender(ILogFormatter formatter) : base(NAME, formatter)
         {
             m_serverSocket = new TcpServerSocket();
-            m_serverSocket.OnClientConnect += OnConnected;
+            m_serverSocket.OnClientConnect += OnClientConnected;
             m_serverSocket.OnReceive += OnReceived;
             m_serverSocket.OnDisconnect += OnDisconnected;
             m_serverSocket.Listen(PORT);
@@ -45,9 +45,33 @@ namespace DotEngine.Log.Appender
             m_serverSocket.Disconnect();
         }
 
-        private void OnConnected(object sender, EventArgs e)
+        private void OnClientConnected(object sender, TcpSocketEventArgs e)
         {
-            OnNetConnected?.Invoke();
+            //JObject jObj = new JObject();
+
+            //jObj.Add("global_log_level", (int)LogUtil.GlobalLogLevel);
+
+            //JArray jArr = new JArray();
+            //jObj.Add("logger_log_level", jArr);
+            //foreach(var kvp in LogUtil.Loggers)
+            //{
+            //    JObject loggerJObj = new JObject();
+            //    loggerJObj.Add("name", kvp.Value.Name);
+            //    loggerJObj.Add("min_log_level", (int)kvp.Value.MinLogLevel);
+            //    loggerJObj.Add("stacktrace_log_level", (int)kvp.Value.StackTraceLogLevel);
+
+            //    jArr.Add(loggerJObj);
+            //}
+            //jObj.Add("logger", jArr);
+
+            //byte[] contentBytes = Encoding.UTF8.GetBytes(jObj.ToString());
+            //byte[] messageBytes = new byte[contentBytes.Length + 1];
+            //messageBytes[0] = (byte)1;
+            //Array.Copy(contentBytes, 0,messageBytes, 0, contentBytes.Length);
+
+            //e.socket.Send(messageBytes);
+
+            OnClientNetConnected?.Invoke();
         }
 
         private void OnReceived(object sender, ReceiveEventArgs e)
@@ -85,7 +109,7 @@ namespace DotEngine.Log.Appender
             }
             if(m_serverSocket!=null)
             {
-                m_serverSocket.OnClientConnect -= OnConnected;
+                m_serverSocket.OnClientConnect -= OnClientConnected;
                 m_serverSocket.OnReceive -= OnReceived;
                 m_serverSocket.OnDisconnect -= OnDisconnected;
                 m_serverSocket.Disconnect();

@@ -6,6 +6,7 @@ namespace DotEngine.Log
     public static class LogUtil
     {
         public static LogLevel GlobalLogLevel { get; set; } = LogLevel.On;
+        internal static Dictionary<string, Logger> Loggers => sm_Loggers;
 
         private readonly static Dictionary<string, Logger> sm_Loggers = new Dictionary<string, Logger>();
         private readonly static Dictionary<string, ALogAppender> sm_Appenders = new Dictionary<string, ALogAppender>();
