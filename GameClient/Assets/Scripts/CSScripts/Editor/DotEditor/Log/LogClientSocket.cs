@@ -1,4 +1,6 @@
-﻿using DotEngine.Log;
+﻿using DotEngine;
+using DotEngine.Log;
+using DotEngine.Log.Appender;
 using DotEngine.Network;
 using Newtonsoft.Json.Linq;
 using System;
@@ -17,13 +19,12 @@ namespace DotEditor.Log
         Disconnected,
     }
 
-    public class LogClientSocket
+    public class LogClientSocket : IUpdate
     {
         private TcpClientSocket clientSocket = null;
         
         private object logDataLocker = new object();
         private List<LogData> logDataList = new List<LogData>();
-
         public LogData[] LogDatas
         {
             get
@@ -38,10 +39,8 @@ namespace DotEditor.Log
             }
         }
 
-
         private object logStatusLocker = new object();
         private LogClientStatus status = LogClientStatus.None;
-
         public LogClientStatus Status
         {
             get
@@ -59,6 +58,15 @@ namespace DotEditor.Log
                     status = value;
                 }
             }
+        }
+
+        public LogClientSocket()
+        {
+        }
+
+        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
+        {
+
         }
 
         public bool Connect(string ipString,int port)
@@ -93,23 +101,29 @@ namespace DotEditor.Log
         private void OnConnected(object sender, EventArgs eventArgs)
         {
             Status = LogClientStatus.Connected;
+
+            
         }
 
         private void OnReceived(object sender, ReceiveEventArgs eventArgs)
         {
-            lock(logDataLocker)
+            int id = BitConverter.ToInt32(eventArgs.bytes, 0);
+            if (id == LogSocketUtil.S2C_RECEIVE_LOG_REQUEST)
             {
-                string jsonStr = Encoding.UTF8.GetString(eventArgs.bytes);
-                JObject jsonObj = JObject.Parse(jsonStr);
+                lock (logDataLocker)
+                {
+                    string jsonStr = Encoding.UTF8.GetString(eventArgs.bytes,sizeof(int),eventArgs.bytes.Length-sizeof(int));
+                    JObject jsonObj = JObject.Parse(jsonStr);
 
-                LogData logData = new LogData();
-                logData.Level = (LogLevel)jsonObj["level"].Value<int>();
-                logData.Time = new DateTime(jsonObj["time"].Value<long>());
-                logData.Tag = jsonObj["tag"].Value<string>();
-                logData.Message = jsonObj["message"].Value<string>();
-                logData.StackTrace = jsonObj["stacktrace"].Value<string>();
+                    LogData logData = new LogData();
+                    logData.Level = (LogLevel)jsonObj["level"].Value<int>();
+                    logData.Time = new DateTime(jsonObj["time"].Value<long>());
+                    logData.Tag = jsonObj["tag"].Value<string>();
+                    logData.Message = jsonObj["message"].Value<string>();
+                    logData.StackTrace = jsonObj["stacktrace"].Value<string>();
 
-                logDataList.Add(logData);
+                    logDataList.Add(logData);
+                }
             }
         }
 
@@ -122,5 +136,11 @@ namespace DotEditor.Log
             clientSocket.OnDisconnect -= OnDisconnected;
             clientSocket = null;
         }
+
+        public void SendMessage(int id,string message)
+        {
+
+        }
+        
     }
 }

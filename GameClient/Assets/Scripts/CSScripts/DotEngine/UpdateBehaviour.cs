@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.Utilities;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DotEngine
@@ -20,21 +21,28 @@ namespace DotEngine
 
     public class UpdateBehaviour : MonoBehaviour
     {
-        public const string NAME = "Update-Root";
+        public const string NAME = "Updater";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void OnStartup()
         {
-            GameObject gObj = new GameObject(NAME);
-            gObj.AddComponent<UpdateBehaviour>();
-            DontDestroyOnLoad(gObj);
+            DontDestroyHandler.CreateComponent<UpdateBehaviour>(NAME);
         }
 
         public static UpdateBehaviour Updater { get; private set; } = null;
 
-        public event Action<float,float> OnUpdate;
-        public event Action<float,float> OnLateUpdate;
-        public event Action<float,float> OnFixedUpdate;
+        private List<IUpdate> m_Updates = new List<IUpdate>();
+        private List<ILateUpdate> m_LateUpdates = new List<ILateUpdate>();
+        private List<IFixedUpdate> m_FixedUpdates = new List<IFixedUpdate>();
+
+        public void AddUpdate(IUpdate updater) => m_Updates.Add(updater);
+        public void RemoveUpdate(IUpdate updater) => m_Updates.Remove(updater);
+
+        public void AddLateUpdate(ILateUpdate updater) => m_LateUpdates.Add(updater);
+        public void RemoveLateUpdate(ILateUpdate updater) => m_LateUpdates.Remove(updater);
+
+        public void AddFixedUpdate(IFixedUpdate updater) => m_FixedUpdates.Add(updater);
+        public void RemoveFixedUpdate(IFixedUpdate updater) => m_FixedUpdates.Remove(updater);
 
         private void Awake()
         {
@@ -49,22 +57,34 @@ namespace DotEngine
 
         private void Update()
         {
-            OnUpdate?.Invoke(Time.deltaTime, Time.unscaledDeltaTime);
+            m_Updates.ForEach((updater) =>
+            {
+                updater.DoUpdate(Time.deltaTime, Time.unscaledDeltaTime);
+            });
         }
 
         private void LateUpdate()
         {
-            OnLateUpdate?.Invoke(Time.deltaTime, Time.unscaledDeltaTime);
+            m_LateUpdates.ForEach((updater) =>
+            {
+                updater.DoLateUpdate(Time.deltaTime, Time.unscaledDeltaTime);
+            });
         }
 
         private void FixedUpdate()
         {
-            OnFixedUpdate?.Invoke(Time.fixedDeltaTime, Time.fixedUnscaledDeltaTime);
+            m_FixedUpdates.ForEach((updater) =>
+            {
+                updater.DoFixedUpdate(Time.fixedDeltaTime, Time.fixedUnscaledDeltaTime);
+            });
         }
 
         private void OnDestroy()
         {
-            
+            Updater = null;
+            m_FixedUpdates.Clear();
+            m_LateUpdates.Clear();
+            m_FixedUpdates.Clear();
         }
     }
 }
