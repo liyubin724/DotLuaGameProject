@@ -37,43 +37,47 @@ namespace DotEditor.Log
                 EditorGUILayout.Space();
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
                 {
-                    EditorGUI.BeginChangeCheck();
+                    if(m_Setting!=null)
                     {
-                        m_Setting.GlobalLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Global Log Level:", m_Setting.GlobalLogLevel);
-                    }
-                    if(EditorGUI.EndChangeCheck())
-                    {
-
-                    }
-                    if(m_Setting.LoggerLogLevelDic.Count>0)
-                    {
-                        EditorGUILayout.LabelField("Logger Log Level:");
-                        EGUI.BeginIndent();
+                        EditorGUI.BeginChangeCheck();
                         {
-                            foreach(var kvp in m_Setting.LoggerLogLevelDic)
+                            m_Setting.GlobalLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Global Log Level:", m_Setting.GlobalLogLevel);
+                        }
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            LogViewer.Viewer.ChangeGlobalLogLevel(m_Setting.GlobalLogLevel);
+                        }
+                        if (m_Setting.LoggerLogLevelDic.Count > 0)
+                        {
+                            EditorGUILayout.LabelField("Logger Log Level:");
+                            EGUI.BeginIndent();
                             {
-                                EditorGUI.BeginChangeCheck();
+                                foreach (var kvp in m_Setting.LoggerLogLevelDic)
                                 {
-                                    EditorGUILayout.LabelField(kvp.Value.Name);
-                                    EGUI.BeginIndent();
+                                    EditorGUI.BeginChangeCheck();
                                     {
-                                        kvp.Value.MinLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Min Log Level:", kvp.Value.MinLogLevel);
-                                        kvp.Value.StackTraceLogLevel = (LogLevel)EditorGUILayout.EnumPopup("StackTrace Log Level:", kvp.Value.StackTraceLogLevel);
+                                        EditorGUILayout.LabelField(kvp.Value.Name);
+                                        EGUI.BeginIndent();
+                                        {
+                                            kvp.Value.MinLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Min Log Level:", kvp.Value.MinLogLevel);
+                                            kvp.Value.StackTraceLogLevel = (LogLevel)EditorGUILayout.EnumPopup("StackTrace Log Level:", kvp.Value.StackTraceLogLevel);
+                                        }
+                                        EGUI.EndIndent();
                                     }
-                                    EGUI.EndIndent();
-                                }
-                                if (EditorGUI.EndChangeCheck())
-                                {
-
+                                    if (EditorGUI.EndChangeCheck())
+                                    {
+                                        LogViewer.Viewer.ChangeLoggerLogLevel(kvp.Value.Name, kvp.Value.MinLogLevel, kvp.Value.StackTraceLogLevel);
+                                    }
                                 }
                             }
+                            EGUI.EndIndent();
                         }
-                        EGUI.EndIndent();
                     }
                 }
                 EditorGUILayout.EndScrollView();
             }
             GUILayout.EndArea();
         }
+
     }
 }

@@ -1,5 +1,7 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.Log;
+using DotEngine.Log.Appender;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,7 +29,7 @@ namespace DotEditor.Log
         private LogClientSocket clientSocket = null;
 
         private LogViewerData viewerData = new LogViewerData();
-        private LogViewerSetting viewerSetting = new LogViewerSetting();
+        internal LogViewerSetting viewerSetting = new LogViewerSetting();
 
         private LogGridView gridView = null;
 
@@ -161,6 +163,8 @@ namespace DotEditor.Log
                 {
                     if (GUILayout.Button("Setting", EditorStyles.toolbarButton))
                     {
+                        clientSocket.SendMessage(LogSocketUtil.C2S_GET_LOG_LEVEL_REQUEST, string.Empty);
+
                         Vector2 pos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
                         GUIExtension.Windows.PopupWindow.ShowWin(new Rect(pos.x, pos.y, 250, 400), new LogViewerSettingPopContent(viewerSetting), false, true);
                     }
@@ -220,6 +224,28 @@ namespace DotEditor.Log
 
                     Repaint();
                 }
+            }
+        }
+
+        public void ChangeGlobalLogLevel(LogLevel globalLogLevel)
+        {
+            if (clientSocket != null && clientStatus == LogClientStatus.Connected)
+            {
+                JObject messJObj = new JObject();
+                messJObj.Add("global_log_level", (int)globalLogLevel);
+                clientSocket.SendMessage(LogSocketUtil.C2S_SET_GLOBAL_LOG_LEVEL_REQUEST, messJObj.ToString());
+            }
+        }
+
+        public void ChangeLoggerLogLevel(string name,LogLevel minLogLevel,LogLevel stacktraceLogLevel)
+        {
+            if (clientSocket != null && clientStatus == LogClientStatus.Connected)
+            {
+                JObject messJObj = new JObject();
+                messJObj.Add("name", name);
+                messJObj.Add("min_log_level", (int)minLogLevel);
+                messJObj.Add("stacktrace_log_level", (int)stacktraceLogLevel);
+                clientSocket.SendMessage(LogSocketUtil.C2S_SET_LOGGER_LOG_LEVEL_REQUEST, messJObj.ToString());
             }
         }
     }

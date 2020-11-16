@@ -101,8 +101,6 @@ namespace DotEditor.Log
         private void OnConnected(object sender, EventArgs eventArgs)
         {
             Status = LogClientStatus.Connected;
-
-            
         }
 
         private void OnReceived(object sender, ReceiveEventArgs eventArgs)
@@ -124,6 +122,27 @@ namespace DotEditor.Log
 
                     logDataList.Add(logData);
                 }
+            }else if(id == LogSocketUtil.S2C_GET_LOG_LEVEL_RESPONSE)
+            {
+                LogViewerSetting setting = LogViewer.Viewer.viewerSetting;
+                string jsonStr = Encoding.UTF8.GetString(eventArgs.bytes, sizeof(int), eventArgs.bytes.Length - sizeof(int));
+                JObject messJObj = JObject.Parse(jsonStr);
+
+                setting.GlobalLogLevel = (LogLevel)messJObj["global_log_level"].Value<int>();
+
+                setting.LoggerLogLevelDic.Clear();
+
+                JArray loggerSettings = (JArray)messJObj["loggers"];
+                for(int i =0;i<loggerSettings.Count;++i)
+                {
+                    JObject loggerJObj = loggerSettings.GetItem(i).Value<JObject>();
+                    LogViewerSetting.LoggerSetting loggerSetting = new LogViewerSetting.LoggerSetting();
+                    loggerSetting.Name = loggerJObj["name"].Value<string>();
+                    loggerSetting.MinLogLevel = (LogLevel)loggerJObj["min_log_level"].Value<int>();
+                    loggerSetting.StackTraceLogLevel = (LogLevel)loggerJObj["stacktrace_log_level"].Value<int>();
+
+                    setting.LoggerLogLevelDic.Add(loggerSetting.Name, loggerSetting);
+                }
             }
         }
 
@@ -139,7 +158,17 @@ namespace DotEditor.Log
 
         public void SendMessage(int id,string message)
         {
+            if(clientSocket!=null && clientSocket.IsConnected)
+            {
+                byte[] idBytes = BitConverter.GetBytes(id);
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
+                byte[] bytes = new byte[sizeof(int) + messageBytes.Length];
+                Array.Copy(idBytes, 0, bytes, 0, idBytes.Length);
+                Array.Copy(messageBytes, 0, bytes, idBytes.Length, messageBytes.Length);
+
+                clientSocket.Send(bytes);
+            }
         }
         
     }

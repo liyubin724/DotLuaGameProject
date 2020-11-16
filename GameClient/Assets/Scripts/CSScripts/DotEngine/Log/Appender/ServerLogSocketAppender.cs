@@ -102,7 +102,7 @@ namespace DotEngine.Log.Appender
 
                     jArr.Add(loggerJObj);
                 }
-                jObj.Add("logger", jArr);
+                jObj.Add("loggers", jArr);
 
                 SendMessage(clientSocket, LogSocketUtil.S2C_GET_LOG_LEVEL_RESPONSE, jObj.ToString());
             }

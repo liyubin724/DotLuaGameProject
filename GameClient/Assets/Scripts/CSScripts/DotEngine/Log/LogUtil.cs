@@ -11,12 +11,11 @@ namespace DotEngine.Log
         private readonly static Dictionary<string, Logger> sm_Loggers = new Dictionary<string, Logger>();
         private readonly static Dictionary<string, ALogAppender> sm_Appenders = new Dictionary<string, ALogAppender>();
 
-        private static Logger sm_DefaultLogger = new Logger("Logger")
+        private static Logger sm_DefaultLogger = null;
+        static LogUtil()
         {
-            OnLogMessage = OnLogMessage,
-            MinLogLevel = LogLevel.On,
-            StackTraceLogLevel = LogLevel.Error,
-        };
+            sm_DefaultLogger = GetLogger("Logger", LogLevel.On, LogLevel.Error);
+        }
 
         public static void AddAppender(ALogAppender appender)
         {
