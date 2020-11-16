@@ -77,7 +77,7 @@ namespace DotEngine.Utilities
             return false;
         }
 
-        public static Type[] GetAllChildClasses(Type baseType,bool allowAbstract = false)
+        public static Type[] GetAllChildClasses(Type baseType, bool allowInvisible = false, bool allowAbstract = false)
         {
             var types = new List<Type>();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -90,7 +90,7 @@ namespace DotEngine.Utilities
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (!isSubclass(type) || !type.IsVisible || (!allowAbstract && type.IsAbstract))
+                    if (!isSubclass(type) ||(!type.IsVisible&&!allowInvisible) || (!allowAbstract && type.IsAbstract))
                     {
                         continue;
                     }

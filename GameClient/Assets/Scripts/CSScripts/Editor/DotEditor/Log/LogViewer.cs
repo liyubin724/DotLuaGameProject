@@ -14,6 +14,7 @@ namespace DotEditor.Log
         {
             var viewer = GetWindow<LogViewer>();
             viewer.titleContent = new GUIContent("Log Viewer");
+            viewer.CenterOnMainWin();
 
             viewer.Show();
         }
