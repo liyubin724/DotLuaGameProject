@@ -18,7 +18,7 @@ namespace DotEditor.GUIExtension
             win.position = pos;
         }
 
-        private static Rect GetEditorMainWindowPos()
+        public static Rect GetEditorMainWindowPos()
         {
             var containerWinType = ReflectionUtility.GetAllChildClasses(typeof(ScriptableObject),true).Where(t => t.Name == "ContainerWindow").FirstOrDefault();
             if (containerWinType == null)
