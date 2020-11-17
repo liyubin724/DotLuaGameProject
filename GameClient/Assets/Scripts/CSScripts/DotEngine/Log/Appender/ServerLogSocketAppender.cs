@@ -10,14 +10,14 @@ namespace DotEngine.Log.Appender
 {
     public class LogSocketUtil
     {
-        public static readonly int C2S_GET_LOG_LEVEL_REQUEST = 1;
-        public static readonly int C2S_SET_GLOBAL_LOG_LEVEL_REQUEST = 2;
-        public static readonly int C2S_SET_LOGGER_LOG_LEVEL_REQUEST = 3;
+        public const int C2S_GET_LOG_LEVEL_REQUEST = 1;
+        public const int C2S_SET_GLOBAL_LOG_LEVEL_REQUEST = 2;
+        public const int C2S_SET_LOGGER_LOG_LEVEL_REQUEST = 3;
 
-        public static readonly int S2C_GET_LOG_LEVEL_RESPONSE = 101;
-        public static readonly int S2C_SET_GLOBAL_LOG_LEVEL_RESPONSE = 102;
-        public static readonly int S2C_SET_LOGGER_LOG_LEVEL_RESPONSE = 103;
-        public static readonly int S2C_RECEIVE_LOG_REQUEST = 104;
+        public const int S2C_GET_LOG_LEVEL_RESPONSE = 101;
+        public const int S2C_SET_GLOBAL_LOG_LEVEL_RESPONSE = 102;
+        public const int S2C_SET_LOGGER_LOG_LEVEL_RESPONSE = 103;
+        public const int S2C_RECEIVE_LOG_REQUEST = 104;
     }
 
     public class ServerLogMessage

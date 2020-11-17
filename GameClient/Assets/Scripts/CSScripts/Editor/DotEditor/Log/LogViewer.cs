@@ -1,7 +1,10 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.Log;
 using DotEngine.Log.Appender;
+using DotEngine.NetworkEx;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,26 +27,26 @@ namespace DotEditor.Log
         public static LogViewer Viewer = null;
 
         [SerializeField]
-        private string ipAddressString = "127.0.0.1";
+        private string m_IPAddressString = "127.0.0.1";
 
-        private LogClientStatus clientStatus = LogClientStatus.None;
-        private LogClientSocket clientSocket = null;
+        private ClientNetworkStatus m_ClientStatus = ClientNetworkStatus.None;
+        private ClientNetwork m_ClientNetwork = null;
 
-        private LogViewerData viewerData = new LogViewerData();
+        private LogViewerData m_ViewerData = new LogViewerData();
         internal LogViewerSetting viewerSetting = new LogViewerSetting();
 
-        private LogGridView gridView = null;
+        private LogGridView m_GridView = null;
 
-        private string selectedLogDataText = string.Empty;
-        private Vector2 selectedLogDataScrollPos = Vector2.zero;
+        private string m_SelectedLogDataText = string.Empty;
+        private Vector2 m_SelectedLogDataScrollPos = Vector2.zero;
 
-        private ToolbarSearchField searchField = null;
+        private ToolbarSearchField m_SearchField = null;
         private void OnEnable()
         {
             Viewer = this;
 
-            viewerData = new LogViewerData();
-            viewerData.OnLogDataChanged = OnLogDataChanged;
+            m_ViewerData = new LogViewerData();
+            m_ViewerData.OnLogDataChanged = OnLogDataChanged;
             EditorApplication.update += OnUpdate;
         }
 
@@ -59,24 +62,24 @@ namespace DotEditor.Log
 
         private void OnLogDataChanged()
         {
-            gridView?.Reload();
+            m_GridView?.Reload();
         }
 
         private void OnGUI()
         {
-            if(gridView == null)
+            if(m_GridView == null)
             {
-                gridView = new LogGridView(viewerData.GridViewModel);
-                gridView.OnSelectedChanged += (logData) =>
+                m_GridView = new LogGridView(m_ViewerData.GridViewModel);
+                m_GridView.OnSelectedChanged += (logData) =>
                 {
-                    selectedLogDataScrollPos = Vector2.zero;
-                    viewerData.SelectedLogData = logData;
-                    if(viewerData.SelectedLogData!=null)
+                    m_SelectedLogDataScrollPos = Vector2.zero;
+                    m_ViewerData.SelectedLogData = logData;
+                    if(m_ViewerData.SelectedLogData!=null)
                     {
-                        selectedLogDataText = viewerData.SelectedLogData.ToString();
+                        m_SelectedLogDataText = m_ViewerData.SelectedLogData.ToString();
                     }else
                     {
-                        selectedLogDataText = string.Empty;
+                        m_SelectedLogDataText = string.Empty;
                     }
                 };
             }
@@ -84,51 +87,52 @@ namespace DotEditor.Log
             DrawToolbar();
             DrawGridView();
 
-            selectedLogDataScrollPos = EditorGUILayout.BeginScrollView(selectedLogDataScrollPos,GUILayout.Height(160),GUILayout.ExpandWidth(true));
+            m_SelectedLogDataScrollPos = EditorGUILayout.BeginScrollView(m_SelectedLogDataScrollPos,GUILayout.Height(160),GUILayout.ExpandWidth(true));
             {
-                EditorGUILayout.SelectableLabel(selectedLogDataText,GUILayout.ExpandWidth(true),GUILayout.ExpandHeight(true));
+                EditorGUILayout.SelectableLabel(m_SelectedLogDataText,GUILayout.ExpandWidth(true),GUILayout.ExpandHeight(true));
             }
             EditorGUILayout.EndScrollView();
         }
 
         void DrawToolbar()
         {
-            if(searchField == null)
+            if(m_SearchField == null)
             {
-                searchField = new ToolbarSearchField((text)=>
+                m_SearchField = new ToolbarSearchField((text)=>
                 {
-                    viewerData.SearchText = text;
+                    m_ViewerData.SearchText = text;
                 },(category)=> {
-                    viewerData.SearchCategory = category;
+                    m_ViewerData.SearchCategory = category;
                 });
-                searchField.CategoryIndex = 0;
-                searchField.Categories = viewerData.SearchCategories;
-                searchField.Text = viewerData.SearchText;
+                m_SearchField.CategoryIndex = 0;
+                m_SearchField.Categories = m_ViewerData.SearchCategories;
+                m_SearchField.Text = m_ViewerData.SearchText;
             }
 
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             {
-                ipAddressString = GUILayout.TextField(ipAddressString, EditorStyles.toolbarTextField,GUILayout.Width(220));
-                
-                if(clientSocket == null)
+                m_IPAddressString = GUILayout.TextField(m_IPAddressString, EditorStyles.toolbarTextField,GUILayout.Width(220));
+                if(m_ClientNetwork == null)
                 {
-                    if(GUILayout.Button("Connect",EditorStyles.toolbarButton))
+                    if (GUILayout.Button("Connect", EditorStyles.toolbarButton))
                     {
-                        clientSocket = new LogClientSocket();
-                        clientSocket.Connect(ipAddressString, PORT);
+                        m_ClientNetwork = new ClientNetwork("LogClientNetwork");
+                        m_ClientNetwork.Connect(m_IPAddressString, PORT);
                     }
                 }else
                 {
-                    if(clientStatus == LogClientStatus.Connecting)
+                    if (m_ClientStatus == ClientNetworkStatus.Connecting)
                     {
                         GUILayout.Label("Connecting", EditorStyles.toolbarButton);
-                    }else if(clientStatus == LogClientStatus.Connected)
+                    }
+                    else if (m_ClientStatus == ClientNetworkStatus.Connected)
                     {
                         if (GUILayout.Button("Disconnect", EditorStyles.toolbarButton))
                         {
-                            clientSocket.Disconnect();
+                            m_ClientNetwork.Disconnect();
                         }
-                    }else if(clientStatus == LogClientStatus.Disconnecting)
+                    }
+                    else if (m_ClientStatus == ClientNetworkStatus.Disconnecting)
                     {
                         GUILayout.Label("Disconnecting", EditorStyles.toolbarButton);
                     }
@@ -137,9 +141,9 @@ namespace DotEditor.Log
                 GUILayout.Space(10);
                 if(GUILayout.Button("Clear",EditorStyles.toolbarButton))
                 {
-                    selectedLogDataText = string.Empty;
-                    selectedLogDataScrollPos = Vector2.zero;
-                    viewerData.Reset();
+                    m_SelectedLogDataText = string.Empty;
+                    m_SelectedLogDataScrollPos = Vector2.zero;
+                    m_ViewerData.Reset();
                 }
 
                 GUILayout.FlexibleSpace();
@@ -149,22 +153,22 @@ namespace DotEditor.Log
                 {
                     LogLevel level = (LogLevel)i;
 
-                    GUI.color = viewerData.GetIsLogLevelEnable(level) ? Color.cyan : oldBGColor;
-                    if (GUILayout.Button(level.ToString()+"("+viewerData.GetLogLevelCount(level)+")", EditorStyles.toolbarButton))
+                    GUI.color = m_ViewerData.GetIsLogLevelEnable(level) ? Color.cyan : oldBGColor;
+                    if (GUILayout.Button(level.ToString()+"("+m_ViewerData.GetLogLevelCount(level)+")", EditorStyles.toolbarButton))
                     {
-                        viewerData.ReverseIsLogLevelEnable(level);
+                        m_ViewerData.ReverseIsLogLevelEnable(level);
                     }
                 }
                 GUI.color = oldBGColor;
 
                 GUILayout.Space(10);
-                searchField.OnGUILayout();
+                m_SearchField.OnGUILayout();
 
-                EditorGUI.BeginDisabledGroup(clientSocket == null);
+                EditorGUI.BeginDisabledGroup(m_ClientNetwork == null);
                 {
                     if (GUILayout.Button("Setting", EditorStyles.toolbarButton))
                     {
-                        clientSocket.SendMessage(LogSocketUtil.C2S_GET_LOG_LEVEL_REQUEST, string.Empty);
+                        m_ClientNetwork.SendMessage(LogSocketUtil.C2S_GET_LOG_LEVEL_REQUEST, null);
 
                         Vector2 pos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
                         GUIExtension.Windows.PopupWindow.ShowWin(new Rect(pos.x, pos.y, 250, 400), new LogViewerSettingPopContent(viewerSetting), false, true);
@@ -180,9 +184,9 @@ namespace DotEditor.Log
         {
             EditorGUILayout.BeginVertical(GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
             {
-                if (gridView != null)
+                if (m_GridView != null)
                 {
-                    gridView.OnGUILayout();
+                    m_GridView.OnGUILayout();
                 }
             }
             EditorGUILayout.EndVertical();
@@ -190,37 +194,26 @@ namespace DotEditor.Log
 
         private void OnUpdate()
         {
-            if (clientSocket!=null)
+            if (m_ClientNetwork!=null)
             {
-                LogClientStatus curStatus = clientSocket.Status;
-                if(curStatus!= clientStatus)
+                ClientNetworkStatus curStatus = m_ClientNetwork.Status;
+                if(curStatus!= m_ClientStatus)
                 {
-                    clientStatus = curStatus;
+                    m_ClientStatus = curStatus;
 
-                    if(clientStatus == LogClientStatus.Disconnected)
+                    if(m_ClientStatus == ClientNetworkStatus.Disconnected)
                     {
                         ShowNotification(new GUIContent("Disconnected"));
-                        clientSocket = null;
-                    }else if(clientStatus == LogClientStatus.Connecting)
+                        m_ClientNetwork = null;
+                    }else if(m_ClientStatus == ClientNetworkStatus.Connecting)
                     {
                         ShowNotification(new GUIContent("Connecting..."));
-                    }else if(clientStatus == LogClientStatus.Connected)
+                    }else if(m_ClientStatus == ClientNetworkStatus.Connected)
                     {
                         ShowNotification(new GUIContent("Connected"));
-                    }else if(clientStatus == LogClientStatus.Disconnecting)
+                    }else if(m_ClientStatus == ClientNetworkStatus.Disconnecting)
                     {
                         ShowNotification(new GUIContent("Disconnecting..."));
-                    }
-
-                    Repaint();
-                }
-
-                if(curStatus == LogClientStatus.Connected)
-                {
-                    LogData[] datas = clientSocket.LogDatas;
-                    if(datas!=null && datas.Length>0)
-                    {
-                        viewerData.AddLogDatas(datas);
                     }
 
                     Repaint();
@@ -230,23 +223,75 @@ namespace DotEditor.Log
 
         public void ChangeGlobalLogLevel(LogLevel globalLogLevel)
         {
-            if (clientSocket != null && clientStatus == LogClientStatus.Connected)
+            if (m_ClientNetwork != null && m_ClientStatus == ClientNetworkStatus.Connected)
             {
                 JObject messJObj = new JObject();
                 messJObj.Add("global_log_level", (int)globalLogLevel);
-                clientSocket.SendMessage(LogSocketUtil.C2S_SET_GLOBAL_LOG_LEVEL_REQUEST, messJObj.ToString());
+
+                SendMessage(LogSocketUtil.C2S_SET_GLOBAL_LOG_LEVEL_REQUEST, messJObj.ToString());
             }
         }
 
         public void ChangeLoggerLogLevel(string name,LogLevel minLogLevel,LogLevel stacktraceLogLevel)
         {
-            if (clientSocket != null && clientStatus == LogClientStatus.Connected)
+            if (m_ClientNetwork != null && m_ClientStatus == ClientNetworkStatus.Connected)
             {
                 JObject messJObj = new JObject();
                 messJObj.Add("name", name);
                 messJObj.Add("min_log_level", (int)minLogLevel);
                 messJObj.Add("stacktrace_log_level", (int)stacktraceLogLevel);
-                clientSocket.SendMessage(LogSocketUtil.C2S_SET_LOGGER_LOG_LEVEL_REQUEST, messJObj.ToString());
+                SendMessage(LogSocketUtil.C2S_SET_LOGGER_LOG_LEVEL_REQUEST, messJObj.ToString());
+            }
+        }
+
+        private void SendMessage(int id, string message)
+        {
+            if (m_ClientNetwork != null && m_ClientNetwork.IsConnected)
+            {
+                if(string.IsNullOrEmpty(message))
+                {
+                    m_ClientNetwork.SendMessage(id, null);
+                }else
+                {
+                    m_ClientNetwork.SendMessage(id, Encoding.UTF8.GetBytes(message));
+                }
+            }
+        }
+
+        [ClientNetworkMessageHandler(LogSocketUtil.S2C_RECEIVE_LOG_REQUEST)]
+        private void OnS2CReceivedLogRequest(byte[] messageBytes)
+        {
+            JObject jsonObj = JObject.Parse(Encoding.UTF8.GetString(messageBytes));
+
+            LogData logData = new LogData();
+            logData.Level = (LogLevel)jsonObj["level"].Value<int>();
+            logData.Time = new DateTime(jsonObj["time"].Value<long>());
+            logData.Tag = jsonObj["tag"].Value<string>();
+            logData.Message = jsonObj["message"].Value<string>();
+            logData.StackTrace = jsonObj["stacktrace"].Value<string>();
+
+            m_ViewerData.AddLogData(logData);
+        }
+
+        [ClientNetworkMessageHandler(LogSocketUtil.S2C_GET_LOG_LEVEL_RESPONSE)]
+        private void OnS2CGetLogLevelResponse(byte[] messageBytes)
+        {
+            JObject messJObj = JObject.Parse(Encoding.UTF8.GetString(messageBytes));
+
+            viewerSetting.GlobalLogLevel = (LogLevel)messJObj["global_log_level"].Value<int>();
+
+            viewerSetting.LoggerLogLevelDic.Clear();
+
+            JArray loggerSettings = (JArray)messJObj["loggers"];
+            for (int i = 0; i < loggerSettings.Count; ++i)
+            {
+                JObject loggerJObj = loggerSettings.GetItem(i).Value<JObject>();
+                LogViewerSetting.LoggerSetting loggerSetting = new LogViewerSetting.LoggerSetting();
+                loggerSetting.Name = loggerJObj["name"].Value<string>();
+                loggerSetting.MinLogLevel = (LogLevel)loggerJObj["min_log_level"].Value<int>();
+                loggerSetting.StackTraceLogLevel = (LogLevel)loggerJObj["stacktrace_log_level"].Value<int>();
+
+                viewerSetting.LoggerLogLevelDic.Add(loggerSetting.Name, loggerSetting);
             }
         }
     }
