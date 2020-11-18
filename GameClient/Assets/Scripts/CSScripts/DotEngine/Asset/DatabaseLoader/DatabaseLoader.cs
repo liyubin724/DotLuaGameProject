@@ -14,7 +14,7 @@ namespace DotEngine.Asset
     /// </summary>
     public class DatabaseLoader : AAssetLoader
     {
-        private ObjectPool<DatabaseAssetNode> assetNodePool = new ObjectPool<DatabaseAssetNode>();
+        private ItemObjectPool<DatabaseAssetNode> assetNodePool = new ItemObjectPool<DatabaseAssetNode>();
 
         /// <summary>
         /// 初始化

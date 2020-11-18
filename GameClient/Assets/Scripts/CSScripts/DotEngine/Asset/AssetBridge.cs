@@ -11,7 +11,7 @@ namespace DotEngine.Asset
 
     public class AssetBridge //: IDispose
     {
-        private static ObjectPool<AssetBridgeData> bridgeDataPool = new ObjectPool<AssetBridgeData>();
+        private static ItemObjectPool<AssetBridgeData> bridgeDataPool = new ItemObjectPool<AssetBridgeData>();
 
         private UniqueIntID idCreator = new UniqueIntID(0);
         private AssetLoaderPriority loaderPriority = AssetLoaderPriority.Default;

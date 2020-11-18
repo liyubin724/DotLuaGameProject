@@ -15,7 +15,7 @@ namespace DotEngine.World.QT
         private int m_MaxDepth = 7;//最大深度
         private int m_NodeSplitThreshold = 10;//进行分裂的数量
 
-        private ObjectPool<QuadNode> m_NodePool = new ObjectPool<QuadNode>();
+        private ItemObjectPool<QuadNode> m_NodePool = new ItemObjectPool<QuadNode>();
         
         private Dictionary<IQuadObject, QuadNode> m_ObjectToNodeDic = new Dictionary<IQuadObject, QuadNode>();
         /// <summary>

@@ -46,7 +46,7 @@ namespace DotEngine.Net.Server
 
         private ManualResetEvent allDone = new ManualResetEvent(false);
 
-        private ObjectPool<ServerNetMessageData> dataPool = new ObjectPool<ServerNetMessageData>();
+        private ItemObjectPool<ServerNetMessageData> dataPool = new ItemObjectPool<ServerNetMessageData>();
         private object dataListLock = new object();
         private List<ServerNetMessageData> dataList = new List<ServerNetMessageData>();
 

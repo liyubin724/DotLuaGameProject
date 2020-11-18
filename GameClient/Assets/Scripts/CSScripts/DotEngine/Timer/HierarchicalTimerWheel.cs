@@ -13,7 +13,7 @@ namespace DotEngine.Timer
     internal class HierarchicalTimerWheel
     {
         private UniqueIntID m_IndexCreator = new UniqueIntID();
-        private ObjectPool<TimerTask> m_TaskPool = new ObjectPool<TimerTask>();
+        private ItemObjectPool<TimerTask> m_TaskPool = new ItemObjectPool<TimerTask>();
 
         private bool m_IsPaused = false;
         private List<TimerWheel> m_Wheels = new List<TimerWheel>();

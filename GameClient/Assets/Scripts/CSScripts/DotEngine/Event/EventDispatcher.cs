@@ -8,7 +8,7 @@ namespace DotEngine.EventDispatch
 
     public class EventDispatcher
     {
-        private static ObjectPool<EventData> eventDataPool = null;
+        private static ItemObjectPool<EventData> eventDataPool = null;
         private Dictionary<int, List<EventHandler>> eventHandlerDic = null;
         private Dictionary<EventData, TimerHandler> delayEventTaskInfo = null;
 
@@ -16,7 +16,7 @@ namespace DotEngine.EventDispatch
         {
             if (eventDataPool == null)
             {
-                eventDataPool = new ObjectPool<EventData>();
+                eventDataPool = new ItemObjectPool<EventData>();
             }
 
             eventHandlerDic = new Dictionary<int, List<EventHandler>>();

@@ -129,11 +129,11 @@ namespace DotEngine.Pool
         void OnRelease();
     }
 
-    public class ObjectPool<T> where T : class, IObjectPoolItem, new()
+    public class ItemObjectPool<T> where T : class, IObjectPoolItem, new()
     {
         private Stack<T> m_Stack = new Stack<T>();
 
-        public ObjectPool(int preloadCount=0)
+        public ItemObjectPool(int preloadCount=0)
         {
             if(preloadCount>0)
             {

@@ -15,10 +15,10 @@ namespace DotEngine.Asset
     /// </summary>
     public class BundleLoader : AAssetLoader
     {
-        private ObjectPool<BundleNode> bundleNodePool = new ObjectPool<BundleNode>();
+        private ItemObjectPool<BundleNode> bundleNodePool = new ItemObjectPool<BundleNode>();
         private Dictionary<string, BundleNode> bundleNodeDic = new Dictionary<string, BundleNode>();
 
-        private ObjectPool<BundleAssetNode> assetNodePool = new ObjectPool<BundleAssetNode>();
+        private ItemObjectPool<BundleAssetNode> assetNodePool = new ItemObjectPool<BundleAssetNode>();
         private AssetBundleConfig bundleConfig = null;
 
         protected override void DoInitUpdate()

@@ -24,7 +24,7 @@ namespace DotEngine.Asset
 
     public abstract class AAssetLoader
     {
-        protected ObjectPool<AssetLoaderData> dataPool = new ObjectPool<AssetLoaderData>(5);
+        protected ItemObjectPool<AssetLoaderData> dataPool = new ItemObjectPool<AssetLoaderData>(5);
 
         //等待加载的资源队列，会根据优先级调整加载的先后顺序
         protected StablePriorityQueue<AssetLoaderData> dataWaitingQueue = new StablePriorityQueue<AssetLoaderData>(10);
