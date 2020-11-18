@@ -1,5 +1,4 @@
-﻿using DotEngine.Log;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DotEngine.Pool
@@ -49,7 +48,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                LogUtil.Error("ObjectPool", "The element has been push into pool!");
+                DebugLog.Error("ObjectPool::Release->The element has been push into pool!");
                 return;
             }
 #endif
@@ -108,7 +107,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                LogUtil.Error("ObjectPool", "The element has been push into pool!");
+                DebugLog.Error("GenericObjectPool::Release->The element has been push into pool!");
                 return;
             }
 #endif
@@ -171,7 +170,7 @@ namespace DotEngine.Pool
 #if DEBUG
                 if (m_Stack.Contains(element))
                 {
-                    LogUtil.Error("ObjectPool", "The element has been push into pool!");
+                    DebugLog.Error("ItemObjectPool::Release->The element has been push into pool!");
                     return;
                 }
 #endif

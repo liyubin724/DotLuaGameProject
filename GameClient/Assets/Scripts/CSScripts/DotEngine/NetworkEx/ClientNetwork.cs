@@ -1,8 +1,6 @@
-﻿using DotEngine.Log;
-using DotEngine.Network;
+﻿using DotEngine.Network;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 
@@ -19,9 +17,8 @@ namespace DotEngine.NetworkEx
 
     public class ClientNetwork : IUpdate
     {
+        public string Name { get; private set; }
         private TcpClientSocket m_ClientSocket = null;
-
-        private Logger m_Logger = null;
 
         private object m_StatusLocker = new object();
         private ClientNetworkStatus m_Status = ClientNetworkStatus.None;
@@ -59,7 +56,7 @@ namespace DotEngine.NetworkEx
 
         public ClientNetwork(string name)
         {
-            m_Logger = LogUtil.GetLogger($"ClientNet({name})", LogLevel.Error, LogLevel.Error);
+            Name = name;
         }
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
@@ -109,7 +106,7 @@ namespace DotEngine.NetworkEx
                             callback(contentBytes);
                         }else
                         {
-                            m_Logger.Warning("");
+                            DebugLog.Warning("");
                         }
                     }
 
@@ -176,7 +173,7 @@ namespace DotEngine.NetworkEx
                         RegistMessageHandler(attr.ID, messageHandler);
                     }else
                     {
-                        m_Logger.Warning("");
+                        DebugLog.Warning("");
                     }
                 }
             }

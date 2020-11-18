@@ -1,5 +1,4 @@
-﻿using DotEngine.Log;
-using DotEngine.Network;
+﻿using DotEngine.Network;
 using DotEngine.Pool;
 using System;
 using System.Collections.Generic;
@@ -17,11 +16,9 @@ namespace DotEngine.NetworkEx
 
     public class ServerNetwork : IUpdate
     {
-        private string m_Name;
+        public string Name { get; private set; }
         private int m_Port = 0;
         private TcpServerSocket m_serverSocket;
-
-        private Logger m_Logger = null;
 
         private readonly object m_MessageLocker = new object();
         private GenericObjectPool<ServerLogMessage> m_MessagePool = null;
@@ -31,9 +28,7 @@ namespace DotEngine.NetworkEx
 
         public ServerNetwork(string name)
         {
-            m_Name = name;
-
-            m_Logger = LogUtil.GetLogger(name, LogLevel.Error, LogLevel.Error);
+            Name = name;
 
             m_MessagePool = new GenericObjectPool<ServerLogMessage>(
                 () => new ServerLogMessage() { Client = null, Message = null },
@@ -45,7 +40,7 @@ namespace DotEngine.NetworkEx
         {
             if(m_Port!=port && m_serverSocket!=null)
             {
-                m_Logger.Warning("");
+                DebugLog.Warning("");
                 Disconnect();
             }
 
@@ -83,7 +78,7 @@ namespace DotEngine.NetworkEx
                     }
                     else
                     {
-                        m_Logger.Warning("");
+                        DebugLog.Warning("");
                     }
                 }
             }
@@ -113,7 +108,7 @@ namespace DotEngine.NetworkEx
                 m_MessageHandlerDic.Add(id, handler);
             }else
             {
-                m_Logger.Error("");
+                DebugLog.Error("");
             }
         }
 
@@ -124,7 +119,7 @@ namespace DotEngine.NetworkEx
                 m_MessageHandlerDic.Remove(id);
             }else
             {
-                m_Logger.Error("");
+                DebugLog.Error("");
             }
         }
 
