@@ -22,8 +22,6 @@ namespace DotEditor.Log
             viewer.Show();
         }
 
-        public static readonly int PORT = 8899;
-
         public static LogViewer Viewer = null;
 
         [SerializeField]
@@ -47,6 +45,7 @@ namespace DotEditor.Log
 
             m_ViewerData = new LogViewerData();
             m_ViewerData.OnLogDataChanged = OnLogDataChanged;
+
             EditorApplication.update += OnUpdate;
         }
 
@@ -117,7 +116,8 @@ namespace DotEditor.Log
                     if (GUILayout.Button("Connect", EditorStyles.toolbarButton))
                     {
                         m_ClientNetwork = new ClientNetwork("LogClientNetwork");
-                        m_ClientNetwork.Connect(m_IPAddressString, PORT);
+                        m_ClientNetwork.RegistAllMessageHandler(this);
+                        m_ClientNetwork.Connect(m_IPAddressString, LogNetUtill.PORT);
                     }
                 }else
                 {
@@ -168,7 +168,7 @@ namespace DotEditor.Log
                 {
                     if (GUILayout.Button("Setting", EditorStyles.toolbarButton))
                     {
-                        m_ClientNetwork.SendMessage(LogSocketUtil.C2S_GET_LOG_LEVEL_REQUEST, null);
+                        m_ClientNetwork.SendMessage(LogNetUtill.C2S_GET_LOG_LEVEL_REQUEST, null);
 
                         Vector2 pos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
                         GUIExtension.Windows.PopupWindow.ShowWin(new Rect(pos.x, pos.y, 250, 400), new LogViewerSettingPopContent(viewerSetting), false, true);
@@ -228,7 +228,7 @@ namespace DotEditor.Log
                 JObject messJObj = new JObject();
                 messJObj.Add("global_log_level", (int)globalLogLevel);
 
-                SendMessage(LogSocketUtil.C2S_SET_GLOBAL_LOG_LEVEL_REQUEST, messJObj.ToString());
+                SendMessage(LogNetUtill.C2S_SET_GLOBAL_LOG_LEVEL_REQUEST, messJObj.ToString());
             }
         }
 
@@ -240,7 +240,7 @@ namespace DotEditor.Log
                 messJObj.Add("name", name);
                 messJObj.Add("min_log_level", (int)minLogLevel);
                 messJObj.Add("stacktrace_log_level", (int)stacktraceLogLevel);
-                SendMessage(LogSocketUtil.C2S_SET_LOGGER_LOG_LEVEL_REQUEST, messJObj.ToString());
+                SendMessage(LogNetUtill.C2S_SET_LOGGER_LOG_LEVEL_REQUEST, messJObj.ToString());
             }
         }
 
@@ -258,7 +258,7 @@ namespace DotEditor.Log
             }
         }
 
-        [ClientNetworkMessageHandler(LogSocketUtil.S2C_RECEIVE_LOG_REQUEST)]
+        [ClientNetworkMessageHandler(LogNetUtill.S2C_RECEIVE_LOG_REQUEST)]
         private void OnS2CReceivedLogRequest(byte[] messageBytes)
         {
             JObject jsonObj = JObject.Parse(Encoding.UTF8.GetString(messageBytes));
@@ -273,7 +273,7 @@ namespace DotEditor.Log
             m_ViewerData.AddLogData(logData);
         }
 
-        [ClientNetworkMessageHandler(LogSocketUtil.S2C_GET_LOG_LEVEL_RESPONSE)]
+        [ClientNetworkMessageHandler(LogNetUtill.S2C_GET_LOG_LEVEL_RESPONSE)]
         private void OnS2CGetLogLevelResponse(byte[] messageBytes)
         {
             JObject messJObj = JObject.Parse(Encoding.UTF8.GetString(messageBytes));
@@ -292,6 +292,30 @@ namespace DotEditor.Log
                 loggerSetting.StackTraceLogLevel = (LogLevel)loggerJObj["stacktrace_log_level"].Value<int>();
 
                 viewerSetting.LoggerLogLevelDic.Add(loggerSetting.Name, loggerSetting);
+            }
+        }
+
+        [ClientNetworkMessageHandler(LogNetUtill.S2C_SET_GLOBAL_LOG_LEVEL_RESPONSE)]
+        private void OnS2CSetGlobalLogLevelResponse(byte[] messageBytes)
+        {
+            JObject messJObj = JObject.Parse(Encoding.UTF8.GetString(messageBytes));
+            viewerSetting.GlobalLogLevel = (LogLevel)messJObj["global_log_level"].Value<int>();
+        }
+
+        [ClientNetworkMessageHandler(LogNetUtill.S2C_SET_LOGGER_LOG_LEVEL_RESPONSE)]
+        private void OnS2CSetLoggerLogLevelResponse(byte[] messageBytes)
+        {
+            string jsonStr = Encoding.UTF8.GetString(messageBytes);
+            JObject messJObj = JObject.Parse(jsonStr);
+
+            string name = messJObj["name"].Value<string>();
+            LogLevel minLogLevel = (LogLevel)messJObj["min_log_level"].Value<int>();
+            LogLevel stacktraceLogLevel = (LogLevel)messJObj["stacktrace_log_level"].Value<int>();
+
+            if(viewerSetting.LoggerLogLevelDic.TryGetValue(name,out var setting))
+            {
+                setting.MinLogLevel = minLogLevel;
+                setting.StackTraceLogLevel = stacktraceLogLevel;
             }
         }
     }

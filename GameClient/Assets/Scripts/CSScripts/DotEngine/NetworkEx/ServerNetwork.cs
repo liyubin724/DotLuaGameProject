@@ -11,6 +11,7 @@ namespace DotEngine.NetworkEx
     public class ServerLogMessage
     {
         public Socket Client { get; set; }
+        public int ID { get; set; }
         public byte[] Message { get; set; }
     }
 
@@ -26,7 +27,7 @@ namespace DotEngine.NetworkEx
         private GenericObjectPool<ServerLogMessage> m_MessagePool = null;
         private List<ServerLogMessage> m_ReceivedMessages = new List<ServerLogMessage>();
 
-        private Dictionary<int, Action<Socket, byte[]>> m_MessageHandlerDic = new Dictionary<int, Action<Socket, byte[]>>();
+        private Dictionary<int, Action<ServerLogMessage>> m_MessageHandlerDic = new Dictionary<int, Action<ServerLogMessage>>();
 
         public ServerNetwork(string name)
         {
@@ -69,13 +70,13 @@ namespace DotEngine.NetworkEx
             {
                 return;
             }
-            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
+            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public|BindingFlags.NonPublic);
             foreach (var method in methods)
             {
                 var attr = method.GetCustomAttribute<ServerNetworkMessageHandlerAttribute>();
                 if (attr != null)
                 {
-                    Action<Socket, byte[]> messageHandler = Delegate.CreateDelegate(typeof(Action<Socket, byte[]>), instance, method) as Action<Socket, byte[]>;
+                    Action<ServerLogMessage> messageHandler = Delegate.CreateDelegate(typeof(Action<ServerLogMessage>), instance, method) as Action<ServerLogMessage>;
                     if (messageHandler != null)
                     {
                         RegistMessageHandler(attr.ID, messageHandler);
@@ -105,7 +106,7 @@ namespace DotEngine.NetworkEx
             }
         }
 
-        public void RegistMessageHandler(int id,Action<Socket,byte[]> handler)
+        public void RegistMessageHandler(int id,Action<ServerLogMessage> handler)
         {
             if(!m_MessageHandlerDic.ContainsKey(id))
             {
@@ -156,15 +157,9 @@ namespace DotEngine.NetworkEx
                 {
                     if (message.Client != null && message.Client.Connected)
                     {
-                        int id = BitConverter.ToInt32(message.Message, 0);
-                        if(m_MessageHandlerDic.TryGetValue(id,out var callback))
+                        if(m_MessageHandlerDic.TryGetValue(message.ID,out var callback))
                         {
-                            byte[] contentBytes = new byte[0];
-                            if (message.Message.Length > sizeof(int))
-                            {
-                                contentBytes = new byte[message.Message.Length - sizeof(int)];
-                            }
-                            callback(message.Client, contentBytes);
+                            callback(message);
                         }else
                         {
 
@@ -239,7 +234,17 @@ namespace DotEngine.NetworkEx
             {
                 ServerLogMessage message = m_MessagePool.Get();
                 message.Client = e.client;
-                message.Message = e.bytes;
+
+                int id = BitConverter.ToInt32(e.bytes, 0);
+                byte[] contentBytes = new byte[0];
+                if (message.Message.Length > sizeof(int))
+                {
+                    contentBytes = new byte[e.bytes.Length - sizeof(int)];
+                    Array.Copy(e.bytes, sizeof(int), contentBytes, 0,contentBytes.Length);
+                }
+                message.ID = id;
+                message.Message = contentBytes;
+
                 m_ReceivedMessages.Add(message);
             }
         }

@@ -164,7 +164,7 @@ namespace DotEngine.NetworkEx
             {
                 return;
             }
-            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
+            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public|BindingFlags.NonPublic);
             foreach(var method in methods)
             {
                 var attr = method.GetCustomAttribute<ClientNetworkMessageHandlerAttribute>();
