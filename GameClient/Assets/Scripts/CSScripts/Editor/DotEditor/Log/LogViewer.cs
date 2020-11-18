@@ -17,7 +17,6 @@ namespace DotEditor.Log
         {
             var viewer = GetWindow<LogViewer>();
             viewer.titleContent = new GUIContent("Log Viewer");
-            viewer.CenterOnMainWin();
 
             viewer.Show();
         }
@@ -285,7 +284,7 @@ namespace DotEditor.Log
             JArray loggerSettings = (JArray)messJObj["loggers"];
             for (int i = 0; i < loggerSettings.Count; ++i)
             {
-                JObject loggerJObj = loggerSettings.GetItem(i).Value<JObject>();
+                JObject loggerJObj = loggerSettings[i].Value<JObject>();
                 LogViewerSetting.LoggerSetting loggerSetting = new LogViewerSetting.LoggerSetting();
                 loggerSetting.Name = loggerJObj["name"].Value<string>();
                 loggerSetting.MinLogLevel = (LogLevel)loggerJObj["min_log_level"].Value<int>();

@@ -29,7 +29,7 @@ namespace DotEditor.Log
             m_Setting = setting;
         }
 
-        protected internal override void OnGUI(Rect rect)
+        public override void OnGUI(Rect rect)
         {
             GUILayout.BeginArea(rect);
             {

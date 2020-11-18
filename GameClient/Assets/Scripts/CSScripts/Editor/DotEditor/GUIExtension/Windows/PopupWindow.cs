@@ -5,10 +5,10 @@ namespace DotEditor.GUIExtension.Windows
 {
     public abstract class PopupWindowContent
     {
-        protected internal PopupWindow Window { get; internal set; }
-        protected internal virtual void OnOpen() { }
-        protected internal abstract void OnGUI(Rect rect);
-        protected internal virtual void OnClose() { }
+        public PopupWindow Window { get; set; }
+        public virtual void OnOpen() { }
+        public abstract void OnGUI(Rect rect);
+        public virtual void OnClose() { }
     }
 
     public class PopupWindow : EditorWindow
