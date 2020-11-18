@@ -1,6 +1,5 @@
 using System;
 using System.Net.Sockets;
-using DotEngine.Log;
 
 namespace DotEngine.Network
 {
@@ -15,10 +14,9 @@ namespace DotEngine.Network
         public event EventHandler<ReceiveEventArgs> OnReceive;
         public event EventHandler OnDisconnect;
 
-        public bool IsConnected { get; protected set; }
-
-        protected Logger logger;
         protected Socket socket;
+
+        public bool IsConnected { get; protected set; }
 
         protected void TriggerOnReceive(ReceiveVO receiveVO, int bytesReceived)
         {
@@ -54,11 +52,13 @@ namespace DotEngine.Network
 
                 if (bytesReceived == 0)
                 {
+                    DebugLog.Info("AbstractTcpSocket::OnReceived->the length of bytes which was received from net is zero.the net was closed by remote");
+
                     DisconnectedByRemote(receiveVO.socket);
                 }
                 else
                 {
-                    logger.Debug(string.Format("Received {0} bytes.", bytesReceived));
+                    DebugLog.Debug($"AbstractTcpSocket::OnReceived->Received {bytesReceived} bytes.");
                     TriggerOnReceive(receiveVO, bytesReceived);
 
                     Receive(receiveVO);
@@ -71,6 +71,9 @@ namespace DotEngine.Network
             if (IsConnected && socket.Connected)
             {
                 socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, OnSended, socket);
+            }else
+            {
+                DebugLog.Info("AbstractTcpSocket::SendWith->the net is disconnected");
             }
         }
 

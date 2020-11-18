@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using DotEngine.Log;
 
 namespace DotEngine.Network
 {
@@ -11,12 +10,12 @@ namespace DotEngine.Network
 
         public TcpClientSocket()
         {
-            logger = LogUtil.GetLogger(GetType().Name,LogLevel.Error);
         }
 
         public void Connect(IPAddress ip, int port)
         {
-            logger.Debug(string.Format("Connecting to {0}:{1}...", ip, port));
+            DebugLog.Debug($"TcpClientSocket::Connect->Connecting to {ip}:{port}...");
+
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.BeginConnect(ip, port, OnConnected, socket);
         }
@@ -29,9 +28,7 @@ namespace DotEngine.Network
                 socket.EndConnect(ar);
                 IsConnected = true;
 
-                IPEndPoint clientEndPoint = (IPEndPoint)socket.RemoteEndPoint;
-
-                logger.Info(string.Format("Connected to {0}:{1}", clientEndPoint.Address, clientEndPoint.Port));
+                DebugLog.Debug("TcpClientSocket::Connect->Connected");
 
                 OnConnect?.Invoke(this, null);
 
@@ -39,7 +36,7 @@ namespace DotEngine.Network
             }
             catch (Exception ex)
             {
-                logger.Warning(ex.Message);
+                DebugLog.Warning($"TcpClientSocket::Connect->{ex.Message}");
 
                 TriggerOnDisconnect();
             }
@@ -52,7 +49,8 @@ namespace DotEngine.Network
 
         protected override void DisconnectedByRemote(Socket socket)
         {
-            logger.Info("Disconnected by remote.");
+            DebugLog.Info("TcpClientSocket::DisconnectedByRemote->Disconnected by remote.");
+
             Disconnect();
         }
 
@@ -60,13 +58,13 @@ namespace DotEngine.Network
         {
             if (IsConnected)
             {
-                logger.Debug("Disconnecting...");
+                DebugLog.Debug("TcpClientSocket::Disconnect->Disconnecting...");
                 IsConnected = false;
                 socket.BeginDisconnect(false, OnDisconnected, socket);
             }
             else
             {
-                logger.Debug("Already diconnected.");
+                DebugLog.Info("TcpClientSocket::Disconnect->Already disconnected.");
             }
         }
 
@@ -77,8 +75,8 @@ namespace DotEngine.Network
             socket.Close();
 
             base.socket = null;
-            
-            logger.Debug("Disconnected.");
+
+            DebugLog.Debug("TcpClientSocket::OnDisconnected->Disconnected.");
 
             TriggerOnDisconnect();
         }

@@ -16,7 +16,7 @@ namespace DotEngine.Log
         {
             sm_DefaultLogger = GetLogger("Logger", LogLevel.On, LogLevel.Error);
 
-            DebugLog.SetLogAction(sm_DefaultLogger.Info, sm_DefaultLogger.Warning, sm_DefaultLogger.Error);
+            DebugLog.SetLogAction(null, sm_DefaultLogger.Warning, sm_DefaultLogger.Error);
         }
 
         public static void AddAppender(ALogAppender appender)

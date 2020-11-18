@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Net;
-using DotEngine.Log;
+using System.Net.Sockets;
 
 namespace DotEngine.Network
 {
@@ -17,27 +16,27 @@ namespace DotEngine.Network
 
         public TcpServerSocket()
         {
-            logger = LogUtil.GetLogger(GetType().Name,LogLevel.Error);
-
             clients = new List<Socket>();
         }
 
-        public void Listen(int port)
+        public void Listen(int port, int backlog = 100)
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             try
             {
                 socket.Bind(new IPEndPoint(IPAddress.Any, port));
-                socket.Listen(100);
+                socket.Listen(backlog);
                 IsConnected = true;
-                logger.Info(string.Format("Listening on port {0}...", port));
+
+                DebugLog.Debug($"TcpServerSocket::Listen->Listening on port {port}..."); 
+
                 Accept();
             }
             catch (Exception ex)
             {
                 socket = null;
-                logger.Warning(ex.Message);
+                DebugLog.Warning(ex.Message);
             }
         }
 
@@ -62,7 +61,7 @@ namespace DotEngine.Network
 
             IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
 
-            logger.Info(string.Format("New client connection accepted ({0}:{1})", clientEndPoint.Address, clientEndPoint.Port));
+            DebugLog.Info($"TcpServerSocket::AcceptedClientConnection->New client connection accepted ({clientEndPoint.Address}:{clientEndPoint.Port})");
 
             OnClientConnect?.Invoke(this, new TcpSocketEventArgs(client));
 
@@ -75,11 +74,11 @@ namespace DotEngine.Network
             {
                 IPEndPoint clientEndPoint = (IPEndPoint)socket.RemoteEndPoint;
 
-                logger.Info(string.Format("Client disconnected ({0}:{1})",clientEndPoint.Address, clientEndPoint.Port));
+                DebugLog.Info($"TcpServerSocket::DisconnectedByRemote->Client disconnected ({clientEndPoint.Address}:{clientEndPoint.Port})");
             }
             catch (Exception)
             {
-                logger.Info("Client disconnected.");
+                DebugLog.Info("TcpServerSocket::DisconnectedByRemote->Client disconnected.");
             }
 
             socket.Close();
@@ -104,14 +103,15 @@ namespace DotEngine.Network
 
             if (IsConnected)
             {
-                logger.Info("Stopped listening.");
+                DebugLog.Info("TcpServerSocket::Disconnect->Stopped listening.");
+
                 IsConnected = false;
                 socket.Close();
                 TriggerOnDisconnect();
             }
             else
             {
-                logger.Info("Already diconnected.");
+                DebugLog.Info("TcpServerSocket::Disconnect->Already diconnected.");
             }
         }
 
