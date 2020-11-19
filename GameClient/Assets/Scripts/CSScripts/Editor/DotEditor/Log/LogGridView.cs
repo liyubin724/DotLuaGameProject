@@ -1,6 +1,7 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.GUIExtension.DataGrid;
 using DotEngine.Log;
+using DotEngine.Log.Formatter;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -92,7 +93,7 @@ namespace DotEditor.Log
                 }
                 else if (columnIndex == 1)
                 {
-                    GUI.Label(rect, logData.Time.ToString());
+                    GUI.Label(rect, new DateTime(logData.Time).ToString());
                 }
                 else if (columnIndex == 2)
                 {

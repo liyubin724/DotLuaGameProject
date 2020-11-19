@@ -1,30 +1,18 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.Log;
+using DotEngine.Log.Appender;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.Log
 {
-    public class LogViewerSetting
-    {
-        public LogLevel GlobalLogLevel { get; set; } = LogLevel.On;
-        public Dictionary<string, LoggerSetting> LoggerLogLevelDic = new Dictionary<string, LoggerSetting>();
-
-        public class LoggerSetting
-        {
-            public string Name { get; set; }
-            public LogLevel MinLogLevel { get; set; } = LogLevel.On;
-            public LogLevel StackTraceLogLevel { get; set; } = LogLevel.Error;
-        }
-    }
-
     public class LogViewerSettingPopContent : GUIExtension.Windows.PopupWindowContent
     {
-        private LogViewerSetting m_Setting = null;
+        private LogNetSetting m_Setting = null;
         private Vector2 scrollPos = Vector2.zero;
 
-        public LogViewerSettingPopContent(LogViewerSetting setting)
+        public LogViewerSettingPopContent(LogNetSetting setting)
         {
             m_Setting = setting;
         }
@@ -41,32 +29,32 @@ namespace DotEditor.Log
                     {
                         EditorGUI.BeginChangeCheck();
                         {
-                            m_Setting.GlobalLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Global Log Level:", m_Setting.GlobalLogLevel);
+                            m_Setting.GlobalSetting.GlobalLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Global Log Level:", m_Setting.GlobalSetting.GlobalLogLevel);
                         }
                         if (EditorGUI.EndChangeCheck())
                         {
-                            LogViewer.Viewer.ChangeGlobalLogLevel(m_Setting.GlobalLogLevel);
+                            LogViewer.Viewer.ChangeGlobalLogLevel(m_Setting.GlobalSetting.GlobalLogLevel);
                         }
-                        if (m_Setting.LoggerLogLevelDic.Count > 0)
+                        if (m_Setting.LoggerSettings.Count > 0)
                         {
                             EditorGUILayout.LabelField("Logger Log Level:");
                             EGUI.BeginIndent();
                             {
-                                foreach (var kvp in m_Setting.LoggerLogLevelDic)
+                                foreach (var loggerSetting in m_Setting.LoggerSettings)
                                 {
                                     EditorGUI.BeginChangeCheck();
                                     {
-                                        EditorGUILayout.LabelField(kvp.Value.Name);
+                                        EditorGUILayout.LabelField(loggerSetting.Name);
                                         EGUI.BeginIndent();
                                         {
-                                            kvp.Value.MinLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Min Log Level:", kvp.Value.MinLogLevel);
-                                            kvp.Value.StackTraceLogLevel = (LogLevel)EditorGUILayout.EnumPopup("StackTrace Log Level:", kvp.Value.StackTraceLogLevel);
+                                            loggerSetting.MinLogLevel = (LogLevel)EditorGUILayout.EnumPopup("Min Log Level:", loggerSetting.MinLogLevel);
+                                            loggerSetting.StackTraceLogLevel = (LogLevel)EditorGUILayout.EnumPopup("StackTrace Log Level:", loggerSetting.StackTraceLogLevel);
                                         }
                                         EGUI.EndIndent();
                                     }
                                     if (EditorGUI.EndChangeCheck())
                                     {
-                                        LogViewer.Viewer.ChangeLoggerLogLevel(kvp.Value.Name, kvp.Value.MinLogLevel, kvp.Value.StackTraceLogLevel);
+                                        LogViewer.Viewer.ChangeLoggerLogLevel(loggerSetting.Name, loggerSetting.MinLogLevel, loggerSetting.StackTraceLogLevel);
                                     }
                                 }
                             }

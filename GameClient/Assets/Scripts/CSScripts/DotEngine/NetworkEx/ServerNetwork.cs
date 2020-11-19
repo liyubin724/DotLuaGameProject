@@ -127,7 +127,7 @@ namespace DotEngine.NetworkEx
         {
             if(m_serverSocket!=null)
             {
-                UpdateBehaviour.Updater.RemoveUpdate(this);
+                UpdateBehaviour.Updater?.RemoveUpdate(this);
 
                 m_serverSocket.OnClientConnect -= OnClientConnected;
                 m_serverSocket.OnClientDisconnect -= OnClientDisconnected;
@@ -207,7 +207,7 @@ namespace DotEngine.NetworkEx
                 }
             }
         }
-             
+     
         bool IsReadyForSend()
         {
             return m_serverSocket != null && m_serverSocket.IsConnected && m_serverSocket.ConnectedClients > 0;
@@ -228,16 +228,16 @@ namespace DotEngine.NetworkEx
             lock (m_MessageLocker)
             {
                 ServerLogMessage message = m_MessagePool.Get();
-                message.Client = e.client;
 
                 int id = BitConverter.ToInt32(e.bytes, 0);
                 byte[] contentBytes = new byte[0];
-                if (message.Message.Length > sizeof(int))
+                if (e.bytes.Length > sizeof(int))
                 {
                     contentBytes = new byte[e.bytes.Length - sizeof(int)];
                     Array.Copy(e.bytes, sizeof(int), contentBytes, 0,contentBytes.Length);
                 }
                 message.ID = id;
+                message.Client = e.client;
                 message.Message = contentBytes;
 
                 m_ReceivedMessages.Add(message);

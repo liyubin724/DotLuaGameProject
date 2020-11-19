@@ -1,5 +1,6 @@
 ﻿using DotEditor.GUIExtension.DataGrid;
 using DotEngine.Log;
+using DotEngine.Log.Formatter;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,29 +13,6 @@ namespace DotEditor.Log
         Tag,
         Message,
         StackTrace,
-    }
-
-    public class LogData
-    {
-        public LogLevel Level { get; set; }
-        public DateTime Time { get; set; }
-        public string Tag { get; set; }
-        public string Message { get; set; }
-        public string StackTrace { get; set; }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Level:      {Level}");
-            sb.AppendLine($"Time:      {Time}");
-            sb.AppendLine($"Tag:        {Tag}");
-            sb.AppendLine($"Message:{Message}");
-            if (!string.IsNullOrEmpty(StackTrace))
-            {
-                sb.AppendLine($"StackTrace:\n{StackTrace}");
-            }
-            return sb.ToString();
-        }
     }
 
     public class LogViewerData

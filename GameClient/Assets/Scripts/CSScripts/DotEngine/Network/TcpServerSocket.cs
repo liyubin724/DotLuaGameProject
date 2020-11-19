@@ -94,6 +94,17 @@ namespace DotEngine.Network
             }
         }
 
+        public void SendExcept(Socket exceptClient,byte[] bytes)
+        {
+            foreach (var client in clients)
+            {
+                if(client != exceptClient)
+                {
+                    SendWith(client, bytes);
+                }
+            }
+        }
+
         public override void Disconnect()
         {
             foreach (var client in clients)

@@ -6,9 +6,8 @@ namespace DotEngine.Log
     public static class LogUtil
     {
         public static LogLevel GlobalLogLevel { get; set; } = LogLevel.On;
-        internal static Dictionary<string, Logger> Loggers => sm_Loggers;
 
-        private readonly static Dictionary<string, Logger> sm_Loggers = new Dictionary<string, Logger>();
+        internal static Dictionary<string, Logger> Loggers { get; private set; } = new Dictionary<string, Logger>();
         private readonly static Dictionary<string, ALogAppender> sm_Appenders = new Dictionary<string, ALogAppender>();
 
         private static Logger sm_DefaultLogger = null;
@@ -16,7 +15,7 @@ namespace DotEngine.Log
         {
             sm_DefaultLogger = GetLogger("Logger", LogLevel.On, LogLevel.Error);
 
-            DebugLog.SetLogAction(null, sm_DefaultLogger.Warning, sm_DefaultLogger.Error);
+            //DebugLog.SetLogAction(sm_DefaultLogger.Info, sm_DefaultLogger.Warning, sm_DefaultLogger.Error);
         }
 
         public static void AddAppender(ALogAppender appender)
@@ -39,7 +38,7 @@ namespace DotEngine.Log
 
         public static Logger GetLogger(string name,LogLevel logLevel = LogLevel.Trace,LogLevel stackTraceLevel = LogLevel.Error)
         {
-            if(!sm_Loggers.TryGetValue(name,out var logger))
+            if(!Loggers.TryGetValue(name,out var logger))
             {
                 logger = new Logger(name)
                 {
@@ -47,9 +46,17 @@ namespace DotEngine.Log
                     MinLogLevel = logLevel,
                     StackTraceLogLevel = stackTraceLevel,
                 };
-                sm_Loggers.Add(name, logger);
+                Loggers.Add(name, logger);
             }
             return logger;
+        }
+
+        public static void RemoveLogger(string name)
+        {
+            if(Loggers.ContainsKey(name))
+            {
+                Loggers.Remove(name);
+            }
         }
 
         private static void OnLogMessage(Logger logger, LogLevel level, string message,string stackTrace)
@@ -72,7 +79,7 @@ namespace DotEngine.Log
                 kvp.Value.Dispose();
             }
             sm_Appenders.Clear();
-            sm_Loggers.Clear();
+            Loggers.Clear();
         }
 
         public static void Trace(string message)

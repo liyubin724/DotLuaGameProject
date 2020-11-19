@@ -2,7 +2,7 @@
 
 namespace DotEngine.Log
 {
-    public delegate void LogMessage(Logger logger, LogLevel level, string message,string stackTrace);
+    public delegate void LogMessage(Logger logger, LogLevel level, string message, string stackTrace);
 
     public class Logger
     {
@@ -23,6 +23,12 @@ namespace DotEngine.Log
                 return string.Empty;
             }
             return new StackTrace(3,true).ToString();
+        }
+
+        public void Dispose()
+        {
+            OnLogMessage = null;
+            LogUtil.RemoveLogger(Name);
         }
 
         public void Trace(string message)
