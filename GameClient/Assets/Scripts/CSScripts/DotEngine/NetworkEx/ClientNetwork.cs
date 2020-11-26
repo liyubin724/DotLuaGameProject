@@ -131,7 +131,7 @@ namespace DotEngine.NetworkEx
 
             m_ClientSocket.Connect(IPAddress.Parse(ipString), port);
 
-            UpdateBehaviour.Updater.AddUpdate(this);
+            UpdateBehaviour.AddUpdate(this);
 
             return true;
         }
@@ -222,7 +222,7 @@ namespace DotEngine.NetworkEx
         {
             if(m_ClientSocket !=null && (Status == ClientNetworkStatus.Connecting || Status == ClientNetworkStatus.Connected))
             {
-                UpdateBehaviour.Updater.RemoveUpdate(this);
+                UpdateBehaviour.RemoveUpdate(this);
 
                 Status = ClientNetworkStatus.Disconnecting;
                 m_ClientSocket.Disconnect();
@@ -249,7 +249,7 @@ namespace DotEngine.NetworkEx
 
         private void OnDisconnected(object sender, EventArgs eventArgs)
         {
-            UpdateBehaviour.Updater.RemoveUpdate(this);
+            UpdateBehaviour.RemoveUpdate(this);
 
             Status = ClientNetworkStatus.Disconnected;
             m_ClientSocket.OnConnect -= OnConnected;

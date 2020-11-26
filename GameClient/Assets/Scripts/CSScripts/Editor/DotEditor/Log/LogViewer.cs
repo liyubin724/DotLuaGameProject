@@ -53,6 +53,11 @@ namespace DotEditor.Log
             m_ViewerData.OnLogDataChanged = OnLogDataChanged;
 
             EditorApplication.update += OnUpdate;
+
+            if(Application.isPlaying)
+            {
+                ConnectServer();
+            }
         }
 
         private void OnDisable()
@@ -65,6 +70,17 @@ namespace DotEditor.Log
         private void OnDestroy()
         {
             Viewer = null;
+        }
+
+        private void ConnectServer()
+        {
+            if(m_ClientNetwork!=null)
+            {
+                m_ClientNetwork.Disconnect();
+            }
+            m_ClientNetwork = new ClientNetwork("LogClientNetwork");
+            m_ClientNetwork.RegistAllMessageHandler(this);
+            m_ClientNetwork.Connect(m_IPAddressString, LogNetUtill.PORT);
         }
 
         private void OnLogDataChanged()
@@ -123,9 +139,7 @@ namespace DotEditor.Log
                 {
                     if (GUILayout.Button("Connect", EditorStyles.toolbarButton))
                     {
-                        m_ClientNetwork = new ClientNetwork("LogClientNetwork");
-                        m_ClientNetwork.RegistAllMessageHandler(this);
-                        m_ClientNetwork.Connect(m_IPAddressString, LogNetUtill.PORT);
+                        ConnectServer();
                     }
                 }else
                 {

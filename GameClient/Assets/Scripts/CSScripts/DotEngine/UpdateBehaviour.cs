@@ -22,38 +22,26 @@ namespace DotEngine
     public class UpdateBehaviour : MonoBehaviour
     {
         public const string NAME = "Updater";
+        public static UpdateBehaviour sm_Updater;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void OnStartup()
         {
-            DontDestroyHandler.CreateComponent<UpdateBehaviour>(NAME);
+            sm_Updater = DontDestroyHandler.CreateComponent<UpdateBehaviour>(NAME);
         }
-
-        public static UpdateBehaviour Updater { get; private set; } = null;
 
         private List<IUpdate> m_Updates = new List<IUpdate>();
         private List<ILateUpdate> m_LateUpdates = new List<ILateUpdate>();
         private List<IFixedUpdate> m_FixedUpdates = new List<IFixedUpdate>();
 
-        public void AddUpdate(IUpdate updater) => m_Updates.Add(updater);
-        public void RemoveUpdate(IUpdate updater) => m_Updates.Remove(updater);
+        public static void AddUpdate(IUpdate updater) => sm_Updater?.m_Updates.Add(updater);
+        public static void RemoveUpdate(IUpdate updater) => sm_Updater?.m_Updates.Remove(updater);
 
-        public void AddLateUpdate(ILateUpdate updater) => m_LateUpdates.Add(updater);
-        public void RemoveLateUpdate(ILateUpdate updater) => m_LateUpdates.Remove(updater);
+        public static void AddLateUpdate(ILateUpdate updater) => sm_Updater?.m_LateUpdates.Add(updater);
+        public static void RemoveLateUpdate(ILateUpdate updater) => sm_Updater?.m_LateUpdates.Remove(updater);
 
-        public void AddFixedUpdate(IFixedUpdate updater) => m_FixedUpdates.Add(updater);
-        public void RemoveFixedUpdate(IFixedUpdate updater) => m_FixedUpdates.Remove(updater);
-
-        private void Awake()
-        {
-            if(Updater!=null)
-            {
-                Destroy(this);
-            }else
-            {
-                Updater = this;
-            }
-        }
+        public static void AddFixedUpdate(IFixedUpdate updater) => sm_Updater?.m_FixedUpdates.Add(updater);
+        public static void RemoveFixedUpdate(IFixedUpdate updater) => sm_Updater?.m_FixedUpdates.Remove(updater);
 
         private void Update()
         {
@@ -81,10 +69,11 @@ namespace DotEngine
 
         private void OnDestroy()
         {
-            Updater = null;
             m_FixedUpdates.Clear();
             m_LateUpdates.Clear();
             m_FixedUpdates.Clear();
+
+            sm_Updater = null;
         }
     }
 }
