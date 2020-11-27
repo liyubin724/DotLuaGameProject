@@ -26,11 +26,9 @@ public class TestSO
         rootData2.name = "Root2";
         AssetDatabase.CreateAsset(rootData2, filePath2);
 
-        NodeData childChildData = ScriptableObject.CreateInstance<EventActionData>();
+        NodeData childChildData = ScriptableObject.CreateInstance<DurationActionData>();
         childChildData.name = "Root/Condition Data/Event Action Data";
         AssetDatabase.AddObjectToAsset(childChildData, rootData2);
-
-        AssetDatabase.RemoveObjectFromAsset(childChildData);
 
         AssetDatabase.SaveAssets();
     }
