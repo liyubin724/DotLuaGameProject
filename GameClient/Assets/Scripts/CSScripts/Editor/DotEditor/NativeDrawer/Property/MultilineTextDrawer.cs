@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrDrawBinder(typeof(MultilineTextAttribute))]
+    [AttrBinder(typeof(MultilineTextAttribute))]
     public class MultilineTextDrawer : PropertyDrawer
     {
         public MultilineTextDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)

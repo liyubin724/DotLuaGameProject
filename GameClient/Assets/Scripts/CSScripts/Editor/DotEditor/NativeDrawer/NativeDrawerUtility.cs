@@ -23,8 +23,7 @@ namespace DotEditor.NativeDrawer
     public static class NativeDrawerUtility
     {
         private static Dictionary<Type, Type> attrDrawerDic = new Dictionary<Type, Type>();
-
-        private static Dictionary<Type, Type> defaultTypeDrawerDic = new Dictionary<Type, Type>();
+        private static Dictionary<Type, Type> customTypeDrawerDic = new Dictionary<Type, Type>();
 
         [UnityEditor.InitializeOnLoadMethod]
         public static void OnDrawerInited()
@@ -39,29 +38,21 @@ namespace DotEditor.NativeDrawer
                 }
                 Type[] types = (
                                 from type in assembly.GetTypes() 
-                                where !type.IsAbstract && !type.IsInterface && typeof(AttrNativeDrawer).IsAssignableFrom(type) 
+                                where !type.IsAbstract && !type.IsInterface && (typeof(AttrNativeDrawer).IsAssignableFrom(type)  || typeof(NativeTypeDrawer).IsAssignableFrom(type))
                                 select type
                                 ).ToArray();
                 foreach(var type in types)
                 {
-                    AttrDrawBinderAttribute attr = type.GetCustomAttribute<AttrDrawBinderAttribute>();
-                    if(attr!=null)
+                    AttrBinderAttribute binderAttr = type.GetCustomAttribute<AttrBinderAttribute>();
+                    if(binderAttr != null)
                     {
-                        attrDrawerDic.Add(attr.AttrType, type);
+                        attrDrawerDic.Add(binderAttr.AttrType, type);
                     }
-                }
 
-                types = (
-                        from type in assembly.GetTypes()
-                        where !type.IsAbstract && !type.IsInterface && typeof(NativeTypeDrawer).IsAssignableFrom(type)
-                        select type
-                        ).ToArray();
-                foreach(var type in types)
-                {
-                    CustomTypeDrawerAttribute attr = type.GetCustomAttribute<CustomTypeDrawerAttribute>();
-                    if(attr!=null)
+                    CustomTypeDrawerAttribute drawerAttr = type.GetCustomAttribute<CustomTypeDrawerAttribute>();
+                    if (drawerAttr != null)
                     {
-                        defaultTypeDrawerDic.Add(attr.Target, type);
+                        customTypeDrawerDic.Add(drawerAttr.Target, type);
                     }
                 }
             }
@@ -145,7 +136,7 @@ namespace DotEditor.NativeDrawer
         public static NativeTypeDrawer CreateDefaultTypeDrawer(NativeDrawerProperty property)
         {
             Type type = GetDefaultType(property.ValueType);
-            if (defaultTypeDrawerDic.TryGetValue(type, out Type drawerType))
+            if (customTypeDrawerDic.TryGetValue(type, out Type drawerType))
             {
                 return (NativeTypeDrawer)Activator.CreateInstance(drawerType, property);
             }

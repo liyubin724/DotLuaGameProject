@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Layout
 {
-    [AttrDrawBinder(typeof(BeginGroupAttribute))]
+    [AttrBinder(typeof(BeginGroupAttribute))]
     public class BeginGroupDrawer : LayoutDrawer
     {
         public BeginGroupDrawer(LayoutAttribute attr) : base(attr)

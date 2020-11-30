@@ -105,6 +105,7 @@ namespace DotEditor.NativeDrawer
             Target = propertyObject;
             Field = field;
             ArrayElementIndex = arrayElementIndex;
+
             Init();
         }
 

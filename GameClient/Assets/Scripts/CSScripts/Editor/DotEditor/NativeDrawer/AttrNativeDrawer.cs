@@ -7,16 +7,11 @@ namespace DotEditor.NativeDrawer
 {
     public abstract class AttrNativeDrawer
     {
-        public NativeDrawerAttribute Attr { get; private set; }
+        public NativeDrawerAttribute Attr { get; set; }
 
         public T GetAttr<T>() where T:NativeDrawerAttribute
         {
             return (T)Attr;
-        }
-
-        protected AttrNativeDrawer(NativeDrawerAttribute attr)
-        {
-            Attr = attr;
         }
     }
 

@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Layout
 {
-    [AttrDrawBinder(typeof(EndGroupAttribute))]
+    [AttrBinder(typeof(EndGroupAttribute))]
     public class EndGroupDrawer : LayoutDrawer
     {
         public EndGroupDrawer(LayoutAttribute attr) : base(attr)

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [AttrDrawBinder(typeof(ButtonAttribute))]
+    [AttrBinder(typeof(ButtonAttribute))]
     public class ButtonDrawer : DecoratorDrawer
     {
         public ButtonDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)

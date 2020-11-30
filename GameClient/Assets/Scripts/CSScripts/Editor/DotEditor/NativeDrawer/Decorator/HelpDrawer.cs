@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [AttrDrawBinder(typeof(HelpAttribute))]
+    [AttrBinder(typeof(HelpAttribute))]
     public class HelpDrawer : DecoratorDrawer
     {
         public HelpDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)

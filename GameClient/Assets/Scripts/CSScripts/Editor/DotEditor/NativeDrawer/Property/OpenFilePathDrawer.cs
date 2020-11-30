@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrDrawBinder(typeof(OpenFilePathAttribute))]
+    [AttrBinder(typeof(OpenFilePathAttribute))]
     public class OpenFilePathDrawer : PropertyDrawer
     {
         public OpenFilePathDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)

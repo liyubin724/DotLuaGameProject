@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Verification
 {
-    [AttrDrawBinder(typeof(NotNullAttribute))]
+    [AttrBinder(typeof(NotNullAttribute))]
     public class NotNullDrawer : VerificationDrawer
     {
         public NotNullDrawer(object target, VerificationCompareAttribute attr) : base(target, attr)

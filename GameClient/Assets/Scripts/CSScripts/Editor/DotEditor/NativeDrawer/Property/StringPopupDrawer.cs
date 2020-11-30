@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrDrawBinder(typeof(StringPopupAttribute))]
+    [AttrBinder(typeof(StringPopupAttribute))]
     public class StringPopupDrawer : PropertyDrawer
     {
         private static EditorWindow lastSearchableWindow;

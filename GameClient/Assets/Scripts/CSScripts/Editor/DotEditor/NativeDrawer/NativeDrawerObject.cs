@@ -16,6 +16,7 @@ namespace DotEditor.NativeDrawer
     public class NativeDrawerObject
     {
         public bool IsShowScroll { get; set; } = false;
+        public bool IsShowInherit { get; set; } = true;
 
         private object drawerObject;
         private List<TypeDrawerProperty> typeDrawerProperties = new List<TypeDrawerProperty>();
@@ -52,23 +53,30 @@ namespace DotEditor.NativeDrawer
         }
 
         private Vector2 scrollPos = Vector2.zero;
-
         public void OnGUILayout()
         {
             if(IsShowScroll)
             {
-                scrollPos = EditorGUILayout.BeginScrollView(scrollPos,GUILayout.ExpandHeight(false));
+                scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(false));
             }
             EditorGUILayout.BeginVertical();
             {
                 foreach(var typeDrawProperty in typeDrawerProperties)
                 {
-                    EGUILayout.DrawHorizontalSpace(10);
-                    EGUILayout.DrawBoxHeader(typeDrawProperty.type.Name, GUILayout.ExpandWidth(true));
-                    EGUILayout.DrawHorizontalLine();
+                    if(IsShowInherit)
+                    {
+                        EGUILayout.DrawHorizontalSpace(10);
+                        EGUILayout.DrawBoxHeader(typeDrawProperty.type.Name, GUILayout.ExpandWidth(true));
+                    }
+
                     foreach (var property in typeDrawProperty.drawerProperties)
                     {
                         property.OnGUILayout();
+                    }
+
+                    if(IsShowInherit)
+                    {
+                        EGUILayout.DrawHorizontalLine();
                     }
                 }
             }
@@ -79,7 +87,7 @@ namespace DotEditor.NativeDrawer
                 EditorGUILayout.EndScrollView();
             }
 
-            if(drawerObject!=null && typeof(UnityEngine.Object).IsAssignableFrom(drawerObject.GetType()))
+            if (drawerObject != null && typeof(UnityEngine.Object).IsAssignableFrom(drawerObject.GetType()))
             {
                 if(GUI.changed)
                 {

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrDrawBinder(typeof(EnumButtonAttribute))]
+    [AttrBinder(typeof(EnumButtonAttribute))]
     public class EnumButtonDrawer : PropertyDrawer
     {
         public EnumButtonDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
