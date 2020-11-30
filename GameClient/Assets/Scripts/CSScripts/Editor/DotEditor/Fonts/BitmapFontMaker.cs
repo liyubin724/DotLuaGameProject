@@ -48,7 +48,7 @@ namespace DotEditor.Fonts
         }
 
         private int selectedIndex = -1;
-        private NativeDrawerObject drawerObject = null;
+        private DrawerObject drawerObject = null;
         private void SelectedChanged(int index)
         {
             if(selectedIndex != index)
@@ -58,7 +58,7 @@ namespace DotEditor.Fonts
                 fontConfigListView.SetSelection(selectedIndex);
                 if(selectedIndex>=0)
                 {
-                    drawerObject = new NativeDrawerObject(fontConfigs[selectedIndex])
+                    drawerObject = new DrawerObject(fontConfigs[selectedIndex])
                     {
                         IsShowScroll = true,
                     };

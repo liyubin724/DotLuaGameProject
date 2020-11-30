@@ -10,7 +10,7 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(EnumButtonAttribute))]
     public class EnumButtonDrawer : PropertyDrawer
     {
-        public EnumButtonDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
+        public EnumButtonDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
         {
         }
 

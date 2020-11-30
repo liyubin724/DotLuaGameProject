@@ -70,7 +70,7 @@ namespace DotEditor.BehaviourLine
             }
         }
 
-        private NativeDrawerObject dataDrawerObject = null;
+        private DrawerObject dataDrawerObject = null;
 
         public ActionDrawer(TracklineDrawer drawer)
         {
@@ -83,7 +83,7 @@ namespace DotEditor.BehaviourLine
 
             if(Data!=null)
             {
-                dataDrawerObject = new NativeDrawerObject(Data);
+                dataDrawerObject = new DrawerObject(Data);
             }
         }
 

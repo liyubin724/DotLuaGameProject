@@ -3,9 +3,9 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(bool))]
-    public class DefaultBoolDrawer : NativeTypeDrawer
+    public class DefaultBoolDrawer : TypeDrawer
     {
-        public DefaultBoolDrawer(NativeDrawerProperty property) : base(property)
+        public DefaultBoolDrawer(DrawerProperty property) : base(property)
         {
         }
 

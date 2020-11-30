@@ -3,13 +3,13 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer
 {
-    public class NativeDrawerEditor : Editor
+    public class DrawerEditor : Editor
     {
-        private NativeDrawerObject drawerObject = null;
+        private DrawerObject drawerObject = null;
 
         void OnEnable()
         {
-            drawerObject = new NativeDrawerObject(target)
+            drawerObject = new DrawerObject(target)
             {
                 IsShowScroll = IsShowScroll(),
             };
@@ -28,7 +28,7 @@ namespace DotEditor.NativeDrawer
         public override void OnInspectorGUI()
         {
             EGUILayout.DrawScript(target);
-            NativeDrawerSetting.OnDrawSetting();
+            DrawerSetting.OnDrawSetting();
 
             EGUI.BeginLabelWidth(GetLabelWidth());
             {

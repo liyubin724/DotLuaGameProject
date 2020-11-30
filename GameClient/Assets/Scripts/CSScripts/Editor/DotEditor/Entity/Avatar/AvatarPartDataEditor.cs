@@ -5,7 +5,7 @@ using UnityEditor;
 namespace DotEditor.Entity.Avatar
 {
     [CustomEditor(typeof(AvatarPartData))]
-    public class AvatarPartDataEditor : NativeDrawerEditor
+    public class AvatarPartDataEditor : DrawerEditor
     {
     }
 }

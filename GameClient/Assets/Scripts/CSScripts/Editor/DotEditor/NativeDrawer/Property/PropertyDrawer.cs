@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    public abstract class PropertyControlDrawer : AttrNativeDrawer
+    public abstract class PropertyControlDrawer : AttrDrawer
     {
         protected PropertyControlDrawer(PropertyControlAttribute attr) : base(attr)
         {
@@ -15,7 +15,7 @@ namespace DotEditor.NativeDrawer.Property
         public abstract void OnEndGUILayout();
     }
 
-    public abstract class PropertyLabelDrawer : AttrNativeDrawer
+    public abstract class PropertyLabelDrawer : AttrDrawer
     {
         protected PropertyLabelDrawer(PropertyLabelAttribute attr) : base(attr)
         {
@@ -24,11 +24,11 @@ namespace DotEditor.NativeDrawer.Property
         public abstract string GetLabel();
     }
 
-    public abstract class PropertyDrawer : AttrNativeDrawer
+    public abstract class PropertyDrawer : AttrDrawer
     {
-        public NativeDrawerProperty DrawerProperty { get; private set; }
+        public DrawerProperty DrawerProperty { get; private set; }
 
-        protected PropertyDrawer(NativeDrawerProperty drawerProperty,PropertyDrawerAttribute attr) : base(attr)
+        protected PropertyDrawer(DrawerProperty drawerProperty,PropertyDrawerAttribute attr) : base(attr)
         {
             DrawerProperty = drawerProperty;
         }

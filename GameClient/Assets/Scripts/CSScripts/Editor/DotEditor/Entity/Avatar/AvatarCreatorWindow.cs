@@ -28,8 +28,8 @@ namespace DotEditor.Entity.Avatar
         private EGUIListView<string> dataListView;
 
         private AvatarCreatorData currentCreatorData = null;
-        private NativeDrawerObject partOutputDataDrawer = null;
-        private NativeDrawerObject skeletonCreatorDataDrawer = null;
+        private DrawerObject partOutputDataDrawer = null;
+        private DrawerObject skeletonCreatorDataDrawer = null;
 
         private AvatarPreviewer previewer = null;
 
@@ -81,11 +81,11 @@ namespace DotEditor.Entity.Avatar
             if (!string.IsNullOrEmpty(assetPath))
             {
                 currentCreatorData = AssetDatabase.LoadAssetAtPath<AvatarCreatorData>(assetPath);
-                skeletonCreatorDataDrawer = new NativeDrawerObject(currentCreatorData.skeletonData)
+                skeletonCreatorDataDrawer = new DrawerObject(currentCreatorData.skeletonData)
                 {
                     IsShowScroll = true,
                 };
-                partOutputDataDrawer = new NativeDrawerObject(currentCreatorData.skeletonPartData)
+                partOutputDataDrawer = new DrawerObject(currentCreatorData.skeletonPartData)
                 {
                     IsShowScroll = true
                 };

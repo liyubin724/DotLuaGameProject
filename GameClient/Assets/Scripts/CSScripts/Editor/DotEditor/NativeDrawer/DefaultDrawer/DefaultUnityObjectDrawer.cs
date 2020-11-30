@@ -4,9 +4,9 @@ using UnityObject = UnityEngine.Object;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(UnityObject))]
-    public class DefaultUnityObjectDrawer : NativeTypeDrawer
+    public class DefaultUnityObjectDrawer : TypeDrawer
     {
-        public DefaultUnityObjectDrawer(NativeDrawerProperty property) : base(property)
+        public DefaultUnityObjectDrawer(DrawerProperty property) : base(property)
         {
         }
 

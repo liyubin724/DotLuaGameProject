@@ -7,7 +7,7 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(ButtonAttribute))]
     public class ButtonDrawer : DecoratorDrawer
     {
-        public ButtonDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)
+        public ButtonDrawer(DrawerProperty property, DecoratorAttribute attr) : base(property, attr)
         {
         }
 

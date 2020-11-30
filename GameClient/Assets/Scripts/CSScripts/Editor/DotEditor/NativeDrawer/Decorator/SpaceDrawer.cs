@@ -6,7 +6,7 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(SpaceAttribute))]
     public class SpaceDrawer : DecoratorDrawer
     {
-        public SpaceDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)
+        public SpaceDrawer(DrawerProperty property, DecoratorAttribute attr) : base(property, attr)
         {
         }
 

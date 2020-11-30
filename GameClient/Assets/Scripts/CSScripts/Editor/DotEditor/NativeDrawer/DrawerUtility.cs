@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer
 {
-    public static class NativeDrawerUtility
+    public static class DrawerUtility
     {
         private static Dictionary<Type, Type> attrDrawerDic = new Dictionary<Type, Type>();
         private static Dictionary<Type, Type> customTypeDrawerDic = new Dictionary<Type, Type>();
@@ -38,7 +38,7 @@ namespace DotEditor.NativeDrawer
                 }
                 Type[] types = (
                                 from type in assembly.GetTypes() 
-                                where !type.IsAbstract && !type.IsInterface && (typeof(AttrNativeDrawer).IsAssignableFrom(type)  || typeof(NativeTypeDrawer).IsAssignableFrom(type))
+                                where !type.IsAbstract && !type.IsInterface && (typeof(AttrDrawer).IsAssignableFrom(type)  || typeof(TypeDrawer).IsAssignableFrom(type))
                                 select type
                                 ).ToArray();
                 foreach(var type in types)
@@ -133,17 +133,17 @@ namespace DotEditor.NativeDrawer
             return type;
         }
 
-        public static NativeTypeDrawer CreateDefaultTypeDrawer(NativeDrawerProperty property)
+        public static TypeDrawer CreateDefaultTypeDrawer(DrawerProperty property)
         {
             Type type = GetDefaultType(property.ValueType);
             if (customTypeDrawerDic.TryGetValue(type, out Type drawerType))
             {
-                return (NativeTypeDrawer)Activator.CreateInstance(drawerType, property);
+                return (TypeDrawer)Activator.CreateInstance(drawerType, property);
             }
             return null;
         }
 
-        public static DecoratorDrawer CreateDecoratorDrawer(NativeDrawerProperty drawerProperty, DecoratorAttribute attr)
+        public static DecoratorDrawer CreateDecoratorDrawer(DrawerProperty drawerProperty, DecoratorAttribute attr)
         {
             if(attrDrawerDic.TryGetValue(attr.GetType(),out Type drawerType))
             {
@@ -188,7 +188,7 @@ namespace DotEditor.NativeDrawer
             return null;
         }
 
-        public static PropertyDrawer CreatePropertyDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr)
+        public static PropertyDrawer CreatePropertyDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr)
         {
             if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
             {

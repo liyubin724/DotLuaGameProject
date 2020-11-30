@@ -10,10 +10,10 @@ namespace DotEditor.NativeDrawer
     class TypeDrawerProperty
     {
         public Type type;
-        public List<NativeDrawerProperty> drawerProperties = new List<NativeDrawerProperty>();
+        public List<DrawerProperty> drawerProperties = new List<DrawerProperty>();
     }
 
-    public class NativeDrawerObject
+    public class DrawerObject
     {
         public bool IsShowScroll { get; set; } = false;
         public bool IsShowInherit { get; set; } = true;
@@ -21,7 +21,7 @@ namespace DotEditor.NativeDrawer
         private object drawerObject;
         private List<TypeDrawerProperty> typeDrawerProperties = new List<TypeDrawerProperty>();
 
-        public NativeDrawerObject(object obj)
+        public DrawerObject(object obj)
         {
             drawerObject = obj;
 
@@ -30,7 +30,7 @@ namespace DotEditor.NativeDrawer
 
         private void InitField()
         {
-            Type[] allTypes = NativeDrawerUtility.GetAllBaseTypes(drawerObject.GetType());
+            Type[] allTypes = DrawerUtility.GetAllBaseTypes(drawerObject.GetType());
             if(allTypes!=null)
             {
                 foreach (var type in allTypes)
@@ -43,7 +43,7 @@ namespace DotEditor.NativeDrawer
                     FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     foreach (var field in fields)
                     {
-                        NativeDrawerProperty drawerProperty = new NativeDrawerProperty(drawerObject, field);
+                        DrawerProperty drawerProperty = new DrawerProperty(drawerObject, field);
                         typeDrawerProperty.drawerProperties.Add(drawerProperty);
                     }
 

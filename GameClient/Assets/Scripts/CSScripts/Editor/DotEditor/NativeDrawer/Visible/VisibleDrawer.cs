@@ -2,7 +2,7 @@
 
 namespace DotEditor.NativeDrawer.Visible
 {
-    public abstract class VisibleDrawer : AttrNativeDrawer
+    public abstract class VisibleDrawer : AttrDrawer
     {
         public VisibleDrawer(VisibleAtrribute attr) : base(attr)
         {
@@ -12,7 +12,7 @@ namespace DotEditor.NativeDrawer.Visible
         public abstract bool IsVisible();
     }
 
-    public abstract class VisibleCompareDrawer : CompareAttrNativeDrawer
+    public abstract class VisibleCompareDrawer : CompareAttrDrawer
     {
         protected VisibleCompareDrawer(object target, VisibleCompareAttribute attr) : base(target, attr)
         {

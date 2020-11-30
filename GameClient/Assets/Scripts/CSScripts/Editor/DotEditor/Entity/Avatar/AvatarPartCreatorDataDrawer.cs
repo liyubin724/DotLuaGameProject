@@ -8,14 +8,14 @@ using static DotEditor.Entity.Avatar.AvatarCreatorData;
 namespace DotEditor.Entity.Avatar
 {
     [CustomTypeDrawer(typeof(AvatarPartCreatorData))]
-    public class AvatarPartCreatorDataDrawer : NativeTypeDrawer
+    public class AvatarPartCreatorDataDrawer : TypeDrawer
     {
         public static Action<AvatarPartCreatorData> CreatePartBtnClick = null;
         public static Action<AvatarPartCreatorData> PreviewPartBtnClick = null;
 
-        private NativeDrawerObject drawerObject = null;
+        private DrawerObject drawerObject = null;
 
-        public AvatarPartCreatorDataDrawer(NativeDrawerProperty property) : base(property)
+        public AvatarPartCreatorDataDrawer(DrawerProperty property) : base(property)
         {
         }
 
@@ -28,7 +28,7 @@ namespace DotEditor.Entity.Avatar
         {
             if (drawerObject == null)
             {
-                drawerObject = new NativeDrawerObject(DrawerProperty.Value);
+                drawerObject = new DrawerObject(DrawerProperty.Value);
             }
             if (DrawerProperty.IsArrayElement)
             {

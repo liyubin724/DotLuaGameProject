@@ -6,7 +6,7 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(SeparatorLineAttribute))]
     public class SeparatorLineDrawer : DecoratorDrawer
     {
-        public SeparatorLineDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)
+        public SeparatorLineDrawer(DrawerProperty property, DecoratorAttribute attr) : base(property, attr)
         {
         }
 

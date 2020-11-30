@@ -7,9 +7,9 @@ using static DotEditor.Fonts.BitmapFontConfig;
 namespace DotEditor.Fonts
 {
     [CustomTypeDrawer(typeof(BitmapFontChar))]
-    public class BitmapFontCharDrawer : NativeTypeDrawer
+    public class BitmapFontCharDrawer : TypeDrawer
     {
-        public BitmapFontCharDrawer(NativeDrawerProperty property) : base(property)
+        public BitmapFontCharDrawer(DrawerProperty property) : base(property)
         {
         }
 

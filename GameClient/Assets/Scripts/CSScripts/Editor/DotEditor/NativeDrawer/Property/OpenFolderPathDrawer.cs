@@ -7,7 +7,7 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(OpenFolderPathAttribute))]
     public class OpenFolderPathDrawer : PropertyDrawer
     {
-        public OpenFolderPathDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
+        public OpenFolderPathDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
         {
         }
 

@@ -8,7 +8,7 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(MultilineTextAttribute))]
     public class MultilineTextDrawer : PropertyDrawer
     {
-        public MultilineTextDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
+        public MultilineTextDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
         {
         }
 

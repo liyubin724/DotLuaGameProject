@@ -5,20 +5,26 @@ using System;
 
 namespace DotEditor.NativeDrawer
 {
-    public abstract class AttrNativeDrawer
+    public abstract class AttrDrawer
     {
-        public DrawerAttribute Attr { get; set; }
+        public DrawerAttribute DrawerAttr { get; set; }
+        public DrawerProperty DrawerProperty { get; set; }
 
         public T GetAttr<T>() where T:DrawerAttribute
         {
-            return (T)Attr;
+            return (T)DrawerAttr;
         }
+
+        public abstract void OnGUILayout();
     }
 
-    public abstract class CompareAttrNativeDrawer : AttrNativeDrawer
+
+
+
+    public abstract class CompareAttrDrawer : AttrDrawer
     {
         public object Target { get; private set; }
-        protected CompareAttrNativeDrawer(object target,CompareAttribute attr) : base(attr)
+        protected CompareAttrDrawer(object target,CompareAttribute attr)
         {
             Target = target;
         }
@@ -31,7 +37,7 @@ namespace DotEditor.NativeDrawer
                 return true;
             }
 
-            object comparedValue = NativeDrawerUtility.GetMemberValue(attr.MemberName, Target);
+            object comparedValue = DrawerUtility.GetMemberValue(attr.MemberName, Target);
             if (comparedValue == null && attr.Value == null)
             {
                 return true;

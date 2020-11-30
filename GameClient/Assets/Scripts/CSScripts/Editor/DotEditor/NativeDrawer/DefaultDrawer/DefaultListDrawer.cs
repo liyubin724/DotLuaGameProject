@@ -8,11 +8,11 @@ using UnityEngine;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(IList))]
-    public class DefaultListDrawer : NativeTypeDrawer
+    public class DefaultListDrawer : TypeDrawer
     {
         private IList list = null;
-        private List<NativeDrawerProperty> elementProperties = new List<NativeDrawerProperty>();
-        public DefaultListDrawer(NativeDrawerProperty property) : base(property)
+        private List<DrawerProperty> elementProperties = new List<DrawerProperty>();
+        public DefaultListDrawer(DrawerProperty property) : base(property)
         {
             InitList();
         }
@@ -24,7 +24,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
             elementProperties.Clear();
             for (int i = 0; i < list.Count; ++i)
             {
-                elementProperties.Add(new NativeDrawerProperty(DrawerProperty.Target,DrawerProperty.Field,i));
+                elementProperties.Add(new DrawerProperty(DrawerProperty.Target,DrawerProperty.Field,i));
             }
         }
 

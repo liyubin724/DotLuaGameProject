@@ -4,9 +4,9 @@ using UnityEngine;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(Rect))]
-    public class DefaultRectDrawer : NativeTypeDrawer
+    public class DefaultRectDrawer : TypeDrawer
     {
-        public DefaultRectDrawer(NativeDrawerProperty property) : base(property)
+        public DefaultRectDrawer(DrawerProperty property) : base(property)
         {
         }
 

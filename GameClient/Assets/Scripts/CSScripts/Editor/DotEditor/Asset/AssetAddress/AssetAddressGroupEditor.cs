@@ -8,7 +8,7 @@ using UnityEngine;
 namespace DotEditor.Asset.AssetAddress
 {
     [CustomEditor(typeof(AssetAddressGroup))]
-    public class AssetAddressGroupEditor :  NativeDrawerEditor
+    public class AssetAddressGroupEditor :  DrawerEditor
     {
         private EGUIListView<string> listViewer = null;
 

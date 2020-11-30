@@ -6,7 +6,7 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(IntSliderAttribute))]
     public class IntSliderDrawer : PropertyDrawer
     {
-        public IntSliderDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
+        public IntSliderDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
         {
         }
 
@@ -23,11 +23,11 @@ namespace DotEditor.NativeDrawer.Property
             int rightValue = attr.RightValue;
             if (!string.IsNullOrEmpty(attr.LeftValueMemberName))
             {
-                leftValue = NativeDrawerUtility.GetMemberValue<int>(attr.LeftValueMemberName, DrawerProperty.Target);
+                leftValue = DrawerUtility.GetMemberValue<int>(attr.LeftValueMemberName, DrawerProperty.Target);
             }
             if (!string.IsNullOrEmpty(attr.RightValueMemberName))
             {
-                rightValue = NativeDrawerUtility.GetMemberValue<int>(attr.RightValueMemberName, DrawerProperty.Target);
+                rightValue = DrawerUtility.GetMemberValue<int>(attr.RightValueMemberName, DrawerProperty.Target);
             }
 
             label = label ?? "";

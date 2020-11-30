@@ -7,10 +7,6 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(BoxedHeaderAttribute))]
     public class BoxedHeaderDrawer : DecoratorDrawer
     {
-        public BoxedHeaderDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)
-        {
-        }
-
         public override void OnGUILayout()
         {
             BoxedHeaderAttribute attr = GetAttr<BoxedHeaderAttribute>();

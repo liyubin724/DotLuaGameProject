@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer
 {
-    public static class NativeDrawerSetting
+    public static class DrawerSetting
     {
         public static bool IsShowHelp = false;
 

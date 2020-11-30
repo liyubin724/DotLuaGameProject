@@ -11,7 +11,7 @@ namespace DotEditor.NativeDrawer.Property
     {
         private static EditorWindow lastSearchableWindow;
 
-        public StringPopupDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
+        public StringPopupDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
         {
         }
 
@@ -27,7 +27,7 @@ namespace DotEditor.NativeDrawer.Property
             string[] options = attr.Options;
             if (!string.IsNullOrEmpty(attr.MemberName))
             {
-                options = NativeDrawerUtility.GetMemberValue<string[]>(attr.MemberName, DrawerProperty.Target);
+                options = DrawerUtility.GetMemberValue<string[]>(attr.MemberName, DrawerProperty.Target);
             }
 
             var value = DrawerProperty.GetValue<string>();
