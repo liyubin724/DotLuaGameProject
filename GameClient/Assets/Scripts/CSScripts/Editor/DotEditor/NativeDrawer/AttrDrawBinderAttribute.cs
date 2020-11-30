@@ -3,10 +3,10 @@
 namespace DotEditor.NativeDrawer
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class CustomAttributeDrawerAttribute : Attribute
+    public class AttrDrawBinderAttribute : Attribute
     {
         public Type AttrType { get; private set; }
-        public CustomAttributeDrawerAttribute(Type attrType)
+        public AttrDrawBinderAttribute(Type attrType)
         {
             AttrType = attrType;
         }

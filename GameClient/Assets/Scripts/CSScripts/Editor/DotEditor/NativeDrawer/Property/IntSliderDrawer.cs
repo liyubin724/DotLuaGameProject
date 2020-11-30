@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [CustomAttributeDrawer(typeof(IntSliderAttribute))]
+    [AttrDrawBinder(typeof(IntSliderAttribute))]
     public class IntSliderDrawer : PropertyDrawer
     {
         public IntSliderDrawer(NativeDrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)

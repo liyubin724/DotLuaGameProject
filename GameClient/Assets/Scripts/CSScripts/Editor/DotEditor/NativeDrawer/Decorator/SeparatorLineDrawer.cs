@@ -3,7 +3,7 @@ using DotEngine.NativeDrawer.Decorator;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [CustomAttributeDrawer(typeof(SeparatorLineAttribute))]
+    [AttrDrawBinder(typeof(SeparatorLineAttribute))]
     public class SeparatorLineDrawer : DecoratorDrawer
     {
         public SeparatorLineDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)

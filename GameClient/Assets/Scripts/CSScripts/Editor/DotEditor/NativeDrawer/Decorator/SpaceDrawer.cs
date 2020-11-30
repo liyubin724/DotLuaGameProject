@@ -3,7 +3,7 @@ using DotEngine.NativeDrawer.Decorator;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [CustomAttributeDrawer(typeof(SpaceAttribute))]
+    [AttrDrawBinder(typeof(SpaceAttribute))]
     public class SpaceDrawer : DecoratorDrawer
     {
         public SpaceDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(property, attr)

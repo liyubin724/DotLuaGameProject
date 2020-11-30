@@ -2,7 +2,7 @@
 
 namespace DotEditor.NativeDrawer.Visible
 {
-    [CustomAttributeDrawer(typeof(ShowAttribute))]
+    [AttrDrawBinder(typeof(ShowAttribute))]
     public class ShowDrawer : VisibleDrawer
     {
         public ShowDrawer(VisibleAtrribute attr) : base(attr)

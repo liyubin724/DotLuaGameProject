@@ -44,7 +44,7 @@ namespace DotEditor.NativeDrawer
                                 ).ToArray();
                 foreach(var type in types)
                 {
-                    CustomAttributeDrawerAttribute attr = type.GetCustomAttribute<CustomAttributeDrawerAttribute>();
+                    AttrDrawBinderAttribute attr = type.GetCustomAttribute<AttrDrawBinderAttribute>();
                     if(attr!=null)
                     {
                         attrDrawerDic.Add(attr.AttrType, type);
