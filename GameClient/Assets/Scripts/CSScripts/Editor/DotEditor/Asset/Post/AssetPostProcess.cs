@@ -39,7 +39,7 @@ namespace DotEditor.Asset.Post
             {
                 StringContext context = new StringContext();
                 context.Add(AssetPostContextKeys.ASSET_FILTER_KEY, Filter);
-                context.Add(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, assets,true);
+                context.Add(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, assets);
 
                 foreach (var ruler in Rulers)
                 {
