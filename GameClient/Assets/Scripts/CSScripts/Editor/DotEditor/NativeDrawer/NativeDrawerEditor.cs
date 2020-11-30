@@ -21,7 +21,7 @@ namespace DotEditor.NativeDrawer
             return true;
         }
 
-        protected virtual float GetLabelWith()
+        protected virtual float GetLabelWidth()
         {
             return 120;
         }
@@ -32,26 +32,24 @@ namespace DotEditor.NativeDrawer
 
             EditorGUILayout.Space();
 
-            EGUI.BeginGUIColor(Color.cyan);
+            EGUI.BeginGUIColor(Color.grey);
             {
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 {
-                    EditorGUILayout.LabelField("Native Drawer Setting", EditorStyles.toolbar);
+                    EGUILayout.DrawBoxHeader("Native Drawer Setting", GUILayout.ExpandWidth(true));
                     EGUI.BeginIndent();
                     {
                         NativeDrawerSetting.IsShowHelp = EditorGUILayout.Toggle("Is Show Help", NativeDrawerSetting.IsShowHelp);
-                        EGUILayout.DrawHorizontalLine();
                     }
                     EGUI.EndIndent();
                 }
                 EditorGUILayout.EndVertical();
-                
             }
             EGUI.EndGUIColor();
 
             EditorGUILayout.Space();
 
-            EGUI.BeginLabelWidth(GetLabelWith());
+            EGUI.BeginLabelWidth(GetLabelWidth());
             {
                 drawerObject.OnGUILayout();
             }

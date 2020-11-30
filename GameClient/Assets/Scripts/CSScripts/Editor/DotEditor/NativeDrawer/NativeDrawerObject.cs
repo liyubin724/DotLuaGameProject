@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEditor.GUIExtension;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
@@ -6,12 +7,18 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer
 {
+    class TypeDrawerProperty
+    {
+        public Type type;
+        public List<NativeDrawerProperty> drawerProperties = new List<NativeDrawerProperty>();
+    }
+
     public class NativeDrawerObject
     {
         public bool IsShowScroll { get; set; } = false;
 
         private object drawerObject;
-        private List<NativeDrawerProperty> drawerProperties = new List<NativeDrawerProperty>();
+        private List<TypeDrawerProperty> typeDrawerProperties = new List<TypeDrawerProperty>();
 
         public NativeDrawerObject(object obj)
         {
@@ -27,12 +34,19 @@ namespace DotEditor.NativeDrawer
             {
                 foreach (var type in allTypes)
                 {
+                    TypeDrawerProperty typeDrawerProperty = new TypeDrawerProperty()
+                    {
+                        type = type,
+                    };
+
                     FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     foreach (var field in fields)
                     {
                         NativeDrawerProperty drawerProperty = new NativeDrawerProperty(drawerObject, field);
-                        drawerProperties.Add(drawerProperty);
+                        typeDrawerProperty.drawerProperties.Add(drawerProperty);
                     }
+
+                    typeDrawerProperties.Add(typeDrawerProperty);
                 }
             }
         }
@@ -47,9 +61,15 @@ namespace DotEditor.NativeDrawer
             }
             EditorGUILayout.BeginVertical();
             {
-                foreach(var property in drawerProperties)
+                foreach(var typeDrawProperty in typeDrawerProperties)
                 {
-                    property.OnGUILayout();
+                    EGUILayout.DrawHorizontalSpace(10);
+                    EGUILayout.DrawBoxHeader(typeDrawProperty.type.Name, GUILayout.ExpandWidth(true));
+                    EGUILayout.DrawHorizontalLine();
+                    foreach (var property in typeDrawProperty.drawerProperties)
+                    {
+                        property.OnGUILayout();
+                    }
                 }
             }
             EditorGUILayout.EndVertical();

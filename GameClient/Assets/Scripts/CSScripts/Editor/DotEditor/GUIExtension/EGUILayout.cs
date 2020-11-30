@@ -53,6 +53,16 @@ namespace DotEditor.GUIExtension
             }
         }
 
+        public static void DrawHorizontalSpace(int space)
+        {
+            EditorGUILayout.LabelField(GUIContent.none, GUILayout.Height(space), GUILayout.ExpandWidth(true));
+        }
+
+        public static void DrawVerticalSpace(int space)
+        {
+            EditorGUILayout.LabelField(GUIContent.none, GUILayout.Width(space), GUILayout.ExpandHeight(true));
+        }
+
         /// <summary>
         /// 
         /// </summary>
