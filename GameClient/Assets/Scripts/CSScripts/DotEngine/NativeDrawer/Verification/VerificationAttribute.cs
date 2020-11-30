@@ -1,10 +1,8 @@
-﻿namespace DotEngine.NativeDrawer.Verification
-{
-    //public abstract class VerificationAttribute : NativeDrawerAttribute
-    //{
-    //}
+﻿using DotEngine.NativeDrawer.Condition;
 
-    public abstract class VerificationCompareAttribute : CompareDrawerAttribute
+namespace DotEngine.NativeDrawer.Verification
+{
+    public abstract class VerificationCompareAttribute : CompareAttribute
     {
         public string ValidMsg { get; private set; }
         public string UnvalidMsg { get; private set; }

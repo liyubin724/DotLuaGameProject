@@ -1,4 +1,5 @@
 ﻿using DotEngine.NativeDrawer;
+using DotEngine.NativeDrawer.Condition;
 using DotEngine.Utilities;
 using System;
 
@@ -22,14 +23,14 @@ namespace DotEditor.NativeDrawer
     public abstract class CompareAttrNativeDrawer : AttrNativeDrawer
     {
         public object Target { get; private set; }
-        protected CompareAttrNativeDrawer(object target,CompareDrawerAttribute attr) : base(attr)
+        protected CompareAttrNativeDrawer(object target,CompareAttribute attr) : base(attr)
         {
             Target = target;
         }
 
         protected bool IsEqual()
         {
-            CompareDrawerAttribute attr = GetAttr<CompareDrawerAttribute>();
+            CompareAttribute attr = GetAttr<CompareAttribute>();
             if (string.IsNullOrEmpty(attr.MemberName))
             {
                 return true;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.NativeDrawer.Condition;
+using System;
 
 namespace DotEngine.NativeDrawer.Visible
 {

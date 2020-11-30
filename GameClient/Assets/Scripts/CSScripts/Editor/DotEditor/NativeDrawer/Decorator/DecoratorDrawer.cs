@@ -6,7 +6,7 @@ namespace DotEditor.NativeDrawer.Decorator
     {
         public NativeDrawerProperty DrawerProperty { get; private set; }
 
-        protected DecoratorDrawer(NativeDrawerProperty property,DecoratorAttribute attr) : base(attr)
+        protected DecoratorDrawer(NativeDrawerProperty property, DecoratorAttribute attr) : base(attr)
         {
             DrawerProperty = property;
         }
