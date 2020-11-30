@@ -6,6 +6,7 @@ namespace DotEngine.NativeDrawer.Property
     public class MultilineTextAttribute : PropertyDrawerAttribute
     {
         public int LineCount { get; private set; }
+
         public MultilineTextAttribute(int lineCount = 4)
         {
             LineCount = lineCount;

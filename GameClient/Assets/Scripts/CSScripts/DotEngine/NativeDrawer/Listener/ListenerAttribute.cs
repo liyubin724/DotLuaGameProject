@@ -1,9 +1,8 @@
-﻿namespace DotEngine.NativeDrawer.Listener
+﻿using System;
+
+namespace DotEngine.NativeDrawer.Listener
 {
-    public abstract class ListenerAttribute : DrawerAttribute
+    public abstract class ListenerAttribute : Attribute
     {
-        protected ListenerAttribute()
-        {
-        }
     }
 }
