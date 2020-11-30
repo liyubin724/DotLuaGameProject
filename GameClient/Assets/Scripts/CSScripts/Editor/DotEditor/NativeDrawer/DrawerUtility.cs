@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using DotEngine.NativeDrawer;
 
 namespace DotEditor.NativeDrawer
 {
@@ -38,7 +39,7 @@ namespace DotEditor.NativeDrawer
                 }
                 Type[] types = (
                                 from type in assembly.GetTypes() 
-                                where !type.IsAbstract && !type.IsInterface && (typeof(AttrDrawer).IsAssignableFrom(type)  || typeof(TypeDrawer).IsAssignableFrom(type))
+                                where !type.IsAbstract && !type.IsInterface && (typeof(AttrDrawer).IsAssignableFrom(type)  || typeof(CustomTypeDrawer).IsAssignableFrom(type))
                                 select type
                                 ).ToArray();
                 foreach(var type in types)
@@ -133,93 +134,25 @@ namespace DotEditor.NativeDrawer
             return type;
         }
 
-        public static TypeDrawer CreateDefaultTypeDrawer(DrawerProperty property)
+        public static CustomTypeDrawer CreateDefaultTypeDrawer(DrawerProperty property)
         {
             Type type = GetDefaultType(property.ValueType);
             if (customTypeDrawerDic.TryGetValue(type, out Type drawerType))
             {
-                return (TypeDrawer)Activator.CreateInstance(drawerType, property);
+                return (CustomTypeDrawer)Activator.CreateInstance(drawerType, property);
             }
             return null;
         }
 
-        public static DecoratorDrawer CreateDecoratorDrawer(DrawerProperty drawerProperty, DecoratorAttribute attr)
-        {
-            if(attrDrawerDic.TryGetValue(attr.GetType(),out Type drawerType))
-            {
-                return (DecoratorDrawer)Activator.CreateInstance(drawerType, drawerProperty, attr);
-            }
-            return null;
-        }
-
-        public static LayoutDrawer CreateLayoutDrawer(LayoutAttribute attr)
+        public static AttrDrawer CreateDrawer(DrawerProperty property, DrawerAttribute attr)
         {
             if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
             {
-                return (LayoutDrawer)Activator.CreateInstance(drawerType, attr);
-            }
-            return null;
-        }
+                AttrDrawer drawer = (AttrDrawer)Activator.CreateInstance(drawerType);
+                drawer.DrawerAttr = attr;
+                drawer.DrawerProperty = property;
 
-        public static VerificationDrawer CreateVerificationDrawer(object target, VerificationCompareAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (VerificationDrawer)Activator.CreateInstance(drawerType, target,attr);
-            }
-            return null;
-        }
-
-        public static VisibleDrawer CreateVisibleDrawer(VisibleAtrribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (VisibleDrawer)Activator.CreateInstance(drawerType, attr);
-            }
-            return null;
-        }
-
-        public static VisibleCompareDrawer CreateVisibleCompareDrawer(object target, VisibleCompareAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (VisibleCompareDrawer)Activator.CreateInstance(drawerType,target,attr);
-            }
-            return null;
-        }
-
-        public static PropertyDrawer CreatePropertyDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (PropertyDrawer)Activator.CreateInstance(drawerType, drawerProperty, attr );
-            }
-            return null;
-        }
-
-        public static PropertyLabelDrawer CreatePropertyLabelDrawer(PropertyLabelAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (PropertyLabelDrawer)Activator.CreateInstance(drawerType, attr);
-            }
-            return null;
-        }
-
-        public static PropertyControlDrawer CreatePropertyControlDrawer(PropertyControlAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (PropertyControlDrawer)Activator.CreateInstance(drawerType, attr);
-            }
-            return null;
-        }
-
-        public static ListenerDrawer CreateListenerDrawer(object target,ListenerAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                return (ListenerDrawer)Activator.CreateInstance(drawerType, target,attr);
+                return drawer;
             }
             return null;
         }

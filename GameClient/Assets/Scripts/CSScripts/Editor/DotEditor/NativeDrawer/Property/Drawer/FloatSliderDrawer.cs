@@ -6,10 +6,6 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(FloatSliderAttribute))]
     public class FloatSliderDrawer : PropertyDrawer
     {
-        public FloatSliderDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
-        {
-        }
-
         protected override void OnDrawProperty(string label)
         {
             FloatSliderAttribute attr = GetAttr<FloatSliderAttribute>();

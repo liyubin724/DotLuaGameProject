@@ -3,12 +3,8 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(bool))]
-    public class DefaultBoolDrawer : TypeDrawer
+    public class BoolDrawer : Property.PropertyDrawer
     {
-        public DefaultBoolDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";

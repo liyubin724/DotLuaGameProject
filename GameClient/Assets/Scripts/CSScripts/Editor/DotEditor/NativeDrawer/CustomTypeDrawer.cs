@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer
 {
-    public abstract class TypeDrawer
+    public abstract class CustomTypeDrawer
     {
         public DrawerProperty DrawerProperty { get; private set; }
 
-        protected TypeDrawer(DrawerProperty property)
+        protected CustomTypeDrawer(DrawerProperty property)
         {
             DrawerProperty = property;
         }

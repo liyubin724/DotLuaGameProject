@@ -1,6 +1,8 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.NativeDrawer.Decorator;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
@@ -12,9 +14,9 @@ namespace DotEditor.NativeDrawer.Decorator
             var attr = GetAttr<ButtonAttribute>();
             if (string.IsNullOrEmpty(attr.MethodName))
             {
-                EGUI.BeginGUIColor(UnityEngine.Color.red);
+                EGUI.BeginGUIColor(Color.red);
                 {
-                    UnityEditor.EditorGUILayout.LabelField("The name of the method can't be empty.");
+                    EditorGUILayout.LabelField("The name of the method can't be empty.");
                 }
                 EGUI.EndGUIColor();
             }
@@ -30,7 +32,7 @@ namespace DotEditor.NativeDrawer.Decorator
                 {
                     height *= 1.5f;
                 }
-                if (UnityEngine.GUILayout.Button(btnContentStr, UnityEngine.GUILayout.Height(height)))
+                if (GUILayout.Button(btnContentStr, GUILayout.Height(height)))
                 {
                     MethodInfo methodInfo = DrawerProperty.Target.GetType().GetMethod(attr.MethodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     if (methodInfo != null)

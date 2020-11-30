@@ -4,12 +4,8 @@ using UnityEngine;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(Bounds))]
-    public class DefaultBoundsDrawer : TypeDrawer
+    public class BoundsDrawer : Property.PropertyDrawer
     {
-        public DefaultBoundsDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return DrawerProperty.ValueType == typeof(Bounds);

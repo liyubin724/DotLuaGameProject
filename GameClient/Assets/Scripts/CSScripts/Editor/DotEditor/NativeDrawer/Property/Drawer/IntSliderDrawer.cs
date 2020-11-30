@@ -6,10 +6,6 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(IntSliderAttribute))]
     public class IntSliderDrawer : PropertyDrawer
     {
-        public IntSliderDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return DrawerProperty.ValueType == typeof(int);

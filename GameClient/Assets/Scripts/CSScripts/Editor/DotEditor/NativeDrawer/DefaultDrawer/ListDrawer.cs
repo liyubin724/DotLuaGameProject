@@ -8,11 +8,11 @@ using UnityEngine;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(IList))]
-    public class DefaultListDrawer : TypeDrawer
+    public class ListDrawer : Property.PropertyDrawer
     {
         private IList list = null;
         private List<DrawerProperty> elementProperties = new List<DrawerProperty>();
-        public DefaultListDrawer(DrawerProperty property) : base(property)
+        public ListDrawer()
         {
             InitList();
         }

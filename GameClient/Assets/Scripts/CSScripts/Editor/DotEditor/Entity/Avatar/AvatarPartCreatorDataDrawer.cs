@@ -8,7 +8,7 @@ using static DotEditor.Entity.Avatar.AvatarCreatorData;
 namespace DotEditor.Entity.Avatar
 {
     [CustomTypeDrawer(typeof(AvatarPartCreatorData))]
-    public class AvatarPartCreatorDataDrawer : TypeDrawer
+    public class AvatarPartCreatorDataDrawer : CustomTypeDrawer
     {
         public static Action<AvatarPartCreatorData> CreatePartBtnClick = null;
         public static Action<AvatarPartCreatorData> PreviewPartBtnClick = null;

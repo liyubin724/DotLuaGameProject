@@ -4,13 +4,8 @@ using UnityEditor;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(Enum))]
-    public class DefaultEnumDrawer : TypeDrawer
+    public class EnumDrawer : Property.PropertyDrawer
     {
-        public DefaultEnumDrawer(DrawerProperty property) : base(property)
-        {
-            
-        }
-
         protected override void OnDrawProperty(string label)
         {
             var flagAttrs = DrawerProperty.ValueType.GetCustomAttributes(typeof(FlagsAttribute), false);

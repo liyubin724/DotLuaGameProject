@@ -12,7 +12,7 @@ namespace DotEditor.NativeDrawer.Listener
     {
         public object Target { get; private set; }
 
-        public ListenerDrawer(object target,ListenerAttribute attr) : base(attr)
+        public ListenerDrawer(object target)
         {
             Target = target;
         }

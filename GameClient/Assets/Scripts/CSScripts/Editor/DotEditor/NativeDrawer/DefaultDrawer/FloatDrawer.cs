@@ -1,27 +1,22 @@
 ﻿using UnityEditor;
-using UnityEngine;
 
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
-    [CustomTypeDrawer(typeof(Vector2))]
-    public class DefaultVector2Drawer : TypeDrawer
+    [CustomTypeDrawer(typeof(float))]
+    public class FloatDrawer : Property.PropertyDrawer
     {
-        public DefaultVector2Drawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(Vector2);
+            return DrawerProperty.ValueType == typeof(float);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            Vector2 value = DrawerProperty.GetValue<Vector2>();
+            float value = DrawerProperty.GetValue<float>();
             EditorGUI.BeginChangeCheck();
             {
-                value = EditorGUILayout.Vector2Field(label, value);
+                value = EditorGUILayout.FloatField(label, value);
             }
             if (EditorGUI.EndChangeCheck())
             {

@@ -1,5 +1,4 @@
-﻿using DotEngine.NativeDrawer.Property;
-using DotEditor.GUIExtension;
+﻿using DotEditor.GUIExtension;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,10 +8,6 @@ namespace DotEditor.NativeDrawer.Property
     {
         public abstract void OnStartGUILayout();
         public abstract void OnEndGUILayout();
-
-        public override void OnGUILayout()
-        {
-        }
     }
 
     public abstract class PropertyLabelDrawer : AttrDrawer
@@ -45,6 +40,5 @@ namespace DotEditor.NativeDrawer.Property
             }
             EGUI.EndGUIColor();
         }
-
     }
 }

@@ -2,5 +2,6 @@
 {
     public abstract class LayoutDrawer : AttrDrawer
     {
+        public abstract void OnGUILayout();
     }
 }

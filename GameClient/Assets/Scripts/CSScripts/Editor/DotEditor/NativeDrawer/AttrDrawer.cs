@@ -14,8 +14,6 @@ namespace DotEditor.NativeDrawer
         {
             return (T)DrawerAttr;
         }
-
-        public abstract void OnGUILayout();
     }
 
 

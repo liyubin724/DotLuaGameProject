@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using DotEngine.NativeDrawer;
 
 namespace DotEditor.NativeDrawer
 {
@@ -90,7 +91,7 @@ namespace DotEditor.NativeDrawer
 
         private List<ListenerDrawer> listenerDrawers = new List<ListenerDrawer>();
 
-        private TypeDrawer typeDrawer = null;
+        private CustomTypeDrawer typeDrawer = null;
         private DrawerObject drawerObject = null;
         internal DrawerProperty(object propertyObject,FieldInfo field)
         {
@@ -136,6 +137,8 @@ namespace DotEditor.NativeDrawer
 
         private void InitFieldAttr()
         {
+            var drawerAttrs = Field.GetCustomAttributes<DrawerAttribute>();
+
             var decoratorAttrEnumerable = Field.GetCustomAttributes<DecoratorAttribute>();
             foreach (var attr in decoratorAttrEnumerable)
             {

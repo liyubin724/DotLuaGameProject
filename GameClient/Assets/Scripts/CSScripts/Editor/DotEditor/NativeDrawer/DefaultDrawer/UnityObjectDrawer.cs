@@ -4,12 +4,8 @@ using UnityObject = UnityEngine.Object;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(UnityObject))]
-    public class DefaultUnityObjectDrawer : TypeDrawer
+    public class UnityObjectDrawer : Property.PropertyDrawer
     {
-        public DefaultUnityObjectDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return typeof(UnityObject).IsAssignableFrom(DrawerProperty.ValueType);

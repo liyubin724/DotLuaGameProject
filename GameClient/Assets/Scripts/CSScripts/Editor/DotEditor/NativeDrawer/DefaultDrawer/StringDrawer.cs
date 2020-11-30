@@ -3,12 +3,8 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(string))]
-    public class DefaultStringDrawer : TypeDrawer
+    public class StringDrawer : Property.PropertyDrawer
     {
-        public DefaultStringDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return DrawerProperty.ValueType == typeof(string);

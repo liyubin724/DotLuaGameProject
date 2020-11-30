@@ -11,10 +11,6 @@ namespace DotEditor.NativeDrawer.Property
     {
         private static EditorWindow lastSearchableWindow;
 
-        public IntPopupDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return typeof(int) == DrawerProperty.ValueType;

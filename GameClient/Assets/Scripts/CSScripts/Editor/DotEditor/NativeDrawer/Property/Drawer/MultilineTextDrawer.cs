@@ -8,10 +8,6 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(MultilineTextAttribute))]
     public class MultilineTextDrawer : PropertyDrawer
     {
-        public MultilineTextDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return DrawerProperty.ValueType == typeof(string);

@@ -1,5 +1,5 @@
-﻿using DotEngine.NativeDrawer.Property;
-using DotEditor.GUIExtension;
+﻿using DotEditor.GUIExtension;
+using DotEngine.NativeDrawer.Property;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -10,10 +10,6 @@ namespace DotEditor.NativeDrawer.Property
     [AttrBinder(typeof(EnumButtonAttribute))]
     public class EnumButtonDrawer : PropertyDrawer
     {
-        public EnumButtonDrawer(DrawerProperty drawerProperty, PropertyDrawerAttribute attr) : base(drawerProperty, attr)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
             return typeof(Enum).IsAssignableFrom(DrawerProperty.ValueType);

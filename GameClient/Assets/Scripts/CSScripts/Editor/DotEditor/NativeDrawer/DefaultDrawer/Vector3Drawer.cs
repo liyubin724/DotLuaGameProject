@@ -3,25 +3,21 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
-    [CustomTypeDrawer(typeof(Rect))]
-    public class DefaultRectDrawer : TypeDrawer
+    [CustomTypeDrawer(typeof(Vector3))]
+    public class Vector3Drawer : Property.PropertyDrawer
     {
-        public DefaultRectDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(Rect);
+            return DrawerProperty.ValueType == typeof(Vector3);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            Rect value = DrawerProperty.GetValue<Rect>();
+            Vector3 value = DrawerProperty.GetValue<Vector3>();
             EditorGUI.BeginChangeCheck();
             {
-                value = EditorGUILayout.RectField(label, value);
+                value = EditorGUILayout.Vector3Field(label, value);
             }
             if (EditorGUI.EndChangeCheck())
             {
