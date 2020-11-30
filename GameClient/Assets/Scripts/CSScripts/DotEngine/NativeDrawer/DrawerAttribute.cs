@@ -2,7 +2,7 @@
 
 namespace DotEngine.NativeDrawer
 {
-    public abstract class NativeDrawerAttribute : Attribute
+    public abstract class DrawerAttribute : Attribute
     {
     }
 }

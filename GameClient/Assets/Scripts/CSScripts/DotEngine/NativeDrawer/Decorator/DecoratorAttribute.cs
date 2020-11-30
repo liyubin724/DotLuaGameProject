@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.NativeDrawer.Decorator
 {
-    public abstract class DecoratorAttribute : NativeDrawerAttribute
+    public abstract class DecoratorAttribute : DrawerAttribute
     {
     }
 }

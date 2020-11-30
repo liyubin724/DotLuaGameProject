@@ -7,9 +7,9 @@ namespace DotEditor.NativeDrawer
 {
     public abstract class AttrNativeDrawer
     {
-        public NativeDrawerAttribute Attr { get; set; }
+        public DrawerAttribute Attr { get; set; }
 
-        public T GetAttr<T>() where T:NativeDrawerAttribute
+        public T GetAttr<T>() where T:DrawerAttribute
         {
             return (T)Attr;
         }

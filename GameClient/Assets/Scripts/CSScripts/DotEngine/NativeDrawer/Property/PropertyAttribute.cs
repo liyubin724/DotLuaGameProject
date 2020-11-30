@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.NativeDrawer.Property
 {
-    public abstract class PropertyAttribute : NativeDrawerAttribute
+    public abstract class PropertyAttribute : DrawerAttribute
     {
     }
 

@@ -2,7 +2,7 @@
 
 namespace DotEngine.NativeDrawer.Visible
 {
-    public abstract class VisibleAtrribute : NativeDrawerAttribute
+    public abstract class VisibleAtrribute : DrawerAttribute
     {
     }
 
