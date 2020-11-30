@@ -17,9 +17,9 @@ namespace DotEditor.GUIExtension
             DrawHorizontalLine(EGUIResources.gray);
         }
 
-        public static void DrawHorizontalLine(Color color,float thickness = 0.75f, float padding = 6.0f)
+        public static void DrawHorizontalLine(Color color,float thickness = 0.75f, float padding = 3.0f)
         {
-            Rect rect = EditorGUILayout.GetControlRect(UnityEngine.GUILayout.Height(padding + thickness), UnityEngine.GUILayout.ExpandWidth(true));
+            Rect rect = EditorGUILayout.GetControlRect(UnityEngine.GUILayout.Height(padding * 2 + thickness), UnityEngine.GUILayout.ExpandWidth(true));
             EGUI.DrawHorizontalLine(rect, color,thickness);
         }
 
@@ -28,9 +28,9 @@ namespace DotEditor.GUIExtension
             DrawVerticalLine(EGUIResources.gray);
         }
 
-        public static void DrawVerticalLine(Color color,float thickness = 0.75f, float padding = 6.0f )
+        public static void DrawVerticalLine(Color color,float thickness = 0.75f, float padding = 3.0f )
         {
-            Rect rect = EditorGUILayout.GetControlRect(UnityEngine.GUILayout.Width(padding + thickness), UnityEngine.GUILayout.ExpandHeight(true));
+            Rect rect = EditorGUILayout.GetControlRect(UnityEngine.GUILayout.Width(padding*2 + thickness), UnityEngine.GUILayout.ExpandHeight(true));
             EGUI.DrawVerticalLine(rect, color,thickness);
         }
 
@@ -53,12 +53,12 @@ namespace DotEditor.GUIExtension
             }
         }
 
-        public static void DrawHorizontalSpace(int space)
+        public static void DrawHorizontalSpace(float space)
         {
             EditorGUILayout.LabelField(GUIContent.none, GUILayout.Height(space), GUILayout.ExpandWidth(true));
         }
 
-        public static void DrawVerticalSpace(int space)
+        public static void DrawVerticalSpace(float space)
         {
             EditorGUILayout.LabelField(GUIContent.none, GUILayout.Width(space), GUILayout.ExpandHeight(true));
         }

@@ -1,5 +1,5 @@
-﻿using DotEngine.NativeDrawer.Decorator;
-using DotEditor.GUIExtension;
+﻿using DotEditor.GUIExtension;
+using DotEngine.NativeDrawer.Decorator;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
@@ -12,7 +12,8 @@ namespace DotEditor.NativeDrawer.Decorator
 
         public override void OnGUILayout()
         {
-            EGUILayout.DrawHorizontalLine();
+            SeparatorLineAttribute attr = GetAttr<SeparatorLineAttribute>();
+            EGUILayout.DrawHorizontalLine(attr.Color,attr.Thickness,attr.Padding);
         }
     }
 }

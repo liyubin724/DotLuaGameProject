@@ -4,7 +4,7 @@ namespace DotEngine.NativeDrawer.Decorator
 {
     public enum ButtonSize
     {
-        Big,
+        Big = 0,
         Normal,
         Small,
     }
@@ -14,9 +14,9 @@ namespace DotEngine.NativeDrawer.Decorator
     {
         public ButtonSize Size { get; set; } = ButtonSize.Normal;
         public string Label { get; set; }
-        public string MethodName { get; set; }
+        public string MethodName { get; private set; }
 
-        public ButtonAttribute(string methodName) 
+        public ButtonAttribute(string methodName)
         {
             MethodName = methodName;
         }

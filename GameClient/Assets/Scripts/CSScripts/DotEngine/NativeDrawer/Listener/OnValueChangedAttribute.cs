@@ -6,7 +6,8 @@ namespace DotEngine.NativeDrawer.Listener
     public class OnValueChangedAttribute : ListenerAttribute
     {
         public string MethodName { get; private set; }
-        public OnValueChangedAttribute(string methodName)
+
+        public OnValueChangedAttribute(string methodName) : base()
         {
             MethodName = methodName;
         }
