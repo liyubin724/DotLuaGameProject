@@ -1,6 +1,5 @@
 ﻿using DotEditor.GUIExtension;
 using UnityEditor;
-using UnityEngine;
 
 namespace DotEditor.NativeDrawer
 {
@@ -29,25 +28,7 @@ namespace DotEditor.NativeDrawer
         public override void OnInspectorGUI()
         {
             EGUILayout.DrawScript(target);
-
-            EditorGUILayout.Space();
-
-            EGUI.BeginGUIColor(Color.grey);
-            {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                {
-                    EGUILayout.DrawBoxHeader("Native Drawer Setting", GUILayout.ExpandWidth(true));
-                    EGUI.BeginIndent();
-                    {
-                        NativeDrawerSetting.IsShowHelp = EditorGUILayout.Toggle("Is Show Help", NativeDrawerSetting.IsShowHelp);
-                    }
-                    EGUI.EndIndent();
-                }
-                EditorGUILayout.EndVertical();
-            }
-            EGUI.EndGUIColor();
-
-            EditorGUILayout.Space();
+            NativeDrawerSetting.OnDrawSetting();
 
             EGUI.BeginLabelWidth(GetLabelWidth());
             {
