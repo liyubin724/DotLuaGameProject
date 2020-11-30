@@ -6,10 +6,6 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(SpaceAttribute))]
     public class SpaceDrawer : DecoratorDrawer
     {
-        public SpaceDrawer(DrawerProperty property, DecoratorAttribute attr) : base(property, attr)
-        {
-        }
-
         public override void OnGUILayout()
         {
             SpaceAttribute attr = GetAttr<SpaceAttribute>();

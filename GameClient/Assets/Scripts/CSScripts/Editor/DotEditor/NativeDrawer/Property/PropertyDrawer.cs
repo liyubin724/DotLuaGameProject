@@ -7,32 +7,21 @@ namespace DotEditor.NativeDrawer.Property
 {
     public abstract class PropertyControlDrawer : AttrDrawer
     {
-        protected PropertyControlDrawer(PropertyControlAttribute attr) : base(attr)
-        {
-        }
-
         public abstract void OnStartGUILayout();
         public abstract void OnEndGUILayout();
+
+        public override void OnGUILayout()
+        {
+        }
     }
 
     public abstract class PropertyLabelDrawer : AttrDrawer
     {
-        protected PropertyLabelDrawer(PropertyLabelAttribute attr) : base(attr)
-        {
-        }
-
         public abstract string GetLabel();
     }
 
     public abstract class PropertyDrawer : AttrDrawer
     {
-        public DrawerProperty DrawerProperty { get; private set; }
-
-        protected PropertyDrawer(DrawerProperty drawerProperty,PropertyDrawerAttribute attr) : base(attr)
-        {
-            DrawerProperty = drawerProperty;
-        }
-
         protected abstract bool IsValidProperty();
 
         public void OnGUILayout(string label)

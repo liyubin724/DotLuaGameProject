@@ -6,10 +6,6 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(HelpAttribute))]
     public class HelpDrawer : DecoratorDrawer
     {
-        public HelpDrawer(DrawerProperty property, DecoratorAttribute attr) : base(property, attr)
-        {
-        }
-
         public override void OnGUILayout()
         {
             if(!DrawerSetting.IsShowHelp)

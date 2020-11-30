@@ -1,6 +1,5 @@
-﻿using DotEngine.NativeDrawer;
+﻿using DotEditor.GUIExtension;
 using DotEngine.NativeDrawer.Layout;
-using DotEditor.GUIExtension;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,10 +8,6 @@ namespace DotEditor.NativeDrawer.Layout
     [AttrBinder(typeof(BeginGroupAttribute))]
     public class BeginGroupDrawer : LayoutDrawer
     {
-        public BeginGroupDrawer(LayoutAttribute attr) : base(attr)
-        {
-        }
-
         public override void OnGUILayout()
         {
             BeginGroupAttribute attr = GetAttr<BeginGroupAttribute>();

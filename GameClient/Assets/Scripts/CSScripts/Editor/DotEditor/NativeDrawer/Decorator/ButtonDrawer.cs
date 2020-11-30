@@ -1,5 +1,5 @@
-﻿using DotEngine.NativeDrawer.Decorator;
-using DotEditor.GUIExtension;
+﻿using DotEditor.GUIExtension;
+using DotEngine.NativeDrawer.Decorator;
 using System.Reflection;
 
 namespace DotEditor.NativeDrawer.Decorator
@@ -7,10 +7,6 @@ namespace DotEditor.NativeDrawer.Decorator
     [AttrBinder(typeof(ButtonAttribute))]
     public class ButtonDrawer : DecoratorDrawer
     {
-        public ButtonDrawer(DrawerProperty property, DecoratorAttribute attr) : base(property, attr)
-        {
-        }
-
         public override void OnGUILayout()
         {
             var attr = GetAttr<ButtonAttribute>();
