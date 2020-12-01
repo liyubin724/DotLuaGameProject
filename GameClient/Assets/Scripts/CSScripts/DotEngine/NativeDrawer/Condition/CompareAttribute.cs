@@ -1,15 +1,5 @@
 ﻿namespace DotEngine.NativeDrawer.Condition
 {
-    public enum CompareSymbol
-    {
-        Eq,
-        Neq,
-        Lt,
-        Gt,
-        Lte,
-        Gte,
-    }
-
     public abstract class CompareAttribute : ConditionAttribute
     {
         public string MemberName { get; private set; }

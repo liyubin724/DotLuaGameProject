@@ -2,11 +2,11 @@
 {
     public class VisibleIfAttribute : VisibleAtrribute
     {
-        public string VisibleMemberName { get; private set; }
+        public string MemberName { get; private set; }
 
         public VisibleIfAttribute(string memberName)
         {
-            VisibleMemberName = memberName;
+            MemberName = memberName;
         }
     }
 }

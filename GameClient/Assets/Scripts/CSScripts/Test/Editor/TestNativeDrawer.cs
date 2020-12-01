@@ -1,4 +1,5 @@
 ﻿using DotEditor.NativeDrawer;
+using DotEngine.NativeDrawer;
 using DotEngine.NativeDrawer.Decorator;
 using DotEngine.NativeDrawer.Layout;
 using DotEngine.NativeDrawer.Listener;
@@ -157,6 +158,9 @@ namespace TestEditor
         //[Help("Null To Create")]
         [NotNull("Not Null")]
         public VisibleTestData VisibleData2 = null;
+
+        [CompareVerification("TTTT",5,CompareSymbol.Lt)]
+        public int compareVerificationValue;
 
         //public int[] intArray  = new int[0];
     }

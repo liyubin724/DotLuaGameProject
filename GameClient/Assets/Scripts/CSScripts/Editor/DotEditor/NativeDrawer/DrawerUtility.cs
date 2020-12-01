@@ -257,5 +257,114 @@ namespace DotEditor.NativeDrawer
             }
             return types;
         }
+
+        public static bool Compare(object value1,object value2,CompareSymbol symbol)
+        {
+            if(value1 == null && value2 == null)
+            {
+                if (symbol == CompareSymbol.Eq || symbol == CompareSymbol.Gte || symbol == CompareSymbol.Lte)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                } 
+            }else if(value1 == null || value2 ==null)
+            {
+                if(symbol == CompareSymbol.Neq)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }else
+            {
+                if (value1.GetType() != value2.GetType())
+                {
+                    if (symbol == CompareSymbol.Neq)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (TypeUtility.IsCastableTo(value1.GetType(), typeof(IComparable)))
+                    {
+                        int compared = ((IComparable)value1).CompareTo((IComparable)value2);
+                        if(compared == 0)
+                        {
+                            if (symbol == CompareSymbol.Eq || symbol == CompareSymbol.Gte || symbol == CompareSymbol.Lte)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }else
+                        {
+                            if(symbol == CompareSymbol.Neq)
+                            {
+                                return true;
+                            }
+
+                            if(compared>0)
+                            {
+                                if(symbol == CompareSymbol.Gt || symbol == CompareSymbol.Gte)
+                                {
+                                    return true;
+                                }else
+                                {
+                                    return false;
+                                }
+                            }else if(compared<0)
+                            {
+                                if (symbol == CompareSymbol.Lt || symbol == CompareSymbol.Lte)
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }else
+                            {
+                                return false;
+                            }
+                        }
+                    }else
+                    {
+                        if(value1 == value2)
+                        {
+                            if (symbol == CompareSymbol.Eq || symbol == CompareSymbol.Gte || symbol == CompareSymbol.Lte)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }else
+                        {
+                            if(symbol == CompareSymbol.Neq)
+                            {
+                                return true;
+                            }else
+                            {
+                                return false;
+                            }
+                        }
+                    }//endof TypeUtility.IsCastableTo
+                }
+            }
+
+        }
     }
 }

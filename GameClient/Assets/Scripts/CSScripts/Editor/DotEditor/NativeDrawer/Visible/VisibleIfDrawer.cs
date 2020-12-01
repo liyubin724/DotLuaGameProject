@@ -9,9 +9,9 @@ namespace DotEditor.NativeDrawer.Visible
         {
             VisibleIfAttribute attr = GetAttr<VisibleIfAttribute>();
 
-            if(!string.IsNullOrEmpty(attr.VisibleMemberName))
+            if(!string.IsNullOrEmpty(attr.MemberName))
             {
-                return DrawerUtility.GetMemberValue<bool>(attr.VisibleMemberName, Property.Target);
+                return DrawerUtility.GetMemberValue<bool>(attr.MemberName, Property.Target);
             }
             return false;
         }
