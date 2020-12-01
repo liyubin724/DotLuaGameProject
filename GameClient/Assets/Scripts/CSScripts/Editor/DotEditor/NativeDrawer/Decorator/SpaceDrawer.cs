@@ -3,7 +3,7 @@ using DotEngine.NativeDrawer.Decorator;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [AttrBinder(typeof(SpaceAttribute))]
+    [Binder(typeof(SpaceAttribute))]
     public class SpaceDrawer : DecoratorDrawer
     {
         public override void OnGUILayout()

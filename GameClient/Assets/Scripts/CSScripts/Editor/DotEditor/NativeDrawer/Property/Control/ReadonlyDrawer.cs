@@ -3,13 +3,9 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(ReadonlyAttribute))]
+    [Binder(typeof(ReadonlyAttribute))]
     public class ReadonlyDrawer : PropertyControlDrawer
     {
-        public ReadonlyDrawer(PropertyControlAttribute attr) : base(attr)
-        {
-        }
-
         public override void OnStartGUILayout()
         {
             EditorGUI.BeginDisabledGroup(true);

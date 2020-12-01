@@ -1,6 +1,6 @@
 ﻿namespace DotEditor.NativeDrawer.Decorator
 {
-    public abstract class DecoratorDrawer : AttrDrawer
+    public abstract class DecoratorDrawer : Drawer
     {
         public abstract void OnGUILayout();
     }

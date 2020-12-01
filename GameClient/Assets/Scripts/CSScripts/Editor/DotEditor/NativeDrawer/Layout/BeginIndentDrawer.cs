@@ -3,7 +3,7 @@ using DotEngine.NativeDrawer.Layout;
 
 namespace DotEditor.NativeDrawer.Layout
 {
-    [AttrBinder(typeof(BeginIndentAttribute))]
+    [Binder(typeof(BeginIndentAttribute))]
     public class BeginIndentDrawer : LayoutDrawer
     {
         public override void OnGUILayout()

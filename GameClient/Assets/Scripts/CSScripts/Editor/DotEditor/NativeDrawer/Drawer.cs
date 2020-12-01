@@ -5,21 +5,21 @@ using System;
 
 namespace DotEditor.NativeDrawer
 {
-    public abstract class AttrDrawer
+    public abstract class Drawer
     {
-        public DrawerAttribute DrawerAttr { get; set; }
-        public DrawerProperty DrawerProperty { get; set; }
+        public DrawerAttribute Attr { get; set; }
+        public DrawerProperty Property { get; set; }
 
         public T GetAttr<T>() where T:DrawerAttribute
         {
-            return (T)DrawerAttr;
+            return (T)Attr;
         }
     }
 
 
 
 
-    public abstract class CompareAttrDrawer : AttrDrawer
+    public abstract class CompareAttrDrawer : Drawer
     {
         public object Target { get; private set; }
         protected CompareAttrDrawer(object target,CompareAttribute attr)

@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Layout
 {
-    [AttrBinder(typeof(EndHorizontalAttribute))]
+    [Binder(typeof(EndHorizontalAttribute))]
     public class EndHorizontalDrawer : LayoutDrawer
     {
         public override void OnGUILayout()

@@ -7,26 +7,26 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(EnumButtonAttribute))]
-    public class EnumButtonDrawer : PropertyDrawer
+    [Binder(typeof(EnumButtonAttribute))]
+    public class EnumButtonDrawer : PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return typeof(Enum).IsAssignableFrom(DrawerProperty.ValueType);
+            return typeof(Enum).IsAssignableFrom(Property.ValueType);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
 
-            object value = DrawerProperty.Value;
+            object value = Property.Value;
             EditorGUI.BeginChangeCheck();
             {
                 value = EGUILayout.DrawEnumButton(label, (Enum)value, GetLayoutOptions());
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = Enum.ToObject(DrawerProperty.ValueType, value);
+                Property.Value = Enum.ToObject(Property.ValueType, value);
             }
         }
 

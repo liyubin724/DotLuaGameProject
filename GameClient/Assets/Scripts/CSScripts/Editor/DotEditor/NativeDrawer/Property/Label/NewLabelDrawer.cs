@@ -2,7 +2,7 @@
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(NewLabelAttribute))]
+    [Binder(typeof(NewLabelAttribute))]
     public class NewLabelDrawer : PropertyLabelDrawer
     {
         public override string GetLabel()

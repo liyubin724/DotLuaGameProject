@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Layout
 {
-    [AttrBinder(typeof(BeginHorizontalAttribute))]
+    [Binder(typeof(BeginHorizontalAttribute))]
     public class BeginHorizontalDrawer : LayoutDrawer
     {
         public override void OnGUILayout()

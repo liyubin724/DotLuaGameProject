@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DotEditor.NativeDrawer.Listener
 {
-    public abstract class ListenerDrawer : AttrDrawer
+    public abstract class ListenerDrawer : Drawer
     {
         public object Target { get; private set; }
 

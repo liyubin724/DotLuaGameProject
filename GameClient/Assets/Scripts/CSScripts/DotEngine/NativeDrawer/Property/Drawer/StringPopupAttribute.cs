@@ -3,7 +3,7 @@
 namespace DotEngine.NativeDrawer.Property
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class StringPopupAttribute : PropertyDrawerAttribute
+    public class StringPopupAttribute : PropertyContentAttribute
     {
         public string[] Options { get; set; } = new string[0];
 

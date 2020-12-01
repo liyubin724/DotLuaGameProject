@@ -3,25 +3,25 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(bool))]
-    public class BoolDrawer : Property.PropertyDrawer
+    public class BoolDrawer : Property.PropertyContentDrawer
     {
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            bool value = DrawerProperty.GetValue<bool>();
+            bool value = Property.GetValue<bool>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.Toggle(label, value);
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
 
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(bool);
+            return Property.ValueType == typeof(bool);
         }
     }
 }

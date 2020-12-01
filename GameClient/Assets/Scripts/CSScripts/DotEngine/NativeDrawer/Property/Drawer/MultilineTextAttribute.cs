@@ -3,7 +3,7 @@
 namespace DotEngine.NativeDrawer.Property
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class MultilineTextAttribute : PropertyDrawerAttribute
+    public class MultilineTextAttribute : PropertyContentAttribute
     {
         public int LineCount { get; private set; }
 

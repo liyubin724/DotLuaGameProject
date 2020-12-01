@@ -2,13 +2,8 @@
 
 namespace DotEditor.NativeDrawer.Visible
 {
-    public abstract class VisibleDrawer : AttrDrawer
+    public abstract class VisibleDrawer : Drawer
     {
-        public VisibleDrawer(VisibleAtrribute attr) : base(attr)
-        {
-            
-        }
-
         public abstract bool IsVisible();
     }
 

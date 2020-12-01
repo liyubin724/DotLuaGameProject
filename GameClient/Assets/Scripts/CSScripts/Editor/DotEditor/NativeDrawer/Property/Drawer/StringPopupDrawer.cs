@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(StringPopupAttribute))]
-    public class StringPopupDrawer : PropertyDrawer
+    [Binder(typeof(StringPopupAttribute))]
+    public class StringPopupDrawer : PropertyContentDrawer
     {
         private static EditorWindow lastSearchableWindow;
 
         protected override bool IsValidProperty()
         {
-            return typeof(string) == DrawerProperty.ValueType;
+            return typeof(string) == Property.ValueType;
         }
 
         protected override void OnDrawProperty(string label)
@@ -23,10 +23,10 @@ namespace DotEditor.NativeDrawer.Property
             string[] options = attr.Options;
             if (!string.IsNullOrEmpty(attr.MemberName))
             {
-                options = DrawerUtility.GetMemberValue<string[]>(attr.MemberName, DrawerProperty.Target);
+                options = DrawerUtility.GetMemberValue<string[]>(attr.MemberName, Property.Target);
             }
 
-            var value = DrawerProperty.GetValue<string>();
+            var value = Property.GetValue<string>();
 
             label = label ?? "";
 
@@ -43,7 +43,7 @@ namespace DotEditor.NativeDrawer.Property
                         {
                             SearchablePopup.Show(btnRect,new Vector2(200,400) ,Array.IndexOf(options, value), options, (selected) =>
                             {
-                                DrawerProperty.Value = options[selected];
+                                Property.Value = options[selected];
                             });
                         }
                         catch (ExitGUIException)
@@ -69,7 +69,7 @@ namespace DotEditor.NativeDrawer.Property
                 }
                 if (EditorGUI.EndChangeCheck())
                 {
-                    DrawerProperty.Value = value;
+                    Property.Value = value;
                 }
             }
         }

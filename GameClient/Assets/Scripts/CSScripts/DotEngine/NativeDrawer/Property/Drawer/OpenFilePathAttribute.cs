@@ -3,7 +3,7 @@
 namespace DotEngine.NativeDrawer.Property
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class OpenFilePathAttribute : PropertyDrawerAttribute
+    public class OpenFilePathAttribute : PropertyContentAttribute
     {
         public bool IsAbsolute { get; set; } = false;
 

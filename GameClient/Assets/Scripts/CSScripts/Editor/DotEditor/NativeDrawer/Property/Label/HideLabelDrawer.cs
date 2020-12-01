@@ -2,7 +2,7 @@
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(HideLabelAttribute))]
+    [Binder(typeof(HideLabelAttribute))]
     public class HideLabelDrawer : PropertyLabelDrawer
     {
         public override string GetLabel()

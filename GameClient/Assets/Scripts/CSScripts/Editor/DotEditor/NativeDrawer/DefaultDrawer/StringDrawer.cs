@@ -3,24 +3,24 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(string))]
-    public class StringDrawer : Property.PropertyDrawer
+    public class StringDrawer : Property.PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(string);
+            return Property.ValueType == typeof(string);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            string value = DrawerProperty.GetValue<string>();
+            string value = Property.GetValue<string>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.TextField(label, value);
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

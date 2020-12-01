@@ -8,7 +8,7 @@
     {
     }
 
-    public abstract class PropertyDrawerAttribute: PropertyAttribute
+    public abstract class PropertyContentAttribute: PropertyAttribute
     {
     }
 

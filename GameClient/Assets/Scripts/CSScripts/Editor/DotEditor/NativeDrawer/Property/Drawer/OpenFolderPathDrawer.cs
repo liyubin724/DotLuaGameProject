@@ -4,17 +4,17 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(OpenFolderPathAttribute))]
-    public class OpenFolderPathDrawer : PropertyDrawer
+    [Binder(typeof(OpenFolderPathAttribute))]
+    public class OpenFolderPathDrawer : PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(string);
+            return Property.ValueType == typeof(string);
         }
 
         protected override void OnDrawProperty(string label)
         {
-            string value = DrawerProperty.GetValue<string>();
+            string value = Property.GetValue<string>();
             var attr = GetAttr<OpenFolderPathAttribute>();
 
             EditorGUI.BeginChangeCheck();
@@ -23,7 +23,7 @@ namespace DotEditor.NativeDrawer.Property
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

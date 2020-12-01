@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(FloatSliderAttribute))]
-    public class FloatSliderDrawer : PropertyDrawer
+    [Binder(typeof(FloatSliderAttribute))]
+    public class FloatSliderDrawer : PropertyContentDrawer
     {
         protected override void OnDrawProperty(string label)
         {
@@ -14,29 +14,29 @@ namespace DotEditor.NativeDrawer.Property
             float rightValue = attr.RightValue;
             if(!string.IsNullOrEmpty(attr.LeftValueMemberName))
             {
-                leftValue = DrawerUtility.GetMemberValue<float>(attr.LeftValueMemberName, DrawerProperty.Target);
+                leftValue = DrawerUtility.GetMemberValue<float>(attr.LeftValueMemberName, Property.Target);
             }
             if(!string.IsNullOrEmpty(attr.RightValueMemberName))
             {
-                rightValue = DrawerUtility.GetMemberValue<float>(attr.RightValueMemberName, DrawerProperty.Target);
+                rightValue = DrawerUtility.GetMemberValue<float>(attr.RightValueMemberName, Property.Target);
             }
 
             label = label ?? "";
 
-            float value = DrawerProperty.GetValue<float>();
+            float value = Property.GetValue<float>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.Slider(label, value, leftValue, rightValue);
             }
             if(EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
 
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(float);
+            return Property.ValueType == typeof(float);
         }
     }
 }

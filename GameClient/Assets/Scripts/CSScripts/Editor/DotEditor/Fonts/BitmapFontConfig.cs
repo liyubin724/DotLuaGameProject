@@ -11,9 +11,9 @@ namespace DotEditor.Fonts
     {
         [OpenFolderPath]
         public string outputAssetDir = string.Empty;
-        [IntSlider(LeftValue =2,RightValue =10)]
+        [IntSlider(2,10)]
         public int padding = 2;
-        [IntPopup(Values =new int[] { 64,128,256,512,1024,2048},Contents = new string[] { "64 x 64", "128 x 128", "256 x 256", "512 x 512", "1024 x 1024", "2048 x 2048" })]
+        [IntPopup(new string[] { "64 x 64", "128 x 128", "256 x 256", "512 x 512", "1024 x 1024", "2048 x 2048" }, new int[] { 64,128,256,512,1024,2048})]
         public int maxSize = 1024;
 
         public List<BitmapFontChar> fontChars = new List<BitmapFontChar>();

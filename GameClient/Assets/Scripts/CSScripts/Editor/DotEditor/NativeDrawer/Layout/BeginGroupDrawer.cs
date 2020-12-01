@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Layout
 {
-    [AttrBinder(typeof(BeginGroupAttribute))]
+    [Binder(typeof(BeginGroupAttribute))]
     public class BeginGroupDrawer : LayoutDrawer
     {
         public override void OnGUILayout()

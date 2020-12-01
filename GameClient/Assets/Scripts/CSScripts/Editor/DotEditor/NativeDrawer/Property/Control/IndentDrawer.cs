@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(IndentAttribute))]
+    [Binder(typeof(IndentAttribute))]
     public class IndentDrawer : PropertyControlDrawer
     {
         public override void OnStartGUILayout()

@@ -2,7 +2,7 @@
 
 namespace DotEditor.NativeDrawer.Visible
 {
-    [AttrBinder(typeof(ShowIfAttribute))]
+    [Binder(typeof(ShowIfAttribute))]
     public class ShowIfDrawer : VisibleCompareDrawer
     {
         public ShowIfDrawer(object target, VisibleCompareAttribute attr) : base(target, attr)

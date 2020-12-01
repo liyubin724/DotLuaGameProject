@@ -3,7 +3,7 @@ using DotEngine.NativeDrawer.Decorator;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [AttrBinder(typeof(SeparatorLineAttribute))]
+    [Binder(typeof(SeparatorLineAttribute))]
     public class SeparatorLineDrawer : DecoratorDrawer
     {
         public override void OnGUILayout()

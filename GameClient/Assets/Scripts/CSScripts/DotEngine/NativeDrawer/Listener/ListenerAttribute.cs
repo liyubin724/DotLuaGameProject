@@ -2,7 +2,7 @@
 
 namespace DotEngine.NativeDrawer.Listener
 {
-    public abstract class ListenerAttribute : Attribute
+    public abstract class ListenerAttribute : DrawerAttribute
     {
     }
 }

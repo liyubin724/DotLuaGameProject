@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(MultilineTextAttribute))]
-    public class MultilineTextDrawer : PropertyDrawer
+    [Binder(typeof(MultilineTextAttribute))]
+    public class MultilineTextDrawer : PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(string);
+            return Property.ValueType == typeof(string);
         }
 
         protected override void OnDrawProperty(string label)
@@ -18,7 +18,7 @@ namespace DotEditor.NativeDrawer.Property
             var attr = GetAttr<MultilineTextAttribute>();
 
             label = label ?? "";
-            string value = DrawerProperty.GetValue<string>();
+            string value = Property.GetValue<string>();
 
             EditorGUILayout.LabelField(label);
             EditorGUI.BeginChangeCheck();
@@ -31,7 +31,7 @@ namespace DotEditor.NativeDrawer.Property
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

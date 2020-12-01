@@ -3,12 +3,12 @@ using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(IntSliderAttribute))]
-    public class IntSliderDrawer : PropertyDrawer
+    [Binder(typeof(IntSliderAttribute))]
+    public class IntSliderDrawer : PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(int);
+            return Property.ValueType == typeof(int);
         }
 
         protected override void OnDrawProperty(string label)
@@ -19,23 +19,23 @@ namespace DotEditor.NativeDrawer.Property
             int rightValue = attr.RightValue;
             if (!string.IsNullOrEmpty(attr.LeftValueMemberName))
             {
-                leftValue = DrawerUtility.GetMemberValue<int>(attr.LeftValueMemberName, DrawerProperty.Target);
+                leftValue = DrawerUtility.GetMemberValue<int>(attr.LeftValueMemberName, Property.Target);
             }
             if (!string.IsNullOrEmpty(attr.RightValueMemberName))
             {
-                rightValue = DrawerUtility.GetMemberValue<int>(attr.RightValueMemberName, DrawerProperty.Target);
+                rightValue = DrawerUtility.GetMemberValue<int>(attr.RightValueMemberName, Property.Target);
             }
 
             label = label ?? "";
 
-            int value = DrawerProperty.GetValue<int>();
+            int value = Property.GetValue<int>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.IntSlider(label, value, leftValue, rightValue);
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

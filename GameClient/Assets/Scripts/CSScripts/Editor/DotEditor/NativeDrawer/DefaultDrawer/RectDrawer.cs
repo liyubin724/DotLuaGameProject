@@ -4,24 +4,24 @@ using UnityEngine;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(Rect))]
-    public class RectDrawer : Property.PropertyDrawer
+    public class RectDrawer : Property.PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(Rect);
+            return Property.ValueType == typeof(Rect);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            Rect value = DrawerProperty.GetValue<Rect>();
+            Rect value = Property.GetValue<Rect>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.RectField(label, value);
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

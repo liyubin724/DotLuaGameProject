@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [AttrBinder(typeof(BoxedHeaderAttribute))]
+    [Binder(typeof(BoxedHeaderAttribute))]
     public class BoxedHeaderDrawer : DecoratorDrawer
     {
         public override void OnGUILayout()

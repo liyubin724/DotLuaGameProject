@@ -3,24 +3,24 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(float))]
-    public class FloatDrawer : Property.PropertyDrawer
+    public class FloatDrawer : Property.PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(float);
+            return Property.ValueType == typeof(float);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            float value = DrawerProperty.GetValue<float>();
+            float value = Property.GetValue<float>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.FloatField(label, value);
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

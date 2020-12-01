@@ -3,24 +3,24 @@
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(int))]
-    public class IntDrawer : Property.PropertyDrawer
+    public class IntDrawer : Property.PropertyContentDrawer
     {
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(int);
+            return Property.ValueType == typeof(int);
         }
 
         protected override void OnDrawProperty(string label)
         {
             label = label ?? "";
-            int value = DrawerProperty.GetValue<int>();
+            int value = Property.GetValue<int>();
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.IntField(label, value);
             }
             if(EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

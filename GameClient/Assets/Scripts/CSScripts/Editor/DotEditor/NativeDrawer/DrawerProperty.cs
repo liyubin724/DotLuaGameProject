@@ -1,22 +1,15 @@
-﻿using DotEngine.NativeDrawer.Decorator;
-using DotEngine.NativeDrawer.Layout;
-using DotEngine.NativeDrawer.Listener;
-using DotEngine.NativeDrawer.Property;
-using DotEngine.NativeDrawer.Verification;
-using DotEngine.NativeDrawer.Visible;
-using DotEngine.Utilities;
-using DotEditor.GUIExtension;
+﻿using DotEditor.GUIExtension;
 using DotEditor.NativeDrawer.Decorator;
 using DotEditor.NativeDrawer.Layout;
-using DotEditor.NativeDrawer.Listener;
 using DotEditor.NativeDrawer.Property;
-using DotEditor.NativeDrawer.Verification;
-using DotEditor.NativeDrawer.Visible;
+using DotEngine;
+using DotEngine.NativeDrawer;
+using DotEngine.NativeDrawer.Layout;
+using DotEngine.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using DotEngine.NativeDrawer;
 
 namespace DotEditor.NativeDrawer
 {
@@ -25,6 +18,26 @@ namespace DotEditor.NativeDrawer
         public object Target { get; private set; }
         public FieldInfo Field { get; private set; }
         public int ArrayElementIndex { get; private set; } = -1;
+
+        public string FieldName
+        {
+            get
+            {
+                if(IsArrayElement)
+                {
+                    return $"{Field.Name}-{ArrayElementIndex}";
+                }
+                return Field.Name;
+            }
+        }
+
+        public Type TargetType
+        {
+            get
+            {
+                return Target?.GetType();
+            }
+        }
 
         public bool IsArrayElement
         {
@@ -81,17 +94,11 @@ namespace DotEditor.NativeDrawer
 
         private List<DecoratorDrawer> decoratorDrawers = new List<DecoratorDrawer>();
         private List<LayoutDrawer> layoutDrawers = new List<LayoutDrawer>();
-        private List<VerificationDrawer> verificationDrawers = new List<VerificationDrawer>();
-        private List<VisibleDrawer> visibleDrawers = new List<VisibleDrawer>();
-        private List<VisibleCompareDrawer> visibleCompareDrawers = new List<VisibleCompareDrawer>();
 
-        private List<PropertyLabelDrawer> propertyLabelDrawers = new List<PropertyLabelDrawer>();
-        private List<PropertyControlDrawer> propertyControlDrawers = new List<PropertyControlDrawer>();
-        private List<PropertyDrawer> propertyDrawers = new List<PropertyDrawer>();
+        private List<PropertyControlDrawer> controlDrawers = new List<PropertyControlDrawer>();
+        private PropertyLabelDrawer labelDrawer = null;
+        private PropertyContentDrawer contentDrawer = null;
 
-        private List<ListenerDrawer> listenerDrawers = new List<ListenerDrawer>();
-
-        private CustomTypeDrawer typeDrawer = null;
         private DrawerObject drawerObject = null;
         internal DrawerProperty(object propertyObject,FieldInfo field)
         {
@@ -114,95 +121,84 @@ namespace DotEditor.NativeDrawer
         {
             if(!IsArrayElement)
             {
-                InitFieldAttr();
+                var drawerAttrs = Field.GetCustomAttributes<DrawerAttribute>();
+                foreach (var attr in drawerAttrs)
+                {
+                    var drawer = DrawerUtility.CreateAttrDrawer(this, attr);
+                    if (drawer == null)
+                    {
+                        DebugLog.Warning("DrawerProperty::Init->drawer not found.attr = " + attr.GetType().Name);
+                    }else
+                    {
+                        if(drawer.GetType().IsSubclassOf(typeof(DecoratorDrawer)))
+                        {
+                            decoratorDrawers.Add(drawer as DecoratorDrawer);
+                        }
+
+                        if (drawer.GetType().IsSubclassOf(typeof(LayoutDrawer)))
+                        {
+                            layoutDrawers.Add(drawer as LayoutDrawer);
+                        }
+
+                        if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
+                        {
+                            controlDrawers.Add(drawer as PropertyControlDrawer);
+                        }
+
+                        if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))
+                        {
+                            if (labelDrawer != null)
+                            {
+                                DebugLog.Warning("DrawerProperty::Init->labelDrawer has been found.attr = " + attr.GetType().Name);
+                            }else
+                            {
+                                labelDrawer = drawer as PropertyLabelDrawer;
+                            }
+                        }
+
+                        if (drawer.GetType().IsSubclassOf(typeof(PropertyContentDrawer)))
+                        {
+                            if (contentDrawer != null)
+                            {
+                                DebugLog.Warning("DrawerProperty::Init->contentDrawer has been found.attr = " + attr.GetType().Name);
+                            }
+                            else
+                            {
+                                contentDrawer = drawer as PropertyContentDrawer;
+                            }
+                        }
+                    }
+                }
             }
 
-            InitDrawer();
-        }
-
-        private void InitDrawer()
-        {
-            typeDrawer = DrawerUtility.CreateDefaultTypeDrawer(this);
-            if (typeDrawer == null)
+            if(contentDrawer == null)
             {
-                if(DrawerUtility.IsTypeSupported(ValueType))
+                contentDrawer = DrawerUtility.CreateCustomTypeDrawer(this);
+                if(contentDrawer ==null)
                 {
-                    if (TypeUtility.IsStructOrClass(ValueType) && Value != null)
+                    if (DrawerUtility.IsTypeSupported(ValueType))
                     {
-                        drawerObject = new DrawerObject(Value);
+                        if (TypeUtility.IsStructOrClass(ValueType) && Value != null)
+                        {
+                            drawerObject = new DrawerObject(Value);
+                        }
                     }
                 }
             }
         }
 
-        private void InitFieldAttr()
-        {
-            var drawerAttrs = Field.GetCustomAttributes<DrawerAttribute>();
-
-            var decoratorAttrEnumerable = Field.GetCustomAttributes<DecoratorAttribute>();
-            foreach (var attr in decoratorAttrEnumerable)
-            {
-                decoratorDrawers.Add(DrawerUtility.CreateDecoratorDrawer(this,attr));
-            }
-
-            var layoutAttrEnumerable = Field.GetCustomAttributes<LayoutAttribute>();
-            foreach (var attr in layoutAttrEnumerable)
-            {
-                layoutDrawers.Add(DrawerUtility.CreateLayoutDrawer(attr));
-            }
-
-            var verificationAttrEnumerable = Field.GetCustomAttributes<VerificationCompareAttribute>();
-            foreach (var attr in verificationAttrEnumerable)
-            {
-                verificationDrawers.Add(DrawerUtility.CreateVerificationDrawer(Target, attr));
-            }
-
-            var visibleAttrEnumerable = Field.GetCustomAttributes<VisibleAtrribute>();
-            foreach (var attr in visibleAttrEnumerable)
-            {
-                visibleDrawers.Add(DrawerUtility.CreateVisibleDrawer(attr));
-            }
-
-            var visibleCompareAttrEnumerable = Field.GetCustomAttributes<VisibleCompareAttribute>();
-            foreach (var attr in visibleCompareAttrEnumerable)
-            {
-                visibleCompareDrawers.Add(DrawerUtility.CreateVisibleCompareDrawer(Target, attr));
-            }
-
-            var propertyLabelAttrEnumerable = Field.GetCustomAttributes<PropertyLabelAttribute>();
-            foreach (var attr in propertyLabelAttrEnumerable)
-            {
-                propertyLabelDrawers.Add(DrawerUtility.CreatePropertyLabelDrawer(attr));
-            }
-
-            var propertyControlAttrEnumerable = Field.GetCustomAttributes<PropertyControlAttribute>();
-            foreach (var attr in propertyControlAttrEnumerable)
-            {
-                propertyControlDrawers.Add(DrawerUtility.CreatePropertyControlDrawer(attr));
-            }
-
-            var propertyAttrEnumerable = Field.GetCustomAttributes<PropertyDrawerAttribute>();
-            foreach (var attr in propertyAttrEnumerable)
-            {
-                propertyDrawers.Add(DrawerUtility.CreatePropertyDrawer(this, attr));
-            }
-
-            var listenerAttrEnumerable = Field.GetCustomAttributes<ListenerAttribute>();
-            foreach(var attr in listenerAttrEnumerable)
-            {
-                listenerDrawers.Add(DrawerUtility.CreateListenerDrawer(Target, attr));
-            }
-        }
-
         internal void OnGUILayout()
         {
-            bool isVisible = IsVisible();
-
             foreach (var drawer in layoutDrawers)
             {
-                drawer.OnGUILayout();
+                LayoutAttribute attr = drawer.GetAttr<LayoutAttribute>();
+                if(attr.Occasion == LayoutOccasion.Before)
+                {
+                    drawer.OnGUILayout();
+                }
             }
 
+            bool isVisible = IsVisible();
             if (isVisible)
             {
                 foreach (var drawer in decoratorDrawers)
@@ -210,91 +206,99 @@ namespace DotEditor.NativeDrawer
                     drawer.OnGUILayout();
                 }
 
-                foreach (var drawer in verificationDrawers)
-                {
-                    drawer.OnGUILayout();
-                }
-
-                foreach (var drawer in propertyControlDrawers)
+                foreach (var drawer in controlDrawers)
                 {
                     drawer.OnStartGUILayout();
                 }
 
-                string label = GetFieldLabel();
+                string label = FieldName;
+                if(labelDrawer!=null)
+                {
+                    label = labelDrawer.GetLabel();
+                }
                 if(!string.IsNullOrEmpty(label))
                 {
                     label = UnityEditor.ObjectNames.NicifyVariableName(label);
                 }
-                if (propertyDrawers.Count == 0)
+                if(contentDrawer!=null)
                 {
-                    if(typeDrawer != null)
+                    contentDrawer.OnGUILayout(label);
+                }else if(drawerObject!=null)
+                {
+                    if (!IsArrayElement)
                     {
-                        typeDrawer.OnGUILayout(label);
-                    }else if(drawerObject!=null)
-                    {
-                        if(!IsArrayElement)
+                        UnityEditor.EditorGUILayout.LabelField(label);
+                        UnityEditor.EditorGUI.indentLevel++;
                         {
-                            UnityEditor.EditorGUILayout.LabelField(label);
-                            UnityEditor.EditorGUI.indentLevel++;
+                            drawerObject.OnGUILayout();
+                        }
+                        UnityEditor.EditorGUI.indentLevel--;
+                    }
+                    else
+                    {
+                        UnityEditor.EditorGUILayout.BeginHorizontal();
+                        {
+                            UnityEditor.EditorGUILayout.LabelField(label, UnityEngine.GUILayout.Width(25));
+                            UnityEditor.EditorGUILayout.BeginVertical();
                             {
                                 drawerObject.OnGUILayout();
                             }
-                            UnityEditor.EditorGUI.indentLevel--;
-                        }else
-                        {
-                            UnityEditor.EditorGUILayout.BeginHorizontal();
-                            {
-                                UnityEditor.EditorGUILayout.LabelField(label, UnityEngine.GUILayout.Width(25));
-                                UnityEditor.EditorGUILayout.BeginVertical();
-                                {
-                                    drawerObject.OnGUILayout();
-                                }
-                                UnityEditor.EditorGUILayout.EndVertical();
-                            }
-                            UnityEditor.EditorGUILayout.EndHorizontal();
+                            UnityEditor.EditorGUILayout.EndVertical();
                         }
-                    }else if(drawerObject == null)
-                    {
-                        if(!DrawerUtility.IsTypeSupported(ValueType))
-                        {
-                            EGUI.BeginGUIColor(UnityEngine.Color.red);
-                            {
-                                UnityEditor.EditorGUILayout.LabelField(string.IsNullOrEmpty(label) ? "" : label, $"The type isn't supported.type = {ValueType}");
-                            }
-                            EGUI.EndGUIColor();
-                        }else if(Value == null)
-                        {
-                            UnityEditor.EditorGUILayout.BeginHorizontal();
-                            {
-                                UnityEditor.EditorGUILayout.PrefixLabel(label);
-                                if (UnityEngine.GUILayout.Button("Create"))
-                                {
-                                    Value = DrawerUtility.CreateDefaultInstance(ValueType);
-                                    InitDrawer();
-                                }
-                            }
-                            UnityEditor.EditorGUILayout.EndHorizontal();
-                        }else
-                        {
-                            EGUI.BeginGUIColor(UnityEngine.Color.red);
-                            {
-                                UnityEditor.EditorGUILayout.LabelField(string.IsNullOrEmpty(label) ? "" : label, "Unknown Drawer");
-                            }
-                            EGUI.EndGUIColor();
-                        }
+                        UnityEditor.EditorGUILayout.EndHorizontal();
                     }
-                }
-                else
+                }else if(drawerObject == null)
                 {
-                    foreach(var drawer in propertyDrawers)
+                    if (!DrawerUtility.IsTypeSupported(ValueType))
                     {
-                        drawer.OnGUILayout(label);
+                        EGUI.BeginGUIColor(UnityEngine.Color.red);
+                        {
+                            UnityEditor.EditorGUILayout.LabelField(string.IsNullOrEmpty(label) ? "" : label, $"The type isn't supported.type = {ValueType}");
+                        }
+                        EGUI.EndGUIColor();
+                    }
+                    else if (Value == null)
+                    {
+                        UnityEditor.EditorGUILayout.BeginHorizontal();
+                        {
+                            UnityEditor.EditorGUILayout.PrefixLabel(label);
+                            if (UnityEngine.GUILayout.Button("Create"))
+                            {
+                                Value = DrawerUtility.CreateInstance(ValueType);
+
+                                if (DrawerUtility.IsTypeSupported(ValueType))
+                                {
+                                    if (TypeUtility.IsStructOrClass(ValueType) && Value != null)
+                                    {
+                                        drawerObject = new DrawerObject(Value);
+                                    }
+                                }
+                            }
+                        }
+                        UnityEditor.EditorGUILayout.EndHorizontal();
+                    }
+                    else
+                    {
+                        EGUI.BeginGUIColor(UnityEngine.Color.red);
+                        {
+                            UnityEditor.EditorGUILayout.LabelField(string.IsNullOrEmpty(label) ? "" : label, "Unknown Drawer");
+                        }
+                        EGUI.EndGUIColor();
                     }
                 }
 
-                foreach (var drawer in propertyControlDrawers)
+                foreach (var drawer in controlDrawers)
                 {
                     drawer.OnEndGUILayout();
+                }
+            }
+
+            foreach (var drawer in layoutDrawers)
+            {
+                LayoutAttribute attr = drawer.GetAttr<LayoutAttribute>();
+                if (attr.Occasion == LayoutOccasion.After)
+                {
+                    drawer.OnGUILayout();
                 }
             }
         }
@@ -307,30 +311,15 @@ namespace DotEditor.NativeDrawer
             }
 
             bool visible = Field.IsPublic;
-            if (visibleDrawers.Count > 0)
-            {
-                visible = visibleDrawers[0].IsVisible();
-            }
-            else if (visibleCompareDrawers.Count > 0)
-            {
-                visible = visibleCompareDrawers[0].IsVisible();
-            }
+            //if (visibleDrawers.Count > 0)
+            //{
+            //    visible = visibleDrawers[0].IsVisible();
+            //}
+            //else if (visibleCompareDrawers.Count > 0)
+            //{
+            //    visible = visibleCompareDrawers[0].IsVisible();
+            //}
             return visible;
-        }
-
-        private string GetFieldLabel()
-        {
-            if(IsArrayElement)
-            {
-                return "" + ArrayElementIndex;
-            }
-
-            string label = Field?.Name;
-            foreach (var drawer in propertyLabelDrawers)
-            {
-                label = drawer.GetLabel();
-            }
-            return label ?? "";
         }
 
         internal void ClearArrayElement()
@@ -339,7 +328,7 @@ namespace DotEditor.NativeDrawer
             {
                 if (ValueType.IsArray)
                 {
-                    Value = DrawerUtility.CreateDefaultInstance(ValueType);
+                    Value = DrawerUtility.CreateInstance(ValueType);
                 }
                 else
                 {
@@ -352,7 +341,7 @@ namespace DotEditor.NativeDrawer
         {
             if (TypeUtility.IsArrayOrList(ValueType))
             {
-                object element = DrawerUtility.CreateDefaultInstance(TypeUtility.GetArrayOrListElementType(ValueType));
+                object element = DrawerUtility.CreateInstance(TypeUtility.GetArrayOrListElementType(ValueType));
                 if (ValueType.IsArray)
                 {
                     Array array = (Array)Value;
@@ -387,13 +376,13 @@ namespace DotEditor.NativeDrawer
 
         private void OnValueChanged()
         {
-            foreach(var drawer in listenerDrawers)
-            {
-                if(drawer.GetType() == typeof(OnValueChangedDrawer))
-                {
-                    ((OnValueChangedDrawer)drawer).Execute();
-                }
-            }
+            //foreach(var drawer in listenerDrawers)
+            //{
+            //    if(drawer.GetType() == typeof(OnValueChangedDrawer))
+            //    {
+            //        ((OnValueChangedDrawer)drawer).Execute();
+            //    }
+            //}
         }
     }
 }

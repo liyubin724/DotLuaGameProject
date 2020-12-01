@@ -1,23 +1,14 @@
-﻿using DotEngine.NativeDrawer.Decorator;
-using DotEngine.NativeDrawer.Layout;
-using DotEngine.NativeDrawer.Listener;
-using DotEngine.NativeDrawer.Property;
-using DotEngine.NativeDrawer.Verification;
-using DotEngine.NativeDrawer.Visible;
+﻿using DotEditor.NativeDrawer.Property;
+using DotEngine.NativeDrawer;
 using DotEngine.Utilities;
-using DotEditor.NativeDrawer.Decorator;
-using DotEditor.NativeDrawer.Layout;
-using DotEditor.NativeDrawer.Listener;
-using DotEditor.NativeDrawer.Property;
-using DotEditor.NativeDrawer.Verification;
-using DotEditor.NativeDrawer.Visible;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using DotEngine.NativeDrawer;
+
+using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.NativeDrawer
 {
@@ -39,12 +30,12 @@ namespace DotEditor.NativeDrawer
                 }
                 Type[] types = (
                                 from type in assembly.GetTypes() 
-                                where !type.IsAbstract && !type.IsInterface && (typeof(AttrDrawer).IsAssignableFrom(type)  || typeof(CustomTypeDrawer).IsAssignableFrom(type))
+                                where !type.IsAbstract && !type.IsInterface && typeof(Drawer).IsAssignableFrom(type)
                                 select type
                                 ).ToArray();
                 foreach(var type in types)
                 {
-                    AttrBinderAttribute binderAttr = type.GetCustomAttribute<AttrBinderAttribute>();
+                    BinderAttribute binderAttr = type.GetCustomAttribute<BinderAttribute>();
                     if(binderAttr != null)
                     {
                         attrDrawerDic.Add(binderAttr.AttrType, type);
@@ -59,37 +50,35 @@ namespace DotEditor.NativeDrawer
             }
         }
 
-        public static object CreateDefaultInstance(Type type)
+        public static object CreateInstance(Type type)
         {
             if(type.IsArray)
             {
                 return Array.CreateInstance(TypeUtility.GetArrayOrListElementType(type), 0);
-            }
-            if(type == typeof(string))
+            }else if(type == typeof(string))
             {
                 return string.Empty;
-            }
-            if(typeof(UnityEngine.Object).IsAssignableFrom(type))
+            }else if(typeof(UnityObject).IsAssignableFrom(type))
             {
                 if(typeof(ScriptableObject).IsAssignableFrom(type))
                 {
                     return ScriptableObject.CreateInstance(type);
                 }
                 return null;
-            }
-
-            object instance;
-            try
+            }else
             {
+                object instance;
+                try
+                {
+                    instance = Activator.CreateInstance(type);
+                }
+                catch
+                {
+                    instance = null;
+                }
 
-                instance = Activator.CreateInstance(type);
+                return instance;
             }
-            catch
-            {
-                instance = null;
-            }
-
-            return instance;
         }
 
         public static bool IsTypeSupported(Type type)
@@ -116,7 +105,7 @@ namespace DotEditor.NativeDrawer
             return true;
         }
 
-        public static Type GetDefaultType(Type type)
+        public static Type GetReallyDrawerType(Type type)
         {
             if(type.IsEnum)
             {
@@ -127,33 +116,39 @@ namespace DotEditor.NativeDrawer
                 return typeof(IList);
             }
             
-            if(typeof(UnityEngine.Object).IsAssignableFrom(type))
+            if(typeof(UnityObject).IsAssignableFrom(type))
             {
-                return typeof(UnityEngine.Object);
+                return typeof(UnityObject);
             }
+
             return type;
         }
 
-        public static CustomTypeDrawer CreateDefaultTypeDrawer(DrawerProperty property)
+        public static PropertyContentDrawer CreateCustomTypeDrawer(DrawerProperty property)
         {
-            Type type = GetDefaultType(property.ValueType);
+            Type type = GetReallyDrawerType(property.ValueType);
             if (customTypeDrawerDic.TryGetValue(type, out Type drawerType))
             {
-                return (CustomTypeDrawer)Activator.CreateInstance(drawerType, property);
-            }
-            return null;
-        }
-
-        public static AttrDrawer CreateDrawer(DrawerProperty property, DrawerAttribute attr)
-        {
-            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
-            {
-                AttrDrawer drawer = (AttrDrawer)Activator.CreateInstance(drawerType);
-                drawer.DrawerAttr = attr;
-                drawer.DrawerProperty = property;
+                PropertyContentDrawer drawer = (PropertyContentDrawer)Activator.CreateInstance(drawerType);
+                drawer.Property = property;
 
                 return drawer;
             }
+
+            return null;
+        }
+
+        public static Drawer CreateAttrDrawer(DrawerProperty property, DrawerAttribute attr)
+        {
+            if (attrDrawerDic.TryGetValue(attr.GetType(), out Type drawerType))
+            {
+                Drawer drawer = (Drawer)Activator.CreateInstance(drawerType);
+                drawer.Attr = attr;
+                drawer.Property = property;
+
+                return drawer;
+            }
+
             return null;
         }
 

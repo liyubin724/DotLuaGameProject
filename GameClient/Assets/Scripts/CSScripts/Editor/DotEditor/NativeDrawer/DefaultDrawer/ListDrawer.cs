@@ -8,7 +8,7 @@ using UnityEngine;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(IList))]
-    public class ListDrawer : Property.PropertyDrawer
+    public class ListDrawer : Property.PropertyContentDrawer
     {
         private IList list = null;
         private List<DrawerProperty> elementProperties = new List<DrawerProperty>();
@@ -19,25 +19,27 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
 
         private void InitList()
         {
-            list = DrawerProperty.GetValue<IList>();
-
-            elementProperties.Clear();
-            for (int i = 0; i < list.Count; ++i)
+            list = Property.GetValue<IList>();
+            if(list!=null)
             {
-                elementProperties.Add(new DrawerProperty(DrawerProperty.Target,DrawerProperty.Field,i));
+                elementProperties.Clear();
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    elementProperties.Add(new DrawerProperty(Property.Target,Property.Field,i));
+                }
             }
         }
 
         protected override bool IsValidProperty()
         {
-            return TypeUtility.IsArrayOrList(DrawerProperty.ValueType);
+            return TypeUtility.IsArrayOrList(Property.ValueType);
         }
 
         protected override void OnDrawProperty(string label)
         {
             if(list == null)
             {
-                list = DrawerProperty.GetValue<IList>();
+                list = Property.GetValue<IList>();
             }
 
             EditorGUILayout.BeginVertical(EGUIStyles.BoxStyle);
@@ -50,7 +52,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
                 Rect clearBtnRect = new Rect(lastRect.x + lastRect.width - 40, lastRect.y, 40, lastRect.height);
                 if (GUI.Button(clearBtnRect, "C",EditorStyles.toolbarButton))
                 {
-                    DrawerProperty.ClearArrayElement();
+                    Property.ClearArrayElement();
                     InitList();
                 }
 
@@ -67,7 +69,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
                         {
                             if (GUILayout.Button("-", GUILayout.Width(20)))
                             {
-                                DrawerProperty.RemoveArrayElementAtIndex(i);
+                                Property.RemoveArrayElementAtIndex(i);
                                 InitList();
                             }
                         }
@@ -82,7 +84,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
                 addBtnRect.width = 40;
                 if (GUI.Button(addBtnRect, "+"))
                 {
-                    DrawerProperty.AddArrayElement();
+                    Property.AddArrayElement();
                     InitList();
                 }
             }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Decorator
 {
-    [AttrBinder(typeof(ButtonAttribute))]
+    [Binder(typeof(ButtonAttribute))]
     public class ButtonDrawer : DecoratorDrawer
     {
         public override void OnGUILayout()
@@ -34,10 +34,10 @@ namespace DotEditor.NativeDrawer.Decorator
                 }
                 if (GUILayout.Button(btnContentStr, GUILayout.Height(height)))
                 {
-                    MethodInfo methodInfo = DrawerProperty.Target.GetType().GetMethod(attr.MethodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    MethodInfo methodInfo = Property.TargetType.GetMethod(attr.MethodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     if (methodInfo != null)
                     {
-                        methodInfo.Invoke(DrawerProperty.Target, null);
+                        methodInfo.Invoke(Property.Target, null);
                     }
                 }
             }

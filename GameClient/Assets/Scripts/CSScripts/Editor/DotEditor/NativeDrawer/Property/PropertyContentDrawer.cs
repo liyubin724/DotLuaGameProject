@@ -4,18 +4,23 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    public abstract class PropertyControlDrawer : AttrDrawer
+    public abstract class PropertyDrawer : Drawer
+    {
+
+    }
+
+    public abstract class PropertyControlDrawer : PropertyDrawer
     {
         public abstract void OnStartGUILayout();
         public abstract void OnEndGUILayout();
     }
 
-    public abstract class PropertyLabelDrawer : AttrDrawer
+    public abstract class PropertyLabelDrawer : PropertyDrawer
     {
         public abstract string GetLabel();
     }
 
-    public abstract class PropertyDrawer : AttrDrawer
+    public abstract class PropertyContentDrawer : PropertyDrawer
     {
         protected abstract bool IsValidProperty();
 

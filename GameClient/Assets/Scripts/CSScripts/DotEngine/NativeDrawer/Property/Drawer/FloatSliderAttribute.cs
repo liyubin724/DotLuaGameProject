@@ -3,14 +3,24 @@
 namespace DotEngine.NativeDrawer.Property
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class FloatSliderAttribute : PropertyDrawerAttribute
+    public class FloatSliderAttribute : PropertyContentAttribute
     {
-        public float LeftValue { get; set; } = float.MinValue;
-        public float RightValue { get; set; } = float.MaxValue;
+        public float LeftValue { get; private set; }
+        public float RightValue { get; private set; }
 
-        public string LeftValueMemberName { get; set; } = null;
-        public string RightValueMemberName { get; set; } = null;
+        public string LeftValueMemberName { get; private set; }
+        public string RightValueMemberName { get; private set; }
 
-        public FloatSliderAttribute() { }
+        public FloatSliderAttribute(float left,float right) 
+        {
+            LeftValue = left;
+            RightValue = right;
+        }
+
+        public FloatSliderAttribute(string leftMemberName,string rightMemberName)
+        {
+            LeftValueMemberName = leftMemberName;
+            RightValueMemberName = rightMemberName;
+        }
     }
 }

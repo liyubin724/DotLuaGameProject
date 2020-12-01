@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace DotEditor.NativeDrawer.Property
 {
-    [AttrBinder(typeof(IntPopupAttribute))]
-    public class IntPopupDrawer : PropertyDrawer
+    [Binder(typeof(IntPopupAttribute))]
+    public class IntPopupDrawer : PropertyContentDrawer
     {
         private static EditorWindow lastSearchableWindow;
 
         protected override bool IsValidProperty()
         {
-            return typeof(int) == DrawerProperty.ValueType;
+            return typeof(int) == Property.ValueType;
         }
 
         protected override void OnDrawProperty(string label)
@@ -23,16 +23,16 @@ namespace DotEditor.NativeDrawer.Property
             string[] contents = attr.Contents;
             if (!string.IsNullOrEmpty(attr.ContentMemberName))
             {
-                contents = DrawerUtility.GetMemberValue<string[]>(attr.ContentMemberName, DrawerProperty.Target);
+                contents = DrawerUtility.GetMemberValue<string[]>(attr.ContentMemberName, Property.Target);
             }
 
             int[] values = attr.Values;
             if(!string.IsNullOrEmpty(attr.ValueMemberName))
             {
-                values = DrawerUtility.GetMemberValue<int[]>(attr.ValueMemberName, DrawerProperty.Target);
+                values = DrawerUtility.GetMemberValue<int[]>(attr.ValueMemberName, Property.Target);
             }
 
-            var value = DrawerProperty.GetValue<int>();
+            var value = Property.GetValue<int>();
 
             label = label ?? "";
 
@@ -50,7 +50,7 @@ namespace DotEditor.NativeDrawer.Property
                         {
                             SearchablePopup.Show(btnRect, new Vector2(200, 400), valueIndex, contents, (selected) =>
                             {
-                                DrawerProperty.Value = values[selected];
+                                Property.Value = values[selected];
                             });
                         }
                         catch (ExitGUIException)
@@ -76,7 +76,7 @@ namespace DotEditor.NativeDrawer.Property
                 }
                 if (EditorGUI.EndChangeCheck())
                 {
-                    DrawerProperty.Value = value;
+                    Property.Value = value;
                 }
             }
 

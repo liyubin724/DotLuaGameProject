@@ -3,10 +3,10 @@ using System.Reflection;
 
 namespace DotEditor.NativeDrawer.Listener
 {
-    [AttrBinder(typeof(OnValueChangedAttribute))]
+    [Binder(typeof(OnValueChangedAttribute))]
     public class OnValueChangedDrawer : ListenerDrawer
     {
-        public OnValueChangedDrawer(object target, ListenerAttribute attr) : base(target, attr)
+        public OnValueChangedDrawer(object target) : base(target)
         {
         }
 

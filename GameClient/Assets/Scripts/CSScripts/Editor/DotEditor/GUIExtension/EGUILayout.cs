@@ -203,11 +203,15 @@ namespace DotEditor.GUIExtension
 
         #region Draw Open File Or  Folder
 
-        public static string DrawOpenFileWithFilter(string label,string value,string[] filters,bool isAbsolute = false)
+        public static string DrawOpenFileWithFilter(string label,string value,string[] filters,bool isAbsolute = false,bool isTextEditable = false)
         {
             EditorGUILayout.BeginHorizontal();
             {
-                value = EditorGUILayout.TextField(label, value);
+                string newValue = EditorGUILayout.TextField(label, value);
+                if(isTextEditable && newValue!=value)
+                {
+                    value = newValue;
+                }
 
                 if (GUILayout.Button(new GUIContent(EGUIResources.DefaultFolderIcon), GUIStyle.none, GUILayout.Width(17), GUILayout.Height(17)))
                 {
@@ -235,11 +239,15 @@ namespace DotEditor.GUIExtension
             return value;
         }
 
-        public static string DrawOpenFile(string label,string value,string extension = "", bool isAbsolute = false)
+        public static string DrawOpenFile(string label,string value,string extension = "", bool isAbsolute = false, bool isTextEditable = false)
         {
             EditorGUILayout.BeginHorizontal();
             {
-                value = EditorGUILayout.TextField(label, value);
+                string newValue = EditorGUILayout.TextField(label, value);
+                if (isTextEditable && newValue != value)
+                {
+                    value = newValue;
+                }
 
                 if (GUILayout.Button(new GUIContent(EGUIResources.DefaultFolderIcon), GUIStyle.none, GUILayout.Width(17), GUILayout.Height(17)))
                 {

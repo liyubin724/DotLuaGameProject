@@ -4,11 +4,11 @@ using UnityEditor;
 namespace DotEditor.NativeDrawer.DefaultDrawer
 {
     [CustomTypeDrawer(typeof(Enum))]
-    public class EnumDrawer : Property.PropertyDrawer
+    public class EnumDrawer : Property.PropertyContentDrawer
     {
         protected override void OnDrawProperty(string label)
         {
-            var flagAttrs = DrawerProperty.ValueType.GetCustomAttributes(typeof(FlagsAttribute), false);
+            var flagAttrs = Property.ValueType.GetCustomAttributes(typeof(FlagsAttribute), false);
             bool isFlagEnum = false;
             if (flagAttrs != null && flagAttrs.Length > 0)
             {
@@ -16,7 +16,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
             }
 
             label = label ?? "";
-            Enum value = DrawerProperty.GetValue<Enum>();
+            Enum value = Property.GetValue<Enum>();
             EditorGUI.BeginChangeCheck();
             {
                 if(isFlagEnum)
@@ -29,13 +29,13 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
 
         protected override bool IsValidProperty()
         {
-            return typeof(Enum).IsAssignableFrom(DrawerProperty.ValueType);
+            return typeof(Enum).IsAssignableFrom(Property.ValueType);
         }
     }
 }
