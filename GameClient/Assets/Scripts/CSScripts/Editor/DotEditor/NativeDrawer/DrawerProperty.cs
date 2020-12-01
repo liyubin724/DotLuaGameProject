@@ -148,7 +148,7 @@ namespace DotEditor.NativeDrawer
                         }else if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
                         {
                             controlDrawers.Add(drawer as PropertyControlDrawer);
-                        }else if(drawer.GetType().IsSubclassOf(typeof(VisibleDrawer)))
+                        } else if(drawer.GetType().IsSubclassOf(typeof(VisibleDrawer)))
                         {
                             visibleDrawers.Add(drawer as VisibleDrawer);
                         }else if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))

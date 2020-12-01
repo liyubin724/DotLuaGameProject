@@ -61,6 +61,12 @@ namespace TestEditor
         [HideLabel]
         public int hideLabel;
 
+        [Indent(2)]
+        public int indentIntValue;
+
+        [Readonly]
+        public int readonlyIntValue;
+
         public float GetFloatSliderLeftValue()
         {
             return 10.0f;
@@ -92,7 +98,6 @@ namespace TestEditor
         [SeparatorLine]
         [Help("Help message",HelpMessageType.Warning)]
         public int help;
-
 
         public void OnButtonClicked()
         {
