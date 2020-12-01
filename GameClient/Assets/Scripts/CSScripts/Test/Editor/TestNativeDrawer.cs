@@ -3,6 +3,7 @@ using DotEngine.NativeDrawer.Decorator;
 using DotEngine.NativeDrawer.Layout;
 using DotEngine.NativeDrawer.Listener;
 using DotEngine.NativeDrawer.Property;
+using DotEngine.NativeDrawer.Verification;
 using DotEngine.NativeDrawer.Visible;
 using UnityEditor;
 using UnityEngine;
@@ -149,15 +150,19 @@ namespace TestEditor
         public int visibleIfIntValue;
     }
 
-    public class TestData : LayoutTestData
+    public class TestData //: LayoutTestData
     {
-        public ListenerTestData ListenerData = new ListenerTestData();
-        public VisibleTestData VisibleData = new VisibleTestData();
+        //public ListenerTestData ListenerData = new ListenerTestData();
+        //public VisibleTestData VisibleData = new VisibleTestData();
+        //[Help("Null To Create")]
+        [NotNull("Not Null")]
+        public VisibleTestData VisibleData2 = null;
+
+        //public int[] intArray  = new int[0];
     }
 
     public class TestNativeDrawer : EditorWindow
     {
-
         [MenuItem("Test/Test Native Drawer")]
         static void ShowWin()
         {

@@ -3,6 +3,7 @@ using DotEditor.NativeDrawer.Decorator;
 using DotEditor.NativeDrawer.Layout;
 using DotEditor.NativeDrawer.Listener;
 using DotEditor.NativeDrawer.Property;
+using DotEditor.NativeDrawer.Verification;
 using DotEditor.NativeDrawer.Visible;
 using DotEngine;
 using DotEngine.NativeDrawer;
@@ -101,6 +102,8 @@ namespace DotEditor.NativeDrawer
 
         private List<VisibleDrawer> visibleDrawers = new List<VisibleDrawer>();
 
+        private List<VerificationDrawer> verificationDrawers = new List<VerificationDrawer>();
+
         private List<PropertyControlDrawer> controlDrawers = new List<PropertyControlDrawer>();
         private PropertyLabelDrawer labelDrawer = null;
         private PropertyContentDrawer contentDrawer = null;
@@ -136,31 +139,34 @@ namespace DotEditor.NativeDrawer
                         DebugLog.Warning("DrawerProperty::Init->drawer not found.attr = " + attr.GetType().Name);
                     }else
                     {
-                        if(drawer.GetType().IsSubclassOf(typeof(DecoratorDrawer)))
+                        if (drawer.GetType().IsSubclassOf(typeof(DecoratorDrawer)))
                         {
                             decoratorDrawers.Add(drawer as DecoratorDrawer);
-                        }else if (drawer.GetType().IsSubclassOf(typeof(LayoutDrawer)))
+                        } else if (drawer.GetType().IsSubclassOf(typeof(LayoutDrawer)))
                         {
                             layoutDrawers.Add(drawer as LayoutDrawer);
-                        }else if(drawer.GetType().IsSubclassOf(typeof(ListenerDrawer)))
+                        } else if (drawer.GetType().IsSubclassOf(typeof(ListenerDrawer)))
                         {
                             listenerDrawers.Add(drawer as ListenerDrawer);
-                        }else if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
+                        } else if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
                         {
                             controlDrawers.Add(drawer as PropertyControlDrawer);
-                        } else if(drawer.GetType().IsSubclassOf(typeof(VisibleDrawer)))
+                        } else if (drawer.GetType().IsSubclassOf(typeof(VisibleDrawer)))
                         {
                             visibleDrawers.Add(drawer as VisibleDrawer);
-                        }else if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))
+                        } else if (drawer.GetType().IsSubclassOf(typeof(VerificationDrawer)))
+                        {
+                            verificationDrawers.Add(drawer as VerificationDrawer);
+                        } else if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))
                         {
                             if (labelDrawer != null)
                             {
                                 DebugLog.Warning("DrawerProperty::Init->labelDrawer has been found.attr = " + attr.GetType().Name);
-                            }else
+                            } else
                             {
                                 labelDrawer = drawer as PropertyLabelDrawer;
                             }
-                        }else if (drawer.GetType().IsSubclassOf(typeof(PropertyContentDrawer)))
+                        } else if (drawer.GetType().IsSubclassOf(typeof(PropertyContentDrawer)))
                         {
                             if (contentDrawer != null)
                             {
@@ -205,14 +211,19 @@ namespace DotEditor.NativeDrawer
             bool isVisible = IsVisible();
             if (isVisible)
             {
+                foreach (var drawer in controlDrawers)
+                {
+                    drawer.OnStartGUILayout();
+                }
+
                 foreach (var drawer in decoratorDrawers)
                 {
                     drawer.OnGUILayout();
                 }
 
-                foreach (var drawer in controlDrawers)
+                foreach(var drawer in verificationDrawers)
                 {
-                    drawer.OnStartGUILayout();
+                    drawer.OnGUILayout();
                 }
 
                 string label = FieldName;

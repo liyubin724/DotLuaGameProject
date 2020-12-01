@@ -1,16 +1,12 @@
-﻿using DotEngine.NativeDrawer.Condition;
-
-namespace DotEngine.NativeDrawer.Verification
+﻿namespace DotEngine.NativeDrawer.Verification
 {
-    public abstract class VerificationCompareAttribute : CompareAttribute
+    public abstract class VerificationAttribute : DrawerAttribute
     {
-        public string ValidMsg { get; private set; }
-        public string UnvalidMsg { get; private set; }
+        public string InvalidMsg { get; private set; }
 
-        protected VerificationCompareAttribute(string memberName, object value, CompareSymbol symbol,string validMsg,string unvalidMsg) : base(memberName, value, symbol)
+        public VerificationAttribute(string invalidMsg)
         {
-            ValidMsg = validMsg;
-            UnvalidMsg = unvalidMsg;
+            InvalidMsg = invalidMsg;
         }
     }
 }

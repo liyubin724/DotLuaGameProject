@@ -1,13 +1,20 @@
 ﻿using DotEngine.NativeDrawer.Verification;
+using UnityEditor;
 
 namespace DotEditor.NativeDrawer.Verification
 {
-    public abstract class VerificationDrawer : CompareAttrDrawer
+    public abstract class VerificationDrawer : Drawer
     {
-        protected VerificationDrawer(object target, VerificationCompareAttribute attr) : base(target, attr)
-        {
-        }
+        public abstract bool IsValid();
 
-        public abstract void OnGUILayout();
+        public void OnGUILayout()
+        {
+            VerificationAttribute attr = GetAttr<VerificationAttribute>();
+
+            if(!IsValid())
+            {
+                EditorGUILayout.HelpBox(attr.InvalidMsg, MessageType.Error);
+            }
+        }
     }
 }
