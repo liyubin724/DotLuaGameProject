@@ -1,4 +1,7 @@
 ﻿using DotEditor.NativeDrawer;
+using DotEngine.NativeDrawer.Decorator;
+using DotEngine.NativeDrawer.Layout;
+using DotEngine.NativeDrawer.Listener;
 using DotEngine.NativeDrawer.Property;
 using System;
 using System.Collections.Generic;
@@ -7,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using SpaceAttribute = DotEngine.NativeDrawer.Decorator.SpaceAttribute;
 
 namespace TestEditor
 {
@@ -33,22 +37,99 @@ namespace TestEditor
         public GameObject gObjValue;
     }
 
-    public class TestData : BaseTestData
+    public class BaseAttrTestData : BaseTestData
     {
         [EnumButton]
         public TestEnum enumButton;
         [MultilineText]
         public string multilineText;
-        [FloatSlider(0,100)]
+        [FloatSlider(0, 100)]
         public float floatSlider;
-        [IntSlider(0,10)]
+        [FloatSlider("GetFloatSliderLeftValue", "GetFloatSliderRightValue")]
+        public float floatSliderMethod;
+        [IntSlider(0, 10)]
         public int intSlider;
+        [IntSlider("GetIntSliderLeftValue", "GetIntSliderRightValue")]
+        public int intSliderMethod;
         [IntPopup(new string[] { "One", "Two", "Three", "Four" }, new int[] { 1, 2, 3, 4 })]
         public int intPopup;
+        [StringPopup(new string[] { "Yestaday", "Today", "Tomorrow" })]
+        public string stringPopup;
         [OpenFilePath]
         public string openFilePath;
         [OpenFolderPath]
         public string openFolderPath;
+
+        public float GetFloatSliderLeftValue()
+        {
+            return 10.0f;
+        }
+
+        public float GetFloatSliderRightValue()
+        {
+            return 20.0f;
+        }
+
+        public int GetIntSliderLeftValue()
+        {
+            return 5;
+        }
+
+        public int GetIntSliderRightValue()
+        {
+            return 14;
+        }
+    }
+
+    public class DecoratorTestData : BaseAttrTestData
+    {
+        [Space]
+        [BoxedHeader("Boxed Header")]
+        public int boxedHeader;
+        [Button("OnButtonClicked")]
+        public int button;
+        [SeparatorLine]
+        [Help("Help message",HelpMessageType.Warning)]
+        public int help;
+
+
+        public void OnButtonClicked()
+        {
+            Debug.Log("OnButtonClicked");
+        }
+    }
+
+    public class LayoutTestData : DecoratorTestData
+    {
+        [BeginGroup("Begin Group")]
+        [EndGroup]
+        public int groupValue;
+
+        [BeginHorizontal]
+        public int beginHorizontal1;
+        public int beginHorizontal2;
+        [EndHorizontal]
+        public int beginHorizontal3;
+
+        [BeginIndent]
+        [EndIndent]
+        public int beginIndent;
+    }
+
+    public class ListenerTestData
+    {
+        [OnValueChanged("OnIntValueChanged")]
+        public int intValue;
+
+        private void OnIntValueChanged()
+        {
+            Debug.Log("OnIntValueChanged:value = " + intValue);
+        }
+    }
+
+    public class TestData : LayoutTestData
+    {
+        public ListenerTestData ListenerTestData = new ListenerTestData();
     }
 
     public class TestNativeDrawer : EditorWindow

@@ -154,7 +154,12 @@ namespace DotEditor.NativeDrawer
 
         public static T GetMemberValue<T>(string memberName, object target)
         {
-            return (T)GetMemberValue(memberName, target);
+            object value = GetMemberValue(memberName, target);
+            if(value!=null)
+            {
+                return (T)value;
+            }
+            return default;
         }
 
         public static object GetMemberValue(string memberName,object target)

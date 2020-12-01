@@ -5,14 +5,20 @@ namespace DotEngine.NativeDrawer.Property
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class StringPopupAttribute : PropertyContentAttribute
     {
-        public string[] Options { get; set; } = new string[0];
+        public string[] Options { get; private set; }
 
-        public string MemberName { get; set; } = null;
+        public string MemberName { get; private set; }
 
         public bool IsSearchable { get; set; } = false;
 
-        public StringPopupAttribute()
+        public StringPopupAttribute(string[] options)
         {
+            Options = options;
+        }
+
+        public StringPopupAttribute(string memberName)
+        {
+            MemberName = memberName;
         }
     }
 }

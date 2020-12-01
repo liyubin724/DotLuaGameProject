@@ -33,12 +33,19 @@ namespace DotEditor.NativeDrawer.Property
             }
 
             var value = Property.GetValue<int>();
+            var valueIndex = Array.IndexOf(values, value);
+            if(valueIndex<0 && values!=null && values.Length>0)
+            {
+                valueIndex = 0;
+                value = values[0];
+
+                Property.Value = value;
+            }    
 
             label = label ?? "";
 
             if (attr.IsSearchable)
             {
-                var valueIndex = Array.IndexOf(values, value);
                 EditorGUILayout.BeginHorizontal();
                 {
                     EditorGUILayout.PrefixLabel(label);

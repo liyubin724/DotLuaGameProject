@@ -10,7 +10,6 @@ namespace DotEngine.NativeDrawer.Property
 
         public string LeftValueMemberName { get; private set; }
         public string RightValueMemberName { get; private set; }
-
         public FloatSliderAttribute(float left,float right) 
         {
             LeftValue = left;

@@ -6,7 +6,7 @@ namespace DotEditor.NativeDrawer
 {
     public static class DrawerSetting
     {
-        public static bool IsShowHelp = false;
+        public static bool IsShowHelp = true;
 
         internal static void OnDrawSetting()
         {

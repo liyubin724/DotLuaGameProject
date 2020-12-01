@@ -5,11 +5,11 @@ namespace DotEngine.NativeDrawer.Property
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class IntSliderAttribute : PropertyContentAttribute
     {
-        public int LeftValue { get; set; } = int.MinValue;
-        public int RightValue { get; set; } = int.MaxValue;
+        public int LeftValue { get; private set; }
+        public int RightValue { get; private set; }
 
-        public string LeftValueMemberName { get; set; } = null;
-        public string RightValueMemberName { get; set; } = null;
+        public string LeftValueMemberName { get; private set; }
+        public string RightValueMemberName { get; private set; }
 
         public IntSliderAttribute(int left,int right)
         {

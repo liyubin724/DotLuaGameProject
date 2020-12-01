@@ -27,6 +27,14 @@ namespace DotEditor.NativeDrawer.Property
             }
 
             var value = Property.GetValue<string>();
+            var valueIndex = Array.IndexOf(options, value);
+            if(valueIndex<0 && options!=null && options.Length>0)
+            {
+                valueIndex = 0;
+                value = options[0];
+
+                Property.Value = value;
+            }
 
             label = label ?? "";
 
@@ -41,7 +49,7 @@ namespace DotEditor.NativeDrawer.Property
                     {
                         try
                         {
-                            SearchablePopup.Show(btnRect,new Vector2(200,400) ,Array.IndexOf(options, value), options, (selected) =>
+                            SearchablePopup.Show(btnRect,new Vector2(200,400) ,valueIndex, options, (selected) =>
                             {
                                 Property.Value = options[selected];
                             });

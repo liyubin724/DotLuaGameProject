@@ -2,14 +2,14 @@
 
 namespace DotEngine.NativeDrawer.Listener
 {
-    [AttributeUsage(AttributeTargets.Field,AllowMultiple =true,Inherited =true)]
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
     public class OnValueChangedAttribute : ListenerAttribute
     {
-        public string MethodName { get; private set; }
+        public string CallbackMethodName { get; private set; }
 
-        public OnValueChangedAttribute(string methodName) : base()
+        public OnValueChangedAttribute(string methodName)
         {
-            MethodName = methodName;
+            CallbackMethodName = methodName;
         }
     }
 }

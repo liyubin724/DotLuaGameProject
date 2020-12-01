@@ -1,6 +1,7 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.NativeDrawer.Decorator;
 using DotEditor.NativeDrawer.Layout;
+using DotEditor.NativeDrawer.Listener;
 using DotEditor.NativeDrawer.Property;
 using DotEngine;
 using DotEngine.NativeDrawer;
@@ -95,6 +96,8 @@ namespace DotEditor.NativeDrawer
         private List<DecoratorDrawer> decoratorDrawers = new List<DecoratorDrawer>();
         private List<LayoutDrawer> layoutDrawers = new List<LayoutDrawer>();
 
+        private List<ListenerDrawer> listenerDrawers = new List<ListenerDrawer>();
+
         private List<PropertyControlDrawer> controlDrawers = new List<PropertyControlDrawer>();
         private PropertyLabelDrawer labelDrawer = null;
         private PropertyContentDrawer contentDrawer = null;
@@ -133,19 +136,16 @@ namespace DotEditor.NativeDrawer
                         if(drawer.GetType().IsSubclassOf(typeof(DecoratorDrawer)))
                         {
                             decoratorDrawers.Add(drawer as DecoratorDrawer);
-                        }
-
-                        if (drawer.GetType().IsSubclassOf(typeof(LayoutDrawer)))
+                        }else if (drawer.GetType().IsSubclassOf(typeof(LayoutDrawer)))
                         {
                             layoutDrawers.Add(drawer as LayoutDrawer);
-                        }
-
-                        if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
+                        }else if(drawer.GetType().IsSubclassOf(typeof(ListenerDrawer)))
+                        {
+                            listenerDrawers.Add(drawer as ListenerDrawer);
+                        }else if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
                         {
                             controlDrawers.Add(drawer as PropertyControlDrawer);
-                        }
-
-                        if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))
+                        }else if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))
                         {
                             if (labelDrawer != null)
                             {
@@ -154,9 +154,7 @@ namespace DotEditor.NativeDrawer
                             {
                                 labelDrawer = drawer as PropertyLabelDrawer;
                             }
-                        }
-
-                        if (drawer.GetType().IsSubclassOf(typeof(PropertyContentDrawer)))
+                        }else if (drawer.GetType().IsSubclassOf(typeof(PropertyContentDrawer)))
                         {
                             if (contentDrawer != null)
                             {
@@ -376,13 +374,13 @@ namespace DotEditor.NativeDrawer
 
         private void OnValueChanged()
         {
-            //foreach(var drawer in listenerDrawers)
-            //{
-            //    if(drawer.GetType() == typeof(OnValueChangedDrawer))
-            //    {
-            //        ((OnValueChangedDrawer)drawer).Execute();
-            //    }
-            //}
+            foreach (var drawer in listenerDrawers)
+            {
+                if (drawer.GetType() == typeof(OnValueChangedDrawer))
+                {
+                    ((OnValueChangedDrawer)drawer).Execute();
+                }
+            }
         }
     }
 }

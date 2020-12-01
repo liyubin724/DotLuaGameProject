@@ -16,6 +16,7 @@ namespace DotEditor.NativeDrawer.Property
             {
                 leftValue = DrawerUtility.GetMemberValue<float>(attr.LeftValueMemberName, Property.Target);
             }
+
             if(!string.IsNullOrEmpty(attr.RightValueMemberName))
             {
                 rightValue = DrawerUtility.GetMemberValue<float>(attr.RightValueMemberName, Property.Target);
@@ -24,6 +25,17 @@ namespace DotEditor.NativeDrawer.Property
             label = label ?? "";
 
             float value = Property.GetValue<float>();
+            if (value < leftValue)
+            {
+                value = leftValue;
+                Property.Value = value;
+            }
+            if (value > rightValue)
+            {
+                value = rightValue;
+                Property.Value = value;
+            }
+
             EditorGUI.BeginChangeCheck();
             {
                 value = EditorGUILayout.Slider(label, value, leftValue, rightValue);
