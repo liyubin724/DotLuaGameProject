@@ -3,6 +3,7 @@ using DotEditor.NativeDrawer.Decorator;
 using DotEditor.NativeDrawer.Layout;
 using DotEditor.NativeDrawer.Listener;
 using DotEditor.NativeDrawer.Property;
+using DotEditor.NativeDrawer.Visible;
 using DotEngine;
 using DotEngine.NativeDrawer;
 using DotEngine.NativeDrawer.Layout;
@@ -98,6 +99,8 @@ namespace DotEditor.NativeDrawer
 
         private List<ListenerDrawer> listenerDrawers = new List<ListenerDrawer>();
 
+        private List<VisibleDrawer> visibleDrawers = new List<VisibleDrawer>();
+
         private List<PropertyControlDrawer> controlDrawers = new List<PropertyControlDrawer>();
         private PropertyLabelDrawer labelDrawer = null;
         private PropertyContentDrawer contentDrawer = null;
@@ -145,6 +148,9 @@ namespace DotEditor.NativeDrawer
                         }else if (drawer.GetType().IsSubclassOf(typeof(PropertyControlDrawer)))
                         {
                             controlDrawers.Add(drawer as PropertyControlDrawer);
+                        }else if(drawer.GetType().IsSubclassOf(typeof(VisibleDrawer)))
+                        {
+                            visibleDrawers.Add(drawer as VisibleDrawer);
                         }else if (drawer.GetType().IsSubclassOf(typeof(PropertyLabelDrawer)))
                         {
                             if (labelDrawer != null)
@@ -308,16 +314,18 @@ namespace DotEditor.NativeDrawer
                 return true;
             }
 
-            bool visible = Field.IsPublic;
-            //if (visibleDrawers.Count > 0)
-            //{
-            //    visible = visibleDrawers[0].IsVisible();
-            //}
-            //else if (visibleCompareDrawers.Count > 0)
-            //{
-            //    visible = visibleCompareDrawers[0].IsVisible();
-            //}
-            return visible;
+            if(visibleDrawers.Count>0)
+            {
+                bool visible = true;
+                foreach(var drawer in visibleDrawers)
+                {
+                    visible = visible && drawer.IsVisible();
+                }
+                return visible;
+            }else
+            {
+                return Field.IsPublic;
+            }
         }
 
         internal void ClearArrayElement()

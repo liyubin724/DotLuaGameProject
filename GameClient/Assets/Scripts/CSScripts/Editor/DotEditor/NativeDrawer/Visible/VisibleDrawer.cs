@@ -7,12 +7,12 @@ namespace DotEditor.NativeDrawer.Visible
         public abstract bool IsVisible();
     }
 
-    public abstract class VisibleCompareDrawer : CompareAttrDrawer
-    {
-        protected VisibleCompareDrawer(object target, VisibleCompareAttribute attr) : base(target, attr)
-        {
-        }
+    //public abstract class VisibleCompareDrawer : CompareAttrDrawer
+    //{
+    //    protected VisibleCompareDrawer(object target, VisibleCompareAttribute attr) : base(target, attr)
+    //    {
+    //    }
 
-        public abstract bool IsVisible();
-    }
+    //    public abstract bool IsVisible();
+    //}
 }

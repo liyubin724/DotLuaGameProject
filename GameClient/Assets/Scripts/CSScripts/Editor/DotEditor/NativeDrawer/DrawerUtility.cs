@@ -171,22 +171,40 @@ namespace DotEditor.NativeDrawer
 
             Type type = target.GetType();
 
-            FieldInfo fieldInfo = type.GetField(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo fieldInfo = type.GetField(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             if (fieldInfo != null)
             {
-                return fieldInfo.GetValue(target);
+                if(fieldInfo.IsStatic)
+                {
+                    return fieldInfo.GetValue(null);
+                }else
+                {
+                    return fieldInfo.GetValue(target);
+                }
             }
 
-            PropertyInfo propertyInfo = type.GetProperty(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            if (propertyInfo != null)
+            PropertyInfo propertyInfo = type.GetProperty(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            if (propertyInfo != null && propertyInfo.CanRead)
             {
-                return propertyInfo.GetValue(target);
+                if(propertyInfo.GetGetMethod().IsStatic)
+                {
+                    propertyInfo.GetValue(null);
+                }else
+                {
+                    return propertyInfo.GetValue(target);
+                }
             }
 
-            MethodInfo methodInfo = type.GetMethod(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo methodInfo = type.GetMethod(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             if (methodInfo != null)
             {
-                return methodInfo.Invoke(target, null);
+                if(methodInfo.IsStatic)
+                {
+                    methodInfo.Invoke(null, null);
+                }else
+                {
+                    return methodInfo.Invoke(target, null);
+                }
             }
             return null;
         }

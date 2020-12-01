@@ -65,7 +65,6 @@ namespace DotEditor.NativeDrawer
                 {
                     if(IsShowInherit)
                     {
-                        EGUILayout.DrawHorizontalSpace(10);
                         EGUILayout.DrawBoxHeader(typeDrawProperty.type.Name, GUILayout.ExpandWidth(true));
                     }
 

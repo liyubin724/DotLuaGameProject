@@ -3,11 +3,7 @@ using DotEngine.NativeDrawer.Decorator;
 using DotEngine.NativeDrawer.Layout;
 using DotEngine.NativeDrawer.Listener;
 using DotEngine.NativeDrawer.Property;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DotEngine.NativeDrawer.Visible;
 using UnityEditor;
 using UnityEngine;
 using SpaceAttribute = DotEngine.NativeDrawer.Decorator.SpaceAttribute;
@@ -59,6 +55,11 @@ namespace TestEditor
         public string openFilePath;
         [OpenFolderPath]
         public string openFolderPath;
+
+        [NewLabel("New Label")]
+        public int testNewLabel;
+        [HideLabel]
+        public int hideLabel;
 
         public float GetFloatSliderLeftValue()
         {
@@ -127,9 +128,26 @@ namespace TestEditor
         }
     }
 
+    public class VisibleTestData
+    {
+        public bool visible;
+
+        public int publicIntValue;
+        private int privateIntValue;
+
+        [Hide]
+        public int hidePublicIntValue;
+        [Show]
+        private int showPrivateIntValue;
+
+        [VisibleIf("visible")]
+        public int visibleIfIntValue;
+    }
+
     public class TestData : LayoutTestData
     {
-        public ListenerTestData ListenerTestData = new ListenerTestData();
+        public ListenerTestData ListenerData = new ListenerTestData();
+        public VisibleTestData VisibleData = new VisibleTestData();
     }
 
     public class TestNativeDrawer : EditorWindow
