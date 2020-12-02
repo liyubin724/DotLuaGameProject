@@ -19,29 +19,33 @@ namespace DotEngine
         void DoFixedUpdate(float deltaTime, float unscaleDeltaTime);
     }
 
-    public class UpdateBehaviour : MonoBehaviour
+    public class Updater : MonoBehaviour
     {
-        public const string NAME = "Updater";
-        public static UpdateBehaviour sm_Updater;
+        private const string NAME = "Updater";
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        static void OnStartup()
+        private static Updater sm_Updater;
+        private static Updater GetUpdater()
         {
-            sm_Updater = DontDestroyUtility.CreateComponent<UpdateBehaviour>(NAME);
+            if(sm_Updater == null)
+            {
+                sm_Updater = DontDestroyUtility.CreateComponent<Updater>(NAME);
+            }
+
+            return sm_Updater;
         }
 
         private List<IUpdate> m_Updates = new List<IUpdate>();
         private List<ILateUpdate> m_LateUpdates = new List<ILateUpdate>();
         private List<IFixedUpdate> m_FixedUpdates = new List<IFixedUpdate>();
 
-        public static void AddUpdate(IUpdate updater) => sm_Updater?.m_Updates.Add(updater);
-        public static void RemoveUpdate(IUpdate updater) => sm_Updater?.m_Updates.Remove(updater);
+        public static void AddUpdate(IUpdate updater) => GetUpdater().m_Updates.Add(updater);
+        public static void RemoveUpdate(IUpdate updater) => GetUpdater().m_Updates.Remove(updater);
 
-        public static void AddLateUpdate(ILateUpdate updater) => sm_Updater?.m_LateUpdates.Add(updater);
-        public static void RemoveLateUpdate(ILateUpdate updater) => sm_Updater?.m_LateUpdates.Remove(updater);
+        public static void AddLateUpdate(ILateUpdate updater) => GetUpdater().m_LateUpdates.Add(updater);
+        public static void RemoveLateUpdate(ILateUpdate updater) => GetUpdater().m_LateUpdates.Remove(updater);
 
-        public static void AddFixedUpdate(IFixedUpdate updater) => sm_Updater?.m_FixedUpdates.Add(updater);
-        public static void RemoveFixedUpdate(IFixedUpdate updater) => sm_Updater?.m_FixedUpdates.Remove(updater);
+        public static void AddFixedUpdate(IFixedUpdate updater) => GetUpdater().m_FixedUpdates.Add(updater);
+        public static void RemoveFixedUpdate(IFixedUpdate updater) => GetUpdater().m_FixedUpdates.Remove(updater);
 
         private void Update()
         {
