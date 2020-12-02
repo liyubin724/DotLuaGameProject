@@ -1,5 +1,6 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.NativeDrawer;
+using DotEditor.NativeDrawer.Property;
 using UnityEditor;
 using UnityEngine;
 using static DotEditor.Fonts.BitmapFontConfig;
@@ -7,20 +8,16 @@ using static DotEditor.Fonts.BitmapFontConfig;
 namespace DotEditor.Fonts
 {
     [CustomTypeDrawer(typeof(BitmapFontChar))]
-    public class BitmapFontCharDrawer : CustomTypeDrawer
+    public class BitmapFontCharDrawer : PropertyContentDrawer
     {
-        public BitmapFontCharDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(BitmapFontChar);
+            return Property.ValueType == typeof(BitmapFontChar);
         }
 
         protected override void OnDrawProperty(string label)
         {
-            BitmapFontChar value = DrawerProperty.GetValue<BitmapFontChar>();
+            BitmapFontChar value = Property.GetValue<BitmapFontChar>();
             label = $"Font {(label ?? "")} ({value.fontName})";
             EditorGUI.BeginChangeCheck();
             {
@@ -80,7 +77,7 @@ namespace DotEditor.Fonts
             }
             if (EditorGUI.EndChangeCheck())
             {
-                DrawerProperty.Value = value;
+                Property.Value = value;
             }
         }
     }

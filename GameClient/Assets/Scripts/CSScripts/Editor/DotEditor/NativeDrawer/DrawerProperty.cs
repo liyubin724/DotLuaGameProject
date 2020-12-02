@@ -339,6 +339,58 @@ namespace DotEditor.NativeDrawer
             }
         }
 
+        internal void ClearArrayElement()
+        {
+            if (TypeUtility.IsArrayOrList(ValueType))
+            {
+                if (ValueType.IsArray)
+                {
+                    Value = DrawerUtility.CreateInstance(ValueType);
+                }
+                else
+                {
+                    ((IList)Value).Clear();
+                }
+            }
+        }
+
+        internal void AddArrayElement()
+        {
+            if (TypeUtility.IsArrayOrList(ValueType))
+            {
+                object element = DrawerUtility.CreateInstance(TypeUtility.GetArrayOrListElementType(ValueType));
+                if (ValueType.IsArray)
+                {
+                    Array array = (Array)Value;
+                    ArrayUtility.Add(ref array,element);
+
+                    Value = array;
+                }
+                else
+                {
+                    ((IList)Value).Add(element);
+                }
+            }
+        }
+
+        internal void RemoveArrayElementAtIndex(int index)
+        {
+            if(TypeUtility.IsArrayOrList(ValueType))
+            {
+                if(ValueType.IsArray)
+                {
+                    Array array = (Array)Value;
+                    ArrayUtility.Remove(ref array, index);
+
+                    Value = array;
+                }
+                else
+                {
+                    ((IList)Value).RemoveAt(index);
+                }
+            }
+        }
+
         private void OnValueChanged()
         {
             foreach (var drawer in listenerDrawers)

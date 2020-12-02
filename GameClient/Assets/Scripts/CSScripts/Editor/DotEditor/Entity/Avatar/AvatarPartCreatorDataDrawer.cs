@@ -1,5 +1,6 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.NativeDrawer;
+using DotEditor.NativeDrawer.Property;
 using System;
 using UnityEditor;
 using UnityEngine;
@@ -8,31 +9,27 @@ using static DotEditor.Entity.Avatar.AvatarCreatorData;
 namespace DotEditor.Entity.Avatar
 {
     [CustomTypeDrawer(typeof(AvatarPartCreatorData))]
-    public class AvatarPartCreatorDataDrawer : CustomTypeDrawer
+    public class AvatarPartCreatorDataDrawer : PropertyContentDrawer
     {
         public static Action<AvatarPartCreatorData> CreatePartBtnClick = null;
         public static Action<AvatarPartCreatorData> PreviewPartBtnClick = null;
 
         private DrawerObject drawerObject = null;
 
-        public AvatarPartCreatorDataDrawer(DrawerProperty property) : base(property)
-        {
-        }
-
         protected override bool IsValidProperty()
         {
-            return DrawerProperty.ValueType == typeof(AvatarPartCreatorData);
+            return Property.ValueType == typeof(AvatarPartCreatorData);
         }
 
         protected override void OnDrawProperty(string label)
         {
             if (drawerObject == null)
             {
-                drawerObject = new DrawerObject(DrawerProperty.Value);
+                drawerObject = new DrawerObject(Property.Value);
             }
-            if (DrawerProperty.IsArrayElement)
+            if (Property.IsArrayElement)
             {
-                AvatarPartCreatorData partCreatorData = (AvatarPartCreatorData)DrawerProperty.Value;
+                AvatarPartCreatorData partCreatorData = (AvatarPartCreatorData)Property.Value;
                 EditorGUILayout.BeginHorizontal();
                 {
                     EditorGUILayout.LabelField(label, UnityEngine.GUILayout.Width(25));
