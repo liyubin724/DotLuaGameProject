@@ -162,7 +162,16 @@ namespace TestEditor
         [CompareVerification("TTTT",5,CompareSymbol.Lt)]
         public int compareVerificationValue;
 
-        //public int[] intArray  = new int[0];
+        public int[] intArray  = new int[0];
+
+        public TestArrayData[] datas = null;
+    }
+
+    public class TestArrayData
+    {
+        public int intValue;
+        public bool boolValue;
+        public Vector2 vector2Value;
     }
 
     public class TestNativeDrawer : EditorWindow

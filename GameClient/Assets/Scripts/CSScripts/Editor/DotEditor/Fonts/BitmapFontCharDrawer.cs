@@ -36,7 +36,7 @@ namespace DotEditor.Fonts
                     Rect clearBtnRect = new Rect(lastRect.x + lastRect.width - 40, lastRect.y, 40, lastRect.height);
                     if (GUI.Button(clearBtnRect, "C", EditorStyles.toolbarButton))
                     {
-                        DrawerProperty.ClearArrayElement();
+                        //DrawerProperty.ClearArrayElement();
                         value.chars.Clear();
                         value.textures.Clear();
                     }
