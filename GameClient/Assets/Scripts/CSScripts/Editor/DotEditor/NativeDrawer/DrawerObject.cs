@@ -15,7 +15,7 @@ namespace DotEditor.NativeDrawer
 
     public class DrawerObject
     {
-        public bool IsShowScroll { get; set; } = false;
+        public bool IsShowScroll { get; set; } = true;
         public bool IsShowInherit { get; set; } = true;
 
         private object drawerObject;

@@ -7,11 +7,12 @@ namespace DotEditor.NativeDrawer
     {
         private DrawerObject drawerObject = null;
 
-        void OnEnable()
+        protected virtual void OnEnable()
         {
             drawerObject = new DrawerObject(target)
             {
                 IsShowScroll = IsShowScroll(),
+                IsShowInherit = IsShowInherit(),
             };
         }
 
@@ -23,6 +24,11 @@ namespace DotEditor.NativeDrawer
         protected virtual float GetLabelWidth()
         {
             return 120;
+        }
+
+        protected virtual bool IsShowInherit()
+        {
+            return true;
         }
 
         public override void OnInspectorGUI()
