@@ -25,7 +25,7 @@ namespace DotEngine
 
         protected virtual void InitializeFacade()
         {
-            DontDestroyHandler.CreateComponent<FacadeBehaviour>("Facade Behaviour");
+            DontDestroyUtility.CreateComponent<FacadeBehaviour>("Facade Behaviour");
 
             InitializeService();
         }

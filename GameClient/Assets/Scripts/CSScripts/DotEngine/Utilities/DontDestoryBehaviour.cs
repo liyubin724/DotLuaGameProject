@@ -6,7 +6,7 @@ namespace DotEngine.Utilities
     {
         void Awake()
         {
-            DontDestroyHandler.AddTransform(transform);
+            DontDestroyUtility.AddTransform(transform);
             Destroy(this);
         }
     }

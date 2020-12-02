@@ -15,7 +15,7 @@ namespace DotEngine.UI
         private void Awake()
         {
             Root = this;
-            DontDestroyHandler.AddTransform(transform);
+            DontDestroyUtility.AddTransform(transform);
 
             foreach(var layer in layers)
             {

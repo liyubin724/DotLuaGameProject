@@ -2,7 +2,7 @@
 
 namespace DotEngine.Utilities
 {
-    public static class DontDestroyHandler
+    public static class DontDestroyUtility
     {
         private const string RootName = "Singleton-Root";
         private static Transform rootTran = null;

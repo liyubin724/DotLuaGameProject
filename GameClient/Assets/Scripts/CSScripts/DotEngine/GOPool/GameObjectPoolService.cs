@@ -22,7 +22,7 @@ namespace DotEngine.GOPool
 
         public override void DoRegister()
         {
-            rootTransform = DontDestroyHandler.CreateTransform(ROOT_NAME);
+            rootTransform = DontDestroyUtility.CreateTransform(ROOT_NAME);
         }
 
         /// <summary>

@@ -49,7 +49,7 @@ namespace Game
             //    LogUtil.LogInfo("Timer Test", "Test Interval"+"   -> "+userdata+"    --  "+count);
             //},"AIT");
 
-            DontDestroyHandler.AddTransform(transform);
+            DontDestroyUtility.AddTransform(transform);
         }
 
         private void OnAssetInitialize()

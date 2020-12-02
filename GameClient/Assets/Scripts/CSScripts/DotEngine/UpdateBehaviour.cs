@@ -27,7 +27,7 @@ namespace DotEngine
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void OnStartup()
         {
-            sm_Updater = DontDestroyHandler.CreateComponent<UpdateBehaviour>(NAME);
+            sm_Updater = DontDestroyUtility.CreateComponent<UpdateBehaviour>(NAME);
         }
 
         private List<IUpdate> m_Updates = new List<IUpdate>();
