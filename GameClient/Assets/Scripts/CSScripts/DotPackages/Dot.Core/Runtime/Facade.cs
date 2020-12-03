@@ -1,7 +1,7 @@
-﻿using DotEngine.Asset;
-using DotEngine.GOP;
+﻿//using DotEngine.Asset;
+//using DotEngine.GOP;
 using DotEngine.Services;
-using DotEngine.Timer;
+//using DotEngine.Timer;
 using DotEngine.Utilities;
 
 namespace DotEngine
@@ -36,14 +36,14 @@ namespace DotEngine
             //LuaEnvService luaEnvService = new LuaEnvService();
             //service.RegisterServicer(luaEnvService);
 
-            TimerService timerService = new TimerService();
-            service.RegisterServicer(timerService);
+            //TimerService timerService = new TimerService();
+            //service.RegisterServicer(timerService);
 
-            AssetService assetService = new AssetService();
-            service.RegisterServicer(assetService);
+            //AssetService assetService = new AssetService();
+            //service.RegisterServicer(assetService);
 
-            GameObjectPoolService poolService = new GameObjectPoolService(assetService.InstantiateAsset);
-            service.RegisterServicer(poolService);
+            //GameObjectPoolService poolService = new GameObjectPoolService(assetService.InstantiateAsset);
+            //service.RegisterServicer(poolService);
         }
 
         public virtual void RegisterServicer(IServicer servicer)

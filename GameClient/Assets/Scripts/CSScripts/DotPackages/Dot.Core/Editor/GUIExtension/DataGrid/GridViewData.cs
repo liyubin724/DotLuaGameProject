@@ -10,9 +10,9 @@ namespace DotEditor.GUIExtension.DataGrid
         public SystemObject Userdata { get; set; } = null;
         public string DisplayName { get; set; } = string.Empty;
 
-        internal bool IsExpand { get; set; } = false;
-        internal GridViewData Parent { get; set; } = null;
-        internal List<GridViewData> Children { get; } = new List<GridViewData>();
+        public bool IsExpand { get; set; } = false;
+        public GridViewData Parent { get; set; } = null;
+        public List<GridViewData> Children { get; } = new List<GridViewData>();
 
         public GridViewData(string displayName, SystemObject userdata = null)
         {
