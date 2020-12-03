@@ -1,0 +1,22 @@
+{
+    "name": "DotEditor.AI",
+    "references": [
+        "GUID:9585a5252a74ad84daea673ae34bfc23",
+        "GUID:3d7195c9a8a2f8742bd10607bc40cbca",
+        "GUID:b140569d7d66cee4694570df17fff62b",
+        "GUID:1a1a14241271acf41b94effae8c9fe0c",
+        "GUID:933edf6fd91824744b485969624f7526",
+        "GUID:f0af87eef8d7e4b45b6de2fab09b59e2"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
