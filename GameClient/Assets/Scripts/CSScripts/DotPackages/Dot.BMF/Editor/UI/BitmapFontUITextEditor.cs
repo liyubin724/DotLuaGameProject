@@ -1,9 +1,9 @@
-﻿using DotEditor.Fonts;
-using DotEngine.UI;
+﻿using DotEditor.BMF;
+using DotEngine.BMF.UI;
 using UnityEditor;
 using UnityEngine.UI;
 
-namespace DotEditor.UI
+namespace DotEditor.BMF.UI
 {
     [CustomEditor(typeof(BitmapFontUIText))]
     public class BitmapFontUITextEditor : BitmapFontTextEditor

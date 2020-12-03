@@ -1,8 +1,7 @@
-﻿using DotEngine.BMF;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace DotEngine.UI
+namespace DotEngine.BMF.UI
 {
     [RequireComponent(typeof(Text))]
     [ExecuteInEditMode]

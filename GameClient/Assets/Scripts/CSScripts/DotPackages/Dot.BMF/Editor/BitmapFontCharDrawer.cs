@@ -3,9 +3,9 @@ using DotEditor.NativeDrawer;
 using DotEditor.NativeDrawer.Property;
 using UnityEditor;
 using UnityEngine;
-using static DotEditor.Fonts.BitmapFontConfig;
+using static DotEditor.BMF.BitmapFontConfig;
 
-namespace DotEditor.Fonts
+namespace DotEditor.BMF
 {
     [CustomTypeDrawer(typeof(BitmapFontChar))]
     public class BitmapFontCharDrawer : PropertyContentDrawer

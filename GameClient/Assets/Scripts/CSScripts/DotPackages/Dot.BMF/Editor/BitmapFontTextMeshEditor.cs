@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Fonts
+namespace DotEditor.BMF
 {
     [CustomEditor(typeof(BitmapFontTextMesh))]
     public class BitmapFontTextMeshEditor : BitmapFontTextEditor

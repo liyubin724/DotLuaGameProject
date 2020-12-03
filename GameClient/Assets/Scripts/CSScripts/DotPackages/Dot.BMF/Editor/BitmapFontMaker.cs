@@ -8,10 +8,10 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using static DotEditor.Fonts.BitmapFontConfig;
+using static DotEditor.BMF.BitmapFontConfig;
 using static DotEngine.BMF.BitmapFont;
 
-namespace DotEditor.Fonts
+namespace DotEditor.BMF
 {
     public class BitmapFontMaker : EditorWindow
     {

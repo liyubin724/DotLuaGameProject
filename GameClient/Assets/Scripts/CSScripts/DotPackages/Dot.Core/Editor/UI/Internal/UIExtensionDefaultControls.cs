@@ -108,7 +108,7 @@ namespace DotEditor.UI
         public static GameObject CreateBitmapText(Resources resources)
         {
             GameObject go = CreateUIElementRoot("BitmapText", s_ImageElementSize);
-            go.AddComponent<BitmapFontUIText>();
+            //go.AddComponent<BitmapFontUIText>();
             return go;
         }
 

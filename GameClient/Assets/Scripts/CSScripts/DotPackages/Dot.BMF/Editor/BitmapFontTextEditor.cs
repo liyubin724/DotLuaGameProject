@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Fonts
+namespace DotEditor.BMF
 {
     public class BitmapFontTextEditor : Editor
     {
