@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace DotEngine.Fonts
+namespace DotEngine.BMF
 {
     public class BitmapFont : ScriptableObject
     {

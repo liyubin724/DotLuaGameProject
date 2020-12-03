@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DotEngine.Fonts
+namespace DotEngine.BMF
 {
     public class BitmapFontText : MonoBehaviour
     {

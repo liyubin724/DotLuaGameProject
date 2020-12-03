@@ -1,5 +1,5 @@
 ﻿using DotEditor.Utilities;
-using DotEngine.Fonts;
+using DotEngine.BMF;
 using System;
 using System.IO;
 using System.Linq;
