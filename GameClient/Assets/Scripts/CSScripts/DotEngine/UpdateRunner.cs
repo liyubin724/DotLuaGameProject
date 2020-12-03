@@ -19,33 +19,33 @@ namespace DotEngine
         void DoFixedUpdate(float deltaTime, float unscaleDeltaTime);
     }
 
-    public class Updater : MonoBehaviour
+    public class UpdateRunner : MonoBehaviour
     {
-        private const string NAME = "Updater";
+        private const string NAME = "Update Hanlder";
 
-        private static Updater sm_Updater;
-        private static Updater GetUpdater()
+        private static UpdateRunner sm_Handler;
+        private static UpdateRunner GetRunner()
         {
-            if(sm_Updater == null)
+            if(sm_Handler == null)
             {
-                sm_Updater = DontDestroyUtility.CreateComponent<Updater>(NAME);
+                sm_Handler = DontDestroyUtility.CreateComponent<UpdateRunner>(NAME);
             }
 
-            return sm_Updater;
+            return sm_Handler;
         }
 
         private List<IUpdate> m_Updates = new List<IUpdate>();
         private List<ILateUpdate> m_LateUpdates = new List<ILateUpdate>();
         private List<IFixedUpdate> m_FixedUpdates = new List<IFixedUpdate>();
 
-        public static void AddUpdate(IUpdate updater) => GetUpdater().m_Updates.Add(updater);
-        public static void RemoveUpdate(IUpdate updater) => GetUpdater().m_Updates.Remove(updater);
+        public static void AddUpdate(IUpdate updater) => GetRunner().m_Updates.Add(updater);
+        public static void RemoveUpdate(IUpdate updater) => GetRunner().m_Updates.Remove(updater);
 
-        public static void AddLateUpdate(ILateUpdate updater) => GetUpdater().m_LateUpdates.Add(updater);
-        public static void RemoveLateUpdate(ILateUpdate updater) => GetUpdater().m_LateUpdates.Remove(updater);
+        public static void AddLateUpdate(ILateUpdate updater) => GetRunner().m_LateUpdates.Add(updater);
+        public static void RemoveLateUpdate(ILateUpdate updater) => GetRunner().m_LateUpdates.Remove(updater);
 
-        public static void AddFixedUpdate(IFixedUpdate updater) => GetUpdater().m_FixedUpdates.Add(updater);
-        public static void RemoveFixedUpdate(IFixedUpdate updater) => GetUpdater().m_FixedUpdates.Remove(updater);
+        public static void AddFixedUpdate(IFixedUpdate updater) => GetRunner().m_FixedUpdates.Add(updater);
+        public static void RemoveFixedUpdate(IFixedUpdate updater) => GetRunner().m_FixedUpdates.Remove(updater);
 
         private void Update()
         {
@@ -77,7 +77,7 @@ namespace DotEngine
             m_LateUpdates.Clear();
             m_FixedUpdates.Clear();
 
-            sm_Updater = null;
+            sm_Handler = null;
         }
     }
 }

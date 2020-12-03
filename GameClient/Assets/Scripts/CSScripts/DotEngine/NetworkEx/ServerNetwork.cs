@@ -56,7 +56,7 @@ namespace DotEngine.NetworkEx
 
             m_serverSocket.Listen(m_Port);
 
-            Updater.AddUpdate(this);
+            UpdateRunner.AddUpdate(this);
         }
 
         public void RegistAllMessageHandler(object instance)
@@ -127,7 +127,7 @@ namespace DotEngine.NetworkEx
         {
             if(m_serverSocket!=null)
             {
-                Updater.RemoveUpdate(this);
+                UpdateRunner.RemoveUpdate(this);
 
                 m_serverSocket.OnClientConnect -= OnClientConnected;
                 m_serverSocket.OnClientDisconnect -= OnClientDisconnected;
