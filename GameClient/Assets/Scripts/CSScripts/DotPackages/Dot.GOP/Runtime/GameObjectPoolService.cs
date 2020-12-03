@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOPool
+namespace DotEngine.GOP
 {
     public class GameObjectPoolService : Servicer
     {

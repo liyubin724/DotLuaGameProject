@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOPool
+namespace DotEngine.GOP
 {
     public static class GameObjectPoolConst
     {

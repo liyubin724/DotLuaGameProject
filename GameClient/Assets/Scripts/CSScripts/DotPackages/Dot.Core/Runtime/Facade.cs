@@ -1,5 +1,5 @@
 ﻿using DotEngine.Asset;
-using DotEngine.GOPool;
+using DotEngine.GOP;
 using DotEngine.Services;
 using DotEngine.Timer;
 using DotEngine.Utilities;

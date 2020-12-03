@@ -6,7 +6,7 @@ using UnityEngine;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOPool
+namespace DotEngine.GOP
 {
     public delegate void PoolPreloadComplete(string groupName, string assetPath);
 

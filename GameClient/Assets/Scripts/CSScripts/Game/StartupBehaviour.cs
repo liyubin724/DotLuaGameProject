@@ -1,6 +1,6 @@
 ﻿using DotEngine;
 using DotEngine.Asset;
-using DotEngine.GOPool;
+using DotEngine.GOP;
 using DotEngine.Log;
 using DotEngine.Log.Appender;
 using DotEngine.Lua;
