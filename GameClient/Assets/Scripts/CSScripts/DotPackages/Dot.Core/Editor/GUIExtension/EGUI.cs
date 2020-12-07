@@ -26,7 +26,7 @@ namespace DotEditor.GUIExtension
         /// <param name="thickness">线宽</param>
         /// <param name="padding">与上方的间距</param>
         /// <param name="color">绘制使用的颜色</param>
-        public static void DrawHorizontalLine(Rect rect , Color color , float thickness = 0.75f)
+        public static void DrawHorizontalLine(Rect rect , Color color , float thickness = 1.0f)
         {
             float padding = (rect.height - thickness) * 0.5f;
             padding = Mathf.Max(padding, 0.0f);
@@ -44,7 +44,7 @@ namespace DotEditor.GUIExtension
             DrawVerticalLine(rect, EGUIResources.gray);
         }
 
-        public static void DrawVerticalLine(Rect rect, Color color, float thickness = 0.75f)
+        public static void DrawVerticalLine(Rect rect, Color color, float thickness = 1.0f)
         {
             float padding = (rect.width - thickness) * 0.5f;
             padding = Mathf.Max(padding, 0.0f);
