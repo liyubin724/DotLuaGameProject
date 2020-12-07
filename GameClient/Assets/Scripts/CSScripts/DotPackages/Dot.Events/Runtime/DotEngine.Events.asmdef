@@ -1,8 +1,7 @@
 {
-    "name": "DotEngine.EventDispatch",
+    "name": "DotEngine.Events",
     "references": [
-        "GUID:9585a5252a74ad84daea673ae34bfc23",
-        "GUID:cbc4564360a0ed641a5786fa1461a521"
+        "GUID:9585a5252a74ad84daea673ae34bfc23"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
