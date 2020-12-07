@@ -8,6 +8,5 @@ namespace DotEngine.AI.BD.Tracks
 {
     public class ActorTrack : Track
     {
-
     }
 }

@@ -78,6 +78,18 @@ namespace DotEditor.GUIExtension
             EditorGUILayout.LabelField(label, style, options);
         }
 
+        public static bool DrawBoxedFoldout(bool isFoldout, string title)
+        {
+            Rect rect = EditorGUILayout.GetControlRect(GUILayout.ExpandWidth(true));
+            return EGUI.DrawBoxedFoldout(rect, isFoldout, title);
+        }
+
+        public static bool DrawBoxedFoldout(bool isFoldout, GUIContent title)
+        {
+            Rect rect = EditorGUILayout.GetControlRect(GUILayout.ExpandWidth(true));
+            return EGUI.DrawBoxedFoldout(rect, isFoldout, title);
+        }
+
         public static void DrawScript(UnityObject target)
         {
             Type targetType = target.GetType();

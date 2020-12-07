@@ -103,6 +103,18 @@ namespace DotEditor.GUIExtension
             EditorGUI.LabelField(rect, label, style);
         }
 
+        public static bool DrawBoxedFoldout(Rect rect,bool isFoldout,string title)
+        {
+            GUI.Box(rect, GUIContent.none, EditorStyles.toolbar);
+            return EditorGUI.Foldout(rect, isFoldout, title, true);
+        }
+
+        public static bool DrawBoxedFoldout(Rect rect, bool isFoldout, GUIContent title)
+        {
+            GUI.Box(rect, GUIContent.none, EditorStyles.toolbar);
+            return EditorGUI.Foldout(rect, isFoldout, title, true);
+        }
+
         #region Label Width
         private static Stack<float> labelWidthStack = new Stack<float>();
         public static void BeginLabelWidth(float labelWidth)
