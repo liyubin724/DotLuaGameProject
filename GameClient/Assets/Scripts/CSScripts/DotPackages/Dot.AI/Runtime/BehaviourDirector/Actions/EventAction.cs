@@ -1,10 +1,7 @@
 ﻿namespace DotEngine.AI.BD.Actions
 {
-    public abstract class EventAction : ActionNode
+    public abstract class EventAction : Action
     {
-        public virtual void DoTrigger()
-        {
-            DoExecute();
-        }
+        public abstract void DoTrigger();
     }
 }

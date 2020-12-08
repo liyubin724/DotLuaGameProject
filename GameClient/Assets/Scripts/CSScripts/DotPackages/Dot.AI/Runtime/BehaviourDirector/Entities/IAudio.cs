@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BD.Tracks
+namespace DotEngine.AI.BD
 {
-    public class ActorTrack : Track
+    public interface IAudio
     {
     }
 }

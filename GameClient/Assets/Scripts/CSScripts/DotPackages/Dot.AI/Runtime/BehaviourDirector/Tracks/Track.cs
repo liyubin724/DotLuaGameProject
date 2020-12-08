@@ -16,15 +16,40 @@ namespace DotEngine.AI.BD.Tracks
         Max,
     }
 
-    public class Track
+    public enum TrackCategory
+    {
+
+    }
+
+    public abstract class Track
     {
         public string Name = string.Empty;
-        public NodeTrackCategory Category = NodeTrackCategory.None;
-        public List<ActionNode> Nodes = new List<ActionNode>();
-
-        public void DoUpdate(float deltaTime)
+        public List<Actions.Action> Actions = new List<Actions.Action>();
+        
+        public virtual void DoUpdate(float deltaTime)
         {
 
         }
+
+        public virtual void DoStart()
+        {
+
+        }
+
+        public virtual void DoPause()
+        {
+
+        }
+
+        public virtual void DoResume()
+        {
+
+        }
+
+        public virtual void DoStop()
+        {
+
+        }
+
     }
 }

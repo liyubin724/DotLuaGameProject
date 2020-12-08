@@ -25,7 +25,7 @@ namespace DotEditor.AI.BD
         private static Type[] GetActionInTrackTypes(NodeTrackCategory category)
         {
             return (from type in sm_NodeTypes
-                    where type.IsSubclassOf(typeof(ActionNode))
+                    where type.IsSubclassOf(typeof(DotEngine.AI.BD.Actions.Action))
                     let attrs = type.GetCustomAttributes(typeof(NodeTrackAttribute), false)
                     where attrs != null && attrs.Length > 0
                     let attr = (NodeTrackAttribute)attrs[0]
@@ -33,7 +33,7 @@ namespace DotEditor.AI.BD
                     select type).ToArray();
         }
 
-        public static void ShowActionInTrackMenu(NodeTrackCategory category, Action<ActionNode> callback)
+        public static void ShowActionInTrackMenu(NodeTrackCategory category, Action<Action> callback)
         {
             if(sm_ActionInTrackTypeDic == null)
             {
@@ -57,7 +57,7 @@ namespace DotEditor.AI.BD
                         string itemName = string.IsNullOrEmpty(menuAttr.Prefix) ? menuAttr.Name : $"{menuAttr.Prefix}/{menuAttr.Name}";
                         menu.AddItem(new GUIContent(itemName), false, () =>
                         {
-                            callback?.Invoke((ActionNode)Activator.CreateInstance(type));
+                            callback?.Invoke((DotEngine.AI.BD.Actions.Action)(DotEngine.AI.BD.Actions.Action)Activator.CreateInstance((Type)type));
                         });
                     }
                 }

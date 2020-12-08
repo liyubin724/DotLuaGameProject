@@ -14,8 +14,8 @@ namespace DotEditor.AI.BD
         public static EditorData Data = null;
 
         public event Action OnDirectorChanged;
-        private Director m_CurrentDirector = null;
-        public Director CurrentDirector
+        private Cutscene m_CurrentDirector = null;
+        public Cutscene CurrentDirector
         {
             get
             {
@@ -47,7 +47,7 @@ namespace DotEditor.AI.BD
         {
             if(CurrentDirector!=null && SelectedTrackIndex>=0)
             {
-                return CurrentDirector.Tracks[SelectedTrackIndex];
+                return CurrentDirector.Groups[SelectedTrackIndex];
             }
 
             return null;
@@ -97,19 +97,19 @@ namespace DotEditor.AI.BD
             m_TrackAreaDrawer = new TrackAreaDrawer(this);
             m_TrackPropertyAreaDrawer = new TrackPropertyAreaDrawer(this);
 
-            Director director = new Director();
+            Cutscene director = new Cutscene();
             EditorData.Data.CurrentDirector = director;
 
             Track track = new Track();
             track.Category = NodeTrackCategory.Actor;
             track.Name = "Actor Group";
-            director.Tracks.Add(track) ;
+            director.Groups.Add(track) ;
 
             track = new Track();
-            director.Tracks.Add(track);
+            director.Groups.Add(track);
 
             track = new Track();
-            director.Tracks.Add(track);
+            director.Groups.Add(track);
         }
 
         private void OnGUI()

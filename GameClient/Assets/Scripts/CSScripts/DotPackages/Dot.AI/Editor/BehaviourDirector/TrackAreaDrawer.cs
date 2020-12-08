@@ -40,12 +40,12 @@ namespace DotEditor.AI.BD
                 for(int i = trackStartIndex;i<trackEndIndex;++i)
                 {
                     float y = setting.TracklineHeight * i - setting.ScrollPosY;
-                    if(i>=data.CurrentDirector.Tracks.Count)
+                    if(i>=data.CurrentDirector.Groups.Count)
                     {
                         break;
                     }
 
-                    Track track = data.CurrentDirector.Tracks[i];
+                    Track track = data.CurrentDirector.Groups[i];
 
                     Rect trackIndexRect = new Rect(0, y, rect.width, setting.TracklineHeight);
                     GUI.Label(trackIndexRect, $"{(track.Name ?? "")} ({i.ToString()})", data.SelectedTrackIndex == i ? "flow node 1" : "flow node 0");
@@ -83,7 +83,7 @@ namespace DotEditor.AI.BD
 
                             });
                         }
-                        if(selectedIndex < EditorData.Data.CurrentDirector.Tracks.Count-1)
+                        if(selectedIndex < EditorData.Data.CurrentDirector.Groups.Count-1)
                         {
                             menu.AddItem(new GUIContent("Down"), false, () =>
                             {
