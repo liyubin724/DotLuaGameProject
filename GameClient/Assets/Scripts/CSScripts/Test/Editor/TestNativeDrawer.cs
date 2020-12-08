@@ -1,4 +1,5 @@
 ﻿using DotEditor.NativeDrawer;
+using DotEngine.BD.Datas.Actions;
 using DotEngine.NativeDrawer;
 using DotEngine.NativeDrawer.Decorator;
 using DotEngine.NativeDrawer.Layout;
@@ -183,8 +184,8 @@ namespace TestEditor
             win.Show();
         }
 
-        TestData testData = new TestData();
-
+        //TestData testData = new TestData();
+        AnimatorSetParameterData testData = new AnimatorSetParameterData();
         DrawerObject drawerObj = null;
 
         private void OnEnable()
@@ -192,7 +193,7 @@ namespace TestEditor
             drawerObj = new DrawerObject(testData)
             {
                 IsShowScroll = true,
-                IsShowInherit = true,
+                IsShowInherit = false,
             };
         }
        private void OnGUI()
