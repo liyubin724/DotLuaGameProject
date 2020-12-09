@@ -7,11 +7,12 @@ namespace DotEngine.BD.Executors
         protected DurationActionData DurationData { get; private set; }
 
         public float DurationTime => DurationData.Duration;
-        public float EndTime => Data.FireTime + DurationData.Duration;
-        
-        public override void DoInit(CutsceneContext context, ActionData data)
+        public float EndTime => FireTime + DurationTime;
+
+        public override void DoInit(CutsceneContext context, BDData data)
         {
             base.DoInit(context, data);
+
             DurationData = (DurationActionData)data;
         }
 

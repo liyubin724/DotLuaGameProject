@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BD
+namespace DotEngine.BD.Enities
 {
     public interface ICamera
     {

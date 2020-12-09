@@ -23,7 +23,7 @@ namespace DotEngine.BehaviourLine.Track
             this.context = context;
             this.data = data;
 
-            itemFactory = context.Get<ActionItemFactory>();
+            //itemFactory = context.Get<ActionItemFactory>();
 
             for(int i =0;i<data.Actions.Count;++i)
             {
