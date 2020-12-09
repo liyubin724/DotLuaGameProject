@@ -2,10 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace DotEditor.BD
 {
@@ -37,22 +35,80 @@ namespace DotEditor.BD
             return sm_TrackDataTypes;
         }
 
-        private static Dictionary<Type, List<Type>> sm_TrackGroupDataAllowedTrackDataTypeDic = null;
-        public static Type[] GetTrackGroupDataAllowedTrackDataTypes(Type trackGroupDataType)
+        private static Type[] sm_ActionDataTypes = null;
+        private static Type[] GetActionDataTypes()
         {
-            if(sm_TrackGroupDataAllowedTrackDataTypeDic == null)
+            if(sm_ActionDataTypes == null)
             {
-                sm_TrackGroupDataAllowedTrackDataTypeDic = new Dictionary<Type, List<Type>>();
+                sm_ActionDataTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                                     from type in assembly.GetTypes()
+                                     where !type.IsAbstract && !type.IsInterface && type.IsSubclassOf(typeof(ActionData))
+                                     select type).ToArray();
             }
-            
-            if(sm_TrackGroupDataAllowedTrackDataTypeDic.TryGetValue(trackGroupDataType,out var typeList))
-            {
-                return typeList.ToArray();
-            }else
-            {
+            return sm_ActionDataTypes;
+        }
 
+        private static Dictionary<Type, List<Type>> sm_AllowedTrackDataTypeDic = new Dictionary<Type, List<Type>>();
+        private static Type[] GetAllowedTrackDataTypes(Type trackGroupDataType)
+        {
+            if(!sm_AllowedTrackDataTypeDic.TryGetValue(trackGroupDataType,out var typeList))
+            {
+                typeList = new List<Type>();
+                sm_AllowedTrackDataTypeDic.Add(trackGroupDataType, typeList);
+                var tgdAttrs = trackGroupDataType.GetCustomAttributes(typeof(TrackGroupDataAttribute), false);
+                if (tgdAttrs != null && tgdAttrs.Length > 0)
+                {
+                    TrackGroupDataAttribute tgdAttr = (TrackGroupDataAttribute)tgdAttrs[0];
+                    if (tgdAttr != null && tgdAttr.AllowedTrackCategories!=null && tgdAttr.AllowedTrackCategories.Length>0)
+                    {
+                        foreach(var type in GetTrackDataTypes())
+                        {
+                            var tdAttrs = type.GetCustomAttributes(typeof(TrackDataAttribute), false);
+                            if(tdAttrs!=null && tdAttrs.Length>0)
+                            {
+                                TrackDataAttribute tdAttr = (TrackDataAttribute)tdAttrs[0];
+                                if(Array.IndexOf(tgdAttr.AllowedTrackCategories,tdAttr.Category)>=0)
+                                {
+                                    typeList.Add(type);
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            return new Type[0];
+            return typeList.ToArray();
+        }
+
+        private static Dictionary<Type, List<Type>> sm_AllowedActionDataTypeDic = new Dictionary<Type, List<Type>>();
+        private static Type[] GetAllowedActionDataTypes(Type trackDataType)
+        {
+            if(!sm_AllowedActionDataTypeDic.TryGetValue(trackDataType,out var typeList))
+            {
+                typeList = new List<Type>();
+                sm_AllowedActionDataTypeDic.Add(trackDataType, typeList);
+                var tdAttrs = trackDataType.GetCustomAttributes(typeof(TrackDataAttribute), false);
+                if (tdAttrs != null && tdAttrs.Length > 0)
+                {
+                    TrackDataAttribute tdAttr = (TrackDataAttribute)tdAttrs[0];
+                    if (tdAttr != null && tdAttr.AllowedActionCategories != null && tdAttr.AllowedActionCategories.Length > 0)
+                    {
+                        foreach (var type in GetActionDataTypes())
+                        {
+                            var aAttrs = type.GetCustomAttributes(typeof(ActionDataAttribute), false);
+                            if (aAttrs != null && aAttrs.Length > 0)
+                            {
+                                ActionDataAttribute aAttr = (ActionDataAttribute)tdAttrs[0];
+                                if (aAttr.Categories != null && aAttr.Categories.Length > 0 && aAttr.Categories.Intersect(tdAttr.AllowedActionCategories).Count() > 0)
+                                {
+                                    typeList.Add(type);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return typeList.ToArray();
         }
 
         public static void ShowCreateTrackGroupMenu(Action<TrackGroupData> createdCallback)
@@ -85,11 +141,51 @@ namespace DotEditor.BD
             menu.ShowAsContext();
         }
 
-        private static Type[] sm_TrackTypes = null;
-
-        public static void ShowCreateTrackMenu(TrackGroupData groupData)
+        public static void ShowCreateTrackMenu(Type trackGroupDataType,Action<TrackData> createdCallback)
         {
+            Type[] allowedTrackDataTypes = GetAllowedTrackDataTypes(trackGroupDataType);
 
+            GenericMenu menu = new GenericMenu();
+            foreach (var type in allowedTrackDataTypes)
+            {
+                var attrs = type.GetCustomAttributes(typeof(TrackDataAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    TrackDataAttribute attr = (TrackDataAttribute)attrs[0];
+                    if (attr != null)
+                    {
+                        menu.AddItem(new GUIContent(attr.Label), false, () =>
+                        {
+                            TrackData data = Activator.CreateInstance(type) as TrackData;
+                            createdCallback?.Invoke(data);
+                        });
+                    }
+                }
+            }
+            menu.ShowAsContext();
+        }
+
+        public static void ShowCreateActionMenu(Type trackDataType,Action<ActionData> createdCallback)
+        {
+            Type[] allowedActionDataTypes = GetAllowedActionDataTypes(trackDataType);
+            GenericMenu menu = new GenericMenu();
+            foreach (var type in allowedActionDataTypes)
+            {
+                var attrs = type.GetCustomAttributes(typeof(ActionDataAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    ActionDataAttribute attr = (ActionDataAttribute)attrs[0];
+                    if (attr != null)
+                    {
+                        menu.AddItem(new GUIContent(attr.Label), false, () =>
+                        {
+                            ActionData data = Activator.CreateInstance(type) as ActionData;
+                            createdCallback?.Invoke(data);
+                        });
+                    }
+                }
+            }
+            menu.ShowAsContext();
         }
 
     }
