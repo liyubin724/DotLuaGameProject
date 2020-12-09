@@ -82,12 +82,12 @@ namespace DotEngine.Net.Services
             //CallAction<int>(NetNotification.CLIENT_NET_DISCONNECTED, net.UniqueID);
         }
 
-        public void DoLateUpdate(float deltaTime,float unscaleDeltaTime)
+        public void DoLateUpdate(float deltaTime)
         {
             NetManager.GetInstance().DoLateUpdate_Client(deltaTime);
         }
 
-        public void DoUpdate(float deltaTime,float unscaleDeltaTime)
+        public void DoUpdate(float deltaTime)
         {
             NetManager.GetInstance().DoUpdate_Client(deltaTime);
         }

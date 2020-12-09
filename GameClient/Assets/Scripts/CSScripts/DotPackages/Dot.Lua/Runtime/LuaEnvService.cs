@@ -128,7 +128,7 @@ namespace DotEngine.Lua
             return m_InstanceWithFunc.Func<LuaTable>(list.ToArray());
         }
 
-        public virtual void DoUpdate(float deltaTime,float unscaleDeltaTime)
+        public virtual void DoUpdate(float deltaTime)
         {
             if(!Env.IsValid())
             {
@@ -146,11 +146,14 @@ namespace DotEngine.Lua
                     Env.Tick();
                 }
             }
+        }
 
+        public virtual void DoUnscaleUpdate(float unscaleDeltaTime)
+        {
             m_UnscaleUpdateAction?.Invoke(unscaleDeltaTime);
         }
 
-        public void DoFixedUpdate(float deltaTime,float unscaleDeltaTime)
+        public void DoFixedUpdate(float deltaTime)
         {
             if (!Env.IsValid())
             {
@@ -159,7 +162,7 @@ namespace DotEngine.Lua
             m_FixedUpdateAction?.Invoke(deltaTime);
         }
 
-        public void DoLateUpdate(float deltaTime,float unscaleDeltaTime)
+        public void DoLateUpdate(float deltaTime)
         {
             if (!Env.IsValid())
             {

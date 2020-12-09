@@ -27,7 +27,7 @@ namespace DotEngine.Services
                 string name = m_UpdateServicerNames[i];
                 if (m_ServicerDic.TryGetValue(name, out IServicer value))
                 {
-                    ((IUpdate)value).DoUpdate(deltaTime,unscaleDeltaTime);
+                    ((IUpdate)value).DoUpdate(deltaTime);
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace DotEngine.Services
                 string name = m_LateUpdateServicerNames[i];
                 if (m_ServicerDic.TryGetValue(name, out IServicer value))
                 {
-                    ((ILateUpdate)value).DoLateUpdate(deltaTime, unscaleDeltaTime);
+                    ((ILateUpdate)value).DoLateUpdate(deltaTime);
                 }
                 else
                 {
@@ -59,7 +59,7 @@ namespace DotEngine.Services
                 string name = m_FixedUpdateServicerNames[i];
                 if (m_ServicerDic.TryGetValue(name, out IServicer value))
                 {
-                    ((IFixedUpdate)value).DoFixedUpdate(deltaTime, unscaleDeltaTime);
+                    ((IFixedUpdate)value).DoFixedUpdate(deltaTime);
                 }
                 else
                 {

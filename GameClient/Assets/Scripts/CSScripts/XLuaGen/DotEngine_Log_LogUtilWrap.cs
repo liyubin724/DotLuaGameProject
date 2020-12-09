@@ -31,10 +31,11 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 11, 1, 1);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 12, 1, 1);
 			Utils.RegisterFunc(L, Utils.CLS_IDX, "AddAppender", _m_AddAppender_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "RemoveAppender", _m_RemoveAppender_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "GetLogger", _m_GetLogger_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "RemoveLogger", _m_RemoveLogger_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Reset", _m_Reset_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Trace", _m_Trace_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Debug", _m_Debug_xlua_st_);
@@ -169,6 +170,30 @@ namespace XLua.CSObjectWrap
             }
             
             return LuaAPI.luaL_error(L, "invalid arguments to DotEngine.Log.LogUtil.GetLogger!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_RemoveLogger_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    string _name = LuaAPI.lua_tostring(L, 1);
+                    
+                    DotEngine.Log.LogUtil.RemoveLogger( _name );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
             
         }
         
