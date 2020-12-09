@@ -1,6 +1,6 @@
 ﻿using DotEngine.NativeDrawer.Visible;
 
-namespace DotEngine.BD.Datas.Actions
+namespace DotEngine.BD.Datas
 {
     public enum AnimatorSetParameterType
     {
@@ -10,7 +10,7 @@ namespace DotEngine.BD.Datas.Actions
         Trigger,
     }
 
-    [ActionData("Animator", "Set Parameter", ActionCategory.Animator, Target = DataTarget.Client)]
+    [ActionData("Animator", "Set Parameter", ActionCategory.Animator, Target = BDDataTarget.Client)]
     public class AnimatorSetParameterData : EventActionData
     {
         public string ParameterName = string.Empty;

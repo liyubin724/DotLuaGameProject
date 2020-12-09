@@ -43,33 +43,40 @@ namespace DotEngine.Context
 
         public object Get(K key)
         {
-            if (TryGet(key, out object v))
+            if (itemDic.TryGetValue(key, out object value))
             {
-                return v;
+                return value;
             }
+
             return null;
         }
 
         public V Get<V>(K key)
         {
-            TryGet<V>(key, out V value);
-            return value;
+            var value = Get(key);
+            if(value!=null)
+            {
+                return (V)value;
+            }
+            return default;
         }
 
         public bool TryGet(K key, out object value)
         {
-            if (itemDic.TryGetValue(key, out value))
+            value = Get(key);
+
+            if(value !=null)
             {
                 return true;
+            }else
+            {
+                return false;
             }
-
-            value = null;
-            return false;
         }
 
         public bool TryGet<V>(K key, out V value)
         {
-            if (itemDic.TryGetValue(key, out object item))
+            if (TryGet(key, out object item))
             {
                 value = (V)item;
                 return true;
@@ -90,9 +97,9 @@ namespace DotEngine.Context
 
         public void Update(K key, object value)
         {
-            if (itemDic.TryGetValue(key, out object item))
+            if (ContainsKey(key))
             {
-                itemDic[key] = item;
+                itemDic[key] = value;
             }
             else
             {
@@ -104,11 +111,11 @@ namespace DotEngine.Context
         {
             if (ContainsKey(key))
             {
-                itemDic[key] = value;
+                Update(key, value);
             }
             else
             {
-                itemDic.Add(key, value);
+                Add(key, value);
             }
         }
 

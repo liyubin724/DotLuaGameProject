@@ -6,9 +6,8 @@
         Animator,
     }
 
-    public abstract class ActionData
+    public abstract class ActionData : BDData
     {
-        public int UniqueID = -1;
         public bool IsEnable = true;
         public float FireTime = 0.0f;
 

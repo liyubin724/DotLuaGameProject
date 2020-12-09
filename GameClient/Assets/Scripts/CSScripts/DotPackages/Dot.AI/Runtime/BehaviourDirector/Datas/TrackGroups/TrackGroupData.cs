@@ -2,7 +2,7 @@
 
 namespace DotEngine.BD.Datas
 {
-    public abstract class TrackGroupData
+    public abstract class TrackGroupData : BDData
     {
         public List<TrackData> Tracks = new List<TrackData>();
     }

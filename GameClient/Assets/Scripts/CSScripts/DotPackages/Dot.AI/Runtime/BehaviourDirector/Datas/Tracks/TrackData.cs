@@ -7,10 +7,10 @@ namespace DotEngine.BD.Datas
 
     }
 
-    public class TrackData
+    public class TrackData : BDData
     {
         public string Name = string.Empty;
-        public DataTarget Target = DataTarget.All;
+        public BDDataTarget Target = BDDataTarget.All;
         public List<ActionData> Actions = new List<ActionData>();
     }
 }

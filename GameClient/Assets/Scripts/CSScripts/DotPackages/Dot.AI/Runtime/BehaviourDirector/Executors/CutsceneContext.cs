@@ -1,6 +1,6 @@
 ﻿using DotEngine.Context;
 
-namespace DotEngine.AI.BD
+namespace DotEngine.BD.Executors
 {
     public class CutsceneContext : TypeContext
     {

@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnityEngine;
 
-namespace DotEngine.BD.Enities
+namespace DotEngine.BD.Datas
 {
-    public interface IActor
+    public class BDData
     {
-        Animator GetAnimator();
     }
 }

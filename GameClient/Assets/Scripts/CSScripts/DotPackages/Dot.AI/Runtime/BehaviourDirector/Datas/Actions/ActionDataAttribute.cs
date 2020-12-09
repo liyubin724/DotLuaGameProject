@@ -9,8 +9,8 @@ namespace DotEngine.BD.Datas
         public string Label { get; private set; }
         public ActionCategory[] Categories { get; private set; }
 
-        public DataTarget Target { get; set; } = DataTarget.All;
-        public DataMode Model { get; set; } = DataMode.All;
+        public BDDataTarget Target { get; set; } = BDDataTarget.All;
+        public BDDataMode Model { get; set; } = BDDataMode.All;
 
         public ActionDataAttribute(string menu,string label,params ActionCategory[] categories)
         {

@@ -1,9 +1,9 @@
 ﻿namespace DotEngine.BD.Datas
 {
-    public enum DataTarget
+    public enum BDDataMode
     {
         All = 0,
-        Client,
-        Server,
+        Debug,
+        Release,
     }
 }

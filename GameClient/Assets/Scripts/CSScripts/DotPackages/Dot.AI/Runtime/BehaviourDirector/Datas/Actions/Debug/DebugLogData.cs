@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 
-namespace DotEngine.BD.Datas.Actions
+namespace DotEngine.BD.Datas
 {
-    [ActionData("Debug", "Log", ActionCategory.Debug, Target = DataTarget.Client, Model = DataMode.Debug)]
+    [ActionData("Debug", "Log", ActionCategory.Debug, Target = BDDataTarget.Client, Model = BDDataMode.Debug)]
     public class DebugLogData : EventActionData
     {
-        public LogType Type = LogType.Log;
-        public bool IsDetail = false;
+        public LogType LogType = LogType.Log;
         public string Message = string.Empty;
     }
 }
