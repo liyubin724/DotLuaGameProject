@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DotEditor.AI.BD
+namespace DotEditor.BD
 {
     public class DirectorSetting
     {
@@ -89,14 +89,5 @@ namespace DotEditor.AI.BD
         public Vector2 ScrollPos = Vector2.zero;
         public float ScrollPosX { get => ScrollPos.x; }
         public float ScrollPosY { get => ScrollPos.y; }
-
-        public string CopiedActionData = string.Empty;
-
-        public int MaxActionIndex = 0;
-        public int GetActionIndex()
-        {
-            return ++MaxActionIndex;
-        }
-
     }
 }
