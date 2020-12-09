@@ -99,17 +99,17 @@ namespace DotEngine.Events
 
                 if(delayEvents.Count == 1)
                 {
-                    UpdateRunner.AddUpdate(this);
+                    Updater.AddUpdater(this);
                 }
             }
         }
 
-        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
+        public void DoUpdate(float deltaTime)
         {
             for (int i = delayEvents.Count - 1; i >= 0; --i)
             {
                 EventData eventData = delayEvents[i];
-                eventData.DelayTime -= unscaleDeltaTime;
+                eventData.DelayTime -= deltaTime;
                 if (eventData.DelayTime <= 0)
                 {
                     TriggerEvent(eventData.Sender, eventData.EventID, -1.0f, eventData.Values);
@@ -121,7 +121,7 @@ namespace DotEngine.Events
 
             if(delayEvents.Count == 0)
             {
-                UpdateRunner.RemoveUpdate(this);
+                Updater.RemoveUpdater(this);
             }
         }
 
@@ -131,7 +131,7 @@ namespace DotEngine.Events
 
             if (delayEvents.Count > 0)
             {
-                UpdateRunner.RemoveUpdate(this);
+                Updater.RemoveUpdater(this);
             }
             for (int i = delayEvents.Count - 1; i >= 0; --i)
             {

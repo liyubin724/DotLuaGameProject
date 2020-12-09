@@ -59,7 +59,7 @@ namespace DotEngine.NetworkEx
             Name = name;
         }
 
-        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
+        public void DoUpdate(float deltaTime)
         {
             if(m_ClientSocket==null)
             {
@@ -131,7 +131,7 @@ namespace DotEngine.NetworkEx
 
             m_ClientSocket.Connect(IPAddress.Parse(ipString), port);
 
-            UpdateRunner.AddUpdate(this);
+            Updater.AddUpdater(this);
 
             return true;
         }
@@ -222,7 +222,7 @@ namespace DotEngine.NetworkEx
         {
             if(m_ClientSocket !=null && (Status == ClientNetworkStatus.Connecting || Status == ClientNetworkStatus.Connected))
             {
-                UpdateRunner.RemoveUpdate(this);
+                Updater.RemoveUpdater(this);
 
                 Status = ClientNetworkStatus.Disconnecting;
                 m_ClientSocket.Disconnect();
@@ -249,7 +249,7 @@ namespace DotEngine.NetworkEx
 
         private void OnDisconnected(object sender, EventArgs eventArgs)
         {
-            UpdateRunner.RemoveUpdate(this);
+            Updater.RemoveUpdater(this);
 
             Status = ClientNetworkStatus.Disconnected;
             m_ClientSocket.OnConnect -= OnConnected;

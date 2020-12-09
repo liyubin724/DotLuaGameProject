@@ -2,15 +2,23 @@
 
 <linker>
 
-	<assembly fullname="Assembly-CSharp">
+	<assembly fullname="DotEngine.Log">
 	    <type fullname="DotEngine.Log.LogUtil" preserve="all"/>
-		<type fullname="DotEngine.Asset.AssetService" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="Assembly-CSharp">
+	    <type fullname="DotEngine.Asset.AssetService" preserve="all"/>
 		<type fullname="Game.GameFacade" preserve="all"/>
-		<type fullname="DotEngine.Facade" preserve="all"/>
 		<type fullname="DotEngine.Asset.AssetLoaderPriority" preserve="all"/>
 		<type fullname="DotEngine.UI.UIRoot" preserve="all"/>
 		<type fullname="DotEngine.UI.UILayerLevel" preserve="all"/>
 		<type fullname="DotEngine.UI.UILayer" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="DotEngine.Core">
+	    <type fullname="DotEngine.Facade" preserve="all"/>
 		
 	</assembly>
 

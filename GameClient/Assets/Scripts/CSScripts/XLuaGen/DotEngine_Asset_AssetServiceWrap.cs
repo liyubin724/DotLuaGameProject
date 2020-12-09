@@ -100,9 +100,8 @@ namespace XLua.CSObjectWrap
                 
                 {
                     float _deltaTime = (float)LuaAPI.lua_tonumber(L, 2);
-                    float _unscaleDeltaTime = (float)LuaAPI.lua_tonumber(L, 3);
                     
-                    gen_to_be_invoked.DoUpdate( _deltaTime, _unscaleDeltaTime );
+                    gen_to_be_invoked.DoUpdate( _deltaTime );
                     
                     
                     
