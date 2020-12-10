@@ -185,7 +185,7 @@ namespace TestEditor
         }
 
         //TestData testData = new TestData();
-        AnimatorSetParameterData testData = new AnimatorSetParameterData();
+        AnimatorSetParameterEvent testData = new AnimatorSetParameterEvent();
         DrawerObject drawerObj = null;
 
         private void OnEnable()

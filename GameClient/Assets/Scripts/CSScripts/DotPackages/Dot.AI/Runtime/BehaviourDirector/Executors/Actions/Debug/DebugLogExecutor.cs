@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace DotEngine.BD.Executors
 {
-    [BDExecutor(typeof(DebugLogData))]
+    [BDExecutor(typeof(DebugLogEvent))]
     public class DebugLogExecutor : EventActionExecutor
     {
         public override void DoTrigger()
         {
-            DebugLogData logData = GetData<DebugLogData>();
+            DebugLogEvent logData = GetData<DebugLogEvent>();
 
             if(logData.LogType == LogType.Log)
             {

@@ -2,14 +2,14 @@
 
 namespace DotEditor.BD
 {
-    public class DirectorSetting
+    public class DrawerSetting
     {
-        private static DirectorSetting setting = null;
-        public static DirectorSetting GetSetting()
+        private static DrawerSetting setting = null;
+        public static DrawerSetting GetSetting()
         {
             if(setting == null)
             {
-                setting = new DirectorSetting();
+                setting = new DrawerSetting();
             }
             return setting;
         }

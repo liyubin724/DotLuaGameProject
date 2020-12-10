@@ -10,8 +10,8 @@ namespace DotEngine.BD.Datas
         Trigger,
     }
 
-    [ActionData("Animator", "Set Parameter", ActionCategory.Animator, Target = BDDataTarget.Client)]
-    public class AnimatorSetParameterData : EventActionData
+    [ActionData("Animator/Events", "Set Parameter", ActionCategory.Animator, Target = BDDataTarget.Client)]
+    public class AnimatorSetParameterEvent : EventActionData
     {
         public string ParameterName = string.Empty;
         public AnimatorSetParameterType ParameterType = AnimatorSetParameterType.Int;

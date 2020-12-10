@@ -7,16 +7,16 @@ namespace DotEngine.BD.Datas
     {
         public string MenuPrefix { get; private set; }
         public string Label { get; private set; }
-        public ActionCategory[] Categories { get; private set; }
+        public ActionCategory Category { get; private set; }
 
         public BDDataTarget Target { get; set; } = BDDataTarget.All;
         public BDDataMode Model { get; set; } = BDDataMode.All;
 
-        public ActionDataAttribute(string menu,string label,params ActionCategory[] categories)
+        public ActionDataAttribute(string menu, string label, ActionCategory category)
         {
             MenuPrefix = menu;
             Label = label;
-            Categories = categories;
+            Category = category;
         }
     }
 }

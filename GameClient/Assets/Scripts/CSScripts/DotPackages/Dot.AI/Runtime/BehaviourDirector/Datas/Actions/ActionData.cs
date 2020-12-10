@@ -3,7 +3,11 @@
     public enum ActionCategory
     {
         Debug = 0,
+        Time,
+        Audio,
         Animator,
+        Camera,
+
     }
 
     public abstract class ActionData : BDData

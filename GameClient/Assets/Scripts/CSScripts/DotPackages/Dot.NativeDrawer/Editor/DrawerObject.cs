@@ -17,6 +17,8 @@ namespace DotEditor.NativeDrawer
     {
         public bool IsShowScroll { get; set; } = true;
         public bool IsShowInherit { get; set; } = true;
+        public float LabelWidth { get; set; } = 100;
+        public string TitleContent { get; set; } = null;
 
         private object drawerObject;
         private List<TypeDrawerProperty> typeDrawerProperties = new List<TypeDrawerProperty>();
@@ -55,6 +57,11 @@ namespace DotEditor.NativeDrawer
         private Vector2 scrollPos = Vector2.zero;
         public void OnGUILayout()
         {
+            if(!string.IsNullOrEmpty(TitleContent))
+            {
+                EGUILayout.DrawBoxHeader(TitleContent, EGUIStyles.BoxedHeaderCenterStyle,GUILayout.ExpandWidth(true));
+            }
+
             if(IsShowScroll)
             {
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(false));
@@ -67,11 +74,14 @@ namespace DotEditor.NativeDrawer
                     {
                         EGUILayout.DrawBoxHeader(typeDrawProperty.type.Name, GUILayout.ExpandWidth(true));
                     }
-
-                    foreach (var property in typeDrawProperty.drawerProperties)
+                    EGUI.BeginLabelWidth(LabelWidth);
                     {
-                        property.OnGUILayout();
+                        foreach (var property in typeDrawProperty.drawerProperties)
+                        {
+                            property.OnGUILayout();
+                        }
                     }
+                    EGUI.EndLableWidth();
 
                     if(IsShowInherit)
                     {

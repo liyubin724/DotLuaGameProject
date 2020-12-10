@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace DotEngine.BD.Executors
 {
-    [BDExecutor(typeof(AnimatorSetSpeedData))]
+    [BDExecutor(typeof(AnimatorSetSpeedEvent))]
     public class AnimatorSetSpeedExecutor : EventActionExecutor
     {
         public override void DoTrigger()
         {
-            AnimatorSetSpeedData data = GetData<AnimatorSetSpeedData>();
+            AnimatorSetSpeedEvent data = GetData<AnimatorSetSpeedEvent>();
             IActor actor = GetContextData<IActor>();
 
             Animator animator = actor.GetAnimator();

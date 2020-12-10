@@ -55,6 +55,7 @@ namespace DotEditor.BD
             {
                 typeList = new List<Type>();
                 sm_AllowedTrackDataTypeDic.Add(trackGroupDataType, typeList);
+
                 var tgdAttrs = trackGroupDataType.GetCustomAttributes(typeof(TrackGroupDataAttribute), false);
                 if (tgdAttrs != null && tgdAttrs.Length > 0)
                 {
@@ -86,6 +87,7 @@ namespace DotEditor.BD
             {
                 typeList = new List<Type>();
                 sm_AllowedActionDataTypeDic.Add(trackDataType, typeList);
+
                 var tdAttrs = trackDataType.GetCustomAttributes(typeof(TrackDataAttribute), false);
                 if (tdAttrs != null && tdAttrs.Length > 0)
                 {
@@ -94,11 +96,11 @@ namespace DotEditor.BD
                     {
                         foreach (var type in GetActionDataTypes())
                         {
-                            var aAttrs = type.GetCustomAttributes(typeof(ActionDataAttribute), false);
-                            if (aAttrs != null && aAttrs.Length > 0)
+                            var adAttrs = type.GetCustomAttributes(typeof(ActionDataAttribute), false);
+                            if (adAttrs != null && adAttrs.Length > 0)
                             {
-                                ActionDataAttribute aAttr = (ActionDataAttribute)tdAttrs[0];
-                                if (aAttr.Categories != null && aAttr.Categories.Length > 0 && aAttr.Categories.Intersect(tdAttr.AllowedActionCategories).Count() > 0)
+                                ActionDataAttribute adAttr = (ActionDataAttribute)tdAttrs[0];
+                                if (adAttr != null && Array.IndexOf(tdAttr.AllowedActionCategories, adAttr.Category) > 0)
                                 {
                                     typeList.Add(type);
                                 }
@@ -113,30 +115,15 @@ namespace DotEditor.BD
 
         public static void ShowCreateTrackGroupMenu(Action<TrackGroupData> createdCallback)
         {
-            if(sm_TrackGroupDataTypes == null)
-            {
-                sm_TrackGroupDataTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                                          from type in assembly.GetTypes()
-                                          where !type.IsAbstract && !type.IsInterface && type.IsSubclassOf(typeof(TrackGroupData))
-                                          select type).ToArray();
-            }
-
             GenericMenu menu = new GenericMenu();
-            foreach(var type in sm_TrackGroupDataTypes)
+            foreach(var type in GetTrackGroupDataTypes())
             {
-                var attrs = type.GetCustomAttributes(typeof(TrackGroupDataAttribute), false);
-                if(attrs !=null && attrs.Length>0)
+                TrackGroupDataAttribute attr = type.GetCustomAttributes(typeof(TrackGroupDataAttribute), false)[0] as TrackGroupDataAttribute;
+                menu.AddItem(new GUIContent(attr.Label), false, () =>
                 {
-                    TrackGroupDataAttribute attr = (TrackGroupDataAttribute)attrs[0];
-                    if(attr!=null)
-                    {
-                        menu.AddItem(new GUIContent(attr.Label), false, () =>
-                        {
-                            TrackGroupData data = Activator.CreateInstance(type) as TrackGroupData;
-                            createdCallback?.Invoke(data);
-                        });
-                    }
-                }
+                    TrackGroupData data = Activator.CreateInstance(type) as TrackGroupData;
+                    createdCallback?.Invoke(data);
+                });
             }
             menu.ShowAsContext();
         }
@@ -148,19 +135,12 @@ namespace DotEditor.BD
             GenericMenu menu = new GenericMenu();
             foreach (var type in allowedTrackDataTypes)
             {
-                var attrs = type.GetCustomAttributes(typeof(TrackDataAttribute), false);
-                if (attrs != null && attrs.Length > 0)
+                TrackDataAttribute attr = type.GetCustomAttributes(typeof(TrackDataAttribute), false)[0] as TrackDataAttribute;
+                menu.AddItem(new GUIContent(attr.Label), false, () =>
                 {
-                    TrackDataAttribute attr = (TrackDataAttribute)attrs[0];
-                    if (attr != null)
-                    {
-                        menu.AddItem(new GUIContent(attr.Label), false, () =>
-                        {
-                            TrackData data = Activator.CreateInstance(type) as TrackData;
-                            createdCallback?.Invoke(data);
-                        });
-                    }
-                }
+                    TrackData data = Activator.CreateInstance(type) as TrackData;
+                    createdCallback?.Invoke(data);
+                });
             }
             menu.ShowAsContext();
         }
@@ -171,22 +151,14 @@ namespace DotEditor.BD
             GenericMenu menu = new GenericMenu();
             foreach (var type in allowedActionDataTypes)
             {
-                var attrs = type.GetCustomAttributes(typeof(ActionDataAttribute), false);
-                if (attrs != null && attrs.Length > 0)
+                ActionDataAttribute attr = type.GetCustomAttributes(typeof(ActionDataAttribute), false)[0] as ActionDataAttribute;
+                menu.AddItem(new GUIContent(attr.Label), false, () =>
                 {
-                    ActionDataAttribute attr = (ActionDataAttribute)attrs[0];
-                    if (attr != null)
-                    {
-                        menu.AddItem(new GUIContent(attr.Label), false, () =>
-                        {
-                            ActionData data = Activator.CreateInstance(type) as ActionData;
-                            createdCallback?.Invoke(data);
-                        });
-                    }
-                }
+                    ActionData data = Activator.CreateInstance(type) as ActionData;
+                    createdCallback?.Invoke(data);
+                });
             }
             menu.ShowAsContext();
         }
-
     }
 }

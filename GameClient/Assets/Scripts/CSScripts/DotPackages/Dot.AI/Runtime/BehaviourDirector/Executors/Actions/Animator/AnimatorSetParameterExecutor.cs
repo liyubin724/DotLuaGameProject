@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace DotEngine.BD.Executors
 {
-    [BDExecutor(typeof(AnimatorSetParameterData))]
+    [BDExecutor(typeof(AnimatorSetParameterEvent))]
     public class AnimatorSetParameterExecutor : EventActionExecutor
     {
         public override void DoTrigger()
         {
-            AnimatorSetParameterData data = GetData<AnimatorSetParameterData>();
+            AnimatorSetParameterEvent data = GetData<AnimatorSetParameterEvent>();
             IActor actor = GetContextData<IActor>();
 
             Animator animator = actor.GetAnimator();
