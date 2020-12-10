@@ -28,8 +28,6 @@ namespace DotEditor.BD
             cutsceneData.Name = "Test Cutscene";
             cutsceneData.Desc = "Just for test";
 
-            TrackGroupData groupData = new TrackGroupData();
-
             m_CutsceneAreaDrawer = new CutsceneAreaDrawer()
             {
                 Window = this,

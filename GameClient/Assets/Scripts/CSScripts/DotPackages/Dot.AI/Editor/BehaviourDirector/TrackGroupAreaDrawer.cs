@@ -14,10 +14,6 @@ namespace DotEditor.BD
     {
         private const float HEADER_HEIGHT = 22.0f;
 
-        public TrackGroupAreaDrawer(EditorWindow win) : base(win)
-        {
-        }
-
         public override void OnGUI(Rect rect)
         {
             Rect headerRect = new Rect(rect.x, rect.y, rect.width, HEADER_HEIGHT);

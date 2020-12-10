@@ -11,13 +11,7 @@ namespace DotEditor.BD
 {
     public class ActionAreaDrawer : AreaDrawer
     {
-        public ActionData Data { get; set; }
         private ActionDragType m_DragType = ActionDragType.None;
-
-        public ActionAreaDrawer(EditorWindow win,ActionData data) : base(win)
-        {
-            Data = data;
-        }
 
         public override void OnGUI(Rect rect)
         {

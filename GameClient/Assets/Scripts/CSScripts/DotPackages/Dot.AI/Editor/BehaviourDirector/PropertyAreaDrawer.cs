@@ -15,7 +15,7 @@ namespace DotEditor.BD
         private DrawerObject m_TrackGroupDataDrawer = null;
         private DrawerObject m_TrackDataDrawer = null;
         private DrawerObject m_ActionDataDrawer = null;
-        public PropertyAreaDrawer(EditorWindow win) : base(win)
+        public PropertyAreaDrawer()
         {
             CutsceneEditorData.EditorData.SelectedCutsceneChangedEvent += OnCutsceneChanged;
         }

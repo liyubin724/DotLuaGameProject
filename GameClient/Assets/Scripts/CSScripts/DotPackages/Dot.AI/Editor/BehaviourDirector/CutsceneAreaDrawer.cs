@@ -92,8 +92,8 @@ namespace DotEditor.BD
 
         public CutsceneAreaDrawer()
         {
-            m_PropertyAreaDrawer = new PropertyAreaDrawer(Window);
-            m_TrackGroupAreaDrawer = new TrackGroupAreaDrawer(Window);
+            m_PropertyAreaDrawer = new PropertyAreaDrawer();
+            m_TrackGroupAreaDrawer = new TrackGroupAreaDrawer();
 
             CutsceneEditorData.EditorData.SelectedCutsceneChangedEvent += OnCutsceneChanged;
         }
