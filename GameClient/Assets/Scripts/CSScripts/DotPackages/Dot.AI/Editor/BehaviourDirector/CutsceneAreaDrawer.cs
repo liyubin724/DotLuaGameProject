@@ -1,146 +1,169 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.BD.Datas;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.BD
 {
-    public class CutsceneEditorData
-    {
-        public static CutsceneEditorData EditorData = new CutsceneEditorData();
-
-        private CutsceneData m_SelectedCutsceneData = null;
-        public event Action SelectedCutsceneChangedEvent;
-        public CutsceneData Cutscene
-        {
-            get
-            {
-                return m_SelectedCutsceneData;
-            }
-            set
-            {
-                m_SelectedCutsceneData = value;
-                SelectedCutsceneChangedEvent?.Invoke();
-                
-                SelectedTrackGroupIndex = -1;
-                SelectedTrackIndex = -1;
-                SelectedActionIndex = -1;
-            }
-        }
-
-        private int m_SelectedTrackGroupIndex = -1;
-        private event Action SelectedTrackGroupChangedEvent;
-        public int SelectedTrackGroupIndex
-        {
-            get
-            {
-                return m_SelectedTrackGroupIndex;
-            }
-            set
-            {
-                
-                m_SelectedTrackGroupIndex = value;
-            }
-        }
-        private int m_SelectedTrackIndex = -1;
-        public int SelectedTrackIndex
-        {
-            get
-            {
-                return m_SelectedTrackIndex;
-            }
-            set
-            {
-                m_SelectedTrackIndex = value;
-            }
-        }
-
-        private int m_SelectedActionIndex = -1;
-        public int SelectedActionIndex
-        {
-            get
-            {
-                return m_SelectedActionIndex;
-            }
-            set
-            {
-                m_SelectedActionIndex = value;
-            }
-        }
-    }
-
-    public class CutsceneAreaDrawer : AreaDrawer
+    public class CutsceneAreaDrawer : BDDrawer
     {
         private const float MIN_PROPERTY_WIDTH = 200;
         private const float MAX_PROPERTY_WIDTH = 400;
 
+        private const float MIN_GROUP_WIDTH = 100;
+        private const float MAX_GROUP_WIDTH = 200;
+
         private const float DRAG_LINE_WIDTH = 3;
+        private const float HEADER_HEIGHT = 20;
+        private const float GROUP_HEADER_HEIGHT = 20;
+        private const float GROUP_PADDING_HEIGHT = 4;
 
-        private Rect m_PropertyRect = new Rect();
-        private Rect m_GroupRect = new Rect();
-        private Rect m_DragRect = new Rect();
+        private Rect m_GroupDragLineRect = new Rect();
+        private Rect m_PropertyDragLineRect = new Rect();
 
+        private EGUIDragLine m_GroupDragLine = null;
         private EGUIDragLine m_PropertyDragLine = null;
 
-        private TrackGroupAreaDrawer m_TrackGroupAreaDrawer = null;
-        private PropertyAreaDrawer m_PropertyAreaDrawer = null;
-
-        public CutsceneAreaDrawer()
+        public CutsceneAreaDrawer(EditorWindow win,CutsceneData data) 
         {
-            m_PropertyAreaDrawer = new PropertyAreaDrawer();
-            m_TrackGroupAreaDrawer = new TrackGroupAreaDrawer();
-
-            CutsceneEditorData.EditorData.SelectedCutsceneChangedEvent += OnCutsceneChanged;
         }
 
-        private void OnCutsceneChanged()
+        private void DrawGroupDragLine(Rect rect)
         {
+            if (m_GroupDragLine == null)
+            {
+                float dragRectX = rect.x + MIN_GROUP_WIDTH;
+                float dragRectY = rect.y + 3;
+                float dragRectWidth = DRAG_LINE_WIDTH;
+                float dragRectHeight = rect.height - 6;
+                m_GroupDragLineRect = new Rect(dragRectX, dragRectY, dragRectWidth, dragRectHeight);
 
+                float minDragRectX = rect.x + MIN_GROUP_WIDTH;
+                float maxDragRectX = rect.x + MAX_GROUP_WIDTH;
+
+                m_GroupDragLine = new EGUIDragLine(Window, EGUIDirection.Vertical)
+                {
+                    MinValue = minDragRectX,
+                    MaxValue = maxDragRectX,
+                };
+            }
+            m_GroupDragLineRect = m_GroupDragLine.OnGUI(m_GroupDragLineRect);
         }
 
-        public override void OnGUI(Rect rect)
+        private void DrawPropertyDragLine(Rect rect)
         {
-            if(m_PropertyDragLine == null)
+            if (m_PropertyDragLine == null)
             {
                 float dragRectX = rect.width - MIN_PROPERTY_WIDTH - DRAG_LINE_WIDTH;
                 float dragRectY = rect.y + 3;
                 float dragRectWidth = DRAG_LINE_WIDTH;
                 float dragRectHeight = rect.height - 6;
-                m_DragRect = new Rect(dragRectX, dragRectY, dragRectWidth, dragRectHeight);
-                m_PropertyDragLine = new EGUIDragLine(Window, EGUIDirection.Vertical);
+                m_PropertyDragLineRect = new Rect(dragRectX, dragRectY, dragRectWidth, dragRectHeight);
+
+                float minDragRectX = rect.width - MAX_PROPERTY_WIDTH - DRAG_LINE_WIDTH;
+                float maxDragRectX = rect.width - MIN_PROPERTY_WIDTH - DRAG_LINE_WIDTH;
+                m_PropertyDragLine = new EGUIDragLine(Window, EGUIDirection.Vertical)
+                {
+                    MinValue = minDragRectX,
+                    MaxValue = maxDragRectX,
+                };
             }
-            m_DragRect = m_PropertyDragLine.OnGUI(m_DragRect);
-            float minDragRectX = rect.width - MAX_PROPERTY_WIDTH - DRAG_LINE_WIDTH;
-            float maxDragRectX = rect.width - MIN_PROPERTY_WIDTH - DRAG_LINE_WIDTH;
-            if (m_DragRect.x < minDragRectX)
+            m_PropertyDragLineRect = m_PropertyDragLine.OnGUI(m_PropertyDragLineRect);
+        }
+
+        private void DrawGroups(Rect rect)
+        {
+            float groupHeaderRectX = rect.x;
+            float groupHeaderRectY = rect.y;
+            float groupHeaderRectWidth = rect.width;
+            float groupHeaderRectHeight = HEADER_HEIGHT;
+            EGUI.DrawBoxHeader(new Rect(groupHeaderRectX, groupHeaderRectY, groupHeaderRectWidth, groupHeaderRectHeight), Contents.groupHeaderContent);
+
+            CutsceneData cutscene = GetData<CutsceneData>();
+            Rect addBtnRect = new Rect(rect.x + rect.width - HEADER_HEIGHT, rect.y, HEADER_HEIGHT, HEADER_HEIGHT);
+            if(GUI.Button(addBtnRect,"+",EditorStyles.popup))
             {
-                m_DragRect.x = minDragRectX;
-            }
-            if (m_DragRect.x > maxDragRectX)
-            {
-                m_DragRect.x = maxDragRectX;
+                MenuUtility.ShowCreateTrackGroupMenu((groupData) =>
+                {
+                    cutscene.Groups.Add(groupData);
+                });
             }
 
-            float propertyRectX = m_DragRect.x + m_DragRect.width;
-            float propertyRectY = rect.y;
-            float propertyRectWidth = rect.width - propertyRectX;
-            float propertyRectHeight = rect.height;
-            m_PropertyRect = new Rect(propertyRectX, propertyRectY, propertyRectWidth, propertyRectHeight);
-            EGUI.DrawAreaLine(m_PropertyRect, Color.grey);
-            m_PropertyAreaDrawer.OnGUI(m_PropertyRect);
+            Rect clipRect = new Rect(rect.x, rect.y + HEADER_HEIGHT, rect.width, rect.height - HEADER_HEIGHT);
+            EGUI.DrawAreaLine(clipRect, Color.grey);
+
+            DrawerSetting setting = DrawerSetting.GetSetting();
+            using(var clipScope = new GUI.ClipScope(clipRect))
+            {
+                float groupRectX = 0.0f;
+                float groupRectY = setting.ScrollPosY;
+                float groupRectWidth = clipRect.width;
+                float groupRectHeight = 0.0f;
+                for(int i =0;i<cutscene.Groups.Count;++i)
+                {
+                    GroupData groupData = cutscene.Groups[i];
+
+                    groupRectY += groupRectHeight + GROUP_PADDING_HEIGHT;
+                    groupRectHeight = GROUP_HEADER_HEIGHT + groupData.Tracks.Count * setting.TracklineHeight;
+
+                    DrawGroup(new Rect(groupRectX, groupRectY, groupRectWidth, groupRectHeight), i,groupData);
+                }
+            }
+        }
+
+        private void DrawGroup(Rect rect,int index,GroupData groupData)
+        {
+            Rect groupHeaderRect = new Rect(rect.x, rect.y, rect.width, GROUP_HEADER_HEIGHT);
+            EGUI.DrawBoxHeader(groupHeaderRect, $"{groupData.Name}({index})");
+
+            Rect addBtnRect = new Rect(rect.x + rect.width - GROUP_HEADER_HEIGHT, rect.y, GROUP_HEADER_HEIGHT, GROUP_HEADER_HEIGHT);
+            if (GUI.Button(addBtnRect, "+", EditorStyles.popup))
+            {
+                MenuUtility.ShowCreateTrackMenu(groupData.GetType(),(trackData) =>
+                {
+                    groupData.Tracks.Add(trackData);
+                });
+            }
+        }
+
+        private void DrawTrack(Rect rect,TrackData trackData)
+        {
+
+        }
+
+        private void DrawProperties(Rect rect)
+        {
+            float propertyHeaderRectX = rect.x;
+            float propertyHeaderRectY = rect.y;
+            float propertyHeaderRectWidth = rect.width;
+            float propertyHeaderRectHeight = HEADER_HEIGHT;
+            EGUI.DrawBoxHeader(new Rect(propertyHeaderRectX, propertyHeaderRectY, propertyHeaderRectWidth, propertyHeaderRectHeight), Contents.propertyHeaderContent);
+        }
+
+        public override void OnGUI(Rect rect)
+        {
+            DrawGroupDragLine(rect);
+            DrawPropertyDragLine(rect);
 
             float groupRectX = rect.x;
             float groupRectY = rect.y;
-            float groupRectWidth = m_DragRect.x ;
+            float groupRectWidth = m_GroupDragLineRect.x;
             float groupRectHeight = rect.height;
-            m_GroupRect = new Rect(groupRectX, groupRectY, groupRectWidth, groupRectHeight);
-            EGUI.DrawAreaLine(m_GroupRect, Color.grey);
-            m_TrackGroupAreaDrawer.OnGUI(m_GroupRect);
+            DrawGroups(new Rect(groupRectX, groupRectY, groupRectWidth, groupRectHeight));
+
+            float propertyRectX = m_PropertyDragLineRect.x + m_PropertyDragLineRect.width;
+            float propertyRectY = rect.y;
+            float propertyRectWidth = rect.width - propertyRectX;
+            float propertyRectHeight = rect.height;
+            Rect propertyRect = new Rect(propertyRectX, propertyRectY, propertyRectWidth, propertyRectHeight);
+            DrawProperties(propertyRect);
+
+        }
+        
+        class Contents
+        {
+            public static string groupHeaderContent = "Groups";
+            public static string propertyHeaderContent = "Properties";
         }
     }
 }

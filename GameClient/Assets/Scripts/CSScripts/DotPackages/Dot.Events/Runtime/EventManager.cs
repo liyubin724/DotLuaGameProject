@@ -4,11 +4,11 @@ namespace DotEngine.Events
 {
     public static class EventManager
     {
-        private static GenericObjectPool<EventDispatcher> sm_DispatcherPool = null;
+        private static ObjectPool<EventDispatcher> sm_DispatcherPool = null;
 
         static EventManager()
         {
-            sm_DispatcherPool = new GenericObjectPool<EventDispatcher>(
+            sm_DispatcherPool = new ObjectPool<EventDispatcher>(
                                 () => new EventDispatcher(),
                                 null,
                                 (dispatcher) =>

@@ -1,11 +1,12 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.NativeDrawer;
+using DotEngine.BD.Datas;
 using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.BD
 {
-    public class PropertyAreaDrawer : AreaDrawer
+    public class PropertyAreaDrawer : BDDrawer
     {
         private const float TITLE_HEIGHT = 20.0f;
 
@@ -15,25 +16,6 @@ namespace DotEditor.BD
         private DrawerObject m_TrackGroupDataDrawer = null;
         private DrawerObject m_TrackDataDrawer = null;
         private DrawerObject m_ActionDataDrawer = null;
-        public PropertyAreaDrawer()
-        {
-            CutsceneEditorData.EditorData.SelectedCutsceneChangedEvent += OnCutsceneChanged;
-        }
-
-        private void OnCutsceneChanged()
-        {
-            m_CutsceneDataDrawer = null;
-            if(CutsceneEditorData.EditorData.Cutscene!=null)
-            {
-                m_CutsceneDataDrawer = new DrawerObject(CutsceneEditorData.EditorData.Cutscene)
-                {
-                    IsShowInherit = false,
-                    IsShowScroll = false,
-                    TitleContent = "Cutscene Data",
-                };
-            }
-        }
-
         public override void OnGUI(Rect rect)
         {
             Rect titleRect = new Rect(rect.x, rect.y, rect.width, TITLE_HEIGHT);

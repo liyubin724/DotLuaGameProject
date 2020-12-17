@@ -15,6 +15,8 @@ namespace DotEditor.GUIExtension
 
         private EditorWindow m_Window = null;
         private EGUIDirection m_Direction = EGUIDirection.Horizontal;
+        public float MinValue { get; set; } = float.MinValue;
+        public float MaxValue { get; set; } = float.MaxValue;
         public EGUIDragLine(EditorWindow win, EGUIDirection direction)
         {
             m_Window = win;
@@ -67,6 +69,21 @@ namespace DotEditor.GUIExtension
                 {
                     m_IsDragging = false;
                     Event.current.Use();
+                }
+            }
+
+            if(m_Direction == EGUIDirection.Horizontal)
+            {
+
+            }else if(m_Direction == EGUIDirection.Vertical)
+            {
+                if(rect.x < MinValue)
+                {
+                    rect.x = MinValue;
+                }
+                if(rect.x > MaxValue)
+                {
+                    rect.x = MaxValue;
                 }
             }
 

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace DotEditor.BD
 {
-    public class TrackGroupAreaDrawer : AreaDrawer
+    public class GroupAreaDrawer : BDDrawer
     {
         private const float HEADER_HEIGHT = 22.0f;
 

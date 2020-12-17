@@ -13,6 +13,6 @@ namespace DotEngine.BD.Datas
         public float Duration = 0.0f;
 
         [Hide]
-        public List<TrackGroupData> Groups = new List<TrackGroupData>();
+        public List<GroupData> Groups = new List<GroupData>();
     }
 }

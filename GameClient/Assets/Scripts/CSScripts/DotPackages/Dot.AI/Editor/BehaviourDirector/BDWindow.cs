@@ -28,13 +28,7 @@ namespace DotEditor.BD
             cutsceneData.Name = "Test Cutscene";
             cutsceneData.Desc = "Just for test";
 
-            m_CutsceneAreaDrawer = new CutsceneAreaDrawer()
-            {
-                Window = this,
-
-            };
-
-            CutsceneEditorData.EditorData.Cutscene = new CutsceneData();
+            m_CutsceneAreaDrawer = new CutsceneAreaDrawer(this, cutsceneData);
         }
 
         private void OnGUI()
@@ -117,7 +111,6 @@ namespace DotEditor.BD
         public static GUIContent settingContent = new GUIContent("Setting", "Open Setting Window");
         public static GUIContent zoomInContent = new GUIContent("+", "Zoom in");
         public static GUIContent zoomOutContent = new GUIContent("-", "Zoom out");
-
     }
 
     class Styles

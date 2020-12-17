@@ -2,7 +2,7 @@
 {
     public abstract class DurationActionData : ActionData
     {
-        public float Duration = 0.0f;
+        public float DurationTime = 0.0f;
         public bool IsFixedDuration = false;
     }
 }

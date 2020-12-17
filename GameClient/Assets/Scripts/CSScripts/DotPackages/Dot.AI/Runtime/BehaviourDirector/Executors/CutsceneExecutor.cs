@@ -26,7 +26,7 @@ namespace DotEngine.BD.Executors
         private CutsceneContext m_Context = null;
         private CutsceneData m_Data = null;
 
-        private List<TrackGroupExecutor> m_Executors = new List<TrackGroupExecutor>();
+        private List<GroupExecutor> m_Executors = new List<GroupExecutor>();
 
         public void SetData(CutsceneContext context,CutsceneData cutsceneData)
         {
@@ -35,8 +35,8 @@ namespace DotEngine.BD.Executors
             
             for(int i =0;i<cutsceneData.Groups.Count;++i)
             {
-                TrackGroupData groupData = cutsceneData.Groups[i];
-                TrackGroupExecutor executor = BDExecutorFactory.GetInstance().RetainExecutor<TrackGroupExecutor>(groupData.GetType());
+                GroupData groupData = cutsceneData.Groups[i];
+                GroupExecutor executor = BDExecutorFactory.GetInstance().RetainExecutor<GroupExecutor>(groupData.GetType());
                 if(executor!=null)
                 {
                     m_Executors.Add(executor);

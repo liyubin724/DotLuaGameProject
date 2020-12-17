@@ -95,12 +95,13 @@ namespace DotEditor.GUIExtension
 
         public static void DrawBoxHeader(Rect rect,string label)
         {
-            DrawBoxHeader(rect, label, EGUIStyles.BoxedHeaderStyle);
+            DrawBoxHeader(rect, label, EGUIStyles.BoldLabelStyle);
         }
 
-        public static void DrawBoxHeader(Rect rect,string label,GUIStyle style)
+        public static void DrawBoxHeader(Rect rect,string label,GUIStyle labelStyle)
         {
-            EditorGUI.LabelField(rect, label, style);
+            GUI.Box(rect, GUIContent.none, EditorStyles.helpBox);
+            EditorGUI.LabelField(rect, label, labelStyle);
         }
 
         public static bool DrawBoxedFoldout(Rect rect,bool isFoldout,string title)

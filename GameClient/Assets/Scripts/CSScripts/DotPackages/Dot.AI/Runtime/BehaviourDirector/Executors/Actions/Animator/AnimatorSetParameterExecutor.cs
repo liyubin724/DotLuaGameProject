@@ -27,7 +27,6 @@ namespace DotEngine.BD.Executors
             {
                 animator.SetTrigger(data.ParameterName);
             }
-            
         }
     }
 }

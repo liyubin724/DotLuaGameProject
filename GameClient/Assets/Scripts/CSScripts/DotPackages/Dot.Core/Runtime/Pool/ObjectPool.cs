@@ -65,15 +65,15 @@ namespace DotEngine.Pool
         }
     }
 
-    public class GenericObjectPool<T>
+    public class ObjectPool<T>
     {
         private readonly Stack<T> m_Stack = new Stack<T>();
 
-        private Func<T> m_OnNew;
+        private readonly Func<T> m_OnNew;
         private readonly Action<T> m_OnGet;
         private readonly Action<T> m_OnRelease;
 
-        public GenericObjectPool(Func<T> createFunc,Action<T> getAction,Action<T> releaseAction,int preload = 0)
+        public ObjectPool(Func<T> createFunc, Action<T> getAction, Action<T> releaseAction, int preload = 0)
         {
             m_OnNew = createFunc;
             m_OnGet = getAction;

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DotEngine.BD.Datas
 {
-    [TrackGroupData("Global Track Group")]
-    public class GlobalTrackGroupData : TrackGroupData
+    [GroupData("Global Track Group")]
+    public class GlobalGroupData : GroupData
     {
     }
 }

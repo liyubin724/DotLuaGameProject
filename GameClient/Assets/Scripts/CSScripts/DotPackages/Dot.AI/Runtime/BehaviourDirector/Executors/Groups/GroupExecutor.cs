@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DotEngine.BD.Executors
 {
-    public abstract class TrackGroupExecutor : BDExecutor
+    public abstract class GroupExecutor : BDExecutor
     {
         private List<TrackExecutor> m_Executors = new List<TrackExecutor>();
 
@@ -11,7 +11,7 @@ namespace DotEngine.BD.Executors
         {
             base.DoInit(context, data);
 
-            TrackGroupData groupData = (TrackGroupData)data;
+            GroupData groupData = (GroupData)data;
             for(int i =0;i<groupData.Tracks.Count;++i)
             {
                 TrackData trackData = groupData.Tracks[i];

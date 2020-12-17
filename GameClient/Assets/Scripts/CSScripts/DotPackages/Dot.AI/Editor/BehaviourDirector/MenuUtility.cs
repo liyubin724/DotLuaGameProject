@@ -16,7 +16,7 @@ namespace DotEditor.BD
             {
                 sm_TrackGroupDataTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                                           from type in assembly.GetTypes()
-                                          where !type.IsAbstract && !type.IsInterface && type.IsSubclassOf(typeof(TrackGroupData))
+                                          where !type.IsAbstract && !type.IsInterface && type.IsSubclassOf(typeof(GroupData))
                                           select type).ToArray();
             }
             return sm_TrackGroupDataTypes;
@@ -56,10 +56,10 @@ namespace DotEditor.BD
                 typeList = new List<Type>();
                 sm_AllowedTrackDataTypeDic.Add(trackGroupDataType, typeList);
 
-                var tgdAttrs = trackGroupDataType.GetCustomAttributes(typeof(TrackGroupDataAttribute), false);
+                var tgdAttrs = trackGroupDataType.GetCustomAttributes(typeof(GroupDataAttribute), false);
                 if (tgdAttrs != null && tgdAttrs.Length > 0)
                 {
-                    TrackGroupDataAttribute tgdAttr = (TrackGroupDataAttribute)tgdAttrs[0];
+                    GroupDataAttribute tgdAttr = (GroupDataAttribute)tgdAttrs[0];
                     if (tgdAttr != null && tgdAttr.AllowedTrackCategories!=null && tgdAttr.AllowedTrackCategories.Length>0)
                     {
                         foreach(var type in GetTrackDataTypes())
@@ -113,15 +113,15 @@ namespace DotEditor.BD
             return typeList.ToArray();
         }
 
-        public static void ShowCreateTrackGroupMenu(Action<TrackGroupData> createdCallback)
+        public static void ShowCreateTrackGroupMenu(Action<GroupData> createdCallback)
         {
             GenericMenu menu = new GenericMenu();
             foreach(var type in GetTrackGroupDataTypes())
             {
-                TrackGroupDataAttribute attr = type.GetCustomAttributes(typeof(TrackGroupDataAttribute), false)[0] as TrackGroupDataAttribute;
+                GroupDataAttribute attr = type.GetCustomAttributes(typeof(GroupDataAttribute), false)[0] as GroupDataAttribute;
                 menu.AddItem(new GUIContent(attr.Label), false, () =>
                 {
-                    TrackGroupData data = Activator.CreateInstance(type) as TrackGroupData;
+                    GroupData data = Activator.CreateInstance(type) as GroupData;
                     createdCallback?.Invoke(data);
                 });
             }

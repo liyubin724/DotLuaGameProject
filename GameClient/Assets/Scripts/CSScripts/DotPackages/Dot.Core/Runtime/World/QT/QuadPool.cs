@@ -8,12 +8,12 @@ namespace DotEngine.World.QT
     /// </summary>
     internal static class QuadPool
     {
-        private static GenericObjectPool<List<IQuadObject>> sm_ObjectListPool = null;
-        private static GenericObjectPool<List<QuadNode>> sm_NodeListPool = null;
+        private static ObjectPool<List<IQuadObject>> sm_ObjectListPool = null;
+        private static ObjectPool<List<QuadNode>> sm_NodeListPool = null;
 
         static QuadPool()
         {
-            sm_ObjectListPool = new GenericObjectPool<List<IQuadObject>>(() =>
+            sm_ObjectListPool = new ObjectPool<List<IQuadObject>>(() =>
             {
                 return new List<IQuadObject>();
             }, 
@@ -23,7 +23,7 @@ namespace DotEngine.World.QT
                 list.Clear();
             });
 
-            sm_NodeListPool = new GenericObjectPool<List<QuadNode>>(() =>
+            sm_NodeListPool = new ObjectPool<List<QuadNode>>(() =>
             {
                 return new List<QuadNode>();
             },

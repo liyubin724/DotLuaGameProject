@@ -21,7 +21,7 @@ namespace DotEngine.NetworkEx
         private TcpServerSocket m_serverSocket;
 
         private readonly object m_MessageLocker = new object();
-        private GenericObjectPool<ServerLogMessage> m_MessagePool = null;
+        private ObjectPool<ServerLogMessage> m_MessagePool = null;
         private List<ServerLogMessage> m_ReceivedMessages = new List<ServerLogMessage>();
 
         private Dictionary<int, Action<ServerLogMessage>> m_MessageHandlerDic = new Dictionary<int, Action<ServerLogMessage>>();
@@ -30,7 +30,7 @@ namespace DotEngine.NetworkEx
         {
             Name = name;
 
-            m_MessagePool = new GenericObjectPool<ServerLogMessage>(
+            m_MessagePool = new ObjectPool<ServerLogMessage>(
                 () => new ServerLogMessage() { Client = null, Message = null },
                 null,
                 (message) => { message.Client = null; message.Message = null; });
