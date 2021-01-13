@@ -197,7 +197,7 @@ namespace DotEditor.UI
             TextureImporterPlatformSettings iOSTips = packAtlas.GetPlatformSettings("iPhone");
             iOSTips.maxTextureSize = 2048;
             iOSTips.overridden = true;
-            iOSTips.format = TextureImporterFormat.ASTC_RGBA_4x4;
+            iOSTips.format = TextureImporterFormat.ASTC_4x4;
             packAtlas.SetPlatformSettings(iOSTips);
 
             AssetDatabase.ImportAsset(atlasAssetPath);
