@@ -1,3 +1,16 @@
-﻿{
-	"name": "DotEditor.AssetChecker"
+{
+    "name": "DotEditor.AssetChecker",
+    "references": [
+        "GUID:3d7195c9a8a2f8742bd10607bc40cbca",
+        "GUID:9585a5252a74ad84daea673ae34bfc23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

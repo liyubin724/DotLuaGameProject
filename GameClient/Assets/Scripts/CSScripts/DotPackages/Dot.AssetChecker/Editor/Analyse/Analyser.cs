@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DotEditor.Utilities;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityObject = UnityEngine.Object;
@@ -42,7 +43,7 @@ namespace DotEditor.AssetChecker
                 return false;
             }
 
-            string fullPath = "";
+            string fullPath = PathUtility.GetDiskPath(assetPath);
             if (!File.Exists(fullPath))
             {
                 errorCode = ResultCode.ERR_ANALYSE_ASSET_NOT_FOUND;

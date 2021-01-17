@@ -6,7 +6,7 @@ namespace DotEditor.AssetChecker
     {
         public AssetPlatformType platform = AssetPlatformType.Window;
         public int maxSize = 1024;
-        public TextureImporterFormat format = TextureImporterFormat.ARGB32;
+        public TextureImporterFormat format = TextureImporterFormat.RGBA32;
 
         private string GetPlatformName()
         {

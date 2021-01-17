@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEngine;
 
 namespace DotEditor.AssetChecker
 {
@@ -42,6 +43,19 @@ namespace DotEditor.AssetChecker
             };
             checker.operater.Add(tpor);
             checker.operater.Add(tpmor);
+
+            string assetPath = "Assets/ArtRes/UI/BG/HighQuality/Alpha/activity_patern1.png";
+            if(checker.DoMatch(assetPath))
+            {
+                int errorCode = 0;
+                if (checker.DoAnalyse(assetPath, ref errorCode))
+                {
+                    checker.DoOperate(assetPath);
+                }else
+                {
+                    Debug.LogError("SSSSSSSS->" + errorCode);
+                }
+            }
         }
     }
 }
