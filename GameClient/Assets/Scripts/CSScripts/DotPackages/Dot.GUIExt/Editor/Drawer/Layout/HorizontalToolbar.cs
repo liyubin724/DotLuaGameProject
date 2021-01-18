@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.GUIExt.EditDrawer
+namespace DotEditor.GUIExt.Layout
 {
     public class HorizontalToolbar : ILayoutDrawable
     {

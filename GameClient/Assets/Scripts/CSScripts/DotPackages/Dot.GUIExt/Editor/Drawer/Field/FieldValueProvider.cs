@@ -1,10 +1,11 @@
-﻿using DotEngine.Utilities;
+﻿using DotEditor.GUIExt.Provider;
+using DotEngine.Utilities;
 using System;
 using System.Collections;
 using System.Reflection;
 using SystemObject = System.Object;
 
-namespace DotEditor.GUIExt.EditorDrawer.Provider
+namespace DotEditor.GUIExt.Field
 {
     public class FieldValueProvider : IValueProvider
     {
@@ -57,7 +58,6 @@ namespace DotEditor.GUIExt.EditorDrawer.Provider
             }
         }
 
-
         public SystemObject Value
         {
             get
@@ -86,7 +86,6 @@ namespace DotEditor.GUIExt.EditorDrawer.Provider
             }
         }
 
-
         public event Action<object> OnValueChanged;
 
         public FieldValueProvider(FieldInfo field,SystemObject target)
@@ -94,7 +93,5 @@ namespace DotEditor.GUIExt.EditorDrawer.Provider
             Field = field;
             Target = target;
         }
-
-
     }
 }
