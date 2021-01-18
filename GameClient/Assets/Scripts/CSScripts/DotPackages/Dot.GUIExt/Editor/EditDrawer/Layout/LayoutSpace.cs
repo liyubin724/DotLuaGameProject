@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEditor.GUIExt.NativeDrawer
+namespace Assets.Scripts.CSScripts.DotPackages.Dot.GUIExt.Editor.EditDrawer.Layout
 {
-    public class ContentDrawer : Drawer
+    class LayoutSpace
     {
     }
 }
