@@ -3,7 +3,7 @@
 namespace DotEditor.AssetChecker
 {
     [AnalyseRule("Texture","Max Size")]
-    public class TextureMaxSizeCheckRuler : TextureAnalyseRuler
+    public class TextureMaxSizeCheckRule : TextureAnalyseRuler
     {
         public int maxWidth = 1024;
         public int maxHeight = 1024;

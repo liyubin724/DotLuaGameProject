@@ -16,18 +16,14 @@ namespace DotEditor.AssetChecker
         static void Test()
         {
             Checker checker = new Checker();
-
-            AndMatchFilter amf = new AndMatchFilter();
-            checker.matcher.Filter = amf;
-
             FileExtensionMatchFilter femf = new FileExtensionMatchFilter()
             {
                 ignoreCase = true,
                 extension = ".png",
             };
-            amf.Add(femf);
+            checker.matcher.Add(femf);
 
-            TextureMaxSizeCheckRuler tmscr = new TextureMaxSizeCheckRuler()
+            TextureMaxSizeCheckRule tmscr = new TextureMaxSizeCheckRule()
             {
                 maxHeight = 512,
                 maxWidth = 512,

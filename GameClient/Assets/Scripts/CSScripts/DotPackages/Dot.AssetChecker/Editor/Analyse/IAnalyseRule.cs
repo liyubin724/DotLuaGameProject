@@ -34,15 +34,13 @@ namespace DotEditor.AssetChecker
     {
     }
 
-    public interface IFileAnalyseRule
+    public interface IFileAnalyseRule : IAnalyseRule
     {
         bool AnalyseAsset(string assetPath, ref int errorCode);
     }
 
-    public interface IUnityObjectAnalyseRule
+    public interface IUnityObjectAnalyseRule : IAnalyseRule
     {
         bool AnalyseAsset(UnityObject uObj, ref int errorCode);
     }
-
-
 }
