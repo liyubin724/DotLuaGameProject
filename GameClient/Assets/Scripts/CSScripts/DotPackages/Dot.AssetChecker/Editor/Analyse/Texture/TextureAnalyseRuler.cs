@@ -3,9 +3,9 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.AssetChecker
 {
-    public abstract class TextureAnalyseRuler : AnalyseRule
+    public abstract class TextureAnalyseRuler : IUnityObjectAnalyseRule
     {
-        public override bool AnalyseAsset(UnityObject uObj, ref int errorCode)
+        public bool AnalyseAsset(UnityObject uObj, ref int errorCode)
         {
             if (uObj is Texture texture && texture != null)
             {

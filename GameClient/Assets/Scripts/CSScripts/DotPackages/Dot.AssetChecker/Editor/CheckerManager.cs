@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace DotEditor.AssetChecker
 {
@@ -27,8 +29,8 @@ namespace DotEditor.AssetChecker
 
             TextureMaxSizeCheckRuler tmscr = new TextureMaxSizeCheckRuler()
             {
-                MaxHeight = 512,
-                MaxWidth = 512,
+                maxHeight = 512,
+                maxWidth = 512,
             };
 
             checker.analyser.Add(tmscr);
@@ -43,6 +45,19 @@ namespace DotEditor.AssetChecker
             };
             checker.operater.Add(tpor);
             checker.operater.Add(tpmor);
+
+            string jsonStr = JsonConvert.SerializeObject(checker, Formatting.Indented,new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+            File.WriteAllText("D:/json.txt", jsonStr);
+
+            Checker nc = JsonConvert.DeserializeObject<Checker>(jsonStr, new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+
+            checker = nc;
 
             string assetPath = "Assets/ArtRes/UI/BG/HighQuality/Alpha/activity_patern1.png";
             if(checker.DoMatch(assetPath))

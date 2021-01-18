@@ -2,13 +2,6 @@
 
 namespace DotEditor.AssetChecker
 {
-    public enum AssetPlatformType
-    {
-        Window = 0,
-        Android,
-        iOS,
-    }
-
     public abstract class ImportOperationRule : OperationRule
     {
         public override void Execute(string assetPath)

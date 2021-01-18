@@ -2,8 +2,8 @@
 {
     public class Checker
     {
-        public string name = "Checker";
         public bool enable = true;
+        public string name = "Checker";
 
         public Matcher matcher = new Matcher();
         public Analyser analyser = new Analyser();

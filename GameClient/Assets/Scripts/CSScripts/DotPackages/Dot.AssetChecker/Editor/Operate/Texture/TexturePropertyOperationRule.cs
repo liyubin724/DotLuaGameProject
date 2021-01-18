@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace DotEditor.AssetChecker
 {
+    [OperatationRule("Texture", "Property")]
     public class TexturePropertyOperationRule : ImportOperationRule
     {
         public TextureImporterType textureType = TextureImporterType.Default;

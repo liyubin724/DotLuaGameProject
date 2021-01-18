@@ -2,6 +2,14 @@
 
 namespace DotEditor.AssetChecker
 {
+    public enum AssetPlatformType
+    {
+        Window = 0,
+        Android,
+        iOS,
+    }
+
+    [OperatationRule("Texture","Platform")]
     public class TexturePlatformOperationRule : ImportOperationRule
     {
         public AssetPlatformType platform = AssetPlatformType.Window;
@@ -34,10 +42,9 @@ namespace DotEditor.AssetChecker
         protected override void ImportAsset(AssetImporter importer)
         {
             TextureImporter ti = importer as TextureImporter;
-            TextureImporterPlatformSettings tips = new TextureImporterPlatformSettings();
-            tips = ti.GetPlatformTextureSettings(GetPlatformName());
+            TextureImporterPlatformSettings tips = ti.GetPlatformTextureSettings(GetPlatformName());
 
-            tips.overridden = true;
+            tips.overridden = true; 
             tips.maxTextureSize = maxSize;
             tips.format = format;
 

@@ -1,18 +1,61 @@
-﻿namespace DotEditor.AssetChecker
+﻿using System;
+using System.Collections.Generic;
+
+namespace DotEditor.AssetChecker
 {
-    public class Matcher
+    public class Matcher : ICloneable
     {
         public bool enable = true;
-        public ComposeMatchFilter Filter { get; set; } = null;
+        public List<IMatchFilter> filters = new List<IMatchFilter>();
+
+        public void Add(IMatchFilter filter)
+        {
+            if (filters == null)
+            {
+                filters = new List<IMatchFilter>();
+            }
+            filters.Add(filter);
+        }
+
+        public void Remove(IMatchFilter filter)
+        {
+            filters?.Remove(filter);
+        }
+
+        public void Clear()
+        {
+            filters?.Clear();
+        }
 
         public bool IsMatch(string assetPath)
         {
-            if(!enable || Filter == null)
+            foreach (var filter in filters)
             {
-                return false;
+                if (!filter.IsMatch(assetPath))
+                {
+                    return false;
+                }
             }
 
-            return Filter.IsMatch(assetPath);
+            return true;
+        }
+
+        public object Clone()
+        {
+            Matcher matcher = new Matcher();
+            matcher.enable = enable;
+            matcher.filters = new List<IMatchFilter>();
+            if(filters!=null && filters.Count>0)
+            {
+                for(int i =0;i<filters.Count;++i)
+                {
+                    if(filters[i]!=null)
+                    {
+                        matcher.filters.Add(filters[i]);
+                    }
+                }
+            }
+            return matcher;
         }
     }
 }
