@@ -228,7 +228,7 @@ namespace DotEditor.NativeDrawer
                 return new Type[] { type };
             }
 
-            Type[] types = type.GetAllBasedTypes();
+            Type[] types = type.GetBaseTypes();
             if(types!=null && types.Length>0)
             {
                 Type blockType;

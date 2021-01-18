@@ -1,8 +1,16 @@
 ﻿using DotEditor.GUIExt.Layout;
+using DotEditor.GUIExt.NativeDrawer;
 using UnityEditor;
 
 namespace DotEditor.GUIExt.EditDrawer
 {
+    class NativeData
+    {
+        public int intValue;
+        public float floatValue;
+        public string stringValue;
+        public bool boolValue;
+    }
     public class EditDrawerWindow : EditorWindow
     {
         [MenuItem("Test/Edit Drawer Win")]
@@ -12,32 +20,16 @@ namespace DotEditor.GUIExt.EditDrawer
             win.Show();
         }
 
-        ClickableSpringLabel csLabel;
-        HorizontalToolbar hToolbar;
+        private NativeObject nativeObject = null;
         private void OnEnable()
         {
-            csLabel = new ClickableSpringLabel()
-            {
-                Text = "Clickable Spring Label",
-                Tooltip = "Tooltip for CSL",
-                OnClicked = () =>
-                {
-                    EditorUtility.DisplayDialog("Info", "CSL was clicked", "OK");
-                },
-                Style = EditorStyles.toolbarTextField,
-            };
-
-            hToolbar = new HorizontalToolbar()
-            {
-                LeftDrawable = new HorizontalCompositeDrawable(csLabel, csLabel, csLabel)
-            };
-
+            nativeObject = new NativeObject(new NativeData());
         }
 
 
         private void OnGUI()
         {
-            hToolbar.OnGUILayout();   
+            nativeObject.OnGUILayout();
         }
     }
 }

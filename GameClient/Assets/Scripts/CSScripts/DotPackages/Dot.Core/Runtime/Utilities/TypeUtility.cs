@@ -74,20 +74,7 @@ namespace DotEngine.Utilities
             else return type.ToString();
         }
 
-        public static bool IsArrayOrList(this Type listType)
-        {
-            if (listType.IsArray)
-            {
-                return true;
-            }
-            else if (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static Type GetArrayOrListElementType(this Type listType)
+        public static Type GetArrayOrListElementType(Type listType)
         {
             if (listType.IsArray)
             {
@@ -122,7 +109,29 @@ namespace DotEngine.Utilities
             return false;
         }
 
-        public static Type[] GetAllBasedTypes(this Type type)
+        public static bool IsArrayOrList(this Type listType)
+        {
+            if (listType.IsArray)
+            {
+                return true;
+            }
+            else if (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool IsPrimitiveType(Type type)
+        {
+            if ((type.IsValueType && type.IsPrimitive) || type == typeof(string))
+            {
+                return true; ;
+            }
+            return false;
+        }
+
+        public static Type[] GetBaseTypes(this Type type)
         {
             var types = new List<Type>() { type };
             while (types.Last().BaseType != null)
