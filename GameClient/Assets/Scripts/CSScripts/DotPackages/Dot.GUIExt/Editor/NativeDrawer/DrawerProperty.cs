@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace DotEditor.EGUIP.NativeDrawer
+namespace DotEditor.GUIExt.NativeDrawer
 {
     public class DrawerProperty
     {

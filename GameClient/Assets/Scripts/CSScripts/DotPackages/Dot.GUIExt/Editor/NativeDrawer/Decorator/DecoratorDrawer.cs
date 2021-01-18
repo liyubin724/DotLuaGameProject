@@ -1,4 +1,4 @@
-﻿namespace DotEditor.EGUIP.NativeDrawer
+﻿namespace DotEditor.GUIExt.NativeDrawer
 {
     public abstract class DecoratorDrawer : Drawer
     {

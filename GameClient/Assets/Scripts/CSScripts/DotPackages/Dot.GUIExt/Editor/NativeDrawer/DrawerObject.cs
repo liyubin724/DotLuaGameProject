@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.EGUIP.NativeDrawer
+namespace DotEditor.GUIExt.NativeDrawer
 {
     class TypeDrawerProperty
     {

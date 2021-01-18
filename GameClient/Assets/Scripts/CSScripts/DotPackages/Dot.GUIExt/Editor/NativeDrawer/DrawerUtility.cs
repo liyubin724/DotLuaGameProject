@@ -8,7 +8,7 @@ using UnityEngine;
 
 using UnityObject = UnityEngine.Object;
 
-namespace DotEditor.EGUIP.NativeDrawer
+namespace DotEditor.GUIExt.NativeDrawer
 {
     public static class DrawerUtility
     {
