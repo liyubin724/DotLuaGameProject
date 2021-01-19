@@ -1,5 +1,4 @@
-﻿using DotEditor.GUIExt.Layout;
-using DotEngine.Utilities;
+﻿using DotEngine.Utilities;
 using System;
 using System.Collections;
 using System.Reflection;
@@ -9,7 +8,7 @@ using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class NativeFieldDrawer : ILayoutDrawable
+    public class NFieldDrawer : NLayoutDrawer
     {
         public SystemObject Target { get; private set; }
         public FieldInfo Field { get; private set; }
@@ -80,7 +79,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 if (IsArrayItem)
                 {
                     SystemObject list = Field.GetValue(Target);
-                    if(list == null)
+                    if (list == null)
                     {
                     }
                     ((IList)list)[ArrayIndex] = value;
@@ -96,31 +95,76 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public event Action<object> OnValueChanged;
 
-        public NativeFieldDrawer(FieldInfo field, SystemObject target)
+        private NLayoutDrawer innerDrawer = null;
+
+        public NFieldDrawer(FieldInfo field, SystemObject target)
         {
             Field = field;
             Target = target;
+
+            RefreshFieldInfo();
         }
 
-        internal NativeFieldDrawer(FieldInfo field, SystemObject target,int arrayIndex)
+        internal NFieldDrawer(FieldInfo field, SystemObject target, int arrayIndex):this(field,target)
         {
-            Field = field;
-            Target = target;
             ArrayIndex = arrayIndex;
         }
 
-        private NativeTypeDrawer typeDrawer = null;
-        public void OnGUILayout()
+        private void RefreshFieldInfo()
         {
-            if(typeDrawer == null)
+            innerDrawer = null;
+
+            object value = Value;
+            if(Target!=null &&Field!=null && value!=null)
             {
-                typeDrawer = NativeUtility.CreateTypeDrawer(ValueType);
+                innerDrawer = NativeUtility.GetLayoutDrawer(value);
+                if(innerDrawer is NTypeDrawer typeDrawer)
+                {
+                    typeDrawer.Label = FieldName;
+                    typeDrawer.FieldDrawer = this;
+                }
             }
-            if(typeDrawer!=null)
+        }
+
+        public override void OnGUILayout()
+        {
+            object value = Value;
+            if(value == null)
             {
-                float height = typeDrawer.GetHeight();
-                Rect rect = EditorGUILayout.GetControlRect(false, height);
-                typeDrawer.OnGUI(rect, FieldName, this);
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.LabelField(FieldName,GUILayout.Width(EditorGUIUtility.labelWidth));
+                    if(GUILayout.Button("Create"))
+                    {
+                        Value = NativeUtility.CreateTypeInstance(ValueType);
+
+                        RefreshFieldInfo();
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }else if(innerDrawer!=null)
+            {
+                if(innerDrawer is NInstanceDrawer instanceDrawer)
+                {
+                    EditorGUILayout.LabelField(FieldName);
+                    EGUI.BeginIndent();
+                    {
+                        instanceDrawer.OnGUILayout();
+                    }
+                    EGUI.EndIndent();
+                }
+                else if(innerDrawer is NTypeDrawer typeDrawer)
+                {
+                    typeDrawer.OnGUILayout();
+                }
+            }
+            else
+            {
+                EGUI.BeginGUIColor(Color.red);
+                {
+                    EditorGUILayout.LabelField(FieldName, $"The drawer of {ValueType} is not found");
+                }
+                EGUI.EndGUIColor();
             }
         }
     }

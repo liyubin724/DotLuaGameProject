@@ -14,13 +14,25 @@ namespace DotEditor.GUIExt.EditDrawer
         public int baseFloatValue;
     }
 
-    class NativeData : BaseData
+    class SimpleData : BaseData
     {
         public int intValue;
         public float floatValue;
         public string stringValue;
         public bool boolValue;
     }
+
+    class ComposedData : SimpleData
+    {
+        public Vector3 vector3Value;
+    }
+
+    class NativeData : ComposedData
+    {
+        
+    }
+
+    
 
     enum NativeEnum
     {
@@ -39,10 +51,10 @@ namespace DotEditor.GUIExt.EditDrawer
             win.Show();
         }
 
-        private NativeObjectDrawer nativeObject = null;
+        private NObjectDrawer nativeObject = null;
         private void OnEnable()
         {
-            nativeObject = new NativeObjectDrawer(new NativeData())
+            nativeObject = new NObjectDrawer(new NativeData())
             {
                 IsShowInherit = true,
                 IsShowScroll = true,

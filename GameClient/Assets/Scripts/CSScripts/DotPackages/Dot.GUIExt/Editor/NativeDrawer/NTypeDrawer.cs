@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public abstract class NativeTypeDrawer
+    public abstract class NTypeDrawer : NLayoutDrawer
     {
-        public abstract float GetHeight();
-        public abstract void OnGUI(Rect rect, string label, NativeFieldDrawer field);
+        internal string Label { get; set; }
+        internal NFieldDrawer FieldDrawer { get; set; }
     }
 
-    [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class CustomTypeDrawerAttribute : Attribute
     {
         public Type TargetType { get; private set; }

@@ -1,19 +1,13 @@
 ﻿using UnityEditor;
-using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
     [CustomTypeDrawer(typeof(string))]
-    public class StringTypeDrawer : NativeTypeDrawer
+    public class StringTypeDrawer : NTypeDrawer
     {
-        public override float GetHeight()
+        public override void OnGUILayout()
         {
-            return EditorGUIUtility.singleLineHeight;
-        }
-
-        public override void OnGUI(Rect rect, string label, NativeFieldDrawer field)
-        {
-            field.Value = EditorGUI.TextField(rect, label, (string)field.Value);
+            FieldDrawer.Value = EditorGUILayout.TextField(Label, (string)FieldDrawer.Value);
         }
     }
 }

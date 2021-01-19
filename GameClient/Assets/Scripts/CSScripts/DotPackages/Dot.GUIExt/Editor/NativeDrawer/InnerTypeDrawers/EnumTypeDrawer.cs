@@ -1,28 +1,24 @@
 ﻿using System;
 using UnityEditor;
-using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
     [CustomTypeDrawer(typeof(Enum))]
-    public class EnumTypeDrawer : NativeTypeDrawer
+    public class EnumTypeDrawer : NTypeDrawer
     {
-        public override float GetHeight()
+        public override void OnGUILayout()
         {
-            return EditorGUIUtility.singleLineHeight;
-        }
+            FieldDrawer.Value = EditorGUILayout.Toggle(Label, (bool)FieldDrawer.Value);
 
-        public override void OnGUI(Rect rect, string label, NativeFieldDrawer field)
-        {
-            Type valueType = field.ValueType;
+            Type valueType = FieldDrawer.ValueType;
             var attrs = valueType.GetCustomAttributes(typeof(FlagsAttribute), false);
             if (attrs != null && attrs.Length > 0)
             {
-                field.Value = EditorGUI.EnumFlagsField(rect, label, (Enum)field.Value);
+                FieldDrawer.Value = EditorGUILayout.EnumFlagsField(Label, (Enum)FieldDrawer.Value);
             }
             else
             {
-                field.Value = EditorGUI.EnumPopup(rect, label, (Enum)field.Value);
+                FieldDrawer.Value = EditorGUILayout.EnumPopup(Label, (Enum)FieldDrawer.Value);
             }
         }
     }

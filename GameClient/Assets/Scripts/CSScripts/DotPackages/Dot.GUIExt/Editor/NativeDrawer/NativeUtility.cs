@@ -1,26 +1,24 @@
-﻿using System;
+﻿using DotEngine.Utilities;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using DotEngine.Utilities;
-using UnityObject = UnityEngine.Object;
 using SystemObject = System.Object;
+using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
     public static class NativeUtility
     {
         private static Dictionary<Type, Type> defaultTypeDrawerDic = null;
+
         private static void LoadTypeDrawers()
         {
             defaultTypeDrawerDic = new Dictionary<Type, Type>();
-            Type[] types = AssemblyUtility.GetDerivedTypes(typeof(NativeTypeDrawer));
-            foreach(var type in types)
+            Type[] types = AssemblyUtility.GetDerivedTypes(typeof(NTypeDrawer));
+            foreach (var type in types)
             {
                 var attrs = type.GetCustomAttributes(typeof(CustomTypeDrawerAttribute), false);
-                if(attrs!=null && attrs.Length>0)
+                if (attrs != null && attrs.Length > 0)
                 {
                     CustomTypeDrawerAttribute attr = attrs[0] as CustomTypeDrawerAttribute;
                     defaultTypeDrawerDic.Add(attr.TargetType, type);
@@ -28,16 +26,36 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
-        public static NativeTypeDrawer CreateTypeDrawer(Type type)
+        public static NLayoutDrawer GetLayoutDrawer(SystemObject value)
         {
-            if(defaultTypeDrawerDic == null)
+            Type type = value.GetType();
+
+            NLayoutDrawer drawer = CreateTypeDrawer(type);
+            if(drawer == null)
+            {
+                if (TypeUtility.IsArrayOrListType(type))
+                {
+                    drawer = new NArrayDrawer(value);
+                }
+                else if (TypeUtility.IsStructOrClassType(type))
+                {
+                    drawer = new NObjectDrawer(value);
+                }
+            }
+            return drawer;
+        }
+
+        public static NTypeDrawer CreateTypeDrawer(Type type)
+        {
+            if (defaultTypeDrawerDic == null)
             {
                 LoadTypeDrawers();
             }
 
-            if(defaultTypeDrawerDic.TryGetValue(type,out var drawerType) && drawerType!=null)
+            Type targetType = type.IsEnum?typeof(Enum):type;
+            if (defaultTypeDrawerDic.TryGetValue(targetType, out var drawerType) && drawerType != null)
             {
-                return (NativeTypeDrawer)Activator.CreateInstance(drawerType);
+                return (NTypeDrawer)Activator.CreateInstance(drawerType);
             }
             return null;
         }
