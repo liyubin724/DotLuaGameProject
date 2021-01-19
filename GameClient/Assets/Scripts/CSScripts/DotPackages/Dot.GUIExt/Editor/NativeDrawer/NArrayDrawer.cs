@@ -14,7 +14,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         protected override void InitDrawers()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

@@ -10,8 +10,8 @@ namespace DotEditor.GUIExt.NativeDrawer
     {
     }
 
+    [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
     public class CustomAttrDrawerAttribute : Attribute
     {
-
     }
 }

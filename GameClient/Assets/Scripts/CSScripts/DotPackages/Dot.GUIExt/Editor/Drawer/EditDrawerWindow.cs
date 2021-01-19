@@ -47,6 +47,8 @@ namespace DotEditor.GUIExt.EditDrawer
         public Vector2 vector2Value;
         public Rect rectValue;
         public Bounds boundsValue;
+
+        public Action actionValue;
     }
 
     class NativeData : ComposedData

@@ -28,8 +28,18 @@ namespace DotEditor.GUIExt.NativeDrawer
                     FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     foreach (var field in fields)
                     {
-                        NFieldDrawer fieldDrawer = new NFieldDrawer(field, Target);
-                        childDrawers.Add(fieldDrawer);
+                        if(NDrawerUtility.IsTypeSupported(field.FieldType))
+                        {
+                            NFieldDrawer fieldDrawer = new NFieldDrawer(field, Target);
+                            childDrawers.Add(fieldDrawer);
+                        }else
+                        {
+                            childDrawers.Add(new UnsupportedTypeDrawer()
+                            {
+                                Label = field.Name,
+                                TargetType = field.FieldType,
+                            });
+                        }
                     }
 
                     if(IsShowInherit)

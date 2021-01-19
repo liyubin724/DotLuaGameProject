@@ -26,6 +26,14 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
+        public static bool IsTypeSupported(Type type)
+        {
+            return TypeUtility.IsPrimitiveType(type) || 
+                TypeUtility.IsStructOrClassType(type) || 
+                TypeUtility.IsArrayOrListType(type) ||
+                TypeUtility.IsEnumType(type);
+        }
+
         public static NLayoutDrawer GetLayoutDrawer(SystemObject value)
         {
             Type type = value.GetType();
