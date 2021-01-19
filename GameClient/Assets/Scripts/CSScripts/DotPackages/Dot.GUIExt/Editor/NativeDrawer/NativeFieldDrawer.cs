@@ -52,7 +52,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 if (IsArrayItem)
                 {
-                    return TypeUtility.GetArrayOrListElementType(Field.FieldType);
+                    return TypeUtility.GetElementTypeInArrayOrList(Field.FieldType);
                 }
                 else
                 {

@@ -27,12 +27,14 @@ namespace DotEditor.GUIExt.NativeDrawer
                 }
             }
         }
+
         public static NativeTypeDrawer CreateTypeDrawer(Type type)
         {
             if(defaultTypeDrawerDic == null)
             {
                 LoadTypeDrawers();
             }
+
             if(defaultTypeDrawerDic.TryGetValue(type,out var drawerType) && drawerType!=null)
             {
                 return (NativeTypeDrawer)Activator.CreateInstance(drawerType);
@@ -44,7 +46,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             if (type.IsArray)
             {
-                return Array.CreateInstance(TypeUtility.GetArrayOrListElementType(type), 0);
+                return Array.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(type), 0);
             }
             else if (type == typeof(string))
             {

@@ -24,6 +24,8 @@ namespace DotEditor.GUIExt.NativeDrawer
         public SystemObject Target { get; private set; }
         private List<TypeFieldInfo> typeFields = null;
 
+        private bool isInited = false;
+
         public NativeObjectDrawer(SystemObject target)
         {
             Target = target;
@@ -32,10 +34,12 @@ namespace DotEditor.GUIExt.NativeDrawer
         private Vector2 scrollPos = Vector2.zero;
         public void OnGUILayout()
         {
-            if(typeFields == null)
+            if(!isInited)
             {
                 InitFields();
+                isInited = true;
             }
+
             if (IsShowScroll)
             {
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(false));
@@ -54,7 +58,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                         {
                             DrawPrimitiveObject();
                         }
-                        else if (TypeUtility.IsArrayOrList(Target.GetType()))
+                        else if (TypeUtility.IsArrayOrListType(Target.GetType()))
                         {
                             DrawListObject();
                         }

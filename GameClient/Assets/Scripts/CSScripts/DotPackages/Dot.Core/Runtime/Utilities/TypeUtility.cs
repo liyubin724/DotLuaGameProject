@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using SystemObject = System.Object;
 
 namespace DotEngine.Utilities
 {
@@ -33,7 +34,8 @@ namespace DotEngine.Utilities
         public static string PrettyName(this Type type)
         {
             if (type == null) return "null";
-            if (type == typeof(System.Object)) return "object";
+
+            if (type == typeof(SystemObject)) return "object";
             if (type == typeof(float)) return "float";
             else if (type == typeof(int)) return "int";
             else if (type == typeof(long)) return "long";
@@ -74,62 +76,41 @@ namespace DotEngine.Utilities
             else return type.ToString();
         }
 
-        public static Type GetArrayOrListElementType(Type listType)
+        public static Type GetElementTypeInArrayOrList(Type type)
         {
-            if (listType.IsArray)
+            if(IsArrayType(type))
             {
-                return listType.GetElementType();
-            }
-            else if (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>))
+                return type.GetElementType();
+            }else if(IsListType(type))
             {
-                return listType.GetGenericArguments()[0];
+                return type.GetGenericArguments()[0];
             }
             return null;
         }
 
-        public static bool IsDelegate(this Type type)
+        public static bool IsStructOrClassType(Type type) => IsClassType(type) || IsStructType(type);
+
+        public static bool IsClassType(Type type)
         {
-            return typeof(Delegate).IsAssignableFrom(type);
+            return type.IsClass && 
+                type != typeof(string) && 
+                !IsDelegateType(type) &&
+                !IsArrayOrListType(type);
         }
 
-        public static bool IsStructOrClass(this Type type)
-        {
-            if(type.IsValueType && !type.IsPrimitive)
-            {
-                return true;
-            }
-            if(type.IsValueType)
-            {
-                return false;
-            }
-            if(type.IsClass && !type.IsArrayOrList() && !IsDelegate(type))
-            {
-                return true;
-            }
-            return false;
-        }
+        public static bool IsStructType(Type type) => !type.IsEnum && type.IsValueType && !type.IsPrimitive;
 
-        public static bool IsArrayOrList(this Type listType)
-        {
-            if (listType.IsArray)
-            {
-                return true;
-            }
-            else if (listType.IsGenericType && listType.GetGenericTypeDefinition() == typeof(List<>))
-            {
-                return true;
-            }
-            return false;
-        }
+        public static bool IsArrayOrListType(Type type) => IsListType(type) || IsArrayType(type);
 
-        public static bool IsPrimitiveType(Type type)
-        {
-            if ((type.IsValueType && type.IsPrimitive) || type == typeof(string))
-            {
-                return true; ;
-            }
-            return false;
-        }
+        public static bool IsListType(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
+
+        public static bool IsArrayType(Type type) => type.IsArray;
+
+        public static bool IsPrimitiveType(Type type) => (type.IsValueType && type.IsPrimitive) || type == typeof(string);
+
+        public static bool IsEnumType(Type type) => type.IsEnum;
+
+        public static bool IsDelegateType(this Type type) => typeof(Delegate).IsAssignableFrom(type);
 
         public static Type[] GetBaseTypes(this Type type)
         {

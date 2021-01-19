@@ -49,7 +49,7 @@ namespace DotEditor.GUIExt.Field
             {
                 if(IsArrayItem)
                 {
-                    return TypeUtility.GetArrayOrListElementType(Field.FieldType);
+                    return TypeUtility.GetElementTypeInArrayOrList(Field.FieldType);
                 }
                 else
                 {
