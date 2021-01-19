@@ -1,5 +1,4 @@
-﻿using DotEditor.GUIExt.Layout;
-using DotEditor.GUIExt.NativeDrawer;
+﻿using DotEditor.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
 using System.Text;
@@ -8,6 +7,23 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.EditDrawer
 {
+    enum NativeEnum
+    {
+        None,
+        First,
+        Second,
+        Third,
+    }
+
+    [Flags]
+    enum NativeFlagEnum
+    {
+        None = 1<<0,
+        First = 1<<1,
+        Second = 1<<2,
+        Third = 1<<3,
+    }
+
     class BaseData
     {
         public int baseIntValue;
@@ -20,11 +36,17 @@ namespace DotEditor.GUIExt.EditDrawer
         public float floatValue;
         public string stringValue;
         public bool boolValue;
+
+        public NativeEnum enumValue = NativeEnum.First;
+        public NativeFlagEnum flagEnumValue = NativeFlagEnum.First | NativeFlagEnum.Second;
     }
 
     class ComposedData : SimpleData
     {
         public Vector3 vector3Value;
+        public Vector2 vector2Value;
+        public Rect rectValue;
+        public Bounds boundsValue;
     }
 
     class NativeData : ComposedData
@@ -33,14 +55,6 @@ namespace DotEditor.GUIExt.EditDrawer
     }
 
     
-
-    enum NativeEnum
-    {
-        None,
-        First,
-        Second,
-        Third,
-    }
 
     public class EditDrawerWindow : EditorWindow
     {
@@ -58,6 +72,8 @@ namespace DotEditor.GUIExt.EditDrawer
             {
                 IsShowInherit = true,
                 IsShowScroll = true,
+                IsShowBox = true,
+                Header = "Test For NativeData"
             };
 
             Type enumType = typeof(NativeEnum);

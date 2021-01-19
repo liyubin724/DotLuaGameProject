@@ -8,20 +8,82 @@ namespace DotEditor.GUIExt.NativeDrawer
 {
     public abstract class NInstanceDrawer : NLayoutDrawer
     {
-        public bool IsShowScroll { get; set; } = true;
-        public bool IsShowInherit { get; set; } = true;
-        public bool IsShowBox { get; set; } = false;
-        public string Header { get; set; } = null;
+        private bool isShowScroll = false;
+        public bool IsShowScroll
+        {
+            get
+            {
+                return isShowScroll;
+            }
+            set
+            {
+                if(isShowScroll!=value)
+                {
+                    isShowScroll = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private bool isShowInherit = false;
+        public bool IsShowInherit
+        {
+            get
+            {
+                return isShowInherit;
+            }
+            set
+            {
+                if(isShowInherit!=value)
+                {
+                    isShowInherit = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private bool isShowBox = false;
+        public bool IsShowBox
+        {
+            get
+            {
+                return isShowBox;
+            }
+            set
+            {
+                if(isShowBox!=value)
+                {
+                    isShowBox = value;
+                    Refresh();
+                }
+            }
+        }
+        private string header = null;
+        public string Header
+        {
+            get
+            {
+                return header;
+            }
+            set
+            {
+                if(header!=value)
+                {
+                    header = value;
+                    Refresh();
+                }
+            }
+        }
 
         public SystemObject Target { get; private set; }
         protected List<NLayoutDrawer> childDrawers = new List<NLayoutDrawer>();
 
         private Vector2 scrollPos = Vector2.zero;
+        private bool isNeedRefresh = true;
+
         protected NInstanceDrawer(SystemObject target)
         {
             Target = target;
-
-            RefreshDrawers();
         }
 
         protected void RefreshDrawers()
@@ -41,8 +103,19 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         protected abstract void InitDrawers();
 
+        public void Refresh()
+        {
+            isNeedRefresh = true;
+        }
+
         public override void OnGUILayout()
         {
+            if(isNeedRefresh)
+            {
+                RefreshDrawers();
+                isNeedRefresh = false;
+            }
+
             if (IsShowScroll)
             {
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos, IsShowBox ? EditorStyles.helpBox : GUIStyle.none);
