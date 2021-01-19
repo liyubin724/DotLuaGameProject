@@ -23,7 +23,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
         }
 
-        protected override void InitDrawers()
+        protected override void RefreshDrawers()
         {
             itemDrawers.Clear();
             if (list != null)
@@ -32,7 +32,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 bool isTypeSupported = NDrawerUtility.IsTypeSupported(itemType);
                 for (int i = 0; i < list.Count; ++i)
                 {
-                    if (isTypeSupported)
+                    if (!isTypeSupported)
                     {
                         itemDrawers.Add(new UnsupportedTypeDrawer()
                         {
@@ -97,11 +97,9 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             EditorGUILayout.BeginVertical(EGUIStyles.BoxStyle);
             {
-                EditorGUILayout.LabelField(GUIContent.none, EditorStyles.toolbar, GUILayout.ExpandWidth(true));
+                EGUILayout.DrawBoxHeader(Header, GUILayout.ExpandWidth(true));
 
                 Rect lastRect = GUILayoutUtility.GetLastRect();
-                EditorGUI.LabelField(lastRect, Header, EGUIStyles.BoldLabelStyle);
-
                 Rect clearBtnRect = new Rect(lastRect.x + lastRect.width - 40, lastRect.y, 40, lastRect.height);
                 if (GUI.Button(clearBtnRect, "C", EditorStyles.toolbarButton))
                 {

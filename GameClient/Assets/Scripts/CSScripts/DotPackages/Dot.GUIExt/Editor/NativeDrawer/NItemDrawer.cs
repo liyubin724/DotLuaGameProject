@@ -97,7 +97,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             Target = target;
             Field = field;
 
-            RefreshFieldInfo();
+            RefreshDrawer();
         }
 
         public NItemDrawer(SystemObject target, int index)
@@ -105,10 +105,10 @@ namespace DotEditor.GUIExt.NativeDrawer
             Target = target;
             ItemIndex = index;
 
-            RefreshFieldInfo();
+            RefreshDrawer();
         }
 
-        private void RefreshFieldInfo()
+        private void RefreshDrawer()
         {
             innerDrawer = null;
 
@@ -123,6 +123,9 @@ namespace DotEditor.GUIExt.NativeDrawer
                 else if (innerDrawer is NArrayDrawer arrayDrawer)
                 {
                     arrayDrawer.Header = Label;
+                }else if(innerDrawer is NObjectDrawer objectDrawer)
+                {
+                    objectDrawer.Header = Label;
                 }
             }
         }
@@ -139,33 +142,14 @@ namespace DotEditor.GUIExt.NativeDrawer
                     {
                         Value = NDrawerUtility.GetTypeInstance(ValueType);
 
-                        RefreshFieldInfo();
+                        RefreshDrawer();
                     }
                 }
                 EditorGUILayout.EndHorizontal();
             }
             else if (innerDrawer != null)
             {
-                if (innerDrawer is NInstanceDrawer instanceDrawer)
-                {
-                    if (innerDrawer is NArrayDrawer)
-                    {
-                        instanceDrawer.OnGUILayout();
-                    }
-                    else
-                    {
-                        EditorGUILayout.LabelField(Label);
-                        EGUI.BeginIndent();
-                        {
-                            instanceDrawer.OnGUILayout();
-                        }
-                        EGUI.EndIndent();
-                    }
-                }
-                else if (innerDrawer is NTypeDrawer typeDrawer)
-                {
-                    typeDrawer.OnGUILayout();
-                }
+                innerDrawer.OnGUILayout();
             }
             else
             {

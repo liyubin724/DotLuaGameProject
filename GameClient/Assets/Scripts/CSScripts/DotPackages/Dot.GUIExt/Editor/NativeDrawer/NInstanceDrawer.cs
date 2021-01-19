@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
@@ -76,7 +75,6 @@ namespace DotEditor.GUIExt.NativeDrawer
         }
 
         public SystemObject Target { get; private set; }
-        protected List<NLayoutDrawer> childDrawers = new List<NLayoutDrawer>();
 
         private Vector2 scrollPos = Vector2.zero;
         private bool isNeedRefresh = true;
@@ -86,27 +84,12 @@ namespace DotEditor.GUIExt.NativeDrawer
             Target = target;
         }
 
-        protected void RefreshDrawers()
-        {
-            childDrawers.Clear();
-
-            if (!string.IsNullOrEmpty(Header))
-            {
-                childDrawers.Add(new NHeadDrawer() { Header = Header });
-            }
-
-            if(Target!=null)
-            {
-                InitDrawers();
-            }
-        }
-
-        protected abstract void InitDrawers();
-
         public void Refresh()
         {
             isNeedRefresh = true;
         }
+
+        protected abstract void RefreshDrawers();
 
         public override void OnGUILayout()
         {
@@ -149,15 +132,9 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         protected virtual void DrawNull()
         {
-            EditorGUILayout.LabelField("");
+            EditorGUILayout.LabelField(string.IsNullOrEmpty(Header)?"":Header,"the target is null");
         }
 
-        protected virtual void DrawInstance()
-        {
-            foreach (var drawer in childDrawers)
-            {
-                drawer.OnGUILayout();
-            }
-        }
+        protected abstract void DrawInstance();
     }
 }
