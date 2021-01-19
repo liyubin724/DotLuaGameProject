@@ -8,29 +8,28 @@ using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class NFieldDrawer : NLayoutDrawer
+    public class NItemDrawer : NLayoutDrawer
     {
         public SystemObject Target { get; private set; }
         public FieldInfo Field { get; private set; }
-        public int ArrayIndex { get; private set; } = -1;
-
+        public int ItemIndex { get; set; } = -1;
+        
         public bool IsArrayItem
         {
             get
             {
-                return ArrayIndex >= 0;
+                return Field == null && ItemIndex >= 0;
             }
         }
 
-        public string FieldName
+        public string Label
         {
             get
             {
-                if (IsArrayItem)
+                if(IsArrayItem)
                 {
-                    return $"{Field.Name}[{ArrayIndex}]";
-                }
-                else
+                    return Field != null ? $"{Field.Name}[{ItemIndex}]" : $"{ItemIndex}";
+                }else
                 {
                     return Field.Name;
                 }
@@ -51,7 +50,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 if (IsArrayItem)
                 {
-                    return TypeUtility.GetElementTypeInArrayOrList(Field.FieldType);
+                    return Field != null ? TypeUtility.GetElementTypeInArrayOrList(Field.FieldType) : TypeUtility.GetElementTypeInArrayOrList(Target.GetType());
                 }
                 else
                 {
@@ -64,25 +63,20 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             get
             {
-                SystemObject tValue = Field.GetValue(Target);
-                if (tValue != null)
+                if (IsArrayItem)
                 {
-                    if (IsArrayItem)
-                    {
-                        return ((IList)tValue)[ArrayIndex];
-                    }
+                    return ((IList)Target)[ItemIndex];
                 }
-                return tValue;
+                else
+                {
+                    return Field.GetValue(Target);
+                }
             }
             set
             {
                 if (IsArrayItem)
                 {
-                    SystemObject list = Field.GetValue(Target);
-                    if (list == null)
-                    {
-                    }
-                    ((IList)list)[ArrayIndex] = value;
+                    ((IList)Target)[ItemIndex] = value;
                 }
                 else
                 {
@@ -97,31 +91,36 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         private NLayoutDrawer innerDrawer = null;
 
-        public NFieldDrawer(FieldInfo field, SystemObject target)
+        public NItemDrawer(SystemObject target, FieldInfo field)
         {
-            Field = field;
             Target = target;
+            Field = field;
 
             RefreshFieldInfo();
         }
 
-        internal NFieldDrawer(FieldInfo field, SystemObject target, int arrayIndex):this(field,target)
+        public NItemDrawer(SystemObject target,int index)
         {
-            ArrayIndex = arrayIndex;
+            Target = target;
+            ItemIndex = index;
+
+            RefreshFieldInfo();
         }
 
         private void RefreshFieldInfo()
         {
             innerDrawer = null;
 
-            object value = Value;
-            if(Target!=null &&Field!=null && value!=null)
+            if(Target!=null && Value!=null)
             {
-                innerDrawer = NDrawerUtility.GetLayoutDrawer(value);
+                innerDrawer = NDrawerUtility.GetLayoutDrawer(this);
                 if(innerDrawer is NTypeDrawer typeDrawer)
                 {
-                    typeDrawer.Label = FieldName;
+                    typeDrawer.Label = Label;
                     typeDrawer.FieldDrawer = this;
+                }else if(innerDrawer is NArrayDrawer arrayDrawer)
+                {
+                    arrayDrawer.Header = Label;
                 }
             }
         }
@@ -133,10 +132,10 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 EditorGUILayout.BeginHorizontal();
                 {
-                    EditorGUILayout.LabelField(FieldName,GUILayout.Width(EditorGUIUtility.labelWidth));
+                    EditorGUILayout.LabelField(Label,GUILayout.Width(EditorGUIUtility.labelWidth));
                     if(GUILayout.Button("Create"))
                     {
-                        Value = NDrawerUtility.CreateTypeInstance(ValueType);
+                        Value = NDrawerUtility.GetTypeInstance(ValueType);
 
                         RefreshFieldInfo();
                     }
@@ -146,12 +145,18 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 if(innerDrawer is NInstanceDrawer instanceDrawer)
                 {
-                    EditorGUILayout.LabelField(FieldName);
-                    EGUI.BeginIndent();
+                    if(innerDrawer is NArrayDrawer)
                     {
                         instanceDrawer.OnGUILayout();
+                    }else
+                    {
+                        EditorGUILayout.LabelField(Label);
+                        EGUI.BeginIndent();
+                        {
+                            instanceDrawer.OnGUILayout();
+                        }
+                        EGUI.EndIndent();
                     }
-                    EGUI.EndIndent();
                 }
                 else if(innerDrawer is NTypeDrawer typeDrawer)
                 {
@@ -162,7 +167,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 EGUI.BeginGUIColor(Color.red);
                 {
-                    EditorGUILayout.LabelField(FieldName, $"The drawer of {ValueType} is not found");
+                    EditorGUILayout.LabelField(Label, $"The drawer of {ValueType} is not found");
                 }
                 EGUI.EndGUIColor();
             }

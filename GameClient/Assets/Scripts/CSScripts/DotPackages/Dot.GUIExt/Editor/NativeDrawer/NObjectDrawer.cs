@@ -30,7 +30,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                     {
                         if(NDrawerUtility.IsTypeSupported(field.FieldType))
                         {
-                            NFieldDrawer fieldDrawer = new NFieldDrawer(field, Target);
+                            NItemDrawer fieldDrawer = new NItemDrawer(Target, field);
                             childDrawers.Add(fieldDrawer);
                         }else
                         {

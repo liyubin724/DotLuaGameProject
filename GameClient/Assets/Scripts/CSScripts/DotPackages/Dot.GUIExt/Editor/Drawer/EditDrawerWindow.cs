@@ -1,6 +1,7 @@
 ﻿using DotEditor.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -41,7 +42,13 @@ namespace DotEditor.GUIExt.EditDrawer
         public NativeFlagEnum flagEnumValue = NativeFlagEnum.First | NativeFlagEnum.Second;
     }
 
-    class ComposedData : SimpleData
+    class ArrayData : SimpleData
+    {
+        public int[] intArrValue;
+        public List<int> intListValue;
+    }
+
+    class ComposedData : ArrayData
     {
         public Vector3 vector3Value;
         public Vector2 vector2Value;

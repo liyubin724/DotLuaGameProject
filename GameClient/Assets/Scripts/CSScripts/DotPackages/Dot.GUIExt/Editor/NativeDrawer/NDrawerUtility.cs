@@ -34,26 +34,25 @@ namespace DotEditor.GUIExt.NativeDrawer
                 TypeUtility.IsEnumType(type);
         }
 
-        public static NLayoutDrawer GetLayoutDrawer(SystemObject value)
+        public static NLayoutDrawer GetLayoutDrawer(NItemDrawer itemDrawer)
         {
-            Type type = value.GetType();
-
-            NLayoutDrawer drawer = CreateTypeDrawer(type);
+            Type valueType = itemDrawer.ValueType;
+            NLayoutDrawer drawer = GetTypeDrawerInstance(valueType);
             if(drawer == null)
             {
-                if (TypeUtility.IsArrayOrListType(type))
+                if (TypeUtility.IsArrayOrListType(valueType))
                 {
-                    drawer = new NArrayDrawer(value);
+                    drawer = new NArrayDrawer(itemDrawer);
                 }
-                else if (TypeUtility.IsStructOrClassType(type))
+                else if (TypeUtility.IsStructOrClassType(valueType))
                 {
-                    drawer = new NObjectDrawer(value);
+                    drawer = new NObjectDrawer(itemDrawer.Value);
                 }
             }
             return drawer;
         }
 
-        public static NTypeDrawer CreateTypeDrawer(Type type)
+        public static NTypeDrawer GetTypeDrawerInstance(Type type)
         {
             if (defaultTypeDrawerDic == null)
             {
@@ -68,7 +67,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             return null;
         }
 
-        public static SystemObject CreateTypeInstance(Type type)
+        public static SystemObject GetTypeInstance(Type type)
         {
             if (type.IsArray)
             {
