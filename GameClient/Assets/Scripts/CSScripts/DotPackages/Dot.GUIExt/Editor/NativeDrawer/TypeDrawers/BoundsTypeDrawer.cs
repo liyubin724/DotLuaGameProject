@@ -12,4 +12,3 @@ namespace DotEditor.GUIExt.NativeDrawer
         }
     }
 }
-

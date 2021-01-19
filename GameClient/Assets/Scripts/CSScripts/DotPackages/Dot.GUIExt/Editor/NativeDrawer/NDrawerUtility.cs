@@ -28,8 +28,8 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public static bool IsTypeSupported(Type type)
         {
-            return TypeUtility.IsPrimitiveType(type) || 
-                TypeUtility.IsStructOrClassType(type) || 
+            return TypeUtility.IsPrimitiveType(type) ||
+                TypeUtility.IsStructOrClassType(type) ||
                 TypeUtility.IsArrayOrListType(type) ||
                 TypeUtility.IsEnumType(type);
         }
@@ -38,7 +38,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             Type valueType = itemDrawer.ValueType;
             NLayoutDrawer drawer = GetTypeDrawerInstance(valueType);
-            if(drawer == null)
+            if (drawer == null)
             {
                 if (TypeUtility.IsArrayOrListType(valueType))
                 {
@@ -59,7 +59,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 LoadTypeDrawers();
             }
 
-            Type targetType = type.IsEnum?typeof(Enum):type;
+            Type targetType = type.IsEnum ? typeof(Enum) : type;
             if (defaultTypeDrawerDic.TryGetValue(targetType, out var drawerType) && drawerType != null)
             {
                 return (NTypeDrawer)Activator.CreateInstance(drawerType);

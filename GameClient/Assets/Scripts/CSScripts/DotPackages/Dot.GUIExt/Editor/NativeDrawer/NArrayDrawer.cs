@@ -19,27 +19,28 @@ namespace DotEditor.GUIExt.NativeDrawer
             list = target as IList;
         }
 
-        public NArrayDrawer(NItemDrawer itemDrawer):this(itemDrawer.Value)
+        public NArrayDrawer(NItemDrawer itemDrawer) : this(itemDrawer.Value)
         {
         }
 
         protected override void InitDrawers()
         {
             itemDrawers.Clear();
-            if(list!=null)
+            if (list != null)
             {
                 Type itemType = TypeUtility.GetElementTypeInArrayOrList(list.GetType());
                 bool isTypeSupported = NDrawerUtility.IsTypeSupported(itemType);
-                for(int i =0;i<list.Count;++i)
+                for (int i = 0; i < list.Count; ++i)
                 {
-                    if(isTypeSupported)
+                    if (isTypeSupported)
                     {
                         itemDrawers.Add(new UnsupportedTypeDrawer()
                         {
                             Label = "" + i,
                             TargetType = itemType
                         });
-                    }else
+                    }
+                    else
                     {
                         itemDrawers.Add(new NItemDrawer(Target, i));
                     }
@@ -56,17 +57,18 @@ namespace DotEditor.GUIExt.NativeDrawer
         private void AddNewItemAtLast()
         {
             SystemObject item = NDrawerUtility.GetTypeInstance(TypeUtility.GetElementTypeInArrayOrList(list.GetType()));
-            if(TypeUtility.IsArrayType(list.GetType()))
+            if (TypeUtility.IsArrayType(list.GetType()))
             {
                 Array array = (Array)list;
                 DotEngine.Utilities.ArrayUtility.Add(ref array, item);
                 list = array;
 
-                if(itemDrawer!=null)
+                if (itemDrawer != null)
                 {
                     itemDrawer.Value = list;
                 }
-            }else
+            }
+            else
             {
                 list.Add(item);
             }
@@ -139,7 +141,6 @@ namespace DotEditor.GUIExt.NativeDrawer
                     AddNewItemAtLast();
                     Refresh();
                 }
-
             }
             EditorGUILayout.EndVertical();
         }

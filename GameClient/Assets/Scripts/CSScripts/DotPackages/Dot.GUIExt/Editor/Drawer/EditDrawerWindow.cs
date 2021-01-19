@@ -45,7 +45,7 @@ namespace DotEditor.GUIExt.EditDrawer
     class ArrayData : SimpleData
     {
         public int[] intArrValue;
-        public List<int> intListValue;
+        public List<BaseData> intListValue;
     }
 
     class ComposedData : ArrayData

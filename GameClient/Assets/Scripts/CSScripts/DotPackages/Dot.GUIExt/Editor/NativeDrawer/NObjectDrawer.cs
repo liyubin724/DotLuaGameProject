@@ -6,7 +6,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 {
     public class NObjectDrawer : NInstanceDrawer
     {
-        public NObjectDrawer(SystemObject target):base(target)
+        public NObjectDrawer(SystemObject target) : base(target)
         {
         }
 
@@ -17,7 +17,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 foreach (var type in allTypes)
                 {
-                    if(IsShowInherit)
+                    if (IsShowInherit)
                     {
                         childDrawers.Add(new NHeadDrawer()
                         {
@@ -28,11 +28,12 @@ namespace DotEditor.GUIExt.NativeDrawer
                     FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     foreach (var field in fields)
                     {
-                        if(NDrawerUtility.IsTypeSupported(field.FieldType))
+                        if (NDrawerUtility.IsTypeSupported(field.FieldType))
                         {
                             NItemDrawer fieldDrawer = new NItemDrawer(Target, field);
                             childDrawers.Add(fieldDrawer);
-                        }else
+                        }
+                        else
                         {
                             childDrawers.Add(new UnsupportedTypeDrawer()
                             {
@@ -42,12 +43,12 @@ namespace DotEditor.GUIExt.NativeDrawer
                         }
                     }
 
-                    if(IsShowInherit)
+                    if (IsShowInherit)
                     {
                         childDrawers.Add(new NHorizontalLineDrawer());
                     }
                 }
             }
-        } 
+        }
     }
 }
