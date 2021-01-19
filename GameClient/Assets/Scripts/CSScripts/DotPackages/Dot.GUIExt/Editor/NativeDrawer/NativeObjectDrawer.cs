@@ -13,10 +13,10 @@ namespace DotEditor.GUIExt.NativeDrawer
     class TypeFieldInfo
     {
         public Type type;
-        public List<NativeField> fields = new List<NativeField>();
+        public List<NativeFieldDrawer> fields = new List<NativeFieldDrawer>();
     }
 
-    public class NativeObject : ILayoutDrawable
+    public class NativeObjectDrawer : ILayoutDrawable
     {
         public bool IsShowScroll { get; set; } = true;
         public bool IsShowInherit { get; set; } = true;
@@ -24,7 +24,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         public SystemObject Target { get; private set; }
         private List<TypeFieldInfo> typeFields = null;
 
-        public NativeObject(SystemObject target)
+        public NativeObjectDrawer(SystemObject target)
         {
             Target = target;
         }
@@ -137,7 +137,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                     FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     foreach (var field in fields)
                     {
-                        NativeField nativeField = new NativeField(field, Target);
+                        NativeFieldDrawer nativeField = new NativeFieldDrawer(field, Target);
                         typeFieldInfo.fields.Add(nativeField);
                     }
                 }

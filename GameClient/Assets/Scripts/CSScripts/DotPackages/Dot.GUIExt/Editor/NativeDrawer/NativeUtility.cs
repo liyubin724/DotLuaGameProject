@@ -19,10 +19,10 @@ namespace DotEditor.GUIExt.NativeDrawer
             Type[] types = AssemblyUtility.GetDerivedTypes(typeof(NativeTypeDrawer));
             foreach(var type in types)
             {
-                var attrs = type.GetCustomAttributes(typeof(NativeTypeDrawerAttribute), false);
+                var attrs = type.GetCustomAttributes(typeof(CustomTypeDrawerAttribute), false);
                 if(attrs!=null && attrs.Length>0)
                 {
-                    NativeTypeDrawerAttribute attr = attrs[0] as NativeTypeDrawerAttribute;
+                    CustomTypeDrawerAttribute attr = attrs[0] as CustomTypeDrawerAttribute;
                     defaultTypeDrawerDic.Add(attr.TargetType, type);
                 }
             }

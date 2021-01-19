@@ -6,15 +6,15 @@ namespace DotEditor.GUIExt.NativeDrawer
     public abstract class NativeTypeDrawer
     {
         public abstract float GetHeight();
-        public abstract void OnGUI(Rect rect, string label, NativeField field);
+        public abstract void OnGUI(Rect rect, string label, NativeFieldDrawer field);
     }
 
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
-    public class NativeTypeDrawerAttribute : Attribute
+    public class CustomTypeDrawerAttribute : Attribute
     {
         public Type TargetType { get; private set; }
 
-        public NativeTypeDrawerAttribute(Type type)
+        public CustomTypeDrawerAttribute(Type type)
         {
             TargetType = type;
         }

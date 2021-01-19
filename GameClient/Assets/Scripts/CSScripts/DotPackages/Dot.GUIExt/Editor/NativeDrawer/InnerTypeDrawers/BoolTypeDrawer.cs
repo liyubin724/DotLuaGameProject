@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    [NativeTypeDrawer(typeof(bool))]
+    [CustomTypeDrawer(typeof(bool))]
     public class BoolTypeDrawer : NativeTypeDrawer
     {
         public override float GetHeight()
@@ -11,7 +11,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             return EditorGUIUtility.singleLineHeight;
         }
 
-        public override void OnGUI(Rect rect, string label, NativeField field)
+        public override void OnGUI(Rect rect, string label, NativeFieldDrawer field)
         {
             field.Value = EditorGUI.Toggle(rect, label, (bool)field.Value);
         }

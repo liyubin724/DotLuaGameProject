@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    [NativeTypeDrawer(typeof(Enum))]
+    [CustomTypeDrawer(typeof(Enum))]
     public class EnumTypeDrawer : NativeTypeDrawer
     {
         public override float GetHeight()
@@ -12,7 +12,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             return EditorGUIUtility.singleLineHeight;
         }
 
-        public override void OnGUI(Rect rect, string label, NativeField field)
+        public override void OnGUI(Rect rect, string label, NativeFieldDrawer field)
         {
             Type valueType = field.ValueType;
             var attrs = valueType.GetCustomAttributes(typeof(FlagsAttribute), false);

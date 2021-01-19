@@ -9,7 +9,7 @@ using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class NativeField : ILayoutDrawable
+    public class NativeFieldDrawer : ILayoutDrawable
     {
         public SystemObject Target { get; private set; }
         public FieldInfo Field { get; private set; }
@@ -96,13 +96,13 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public event Action<object> OnValueChanged;
 
-        public NativeField(FieldInfo field, SystemObject target)
+        public NativeFieldDrawer(FieldInfo field, SystemObject target)
         {
             Field = field;
             Target = target;
         }
 
-        internal NativeField(FieldInfo field, SystemObject target,int arrayIndex)
+        internal NativeFieldDrawer(FieldInfo field, SystemObject target,int arrayIndex)
         {
             Field = field;
             Target = target;

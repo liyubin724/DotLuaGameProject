@@ -20,10 +20,10 @@ namespace DotEditor.GUIExt.EditDrawer
             win.Show();
         }
 
-        private NativeObject nativeObject = null;
+        private NativeObjectDrawer nativeObject = null;
         private void OnEnable()
         {
-            nativeObject = new NativeObject(new NativeData());
+            nativeObject = new NativeObjectDrawer(new NativeData());
         }
 
 
