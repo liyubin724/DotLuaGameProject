@@ -12,7 +12,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         protected override void InitDrawers()
         {
-            Type[] allTypes = NativeUtility.GetAllBaseTypes(Target.GetType());
+            Type[] allTypes = NDrawerUtility.GetAllBaseTypes(Target.GetType());
             if (allTypes != null && allTypes.Length > 0)
             {
                 foreach (var type in allTypes)

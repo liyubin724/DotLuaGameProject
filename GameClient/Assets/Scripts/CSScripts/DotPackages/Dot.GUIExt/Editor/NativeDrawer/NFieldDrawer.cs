@@ -117,7 +117,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             object value = Value;
             if(Target!=null &&Field!=null && value!=null)
             {
-                innerDrawer = NativeUtility.GetLayoutDrawer(value);
+                innerDrawer = NDrawerUtility.GetLayoutDrawer(value);
                 if(innerDrawer is NTypeDrawer typeDrawer)
                 {
                     typeDrawer.Label = FieldName;
@@ -136,7 +136,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                     EditorGUILayout.LabelField(FieldName,GUILayout.Width(EditorGUIUtility.labelWidth));
                     if(GUILayout.Button("Create"))
                     {
-                        Value = NativeUtility.CreateTypeInstance(ValueType);
+                        Value = NDrawerUtility.CreateTypeInstance(ValueType);
 
                         RefreshFieldInfo();
                     }

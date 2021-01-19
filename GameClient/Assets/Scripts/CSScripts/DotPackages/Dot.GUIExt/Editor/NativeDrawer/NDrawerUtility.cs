@@ -7,7 +7,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public static class NativeUtility
+    public static class NDrawerUtility
     {
         private static Dictionary<Type, Type> defaultTypeDrawerDic = null;
 
