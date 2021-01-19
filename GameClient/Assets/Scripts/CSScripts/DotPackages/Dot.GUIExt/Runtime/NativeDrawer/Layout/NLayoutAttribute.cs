@@ -1,4 +1,4 @@
-﻿namespace DotEngine.EGUIP.NativeDrawer
+﻿namespace DotEngine.GUIExt.NativeDrawer
 {
     public enum LayoutOccasion
     {
@@ -6,11 +6,11 @@
         After,
     }
 
-    public abstract class LayoutAttribute : DrawableAttribute
+    public abstract class NLayoutAttribute : NDrawerAttribute
     {
         public LayoutOccasion Occasion { get; private set; }
 
-        protected LayoutAttribute(LayoutOccasion occasion = LayoutOccasion.Before)
+        protected NLayoutAttribute(LayoutOccasion occasion = LayoutOccasion.Before)
         {
             Occasion = occasion;
         }
