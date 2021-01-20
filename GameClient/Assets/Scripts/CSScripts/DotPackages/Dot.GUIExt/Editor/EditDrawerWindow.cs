@@ -3,6 +3,8 @@ using DotEditor.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -122,6 +124,12 @@ namespace DotEditor.GUIExt.EditDrawer
         }
 
         private ToolbarDrawer toolbarDrawer = null;
+        private EasyListViewDrawer listViewDrawer = null;
+        private Rect contentRect;
+        private string selectedFilePath = null;
+
+        private DragLineDrawer dragLineDrawer = null;
+        private bool isInited = false;
         private void OnGUI()
         {
             if(toolbarDrawer == null)
@@ -174,7 +182,56 @@ namespace DotEditor.GUIExt.EditDrawer
             }
             toolbarDrawer.OnGUILayout();
 
-            nativeObject.OnGUILayout();
+            if(listViewDrawer ==  null)
+            {
+                listViewDrawer = new EasyListViewDrawer()
+                {
+                    Text = "List View",
+                    DisplayNames = (from file in Directory.GetFiles(@"D:\", "*.*", SearchOption.TopDirectoryOnly) select Path.GetFileNameWithoutExtension(file)).ToArray(),
+                    Values = (from file in Directory.GetFiles(@"D:\", "*.*", SearchOption.TopDirectoryOnly) select file).ToArray(),
+                    OnValueChanged = (file) =>
+                    {
+                        selectedFilePath = (string)file;
+                    }
+                };
+            }
+            if(dragLineDrawer == null)
+            {
+                dragLineDrawer = new DragLineDrawer(this, DragLineDirection.Vertical);
+            }
+            Rect cRect = EditorGUILayout.GetControlRect(GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+            if(cRect!=contentRect && cRect.width >10&&cRect.height>10)
+            {
+                contentRect = cRect;
+                dragLineDrawer.Position = new Rect(contentRect.x + 300, contentRect.y, 6, contentRect.height);
+            }
+            dragLineDrawer.LowLimitXY = 200;
+            dragLineDrawer.UpperLimitXY = contentRect.width * 0.8f;
+            dragLineDrawer.OnGUILayout();
+
+            Rect listViewRect = new Rect(contentRect.x, contentRect.y, dragLineDrawer.MinX - contentRect.x, contentRect.height);
+           // EGUI.DrawAreaLine(listViewRect, Color.blue);
+            GUILayout.BeginArea(listViewRect);
+            {
+                listViewDrawer.OnGUILayout();
+            }
+            GUILayout.EndArea();
+
+            Rect objectRect = new Rect(dragLineDrawer.MaxX, contentRect.y, contentRect.width - dragLineDrawer.MaxX, contentRect.height);
+          //  EGUI.DrawAreaLine(objectRect, Color.yellow);
+            GUILayout.BeginArea(objectRect);
+            {
+                if (string.IsNullOrEmpty(selectedFilePath))
+                {
+                    nativeObject.OnGUILayout();
+                }
+                else
+                {
+                    GUILayout.TextField(File.ReadAllText(selectedFilePath), GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+                }
+            }
+            GUILayout.EndArea();
+
         }
     }
 }
