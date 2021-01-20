@@ -11,6 +11,19 @@ namespace DotEditor.GUIExt.NativeDrawer
     public class NArrayDrawer : NInstanceDrawer
     {
         private List<NLayoutDrawer> itemDrawers = new List<NLayoutDrawer>();
+
+        private Type ItemType
+        {
+            get
+            {
+                if(Target!=null && Target is IList list)
+                {
+                    return TypeUtility.GetElementTypeInArrayOrList(list.GetType());
+                }
+                return null;
+            }
+        }
+
         public NArrayDrawer(SystemObject target) : base(target)
         {
         }
@@ -24,11 +37,11 @@ namespace DotEditor.GUIExt.NativeDrawer
             itemDrawers.Clear();
             if(Target!=null && Target is IList list)
             {
-                Type itemType = TypeUtility.GetElementTypeInArrayOrList(list.GetType());
-                bool isTypeSupported = NDrawerUtility.IsTypeSupported(itemType);
-
                 for (int i = 0; i < list.Count; ++i)
                 {
+                    Type itemType = list[i].GetType();
+                    bool isTypeSupported = NDrawerUtility.IsTypeSupported(itemType);
+
                     if (!isTypeSupported)
                     {
                         itemDrawers.Add(new UnsupportedTypeDrawer()
@@ -61,17 +74,20 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             if (Target != null && Target is IList list)
             {
-                SystemObject item = NDrawerUtility.GetTypeInstance(TypeUtility.GetElementTypeInArrayOrList(list.GetType()));
-                if (TypeUtility.IsArrayType(list.GetType()))
+                SystemObject item = NDrawerUtility.GetTypeInstance(ItemType);
+                if(item!=null)
                 {
-                    Array array = (Array)list;
-                    DotEngine.Utilities.ArrayUtility.Add(ref array, item);
+                    if (TypeUtility.IsArrayType(list.GetType()))
+                    {
+                        Array array = (Array)list;
+                        DotEngine.Utilities.ArrayUtility.Add(ref array, item);
 
-                    Target = array;
-                }
-                else
-                {
-                    list.Add(item);
+                        Target = array;
+                    }
+                    else
+                    {
+                        list.Add(item);
+                    }
                 }
             }
         }
@@ -140,6 +156,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 if (GUI.Button(addBtnRect, "+"))
                 {
                     AddNewItemAtLast();
+
                     Refresh();
                 }
             }

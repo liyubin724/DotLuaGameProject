@@ -60,7 +60,24 @@ namespace DotEditor.GUIExt.EditDrawer
 
     class NativeData : ComposedData
     {
-        
+        public IBaseValue iBaseValue;
+        public List<IBaseValue> baseValues = new List<IBaseValue>()
+        {
+            new TDValue(),
+            new TDValue(),
+            new TDValue(),
+            new TDValue(),
+        };
+    }
+
+    public interface IBaseValue
+    {
+
+    }
+
+    public class TDValue : IBaseValue
+    {
+        public int intValue;
     }
 
     
@@ -77,7 +94,10 @@ namespace DotEditor.GUIExt.EditDrawer
         private NObjectDrawer nativeObject = null;
         private void OnEnable()
         {
-            nativeObject = new NObjectDrawer(new NativeData())
+            NativeData nData = new NativeData();
+            nData.iBaseValue = new TDValue();
+
+            nativeObject = new NObjectDrawer(nData)
             {
                 IsShowInherit = true,
                 IsShowScroll = true,
