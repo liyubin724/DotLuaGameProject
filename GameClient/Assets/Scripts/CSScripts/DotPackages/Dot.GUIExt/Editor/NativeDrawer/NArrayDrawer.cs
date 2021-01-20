@@ -10,13 +10,9 @@ namespace DotEditor.GUIExt.NativeDrawer
 {
     public class NArrayDrawer : NInstanceDrawer
     {
-        private NItemDrawer itemDrawer = null;
         private List<NLayoutDrawer> itemDrawers = new List<NLayoutDrawer>();
-        private IList list = null;
-
         public NArrayDrawer(SystemObject target) : base(target)
         {
-            list = target as IList;
         }
 
         public NArrayDrawer(NItemDrawer itemDrawer) : this(itemDrawer.Value)
@@ -26,10 +22,11 @@ namespace DotEditor.GUIExt.NativeDrawer
         protected override void RefreshDrawers()
         {
             itemDrawers.Clear();
-            if (list != null)
+            if(Target!=null && Target is IList list)
             {
                 Type itemType = TypeUtility.GetElementTypeInArrayOrList(list.GetType());
                 bool isTypeSupported = NDrawerUtility.IsTypeSupported(itemType);
+
                 for (int i = 0; i < list.Count; ++i)
                 {
                     if (!isTypeSupported)
@@ -42,7 +39,10 @@ namespace DotEditor.GUIExt.NativeDrawer
                     }
                     else
                     {
-                        itemDrawers.Add(new NItemDrawer(Target, i));
+                        NItemDrawer itemDrawer = new NItemDrawer(Target, i);
+                        itemDrawer.ParentDrawer = this;
+
+                        itemDrawers.Add(itemDrawer);
                     }
                 }
             }
@@ -51,45 +51,46 @@ namespace DotEditor.GUIExt.NativeDrawer
         private void Clear()
         {
             itemDrawers.Clear();
-            list.Clear();
+            if (Target != null && Target is IList list)
+            {
+                list.Clear();
+            }
         }
 
         private void AddNewItemAtLast()
         {
-            SystemObject item = NDrawerUtility.GetTypeInstance(TypeUtility.GetElementTypeInArrayOrList(list.GetType()));
-            if (TypeUtility.IsArrayType(list.GetType()))
+            if (Target != null && Target is IList list)
             {
-                Array array = (Array)list;
-                DotEngine.Utilities.ArrayUtility.Add(ref array, item);
-                list = array;
-
-                if (itemDrawer != null)
+                SystemObject item = NDrawerUtility.GetTypeInstance(TypeUtility.GetElementTypeInArrayOrList(list.GetType()));
+                if (TypeUtility.IsArrayType(list.GetType()))
                 {
-                    itemDrawer.Value = list;
+                    Array array = (Array)list;
+                    DotEngine.Utilities.ArrayUtility.Add(ref array, item);
+
+                    Target = array;
                 }
-            }
-            else
-            {
-                list.Add(item);
+                else
+                {
+                    list.Add(item);
+                }
             }
         }
 
         private void RemoveItemAtIndex(int index)
         {
-            if (TypeUtility.IsArrayType(list.GetType()))
+            if (Target != null && Target is IList list)
             {
-                Array array = (Array)list;
-                DotEngine.Utilities.ArrayUtility.Remove(ref array, index);
-                list = array;
-
-                if (itemDrawer != null)
+                if (TypeUtility.IsArrayType(list.GetType()))
                 {
-                    itemDrawer.Value = list;
+                    Array array = (Array)list;
+                    DotEngine.Utilities.ArrayUtility.Remove(ref array, index);
+
+                    Target = array;
                 }
-            }
-            else
-            {
-                list.RemoveAt(index);
+                else
+                {
+                    list.RemoveAt(index);
+                }
             }
         }
 
@@ -105,6 +106,8 @@ namespace DotEditor.GUIExt.NativeDrawer
                 {
                     Clear();
                 }
+
+                IList list = Target as IList;
 
                 for (int i = 0; i < list.Count; ++i)
                 {

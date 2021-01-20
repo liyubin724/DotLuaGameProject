@@ -10,6 +10,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 {
     public class NItemDrawer : NLayoutDrawer
     {
+        public NInstanceDrawer ParentDrawer { get; set; }
         public SystemObject Target { get; private set; }
         public FieldInfo Field { get; private set; }
         public int ItemIndex { get; private set; } = -1;
@@ -91,21 +92,23 @@ namespace DotEditor.GUIExt.NativeDrawer
         public event Action<object> OnValueChanged;
 
         private NLayoutDrawer innerDrawer = null;
+        private bool isNeedRefresh = true;
 
         public NItemDrawer(SystemObject target, FieldInfo field)
         {
             Target = target;
             Field = field;
-
-            RefreshDrawer();
         }
 
         public NItemDrawer(SystemObject target, int index)
         {
             Target = target;
             ItemIndex = index;
+        }
 
-            RefreshDrawer();
+        public void Refresh()
+        {
+            isNeedRefresh = true;
         }
 
         private void RefreshDrawer()
@@ -114,24 +117,47 @@ namespace DotEditor.GUIExt.NativeDrawer
 
             if (Target != null && Value != null)
             {
-                innerDrawer = NDrawerUtility.GetLayoutDrawer(this);
-                if (innerDrawer is NTypeDrawer typeDrawer)
+                NTypeDrawer typeDrawer = NDrawerUtility.GetTypeDrawerInstance(ValueType);
+                if (typeDrawer != null)
                 {
                     typeDrawer.Label = Label;
                     typeDrawer.FieldDrawer = this;
-                }
-                else if (innerDrawer is NArrayDrawer arrayDrawer)
+
+                    innerDrawer = typeDrawer;
+                }else
                 {
-                    arrayDrawer.Header = Label;
-                }else if(innerDrawer is NObjectDrawer objectDrawer)
-                {
-                    objectDrawer.Header = Label;
+                    NInstanceDrawer instanceDrawer = null;
+                    if (TypeUtility.IsArrayOrListType(ValueType))
+                    {
+                        instanceDrawer = new NArrayDrawer(Value);
+                    }
+                    else if(TypeUtility.IsStructOrClassType(ValueType))
+                    {
+                        instanceDrawer = new NObjectDrawer(Value);
+                    }
+
+                    if(instanceDrawer!=null)
+                    {
+                        instanceDrawer.Header = Label;
+                        instanceDrawer.ItemDrawer = this;
+
+                        instanceDrawer.IsShowInherit = ParentDrawer.IsShowInherit;
+                        instanceDrawer.IsShowBox = ParentDrawer.IsShowBox;
+
+                        innerDrawer = instanceDrawer;
+                    }
                 }
             }
         }
 
         public override void OnGUILayout()
         {
+            if(isNeedRefresh)
+            {
+                RefreshDrawer();
+                isNeedRefresh = false;
+            }
+
             object value = Value;
             if (value == null)
             {

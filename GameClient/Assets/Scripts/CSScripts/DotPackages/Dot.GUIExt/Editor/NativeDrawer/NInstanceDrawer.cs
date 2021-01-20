@@ -16,7 +16,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
             set
             {
-                if(isShowScroll!=value)
+                if (isShowScroll != value)
                 {
                     isShowScroll = value;
                     Refresh();
@@ -33,7 +33,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
             set
             {
-                if(isShowInherit!=value)
+                if (isShowInherit != value)
                 {
                     isShowInherit = value;
                     Refresh();
@@ -50,7 +50,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
             set
             {
-                if(isShowBox!=value)
+                if (isShowBox != value)
                 {
                     isShowBox = value;
                     Refresh();
@@ -66,7 +66,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
             set
             {
-                if(header!=value)
+                if (header != value)
                 {
                     header = value;
                     Refresh();
@@ -74,7 +74,24 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
-        public SystemObject Target { get; private set; }
+        private SystemObject target = null;
+        public SystemObject Target
+        {
+            get
+            {
+                return target;
+            }
+            protected set
+            {
+                target = value;
+                if(ItemDrawer!=null)
+                {
+                    ItemDrawer.Value = target;
+                }
+            }
+        }
+
+        internal NItemDrawer ItemDrawer { get; set; } = null;
 
         private Vector2 scrollPos = Vector2.zero;
         private bool isNeedRefresh = true;

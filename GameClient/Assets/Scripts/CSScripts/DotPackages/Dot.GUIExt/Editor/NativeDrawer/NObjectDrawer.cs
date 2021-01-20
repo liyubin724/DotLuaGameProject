@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
+using UnityEditor;
 using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
@@ -17,6 +17,11 @@ namespace DotEditor.GUIExt.NativeDrawer
         protected override void RefreshDrawers()
         {
             itemDrawers.Clear();
+            if(Target == null)
+            {
+                return;
+            }
+
             Type[] allTypes = NDrawerUtility.GetAllBaseTypes(Target.GetType());
             if (allTypes != null && allTypes.Length > 0)
             {
@@ -36,6 +41,8 @@ namespace DotEditor.GUIExt.NativeDrawer
                         if (NDrawerUtility.IsTypeSupported(field.FieldType))
                         {
                             NItemDrawer fieldDrawer = new NItemDrawer(Target, field);
+                            fieldDrawer.ParentDrawer = this;
+
                             itemDrawers.Add(fieldDrawer);
                         }
                         else
@@ -48,10 +55,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                         }
                     }
 
-                    if (IsShowInherit)
-                    {
-                        itemDrawers.Add(new NHorizontalLineDrawer());
-                    }
+                    itemDrawers.Add(new NHorizontalLineDrawer());
                 }
             }
         }
@@ -60,16 +64,19 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             if(!string.IsNullOrEmpty(Header))
             {
-                EGUILayout.DrawBoxHeader(Header, GUILayout.ExpandWidth(true));
+                EditorGUILayout.LabelField(Header);
             }
-            EGUI.BeginIndent();
+            if(itemDrawers.Count>0)
             {
-                foreach (var drawer in itemDrawers)
+                EGUI.BeginIndent();
                 {
-                    drawer.OnGUILayout();
+                    foreach (var drawer in itemDrawers)
+                    {
+                        drawer.OnGUILayout();
+                    }
                 }
+                EGUI.EndIndent();
             }
-            EGUI.EndIndent();
         }
     }
 }
