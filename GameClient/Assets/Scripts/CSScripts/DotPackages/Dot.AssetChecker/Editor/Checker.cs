@@ -9,7 +9,7 @@
         public Analyser analyser = new Analyser();
         public Operater operater = new Operater();
 
-        public bool DoMatch(string assetPath)
+        public bool IsMatch(string assetPath)
         {
             if(!enable)
             {

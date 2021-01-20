@@ -74,7 +74,7 @@ namespace DotEditor.AssetChecker
         {
             Checker checker = CreateTestChecker();
             string assetPath = "Assets/ArtRes/UI/BG/HighQuality/Alpha/activity_patern1.png";
-            if (checker.DoMatch(assetPath))
+            if (checker.IsMatch(assetPath))
             {
                 int errorCode = 0;
                 if (checker.DoAnalyse(assetPath, ref errorCode))
