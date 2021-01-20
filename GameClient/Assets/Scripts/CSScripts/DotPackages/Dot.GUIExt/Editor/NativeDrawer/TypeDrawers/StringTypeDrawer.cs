@@ -7,7 +7,7 @@ namespace DotEditor.GUIExt.NativeDrawer
     {
         public override void OnGUILayout()
         {
-            FieldDrawer.Value = EditorGUILayout.TextField(Label, (string)FieldDrawer.Value);
+            ItemDrawer.Value = EditorGUILayout.TextField(Label, (string)ItemDrawer.Value);
         }
     }
 }

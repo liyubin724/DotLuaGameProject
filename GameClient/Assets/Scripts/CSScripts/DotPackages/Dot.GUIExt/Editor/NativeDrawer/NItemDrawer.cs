@@ -133,7 +133,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 if (typeDrawer != null)
                 {
                     typeDrawer.Label = Label;
-                    typeDrawer.FieldDrawer = this;
+                    typeDrawer.ItemDrawer = this;
 
                     innerDrawer = typeDrawer;
                 }else

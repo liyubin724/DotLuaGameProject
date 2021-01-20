@@ -43,7 +43,7 @@ namespace DotEditor.AssetChecker
             FileExtensionMatchFilter femf = new FileExtensionMatchFilter()
             {
                 ignoreCase = true,
-                extension = ".png",
+                extensions = new List<string>() { ".png", ".jpg" },
             };
             checker.matcher.Add(femf);
 

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace DotEditor.AssetChecker
 {
@@ -6,23 +7,33 @@ namespace DotEditor.AssetChecker
     public class FileExtensionMatchFilter : MatchFilter
     {
         public bool ignoreCase = true;
-        public string extension = null;
+        public List<string> extensions = new List<string>();
 
         protected override bool MatchAsset(string assetPath)
         {
-            if (string.IsNullOrEmpty(extension))
+            string ext = Path.GetExtension(assetPath);
+            if(string.IsNullOrEmpty(ext) || extensions.Count == 0)
             {
                 return false;
             }
-            string ext = Path.GetExtension(assetPath);
-            return ignoreCase ? ext.ToLower() == extension.ToLower() : ext == extension;
+            foreach(var extension in extensions)
+            {
+                if(ignoreCase ? ext.ToLower() == extension.ToLower() : ext == extension)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         protected override void CloneTo(MatchFilter filter)
         {
             FileExtensionMatchFilter femf = filter as FileExtensionMatchFilter;
             femf.ignoreCase = ignoreCase;
-            femf.extension = extension;
+            foreach(var ext in extensions)
+            {
+                femf.extensions.Add(ext);
+            }
         }
     }
 }

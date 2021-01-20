@@ -10,6 +10,9 @@ namespace DotEditor.GUIExt.NativeDrawer
 {
     public class NArrayDrawer : NInstanceDrawer
     {
+        public Action CreateNewItem = null;
+        public Action ClearAllItem = null;
+        public Action<int> DeleteItemAt = null;
         private List<NLayoutDrawer> itemDrawers = new List<NLayoutDrawer>();
 
         private Type ItemType
@@ -68,6 +71,8 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 list.Clear();
             }
+
+            Refresh();
         }
 
         private void AddNewItemAtLast()
@@ -89,6 +94,8 @@ namespace DotEditor.GUIExt.NativeDrawer
                         list.Add(item);
                     }
                 }
+
+                Refresh();
             }
         }
 
@@ -107,6 +114,8 @@ namespace DotEditor.GUIExt.NativeDrawer
                 {
                     list.RemoveAt(index);
                 }
+
+                Refresh();
             }
         }
 
@@ -120,7 +129,13 @@ namespace DotEditor.GUIExt.NativeDrawer
                 Rect clearBtnRect = new Rect(lastRect.x + lastRect.width - 40, lastRect.y, 40, lastRect.height);
                 if (GUI.Button(clearBtnRect, "C", EditorStyles.toolbarButton))
                 {
-                    Clear();
+                    if(ClearAllItem!=null)
+                    {
+                        ClearAllItem.Invoke();
+                    }else
+                    {
+                        Clear();
+                    }
                 }
 
                 IList list = Target as IList;
@@ -139,8 +154,13 @@ namespace DotEditor.GUIExt.NativeDrawer
                         {
                             if (GUILayout.Button("-"))
                             {
-                                RemoveItemAtIndex(i);
-                                Refresh();
+                                if(DeleteItemAt!=null)
+                                {
+                                    DeleteItemAt(i);
+                                }else
+                                {
+                                    RemoveItemAtIndex(i);
+                                }
                             }
                         }
                         EditorGUILayout.EndVertical();
@@ -155,9 +175,13 @@ namespace DotEditor.GUIExt.NativeDrawer
                 addBtnRect.width = 40;
                 if (GUI.Button(addBtnRect, "+"))
                 {
-                    AddNewItemAtLast();
-
-                    Refresh();
+                    if(CreateNewItem!=null)
+                    {
+                        CreateNewItem.Invoke();
+                    }else
+                    {
+                        AddNewItemAtLast();
+                    }
                 }
             }
             EditorGUILayout.EndVertical();

@@ -29,15 +29,28 @@ namespace DotEditor.AssetChecker
 
         public bool IsMatch(string assetPath)
         {
+            if(!enable)
+            {
+                return false;
+            }
+
+            int enableCount = 0;
             foreach (var filter in filters)
             {
+                if(filter.Enable)
+                {
+                    enableCount++;
+                }else
+                {
+                    continue;
+                }
                 if (!filter.IsMatch(assetPath))
                 {
                     return false;
                 }
             }
 
-            return true;
+            return enableCount>0;
         }
 
         public object Clone()

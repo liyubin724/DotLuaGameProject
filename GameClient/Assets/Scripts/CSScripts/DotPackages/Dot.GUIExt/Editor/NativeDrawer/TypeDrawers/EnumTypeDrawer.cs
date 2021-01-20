@@ -8,15 +8,15 @@ namespace DotEditor.GUIExt.NativeDrawer
     {
         public override void OnGUILayout()
         {
-            Type valueType = FieldDrawer.ValueType;
+            Type valueType = ItemDrawer.ValueType;
             var attrs = valueType.GetCustomAttributes(typeof(FlagsAttribute), false);
             if (attrs != null && attrs.Length > 0)
             {
-                FieldDrawer.Value = EditorGUILayout.EnumFlagsField(Label, (Enum)FieldDrawer.Value);
+                ItemDrawer.Value = EditorGUILayout.EnumFlagsField(Label, (Enum)ItemDrawer.Value);
             }
             else
             {
-                FieldDrawer.Value = EditorGUILayout.EnumPopup(Label, (Enum)FieldDrawer.Value);
+                ItemDrawer.Value = EditorGUILayout.EnumPopup(Label, (Enum)ItemDrawer.Value);
             }
         }
     }

@@ -10,7 +10,7 @@ namespace DotEditor.AssetChecker
 
         public void Add(IOperationRule rule)
         {
-            if(rules == null)
+            if (rules == null)
             {
                 rules = new List<IOperationRule>();
             }
@@ -30,12 +30,12 @@ namespace DotEditor.AssetChecker
         public object Clone()
         {
             Operater operater = new Operater();
-            operater.enable = enable; 
-            if(rules!=null)
+            operater.enable = enable;
+            if (rules != null)
             {
-                for(int i =0;i<rules.Count;++i)
+                for (int i = 0; i < rules.Count; ++i)
                 {
-                    if(rules[i]!=null)
+                    if (rules[i] != null)
                     {
                         operater.rules.Add((IOperationRule)rules[i].Clone());
                     }
@@ -46,14 +46,17 @@ namespace DotEditor.AssetChecker
 
         public void Operate(string assetPath)
         {
-            if(!enable || rules == null ||rules.Count == 0)
+            if (!enable || rules == null || rules.Count == 0)
             {
                 return;
             }
 
-            for(int i =0;i<rules.Count;++i)
+            for (int i = 0; i < rules.Count; ++i)
             {
-                rules[i]?.Execute(assetPath);
+                if (rules[i] != null && rules[i].Enable)
+                {
+                    rules[i].Execute(assetPath);
+                }
             }
         }
     }

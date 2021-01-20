@@ -35,17 +35,6 @@ namespace DotEditor.AssetChecker
                 return false;
             }
 
-            foreach (var ruler in rulers)
-            {
-                if (ruler != null && ruler.GetType().IsAssignableFrom(typeof(IFileAnalyseRule)))
-                {
-                    if(((IFileAnalyseRule)ruler).AnalyseAsset(assetPath, ref errorCode))
-                    {
-                        return false;
-                    }
-                }
-            }
-
             UnityObject uObj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
             if (uObj == null)
             {
@@ -53,16 +42,26 @@ namespace DotEditor.AssetChecker
                 return false;
             }
 
-            foreach (var ruler in rulers)
+            foreach (var rule in rulers)
             {
-                if (ruler != null && ruler.GetType().IsAssignableFrom(typeof(IUnityObjectAnalyseRule)))
+                if(rule!=null && rule.Enable)
                 {
-                    if (((IUnityObjectAnalyseRule)ruler).AnalyseAsset(uObj, ref errorCode))
+                    if(rule is IFileAnalyseRule fileAnalyseRule)
                     {
-                        return false;
+                        if(!fileAnalyseRule.AnalyseAsset(assetPath,ref errorCode))
+                        {
+                            return false;
+                        }
+                    }else if(rule is IUnityObjectAnalyseRule unityObjectAnalyseRule)
+                    {
+                        if(!unityObjectAnalyseRule.AnalyseAsset(uObj,ref errorCode))
+                        {
+                            return false;
+                        }
                     }
                 }
             }
+
             return true;
         }
     }

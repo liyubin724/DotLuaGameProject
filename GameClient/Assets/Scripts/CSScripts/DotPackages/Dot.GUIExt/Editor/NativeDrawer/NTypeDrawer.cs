@@ -4,8 +4,8 @@ namespace DotEditor.GUIExt.NativeDrawer
 {
     public abstract class NTypeDrawer : NLayoutDrawer
     {
-        internal string Label { get; set; }
-        internal NItemDrawer FieldDrawer { get; set; }
+        public string Label { get; set; }
+        public NItemDrawer ItemDrawer { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
