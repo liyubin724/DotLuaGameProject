@@ -56,7 +56,7 @@ namespace DotEditor.NativeDrawer
             {
                 if (IsArrayElement)
                 {
-                    return TypeUtility.GetArrayOrListElementType(Field.FieldType);
+                    return TypeUtility.GetElementTypeInArrayOrList(Field.FieldType);
                 }
 
                 return Field.FieldType;
@@ -188,7 +188,7 @@ namespace DotEditor.NativeDrawer
                 {
                     if (DrawerUtility.IsTypeSupported(ValueType))
                     {
-                        if (TypeUtility.IsStructOrClass(ValueType) && Value != null)
+                        if (TypeUtility.IsStructOrClassType(ValueType) && Value != null)
                         {
                             drawerObject = new DrawerObject(Value);
                         }
@@ -283,7 +283,7 @@ namespace DotEditor.NativeDrawer
 
                                 if (DrawerUtility.IsTypeSupported(ValueType))
                                 {
-                                    if (TypeUtility.IsStructOrClass(ValueType) && Value != null)
+                                    if (TypeUtility.IsStructOrClassType(ValueType) && Value != null)
                                     {
                                         drawerObject = new DrawerObject(Value);
                                     }
@@ -341,7 +341,7 @@ namespace DotEditor.NativeDrawer
 
         internal void ClearArrayElement()
         {
-            if (TypeUtility.IsArrayOrList(ValueType))
+            if (TypeUtility.IsArrayOrListType(ValueType))
             {
                 if (ValueType.IsArray)
                 {
@@ -356,9 +356,9 @@ namespace DotEditor.NativeDrawer
 
         internal void AddArrayElement()
         {
-            if (TypeUtility.IsArrayOrList(ValueType))
+            if (TypeUtility.IsArrayOrListType(ValueType))
             {
-                object element = DrawerUtility.CreateInstance(TypeUtility.GetArrayOrListElementType(ValueType));
+                object element = DrawerUtility.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(ValueType));
                 if (ValueType.IsArray)
                 {
                     Array array = (Array)Value;
@@ -375,7 +375,7 @@ namespace DotEditor.NativeDrawer
 
         internal void RemoveArrayElementAtIndex(int index)
         {
-            if(TypeUtility.IsArrayOrList(ValueType))
+            if(TypeUtility.IsArrayOrListType(ValueType))
             {
                 if(ValueType.IsArray)
                 {

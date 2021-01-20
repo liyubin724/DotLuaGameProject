@@ -54,7 +54,7 @@ namespace DotEditor.NativeDrawer
         {
             if(type.IsArray)
             {
-                return Array.CreateInstance(TypeUtility.GetArrayOrListElementType(type), 0);
+                return Array.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(type), 0);
             }else if(type == typeof(string))
             {
                 return string.Empty;
@@ -88,7 +88,7 @@ namespace DotEditor.NativeDrawer
                 return false;
             }
 
-            if(type.IsDelegate())
+            if(type.IsDelegateType())
             {
                 return false;
             }
@@ -111,7 +111,7 @@ namespace DotEditor.NativeDrawer
             {
                 return typeof(Enum);
             }
-            if(TypeUtility.IsArrayOrList(type))
+            if(TypeUtility.IsArrayOrListType(type))
             {
                 return typeof(IList);
             }
@@ -228,7 +228,7 @@ namespace DotEditor.NativeDrawer
                 return new Type[] { type };
             }
 
-            Type[] types = type.GetAllBasedTypes();
+            Type[] types = type.GetBaseTypes();
             if(types!=null && types.Length>0)
             {
                 Type blockType;

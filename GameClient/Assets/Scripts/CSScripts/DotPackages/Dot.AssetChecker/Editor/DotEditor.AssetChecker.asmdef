@@ -2,7 +2,8 @@
     "name": "DotEditor.AssetChecker",
     "references": [
         "GUID:3d7195c9a8a2f8742bd10607bc40cbca",
-        "GUID:9585a5252a74ad84daea673ae34bfc23"
+        "GUID:9585a5252a74ad84daea673ae34bfc23",
+        "GUID:4149771e812993e48b3c2d3b779aaa96"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
