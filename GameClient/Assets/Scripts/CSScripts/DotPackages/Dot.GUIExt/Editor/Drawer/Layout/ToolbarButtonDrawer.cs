@@ -4,16 +4,14 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.Layout
 {
-    public class ClickableSpringLabel : LayoutDrawable
+    public class ToolbarButtonDrawer : LayoutDrawable
     {
-        public bool ExpandWidth { get; set; } = true;
-        public GUIStyle Style { get; set; } = EditorStyles.label;
-        
+        public float Width { get; set; } = 60.0f;
         public Action OnClicked { get; set; } = null;
-        
+
         protected override void OnLayoutDraw()
         {
-            if (GUILayout.Button(Label, Style, GUILayout.ExpandWidth(ExpandWidth)))
+            if (GUILayout.Button(Label, EditorStyles.toolbarButton, GUILayout.Width(Width)))
             {
                 OnClicked?.Invoke();
             }

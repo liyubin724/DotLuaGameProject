@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.Layout
 {
-    public class VerticalCompositeDrawable : ILayoutDrawable
+    public class VerticalCompositeDrawer : ILayoutDrawable
     {
         public GUIStyle Style { get; set; } = GUIStyle.none;
 
         private List<ILayoutDrawable> items = new List<ILayoutDrawable>();
 
-        public VerticalCompositeDrawable(params ILayoutDrawable[] items)
+        public VerticalCompositeDrawer(params ILayoutDrawable[] items)
         {
             if(items!=null && items.Length>0)
             {
@@ -18,19 +18,19 @@ namespace DotEditor.GUIExt.Layout
             }
         }
 
-        public VerticalCompositeDrawable Add(ILayoutDrawable item)
+        public VerticalCompositeDrawer Add(ILayoutDrawable item)
         {
             items.Add(item);
             return this;
         }
 
-        public VerticalCompositeDrawable Remove(ILayoutDrawable item)
+        public VerticalCompositeDrawer Remove(ILayoutDrawable item)
         {
             items.Remove(item);
             return this;
         }
 
-        public VerticalCompositeDrawable Clear()
+        public VerticalCompositeDrawer Clear()
         {
             items.Clear();
             return this;

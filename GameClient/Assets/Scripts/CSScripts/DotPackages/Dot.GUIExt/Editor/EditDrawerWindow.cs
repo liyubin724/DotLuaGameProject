@@ -1,4 +1,5 @@
-﻿using DotEditor.GUIExt.NativeDrawer;
+﻿using DotEditor.GUIExt.Layout;
+using DotEditor.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -120,8 +121,59 @@ namespace DotEditor.GUIExt.EditDrawer
             return sb.ToString();
         }
 
+        private ToolbarDrawer toolbarDrawer = null;
         private void OnGUI()
         {
+            if(toolbarDrawer == null)
+            {
+                BaseData[] datas = new BaseData[]
+                {
+                    new BaseData(),
+                    new BaseData(),
+                };
+                string[] contents2 = new string[]
+                {
+                    "BaseData 1",
+                    "BaseData 2"
+                };
+
+                toolbarDrawer = new ToolbarDrawer()
+                {
+                    LeftDrawable = new HorizontalCompositeDrawer(new ToolbarButtonDrawer()
+                    {
+                        Text = "Open",
+                        Tooltip = "open a new file",
+                        OnClicked = () =>
+                        {
+                            Debug.Log("ToolbarButton->Clicked");
+                        }
+                    },
+                    new PopupDrawer<BaseData>()
+                    {
+                        Values = datas,
+                        Value = datas[0],
+                        Contents = contents2,
+                    }),
+                    RightDrawable = new HorizontalCompositeDrawer(
+                        new ToolbarToggleDrawer()
+                        {
+                            Text = "Auto Save",
+                            OnValueChanged = (isSelected) =>
+                            {
+                                Debug.Log("ToolbarToggleDrawer->isSelected = " + isSelected);
+                            }
+                        }, 
+                        new SearchFieldDrawer()
+                        {
+                            OnValueChanged = (searchText) =>
+                            {
+                                Debug.Log("SearchFieldDrawer->searchText = " + searchText);
+                            }
+                        }),
+                };
+            }
+            toolbarDrawer.OnGUILayout();
+
             nativeObject.OnGUILayout();
         }
     }

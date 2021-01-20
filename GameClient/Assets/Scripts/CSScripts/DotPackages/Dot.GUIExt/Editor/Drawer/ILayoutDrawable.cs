@@ -1,6 +1,4 @@
-﻿using UnityEditor;
-
-namespace DotEditor.GUIExt.Layout
+﻿namespace DotEditor.GUIExt
 {
     public interface ILayoutDrawable
     {
