@@ -15,6 +15,11 @@ namespace DotEditor.AssetChecker
             {
                 foreach(var assetPath in importedAssets)
                 {
+                    if(AssetDatabase.IsValidFolder(assetPath) && !CheckerUtility.ReadSetting().isFolderAsAsset)
+                    {
+                        continue;
+                    }
+
                     CheckerFileInfo cfi = checkerFiles.FirstOrDefault((cFileInfo) =>
                     {
                         return cFileInfo.checker.enable && cFileInfo.checker.IsMatch(assetPath);

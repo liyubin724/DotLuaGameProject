@@ -21,7 +21,7 @@ namespace DotEditor.AssetChecker
                 listDrawer = new NArrayDrawer(operater.rules);
                 listDrawer.Header = "Operation Rules";
                 listDrawer.IsShowBox = true;
-                listDrawer.IsShowInherit = true;
+                listDrawer.IsShowInherit = false;
 
                 listDrawer.CreateNewItem = () =>
                 {

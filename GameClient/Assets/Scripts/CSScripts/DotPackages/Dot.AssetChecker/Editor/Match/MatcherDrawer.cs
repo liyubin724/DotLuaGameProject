@@ -21,7 +21,7 @@ namespace DotEditor.AssetChecker
                 listDrawer = new NArrayDrawer(matcher.filters);
                 listDrawer.Header = "Filters";
                 listDrawer.IsShowBox = true;
-                listDrawer.IsShowInherit = true;
+                listDrawer.IsShowInherit = false;
                 
                 listDrawer.CreateNewItem = () =>
                 {

@@ -245,7 +245,8 @@ namespace DotEditor.AssetChecker
                             Text = Contents.settingContent,
                             OnClicked = () =>
                             {
-
+                                var pos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
+                                CheckerSettingPopupContent.ShowWin(pos);
                             }
                         }
                     ),

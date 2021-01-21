@@ -21,7 +21,7 @@ namespace DotEditor.AssetChecker
                 listDrawer = new NArrayDrawer(analyser.rulers);
                 listDrawer.Header = "Filters";
                 listDrawer.IsShowBox = true;
-                listDrawer.IsShowInherit = true;
+                listDrawer.IsShowInherit = false;
 
                 listDrawer.CreateNewItem = () =>
                 {
@@ -60,10 +60,10 @@ namespace DotEditor.AssetChecker
                             select type).ToArray();
             foreach (var type in types)
             {
-                var attrs = type.GetCustomAttributes(typeof(OperatationRuleAttribute), false);
+                var attrs = type.GetCustomAttributes(typeof(AnalyseRuleAttribute), false);
                 if (attrs != null && attrs.Length > 0)
                 {
-                    var attr = attrs[0] as OperatationRuleAttribute;
+                    var attr = attrs[0] as AnalyseRuleAttribute;
                     menu.AddItem(new GUIContent(attr.MenuItemName), false, () =>
                     {
                         if (Activator.CreateInstance(type) is IAnalyseRule rule)

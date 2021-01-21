@@ -33,7 +33,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 }
                 else
                 {
-                    return Field.Name;
+                    return $"{Field.Name}";
                 }
             }
         }

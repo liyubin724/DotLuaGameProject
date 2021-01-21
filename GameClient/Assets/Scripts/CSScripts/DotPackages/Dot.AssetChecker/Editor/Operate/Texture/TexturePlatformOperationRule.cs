@@ -1,53 +1,58 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 
 namespace DotEditor.AssetChecker
 {
-    public enum AssetPlatformType
+    public class TexturePlatformSetting : ICloneable
     {
-        Window = 0,
-        Android,
-        iOS,
+        public int maxSize = 1024;
+        public TextureImporterFormat format = TextureImporterFormat.RGBA32;
+
+        public object Clone()
+        {
+            return new TexturePlatformSetting()
+            {
+                maxSize = maxSize,
+                format = format,
+            };
+        }
     }
 
     [OperatationRule("Texture","Platform")]
     public class TexturePlatformOperationRule : ImportOperationRule
     {
-        public AssetPlatformType platform = AssetPlatformType.Window;
-        public int maxSize = 1024;
-        public TextureImporterFormat format = TextureImporterFormat.RGBA32;
-
-        private string GetPlatformName()
-        {
-            if(platform == AssetPlatformType.Android)
-            {
-                return "Android";
-            }else if(platform == AssetPlatformType.iOS)
-            {
-                return "iPhone";
-            }else if(platform == AssetPlatformType.Window)
-            {
-                return "Window";
-            }
-            return string.Empty;
-        }
+        public TexturePlatformSetting standaloneSetting = new TexturePlatformSetting();
+        public TexturePlatformSetting androidSetting = new TexturePlatformSetting();
+        public TexturePlatformSetting iOSSetting = new TexturePlatformSetting();
 
         protected override void CloneTo(OperationRule rule)
         {
             TexturePlatformOperationRule tr = rule as TexturePlatformOperationRule;
-            tr.platform = platform;
-            tr.maxSize = maxSize;
-            tr.format = format;
+            tr.standaloneSetting = (TexturePlatformSetting)standaloneSetting.Clone();
+            tr.androidSetting = (TexturePlatformSetting)androidSetting.Clone();
+            tr.iOSSetting = (TexturePlatformSetting)iOSSetting.Clone();
         }
 
         protected override void ImportAsset(AssetImporter importer)
         {
             TextureImporter ti = importer as TextureImporter;
-            TextureImporterPlatformSettings tips = ti.GetPlatformTextureSettings(GetPlatformName());
 
+            TextureImporterPlatformSettings tips = ti.GetPlatformTextureSettings("Standalone");
             tips.overridden = true; 
-            tips.maxTextureSize = maxSize;
-            tips.format = format;
+            tips.maxTextureSize = standaloneSetting.maxSize;
+            tips.format = standaloneSetting.format;
+            ti.SetPlatformTextureSettings(tips);
 
+            tips = ti.GetPlatformTextureSettings("Android");
+            tips.overridden = true;
+            tips.maxTextureSize = androidSetting.maxSize;
+            tips.format = androidSetting.format;
+            ti.SetPlatformTextureSettings(tips);
+
+            tips = ti.GetPlatformTextureSettings("iPhone");
+            tips.overridden = true;
+            tips.maxTextureSize = iOSSetting.maxSize;
+            tips.format = iOSSetting.format;
             ti.SetPlatformTextureSettings(tips);
         }
     }
