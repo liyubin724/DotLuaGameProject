@@ -8,8 +8,6 @@ namespace DotEditor.GUIExt.Layout
         private SearchField searchField = null;
         public bool IgnoreCase { get; set; } = true;
         public bool IsInToolbar { get; set; } = true;
-        public bool IsExpandWidth { get; set; } = false;
-        public float Width { get; set; } = 230.0f;
 
         public bool IsMatch(string value)
         {
@@ -38,10 +36,10 @@ namespace DotEditor.GUIExt.Layout
 
             if(IsInToolbar)
             {
-                Value = searchField.OnToolbarGUI(Value,(IsExpandWidth?GUILayout.ExpandWidth(true):GUILayout.Width(Width)));
+                Value = searchField.OnToolbarGUI(Value,LayoutOptions);
             }else
             {
-                Value = searchField.OnGUI(Value, (IsExpandWidth ? GUILayout.ExpandWidth(true) : GUILayout.Width(Width)));
+                Value = searchField.OnGUI(Value, LayoutOptions);
             }
         }
     }

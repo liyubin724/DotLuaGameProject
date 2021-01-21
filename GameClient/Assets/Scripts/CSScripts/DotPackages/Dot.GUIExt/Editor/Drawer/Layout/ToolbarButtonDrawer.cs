@@ -6,12 +6,16 @@ namespace DotEditor.GUIExt.Layout
 {
     public class ToolbarButtonDrawer : LayoutDrawable
     {
-        public float Width { get; set; } = 60.0f;
         public Action OnClicked { get; set; } = null;
+
+        public ToolbarButtonDrawer()
+        {
+            Width = 60.0f;
+        }
 
         protected override void OnLayoutDraw()
         {
-            if (GUILayout.Button(Label, EditorStyles.toolbarButton, GUILayout.Width(Width)))
+            if (GUILayout.Button(Label, EditorStyles.toolbarButton, LayoutOptions))
             {
                 OnClicked?.Invoke();
             }

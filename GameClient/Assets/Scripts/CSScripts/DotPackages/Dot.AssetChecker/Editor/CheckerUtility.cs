@@ -1,86 +1,208 @@
-﻿using System;
+﻿using DotEditor.Utilities;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using UnityEditor;
-using UnityEngine;
+using System.Runtime.Serialization.Formatters;
 
 namespace DotEditor.AssetChecker
 {
+    public class CheckerFileInfo
+    {
+        public string filePath;
+        public Checker checker;
+    }
+
+    public class CheckerResultInfo
+    {
+        public List<FailedResultInfo> failedResults = new List<FailedResultInfo>();
+        public List<PassedResultInfo> passedResults = new List<PassedResultInfo>();
+
+        public void AddFailedResult(string assetPath, int errorCode)
+        {
+            var result = failedResults.FirstOrDefault((r) =>
+            {
+                return r.assetPath == assetPath;
+            });
+            if (result != null)
+            {
+                result.errorCode = errorCode;
+            }
+            else
+            {
+                failedResults.Add(new FailedResultInfo()
+                {
+                    assetPath = assetPath,
+                    errorCode = errorCode
+                });
+            }
+        }
+
+        public void AddPassedResult(string assetPath)
+        {
+            var hasResult = passedResults.Any((r) =>
+            {
+                return r.assetPath == assetPath;
+            });
+            if (hasResult)
+            {
+                return;
+            }
+            passedResults.Add(new PassedResultInfo()
+            {
+                assetPath = assetPath
+            });
+        }
+
+        public void RemoveAsset(string assetPath)
+        {
+            for (int i = failedResults.Count - 1; i >= 0; --i)
+            {
+                if (failedResults[i].assetPath == assetPath)
+                {
+                    failedResults.RemoveAt(i);
+                    break;
+                }
+            }
+
+            for (int i = passedResults.Count - 1; i >= 0; --i)
+            {
+                if (passedResults[i].assetPath == assetPath)
+                {
+                    passedResults.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public class FailedResultInfo
+        {
+            public string assetPath;
+            public int errorCode;
+        }
+
+        public class PassedResultInfo
+        {
+            public string assetPath;
+        }
+    }
+
     internal static class CheckerUtility
     {
-        internal static void ShowMenuToCreateMatchFilter(Action<IMatchFilter> callback)
+        public static string CHECKER_ROOT_DIR = "Tools";
+        public static string CHECKER_CONFIG_DIR = "AssetChecker";
+        public static string CHECKER_RESULT_INFO_PATH = "asset_checker_result.txt";
+
+        static CheckerUtility()
         {
-            GenericMenu menu = new GenericMenu();
-            Type[] types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                            from type in assembly.GetTypes()
-                            where !type.IsAbstract && type.IsClass && typeof(IMatchFilter).IsAssignableFrom(type)
-                            select type).ToArray();
-            foreach(var type in types)
-            {
-                object[] attrs = type.GetCustomAttributes(typeof(MatchFilterAttribute), false);
-                if(attrs!=null && attrs.Length>0)
-                {
-                    MatchFilterAttribute attr = attrs[0] as MatchFilterAttribute;
-                    menu.AddItem(new GUIContent(attr.MenuItemName), false,() =>
-                     {
-                         if (Activator.CreateInstance(type) is IMatchFilter filter)
-                         {
-                             callback?.Invoke(filter);
-                         }
-                     });
-                }
-            }
-            menu.ShowAsContext();
+            CHECKER_CONFIG_DIR = $"{PathUtility.GetProjectDiskPath()}/{CHECKER_ROOT_DIR}/{CHECKER_CONFIG_DIR}";
+            CHECKER_RESULT_INFO_PATH = $"{PathUtility.GetProjectDiskPath()}/{CHECKER_ROOT_DIR}/{CHECKER_RESULT_INFO_PATH}";
         }
 
-        internal static void ShowMenuToCreateOperationRule(Action<IOperationRule> callback)
+        private static CheckerResultInfo checkerResultInfo = null;
+        public static CheckerResultInfo ReadCheckerResultInfo()
         {
-            GenericMenu menu = new GenericMenu();
-            Type[] types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                            from type in assembly.GetTypes()
-                            where !type.IsAbstract && type.IsClass && typeof(IOperationRule).IsAssignableFrom(type)
-                            select type).ToArray();
-            foreach (var type in types)
+            if(checkerResultInfo == null)
             {
-                var attrs = type.GetCustomAttributes(typeof(OperatationRuleAttribute), false);
-                if (attrs != null && attrs.Length > 0)
+                if (File.Exists(CHECKER_RESULT_INFO_PATH))
                 {
-                    var attr = attrs[0] as OperatationRuleAttribute;
-                    menu.AddItem(new GUIContent(attr.MenuItemName), false, () =>
+                    string content = File.ReadAllText(CHECKER_RESULT_INFO_PATH);
+                    checkerResultInfo = JsonConvert.DeserializeObject<CheckerResultInfo>(content, new JsonSerializerSettings()
                     {
-                        if (Activator.CreateInstance(type) is IOperationRule rule)
-                        {
-                            callback?.Invoke(rule);
-                        }
+                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                        TypeNameHandling = TypeNameHandling.All,
                     });
-                }
-            }
-            menu.ShowAsContext();
-        }
-
-        internal static void ShowMenuToCreateAnalyseRule(Action<IAnalyseRule> callback)
-        {
-            GenericMenu menu = new GenericMenu();
-            Type[] types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                            from type in assembly.GetTypes()
-                            where !type.IsAbstract && type.IsClass && typeof(IAnalyseRule).IsAssignableFrom(type)
-                            select type).ToArray();
-            foreach (var type in types)
-            {
-                var attrs = type.GetCustomAttributes(typeof(OperatationRuleAttribute), false);
-                if (attrs != null && attrs.Length > 0)
+                }else
                 {
-                    var attr = attrs[0] as OperatationRuleAttribute;
-                    menu.AddItem(new GUIContent(attr.MenuItemName), false, () =>
-                    {
-                        if (Activator.CreateInstance(type) is IAnalyseRule rule)
-                        {
-                            callback?.Invoke(rule);
-                        }
-                    });
+                    checkerResultInfo = new CheckerResultInfo();
                 }
             }
-            menu.ShowAsContext();
+
+            return checkerResultInfo;           
         }
 
+        public static void SaveCheckerResultInfo()
+        {
+            if (!Directory.Exists(CHECKER_CONFIG_DIR))
+            {
+                Directory.CreateDirectory(CHECKER_CONFIG_DIR);
+            }
+
+            string jsonContent = JsonConvert.SerializeObject(checkerResultInfo, Formatting.Indented, new JsonSerializerSettings()
+            {
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                TypeNameHandling = TypeNameHandling.All,
+            });
+            File.WriteAllText(CHECKER_RESULT_INFO_PATH, jsonContent);
+        }
+
+        private static List<CheckerFileInfo> checkerFileInfos = null;
+        public static List<CheckerFileInfo> ReadCheckerFileInfos()
+        {
+            if(checkerFileInfos != null)
+            {
+                return checkerFileInfos;
+            }
+
+            checkerFileInfos = new List<CheckerFileInfo>();
+            if (!Directory.Exists(CHECKER_CONFIG_DIR))
+            {
+                return checkerFileInfos;
+            }
+
+            string[] files = Directory.GetFiles(CHECKER_CONFIG_DIR, "*.json", SearchOption.TopDirectoryOnly);
+            if (files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                {
+                    Checker checker = JsonConvert.DeserializeObject<Checker>(File.ReadAllText(file), new JsonSerializerSettings()
+                    {
+                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                        TypeNameHandling = TypeNameHandling.All,
+                    });
+                    if (checker != null)
+                    {
+                        checkerFileInfos.Add(new CheckerFileInfo()
+                        {
+                            filePath = file.Replace("\\", "/"),
+                            checker = checker,
+                        });
+                    }
+                }
+            }
+
+            return checkerFileInfos;
+        }
+
+        public static void SaveCheckerFileInfo(CheckerFileInfo checkerFileInfo)
+        {
+            if (!Directory.Exists(CHECKER_CONFIG_DIR))
+            {
+                Directory.CreateDirectory(CHECKER_CONFIG_DIR);
+            }
+
+            string jsonContent = JsonConvert.SerializeObject(checkerFileInfo.checker,Formatting.Indented, new JsonSerializerSettings()
+            {
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                TypeNameHandling = TypeNameHandling.All,
+            });
+            File.WriteAllText(checkerFileInfo.filePath, jsonContent);
+
+            CheckerFileInfo cachedCFI = checkerFileInfos.FirstOrDefault((cfi) =>
+            {
+                return cfi.filePath == checkerFileInfo.filePath;
+            });
+            if(cachedCFI!=null)
+            {
+                checkerFileInfos.Remove(cachedCFI);
+            }
+            checkerFileInfos.Add(checkerFileInfo);
+        }
+
+        public static void DeleteCheckerFileInfo(CheckerFileInfo cfi)
+        {
+            checkerFileInfos.Remove(cfi);
+            File.Delete(cfi.filePath);
+        }
     }
 }

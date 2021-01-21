@@ -11,7 +11,7 @@ namespace DotEditor.GUIExt.Layout
 
         protected override void OnLayoutDraw()
         {
-            Value = EditorGUILayout.ToggleLeft(Label, Value);
+            Value = EditorGUILayout.ToggleLeft(Label, Value,LayoutOptions);
         }
     }
 }

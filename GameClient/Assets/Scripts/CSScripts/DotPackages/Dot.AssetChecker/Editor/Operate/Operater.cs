@@ -6,7 +6,7 @@ namespace DotEditor.AssetChecker
     public class Operater : ICloneable
     {
         public bool enable = true;
-        public List<IOperationRule> rules = null;
+        public List<IOperationRule> rules = new List<IOperationRule>();
 
         public void Add(IOperationRule rule)
         {

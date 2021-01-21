@@ -12,7 +12,7 @@ namespace DotEditor.GUIExt.Layout
         {
             int index = Array.IndexOf(Values, Value);
             if (index < 0) index = 0;
-            int newIndex = EditorGUILayout.Popup(Label, index, Contents);
+            int newIndex = EditorGUILayout.Popup(Label, index, Contents,LayoutOptions);
 
             if(newIndex>=0)
                 Value = Values[newIndex];

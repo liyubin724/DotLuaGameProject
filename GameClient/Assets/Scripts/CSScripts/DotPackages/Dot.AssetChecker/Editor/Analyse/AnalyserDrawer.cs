@@ -1,5 +1,7 @@
 ﻿using DotEditor.GUIExt;
 using DotEditor.GUIExt.NativeDrawer;
+using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,7 +25,7 @@ namespace DotEditor.AssetChecker
 
                 listDrawer.CreateNewItem = () =>
                 {
-                    CheckerUtility.ShowMenuToCreateAnalyseRule((rule) =>
+                    ShowMenuToCreateAnalyseRule((rule) =>
                     {
                         analyser.rulers.Add(rule);
                         listDrawer.Refresh();
@@ -47,6 +49,31 @@ namespace DotEditor.AssetChecker
             }
             EGUI.EndIndent();
 
+        }
+
+        void ShowMenuToCreateAnalyseRule(Action<IAnalyseRule> callback)
+        {
+            GenericMenu menu = new GenericMenu();
+            Type[] types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                            from type in assembly.GetTypes()
+                            where !type.IsAbstract && type.IsClass && typeof(IAnalyseRule).IsAssignableFrom(type)
+                            select type).ToArray();
+            foreach (var type in types)
+            {
+                var attrs = type.GetCustomAttributes(typeof(OperatationRuleAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    var attr = attrs[0] as OperatationRuleAttribute;
+                    menu.AddItem(new GUIContent(attr.MenuItemName), false, () =>
+                    {
+                        if (Activator.CreateInstance(type) is IAnalyseRule rule)
+                        {
+                            callback?.Invoke(rule);
+                        }
+                    });
+                }
+            }
+            menu.ShowAsContext();
         }
     }
 }
