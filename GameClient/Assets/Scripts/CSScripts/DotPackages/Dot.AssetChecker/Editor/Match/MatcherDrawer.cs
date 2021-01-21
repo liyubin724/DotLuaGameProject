@@ -9,40 +9,41 @@ namespace DotEditor.AssetChecker
     public class MatcherDrawer : NTypeDrawer
     {
         private Matcher matcher = null;
-        private NArrayDrawer filterArrayDrawer = null;
+        private NArrayDrawer listDrawer = null;
         public override void OnGUILayout()
         {
             EGUILayout.DrawBoxHeader(Label, GUILayout.ExpandWidth(true));
             if(matcher == null)
             {
                 matcher = ItemDrawer.Value as Matcher;
-                filterArrayDrawer = new NArrayDrawer(matcher.filters);
-                filterArrayDrawer.Header = "Filters";
-                filterArrayDrawer.IsShowBox = true;
+                listDrawer = new NArrayDrawer(matcher.filters);
+                listDrawer.Header = "Filters";
+                listDrawer.IsShowBox = true;
+                listDrawer.IsShowInherit = true;
                 
-                filterArrayDrawer.CreateNewItem = () =>
+                listDrawer.CreateNewItem = () =>
                 {
                     CheckerUtility.ShowMenuToCreateMatchFilter((filter) =>
                     {
                         matcher.filters.Add(filter);
-                        filterArrayDrawer.Refresh();
+                        listDrawer.Refresh();
                     });
                 };
-                filterArrayDrawer.ClearAllItem = () =>
+                listDrawer.ClearAllItem = () =>
                 {
                     matcher.filters.Clear();
-                    filterArrayDrawer.Refresh();
+                    listDrawer.Refresh();
                 };
-                filterArrayDrawer.DeleteItemAt = (index) =>
+                listDrawer.DeleteItemAt = (index) =>
                 {
                     matcher.filters.RemoveAt(index);
-                    filterArrayDrawer.Refresh();
+                    listDrawer.Refresh();
                 };
             }
             EGUI.BeginIndent();
             {
                 matcher.enable = EditorGUILayout.Toggle("enable", matcher.enable);
-                filterArrayDrawer.OnGUILayout();
+                listDrawer.OnGUILayout();
             }
             EGUI.EndIndent();
 

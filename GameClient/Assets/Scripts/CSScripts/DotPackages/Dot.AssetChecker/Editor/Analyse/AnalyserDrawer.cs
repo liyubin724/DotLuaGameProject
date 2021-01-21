@@ -9,40 +9,41 @@ namespace DotEditor.AssetChecker
     public class AnalyserDrawer : NTypeDrawer
     {
         private Analyser analyser = null;
-        private NArrayDrawer ruleArrayDrawer = null;
+        private NArrayDrawer listDrawer = null;
         public override void OnGUILayout()
         {
             EGUILayout.DrawBoxHeader(Label, GUILayout.ExpandWidth(true));
             if (analyser == null)
             {
                 analyser = ItemDrawer.Value as Analyser;
-                ruleArrayDrawer = new NArrayDrawer(analyser.rulers);
-                ruleArrayDrawer.Header = "Filters";
-                ruleArrayDrawer.IsShowBox = true;
+                listDrawer = new NArrayDrawer(analyser.rulers);
+                listDrawer.Header = "Filters";
+                listDrawer.IsShowBox = true;
+                listDrawer.IsShowInherit = true;
 
-                ruleArrayDrawer.CreateNewItem = () =>
+                listDrawer.CreateNewItem = () =>
                 {
                     CheckerUtility.ShowMenuToCreateAnalyseRule((rule) =>
                     {
                         analyser.rulers.Add(rule);
-                        ruleArrayDrawer.Refresh();
+                        listDrawer.Refresh();
                     });
                 };
-                ruleArrayDrawer.ClearAllItem = () =>
+                listDrawer.ClearAllItem = () =>
                 {
                     analyser.rulers.Clear();
-                    ruleArrayDrawer.Refresh();
+                    listDrawer.Refresh();
                 };
-                ruleArrayDrawer.DeleteItemAt = (index) =>
+                listDrawer.DeleteItemAt = (index) =>
                 {
                     analyser.rulers.RemoveAt(index);
-                    ruleArrayDrawer.Refresh();
+                    listDrawer.Refresh();
                 };
             }
             EGUI.BeginIndent();
             {
                 analyser.enable = EditorGUILayout.Toggle("enable", analyser.enable);
-                ruleArrayDrawer.OnGUILayout();
+                listDrawer.OnGUILayout();
             }
             EGUI.EndIndent();
 

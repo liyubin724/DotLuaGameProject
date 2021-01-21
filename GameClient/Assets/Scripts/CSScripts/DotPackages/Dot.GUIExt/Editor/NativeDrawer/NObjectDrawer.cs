@@ -54,8 +54,10 @@ namespace DotEditor.GUIExt.NativeDrawer
                             });
                         }
                     }
-
-                    itemDrawers.Add(new NHorizontalLineDrawer());
+                    if (IsShowInherit)
+                    {
+                        itemDrawers.Add(new NHorizontalLineDrawer());
+                    }
                 }
             }
         }
