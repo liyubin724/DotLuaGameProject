@@ -1,12 +1,18 @@
 ﻿using DotEditor.Utilities;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
+using UnityEngine;
+
+using JsonUtility = DotEngine.Utilities.JsonUtility;
 
 namespace DotEditor.AssetChecker
 {
+    public class CheckerSetting
+    {
+        public bool isFolderAsAsset = false;
+    }
+
     public class CheckerFileInfo
     {
         public string filePath;
@@ -92,11 +98,56 @@ namespace DotEditor.AssetChecker
         public static string CHECKER_ROOT_DIR = "Tools";
         public static string CHECKER_CONFIG_DIR = "AssetChecker";
         public static string CHECKER_RESULT_INFO_PATH = "asset_checker_result.txt";
+        public static string CHECKER_SETTING_PATH = "asset_checker_setting.txt";
 
         static CheckerUtility()
         {
             CHECKER_CONFIG_DIR = $"{PathUtility.GetProjectDiskPath()}/{CHECKER_ROOT_DIR}/{CHECKER_CONFIG_DIR}";
             CHECKER_RESULT_INFO_PATH = $"{PathUtility.GetProjectDiskPath()}/{CHECKER_ROOT_DIR}/{CHECKER_RESULT_INFO_PATH}";
+            CHECKER_SETTING_PATH = $"{PathUtility.GetProjectDiskPath()}/{CHECKER_ROOT_DIR}/{CHECKER_SETTING_PATH}";
+        }
+
+        private static void WriteAsJson<T>(string filePath, T data) where T:class,new()
+        {
+            string dir = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(dir))
+            {
+                if(!Directory.CreateDirectory(dir).Exists)
+                {
+                    Debug.LogError("CheckerUtility::SaveAsJson->Create dir failed.dir = " + dir);
+                    return;
+                }
+            }
+            File.WriteAllText(filePath, JsonUtility.ToJsonWithType(data));
+        }
+
+        private static T ReadFromJson<T>(string filePath,bool createIfNot = true) where T : class, new()
+        {
+            T data = null;
+            if(File.Exists(filePath))
+            {
+                data = (T)JsonUtility.FromJsonWithType(File.ReadAllText(filePath));
+            }
+            if(data == null && createIfNot)
+            {
+                data = new T();
+            }
+            return data;
+        }
+
+        public static CheckerSetting setting = null;
+        public static CheckerSetting ReadSetting()
+        {
+            if(setting == null)
+            {
+                setting = ReadFromJson<CheckerSetting>(CHECKER_SETTING_PATH);
+            }
+            return setting;
+        }
+
+        public static void WriteSetting()
+        {
+            WriteAsJson<CheckerSetting>(CHECKER_SETTING_PATH, setting);
         }
 
         private static CheckerResultInfo checkerResultInfo = null;
@@ -104,18 +155,7 @@ namespace DotEditor.AssetChecker
         {
             if(checkerResultInfo == null)
             {
-                if (File.Exists(CHECKER_RESULT_INFO_PATH))
-                {
-                    string content = File.ReadAllText(CHECKER_RESULT_INFO_PATH);
-                    checkerResultInfo = JsonConvert.DeserializeObject<CheckerResultInfo>(content, new JsonSerializerSettings()
-                    {
-                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-                        TypeNameHandling = TypeNameHandling.All,
-                    });
-                }else
-                {
-                    checkerResultInfo = new CheckerResultInfo();
-                }
+                checkerResultInfo = ReadFromJson<CheckerResultInfo>(CHECKER_RESULT_INFO_PATH);
             }
 
             return checkerResultInfo;           
@@ -123,75 +163,48 @@ namespace DotEditor.AssetChecker
 
         public static void SaveCheckerResultInfo()
         {
-            if (!Directory.Exists(CHECKER_CONFIG_DIR))
-            {
-                Directory.CreateDirectory(CHECKER_CONFIG_DIR);
-            }
-
-            string jsonContent = JsonConvert.SerializeObject(checkerResultInfo, Formatting.Indented, new JsonSerializerSettings()
-            {
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-                TypeNameHandling = TypeNameHandling.All,
-            });
-            File.WriteAllText(CHECKER_RESULT_INFO_PATH, jsonContent);
+            WriteAsJson<CheckerResultInfo>(CHECKER_RESULT_INFO_PATH,checkerResultInfo);
         }
 
         private static List<CheckerFileInfo> checkerFileInfos = null;
         public static List<CheckerFileInfo> ReadCheckerFileInfos()
         {
-            if(checkerFileInfos != null)
+            if(checkerFileInfos == null)
             {
-                return checkerFileInfos;
-            }
+                checkerFileInfos = new List<CheckerFileInfo>();
 
-            checkerFileInfos = new List<CheckerFileInfo>();
-            if (!Directory.Exists(CHECKER_CONFIG_DIR))
-            {
-                return checkerFileInfos;
-            }
-
-            string[] files = Directory.GetFiles(CHECKER_CONFIG_DIR, "*.json", SearchOption.TopDirectoryOnly);
-            if (files != null && files.Length > 0)
-            {
-                foreach (var file in files)
+                if(Directory.Exists(CHECKER_CONFIG_DIR))
                 {
-                    Checker checker = JsonConvert.DeserializeObject<Checker>(File.ReadAllText(file), new JsonSerializerSettings()
+                    string[] files = Directory.GetFiles(CHECKER_CONFIG_DIR, "*.json", SearchOption.TopDirectoryOnly);
+                    if (files != null && files.Length > 0)
                     {
-                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-                        TypeNameHandling = TypeNameHandling.All,
-                    });
-                    if (checker != null)
-                    {
-                        checkerFileInfos.Add(new CheckerFileInfo()
+                        foreach (var file in files)
                         {
-                            filePath = file.Replace("\\", "/"),
-                            checker = checker,
-                        });
+                            Checker checker = ReadFromJson<Checker>(file,false);
+                            if (checker != null)
+                            {
+                                checkerFileInfos.Add(new CheckerFileInfo()
+                                {
+                                    filePath = file.Replace("\\", "/"),
+                                    checker = checker,
+                                });
+                            }
+                        }
                     }
                 }
             }
-
             return checkerFileInfos;
         }
 
         public static void SaveCheckerFileInfo(CheckerFileInfo checkerFileInfo)
         {
-            if (!Directory.Exists(CHECKER_CONFIG_DIR))
-            {
-                Directory.CreateDirectory(CHECKER_CONFIG_DIR);
-            }
-
-            string jsonContent = JsonConvert.SerializeObject(checkerFileInfo.checker,Formatting.Indented, new JsonSerializerSettings()
-            {
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-                TypeNameHandling = TypeNameHandling.All,
-            });
-            File.WriteAllText(checkerFileInfo.filePath, jsonContent);
+            WriteAsJson<Checker>(checkerFileInfo.filePath, checkerFileInfo.checker);
 
             CheckerFileInfo cachedCFI = checkerFileInfos.FirstOrDefault((cfi) =>
             {
                 return cfi.filePath == checkerFileInfo.filePath;
             });
+
             if(cachedCFI!=null)
             {
                 checkerFileInfos.Remove(cachedCFI);

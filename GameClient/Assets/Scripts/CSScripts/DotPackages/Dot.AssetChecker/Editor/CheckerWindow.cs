@@ -240,6 +240,13 @@ namespace DotEditor.AssetChecker
                             {
                                 saveInterval = value;
                             }
+                        },new ToolbarButtonDrawer()
+                        {
+                            Text = Contents.settingContent,
+                            OnClicked = () =>
+                            {
+
+                            }
                         }
                     ),
                 };
@@ -254,6 +261,7 @@ namespace DotEditor.AssetChecker
             public static string saveContent = "Save";
             public static string deleteContent = "Delete";
             public static string autoSaveContent = "Auto Save";
+            public static string settingContent = "Setting";
         }
 
     }
