@@ -2,7 +2,7 @@
 
 namespace DotEditor.GUIExt.Layout
 {
-    public class EnumButtonDrawer : ValueProviderLayoutDrawable<int>
+    public class EnumButtonDrawer : ValueProviderLayoutDrawable<Enum>
     {
         public Type EnumType { get; private set; }
 
@@ -13,9 +13,8 @@ namespace DotEditor.GUIExt.Layout
 
         protected override void OnLayoutDraw()
         {
-            string enumName = Enum.GetName(EnumType, Value);
-
-            Value = (int)EGUILayout.DrawEnumButton(Text,(Enum)Enum.Parse(EnumType,enumName), LayoutOptions);
+            Enum enumValue = (Enum)Enum.ToObject(EnumType, Value);
+            Value = (Enum)EGUILayout.DrawEnumButton(Text, enumValue, LayoutOptions);
         }
     }
 }

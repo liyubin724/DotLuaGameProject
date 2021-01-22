@@ -137,8 +137,12 @@ namespace DotEditor.GUIExt.EditDrawer
             if (enumButtonDrawer == null)
             {
                 enumButtonDrawer = new EnumButtonDrawer(typeof(NativeFlagEnum));
-                enumButtonDrawer.Value = 3;
+                enumButtonDrawer.Value = NativeFlagEnum.First | NativeFlagEnum.Second;
                 enumButtonDrawer.IsExpandWidth = true;
+                enumButtonDrawer.OnValueChanged = (value) =>
+                {
+                    Debug.Log("" + value);
+                };
             }
             enumButtonDrawer.OnGUILayout();
         }
