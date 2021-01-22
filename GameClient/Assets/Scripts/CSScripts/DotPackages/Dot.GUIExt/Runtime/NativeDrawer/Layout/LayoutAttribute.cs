@@ -6,11 +6,11 @@
         After,
     }
 
-    public abstract class NLayoutAttribute : NDrawerAttribute
+    public abstract class LayoutAttribute : NDrawerAttribute
     {
         public LayoutOccasion Occasion { get; private set; }
 
-        protected NLayoutAttribute(LayoutOccasion occasion = LayoutOccasion.Before)
+        protected LayoutAttribute(LayoutOccasion occasion = LayoutOccasion.Before)
         {
             Occasion = occasion;
         }

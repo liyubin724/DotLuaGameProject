@@ -1,6 +1,7 @@
 ﻿using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
@@ -135,6 +136,67 @@ namespace DotEditor.GUIExt.NativeDrawer
                 }
             }
             return types;
+        }
+
+        public static T GetMemberValue<T>(string memberName, object target)
+        {
+            object value = GetMemberValue(memberName, target);
+            if (value != null)
+            {
+                return (T)value;
+            }
+            return default;
+        }
+
+
+        public static object GetMemberValue(string memberName, object target)
+        {
+            if (string.IsNullOrEmpty(memberName) || target == null)
+            {
+                return null;
+            }
+
+            Type type = target.GetType();
+
+            FieldInfo fieldInfo = type.GetField(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            if (fieldInfo != null)
+            {
+                if (fieldInfo.IsStatic)
+                {
+                    return fieldInfo.GetValue(null);
+                }
+                else
+                {
+                    return fieldInfo.GetValue(target);
+                }
+            }
+
+            PropertyInfo propertyInfo = type.GetProperty(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            if (propertyInfo != null && propertyInfo.CanRead)
+            {
+                if (propertyInfo.GetGetMethod().IsStatic)
+                {
+                    propertyInfo.GetValue(null);
+                }
+                else
+                {
+                    return propertyInfo.GetValue(target);
+                }
+            }
+
+            MethodInfo methodInfo = type.GetMethod(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            if (methodInfo != null)
+            {
+                if (methodInfo.IsStatic)
+                {
+                    methodInfo.Invoke(null, null);
+                }
+                else
+                {
+                    return methodInfo.Invoke(target, null);
+                }
+            }
+            return null;
         }
     }
 }

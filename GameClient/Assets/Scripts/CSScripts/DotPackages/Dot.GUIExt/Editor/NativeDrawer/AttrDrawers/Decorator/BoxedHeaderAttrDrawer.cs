@@ -1,6 +1,14 @@
-﻿namespace Assets.Scripts.CSScripts.DotPackages.Dot.GUIExt.Editor.NativeDrawer.AttrDrawers.Decorator
+﻿using DotEngine.GUIExt.NativeDrawer;
+using UnityEngine;
+
+namespace DotEditor.GUIExt.NativeDrawer
 {
-    internal class BoxedHeaderAttrDrawer
+    public class BoxedHeaderDrawer : DecoratorAttrDrawer
     {
+        public override void OnGUILayout()
+        {
+            BoxedHeaderAttribute attr = GetAttr<BoxedHeaderAttribute>();
+            EGUILayout.DrawBoxHeader(attr.Header, GUILayout.ExpandWidth(true));
+        }
     }
 }

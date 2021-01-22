@@ -119,7 +119,6 @@ namespace DotEditor.GUIExt
 
         public void OnGUILayout()
         {
-            
             EditorGUI.BeginDisabledGroup(!Enable);
             {
                 EGUI.BeginLabelWidth(LabelWidth);

@@ -130,8 +130,23 @@ namespace DotEditor.GUIExt.EditDrawer
 
         private DragLineDrawer dragLineDrawer = null;
         private bool isInited = false;
+
+        private EnumButtonDrawer enumButtonDrawer = null;
         private void OnGUI()
         {
+            if (enumButtonDrawer == null)
+            {
+                enumButtonDrawer = new EnumButtonDrawer(typeof(NativeFlagEnum));
+                enumButtonDrawer.Value = 3;
+                enumButtonDrawer.IsExpandWidth = true;
+            }
+            enumButtonDrawer.OnGUILayout();
+        }
+
+        private void OnGUI2()
+        {
+            
+
             if(toolbarDrawer == null)
             {
                 BaseData[] datas = new BaseData[]
