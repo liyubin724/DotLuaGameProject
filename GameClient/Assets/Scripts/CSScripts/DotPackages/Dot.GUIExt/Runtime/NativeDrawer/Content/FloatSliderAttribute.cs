@@ -5,21 +5,21 @@ namespace DotEngine.GUIExt.NativeDrawer
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class FloatSliderAttribute : ContentAttribute
     {
-        public float LeftValue { get; private set; }
-        public float RightValue { get; private set; }
+        public float MinValue { get; private set; }
+        public float MaxValue { get; private set; }
 
-        public string LeftValueMemberName { get; private set; }
-        public string RightValueMemberName { get; private set; }
-        public FloatSliderAttribute(float left, float right)
+        public string MinValueMemberName { get; private set; }
+        public string MaxValueMemberName { get; private set; }
+        public FloatSliderAttribute(float min, float max)
         {
-            LeftValue = left;
-            RightValue = right;
+            MinValue = min;
+            MaxValue = max;
         }
 
-        public FloatSliderAttribute(string leftMemberName, string rightMemberName)
+        public FloatSliderAttribute(string minMemberName, string maxMemberName)
         {
-            LeftValueMemberName = leftMemberName;
-            RightValueMemberName = rightMemberName;
+            MinValueMemberName = minMemberName;
+            MaxValueMemberName = maxMemberName;
         }
     }
 }

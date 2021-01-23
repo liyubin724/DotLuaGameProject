@@ -1,39 +1,38 @@
-﻿using DotEngine.GUIExt.NativeDrawer;
-using UnityEditor;
+﻿using DotEditor.GUIExt.Layout;
+using DotEngine.GUIExt.NativeDrawer;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
     public class FloatSliderAttrDrawer : ContentAttrDrawer
     {
+        private FloatSliderDrawer drawer = null;
+
         protected override void DrawContent()
         {
+            if(drawer == null)
+            {
+                drawer = new FloatSliderDrawer();
+                drawer.OnValueChanged = (value) =>
+                {
+                    ItemDrawer.Value = value;
+                };
+                drawer.Value = (float)ItemDrawer.Value;
+            }
             FloatSliderAttribute attr = GetAttr<FloatSliderAttribute>();
 
-            float leftValue = attr.LeftValue;
-            float rightValue = attr.RightValue;
-            if (!string.IsNullOrEmpty(attr.LeftValueMemberName))
+            float leftValue = attr.MinValue;
+            float rightValue = attr.MaxValue;
+            if (!string.IsNullOrEmpty(attr.MinValueMemberName))
             {
-                leftValue = NDrawerUtility.GetMemberValue<float>(attr.LeftValueMemberName, ItemDrawer.Target);
+                leftValue = NDrawerUtility.GetMemberValue<float>(attr.MinValueMemberName, ItemDrawer.Target);
             }
-
-            if (!string.IsNullOrEmpty(attr.RightValueMemberName))
+            if (!string.IsNullOrEmpty(attr.MaxValueMemberName))
             {
-                rightValue = NDrawerUtility.GetMemberValue<float>(attr.RightValueMemberName, ItemDrawer.Target);
+                rightValue = NDrawerUtility.GetMemberValue<float>(attr.MaxValueMemberName, ItemDrawer.Target);
             }
-
-            float value = (float)ItemDrawer.Value;
-            if (value < leftValue)
-            {
-                value = leftValue;
-                ItemDrawer.Value = value;
-            }
-            if (value > rightValue)
-            {
-                value = rightValue;
-                ItemDrawer.Value = value;
-            }
-
-            ItemDrawer.Value = EditorGUILayout.Slider(Label, value, leftValue, rightValue);
+            drawer.MinValue = leftValue;
+            drawer.MaxValue = rightValue;
+            drawer.OnGUILayout();
         }
 
         protected override bool IsValidValueType()
