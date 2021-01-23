@@ -3,7 +3,7 @@
 namespace DotEngine.GUIExt.NativeDrawer
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-    public class VisibleIfAttribute : VisibleAtrribute
+    public class VisibleIfAttribute : VisibleAttribute
     {
         public string MemberName { get; private set; }
 

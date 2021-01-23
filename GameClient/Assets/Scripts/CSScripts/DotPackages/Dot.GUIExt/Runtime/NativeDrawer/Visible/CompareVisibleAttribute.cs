@@ -3,7 +3,7 @@
 namespace DotEngine.GUIExt.NativeDrawer
 {
     [AttributeUsage(AttributeTargets.Field,AllowMultiple =false,Inherited =false)]
-    public class CompareVisibleAttribute : VisibleAtrribute
+    public class CompareVisibleAttribute : VisibleAttribute
     {
         public CompareSymbol Symbol { get; private set; }
         public object Value { get; private set; }
