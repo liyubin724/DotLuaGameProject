@@ -8,9 +8,9 @@ using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class NItemDrawer : NLayoutDrawer
+    public class ItemDrawer : LayoutDrawer
     {
-        public NInstanceDrawer ParentDrawer { get; set; }
+        public InstanceDrawer ParentDrawer { get; set; }
         public SystemObject Target { get; private set; }
         public FieldInfo Field { get; private set; }
         public int ItemIndex { get; private set; } = -1;
@@ -103,16 +103,16 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public event Action<object> OnValueChanged;
 
-        private NLayoutDrawer innerDrawer = null;
+        private LayoutDrawer innerDrawer = null;
         private bool isNeedRefresh = true;
 
-        public NItemDrawer(SystemObject target, FieldInfo field)
+        public ItemDrawer(SystemObject target, FieldInfo field)
         {
             Target = target;
             Field = field;
         }
 
-        public NItemDrawer(SystemObject target, int index)
+        public ItemDrawer(SystemObject target, int index)
         {
             Target = target;
             ItemIndex = index;
@@ -129,7 +129,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 
             if (Target != null && Value != null)
             {
-                TypeDrawer typeDrawer = NDrawerUtility.GetTypeDrawerInstance(ValueType);
+                TypeDrawer typeDrawer = DrawerUtility.GetTypeDrawerInstance(ValueType);
                 if (typeDrawer != null)
                 {
                     typeDrawer.Label = Label;
@@ -138,14 +138,14 @@ namespace DotEditor.GUIExt.NativeDrawer
                     innerDrawer = typeDrawer;
                 }else
                 {
-                    NInstanceDrawer instanceDrawer = null;
+                    InstanceDrawer instanceDrawer = null;
                     if (TypeUtility.IsArrayOrListType(ValueType))
                     {
-                        instanceDrawer = new NArrayDrawer(Value);
+                        instanceDrawer = new ArrayDrawer(Value);
                     }
                     else if(TypeUtility.IsStructOrClassType(ValueType))
                     {
-                        instanceDrawer = new NObjectDrawer(Value);
+                        instanceDrawer = new ObjectDrawer(Value);
                     }
 
                     if(instanceDrawer!=null)
@@ -178,7 +178,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                     EditorGUILayout.LabelField(Label, GUILayout.Width(EditorGUIUtility.labelWidth));
                     if (GUILayout.Button("Create"))
                     {
-                        Value = NDrawerUtility.GetTypeInstance(ValueType);
+                        Value = DrawerUtility.GetTypeInstance(ValueType);
 
                         RefreshDrawer();
                     }

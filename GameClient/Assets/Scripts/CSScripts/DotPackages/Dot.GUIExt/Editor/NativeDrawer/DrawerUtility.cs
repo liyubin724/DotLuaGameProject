@@ -8,7 +8,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public static class NDrawerUtility
+    public static class DrawerUtility
     {
         private static Dictionary<Type, Type> defaultTypeDrawerDic = null;
 
@@ -35,19 +35,19 @@ namespace DotEditor.GUIExt.NativeDrawer
                 TypeUtility.IsEnumType(type);
         }
 
-        public static NLayoutDrawer GetLayoutDrawer(NItemDrawer itemDrawer)
+        public static LayoutDrawer GetLayoutDrawer(ItemDrawer itemDrawer)
         {
             Type valueType = itemDrawer.ValueType;
-            NLayoutDrawer drawer = GetTypeDrawerInstance(valueType);
+            LayoutDrawer drawer = GetTypeDrawerInstance(valueType);
             if (drawer == null)
             {
                 if (TypeUtility.IsArrayOrListType(valueType))
                 {
-                    drawer = new NArrayDrawer(itemDrawer);
+                    drawer = new ArrayDrawer(itemDrawer);
                 }
                 else if (TypeUtility.IsStructOrClassType(valueType))
                 {
-                    drawer = new NObjectDrawer(itemDrawer.Value);
+                    drawer = new ObjectDrawer(itemDrawer.Value);
                 }
             }
             return drawer;

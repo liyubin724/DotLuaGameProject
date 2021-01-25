@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEditor.GUIExt.IMGUI;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
@@ -6,11 +7,11 @@ using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class NObjectDrawer : NInstanceDrawer
+    public class ObjectDrawer : InstanceDrawer
     {
-        private List<NLayoutDrawer> itemDrawers = new List<NLayoutDrawer>();
+        private List<ILayoutDrawable> itemDrawers = new List<ILayoutDrawable>();
 
-        public NObjectDrawer(SystemObject target) : base(target)
+        public ObjectDrawer(SystemObject target) : base(target)
         {
         }
 
@@ -22,12 +23,12 @@ namespace DotEditor.GUIExt.NativeDrawer
                 return;
             }
 
-            Type[] allTypes = NDrawerUtility.GetAllBaseTypes(Target.GetType());
+            Type[] allTypes = DrawerUtility.GetAllBaseTypes(Target.GetType());
             if (allTypes != null && allTypes.Length > 0)
             {
                 if(!IsShowInherit)
                 {
-                    itemDrawers.Add(new NHeadDrawer()
+                    itemDrawers.Add(new HeaderDrawer()
                     {
                         Header = allTypes[allTypes.Length-1].Name,
                     });
@@ -36,7 +37,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 {
                     if (IsShowInherit)
                     {
-                        itemDrawers.Add(new NHeadDrawer()
+                        itemDrawers.Add(new HeaderDrawer()
                         {
                             Header = type.Name,
                         });
@@ -45,9 +46,9 @@ namespace DotEditor.GUIExt.NativeDrawer
                     FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                     foreach (var field in fields)
                     {
-                        if (NDrawerUtility.IsTypeSupported(field.FieldType))
+                        if (DrawerUtility.IsTypeSupported(field.FieldType))
                         {
-                            NItemDrawer fieldDrawer = new NItemDrawer(Target, field);
+                            ItemDrawer fieldDrawer = new ItemDrawer(Target, field);
                             fieldDrawer.ParentDrawer = this;
 
                             itemDrawers.Add(fieldDrawer);
@@ -63,7 +64,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                     }
                     if (IsShowInherit)
                     {
-                        itemDrawers.Add(new NHorizontalLineDrawer());
+                        itemDrawers.Add(new HorizontalLineDrawer());
                     }
                 }
             }

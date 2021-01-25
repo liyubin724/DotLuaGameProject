@@ -24,11 +24,11 @@ namespace DotEditor.GUIExt.NativeDrawer
             float rightValue = attr.MaxValue;
             if (!string.IsNullOrEmpty(attr.MinValueMemberName))
             {
-                leftValue = NDrawerUtility.GetMemberValue<float>(attr.MinValueMemberName, ItemDrawer.Target);
+                leftValue = DrawerUtility.GetMemberValue<float>(attr.MinValueMemberName, ItemDrawer.Target);
             }
             if (!string.IsNullOrEmpty(attr.MaxValueMemberName))
             {
-                rightValue = NDrawerUtility.GetMemberValue<float>(attr.MaxValueMemberName, ItemDrawer.Target);
+                rightValue = DrawerUtility.GetMemberValue<float>(attr.MaxValueMemberName, ItemDrawer.Target);
             }
             drawer.MinValue = leftValue;
             drawer.MaxValue = rightValue;

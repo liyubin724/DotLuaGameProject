@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class UnsupportedTypeDrawer : NLayoutDrawer
+    public class UnsupportedTypeDrawer : TypeDrawer
     {
-        public string Label { get; set; } = null;
         public Type TargetType { get; set; } = null;
 
         public override void OnGUILayout()

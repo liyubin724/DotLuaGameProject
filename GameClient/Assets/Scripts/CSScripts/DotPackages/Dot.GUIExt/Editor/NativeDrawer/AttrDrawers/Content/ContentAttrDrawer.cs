@@ -8,7 +8,7 @@ namespace DotEditor.GUIExt.NativeDrawer
     public abstract class ContentAttrDrawer : LayoutDrawable, INAttrDrawer
     {
         public NDrawerAttribute DrawerAttr { get; set; }
-        internal NItemDrawer ItemDrawer { get; set; }
+        internal ItemDrawer ItemDrawer { get; set; }
 
         public T GetAttr<T>() where T : NDrawerAttribute
         {

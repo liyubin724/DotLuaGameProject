@@ -5,7 +5,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public abstract class NInstanceDrawer : NLayoutDrawer
+    public abstract class InstanceDrawer : LayoutDrawer
     {
         private bool isShowScroll = false;
         public bool IsShowScroll
@@ -57,6 +57,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 }
             }
         }
+
         private string header = null;
         public string Header
         {
@@ -91,12 +92,12 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
-        internal NItemDrawer ItemDrawer { get; set; } = null;
+        internal ItemDrawer ItemDrawer { get; set; } = null;
 
         private Vector2 scrollPos = Vector2.zero;
         private bool isNeedRefresh = true;
 
-        protected NInstanceDrawer(SystemObject target)
+        protected InstanceDrawer(SystemObject target)
         {
             Target = target;
         }

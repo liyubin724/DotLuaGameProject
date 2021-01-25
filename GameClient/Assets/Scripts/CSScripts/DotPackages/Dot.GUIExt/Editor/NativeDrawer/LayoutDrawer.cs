@@ -2,7 +2,7 @@
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public abstract class NLayoutDrawer : ILayoutDrawable
+    public abstract class LayoutDrawer : ILayoutDrawable
     {
         public abstract void OnGUILayout();
     }

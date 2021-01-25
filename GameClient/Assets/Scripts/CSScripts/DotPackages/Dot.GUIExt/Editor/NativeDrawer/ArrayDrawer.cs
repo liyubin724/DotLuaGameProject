@@ -8,12 +8,12 @@ using SystemObject = System.Object;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public class NArrayDrawer : NInstanceDrawer
+    public class ArrayDrawer : InstanceDrawer
     {
         public Action CreateNewItem = null;
         public Action ClearAllItem = null;
         public Action<int> DeleteItemAt = null;
-        private List<NLayoutDrawer> itemDrawers = new List<NLayoutDrawer>();
+        private List<LayoutDrawer> itemDrawers = new List<LayoutDrawer>();
 
         private Type ItemType
         {
@@ -27,11 +27,11 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
-        public NArrayDrawer(SystemObject target) : base(target)
+        public ArrayDrawer(SystemObject target) : base(target)
         {
         }
 
-        public NArrayDrawer(NItemDrawer itemDrawer) : this(itemDrawer.Value)
+        public ArrayDrawer(ItemDrawer itemDrawer) : this(itemDrawer.Value)
         {
         }
 
@@ -43,7 +43,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                 for (int i = 0; i < list.Count; ++i)
                 {
                     Type itemType = list[i].GetType();
-                    bool isTypeSupported = NDrawerUtility.IsTypeSupported(itemType);
+                    bool isTypeSupported = DrawerUtility.IsTypeSupported(itemType);
 
                     if (!isTypeSupported)
                     {
@@ -55,7 +55,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                     }
                     else
                     {
-                        NItemDrawer itemDrawer = new NItemDrawer(Target, i);
+                        ItemDrawer itemDrawer = new ItemDrawer(Target, i);
                         itemDrawer.ParentDrawer = this;
 
                         itemDrawers.Add(itemDrawer);
@@ -79,7 +79,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             if (Target != null && Target is IList list)
             {
-                SystemObject item = NDrawerUtility.GetTypeInstance(ItemType);
+                SystemObject item = DrawerUtility.GetTypeInstance(ItemType);
                 if(item!=null)
                 {
                     if (TypeUtility.IsArrayType(list.GetType()))

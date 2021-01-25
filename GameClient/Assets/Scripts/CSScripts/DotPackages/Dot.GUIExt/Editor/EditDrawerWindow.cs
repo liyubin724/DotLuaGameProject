@@ -94,13 +94,13 @@ namespace DotEditor.GUIExt.EditDrawer
             win.Show();
         }
 
-        private NObjectDrawer nativeObject = null;
+        private ObjectDrawer nativeObject = null;
         private void OnEnable()
         {
             NativeData nData = new NativeData();
             nData.iBaseValue = new TDValue();
 
-            nativeObject = new NObjectDrawer(nData)
+            nativeObject = new ObjectDrawer(nData)
             {
                 IsShowInherit = true,
                 IsShowScroll = true,

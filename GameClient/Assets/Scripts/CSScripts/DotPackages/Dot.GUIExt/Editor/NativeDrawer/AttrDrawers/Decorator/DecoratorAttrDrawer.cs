@@ -2,6 +2,6 @@
 {
     public abstract class DecoratorAttrDrawer : AttrDrawer
     {
-        internal NItemDrawer ItemDrawer { get; set; }
+        internal ItemDrawer ItemDrawer { get; set; }
     }
 }
