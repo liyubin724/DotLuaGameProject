@@ -1,6 +1,6 @@
 ﻿using DotEditor.GUIExt;
 using DotEditor.GUIExt.DataGrid;
-using DotEditor.GUIExt.Layout;
+using DotEditor.GUIExt.IMGUI;
 using DotEditor.GUIExt.NativeDrawer;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +23,7 @@ namespace DotEditor.AssetChecker
         private EasyListView configListView = null;
         private DragLineDrawer dragLineDrawer = null;
 
-        private NObjectDrawer checkerDrawer = null;
+        private ObjectDrawer checkerDrawer = null;
         private bool isAutoSave = true;
         private int saveInterval = 10;
 
@@ -83,7 +83,7 @@ namespace DotEditor.AssetChecker
             checkerDrawer = null;
             if(selectedCheckerFileInfo != null)
             {
-                checkerDrawer = new NObjectDrawer(selectedCheckerFileInfo.checker);
+                checkerDrawer = new ObjectDrawer(selectedCheckerFileInfo.checker);
                 checkerDrawer.IsShowBox = true;
                 checkerDrawer.IsShowScroll = true;
             }
@@ -156,7 +156,7 @@ namespace DotEditor.AssetChecker
             {
                 toolbarDrawer = new ToolbarDrawer()
                 {
-                    LeftDrawable = new HorizontalCompositeDrawer
+                    LeftDrawable = new HorizontalLayoutDrawer
                     (
                         new ToolbarButtonDrawer()
                         {
@@ -214,7 +214,7 @@ namespace DotEditor.AssetChecker
                             }
                         }
                     ),
-                    RightDrawable = new HorizontalCompositeDrawer
+                    RightDrawable = new HorizontalLayoutDrawer
                     (
                         new ToolbarToggleDrawer()
                         {

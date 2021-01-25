@@ -8,17 +8,17 @@ using UnityEngine;
 namespace DotEditor.AssetChecker
 {
     [CustomTypeDrawer(typeof(Operater))]
-    public class OperaterDrawer : NTypeDrawer
+    public class OperaterDrawer : TypeDrawer
     {
         private Operater operater = null;
-        private NArrayDrawer listDrawer = null;
+        private ArrayDrawer listDrawer = null;
         public override void OnGUILayout()
         {
             EGUILayout.DrawBoxHeader(Label, GUILayout.ExpandWidth(true));
             if (operater == null)
             {
                 operater = ItemDrawer.Value as Operater;
-                listDrawer = new NArrayDrawer(operater.rules);
+                listDrawer = new ArrayDrawer(operater.rules);
                 listDrawer.Header = "Operation Rules";
                 listDrawer.IsShowBox = true;
                 listDrawer.IsShowInherit = false;

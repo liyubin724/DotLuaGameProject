@@ -8,17 +8,17 @@ using UnityEngine;
 namespace DotEditor.AssetChecker
 {
     [CustomTypeDrawer(typeof(Matcher))]
-    public class MatcherDrawer : NTypeDrawer
+    public class MatcherDrawer : TypeDrawer
     {
         private Matcher matcher = null;
-        private NArrayDrawer listDrawer = null;
+        private ArrayDrawer listDrawer = null;
         public override void OnGUILayout()
         {
             EGUILayout.DrawBoxHeader(Label, GUILayout.ExpandWidth(true));
             if(matcher == null)
             {
                 matcher = ItemDrawer.Value as Matcher;
-                listDrawer = new NArrayDrawer(matcher.filters);
+                listDrawer = new ArrayDrawer(matcher.filters);
                 listDrawer.Header = "Filters";
                 listDrawer.IsShowBox = true;
                 listDrawer.IsShowInherit = false;
