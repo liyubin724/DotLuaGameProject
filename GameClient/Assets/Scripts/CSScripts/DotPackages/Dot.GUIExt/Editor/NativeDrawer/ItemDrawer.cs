@@ -1,6 +1,9 @@
-﻿using DotEngine.Utilities;
+﻿using DotEditor.GUIExt.IMGUI;
+using DotEngine.GUIExt.NativeDrawer;
+using DotEngine.Utilities;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -103,7 +106,11 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public event Action<object> OnValueChanged;
 
-        private LayoutDrawer innerDrawer = null;
+        private VisibleAttrDrawer visibleAttrDrawer = null;
+        private List<LayoutAttrDrawer> layoutAttrDrawers = new List<LayoutAttrDrawer>();
+        private List<DecoratorAttrDrawer> decoratorAttrDrawers = new List<DecoratorAttrDrawer>();
+
+        private ILayoutDrawable innerDrawer = null;
         private bool isNeedRefresh = true;
 
         public ItemDrawer(SystemObject target, FieldInfo field)
@@ -164,6 +171,11 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public override void OnGUILayout()
         {
+            if(!GetVisible())
+            {
+                return;
+            }
+
             if(isNeedRefresh)
             {
                 RefreshDrawer();
@@ -198,5 +210,21 @@ namespace DotEditor.GUIExt.NativeDrawer
                 EGUI.EndGUIColor();
             }
         }
+
+        private bool GetVisible()
+        {
+            if(Field == null)
+            {
+                return true;
+            }
+
+            bool visible = Field.IsPublic;
+            if(visibleAttrDrawer != null)
+            {
+                visible = visibleAttrDrawer.IsVisible();
+            }
+            return visible;
+        }
+
     }
 }

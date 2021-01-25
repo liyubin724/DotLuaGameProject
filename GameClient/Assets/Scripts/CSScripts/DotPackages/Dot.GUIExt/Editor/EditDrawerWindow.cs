@@ -132,7 +132,7 @@ namespace DotEditor.GUIExt.EditDrawer
         private bool isInited = false;
 
         private EnumButtonDrawer enumButtonDrawer = null;
-        private void OnGUI()
+        private void OnGUI2()
         {
             if (enumButtonDrawer == null)
             {
@@ -147,7 +147,7 @@ namespace DotEditor.GUIExt.EditDrawer
             enumButtonDrawer.OnGUILayout();
         }
 
-        private void OnGUI2()
+        private void OnGUI()
         {
             
 
