@@ -1,4 +1,4 @@
-﻿using DotEditor.GUIExt.Layout;
+﻿using DotEditor.GUIExt.IMGUI;
 using DotEditor.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
@@ -166,7 +166,7 @@ namespace DotEditor.GUIExt.EditDrawer
 
                 toolbarDrawer = new ToolbarDrawer()
                 {
-                    LeftDrawable = new HorizontalCompositeDrawer(new ToolbarButtonDrawer()
+                    LeftDrawable = new HorizontalLayoutDrawer(new ToolbarButtonDrawer()
                     {
                         Text = "Open",
                         Tooltip = "open a new file",
@@ -181,7 +181,7 @@ namespace DotEditor.GUIExt.EditDrawer
                         Value = datas[0],
                         Contents = contents2,
                     }),
-                    RightDrawable = new HorizontalCompositeDrawer(
+                    RightDrawable = new HorizontalLayoutDrawer(
                         new ToolbarToggleDrawer()
                         {
                             Text = "Auto Save",
