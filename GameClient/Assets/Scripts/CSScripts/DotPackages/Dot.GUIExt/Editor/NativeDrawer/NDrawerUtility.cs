@@ -15,7 +15,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         private static void LoadTypeDrawers()
         {
             defaultTypeDrawerDic = new Dictionary<Type, Type>();
-            Type[] types = AssemblyUtility.GetDerivedTypes(typeof(NTypeDrawer));
+            Type[] types = AssemblyUtility.GetDerivedTypes(typeof(TypeDrawer));
             foreach (var type in types)
             {
                 var attrs = type.GetCustomAttributes(typeof(CustomTypeDrawerAttribute), false);
@@ -53,7 +53,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             return drawer;
         }
 
-        public static NTypeDrawer GetTypeDrawerInstance(Type type)
+        public static TypeDrawer GetTypeDrawerInstance(Type type)
         {
             if (defaultTypeDrawerDic == null)
             {
@@ -63,7 +63,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             Type targetType = type.IsEnum ? typeof(Enum) : type;
             if (defaultTypeDrawerDic.TryGetValue(targetType, out var drawerType) && drawerType != null)
             {
-                return (NTypeDrawer)Activator.CreateInstance(drawerType);
+                return (TypeDrawer)Activator.CreateInstance(drawerType);
             }
             return null;
         }

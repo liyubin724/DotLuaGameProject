@@ -4,7 +4,7 @@ using UnityEditor;
 namespace DotEditor.GUIExt.NativeDrawer
 {
     [CustomTypeDrawer(typeof(Enum))]
-    public class EnumTypeDrawer : NTypeDrawer
+    public class EnumTypeDrawer : TypeDrawer
     {
         public override void OnGUILayout()
         {

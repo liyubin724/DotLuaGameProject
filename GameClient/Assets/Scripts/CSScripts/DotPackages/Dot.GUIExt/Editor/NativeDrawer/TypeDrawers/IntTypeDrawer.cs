@@ -3,7 +3,7 @@
 namespace DotEditor.GUIExt.NativeDrawer
 {
     [CustomTypeDrawer(typeof(int))]
-    public class IntTypeDrawer : NTypeDrawer
+    public class IntTypeDrawer : TypeDrawer
     {
         public override void OnGUILayout()
         {

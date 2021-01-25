@@ -2,7 +2,7 @@
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public abstract class NTypeDrawer : NLayoutDrawer
+    public abstract class TypeDrawer : NLayoutDrawer
     {
         public string Label { get; set; }
         public NItemDrawer ItemDrawer { get; set; }

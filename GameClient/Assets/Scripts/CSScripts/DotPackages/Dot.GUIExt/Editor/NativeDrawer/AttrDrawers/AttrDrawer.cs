@@ -9,7 +9,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         T GetAttr<T>() where T : NDrawerAttribute;
     }
 
-    public abstract class NAttrDrawer : NLayoutDrawer,INAttrDrawer
+    public abstract class AttrDrawer : NLayoutDrawer,INAttrDrawer
     {
         public NDrawerAttribute DrawerAttr { get; set; }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace DotEditor.GUIExt.NativeDrawer
 {
     [CustomTypeDrawer(typeof(Vector3))]
-    public class Vector3TypeDrawer : NTypeDrawer
+    public class Vector3TypeDrawer : TypeDrawer
     {
         public override void OnGUILayout()
         {

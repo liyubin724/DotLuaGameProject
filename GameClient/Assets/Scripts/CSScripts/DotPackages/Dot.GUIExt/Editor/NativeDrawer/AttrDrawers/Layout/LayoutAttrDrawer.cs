@@ -1,6 +1,6 @@
 ﻿namespace DotEditor.GUIExt.NativeDrawer
 {
-    public abstract class LayoutAttrDrawer : NAttrDrawer
+    public abstract class LayoutAttrDrawer : AttrDrawer
     {
     }
 }

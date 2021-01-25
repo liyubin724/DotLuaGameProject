@@ -129,7 +129,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 
             if (Target != null && Value != null)
             {
-                NTypeDrawer typeDrawer = NDrawerUtility.GetTypeDrawerInstance(ValueType);
+                TypeDrawer typeDrawer = NDrawerUtility.GetTypeDrawerInstance(ValueType);
                 if (typeDrawer != null)
                 {
                     typeDrawer.Label = Label;
