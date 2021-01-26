@@ -12,7 +12,7 @@ namespace DotEngine.GUIExt.NativeDrawer
         Gte,
     }
 
-    public abstract class NDrawerAttribute : Attribute
+    public abstract class DrawerAttribute : Attribute
     {
     }
 }

@@ -3,6 +3,7 @@ using UnityEditor;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
+    [CustomAttrDrawer(typeof(HelpAttribute))]
     public class HelpAttrDrawer : DecoratorAttrDrawer
     {
         public override void OnGUILayout()

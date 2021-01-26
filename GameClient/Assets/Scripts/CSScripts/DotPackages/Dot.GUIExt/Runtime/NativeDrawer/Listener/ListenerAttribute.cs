@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.GUIExt.NativeDrawer
 {
-    public abstract class ListenerAttribute : NDrawerAttribute
+    public abstract class ListenerAttribute : DrawerAttribute
     {
     }
 }

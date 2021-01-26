@@ -8,6 +8,8 @@ namespace DotEngine.GUIExt.NativeDrawer
         public float MinWidth { get; set; } = -1;
         public float MaxWidth { get; set; } = -1;
 
+        public bool IsExpandWidth { get; set; } = true;
+
         public EnumButtonAttribute()
         {
         }

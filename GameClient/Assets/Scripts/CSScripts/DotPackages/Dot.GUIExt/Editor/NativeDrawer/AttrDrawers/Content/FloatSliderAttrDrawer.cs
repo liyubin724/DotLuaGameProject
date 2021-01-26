@@ -3,22 +3,25 @@ using DotEngine.GUIExt.NativeDrawer;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
+    [CustomAttrDrawer(typeof(FloatSliderAttribute))]
     public class FloatSliderAttrDrawer : ContentAttrDrawer
     {
         private FloatSliderDrawer drawer = null;
 
         protected override void DrawContent()
         {
+            FloatSliderAttribute attr = GetAttr<FloatSliderAttribute>();
             if(drawer == null)
             {
                 drawer = new FloatSliderDrawer();
+                drawer.IsExpandWidth = attr.IsExpandWidth;
+                drawer.Text = ItemDrawer.Label;
                 drawer.OnValueChanged = (value) =>
                 {
                     ItemDrawer.Value = value;
                 };
                 drawer.Value = (float)ItemDrawer.Value;
             }
-            FloatSliderAttribute attr = GetAttr<FloatSliderAttribute>();
 
             float leftValue = attr.MinValue;
             float rightValue = attr.MaxValue;

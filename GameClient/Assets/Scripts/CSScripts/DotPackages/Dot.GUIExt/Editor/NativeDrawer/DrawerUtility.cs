@@ -1,4 +1,5 @@
-﻿using DotEngine.Utilities;
+﻿using DotEngine.GUIExt.NativeDrawer;
+using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -27,32 +28,6 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
-        public static bool IsTypeSupported(Type type)
-        {
-            return TypeUtility.IsPrimitiveType(type) ||
-                TypeUtility.IsStructOrClassType(type) ||
-                TypeUtility.IsArrayOrListType(type) ||
-                TypeUtility.IsEnumType(type);
-        }
-
-        public static LayoutDrawer GetLayoutDrawer(ItemDrawer itemDrawer)
-        {
-            Type valueType = itemDrawer.ValueType;
-            LayoutDrawer drawer = GetTypeDrawerInstance(valueType);
-            if (drawer == null)
-            {
-                if (TypeUtility.IsArrayOrListType(valueType))
-                {
-                    drawer = new ArrayDrawer(itemDrawer);
-                }
-                else if (TypeUtility.IsStructOrClassType(valueType))
-                {
-                    drawer = new ObjectDrawer(itemDrawer.Value);
-                }
-            }
-            return drawer;
-        }
-
         public static TypeDrawer GetTypeDrawerInstance(Type type)
         {
             if (defaultTypeDrawerDic == null)
@@ -66,6 +41,46 @@ namespace DotEditor.GUIExt.NativeDrawer
                 return (TypeDrawer)Activator.CreateInstance(drawerType);
             }
             return null;
+        }
+
+        private static Dictionary<Type, Type> attrTypeDrawerDic = null;
+        private static void LoadAttrDrawers()
+        {
+            attrTypeDrawerDic = new Dictionary<Type, Type>();
+            Type[] types = AssemblyUtility.GetDerivedTypes(typeof(IAttrDrawer));
+            foreach (var type in types)
+            {
+                var attrs = type.GetCustomAttributes(typeof(CustomAttrDrawerAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    CustomAttrDrawerAttribute attr = attrs[0] as CustomAttrDrawerAttribute;
+                    attrTypeDrawerDic.Add(attr.AttrType, type);
+                }
+            }
+        }
+
+        public static IAttrDrawer GetAttrDrawerInstance(DrawerAttribute drawerAttr)
+        {
+            if (attrTypeDrawerDic == null)
+            {
+                LoadAttrDrawers();
+            }
+
+            if (attrTypeDrawerDic.TryGetValue(drawerAttr.GetType(), out var drawerType) && drawerType != null)
+            {
+                IAttrDrawer drawer = (IAttrDrawer)Activator.CreateInstance(drawerType);
+                drawer.Attr = drawerAttr;
+                return drawer;
+            }
+            return null;
+        }
+
+        public static bool IsTypeSupported(Type type)
+        {
+            return TypeUtility.IsPrimitiveType(type) ||
+                TypeUtility.IsStructOrClassType(type) ||
+                TypeUtility.IsArrayOrListType(type) ||
+                TypeUtility.IsEnumType(type);
         }
 
         public static SystemObject GetTypeInstance(Type type)

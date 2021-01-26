@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.GUIExt.NativeDrawer
 {
-    public abstract class VisibleAttribute : NDrawerAttribute
+    public abstract class VisibleAttribute : DrawerAttribute
     {
     }
 }

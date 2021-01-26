@@ -5,18 +5,17 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public abstract class ContentAttrDrawer : LayoutDrawable, INAttrDrawer
+    public abstract class ContentAttrDrawer : ILayoutDrawable, IAttrDrawer
     {
-        public NDrawerAttribute DrawerAttr { get; set; }
+        public DrawerAttribute Attr { get; set; }
         internal ItemDrawer ItemDrawer { get; set; }
 
-        public T GetAttr<T>() where T : NDrawerAttribute
+        public T GetAttr<T>() where T : DrawerAttribute
         {
-            return (T)DrawerAttr;
+            return (T)Attr;
         }
-        protected abstract bool IsValidValueType();
 
-        protected override void OnLayoutDraw()
+        public void OnGUILayout()
         {
             if(IsValidValueType())
             {
@@ -27,13 +26,15 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
+        protected abstract bool IsValidValueType();
+
         protected abstract void DrawContent();
 
         protected virtual void DrawInvalidContent()
         {
             EGUI.BeginGUIColor(Color.red);
             {
-                EditorGUILayout.LabelField(Label, "Invalid");
+                EditorGUILayout.LabelField(ItemDrawer.Label, "Invalid");
             }
             EGUI.EndGUIColor();
         }

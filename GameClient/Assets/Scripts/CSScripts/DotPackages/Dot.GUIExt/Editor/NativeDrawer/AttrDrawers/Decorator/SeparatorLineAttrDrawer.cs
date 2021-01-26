@@ -2,6 +2,7 @@
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
+    [CustomAttrDrawer(typeof(SeparatorLineAttribute))]
     public class SeparatorLineAttrDrawer : DecoratorAttrDrawer
     {
         public override void OnGUILayout()

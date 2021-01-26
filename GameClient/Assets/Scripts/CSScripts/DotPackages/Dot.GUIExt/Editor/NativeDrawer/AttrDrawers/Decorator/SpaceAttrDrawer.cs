@@ -2,6 +2,7 @@
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
+    [CustomAttrDrawer(typeof(SpaceAttribute))]
     public class SpaceAttrDrawer : DecoratorAttrDrawer
     {
         public override void OnGUILayout()

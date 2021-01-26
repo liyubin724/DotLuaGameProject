@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.GUIExt.NativeDrawer
 {
-    public abstract class VerificationAttribute : NDrawerAttribute
+    public abstract class VerificationAttribute : DrawerAttribute
     {
         public string InvalidMsg { get; private set; }
 

@@ -10,6 +10,8 @@ namespace DotEngine.GUIExt.NativeDrawer
 
         public string MinValueMemberName { get; private set; }
         public string MaxValueMemberName { get; private set; }
+
+        public bool IsExpandWidth { get; set; } = true;
         public FloatSliderAttribute(float min, float max)
         {
             MinValue = min;

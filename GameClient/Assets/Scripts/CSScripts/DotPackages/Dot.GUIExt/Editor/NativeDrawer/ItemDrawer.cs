@@ -117,6 +117,8 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             Target = target;
             Field = field;
+
+            InitAttrs();
         }
 
         public ItemDrawer(SystemObject target, int index)
@@ -130,10 +132,56 @@ namespace DotEditor.GUIExt.NativeDrawer
             isNeedRefresh = true;
         }
 
+        private void InitAttrs()
+        {
+            if(Field!=null)
+            {
+                VisibleAttribute visibleAttribute = Field.GetCustomAttribute<VisibleAttribute>();
+                if(visibleAttribute!=null)
+                {
+                    visibleAttrDrawer = (VisibleAttrDrawer)DrawerUtility.GetAttrDrawerInstance(visibleAttribute);
+                }
+
+                decoratorAttrDrawers.Clear();
+                DecoratorAttribute[] decoratorAttributes = (DecoratorAttribute[])Field.GetCustomAttributes(typeof(DecoratorAttribute), false);
+                if(decoratorAttributes!=null && decoratorAttributes.Length>0)
+                {
+                    foreach(var attr in decoratorAttributes)
+                    {
+                        DecoratorAttrDrawer drawer = (DecoratorAttrDrawer)DrawerUtility.GetAttrDrawerInstance(attr);
+                        drawer.ItemDrawer = this;
+                        decoratorAttrDrawers.Add(drawer);
+                    }
+                }
+
+                layoutAttrDrawers.Clear();
+                LayoutAttribute[] layoutAttributes = (LayoutAttribute[])Field.GetCustomAttributes(typeof(LayoutAttribute), false);
+                if(layoutAttributes!=null && layoutAttributes.Length>0)
+                {
+                    foreach(var attr in layoutAttributes)
+                    {
+                        LayoutAttrDrawer drawer = (LayoutAttrDrawer)DrawerUtility.GetAttrDrawerInstance(attr);
+                        drawer.Occasion = attr.Occasion;
+                        layoutAttrDrawers.Add(drawer);
+                    }
+                }
+
+                ContentAttribute contentAttribute = Field.GetCustomAttribute<ContentAttribute>();
+                if(contentAttribute!=null)
+                {
+                    ContentAttrDrawer contentAttrDrawer = (ContentAttrDrawer)DrawerUtility.GetAttrDrawerInstance(contentAttribute);
+                    contentAttrDrawer.ItemDrawer = this;
+                    innerDrawer = contentAttrDrawer;
+                }
+            }
+        }
+
         private void RefreshDrawer()
         {
-            innerDrawer = null;
-
+            if (innerDrawer != null)
+            {
+                return;
+            }
             if (Target != null && Value != null)
             {
                 TypeDrawer typeDrawer = DrawerUtility.GetTypeDrawerInstance(ValueType);
@@ -141,21 +189,21 @@ namespace DotEditor.GUIExt.NativeDrawer
                 {
                     typeDrawer.Label = Label;
                     typeDrawer.ItemDrawer = this;
-
                     innerDrawer = typeDrawer;
-                }else
+                }
+                else
                 {
                     InstanceDrawer instanceDrawer = null;
                     if (TypeUtility.IsArrayOrListType(ValueType))
                     {
                         instanceDrawer = new ArrayDrawer(Value);
                     }
-                    else if(TypeUtility.IsStructOrClassType(ValueType))
+                    else if (TypeUtility.IsStructOrClassType(ValueType))
                     {
                         instanceDrawer = new ObjectDrawer(Value);
                     }
 
-                    if(instanceDrawer!=null)
+                    if (instanceDrawer != null)
                     {
                         instanceDrawer.Header = Label;
                         instanceDrawer.ItemDrawer = this;
@@ -180,6 +228,19 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 RefreshDrawer();
                 isNeedRefresh = false;
+            }
+
+            foreach(var drawer in layoutAttrDrawers)
+            {
+                if (drawer.Occasion == LayoutOccasion.Before)
+                {
+                    drawer.OnGUILayout();
+                }
+            }
+
+            foreach(var drawer in decoratorAttrDrawers)
+            {
+                drawer.OnGUILayout();
             }
 
             object value = Value;
@@ -208,6 +269,14 @@ namespace DotEditor.GUIExt.NativeDrawer
                     EditorGUILayout.LabelField(Label, $"The drawer of {ValueType} is not found");
                 }
                 EGUI.EndGUIColor();
+            }
+
+            foreach (var drawer in layoutAttrDrawers)
+            {
+                if (drawer.Occasion == LayoutOccasion.After)
+                {
+                    drawer.OnGUILayout();
+                }
             }
         }
 

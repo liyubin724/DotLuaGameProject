@@ -1,5 +1,6 @@
 ﻿using DotEditor.GUIExt.IMGUI;
 using DotEditor.GUIExt.NativeDrawer;
+using DotEngine.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace DotEditor.GUIExt.EditDrawer
         public string stringValue;
         public bool boolValue;
 
+        [EnumButton]
         public NativeEnum enumValue = NativeEnum.First;
         public NativeFlagEnum flagEnumValue = NativeFlagEnum.First | NativeFlagEnum.Second;
     }
@@ -61,16 +63,22 @@ namespace DotEditor.GUIExt.EditDrawer
         public Action actionValue;
     }
 
-    class NativeData : ComposedData
+    class NativeData// : ComposedData
     {
-        public IBaseValue iBaseValue;
-        public List<IBaseValue> baseValues = new List<IBaseValue>()
-        {
-            new TDValue(),
-            new TDValue(),
-            new TDValue(),
-            new TDValue(),
-        };
+        [EnumButton]
+        public NativeEnum enumValue = NativeEnum.First;
+        [EnumButton]
+        public NativeFlagEnum flagEnumValue = NativeFlagEnum.First | NativeFlagEnum.Second;
+        [FloatSlider(0,100)]
+        public float floatValue;
+        //public IBaseValue iBaseValue;
+        //public List<IBaseValue> baseValues = new List<IBaseValue>()
+        //{
+        //    new TDValue(),
+        //    new TDValue(),
+        //    new TDValue(),
+        //    new TDValue(),
+        //};
     }
 
     public interface IBaseValue
@@ -98,7 +106,7 @@ namespace DotEditor.GUIExt.EditDrawer
         private void OnEnable()
         {
             NativeData nData = new NativeData();
-            nData.iBaseValue = new TDValue();
+           // nData.iBaseValue = new TDValue();
 
             nativeObject = new ObjectDrawer(nData)
             {

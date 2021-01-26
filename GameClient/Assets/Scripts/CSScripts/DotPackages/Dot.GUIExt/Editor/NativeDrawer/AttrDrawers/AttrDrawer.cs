@@ -1,21 +1,22 @@
-﻿using DotEngine.GUIExt.NativeDrawer;
+﻿using DotEditor.GUIExt.IMGUI;
+using DotEngine.GUIExt.NativeDrawer;
 using System;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    public interface INAttrDrawer
+    public interface IAttrDrawer : ILayoutDrawable
     {
-        NDrawerAttribute DrawerAttr { get; set; }
-        T GetAttr<T>() where T : NDrawerAttribute;
+        DrawerAttribute Attr { get; set; }
+        T GetAttr<T>() where T : DrawerAttribute;
     }
 
-    public abstract class AttrDrawer : LayoutDrawer,INAttrDrawer
+    public abstract class AttrDrawer : LayoutDrawer,IAttrDrawer
     {
-        public NDrawerAttribute DrawerAttr { get; set; }
+        public DrawerAttribute Attr { get; set; }
 
-        public T GetAttr<T>() where T : NDrawerAttribute
+        public T GetAttr<T>() where T : DrawerAttribute
         {
-            return (T)DrawerAttr;
+            return (T)Attr;
         }
     }
 

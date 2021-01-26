@@ -1,24 +1,13 @@
-﻿using System;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEditor;
 
 namespace DotEditor.GUIExt.IMGUI
 {
-    public class ToolbarButtonDrawer : LayoutDrawable
+    public class ToolbarButtonDrawer : ButtonDrawer
     {
-        public Action OnClicked { get; set; } = null;
-
         public ToolbarButtonDrawer()
         {
             Width = 60.0f;
-        }
-
-        protected override void OnLayoutDraw()
-        {
-            if (GUILayout.Button(Label, EditorStyles.toolbarButton, LayoutOptions))
-            {
-                OnClicked?.Invoke();
-            }
+            Style = EditorStyles.toolbarButton;
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
+    [CustomAttrDrawer(typeof(BeginGroupAttribute))]
     public class BeginGroupAttrDrawer : LayoutAttrDrawer
     {
         public override void OnGUILayout()

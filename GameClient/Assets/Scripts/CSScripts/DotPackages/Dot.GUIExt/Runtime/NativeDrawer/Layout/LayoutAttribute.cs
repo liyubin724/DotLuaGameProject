@@ -6,7 +6,7 @@
         After,
     }
 
-    public abstract class LayoutAttribute : NDrawerAttribute
+    public abstract class LayoutAttribute : DrawerAttribute
     {
         public LayoutOccasion Occasion { get; private set; }
 

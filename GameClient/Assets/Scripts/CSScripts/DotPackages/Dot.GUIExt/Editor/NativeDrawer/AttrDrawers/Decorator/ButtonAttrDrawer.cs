@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
+    [CustomAttrDrawer(typeof(ButtonAttribute))]
     public class ButtonDrawer : DecoratorAttrDrawer
     {
         public override void OnGUILayout()
