@@ -163,7 +163,6 @@ namespace DotEditor.GUIExt.NativeDrawer
             return default;
         }
 
-
         public static object GetMemberValue(string memberName, object target)
         {
             if (string.IsNullOrEmpty(memberName) || target == null)
@@ -212,6 +211,105 @@ namespace DotEditor.GUIExt.NativeDrawer
                 }
             }
             return null;
+        }
+
+        public static bool Compare(object value1, object value2, CompareSymbol symbol)
+        {
+            if (value1 == null && value2 == null)
+            {
+                if (symbol == CompareSymbol.Eq || symbol == CompareSymbol.Gte || symbol == CompareSymbol.Lte)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (value1 == null || value2 == null)
+            {
+                if (symbol == CompareSymbol.Neq)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if(value1.Equals(value2))
+            {
+                if (symbol == CompareSymbol.Eq || symbol == CompareSymbol.Gte || symbol == CompareSymbol.Lte)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if(value1 is IComparable && value2 is IComparable)
+            {
+                int compared = ((IComparable)value1).CompareTo((IComparable)value2);
+                if (compared == 0)
+                {
+                    if (symbol == CompareSymbol.Eq || symbol == CompareSymbol.Gte || symbol == CompareSymbol.Lte)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (symbol == CompareSymbol.Neq)
+                    {
+                        return true;
+                    }
+
+                    if (compared > 0)
+                    {
+                        if (symbol == CompareSymbol.Gt || symbol == CompareSymbol.Gte)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (compared < 0)
+                    {
+                        if (symbol == CompareSymbol.Lt || symbol == CompareSymbol.Lte)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }else
+            {
+                if (symbol == CompareSymbol.Neq)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }

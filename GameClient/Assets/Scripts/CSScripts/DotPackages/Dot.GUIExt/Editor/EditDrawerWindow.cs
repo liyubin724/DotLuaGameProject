@@ -71,6 +71,26 @@ namespace DotEditor.GUIExt.EditDrawer
         public NativeFlagEnum flagEnumValue = NativeFlagEnum.First | NativeFlagEnum.Second;
         [FloatSlider(0,100)]
         public float floatValue;
+
+        [Hide]
+        public int hideIntValue;
+        [Show]
+        private int showIntValue;
+        [VisibleIf("IsVisible")]
+        public int visibleIntValue;
+        [CompareVisible("GetComparedValue",10,CompareSymbol.Gt)]
+        public int comparedIntValue;
+
+        private bool IsVisible()
+        {
+            return floatValue >= 50;
+        }
+
+        private float GetComparedValue()
+        {
+            return floatValue;
+        }
+
         //public IBaseValue iBaseValue;
         //public List<IBaseValue> baseValues = new List<IBaseValue>()
         //{

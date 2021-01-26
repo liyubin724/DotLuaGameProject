@@ -140,6 +140,8 @@ namespace DotEditor.GUIExt.NativeDrawer
                 if(visibleAttribute!=null)
                 {
                     visibleAttrDrawer = (VisibleAttrDrawer)DrawerUtility.GetAttrDrawerInstance(visibleAttribute);
+                    visibleAttrDrawer.Attr = visibleAttribute;
+                    visibleAttrDrawer.ItemDrawer = this;
                 }
 
                 decoratorAttrDrawers.Clear();

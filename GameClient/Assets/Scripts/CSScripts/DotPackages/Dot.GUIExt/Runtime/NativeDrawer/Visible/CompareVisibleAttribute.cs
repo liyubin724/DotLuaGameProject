@@ -1,4 +1,5 @@
 ﻿using System;
+using SystemObject = System.Object;
 
 namespace DotEngine.GUIExt.NativeDrawer
 {
@@ -6,19 +7,14 @@ namespace DotEngine.GUIExt.NativeDrawer
     public class CompareVisibleAttribute : VisibleAttribute
     {
         public CompareSymbol Symbol { get; private set; }
-        public object Value { get; private set; }
+        public SystemObject Value { get; private set; }
         public string MemberName { get; private set; }
 
-        public CompareVisibleAttribute(object value, CompareSymbol symbol = CompareSymbol.Eq)
+        public CompareVisibleAttribute(string memberName, SystemObject value, CompareSymbol symbol = CompareSymbol.Eq)
         {
-            Symbol = symbol;
-            Value = value;
-        }
-
-        public CompareVisibleAttribute(string memberName, CompareSymbol symbol = CompareSymbol.Eq)
-        {
-            Symbol = symbol;
             MemberName = memberName;
+            Value = value;
+            Symbol = symbol;
         }
     }
 }

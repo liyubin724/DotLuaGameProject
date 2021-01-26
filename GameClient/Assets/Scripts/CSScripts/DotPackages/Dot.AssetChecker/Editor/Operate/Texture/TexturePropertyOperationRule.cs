@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using DotEngine.GUIExt.NativeDrawer;
+using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.AssetChecker
@@ -11,6 +12,7 @@ namespace DotEditor.AssetChecker
         
         public bool sRGBTexture = true;
         public TextureImporterAlphaSource alphaSource = TextureImporterAlphaSource.None;
+        [VisibleIf("IsAlphaIsTransparencyVisible")]
         public bool alphaIsTransparency = true;
 
         public TextureImporterNPOTScale npotScale = TextureImporterNPOTScale.None;
@@ -62,6 +64,11 @@ namespace DotEditor.AssetChecker
             ti.wrapMode = wrapMode;
             ti.filterMode = filterMode;
             ti.anisoLevel = anisoLevel;
+        }
+
+        private bool IsAlphaIsTransparencyVisible()
+        {
+            return alphaSource != TextureImporterAlphaSource.None;
         }
     }
 }
