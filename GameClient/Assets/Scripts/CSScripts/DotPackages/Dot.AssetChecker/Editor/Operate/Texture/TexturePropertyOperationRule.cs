@@ -21,6 +21,7 @@ namespace DotEditor.AssetChecker
 
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
         public FilterMode filterMode = FilterMode.Bilinear;
+        [VisibleIf("IsAnisoLevelVisible")]
         public int anisoLevel = 0;
 
         protected override void CloneTo(OperationRule rule)
@@ -66,9 +67,16 @@ namespace DotEditor.AssetChecker
             ti.anisoLevel = anisoLevel;
         }
 
+        #region DrawerAttribute Visible 
         private bool IsAlphaIsTransparencyVisible()
         {
             return alphaSource != TextureImporterAlphaSource.None;
         }
+
+        private bool IsAnisoLevelVisible()
+        {
+            return filterMode != FilterMode.Point;
+        }
+        #endregion
     }
 }
