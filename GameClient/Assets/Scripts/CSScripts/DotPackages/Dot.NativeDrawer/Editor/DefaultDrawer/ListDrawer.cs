@@ -16,7 +16,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
 
         protected override bool IsValidProperty()
         {
-            return TypeUtility.IsArrayOrList(Property.ValueType);
+            return TypeUtility.IsArrayOrListType(Property.ValueType);
         }
 
         protected override void OnDrawProperty(string label)

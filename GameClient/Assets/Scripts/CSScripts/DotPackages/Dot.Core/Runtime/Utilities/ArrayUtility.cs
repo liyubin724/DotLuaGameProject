@@ -11,7 +11,7 @@ namespace DotEngine.Utilities
 
         public static void Insert(ref Array array,object newone,int at)
         {
-            Array expanded = Array.CreateInstance(TypeUtility.GetArrayOrListElementType(array.GetType()),array.Length+1);
+            Array expanded = Array.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(array.GetType()),array.Length+1);
             Array.Copy(array, expanded, at);
             Array.Copy(array, at, expanded, at + 1, array.Length - at);
             expanded.SetValue(newone, at);
@@ -20,7 +20,7 @@ namespace DotEngine.Utilities
 
         public static void Remove(ref Array array,int at)
         {
-            Array expanded = Array.CreateInstance(TypeUtility.GetArrayOrListElementType(array.GetType()), array.Length-1);
+            Array expanded = Array.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(array.GetType()), array.Length-1);
             Array.Copy(array, expanded, at);
             Array.Copy(array, at+1, expanded, at, array.Length - at-1);
             array = expanded;

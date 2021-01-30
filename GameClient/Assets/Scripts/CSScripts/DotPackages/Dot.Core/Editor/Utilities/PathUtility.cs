@@ -6,6 +6,11 @@ namespace DotEditor.Utilities
 {
     public static class PathUtility
     {
+        public static string GetProjectDiskPath()
+        {
+            return Application.dataPath.Replace("/Assets", "");
+        }
+
         /// <summary>
         /// 将相对磁盘的完整路径转换为相对于Assets的路径
         /// </summary>
