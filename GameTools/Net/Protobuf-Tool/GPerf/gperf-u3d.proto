@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+option optimize_for = SPEED;
+
+option java_package = "com.kingsoft.shiyou.infra.gperf.pb";
+option java_outer_classname = "GPerfUnityProtos";
+option java_multiple_files = false;
+
+package gperf.u3d;
+
+message GPerfApp{
+    string identifier = 1;
+    string install_name = 2;
+    string product_name = 3;
+    string version = 4;
+    string unity_version = 5;
+}
+
+message GPerfDevice{
+    string model = 1;
+    string name = 2;
+    string unique_identifier = 3;
+
+    string graphics_name = 4;
+    string graphics_type = 5;
+    string graphics_vendor = 6;
+    string graphics_version = 7;
+    int32 graphics_memory_in_mb = 8;
+
+    int32 system_memory_in_mb = 9;
+}
+
+message GPerfSystemMemory{
+    int64 total_in_kb = 1;
+    int64 available_in_kb = 2;
+    int64 threshold_in_kb = 3;
+
+    bool is_low = 4;
+
+    int64 pss_in_kb = 5;
+    int64 rss_in_kb = 6;
+}
+
+message GPerfProfilerMemory{
+    int64 mono_heap_size_in_kb = 1;
+    int64 mono_used_size_in_kb = 2;
+    int64 temp_allocator_size_in_kb = 3;
+    int64 total_allocator_size_in_kb = 4;
+    int64 total_reserved_size_in_kb = 5;
+    int64 total_unused_reserved_size_in_kb = 6;
+
+    int64 allocated_for_graphics_driver_in_kb = 7;
+}
+
+message GPerfLuaMemory{
+    float total = 1;
+}
+
+message GPerfBattery{
+    float temperature = 1;
+    int32 status = 2;
+    string status_desc = 3;
+    float rate = 4;
+}
+
+message GPerfCPU{
+    int32 core_count = 1;
+    int32 frequency = 2;
+    float usage_rate = 3;
+    repeated int32 core_frequency = 4;
+}
+
+message GPerfFPS{
+    float delta_time_in_MS = 1;
+    int32 fps = 2;
+}
+
+message GPerfFrameTime{
+    float player_loop_time = 1;
+    float rendering_time = 2;
+    float script_time = 3;
+    float physics_time = 4;
+    float animation_time = 5;
+
+    float cpu_time = 6;
+    float gpu_time = 7;
+}
+
+message GPerfGameInfo{
+    map<string,string> extensions = 1;
+}
+
+message GPerfUserInfo{
+    map<string,string> extensions = 1;
+}
+
+message GPerfSample{
+    fixed32 timestamp = 1;
+    int32 frame_index = 2;
+
+    GPerfUserInfo user_info = 3;
+
+    GPerfSystemMemory system_memory = 4;
+    GPerfProfilerMemory profiler_memory = 5;
+    GPerfLuaMemory lua_memory = 6;
+
+    GPerfBattery battery = 7;
+    
+    GPerfCPU cpu = 8;
+
+    GPerfFPS fps = 9;
+
+    GPerfFrameTime frame_time = 10;
+
+    string session=11;
+}
+
+message GPerfSession{
+    GPerfApp app = 1;
+    GPerfDevice device = 2;
+    GPerfGameInfo game_info =3;
+
+    repeated GPerfSample samples = 4;
+
+    map<string,string> extensions = 5;
+
+    GPerfLog logs=6;
+    int32 raw_blob_size=7;
+    string  timestamp=8;
+    int64 from=9;
+    int64 to=10;
+    int64 duration=11;
+    string session=12;
+    GPerfOverview overview=13;
+}
+
+message GPerfOverview{
+    float avg_fps=1;
+    float peak_mem_pss_kb=2;
+    float peak_mem_pss_bytes=3;
+    float max_draw_call=4;
+    float max_triangles=5;
+    float max_temperature=6;
+
+}
+message GPerfLog{
+    string url=1;
+}

@@ -1,4 +1,4 @@
-local UIPanelController = using('DotLua/UI/View/UIPanelController')
+local UIPanelController = require('DotLua/UI/View/UIPanelController')
 
 local LoginPanelController =
     class(

@@ -1,0 +1,15 @@
+{
+    "name": "com.dot.core",
+    "version": "0.1.0",
+    "displayName": "Dot.Core",
+    "description": "This is Framework for Dot.Core",
+    "dependencies": {
+    },
+    "keywords": [
+    ],
+    "author": {
+        "name": "li.yubin",
+        "email": "liyubin724@163.com",
+        "url": "https://www.liyubin.com"
+    }
+}

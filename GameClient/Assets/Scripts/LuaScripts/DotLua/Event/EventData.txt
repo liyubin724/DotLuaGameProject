@@ -6,11 +6,20 @@
 local EventData =
     class(
     function(self)
+        self.id = nil
         self.receiver = nil
         self.func = nil
         self.userdata = nil
     end
 )
+
+function EventData:IsValid()
+    return self.id and self.func
+end
+
+function EventData:GetID()
+    return self.id
+end
 
 function EventData:GetReceiver()
     return self.receiver
@@ -31,16 +40,18 @@ EventData.__eq = function(data1,data2)
         return false
     end
 
-    return data1.receiver == data2.receiver and data1.func == data2.func
+    return data1.id == data2.id and data1.receiver == data2.receiver and data1.func == data2.func
 end
 
-function EventData:SetData(receiver, func, userdata)
+function EventData:SetData(id,receiver, func, userdata)
+    self.id = id
     self.receiver = receiver
     self.func = func
     self.userdata = userdata
 end
 
-function EventData:OnRelease()
+function EventData:DoRelease()
+    self.id = nil
     self.receiver = nil
     self.func = nil
     self.userdata = nil
@@ -49,19 +60,19 @@ end
 ----internal----
 --通知事件执行，由EventDispatcher来调用
 -- @param ... 多参数
-function EventData:Invoke(eventID, ...)
+function EventData:Invoke(...)
     if self.func then
         if self.receiver then
             if self.userdata then
-                self.func(self.receiver, eventID, self.userdata, ...)
+                self.func(self.receiver, self.id, self.userdata, ...)
             else
-                self.func(self.receiver, eventID, ...)
+                self.func(self.receiver, self.id, ...)
             end
         else
             if self.userdata then
-                self.func(eventID,self.userdata, ...)
+                self.func(self.id,self.userdata, ...)
             else
-                self.func(eventID,...)
+                self.func(self.id,...)
             end
         end
     end

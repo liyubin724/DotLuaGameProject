@@ -1,4 +1,5 @@
-local AssetData = using("DotLua/Asset/AssetData")
+local Framework = require('DotLua/Framework/Framework')
+local AssetData = require('DotLua/Asset/AssetData')
 
 local AssetLoaderPriority = CS.DotEngine.Asset.AssetLoaderPriority
 local GameFacade = CS.Game.GameFacade
@@ -7,7 +8,8 @@ local Game = Game
 
 local AssetManager =
     class(
-    function(self)
+    Framework.Servicer,
+    function(self,name)
         self.assetDatas = {}
         self.assetIndex = 0
     end
@@ -28,16 +30,18 @@ end
 -- @param completeFunc 用于接收资源加载完成后的函数
 -- @param userdata 自定义参数
 -- @return assetIndex 返回资源的唯一标识，如果需要中止加载可以使用此值给函数UnloadAssetAsync
-function AssetManager:LoadAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
+function AssetManager:LoadAssetAsync(address, receiver, progressFunc, completeFunc, userdata)
     local assetIndex = self.assetIndex
-    local assetHandler = self:GetAssetService():LoadAssetAsync(
+    local assetHandler =
+        self:GetAssetService():LoadAssetAsync(
         address,
         AssetManager.OnAssetProgress,
         AssetManager.OnAssetComplete,
-        assetIndex)
+        assetIndex
+    )
 
     local assetData = AssetData()
-    assetData:SetData(assetIndex,assetHandler,address,receiver,progressFunc,completeFunc,userdata)
+    assetData:SetData(assetIndex, assetHandler, address, receiver, progressFunc, completeFunc, userdata)
 
     self.assetDatas[self.assetIndex] = assetData
     self.assetIndex = self.assetIndex + 1
@@ -52,25 +56,27 @@ end
 -- @param completeFunc 用于接收资源加载完成后的函数
 -- @param userdata 自定义参数
 -- @return assetIndex 返回资源的唯一标识，如果需要中止加载可以使用此值给函数UnloadAssetAsync
-function AssetManager:InstanceAssetAsync(address,receiver,progressFunc,completeFunc,userdata)
+function AssetManager:InstanceAssetAsync(address, receiver, progressFunc, completeFunc, userdata)
     local assetIndex = self.assetIndex
-    local assetHandler = self:GetAssetService():InstanceAssetAsync(
+    local assetHandler =
+        self:GetAssetService():InstanceAssetAsync(
         address,
         AssetManager.OnAssetProgress,
         AssetManager.OnAssetComplete,
         AssetLoaderPriority.Default,
-        assetIndex)
+        assetIndex
+    )
 
     local assetData = AssetData()
-    assetData:SetData(assetIndex,assetHandler,address,receiver,progressFunc,completeFunc,userdata)
+    assetData:SetData(assetIndex, assetHandler, address, receiver, progressFunc, completeFunc, userdata)
 
     self.assetDatas[self.assetIndex] = assetData
     self.assetIndex = self.assetIndex + 1
     return assetIndex
 end
 
-function AssetManager:InstantiateAsset(address,asset)
-    return self:GetAssetService():InstantiateAsset(address,asset)
+function AssetManager:InstantiateAsset(address, asset)
+    return self:GetAssetService():InstantiateAsset(address, asset)
 end
 
 ----public----
@@ -78,7 +84,7 @@ end
 -- @param assetIndex 需要中止的唯一标识
 -- @return void
 function AssetManager:UnloadAssetAsync(assetIndex)
-    local assetData =  self.assetDatas[assetIndex]
+    local assetData = self.assetDatas[assetIndex]
     if assetData then
         self.assetDatas[assetIndex] = nil
         self:GetAssetService():UnloadAssetAsync(assetData:GetAssetHandler())
@@ -98,8 +104,8 @@ end
 
 ----private----
 -- 以静态的函数用于响应资源的加载OnAssetProgress
-function AssetManager.OnAssetProgress(_,progress,assetIndex)
-    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+function AssetManager.OnAssetProgress(_, progress, assetIndex)
+    local assetData = Game.AssetMgr.assetDatas[assetIndex]
     if assetData then
         assetData:InvokeProgress(progress)
     end
@@ -107,8 +113,8 @@ end
 
 ----private----
 -- 以静态的函数用于响应资源的加载OnAssetComplete
-function AssetManager.OnAssetComplete(_,uObject,assetIndex)
-    local assetData =  Game.AssetMgr.assetDatas[assetIndex]
+function AssetManager.OnAssetComplete(_, uObject, assetIndex)
+    local assetData = Game.AssetMgr.assetDatas[assetIndex]
     if assetData then
         assetData:InvokeComplete(uObject)
     end

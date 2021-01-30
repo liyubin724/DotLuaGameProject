@@ -1,10 +1,10 @@
 local EventID = require('Game/Event/EventID')
 
-local UIPanelLayer = using("DotLua/UI/UIPanelLayer")
-local UIPanelMode = using("DotLua/UI/UIPanelMode")
-local GameObjectPoolTemplateType = using("DotLua/GOPool/GameObjectPoolTemplateType")
+local UIPanelLayer = require('DotLua/UI/UIPanelLayer')
+local UIPanelMode = require('DotLua/UI/UIPanelMode')
+local GameObjectPoolTemplateType = require('DotLua/GOPool/GameObjectPoolTemplateType')
 
-local DebugLog = DebugLog
+local Logger = Logger
 local Game = Game
 
 local EnvManager =
@@ -37,60 +37,52 @@ function EnvManager:DoStartup()
     --local profiler = require("perf.profiler")
     --profiler.start()
 
-    local LoginPanelController = using("Game/Test/UI/View/LoginPanelController")
-    local loginPanelController = Game.PanelMgr:OpenPanel("login_panel",
-                                                        LoginPanelController,
-                                                        UIPanelLayer.Default,
-                                                        UIPanelMode.Append)
-    loginPanelController:LoadView("login_panel")
+    local LoginPanelController = require('Game/Test/UI/View/LoginPanelController')
+    local loginPanelController =
+        Game.PanelMgr:OpenPanel('login_panel', LoginPanelController, UIPanelLayer.Default, UIPanelMode.Append)
+    loginPanelController:LoadView('login_panel')
 
-    --DebugLog.Info("Profiler", profiler.report())
+    --Logger.Info("Profiler", profiler.report())
     --profiler.stop()
 
     local eventMgr = Game.EventMgr
-    eventMgr:RegisterListener(111,self,EnvManager.OnMessage,"EventTest")
+    eventMgr:RegisterListener(111, self, EnvManager.OnMessage, 'EventTest')
 
     local timerMgr = Game.TimerMgr
     --local handler = timerMgr:AddIntervalTimer(1,self,EnvManager.OnIntervalTimer,"Test Timer")
     --local handler = timerMgr:AddEndTimer(3,self,EnvManager.OnEndTimer,"Test End Timer")
-    self.timerHandler = timerMgr:AddTimer(1,
-                                          5,
-                                          self,
-                                          EnvManager.OnIntervalTimer,
-                                          EnvManager.OnEndTimer,
-                                          "Test Interval and End Timer")
-    DebugLog.Info("Timer Test", tostring(self.timerHandler))
+    self.timerHandler =
+        timerMgr:AddTimer(1, 5, self, EnvManager.OnIntervalTimer, EnvManager.OnEndTimer, 'Test Interval and End Timer')
+    Logger.Info('Timer Test', tostring(self.timerHandler))
     self.timerIndex = 0
 
     local poolMgr = Game.PoolMgr
-    local poolGroup = poolMgr:CreateGroup("TestGroup")
+    local poolGroup = poolMgr:CreateGroup('TestGroup')
 
-    local emptyGO = CS.UnityEngine.GameObject("entity")
-    local pool = poolGroup:CreatePool("entity",GameObjectPoolTemplateType.RuntimeInstance,emptyGO)
-    pool:SetPreload(30,2)
+    local emptyGO = CS.UnityEngine.GameObject('entity')
+    local pool = poolGroup:CreatePool('entity', GameObjectPoolTemplateType.RuntimeInstance, emptyGO)
+    pool:SetPreload(30, 2)
     local entity = pool:GetItem()
-    entity.transform:SetParent(nil,false)
+    entity.transform:SetParent(nil, false)
 end
 
-function EnvManager:OnMessage(_,userdata)
-    DebugLog.Info("Event", "message:="..tostring(userdata))
+function EnvManager:OnMessage(_, userdata)
+    Logger.Info('Event', 'message:=' .. tostring(userdata))
 
-    Game.EventMgr:UnregisterListener(111,self,EnvManager.OnMessage)
+    Game.EventMgr:UnregisterListener(111, self, EnvManager.OnMessage)
 end
 
 function EnvManager:OnIntervalTimer(userdata)
-    self.timerIndex = self.timerIndex+1
-    if self.timerIndex%2 == 0 then
+    self.timerIndex = self.timerIndex + 1
+    if self.timerIndex % 2 == 0 then
         Game.EventMgr:Trigger(111)
     end
-    DebugLog.Info("Timer Interval", userdata)
+    Logger.Info('Timer Interval', userdata)
 end
 
 function EnvManager:OnEndTimer(userdata)
-    DebugLog.Info("Timer End", userdata)
+    Logger.Info('Timer End', userdata)
 end
-
-
 
 function EnvManager:DoUpdate(deltaTime)
     self.elapseInterval = self.elapseInterval + deltaTime
@@ -102,12 +94,12 @@ function EnvManager:DoUpdate(deltaTime)
         end
     end
 
-    Game.TimerMgr:DoUpdate(deltaTime)
+    --Game.TimerMgr:DoUpdate(deltaTime)
 end
 
 --------------------Test---------------------------
 function EnvManager:OnCubeLoadComplete(_, uObject, _)
-    DebugLog.Info('EnvManager', 'Cube loaded')
+    Logger.Info('EnvManager', 'Cube loaded')
 
     local transform = uObject.transform
     transform.localPosition = CS.UnityEngine.Vector3.one

@@ -1,0 +1,17 @@
+{
+    "name": "DotEditor.BehaviourLine",
+    "references": [
+        "GUID:57b7121b16c3f924882220177d4d8e9a",
+        "GUID:26392f3185490844fb0730c592a6619b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

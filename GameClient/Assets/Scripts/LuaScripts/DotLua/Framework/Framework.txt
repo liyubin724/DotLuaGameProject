@@ -1,0 +1,93 @@
+local Framework = {}
+
+Framework.Version = '1.0.0'
+Framework.Author = 'erick.li'
+Framework.Email = ''
+Framework.CopyRight = '@'
+
+Framework.ErrorMessage = require('DotLua/Framework/ErrorMessage')
+
+Framework.Notification = require('DotLua/Framework/Observer/Notification')
+Framework.Notifier = require('DotLua/Framework/Observer/Notifier')
+Framework.Observer = require('DotLua/Framework/Observer/Observer')
+
+Framework.Proxy = require('DotLua/Framework/Proxy/Proxy')
+
+Framework.Servicer = require('DotLua/Framework/Servicer/Servicer')
+
+Framework.MacroCommand = require('DotLua/Framework/Command/MacroCommand')
+Framework.SimpleCommand = require('DotLua/Framework/Command/SimpleCommand')
+
+Framework.Mediator = require('DotLua/Framework/Mediator/Mediator')
+Framework.ViewComponent = require('DotLua/Framework/Mediator/ViewComponent')
+
+Framework.Controller = require('DotLua/Framework/Core/Controller')
+Framework.Model = require('DotLua/Framework/Core/Model')
+Framework.View = require('DotLua/Framework/Core/View')
+Framework.Service = require('DotLua/Framework/Core/Service')
+
+Framework.Facade = require('DotLua/Framework/Facade')
+
+Framework.facadeMap = {}
+
+function Framework.HasFacade(uniqueID)
+    return Framework.facadeMap[uniqueID] ~= nil
+end
+
+function Framework.GetFacade(uniqueID)
+    return Framework.facadeMap[uniqueID]
+end
+
+function Framework.AddFacade(facade)
+    if isinstanceof(facade, Framework.Facade) then
+        local uniqueID = facade:GetUniqueID()
+        if not Framework.HasFacade(uniqueID) then
+            Framework.facadeMap[uniqueID] = facade
+        else
+            Logger.Error('Framework', 'The facade has been added')
+        end
+    else
+        Logger.Error('Framework', 'The facade is not a instance of Facade')
+    end
+end
+
+function Framework.RemoveFacade(uniqueID)
+    local facade = Framework.facadeMap[uniqueID]
+    if facade then
+        Framework.facadeMap[uniqueID] = nil
+    end
+    return facade
+end
+
+function Framework.DoUpdate(deltaTime)
+    for _, facade in pairs(Framework.facadeMap) do
+        facade:DoUpdate(deltaTime)
+    end
+end
+
+function Framework.DoUnscaleUpdate(deltaTime)
+    for _, facade in pairs(Framework.facadeMap) do
+        facade:DoUnscaleUpdate(deltaTime)
+    end
+end
+
+function Framework.DoLateUpdate(deltaTime)
+    for _, facade in pairs(Framework.facadeMap) do
+        facade:DoLateUpdate(deltaTime)
+    end
+end
+
+function Framework.DoFixedUpdate(deltaTime)
+    for _, facade in pairs(Framework.facadeMap) do
+        facade:DoFixedUpdate(deltaTime)
+    end
+end
+
+function Framework.DoDispose()
+    for _, facade in pairs(Framework.facadeMap) do
+        facade:DoDispose()
+    end
+    Framework.facadeMap = {}
+end
+
+return Framework

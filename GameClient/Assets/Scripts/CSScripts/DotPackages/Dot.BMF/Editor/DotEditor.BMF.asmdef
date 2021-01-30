@@ -1,0 +1,21 @@
+{
+    "name": "DotEditor.BMF",
+    "references": [
+        "GUID:3d7195c9a8a2f8742bd10607bc40cbca",
+        "GUID:9585a5252a74ad84daea673ae34bfc23",
+        "GUID:f0af87eef8d7e4b45b6de2fab09b59e2",
+        "GUID:933edf6fd91824744b485969624f7526",
+        "GUID:66c54ad6c76949d4486c78098ea7ca0a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

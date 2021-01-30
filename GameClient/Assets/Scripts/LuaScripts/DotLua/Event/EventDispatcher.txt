@@ -1,11 +1,9 @@
 require('DotLua/Utility/table')
 
-local EventData = using('DotLua/Event/EventData')
-local ObjectPool = using('DotLua/Pool/ObjectPool')
+local EventData = require('DotLua/Event/EventData')
+local ObjectPool = require('DotLua/Pool/ObjectPool')
 
-local DebugLog = DebugLog
-local Game = Game
-
+local Logger = Logger
 ----public----
 --消息机制
 -- 对于全局的消息可以使用Game.EventMgr访问到
@@ -14,19 +12,10 @@ local EventDispatcher =
     function(self)
         self.eventPool = ObjectPool(EventData)
         self.events = {}
+
+        self.tempEvents = {}
     end
 )
-
-function EventDispatcher.GetInstance()
-    local eventMgr = Game.EventMgr
-    if not eventMgr then
-        eventMgr = EventDispatcher()
-
-        Game.EventMgr = eventMgr
-    end
-
-    return eventMgr
-end
 
 ----public----
 -- 注册事件的侦听
@@ -37,12 +26,12 @@ end
 -- @param userData 消息可以携带自定义参数
 function EventDispatcher:RegisterListener(eventID, receiver, func, userdata)
     if not func then
-        DebugLog.Error('Event', 'LuaEventDispatcher::RegisterListener->func is empty')
+        Logger.Error('Event', 'LuaEventDispatcher::RegisterListener->func is empty')
         return
     end
 
     local eventData = self.eventPool:Get()
-    eventData:SetData(receiver, func, userdata)
+    eventData:SetData(eventID,receiver, func, userdata)
 
     local eventList = self.events[eventID]
     if not eventList then
@@ -60,7 +49,7 @@ end
 -- @param func 消息处理函数
 function EventDispatcher:UnregisterListener(eventID, receiver, func)
     if not func then
-        DebugLog.Error('Event', 'LuaEventDispatcher::UnregisterListener->func is empty')
+        Logger.Error('Event', 'LuaEventDispatcher::UnregisterListener->func is empty')
         return
     end
 
@@ -100,8 +89,14 @@ end
 function EventDispatcher:Trigger(eventID, ...)
     local eventList = self.events[eventID]
     if eventList then
-        for i = #(eventList), 1, -1 do
-            eventList[i]:Invoke(eventID, ...)
+        table.copyto(eventList, self.tempEvents)
+
+        for i = #(self.tempEvents), 1, -1 do
+            local eventData = self.tempEvents[i]
+            if eventData and eventData:IsValid() and eventData:GetID() == eventID then
+                eventData:Invoke(...)
+            end
+            table.remove(self.tempEvents, i)
         end
     end
 end

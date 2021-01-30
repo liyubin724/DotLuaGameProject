@@ -1,6 +1,6 @@
 require("DotLua/OOP/Callback")
 
-local DebugLog = DebugLog
+local Logger = Logger
 
 ----public----
 -- 代理的实现
@@ -47,13 +47,13 @@ Delegate.__add = function(self, data)
                 local callback = Callback(receiver,func)
                 table.insert(self.callbacks, callback)
             else
-                DebugLog.Error("Delegate", "data is nil")
+                Logger.Error("Delegate", "data is nil")
             end
         else
-            DebugLog.Error("Delegate", "data is not a table")
+            Logger.Error("Delegate", "data is not a table")
         end
     else
-        DebugLog.Error("Delegate", "data is nil")
+        Logger.Error("Delegate", "data is nil")
     end
 
     return self
@@ -86,13 +86,13 @@ Delegate.__sub = function(self,data)
                     end
                 end
             else
-                DebugLog.Error("Delegate", "data is nil")
+                Logger.Error("Delegate", "data is nil")
             end
         else
-            DebugLog.Error("Delegate", "data is not a table")
+            Logger.Error("Delegate", "data is not a table")
         end
     else
-        DebugLog.Error("Delegate", "data is nil")
+        Logger.Error("Delegate", "data is nil")
     end
 
     return self

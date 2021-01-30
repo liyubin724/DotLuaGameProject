@@ -1,0 +1,42 @@
+local profiler = require('perf.profiler')
+local json = require('DotLua/Json/json')
+
+local XLuaProfiler = {}
+
+XLuaProfiler.isRunning = false
+
+function XLuaProfiler.Start()
+    if IsDebug and not XLuaProfiler.isRunning then
+        profiler.start()
+        XLuaProfiler.isRunning = true
+    end
+end
+
+--[[ 通过Report得到的结果是一个Table的数组
+
+其中每个字段分别表示
+name:函数名
+source:源代码，如果是lua文件将会统计到文件，行号，如果是C#的导出代码，将会标注[C#]，如果是C函数，标准为[C]。
+total_time:总时间
+average_time:平均每次调用时间
+relative_time:占总统计时间的百分比
+count:调用次数
+
+对数据结果做了一个封装为Json
+--]]
+function XLuaProfiler.Report()
+    if IsDebug and XLuaProfiler.isRunning then
+        return json.encode(profiler.report())
+    end
+    return ''
+end
+
+function XLuaProfiler.Stop()
+    if IsDebug and XLuaProfiler.isRunning then
+        XLuaProfiler.isRunning = false
+
+        profiler.stop()
+    end
+end
+
+return XLuaProfiler

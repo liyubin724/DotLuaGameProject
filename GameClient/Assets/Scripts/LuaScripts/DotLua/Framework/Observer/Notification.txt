@@ -1,0 +1,31 @@
+local Notification =
+    class(
+    function(self, name, body, userdata)
+        self.name = name
+        self.body = body
+        self.userdata = userdata
+    end
+)
+
+Notification.__tostring = function(notification)
+    return string.format(
+        'name = %s,body = %s,userdata = %s',
+        notification.name,
+        tostring(notification.body),
+        tostring(notification.userdata)
+    )
+end
+
+function Notification:GetName()
+    return self.name
+end
+
+function Notification:GetBody()
+    return self.body
+end
+
+function Notification:GetUserdata()
+    return self.userdata
+end
+
+return Notification

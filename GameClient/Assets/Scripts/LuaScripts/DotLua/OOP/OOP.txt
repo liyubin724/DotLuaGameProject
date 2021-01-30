@@ -1,20 +1,64 @@
 require('DotLua/OOP/Class')
-require('DotLua/OOP/Assembly')
 require('DotLua/OOP/Callback')
 require('DotLua/OOP/Delegate')
 
-function using(path)
-    return Assembly.GetOrLoadClass(path)
-end
+function isclass(tbl)
+    if tbl and type(tbl) == 'table' and tbl['is_a'] and tbl['_init'] then
+        return true
+    end
 
-function useless(path)
-    return Assembly.UnloadClass(path)
+    return false
 end
 
 function instance(path)
-    return Assembly.CreateInstance(path)
+    local class = require(path)
+    if class and type(class) == 'table' and class['is_a'] then
+        return class()
+    end
+    return nil
 end
 
-function instanceWithParams(path, ...)
-    return Assembly.CreateInstanceWithParams(path, ...)
+function instancewith(path, ...)
+    local class = require(path)
+    if class and type(class) == 'table' and class['is_a'] then
+        return class(...)
+    end
+    return nil
+end
+
+function isinstanceof(instance, class)
+    if not instance or not class then
+        return false
+    end
+
+    if type(instance) ~= 'table' or type(class) ~= 'table' then
+        return false
+    end
+
+    if not instance['is_a'] or not class['is_a'] then
+        return false
+    end
+
+    return instance:is_a(class)
+end
+
+function unrequire(path)
+    local isPreloading = false
+
+    for key, _ in pairs(package.preload) do
+        if key == path then
+            package.preload[key] = nil
+            isPreloading = true
+            break
+        end
+    end
+
+    if not isPreloading then
+        for key, _ in pairs(package.loaded) do
+            if key == path then
+                package.loaded[key] = nil
+                break
+            end
+        end
+    end
 end

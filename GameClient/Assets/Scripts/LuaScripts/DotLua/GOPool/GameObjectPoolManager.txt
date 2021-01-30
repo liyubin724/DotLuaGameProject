@@ -1,5 +1,6 @@
-local GameObjectPoolGroup = using('DotLua/GOPool/GameObjectPoolGroup')
-local DontDestroyHandler = CS.DotEngine.Utilities.DontDestroyHandler
+local Framework = require('DotLua/Framework/Framework')
+local GameObjectPoolGroup = require('DotLua/GOPool/GameObjectPoolGroup')
+local CSAgent = require('DotLua/CSAgent')
 
 ----private----
 -- GameObject缓存池的管理器，目前设计为全局唯一，由Game.PoolMgr可以获取到
@@ -18,15 +19,16 @@ item:SetParent(nil,false)
 --]]
 local GameObjectPoolManager =
     class(
-    function(self)
+    Framework.Servicer,
+    function(self, name)
         self.groups = {}
-        self.rootTransform = DontDestroyHandler.CreateTransform('LuaPoolRoot')
+        self.rootTransform = CSAgent.DontDestroyHandler.CreateTransform('LuaGOPoolRoot')
     end
 )
 
 ----public----
 -- 判断缓存池中是否已经存在对应的分组
--- @param name 分组的名称
+-- @param name string 分组的名称
 -- @return bool 返回是否存在指定名称的分组
 function GameObjectPoolManager:HasGroup(name)
     return self.groups[name] ~= nil
@@ -51,7 +53,7 @@ function GameObjectPoolManager:CreateGroup(name)
         group = GameObjectPoolGroup(name, self.rootTransform)
         self.groups[name] = group
     else
-        DebugLog.LogWarning('GOPool', 'The group has been created.name = ' .. name)
+        Logger.LogWarning('GOPool', 'The group has been created.name = ' .. name)
     end
 
     return group
@@ -61,7 +63,7 @@ end
 -- 删除指定名称的分组
 -- @param name 分组的名称
 -- @return void
-function GameObjectPoolManager:DeleteGroup(name)
+function GameObjectPoolManager:RemoveGroup(name)
     local group = self:GetGroup(name)
     if group then
         group:Dispose()
@@ -79,11 +81,11 @@ function GameObjectPoolManager:GetPool(groupName, poolName)
     if group then
         local pool = group:GetPool(poolName)
         if not pool then
-            DebugLog.LogError('GOPool', 'Pool is not found.poolName = ' .. poolName)
+            Logger.LogError('GOPool', 'Pool is not found.poolName = ' .. poolName)
         end
         return pool
     else
-        DebugLog.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
+        Logger.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
     end
 end
 
@@ -92,12 +94,12 @@ end
 -- @param groupName 分组的名称
 -- @param poolName 池名称
 -- @return void
-function GameObjectPoolManager:DeletePool(groupName, poolName)
+function GameObjectPoolManager:RemovePool(groupName, poolName)
     local group = self:GetGroup(groupName)
     if group then
-        group:DeletePool(poolName)
+        group:RemovePool(poolName)
     else
-        DebugLog.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
+        Logger.LogError('GOPool', 'Group is not found.groupName = ' .. groupName)
     end
 end
 
@@ -109,6 +111,11 @@ function GameObjectPoolManager:ClearAll()
         group:Dispose()
     end
     self.groups = {}
+end
+
+function GameObjectPoolManager:DoRemove()
+    self:ClearAll()
+    CSAgent.GameObject.Destroy(self.rootTransform.gameObject)
 end
 
 return GameObjectPoolManager

@@ -1,0 +1,15 @@
+{
+    "name": "com.dot.bl",
+    "version": "0.1.0",
+    "displayName": "Dot.BehavourLine",
+    "description": "This is Framework for Dot.BehavourLine",
+    "dependencies": {
+    },
+    "keywords": [
+    ],
+    "author": {
+        "name": "li.yubin",
+        "email": "liyubin724@163.com",
+        "url": "https://www.liyubin.com"
+    }
+}

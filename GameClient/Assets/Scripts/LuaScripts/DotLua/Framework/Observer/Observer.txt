@@ -1,0 +1,54 @@
+local ObjectPoolItem = require('DotLua/Pool/ObjectPoolItem')
+
+local Observer =
+    class(
+    ObjectPoolItem,
+    function(self)
+        self.target = nil
+        self.func = nil
+    end
+)
+
+Observer.__eq = function(item1, item2)
+    if item1 == nil and item2 == nil then
+        return true
+    elseif item1 ~= nil and item2 ~= nil then
+        return item1.target == item2.target and item1.func == item2.func
+    else
+        return false
+    end
+end
+
+function Observer:GetTarget()
+    return self.target
+end
+
+function Observer:GetFunc()
+    return self.func
+end
+
+function Observer:SetData(target, func)
+    self.target = target
+    self.func = func
+end
+
+function Observer:DoRelease()
+    self.target = nil
+    self.func = nil
+end
+
+function Observer:Notify(notification)
+    if self.func then
+        if self.target then
+            self.func(self.target, notification)
+        else
+            self.func(notification)
+        end
+    end
+end
+
+function Observer:Equal(target, func)
+    return self.target == target and self.func == func
+end
+
+return Observer

@@ -1,116 +1,208 @@
-﻿using DotEngine.World.QT;
-using System.Collections;
+﻿using DotEngine.Generic;
+using DotEngine.Log;
+using DotEngine.Log.Appender;
+using DotEngine.Pool;
+using DotEngine.World.QT;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Profiling;
 
-public class TestCubeQuadObject : IQuadObject
+public class TestCubeQuadObject : MonoBehaviour,IQuadObject
 {
-    public Rect Bounds { get; private set; }
-    private GameObject cubeGO;
+    public int UniqueID { get; set; }
 
-    public event BoundsChanged BoundsChangedHandler;
+    public AABB2D Bounds { get; set; }
 
-    private Transform parentTran = null;
-    public TestCubeQuadObject(Transform t)
+    public float Speed { get; set; } = 5.0f;
+    public bool IsBoundsChangeable { get; set; } = false;
+
+    public event System.Action<IQuadObject, AABB2D, AABB2D> OnBoundsChanged;
+
+    void Update()
     {
-        parentTran = t;
-    }
-
-    public void DoHidden()
-    {
-        if(cubeGO!=null)
+        if(m_IsMoving)
         {
-            GameObject.Destroy(cubeGO);
+            Vector3 dir = (m_TargetPosition - transform.position).normalized;
+            Vector3 deltaDistance = dir * Speed * Time.deltaTime;
+
+            AABB2D oldBounds = Bounds;
+            Vector2 centerPosition = Bounds.Center + new Vector2(deltaDistance.x,deltaDistance.z);
+            AABB2D newBounds = new AABB2D(centerPosition, Bounds.Extents);
+
+            transform.position = new Vector3(newBounds.Center.x, 0, newBounds.Center.y);
+
+            Bounds = newBounds;
+
+            OnBoundsChanged.Invoke(this, oldBounds, newBounds);
+
+            if(Vector3.Distance(transform.position,m_TargetPosition)< 0.1f)
+            {
+                RandomMove();
+            }
         }
     }
 
-    public void DoLOD(int level)
-    {
+    private bool m_IsMoving = false;
+    private Vector3 m_TargetPosition;
 
+    
+
+    public void StartMoveTo(Vector3 targetPosition)
+    {
+        m_IsMoving = true;
+        m_TargetPosition = targetPosition;
     }
 
-    public void DoShow()
+    public void RandomMove()
     {
-        var prefab = Resources.Load<GameObject>("Cube");
-        cubeGO = GameObject.Instantiate(prefab);
-        cubeGO.transform.SetParent(parentTran, false);
-        Vector3 pos = new Vector3(Random.Range(-25f, 25f), 0f, Random.Range(-25f, 25f));
-        cubeGO.transform.localPosition = pos;
-        float sacle = Random.Range(0.1f, 0.2f);
-        cubeGO.transform.localScale = new Vector3(sacle, sacle, sacle);
+        float targetPositionX = Random.Range(30, 360);
+        float targetPositionY = Random.Range(30, 360);
 
-        Bounds = new Rect(pos.x, pos.z, sacle, sacle);
+        Speed = Random.Range(9.0f, 30.0f);
+
+        StartMoveTo(new Vector3(targetPositionX, 0, targetPositionY));
+    }
+
+    public void OnEnterView()
+    {
+        GetComponent<MeshRenderer>().material.color = Color.red;
+    }
+
+    public void OnExitView()
+    {
+        GetComponent<MeshRenderer>().material.color = Color.white;
     }
 }
 
 public class TestQuadTree : MonoBehaviour
 {
-    private QuadTree quadTree = new QuadTree();
-    private List<TestCubeQuadObject> objs = new List<TestCubeQuadObject>();
-    
-    void Start()
+    private QuadTree tree = null;
+    private QuadTreeGizmosDrawer drawer = null;
+
+    private UniqueIntID idCreator = new UniqueIntID();
+    private void Start()
     {
-        Application.targetFrameRate = 30;
-        quadTree.SetData(10, 3, new Rect(-30f, -30f, 60, 60));
+
+        LogUtil.AddAppender(new UnityConsoleAppender());
+
+        tree = new QuadTree(7, 3, new AABB2D(0, 0, 400, 400));
+
+        drawer = QuadTreeGizmosDrawer.DrawGizmos(tree);
     }
-    private void OnGUI()
+
+    private TestCubeQuadObject CreateObject()
     {
-        if (GUILayout.Button("CLICK"))
-        {
-            TestCubeQuadObject obj = new TestCubeQuadObject(transform.parent);
-            obj.DoShow();
-            Profiler.BeginSample("QuadTree.InsertObject");
-            quadTree.InsertObject(obj);
-            Profiler.EndSample();
-        }
+        float randomCenterX = Random.Range(21, 370);
+        float randomCenterY = Random.Range(21, 370);
+        float randomExtents = Random.Range(0.3f, 2);
 
-        if (GUILayout.Button("Random 1000"))
-        {
-            for (int i = 0; i < 1000; ++i)
-            {
-                TestCubeQuadObject obj = new TestCubeQuadObject(transform.parent);
-                obj.DoShow();
-                quadTree.InsertObject(obj);
 
-                objs.Add(obj);
-            }
-        }
+        AABB2D bounds = new AABB2D(new Vector2(randomCenterX, randomCenterY), new Vector2(randomExtents, randomExtents));
 
-        if(GUILayout.Button("Delete "))
-        {
-            int rCount = Random.Range(10, 100);
-            for(int i =0;i<rCount;i++)
-            {
-                if(objs.Count == 0)
-                {
-                    break;
-                }
-                int rIndex = Random.Range(0, objs.Count - 1);
-                TestCubeQuadObject obj = objs[rIndex];
-                objs.RemoveAt(rIndex);
-                quadTree.RemoveObject(obj);
-                obj.DoHidden();
-            }
-        }
+        GameObject gObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        TestCubeQuadObject qObject = gObj.AddComponent<TestCubeQuadObject>();
+        qObject.UniqueID = idCreator.NextID;
+        qObject.Bounds = bounds;
+        gObj.name = "Cube " + qObject.UniqueID;
+        gObj.transform.localScale = new Vector3(bounds.Size.x, 1, bounds.Size.y);
+        gObj.transform.position = new Vector3(bounds.Center.x, 0, bounds.Center.y);
+
+        //qObject.OnEnterView();
+
+        return qObject;
     }
 
     private void OnDrawGizmos()
     {
-        if (Application.isPlaying)
+        if(isMouseDown)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(new Vector3(-50, 0.1f, 0f), new Vector3(50, 0.1f, 0f));
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(new Vector3(0, 0.1f, -50f), new Vector3(0, 0.1f, 50f));
+            QuadTreeUtil.DrawGizmoAABBBorder(showBounds, Color.yellow);
+        }
+    }
 
-            List<QuadNode> nodes = new List<QuadNode>(quadTree.GetNodes());
-            Gizmos.color = Color.white;
-            foreach (var node in nodes)
+    private void OnDestroy()
+    {
+        LogUtil.Reset();
+    }
+
+    private bool isMouseDown = false;
+    private AABB2D showBounds;
+    private List<IQuadObject> selectedObjects = new List<IQuadObject>();
+    private List<IQuadObject> tempObjects = new List<IQuadObject>();
+    private void OnGUI()
+    {
+        Random.InitState((int)System.DateTime.Now.Ticks);
+
+        if(GUILayout.Button("CLICK"))
+        {
+            LogUtil.Trace("SSSSSSSS");
+            for(int i =0;i<10;++i)
             {
-                Vector2 center = node.Bounds.center;
-                Vector2 size = node.Bounds.size;
-                Gizmos.DrawWireCube(new Vector3(center.x, 0.0f, center.y), new Vector3(size.x, 1.0f, size.y));
+                TestCubeQuadObject quadObject = CreateObject();
+                float value = Random.Range(0.0f, 1.0f);
+                if (value > 0.5f)
+                {
+                    quadObject.IsBoundsChangeable = true;
+                    quadObject.RandomMove();
+                }
+                tree.InsertObject(quadObject);
+            }
+        }
+
+        if(Event.current.type == EventType.MouseDown && Event.current.button == 0)
+        {
+            isMouseDown = true;
+        }
+        if(isMouseDown )
+        {
+            Vector3 wPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            showBounds = new AABB2D(new Vector2(wPosition.x, wPosition.z), new Vector2(50, 50));
+
+            List<IQuadObject> list1 = ListPool<IQuadObject>.Get();
+            if(selectedObjects!=null)
+            {
+                list1.AddRange(selectedObjects);
+            }
+
+            tempObjects.Clear();
+            tree.QueryIntersectsObjects(showBounds,ref tempObjects);
+            List<IQuadObject> list2 = ListPool<IQuadObject>.Get();
+            list2.AddRange(tempObjects);
+
+            var dis1 = list1.Except(list2).ToArray();
+            foreach(var obj in dis1)
+            {
+                obj.OnExitView();
+            }
+
+            var dis2 = list2.Except(list1).ToArray();
+            foreach (var obj in dis2)
+            {
+                obj.OnEnterView();
+            }
+
+            selectedObjects.Clear();
+            selectedObjects.AddRange(tempObjects);
+
+            ListPool<IQuadObject>.Release(list1);
+            ListPool<IQuadObject>.Release(list2);
+        }
+        if(isMouseDown && Event.current.type == EventType.MouseUp)
+        {
+            isMouseDown = false;
+        }
+        
+        if(Input.GetKeyUp(KeyCode.Delete))
+        {
+            if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitInfo, float.MaxValue))
+            {
+                var qObject = hitInfo.collider.gameObject.GetComponent<TestCubeQuadObject>();
+                if(qObject!=null)
+                {
+                    tree.RemoveObject(qObject);
+
+                    Destroy(qObject.gameObject);
+                }
             }
         }
     }
