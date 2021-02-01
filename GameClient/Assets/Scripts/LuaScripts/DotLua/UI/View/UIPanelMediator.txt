@@ -1,0 +1,65 @@
+local UIViewMeditor = require('DotLua/UI/View/UIViewMeditor')
+
+----public----
+
+local UIPanelMediator =
+    class(
+    UIViewMeditor,
+    function(self, name)
+        self.layer = nil
+        self.layerTransform = nil
+        self.mode = nil
+    end
+)
+
+---internal----
+-- 为Panel设置显示层级
+-- @param layer 显示层级
+-- @param layerTransform 父结点的Transform
+-- @return void
+function UIPanelMediator:SetLayer(layer, layerTransform)
+    self.layer = layer
+    self.layerTransform = layerTransform
+end
+
+----internal----
+-- 获取Panel的显示层级
+-- @return UIPanelLayer
+function UIPanelMediator:GetLayer()
+    return self.layer
+end
+
+function UIPanelMediator:SetMode(mode)
+    self.mode = mode
+end
+
+function UIPanelMediator:GetMode()
+    return self.mode
+end
+
+function UIPanelMediator:DoStart()
+end
+
+function UIPanelMediator:DoDestroy()
+end
+
+function UIPanelMediator:OnViewInited()
+    if self.layerTransform then
+        self:GetView():SetParent(self.layerTransform)
+    end
+end
+
+function UIPanelMediator:Close()
+    local panelMgr = Game.PanelMgr
+    panelMgr:ClosePanel(self)
+end
+
+function UIPanelMediator:ListNotificationInterests()
+    return {}
+end
+
+function UIPanelMediator:HandleNotification(notification)
+end
+
+
+return UIPanelMediator

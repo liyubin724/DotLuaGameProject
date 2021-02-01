@@ -1,0 +1,30 @@
+local Notifier = require('DotLua/Framework/Observer/Notifier')
+
+local Proxy =
+    class(
+    Notifier,
+    function(self, name)
+        self.name = name
+        self.data = nil
+    end
+)
+
+function Proxy:GetName()
+    return self.name
+end
+
+function Proxy:GetData()
+    return self.data
+end
+
+function Proxy:SetData(data)
+    self.data = data
+end
+
+function Proxy:DoRegister()
+end
+
+function Proxy:DoRemove()
+end
+
+return Proxy

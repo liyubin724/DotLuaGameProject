@@ -1,0 +1,20 @@
+{
+    "name": "DotEditor.Log",
+    "references": [
+        "GUID:9585a5252a74ad84daea673ae34bfc23",
+        "GUID:3d7195c9a8a2f8742bd10607bc40cbca",
+        "GUID:f6ccfdf3dbbf30e4086efb635ade6f8a",
+        "GUID:db1bf23569c7dfa41a1fd78eaf179d9b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

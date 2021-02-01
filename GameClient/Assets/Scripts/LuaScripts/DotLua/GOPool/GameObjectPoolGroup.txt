@@ -1,6 +1,7 @@
-local GameObjectPool = using('DotLua/GOPool/GameObjectPool')
-local GameObject = CS.UnityEngine.GameObject
+local GameObjectPool = require('DotLua/GOPool/GameObjectPool')
+local CSAgent = require('DotLua/CSAgent')
 
+local GameObject = CSAgent.GameObject
 ----private----
 -- 缓存池的分组，在调试模式下将会对分组也创建对应名称的GameObject结点，并将后缓存池中的对象放置到对应的结点下，
 -- 如果在非调试模式下将会不再创建，而是直接放置到根结点下
@@ -10,13 +11,14 @@ local GameObjectPoolGroup =
     class(
     function(self, name, pTransform)
         self.name = name
-        self.pools = {}
-        self.rootTransform = pTransform
-        self.groupTransform = nil
+        self.parentTransform = pTransform
 
-        if Game.IsDebug then
+        self.groupTransform = nil
+        self.pools = {}
+
+        if IsDebug then
             self.groupTransform = GameObject(name).transform
-            self.groupTransform:SetParent(self.rootTransform, false)
+            self.groupTransform:SetParent(self.parentTransform, false)
         end
     end
 )
@@ -28,7 +30,7 @@ function GameObjectPoolGroup:GetTransform()
     if self.groupTransform then
         return self.groupTransform
     end
-    return self.rootTransform
+    return self.parentTransform
 end
 
 ----public----
@@ -56,7 +58,7 @@ end
 function GameObjectPoolGroup:CreatePool(name, templateType, templateGameObject)
     local pool = self:GetPool(name)
     if pool then
-        DebugLog.LogError('GOPool', 'The pool has been created.name = ' .. name)
+        Logger.LogError('GOPool', 'The pool has been created.name = ' .. name)
         return nil
     else
         pool = GameObjectPool(name, self:GetTransform(), templateType, templateGameObject)
@@ -69,7 +71,7 @@ end
 -- 删除指定名称的缓存池
 -- @param name 缓存池的名称，一般情况下会使用资源的路径或者唯一地址做为名称
 -- @return void
-function GameObjectPoolGroup:DeletePool(name)
+function GameObjectPoolGroup:RemovePool(name)
     local pool = self:GetPool(name)
     if pool then
         pool:Dispose()
@@ -89,8 +91,9 @@ function GameObjectPoolGroup:Dispose()
 
     if self.groupTransform then
         GameObject.Destroy(self.groupTransform.gameObject)
+        self.groupTransform = nil
     end
-    self.groupTransform = nil
+
     self.parentTransform = nil
 end
 

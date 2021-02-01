@@ -1,16 +1,18 @@
-local TimerWheel = using('DotLua/Timer/TimerWheel')
-local ObjectPool = using('DotLua/Pool/ObjectPool')
-local TimerTask = using('DotLua/Timer/TimerTask')
-local TimerHandler = using('DotLua/Timer/TimerHandler')
+local Framework = require('DotLua/Framework/Framework')
+local TimerWheel = require('DotLua/Timer/TimerWheel')
+local ObjectPool = require('DotLua/Pool/ObjectPool')
+local TimerTask = require('DotLua/Timer/TimerTask')
+local TimerHandler = require('DotLua/Timer/TimerHandler')
 
-local DebugLog = DebugLog
+local Logger = Logger
 
 ----private----
 -- 多层时间轮定时器
 -- 通过Game.TimerMgr可以获得全局的定时器
 local HierarchicalTimerWheel =
     class(
-    function(self)
+    Framework.Servicer,
+    function(self, name)
         self.uniqueIndex = 0
         self.taskPool = ObjectPool(TimerTask)
 
@@ -59,7 +61,7 @@ function HierarchicalTimerWheel:AddTimer(intervalInSec, totalInSec, receiver, in
     local task = self.taskPool:Get()
     task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
 
-    return self:AddTask(task,nil)
+    return self:AddTask(task, nil)
 end
 
 ----public----
@@ -73,8 +75,8 @@ function HierarchicalTimerWheel:AddIntervalTimer(intervalInSec, receiver, interv
     return self:AddTimer(intervalInSec, 0, receiver, intervalFunc, nil, userdata)
 end
 
-function HierarchicalTimerWheel:AddTickTimer(receiver,intervalFunc,userdata)
-    return self:AddTimer(self.wheel:GetTickInMS() * 0.001,0,receiver,intervalFunc,nil,userdata)
+function HierarchicalTimerWheel:AddTickTimer(receiver, intervalFunc, userdata)
+    return self:AddTimer(self.wheel:GetTickInMS() * 0.001, 0, receiver, intervalFunc, nil, userdata)
 end
 
 ----public----
@@ -112,7 +114,7 @@ end
 -- 驱动多层时间轮进行轮转
 -- @param deltaTime 流逝的时间
 -- @return void
-function HierarchicalTimerWheel:DoUpdate(deltaTime)
+function HierarchicalTimerWheel:DoUnscaleUpdate(deltaTime)
     if self.isPaused then
         return
     end
@@ -150,7 +152,7 @@ end
 function HierarchicalTimerWheel:OnWheelComplete(level)
     local nextLevel = level + 1
     if nextLevel > #(self.wheels) then
-        DebugLog.Error('Timer', 'Timer error')
+        Logger.Error('Timer', 'Timer error')
         return
     end
 

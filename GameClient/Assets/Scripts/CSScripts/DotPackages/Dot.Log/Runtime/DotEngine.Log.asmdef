@@ -1,0 +1,16 @@
+{
+    "name": "DotEngine.Log",
+    "references": [
+        "GUID:9585a5252a74ad84daea673ae34bfc23",
+        "GUID:db1bf23569c7dfa41a1fd78eaf179d9b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

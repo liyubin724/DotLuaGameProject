@@ -1,0 +1,54 @@
+local Controller =
+    class(
+    function(self, uniqueID, view)
+        self.uniqueID = uniqueID
+        self.view = view
+        self.commandMap = {}
+    end
+)
+
+function Controller:GetUniqueID()
+    return self.uniqueID
+end
+
+function Controller:HasCommand(notificationName)
+    return self.commandMap[notificationName] ~= nil
+end
+
+function Controller:RegisterCommand(notificationName, commandClass)
+    if notificationName and isclass(commandClass) then
+        if not self:HasCommand(notificationName) then
+            self.view:RegisterObserver(notificationName, self, self.ExecuteCommand)
+
+            self.commandMap[notificationName] = commandClass
+        else
+            Logger.Error('Framework', 'The notification has been added.name = ' .. notificationName)
+        end
+    else
+        Logger.Error(
+            'Framework',
+            'The name of notification is nil or the command is not a class. name = ' .. notificationName
+        )
+    end
+end
+
+function Controller:RemoveCommand(notificationName)
+    if self.commandMap[notificationName] then
+        self.commandMap[notificationName] = nil
+
+        self.view:RemoveObserver(notificationName, self, self.ExecuteCommand)
+    end
+end
+
+function Controller:ExecuteCommand(notification)
+    local commandClass = self.commandMap[notification:GetName()]
+    if commandClass then
+        local command = commandClass()
+        command:OnInitialized(self:GetUniqueID())
+        command:Execute(notification)
+    else
+        Logger.Error('Framework', 'the command is not found.name = ' .. notification:GetName())
+    end
+end
+
+return Controller

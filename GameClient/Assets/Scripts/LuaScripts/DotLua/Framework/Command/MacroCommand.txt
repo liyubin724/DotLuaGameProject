@@ -1,0 +1,32 @@
+local SimpleCommand = require('DotLua/Framework/Command/SimpleCommand')
+
+local MacroCommand =
+    class(
+    SimpleCommand,
+    function(self)
+        self.subCommands = {}
+        self:OnInitialized()
+    end
+)
+
+function MacroCommand:OnInitialized()
+end
+
+function MacroCommand:AddSubCommand(commandClass)
+    if isclass(commandClass) then
+        table.insert(self.subCommands, commandClass)
+    else
+        Logger.Error('Framework', 'The command is not a class')
+    end
+end
+
+function MacroCommand:Execute(notification)
+    while #(self.subCommands) > 0 do
+        local commandClass = table.remove(self.subCommands, 1)
+        local command = commandClass()
+        command:OnInitialized(self:GetUniqueID())
+        command:Execute(notification)
+    end
+end
+
+return MacroCommand

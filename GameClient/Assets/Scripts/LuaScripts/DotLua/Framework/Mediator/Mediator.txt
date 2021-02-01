@@ -1,0 +1,37 @@
+local Notifier = require('DotLua/Framework/Observer/Notifier')
+
+local Mediator =
+    class(
+    Notifier,
+    function(self, name)
+        self.name = name
+        self.viewComponent = nil
+    end
+)
+
+function Mediator:GetName()
+    return self.name
+end
+
+function Mediator:GetViewComponent()
+    return self.viewComponent
+end
+
+function Mediator:SetViewComponent(viewComponent)
+    self.viewComponent = viewComponent
+end
+
+function Mediator:ListNotificationInterests()
+    return {}
+end
+
+function Mediator:HandleNotification(notification)
+end
+
+function Mediator:DoRegister()
+end
+
+function Mediator:DoRemove()
+end
+
+return Mediator

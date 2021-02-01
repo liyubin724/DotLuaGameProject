@@ -69,12 +69,21 @@ local function report_output_line(rp, stat_interval)
     local linedefined   = (rp.db_info.linedefined and rp.db_info.linedefined >= 0) and string.format(":%i", rp.db_info.linedefined) or ''
     source = source .. linedefined
     local name          = rp.db_info.name or '[anonymous]'
-    local total_time    = string.format("%04.3f", rp.total_time * 1000)
-    local average_time    = string.format("%04.3f", rp.total_time / rp.count * 1000)
-    local relative_time = string.format("%03.2f%%", (rp.total_time / stat_interval) * 100 )
-    local count         = string.format("%7i", rp.count)
+    -- local total_time    = string.format("%04.3f", rp.total_time * 1000)
+    -- local average_time    = string.format("%04.3f", rp.total_time / rp.count * 1000)
+    -- local relative_time = string.format("%03.2f%%", (rp.total_time / stat_interval) * 100 )
+    -- local count         = string.format("%7i", rp.count)
         
-    return string.format("|%-40.40s: %-50.50s: %-12s: %-12s: %-12s: %-12s|\n", name, source, total_time, average_time, relative_time, count)
+    local result = {}
+    result.name = name
+    result.source = source
+    result.total_time = rp.total_time * 1000
+    result.average_time = rp.total_time / rp.count * 1000
+    result.relative_time = (rp.total_time / stat_interval) * 100
+    result.count =  rp.count
+
+    return result
+    --return string.format("|%-40.40s: %-50.50s: %-12s: %-12s: %-12s: %-12s|\n", name, source, total_time, average_time, relative_time, count)
 end
 
 local sort_funcs = {
@@ -87,8 +96,8 @@ local function report(sort_by)
     sethook()
     local sort_func = type(sort_by) == 'function' and sort_by or sort_funcs[sort_by]
     
-    local FORMAT_HEADER_LINE       = "|%-40s: %-50s: %-12s: %-12s: %-12s: %-12s|\n"
-    local header = string.format( FORMAT_HEADER_LINE, "FUNCTION", "SOURCE", "TOTAL(MS)", "AVERAGE(MS)", "RELATIVE", "CALLED" )
+    --local FORMAT_HEADER_LINE       = "|%-40s: %-50s: %-12s: %-12s: %-12s: %-12s|\n"
+    --local header = string.format( FORMAT_HEADER_LINE, "FUNCTION", "SOURCE", "TOTAL(MS)", "AVERAGE(MS)", "RELATIVE", "CALLED" )
     local stat_interval = get_time() - (start_time or get_time())
     
     local report_list = {}
@@ -103,15 +112,17 @@ local function report(sort_by)
     
     table.sort(report_list, sort_func or sort_funcs.TOTAL)
     
-    local output = header
+    -- local output = header
     
+    local result = {}
     for i, rp in ipairs(report_list) do
-        output = output .. rp.output
+        --output = output .. rp.output
+        table.insert(result,rp.output)
     end
     
     sethook(on_hook, 'cr')
     
-    return output
+    return result
 end
 
 return {

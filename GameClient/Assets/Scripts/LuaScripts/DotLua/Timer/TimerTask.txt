@@ -1,7 +1,7 @@
 require('DotLua/Utility/math')
 
-local ObjectPoolItem = using("DotLua/Pool/ObjectPoolItem")
-local DebugLog = DebugLog
+local ObjectPoolItem = require("DotLua/Pool/ObjectPoolItem")
+local Logger = Logger
 
 ----internal----
 local TimerTask =
@@ -67,7 +67,7 @@ function TimerTask:SetData(index, intervalInSec, totalInSec, receiver, intervalF
 
         self.triggerLeftInMS = self.intervalInMS
     else
-        DebugLog.Error('Timer', 'timer error')
+        Logger.Error('Timer', 'timer error')
     end
 
     if intervalFunc then

@@ -1,14 +1,14 @@
-local serpent = require("DotLua/Tool/serpent")
+local serpent = require('DotLua/Tool/serpent')
 
 ----public----
 --将table转换为字符串
 --@param tbl:需要输出的table
 function table.tostring(tbl)
     if not tbl then
-        return "nil"
+        return 'nil'
     end
 
-    if type(tbl) == "table" then
+    if type(tbl) == 'table' then
         return serpent.dump(tbl)
     end
 
@@ -34,13 +34,13 @@ end
 --判断table是否是数组
 --@tbl
 function table.isarray(tbl)
-    if type(tbl) ~= "table" then
+    if type(tbl) ~= 'table' then
         return false
     end
 
     local n = #tbl
     for i, _ in pairs(tbl) do
-        if type(i) ~= "number" then
+        if type(i) ~= 'number' then
             return false
         end
 
@@ -56,7 +56,7 @@ end
 --清空Table的内容
 --@param tbl
 function table.clear(tbl)
-    if not tbl or type(tbl) ~= "table" then
+    if not tbl or type(tbl) ~= 'table' then
         return
     end
 
@@ -64,6 +64,30 @@ function table.clear(tbl)
     if keys and #keys > 0 then
         for index = 1, #keys do
             tbl[keys[index]] = nil
+        end
+    end
+end
+
+function table.copy(tbl)
+    local result = {}
+
+    if tbl then
+        for key, value in pairs(tbl) do
+            result[key] = value
+        end
+    end
+
+    return result
+end
+
+function table.copyto(tbl1, tbl2)
+    tbl2 = tbl2 or {}
+
+    if tbl1 then
+        if tbl1 then
+            for key, value in pairs(tbl1) do
+                tbl2[key] = value
+            end
         end
     end
 end

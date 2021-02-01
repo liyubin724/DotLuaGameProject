@@ -1,0 +1,75 @@
+local LogUtil = CS.DotEngine.Log.LogUtil
+
+local UnityLogger = {}
+UnityLogger.isErrorEnable = false
+UnityLogger.isWarningEnable = false
+UnityLogger.isInfoEnable = false
+
+----public----
+--设置日志输出
+--@param isErrorEnable : 是否输出Error类型的日志
+--@param isWarningEnable : 是否输出Warning类型的日志
+--@param isInfoEnable : 是否输出Info类型的日志
+--@return void
+function UnityLogger.SetEnable(isErrorEnable, isWarningEnable, isInfoEnable)
+    if UnityLogger.isErrorEnable ~= isErrorEnable then
+        if isErrorEnable then
+            Logger.errorDelegate = Logger.errorDelegate + {UnityLogger.Error}
+        else
+            Logger.errorDelegate = Logger.errorDelegate - {UnityLogger.Error}
+        end
+
+        UnityLogger.isErrorEnable = isErrorEnable
+    end
+
+    if UnityLogger.isWarningEnable ~= isWarningEnable then
+        if isWarningEnable then
+            Logger.warningDelegate = Logger.warningDelegate + {UnityLogger.Warning}
+        else
+            Logger.warningDelegate = Logger.warningDelegate - {UnityLogger.Warning}
+        end
+
+        UnityLogger.isWarningEnable = isWarningEnable
+    end
+
+    if UnityLogger.isInfoEnable ~= isInfoEnable then
+        if isInfoEnable then
+            Logger.infoDelegate = Logger.infoDelegate + {UnityLogger.Info}
+        else
+            Logger.infoDelegate = Logger.infoDelegate - {UnityLogger.Info}
+        end
+
+        UnityLogger.isInfoEnable = isInfoEnable
+    end
+
+
+end
+
+----public----
+--将日志以Error的形式输出
+--@param loggerName
+--@param data
+--@return void
+function UnityLogger.Error(loggerName, message)
+    LogUtil.LogError(loggerName, 'LUA:' .. message)
+end
+
+----public----
+--将日志以警告的方式输出
+--@param loggerName
+--@param data
+--@return void
+function UnityLogger.Warning(loggerName, message)
+    LogUtil.LogWarning(loggerName, 'LUA:' .. message)
+end
+
+----public----
+--将日志以调试的方式输出
+--@param loggerName
+--@param data
+--@return void
+function UnityLogger.Info(loggerName, message)
+    LogUtil.LogInfo(loggerName, 'LUA:' .. message)
+end
+
+return UnityLogger

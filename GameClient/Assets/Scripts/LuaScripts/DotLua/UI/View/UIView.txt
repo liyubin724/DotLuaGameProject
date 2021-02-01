@@ -1,15 +1,16 @@
+local Framework = require('DotLua/Framework/Framework')
+
 local UIView =
     class(
+    Framework.ViewComponent,
     function(self)
-        self.controller = nil
-
         self.gameObject = nil
         self.transform = nil
     end
 )
 
-function UIView:SetController(controller)
-    self.controller = controller
+function UIView:SetMediator(mediator)
+    self._base.SetMediator(self,mediator)
 end
 
 function UIView:SetParent(parentTransform)

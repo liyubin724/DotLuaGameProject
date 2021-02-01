@@ -1,0 +1,16 @@
+{
+    "name": "DotEngine.AI",
+    "references": [
+        "GUID:9585a5252a74ad84daea673ae34bfc23",
+        "GUID:1a1a14241271acf41b94effae8c9fe0c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

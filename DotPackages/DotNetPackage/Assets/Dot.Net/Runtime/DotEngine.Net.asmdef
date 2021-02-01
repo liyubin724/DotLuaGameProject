@@ -1,0 +1,14 @@
+{
+    "name": "DotEngine.Net",
+    "references": [
+        "GUID:90dd0319acbfffa4e80d7fca57fd6e65"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

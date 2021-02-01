@@ -1,87 +1,62 @@
 ﻿using CommandLine;
-using DotTool.PBConfig;
+using DotEngine.ConsoleLog;
+using DotEngine.Log;
+using DotTool.NetMessage.Exporter;
 using System.IO;
 
-namespace PBConfigTool
+namespace DotTool.NetMessage
 {
-    public enum OutputFileType
-    {
-        Id = 0,
-        Parser = 1,
-    }
-
-    class Options
-    {
-        [Option('c',"config-path",Required =true,HelpText ="")]
-        public string ConfigFilePath { get; set; }
-
-        [Option('o',"output-dir",Required =true,HelpText ="")]
-        public string OutputDir { get; set; }
-
-        [Option('t',"template-path",Required =true,HelpText ="")]
-        public string TemplateFilePath { get; set; }
-
-        [Option('f',"file-type",Required =true,HelpText ="")]
-        public OutputFileType FileType { get; set; } 
-
-        [Option('p',"platform",Required =false,HelpText ="")]
-        public OutputPlatformType Platform { get; set; } = OutputPlatformType.All;
-    }
-
     class Program
     {
-        static void Main(string[] args)
+        public class Options
         {
-            CommandLine.Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(RunOptions);
+            [Option('c', "config-path", Required = true, HelpText = "")]
+            public string ConfigPath { get; set; }
+
+            [Option('f', "format-type", Required = true, HelpText = "")]
+            public OutputFormatType Format { get; set; }
+
+            [Option('p', "platform", Required = true, HelpText = "")]
+            public OutputPlatformType Platform { get; set; } = OutputPlatformType.All;
+
+            [Option('o', "output-dir", Required = true, HelpText = "")]
+            public string OutputDir { get; set; }
         }
 
-        static void RunOptions(Options options)
+        static void Main(string[] args)
         {
-            if (!File.Exists(options.ConfigFilePath) || !File.Exists(options.TemplateFilePath))
-            {
-                return;
-            }
-            if (!Directory.Exists(options.OutputDir))
-            {
-                Directory.CreateDirectory(options.OutputDir);
-            }
-            string templateContent = File.ReadAllText(options.TemplateFilePath);
-            if (string.IsNullOrEmpty(templateContent))
-            {
-                return;
-            }
+            LogUtil.SetLogger(new ConsoleLogger());
 
-            ProtoConfig protoConfig = ProtoConfigUtil.ReadConfig(options.ConfigFilePath);
-            if(protoConfig == null)
+            Parser.Default.ParseArguments<Options>(args).WithParsed((options) =>
             {
-                return;
-            }
-            if(options.FileType == OutputFileType.Id)
-            {
-                if (options.Platform == OutputPlatformType.Client || options.Platform == OutputPlatformType.All)
+                ToolConfig toolConfig = XMLConfigUtil.ReadConfig<ToolConfig>(options.ConfigPath);
+                if (!File.Exists(toolConfig.messageConfigPath))
                 {
-                    ProtoConfigUtil.CreateProtoID(options.OutputDir, protoConfig.SpaceName, protoConfig.C2SGroup, templateContent);
+                    LogUtil.LogError("ToolConfig", "the messageConfigPath is not found");
+                    return;
                 }
-                if (options.Platform == OutputPlatformType.Server || options.Platform == OutputPlatformType.All)
-                {
-                    ProtoConfigUtil.CreateProtoID(options.OutputDir, protoConfig.SpaceName, protoConfig.S2CGroup, templateContent);
-                }
-            }else if(options.FileType == OutputFileType.Parser)
-            {
-                ProtoConfigUtil.CreateParser(options.OutputDir, options.Platform, protoConfig, templateContent);
 
-                if (options.Platform == OutputPlatformType.Client || options.Platform == OutputPlatformType.All)
+                TemplateConfig templateConfig = toolConfig.GetTemplate(options.Format);
+                if(templateConfig == null 
+                || string.IsNullOrEmpty(templateConfig.idTemplateFilePath) 
+                || string.IsNullOrEmpty(templateConfig.parserTemplateFilePath))
                 {
-                    ProtoConfigUtil.CreateParser(options.OutputDir, OutputPlatformType.Client, protoConfig, templateContent);
+                    LogUtil.LogError("templateConfig", "the template is not found");
+                    return;
                 }
-                if (options.Platform == OutputPlatformType.Server || options.Platform == OutputPlatformType.All)
-                {
-                    ProtoConfigUtil.CreateParser(options.OutputDir, OutputPlatformType.Server, protoConfig, templateContent);
-                }
-            }
 
-            
+                ExportData exportData = new ExportData
+                {
+                    messageConfig = XMLConfigUtil.ReadConfig<MessageConfig>(toolConfig.messageConfigPath, false),
+                    formatType = options.Format,
+                    platformType = options.Platform,
+                    outputDir = options.OutputDir,
+                    idTemplateContent = File.ReadAllText(templateConfig.idTemplateFilePath),
+                    parserTemplateContent = File.ReadAllText(templateConfig.parserTemplateFilePath)
+                };
+
+                new ConfigExporter(exportData).Export();
+            });
         }
     }
 }
