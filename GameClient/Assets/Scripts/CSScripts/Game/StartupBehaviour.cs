@@ -77,7 +77,7 @@ namespace Game
 
 
         private int count = 0;
-        private TimerHandler handler = null;
+        private TimerInstance handler = null;
 
         private void OnDestroy()
         {

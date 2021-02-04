@@ -60,13 +60,13 @@ namespace DotEngine.GOP
         //每帧加载的数量，可以防止一次大量的预加载造成卡顿，一般可以在Loading中提前处理
         private int preloadOnceAmount = 1;
         //预加载的定时器
-        private TimerHandler preloadTimerHandler = null;
+        private TimerInstance preloadTimerHandler = null;
 
         //进行清理时，一次性清理的数量，为0表示一次性清理所有的
         private int cullOnceAmount  = 0;
         //两次清理执行时间间隔,以秒为单位
         private float cullDelayTime = 60.0f;
-        private TimerHandler cullTimerHandler = null;
+        private TimerInstance cullTimerHandler = null;
 
         //缓存池中GameObejct对象可以创建的最大的上限，如果超出则无法生成新的GameObject
         //值为0时，表示无限制

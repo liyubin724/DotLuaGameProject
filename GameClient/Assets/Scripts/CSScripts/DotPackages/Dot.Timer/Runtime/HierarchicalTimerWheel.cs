@@ -9,7 +9,7 @@ namespace DotEngine.Timer
     /// <summary>
     /// 多层时间轮
     /// </summary>
-    internal class HierarchicalTimerWheel
+    public class HierarchicalTimerWheel
     {
         private UniqueIntID m_IndexCreator = new UniqueIntID();
         private ItemObjectPool<TimerTask> m_TaskPool = new ItemObjectPool<TimerTask>();
@@ -17,13 +17,13 @@ namespace DotEngine.Timer
         private bool m_IsPaused = false;
         private List<TimerWheel> m_Wheels = new List<TimerWheel>();
         private TimerWheel m_Wheel = null;
-        private Dictionary<int, TimerHandler> m_Handlers = new Dictionary<int, TimerHandler>();
+        private Dictionary<int, TimerInstance> m_Handlers = new Dictionary<int, TimerInstance>();
         private float m_ElapseInMS = 0.0f;
 
         /// <summary>
         /// 初始化多层时间轮，目前默认生成5层
         /// </summary>
-        internal HierarchicalTimerWheel()
+        public HierarchicalTimerWheel()
         {
             TimerWheel wheel0 = CreateWheel(0, 100, 10);
             TimerWheel wheel1 = CreateWheel(1, 100 * 10, 60);
@@ -47,7 +47,7 @@ namespace DotEngine.Timer
             return wheel;
         }
 
-        public TimerHandler AddTimer(
+        public TimerInstance AddTimer(
             float intervalInSec,
             float totalInSec,
             Action<object> intervalCallback,
@@ -62,7 +62,7 @@ namespace DotEngine.Timer
             return AddTask(task, null);
         }
 
-        public TimerHandler AddIntervalTimer(
+        public TimerInstance AddIntervalTimer(
             float intervalInSec,
             Action<object> intervalCallback,
             object userdata)
@@ -70,7 +70,7 @@ namespace DotEngine.Timer
             return AddTimer(intervalInSec, 0, intervalCallback, null, userdata);
         }
 
-        public TimerHandler AddTickTimer(
+        public TimerInstance AddTickTimer(
             Action<object> intervalCallback,
             object userdata
             )
@@ -78,7 +78,7 @@ namespace DotEngine.Timer
             return AddTimer(m_Wheel.TickInMS * 0.001f, 0, intervalCallback, null, userdata);
         }
 
-        public TimerHandler AddEndTimer(
+        public TimerInstance AddEndTimer(
             float totalInSec,
             Action<object> endCallback,
             object userdata)
@@ -86,7 +86,7 @@ namespace DotEngine.Timer
             return AddTimer(0, totalInSec, null, endCallback, userdata);
         }
 
-        private TimerHandler AddTask(TimerTask task,TimerHandler handler)
+        private TimerInstance AddTask(TimerTask task,TimerInstance handler)
         {
             int wheelIndex = -1;
             int slotIndex = -1;
@@ -106,7 +106,7 @@ namespace DotEngine.Timer
                 handler.WheelSlotIndex = slotIndex;
             }else
             {
-                handler = new TimerHandler()
+                handler = new TimerInstance()
                 {
                     Index = task.Index,
                     WheelIndex = wheelIndex,
@@ -118,7 +118,7 @@ namespace DotEngine.Timer
             return handler;
         }
 
-        public bool RemoveTimer(TimerHandler handler)
+        public bool RemoveTimer(TimerInstance handler)
         {
             if(handler!=null && m_Handlers.ContainsKey(handler.Index))
             {
@@ -182,7 +182,7 @@ namespace DotEngine.Timer
             {
                 foreach(var task in tasks)
                 {
-                    if(m_Handlers.TryGetValue(task.Index,out TimerHandler handler))
+                    if(m_Handlers.TryGetValue(task.Index,out TimerInstance handler))
                     {
                         if(handler.IsValid())
                         {

@@ -1,12 +1,11 @@
-﻿using DotEngine.Framework.Updater;
+﻿using DotEngine.Framework.Services;
+using DotEngine.Framework.Updater;
+using DotEngine.Timer;
 using SystemObject = System.Object;
 
-namespace DotEngine.Framework.Services
+namespace Game.Services
 {
     public delegate void TimerEvent(TimerInstance timer,SystemObject userData);
-
-    public class TimerInstance
-    { }
 
     public interface ITimerService : IService, IUpdate
     {
@@ -19,6 +18,5 @@ namespace DotEngine.Framework.Services
         TimerInstance AddTimer(float intervalInSec, float totalInSec, TimerEvent intervalEvent, TimerEvent endEvent, SystemObject userData = null);
 
         void RemoveTimer(TimerInstance timer);
-
     }
 }

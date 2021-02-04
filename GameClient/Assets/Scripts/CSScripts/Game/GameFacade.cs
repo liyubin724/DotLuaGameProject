@@ -1,33 +1,21 @@
 ﻿using DotEngine;
 using DotEngine.Net.Services;
+using IFacade = DotEngine.Framework.IFacade;
+using Facade = DotEngine.Framework.Facade;
 
 namespace Game
 {
     public class GameFacade : Facade
     {
-        public new static Facade GetInstance()
+        public static new IFacade GetInstance()
         {
-            if(instance == null)
+            if(facade == null)
             {
-                instance = new GameFacade();
+                facade = new GameFacade();
             }
-            return instance;
+            return facade;
         }
 
-        protected override void InitializeFacade()
-        {
-            base.InitializeFacade();
-        }
 
-        protected override void InitializeService()
-        {
-            base.InitializeService();
-
-            ServerNetService serverNetService = new ServerNetService();
-            service.RegisterServicer(serverNetService);
-
-            ClientNetService clientNetService = new ClientNetService();
-            service.RegisterServicer(clientNetService);
-        }
     }
 }

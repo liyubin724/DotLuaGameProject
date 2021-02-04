@@ -9,7 +9,7 @@ namespace DotEngine.Timer
     /// <summary>
     /// 时间轮定时器
     /// </summary>
-    internal class TimerWheel
+    public class TimerWheel
     {
         private int currentSlotIndex = 0;
         private List<Dictionary<int, TimerTask>> m_AllTasks = new List<Dictionary<int, TimerTask>>();
@@ -29,7 +29,7 @@ namespace DotEngine.Timer
         /// <param name="index">时间轮序号</param>
         /// <param name="tickInMS">一刻度的时长，以毫秒计</param>
         /// <param name="slotSize">总的刻度数</param>
-        internal TimerWheel(int level, int tickInMS, int slotSize)
+        public TimerWheel(int level, int tickInMS, int slotSize)
         {
             Level = level;
             TickInMS = tickInMS;
@@ -54,7 +54,7 @@ namespace DotEngine.Timer
             return slotIndex;
         }
 
-        internal TimerTask RemoveTask(TimerHandler handler)
+        internal TimerTask RemoveTask(TimerInstance handler)
         {
             if(m_AllTasks[handler.WheelSlotIndex].TryGetValue(handler.Index,out TimerTask task))
             {

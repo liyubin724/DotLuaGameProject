@@ -1,14 +1,10 @@
 ﻿namespace DotEngine.Timer
 {
-    public class TimerHandler
+    public class TimerInstance
     {
         internal int Index { get; set; } = -1;
         internal int WheelIndex { get; set; } = -1;
         internal int WheelSlotIndex { get; set; } = -1;
-
-        internal TimerHandler()
-        {
-        }
 
         internal bool IsValid()
         {

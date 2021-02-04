@@ -1,6 +1,7 @@
 ﻿using DotEngine.Framework.Dispatcher;
 using DotEngine.Framework.Proxies;
 using DotEngine.Framework.Services;
+using DotEngine.Framework.Updater;
 
 namespace DotEngine.Framework
 {
@@ -21,14 +22,13 @@ namespace DotEngine.Framework
             return facade;
         }
 
-        protected Facade()
+        public virtual void Initialize()
         {
-            facade = this;
-            Initialize();
-        }
-
-        protected virtual void Initialize()
-        {
+            UpdaterBehaviour updater = UpdaterBehaviour.GetUpdater();
+            updater.UpdateAction += DoUpdate;
+            updater.LateUpdateAction += DoLateUpdate;
+            updater.FixedUpdateAction += DoFixedUpdate;
+            
             InitializeServices();
 
             serviceDispatcher.Register(UpdateService.NAME, new UpdateService(UpdateService.NAME));
@@ -38,6 +38,11 @@ namespace DotEngine.Framework
             InitializeObservers();
             InitializeCommands();
             InitializeProxies();
+        }
+
+        public virtual void Dispose()
+        {
+
         }
 
         protected virtual void InitializeServices()
@@ -167,9 +172,9 @@ namespace DotEngine.Framework
             serviceDispatcher.DoLateUpdate(deltaTime, unscaleDeltaTime);
         }
 
-        public void DoFixedUpdate(float deltaTime)
+        public void DoFixedUpdate(float deltaTime,float unscaleDeltaTime)
         {
-            serviceDispatcher?.DoFixedUpdate(deltaTime);
+            serviceDispatcher?.DoFixedUpdate(deltaTime,unscaleDeltaTime);
         }
         #endregion
     }

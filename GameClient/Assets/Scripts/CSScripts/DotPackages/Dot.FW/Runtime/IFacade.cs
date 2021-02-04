@@ -7,6 +7,9 @@ namespace DotEngine.Framework
 {
     public interface IFacade : IUpdate, ILateUpdate, IFixedUpdate
     {
+        void Initialize();
+        void Dispose();
+
         bool HasService(string serviceName);
         void RegisterService(IService service);
         void UnregisterService(string serviceName);
