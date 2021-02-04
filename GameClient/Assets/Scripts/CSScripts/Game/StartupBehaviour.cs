@@ -7,6 +7,8 @@ using DotEngine.Lua;
 using DotEngine.Timer;
 using DotEngine.Utilities;
 using UnityEngine;
+using IFacade = DotEngine.Framework.IFacade;
+using Facade = DotEngine.Framework.Facade;
 
 namespace Game
 {
@@ -18,7 +20,7 @@ namespace Game
 
             LogUtil.AddAppender(new UnityConsoleAppender());
 
-            Facade facade = GameFacade.GetInstance();
+            IFacade facade = GameFacade.GetInstance();
             AssetService assetService = facade.GetServicer<AssetService>(AssetService.NAME);
 #if UNITY_EDITOR
             assetService.InitDatabaseLoader((result) =>

@@ -27,11 +27,11 @@ namespace DotEngine.Framework.Dispatcher
             });
         }
 
-        public void DoFixedUpdate(float deltaTime)
+        public void DoFixedUpdate(float deltaTime,float unscaleDeltaTime)
         {
             fixedUpdateServices.ForEach((service) =>
             {
-                service.DoFixedUpdate(deltaTime);
+                service.DoFixedUpdate(deltaTime, unscaleDeltaTime);
             });
         }
 
