@@ -1,25 +1,12 @@
 ﻿namespace DotEngine.Framework.Services
 {
-    public class LateUpdateService : ILateUpdateService
+    public class LateUpdateService : Service, ILateUpdateService
     {
         public readonly static string NAME = "LateUpdateService";
 
-        public string Name { get; private set; }
-
-        public bool Enable { get; set; } = true;
-
         public event LateUpdateHandler Handler;
 
-        public LateUpdateService(string name)
-        {
-            Name = name;
-        }
-
-        public void DoRegistered()
-        {
-        }
-
-        public void DoUnregistered()
+        public LateUpdateService():base(NAME)
         {
         }
 

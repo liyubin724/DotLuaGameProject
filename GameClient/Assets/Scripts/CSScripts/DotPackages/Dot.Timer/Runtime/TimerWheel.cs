@@ -14,7 +14,7 @@ namespace DotEngine.Timer
         private int currentSlotIndex = 0;
         private List<Dictionary<int, TimerTask>> m_AllTasks = new List<Dictionary<int, TimerTask>>();
 
-        internal int Level { get; private set; } = -1;
+        internal int Level { get; set; } = -1;
         internal int TickInMS { get; private set; } = 0;
         internal int SlotSize { get; private set; } = 0;
 
@@ -29,9 +29,13 @@ namespace DotEngine.Timer
         /// <param name="index">时间轮序号</param>
         /// <param name="tickInMS">一刻度的时长，以毫秒计</param>
         /// <param name="slotSize">总的刻度数</param>
-        public TimerWheel(int level, int tickInMS, int slotSize)
+        public TimerWheel(int level, int tickInMS, int slotSize):this(tickInMS,slotSize)
         {
             Level = level;
+        }
+
+        public TimerWheel(int tickInMS, int slotSize)
+        {
             TickInMS = tickInMS;
             SlotSize = slotSize;
 

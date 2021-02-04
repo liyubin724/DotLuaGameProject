@@ -1,4 +1,5 @@
 ﻿using DotEngine.Framework.Dispatcher;
+using Game.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace Game.Dispatchers
         protected override void DoInitalized()
         {
             base.DoInitalized();
+            Register(TimerService.NAME, new TimerService());
         }
 
         protected override void DoDisposed()
         {
             base.DoDisposed();
+            Unregister(TimerService.NAME);
         }
     }
 }

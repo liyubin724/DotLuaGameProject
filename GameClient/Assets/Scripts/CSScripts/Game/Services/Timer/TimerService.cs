@@ -14,7 +14,7 @@ namespace Game.Services
 
         public override void DoRegistered()
         {
-            hTimerWheel = new HierarchicalTimerWheel();
+            hTimerWheel = HierarchicalTimerWheel.CreateDefaultHTW();
         }
 
         public override void DoUnregistered()

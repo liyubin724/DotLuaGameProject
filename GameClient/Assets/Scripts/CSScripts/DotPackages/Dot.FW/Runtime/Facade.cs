@@ -31,9 +31,9 @@ namespace DotEngine.Framework
             
             InitializeServices();
 
-            serviceDispatcher.Register(UpdateService.NAME, new UpdateService(UpdateService.NAME));
-            serviceDispatcher.Register(LateUpdateService.NAME, new LateUpdateService(LateUpdateService.NAME));
-            serviceDispatcher.Register(FixedUpdateService.NAME, new FixedUpdateService(FixedUpdateService.NAME));
+            serviceDispatcher.Register(UpdateService.NAME, new UpdateService());
+            serviceDispatcher.Register(LateUpdateService.NAME, new LateUpdateService());
+            serviceDispatcher.Register(FixedUpdateService.NAME, new FixedUpdateService());
 
             InitializeObservers();
             InitializeCommands();

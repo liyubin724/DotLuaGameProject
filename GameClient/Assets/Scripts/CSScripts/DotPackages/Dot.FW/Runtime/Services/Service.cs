@@ -11,7 +11,13 @@
             Name = name;
         }
 
-        public abstract void DoRegistered();
-        public abstract void DoUnregistered();
+        public virtual void DoRegistered()
+        {
+        }
+
+        public virtual void DoUnregistered()
+        {
+
+        }
     }
 }

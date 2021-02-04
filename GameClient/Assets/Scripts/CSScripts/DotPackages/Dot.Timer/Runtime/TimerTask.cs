@@ -110,7 +110,7 @@ namespace DotEngine.Timer
             }
         }
 
-        public void OnRelease()
+        internal void Reset()
         {
             Index = -1;
             m_IntervalInMS = 0;

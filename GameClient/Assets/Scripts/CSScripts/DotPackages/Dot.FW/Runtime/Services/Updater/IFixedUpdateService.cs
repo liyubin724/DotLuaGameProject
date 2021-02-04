@@ -2,7 +2,7 @@
 
 namespace DotEngine.Framework.Services
 {
-    public delegate void FixedUpdateHandler(float deltaTime);
+    public delegate void FixedUpdateHandler(float deltaTime,float unscaleDeltaTime);
 
     public interface IFixedUpdateService : IFixedUpdate, IService
     {
