@@ -41,22 +41,22 @@ namespace DotEngine.Timer
 
         public TimerInstance AddTimer(float intervalInSec,
                                                 float totalInSec,
-                                                Action<object> intervalCallback,
-                                                Action<object> endCallback,
+                                                TimerEventHandler intervalCallback,
+                                                TimerEventHandler endCallback,
                                                 object userData)
         {
             return hTimerWheel.AddTimer(intervalInSec, totalInSec, intervalCallback, endCallback, userData);
         }
 
         public TimerInstance AddIntervalTimer(float intervalInSec,
-                                                                    Action<object> intervalCallback, 
+                                                                    TimerEventHandler intervalCallback, 
                                                                     object userData = null)
         {
             return hTimerWheel.AddIntervalTimer(intervalInSec, intervalCallback, userData);
         }
 
         public TimerInstance AddTickTimer(
-            Action<object> intervalCallback,
+            TimerEventHandler intervalCallback,
             object userdata
             )
         {
@@ -64,7 +64,7 @@ namespace DotEngine.Timer
         }
 
         public TimerInstance AddEndTimer(float totalInSec,
-                                                                Action<object> endCallback,
+                                                                TimerEventHandler endCallback,
                                                                 object userData = null)
         {
             return hTimerWheel.AddEndTimer(totalInSec, endCallback, userData);

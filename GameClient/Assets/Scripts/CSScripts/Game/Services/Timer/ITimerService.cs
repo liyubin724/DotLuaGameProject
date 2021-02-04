@@ -5,17 +5,15 @@ using SystemObject = System.Object;
 
 namespace Game.Services
 {
-    public delegate void TimerEvent(TimerInstance timer,SystemObject userData);
-
     public interface ITimerService : IService, IUpdate
     {
         void Pause();
         void Resume();
 
-        TimerInstance AddTickTimer(TimerEvent tickEvent, SystemObject userData = null);
-        TimerInstance AddIntervalTimer(float intervalInSec, TimerEvent intervalEvent, SystemObject userData = null);
-        TimerInstance AddEndTimer(float totalInSec, TimerEvent endEvent, SystemObject userData = null);
-        TimerInstance AddTimer(float intervalInSec, float totalInSec, TimerEvent intervalEvent, TimerEvent endEvent, SystemObject userData = null);
+        TimerInstance AddTickTimer(TimerEventHandler tickEvent, SystemObject userdata = null);
+        TimerInstance AddIntervalTimer(float intervalInSec, TimerEventHandler intervalEvent, SystemObject userdata = null);
+        TimerInstance AddEndTimer(float totalInSec, TimerEventHandler endEvent, SystemObject userdata = null);
+        TimerInstance AddTimer(float intervalInSec, float totalInSec, TimerEventHandler intervalEvent, TimerEventHandler endEvent, SystemObject userdata = null);
 
         void RemoveTimer(TimerInstance timer);
     }

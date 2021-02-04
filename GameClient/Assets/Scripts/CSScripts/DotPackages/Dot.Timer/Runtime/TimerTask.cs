@@ -1,6 +1,4 @@
-﻿using DotEngine.Pool;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DotEngine.Timer
 {
@@ -12,30 +10,30 @@ namespace DotEngine.Timer
         IntervalAndEnd,
     }
 
-    public class TimerTask : IObjectPoolItem
+    public class TimerTask
     {
         internal int Index { get; private set; } = -1;
 
         private int m_IntervalInMS = 0;
         private int m_TotalInMS = 0;
-        private Action<object> m_OnIntervalEvent = null;
-        private Action<object> m_OnEndEvent = null;
+        private TimerEventHandler m_OnIntervalEvent = null;
+        private TimerEventHandler m_OnEndEvent = null;
         private object m_UserData = null;
-
         private TimerTaskCategory m_Category = TimerTaskCategory.None;
-        internal int TriggerLeftInMS { get; set; }
+
+        internal int TriggerLeftInMS { get; set; } = 0;
 
         public TimerTask()
         {
         }
 
-        public void SetData(
+        internal void SetData(
             int index,
             float intervalInSec,
             float totalInSec,
-            Action<object> intervalCallback,
-            Action<object> endCallback,
-            object callbackData)
+            TimerEventHandler intervalCallback,
+            TimerEventHandler endCallback,
+            object userdata)
         {
             Index = index;
 
@@ -64,7 +62,7 @@ namespace DotEngine.Timer
             }
             m_OnIntervalEvent = intervalCallback;
             m_OnEndEvent = endCallback;
-            m_UserData = callbackData;
+            m_UserData = userdata;
         }
 
         internal bool Trigger()
@@ -110,14 +108,6 @@ namespace DotEngine.Timer
             {
                 return false;
             }
-        }
-
-        public void OnNew()
-        {
-        }
-
-        public void OnGet()
-        {
         }
 
         public void OnRelease()

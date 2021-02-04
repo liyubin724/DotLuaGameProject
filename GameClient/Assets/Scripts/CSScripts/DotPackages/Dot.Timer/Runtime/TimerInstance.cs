@@ -6,6 +6,10 @@
         internal int WheelIndex { get; set; } = -1;
         internal int WheelSlotIndex { get; set; } = -1;
 
+        public TimerInstance()
+        {
+        }
+
         internal bool IsValid()
         {
             return Index >= 0 && WheelIndex >= 0 && WheelSlotIndex >= 0;
@@ -20,7 +24,7 @@
 
         public override string ToString()
         {
-            return $"TimerHandler:{{Index = {Index},wheelIndex = {WheelIndex},wheelSlotIndex = {WheelSlotIndex}}}";
+            return $"TimerInstance:{{Index = {Index},wheelIndex = {WheelIndex},wheelSlotIndex = {WheelSlotIndex}}}";
         }
     }
 }

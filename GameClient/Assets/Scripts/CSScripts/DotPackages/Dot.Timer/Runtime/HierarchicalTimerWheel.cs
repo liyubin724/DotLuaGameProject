@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace DotEngine.Timer
 {
+    public delegate void TimerEventHandler(object userdata);
+
     /// <summary>
     /// 多层时间轮
     /// </summary>
@@ -50,8 +52,8 @@ namespace DotEngine.Timer
         public TimerInstance AddTimer(
             float intervalInSec,
             float totalInSec,
-            Action<object> intervalCallback,
-            Action<object> endCallback,
+            TimerEventHandler intervalCallback,
+            TimerEventHandler endCallback,
             object userdata)
         {
             int index = m_IndexCreator.NextID;
@@ -64,14 +66,14 @@ namespace DotEngine.Timer
 
         public TimerInstance AddIntervalTimer(
             float intervalInSec,
-            Action<object> intervalCallback,
+           TimerEventHandler intervalCallback,
             object userdata)
         {
             return AddTimer(intervalInSec, 0, intervalCallback, null, userdata);
         }
 
         public TimerInstance AddTickTimer(
-            Action<object> intervalCallback,
+            TimerEventHandler intervalCallback,
             object userdata
             )
         {
@@ -80,7 +82,7 @@ namespace DotEngine.Timer
 
         public TimerInstance AddEndTimer(
             float totalInSec,
-            Action<object> endCallback,
+            TimerEventHandler endCallback,
             object userdata)
         {
             return AddTimer(0, totalInSec, null, endCallback, userdata);

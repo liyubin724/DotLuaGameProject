@@ -1,8 +1,5 @@
 ﻿using DotEngine.Framework.Services;
 using DotEngine.Timer;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Game.Services
 {
@@ -22,49 +19,47 @@ namespace Game.Services
 
         public override void DoUnregistered()
         {
-            throw new System.NotImplementedException();
+            hTimerWheel = null;
         }
 
-        public TimerInstance AddEndTimer(float totalInSec, TimerEvent endEvent, object userData = null)
+        public TimerInstance AddEndTimer(float totalInSec, TimerEventHandler endEvent, object userdata = null)
         {
-            throw new System.NotImplementedException();
+            return hTimerWheel.AddEndTimer(totalInSec, endEvent, userdata);
         }
 
-        public TimerInstance AddIntervalTimer(float intervalInSec, TimerEvent intervalEvent, object userData = null)
+        public TimerInstance AddIntervalTimer(float intervalInSec, TimerEventHandler intervalEvent, object userdata = null)
         {
-            throw new System.NotImplementedException();
+            return hTimerWheel.AddIntervalTimer(intervalInSec, intervalEvent, userdata);
         }
 
-        public TimerInstance AddTickTimer(TimerEvent tickEvent, object userData = null)
+        public TimerInstance AddTickTimer(TimerEventHandler tickEvent, object userdata = null)
         {
-            throw new System.NotImplementedException();
+            return hTimerWheel.AddTickTimer(tickEvent, userdata);
         }
 
-        public TimerInstance AddTimer(float intervalInSec, float totalInSec, TimerEvent intervalEvent, TimerEvent endEvent, object userData = null)
+        public TimerInstance AddTimer(float intervalInSec, float totalInSec, TimerEventHandler intervalEvent, TimerEventHandler endEvent, object userData = null)
         {
-            throw new System.NotImplementedException();
+            return hTimerWheel.AddTimer(intervalInSec, totalInSec, intervalEvent, endEvent, userData);
         }
-
-        
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
-            throw new System.NotImplementedException();
+            hTimerWheel.DoUpdate(deltaTime);
         }
 
         public void Pause()
         {
-            throw new System.NotImplementedException();
+            hTimerWheel.Pause();
         }
 
         public void RemoveTimer(TimerInstance timer)
         {
-            throw new System.NotImplementedException();
+            hTimerWheel.RemoveTimer(timer);
         }
 
         public void Resume()
         {
-            throw new System.NotImplementedException();
+            hTimerWheel.Resume();
         }
     }
 
