@@ -23,7 +23,7 @@ namespace DotEngine.GOP
     /// <summary>
     /// 以GameObject为对象的缓存池
     /// </summary>
-    public class GameObjectPool
+    public class GOPool
     {
         /// <summary>
         /// 空闲的GameObject对象栈
@@ -75,7 +75,7 @@ namespace DotEngine.GOP
         //值为0时表示无限制
         private int limitMinAmount = 0;
 
-        internal GameObjectPool(string groupName,Transform parentTransform, string poolName, PoolTemplateType templateType, GameObject templateGObj)
+        internal GOPool(string groupName,Transform parentTransform, string poolName, PoolTemplateType templateType, GameObject templateGObj)
         {
             this.groupName = groupName;
             this.poolName = poolName;
@@ -230,7 +230,7 @@ namespace DotEngine.GOP
 
             if (item != null)
             {
-                GameObjectPoolItem poolItem = item.GetComponent<GameObjectPoolItem>();
+                GOPoolItem poolItem = item.GetComponent<GOPoolItem>();
                 if (poolItem != null)
                 {
                     poolItem.DoSpawned();
@@ -267,7 +267,7 @@ namespace DotEngine.GOP
                 {
                     component = gObj.AddComponent<T>();
 
-                    if(component is GameObjectPoolItem poolItem)
+                    if(component is GOPoolItem poolItem)
                     {
                         poolItem.GroupName = groupName;
                         poolItem.PoolName = poolName;
@@ -289,12 +289,12 @@ namespace DotEngine.GOP
             }
             else
             {
-                item = (GameObject)GameObjectPoolConst.InstantiateAsset(poolName, templateGameObject);
+                item = (GameObject)GOPoolUtil.InstantiateAsset(poolName, templateGameObject);
             }
 
             if (item != null)
             {
-                GameObjectPoolItem poolItem = item.GetComponent<GameObjectPoolItem>();
+                GOPoolItem poolItem = item.GetComponent<GOPoolItem>();
                 if (poolItem != null)
                 {
                     poolItem.GroupName = groupName;
@@ -314,11 +314,11 @@ namespace DotEngine.GOP
         {
             if(item == null)
             {
-                DebugLog.Error(GameObjectPoolConst.LOGGER_NAME, "GameObjectPool::ReleaseItem->Item is Null");
+                DebugLog.Error(GOPoolUtil.LOGGER_NAME, "GameObjectPool::ReleaseItem->Item is Null");
                 return;
             }
 
-            GameObjectPoolItem pItem = item.GetComponent<GameObjectPoolItem>();
+            GOPoolItem pItem = item.GetComponent<GOPoolItem>();
             if(pItem!=null)
             {
                 pItem.DoDespawned();

@@ -2,7 +2,7 @@
 
 namespace DotEngine.GOP
 {
-    public class GameObjectPoolItem : MonoBehaviour
+    public class GOPoolItem : MonoBehaviour
     {
         public string PoolName { get; set; } = string.Empty;
         public string GroupName { get; set; } = string.Empty;
@@ -59,15 +59,15 @@ namespace DotEngine.GOP
                 return;
             }
 
-            GameObjectPoolService poolService = Facade.GetInstance().GetServicer<GameObjectPoolService>(GameObjectPoolService.NAME);
+            GOPoolManager poolService = Facade.GetInstance().GetServicer<GOPoolManager>(GOPoolManager.NAME);
 
             if (!poolService.HasGroup(GroupName))
             {
                 Destroy(CachedGameObject);
                 return;
             }
-            GameObjectPoolGroup spawnPool = poolService.GetGroup(GroupName);
-            GameObjectPool gObjPool = spawnPool.GetPool(PoolName);
+            GOPoolGroup spawnPool = poolService.GetGroup(GroupName);
+            GOPool gObjPool = spawnPool.GetPool(PoolName);
             if (gObjPool == null)
             {
                 Destroy(CachedGameObject);

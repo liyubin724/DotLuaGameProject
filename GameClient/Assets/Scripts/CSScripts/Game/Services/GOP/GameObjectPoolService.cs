@@ -15,7 +15,7 @@ namespace Game.Services
         public readonly static string NAME = "GOP Service";
 
         private Transform rootTransform = null;
-        private Dictionary<string, GameObjectPoolGroup> groupDic = new Dictionary<string, GameObjectPoolGroup>();
+        private Dictionary<string, GOPoolGroup> groupDic = new Dictionary<string, GOPoolGroup>();
 
         public GameObjectPoolService():base(NAME)
         {
@@ -47,17 +47,17 @@ namespace Game.Services
             return groupDic.ContainsKey(name);
         }
 
-        public GameObjectPoolGroup CreateGroup(string name)
+        public GOPoolGroup CreateGroup(string name)
         {
             if(!groupDic.TryGetValue(name,out var group))
             {
-                group = new GameObjectPoolGroup(name, rootTransform);
+                group = new GOPoolGroup(name, rootTransform);
                 groupDic.Add(name, group);
             }
             return group;
         }
 
-        public GameObjectPoolGroup GetGroup(string name)
+        public GOPoolGroup GetGroup(string name)
         {
             if (groupDic.TryGetValue(name, out var group))
             {
@@ -68,7 +68,7 @@ namespace Game.Services
 
         public void DeleteGroup(string name)
         {
-            if (groupDic.TryGetValue(name, out GameObjectPoolGroup group))
+            if (groupDic.TryGetValue(name, out GOPoolGroup group))
             {
                 groupDic.Remove(name);
                 group.Dispose();
@@ -80,7 +80,7 @@ namespace Game.Services
 
         public bool HasPool(string groupName,string poolName)
         {
-            GameObjectPoolGroup group = GetGroup(groupName);
+            GOPoolGroup group = GetGroup(groupName);
             if(group==null)
             {
                 return false;
@@ -88,9 +88,9 @@ namespace Game.Services
             return group.HasPool(poolName);
         }
 
-        public GameObjectPool GetPool(string groupName,string poolName)
+        public GOPool GetPool(string groupName,string poolName)
         {
-            GameObjectPoolGroup group = GetGroup(groupName);
+            GOPoolGroup group = GetGroup(groupName);
             if (group == null)
             {
                 return null;
@@ -98,9 +98,9 @@ namespace Game.Services
             return group.GetPool(poolName);
         }
 
-        public GameObjectPool CreatePool(string groupName,string poolName, PoolTemplateType templateType, GameObject template)
+        public GOPool CreatePool(string groupName,string poolName, PoolTemplateType templateType, GameObject template)
         {
-            GameObjectPoolGroup group = GetGroup(groupName);
+            GOPoolGroup group = GetGroup(groupName);
             if(group == null)
             {
                 group = CreateGroup(groupName);
@@ -110,7 +110,7 @@ namespace Game.Services
 
         public void DeletePool(string groupName,string poolName)
         {
-            GameObjectPoolGroup group = GetGroup(groupName);
+            GOPoolGroup group = GetGroup(groupName);
             if (group != null)
             {
                 group.DeletePool(poolName);

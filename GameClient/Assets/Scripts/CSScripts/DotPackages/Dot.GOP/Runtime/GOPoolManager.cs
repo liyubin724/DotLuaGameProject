@@ -7,22 +7,18 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.GOP
 {
-    public class GameObjectPoolService : Servicer
+    public class GOPoolManager 
     {
-        public const string NAME = "GOPoolService";
-        private const string ROOT_NAME = "Root-GOPool";
+        public const string NAME = "GOPool";
 
         private Transform rootTransform = null;
-        private Dictionary<string, GameObjectPoolGroup> groupDic = new Dictionary<string, GameObjectPoolGroup>();
+        private Dictionary<string, GOPoolGroup> groupDic = new Dictionary<string, GOPoolGroup>();
 
-        public GameObjectPoolService(Func<string, UnityObject, UnityObject> instantiateAsset) : base(NAME)
+        public GOPoolManager()
         {
-            GameObjectPoolConst.InstantiateAsset = instantiateAsset;
-        }
-
-        public override void DoRegister()
-        {
-            rootTransform = DontDestroyUtility.CreateTransform(ROOT_NAME);
+            GameObject go = new GameObject(NAME);
+            rootTransform = go.transform;
+            UnityObject.DontDestroyOnLoad(go);
         }
 
         /// <summary>
@@ -38,9 +34,9 @@ namespace DotEngine.GOP
         /// <param name="name"></param>
         /// <param name="autoCreateIfNot"></param>
         /// <returns></returns>
-        public GameObjectPoolGroup GetGroup(string name)
+        public GOPoolGroup GetGroup(string name)
         {
-            if (groupDic.TryGetValue(name, out GameObjectPoolGroup pool))
+            if (groupDic.TryGetValue(name, out GOPoolGroup pool))
             {
                 return pool;
             }
@@ -52,11 +48,11 @@ namespace DotEngine.GOP
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public GameObjectPoolGroup CreateGroup(string name)
+        public GOPoolGroup CreateGroup(string name)
         {
-            if (!groupDic.TryGetValue(name, out GameObjectPoolGroup group))
+            if (!groupDic.TryGetValue(name, out GOPoolGroup group))
             {
-                group = new GameObjectPoolGroup(name, rootTransform);
+                group = new GOPoolGroup(name, rootTransform);
                 groupDic.Add(name, group);
             }
             return group;
@@ -68,7 +64,7 @@ namespace DotEngine.GOP
         /// <param name="name"></param>
         public void DeleteGroup(string name)
         {
-            if (groupDic.TryGetValue(name, out GameObjectPoolGroup group))
+            if (groupDic.TryGetValue(name, out GOPoolGroup group))
             {
                 groupDic.Remove(name);
                 group.Dispose();
@@ -77,7 +73,7 @@ namespace DotEngine.GOP
 
         public override void DoRemove()
         {
-            GameObjectPoolConst.InstantiateAsset = null;
+            GOPoolUtil.InstantiateAsset = null;
 
             foreach (var kvp in groupDic)
             {
