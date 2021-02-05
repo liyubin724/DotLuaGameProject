@@ -9,33 +9,32 @@ namespace DotEngine.GOP
 
         public static Func<string, UnityObject, UnityObject> InstantiateAsset;
 
-        public static bool EnableLog { get; set; } = true;
-        public static Action<string, string> LogInfoAction = null;
+        public static Action<string,string> LogInfoAction = null;
         public static Action<string, string> LogWarningAction = null;
         public static Action<string, string> LogErrorAction = null;
 
-        public static void LogInfo(string message)
+        internal static void LogInfo(string message)
         {
-            if(EnableLog && LogInfoAction!=null)
-            {
-                LogInfoAction(LOGGER_NAME, message);
-            }
+            LogInfoAction?.Invoke(LOGGER_NAME, message);
         }
 
-        public static void LogWarning(string message)
+        internal static void LogWarning(string message)
         {
-            if(EnableLog && LogWarningAction !=null)
-            {
-                LogWarningAction(LOGGER_NAME, message);
-            }
+            LogWarningAction?.Invoke(LOGGER_NAME, message);
         }
 
-        public static void LogError(string message)
+        internal static void LogError(string message)
         {
-            if(EnableLog && LogErrorAction!=null)
+            LogErrorAction?.Invoke(LOGGER_NAME, message);
+        }
+
+        internal static bool IsNull(this UnityObject obj)
+        {
+            if (obj == null || obj.Equals(null))
             {
-                LogErrorAction(LOGGER_NAME, message);
+                return true;
             }
+            return false;
         }
     }
 }

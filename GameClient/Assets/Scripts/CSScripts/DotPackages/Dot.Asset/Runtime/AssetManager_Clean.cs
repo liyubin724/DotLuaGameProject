@@ -34,16 +34,16 @@ namespace DotEngine.Asset
             }
             else if (autoCleanInterval > 0)
             {
-                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
-                autoCleanTimer = timerService.AddIntervalTimer(autoCleanInterval, (userData) => assetLoader?.UnloadUnusedAsset());
+                //TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
+                //autoCleanTimer = timerService.AddIntervalTimer(autoCleanInterval, (userData) => assetLoader?.UnloadUnusedAsset());
             }
         }
         private void StopAutoClean()
         {
             if (autoCleanTimer != null)
             {
-                TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
-                timerService.RemoveTimer(autoCleanTimer);
+                //TimerService timerService = Facade.GetInstance().GetServicer<TimerService>(TimerService.NAME);
+                //timerService.RemoveTimer(autoCleanTimer);
                 autoCleanTimer = null;
             }
         }

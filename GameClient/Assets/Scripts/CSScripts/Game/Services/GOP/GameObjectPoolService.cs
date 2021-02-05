@@ -1,130 +1,111 @@
 ﻿using DotEngine.Framework.Services;
 using DotEngine.GOP;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace Game.Services
 {
-    public class GameObjectPoolService : Service, IGameObjectPoolService
+    public class GameObjectPoolService : Service, IGOPoolService
     {
-        public readonly static string NAME = "GOP Service";
+        public readonly static string NAME = "GOPService";
 
-        private Transform rootTransform = null;
-        private Dictionary<string, GOPoolGroup> groupDic = new Dictionary<string, GOPoolGroup>();
-
+        private GOPool goPool = null;
         public GameObjectPoolService():base(NAME)
         {
         }
 
         public override void DoRegistered()
         {
-            GameObject go = new GameObject(NAME);
-            go.hideFlags = HideFlags.HideAndDontSave;
-            rootTransform = go.transform;
-
-            UnityObject.DontDestroyOnLoad(go);
+            goPool = new GOPool();
         }
 
         public override void DoUnregistered()
         {
-            foreach (var kvp in groupDic)
-            {
-                kvp.Value.Dispose();
-            }
-            groupDic.Clear();
-
-            UnityObject.Destroy(rootTransform);
+            goPool.Dispose();
+            goPool = null;
         }
 
-        #region Group
-        public bool HasGroup(string name)
+        public void InitPool(
+            Func<string, UnityObject, UnityObject> instantiateAssetFunc,
+            Action<string, string> infoAction,
+            Action<string, string> warningAction,
+            Action<string, string> errorAction)
         {
-            return groupDic.ContainsKey(name);
+            GOPoolUtil.InstantiateAsset = instantiateAssetFunc;
+            GOPoolUtil.LogInfoAction = infoAction;
+            GOPoolUtil.LogWarningAction = warningAction;
+            GOPoolUtil.LogErrorAction = errorAction;
         }
 
-        public GOPoolGroup CreateGroup(string name)
+        #region Category
+        public bool HasCategory(string categoryName)
         {
-            if(!groupDic.TryGetValue(name,out var group))
-            {
-                group = new GOPoolGroup(name, rootTransform);
-                groupDic.Add(name, group);
-            }
-            return group;
+            return goPool.HasCategory(categoryName);
         }
 
-        public GOPoolGroup GetGroup(string name)
+        public GOPoolCategory GetCategory(string categoryName)
         {
-            if (groupDic.TryGetValue(name, out var group))
-            {
-                return group;
-            }
-            return null;
+            return goPool.GetCategory(categoryName);
         }
 
-        public void DeleteGroup(string name)
+        public GOPoolCategory CreateCategory(string categoryName)
         {
-            if (groupDic.TryGetValue(name, out GOPoolGroup group))
-            {
-                groupDic.Remove(name);
-                group.Dispose();
-            }
+            return goPool.CreateCategory(categoryName);
+        }
+
+        public void DeleteCategory(string categoryName)
+        {
+            goPool.DeleteGroup(categoryName);
         }
         #endregion
 
-        #region Pool
-
-        public bool HasPool(string groupName,string poolName)
+        #region ItemGroup
+        public bool HasGroup(string categoryName, string groupName)
         {
-            GOPoolGroup group = GetGroup(groupName);
-            if(group==null)
+            GOPoolCategory category = GetCategory(categoryName);
+            if(category == null)
             {
                 return false;
             }
-            return group.HasPool(poolName);
+            return category.HasGroup(groupName);
         }
 
-        public GOPool GetPool(string groupName,string poolName)
+        public GOPoolItemGroup GetGroup(string categoryName, string groupName)
         {
-            GOPoolGroup group = GetGroup(groupName);
-            if (group == null)
+            GOPoolCategory category = GetCategory(categoryName);
+            if (category == null)
             {
                 return null;
             }
-            return group.GetPool(poolName);
+            return category.GetGroup(groupName);
         }
 
-        public GOPool CreatePool(string groupName,string poolName, PoolTemplateType templateType, GameObject template)
+        public GOPoolItemGroup CreateGroup(string categoryName, string groupName, ItemTemplateType itemType, GameObject itemTemplate)
         {
-            GOPoolGroup group = GetGroup(groupName);
-            if(group == null)
+            GOPoolCategory category = GetCategory(categoryName);
+            if (category == null)
             {
-                group = CreateGroup(groupName);
+                return null;
             }
-            return group.CreatePool(poolName, templateType, template);
+            return category.CreateGroup(groupName,itemType,itemTemplate);
         }
 
-        public void DeletePool(string groupName,string poolName)
+        public void DeleteGroup(string categoryName, string groupName)
         {
-            GOPoolGroup group = GetGroup(groupName);
-            if (group != null)
+            GOPoolCategory category = GetCategory(categoryName);
+            if (category == null)
             {
-                group.DeletePool(poolName);
+                return;
             }
+            category.DeleteGroup(groupName);
         }
+
         #endregion
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
-            
+            goPool.DoUpdate(deltaTime, unscaleDeltaTime);
         }
-
-        
-
-        
     }
 }

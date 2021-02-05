@@ -2,6 +2,7 @@
 using DotEngine.Net.Services;
 using IFacade = DotEngine.Framework.IFacade;
 using Facade = DotEngine.Framework.Facade;
+using Game.Dispatchers;
 
 namespace Game
 {
@@ -16,6 +17,10 @@ namespace Game
             return facade;
         }
 
+        protected override void InitializeServices()
+        {
+            serviceDispatcher = new GameServiceDispatcher();
 
+        }
     }
 }

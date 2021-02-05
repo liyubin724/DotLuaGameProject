@@ -21,24 +21,24 @@ namespace Game
             LogUtil.AddAppender(new UnityConsoleAppender());
 
             IFacade facade = GameFacade.GetInstance();
-            AssetService assetService = facade.GetServicer<AssetService>(AssetService.NAME);
-#if UNITY_EDITOR
-            assetService.InitDatabaseLoader((result) =>
-            {
-                if(result)
-                {
-                    OnAssetInitialize();
-                }
-            });
+//            AssetService assetService = facade.GetServicer<AssetService>(AssetService.NAME);
+//#if UNITY_EDITOR
+//            assetService.InitDatabaseLoader((result) =>
+//            {
+//                if(result)
+//                {
+//                    OnAssetInitialize();
+//                }
+//            });
 
-#else
-            string bundleRootDir = "./bundles";
-            assetService.InitBundleLoader((result) =>
-            {
-                LuaEnvService luaEnvService = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
-                luaEnvService.CallAction(LuaConst.START_FUNCTION_NAME);
-            }, bundleRootDir);
-#endif
+//#else
+//            string bundleRootDir = "./bundles";
+//            assetService.InitBundleLoader((result) =>
+//            {
+//                LuaEnvService luaEnvService = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
+//                luaEnvService.CallAction(LuaConst.START_FUNCTION_NAME);
+//            }, bundleRootDir);
+//#endif
 
             //TimerService timerService = facade.GetService<TimerService>(TimerService.NAME);
             //handler = timerService.AddIntervalTimer(1, (userdata) =>
@@ -56,9 +56,9 @@ namespace Game
 
         private void OnAssetInitialize()
         {
-            Facade facade = GameFacade.GetInstance();
-            LuaEnvService luaEnvService = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
-            luaEnvService.CallAction(LuaConst.START_FUNCTION_NAME);
+            //Facade facade = GameFacade.GetInstance();
+            //LuaEnvService luaEnvService = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
+            //luaEnvService.CallAction(LuaConst.START_FUNCTION_NAME);
 
             //GameObjectPoolService poolService = facade.GetService<GameObjectPoolService>(GameObjectPoolService.NAME);
             //var group = poolService.CreateGroup("TestGroup");
@@ -85,8 +85,8 @@ namespace Game
         {
             LogUtil.Reset();
 
-            Facade facade = GameFacade.GetInstance();
-            facade.Dispose();
+            //Facade facade = GameFacade.GetInstance();
+            //facade.Dispose();
         }
     }
 }
