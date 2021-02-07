@@ -45,7 +45,7 @@ namespace DotEditor.BehaviourLine
                 dataToItemTypeDic.Add(attr.DataType, itemType);
             }
 
-            StringContext context = new StringContext();
+            StringContextContainer context = new StringContextContainer();
             context.Add("spaceName", spaceName);
             context.Add("dataToItemTypeDic", dataToItemTypeDic);
 

@@ -10,8 +10,8 @@ namespace DotEngine.AI.FSM
     public class StateMachine
     {
         public object Context { get; }
-        public IEnvContext<Type> TypeContext { get => (IEnvContext < Type >) Context;}
-        public IEnvContext<string> StrContext { get => (IEnvContext<string>)Context; }
+        public IContextContainer<Type> TypeContext { get => (IContextContainer < Type >) Context;}
+        public IContextContainer<string> StrContext { get => (IContextContainer<string>)Context; }
 
         /// <summary>
         /// 当前正常执行的状态

@@ -1,14 +1,15 @@
-﻿namespace DotEngine.Context
+﻿using DotEngine.Context.Interfaces;
+
+namespace DotEngine.Context
 {
-    public interface IEnvContext<K>
+    public interface IContextContainer<K>
     {
         object this[K key] { get; set; }
         
         int Count { get; }
         K[] Keys { get; }
 
-
-        bool ContainsKey(K key);
+        bool Contains(K key);
 
         object Get(K key);
         V Get<V>(K key);
@@ -24,5 +25,8 @@
         void RemoveRange(K[] keys);
 
         void Clear();
+
+        void InjectTo(IContextObject injectObject);
+        void ExtractFrom(IContextObject extractObject);
     }
 }

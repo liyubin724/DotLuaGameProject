@@ -1,12 +1,12 @@
-﻿using System;
+﻿using DotEngine.Context.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DotEngine.Context
 {
-    public class EnvContext<K> : IEnvContext<K>
+    public class ContextContainer<K> : IContextContainer<K>
     {
-        private Dictionary<K, object> itemDic = new Dictionary<K, object>();
+        private readonly Dictionary<K, object> itemDic = new Dictionary<K, object>();
 
         public object this[K key]
         {
@@ -36,7 +36,7 @@ namespace DotEngine.Context
             }
         }
 
-        public bool ContainsKey(K key)
+        public bool Contains(K key)
         {
             return itemDic.ContainsKey(key);
         }
@@ -80,9 +80,9 @@ namespace DotEngine.Context
 
         public void Add(K key, object value)
         {
-            if (ContainsKey(key))
+            if (Contains(key))
             {
-                throw new Exception($"EnvContext::Add->The key has been saved into dictionry.you can use 'AddOrUpdate' to changed it.key = {key}");
+                throw new ContextKeyRepeatException(key);
             }
 
             itemDic.Add(key, value);
@@ -90,19 +90,19 @@ namespace DotEngine.Context
 
         public void Update(K key, object value)
         {
-            if (itemDic.TryGetValue(key, out object item))
+            if (Contains(key))
             {
-                itemDic[key] = item;
+                itemDic[key] = value;
             }
             else
             {
-                throw new Exception($"AContext::Update->Key not found.key = {key}");
+                throw new ContextKeyNotFoundException(key);
             }
         }
 
         public void AddOrUpdate(K key, object value)
         {
-            if (ContainsKey(key))
+            if (Contains(key))
             {
                 itemDic[key] = value;
             }
@@ -114,13 +114,13 @@ namespace DotEngine.Context
 
         public void Remove(K key)
         {
-            if(ContainsKey(key))
+            if(Contains(key))
             {
                 itemDic.Remove(key);
             }
             else
             {
-                throw new Exception($"AContext::Remove->Key not found.key = {key}");
+                throw new ContextKeyNotFoundException(key);
             }
         }
 
@@ -140,5 +140,22 @@ namespace DotEngine.Context
             itemDic.Clear();
         }
 
+        public void InjectTo(IContextObject injectObject)
+        {
+            ContextUtil.Inject(this, injectObject);
+        }
+
+        public void ExtractFrom(IContextObject extractObject)
+        {
+            ContextUtil.Extract(this, extractObject);
+        }
+    }
+
+    public class IntContextContainer : ContextContainer<int>
+    {
+    }
+
+    public class StringContextContainer : ContextContainer<string>
+    {
     }
 }

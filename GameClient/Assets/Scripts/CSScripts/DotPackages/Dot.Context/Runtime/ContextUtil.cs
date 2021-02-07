@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DotEngine.Context.Attributes;
+using DotEngine.Context.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -11,113 +13,115 @@ namespace DotEngine.Context
 
         private static void CachedFields(Type type)
         {
-            List<FieldInfo> inFields = new List<FieldInfo>();
-            List<FieldInfo> outFields = new List<FieldInfo>();
+            List<FieldInfo> injectFields = new List<FieldInfo>();
+            List<FieldInfo> extractFields = new List<FieldInfo>();
 
             Dictionary<ContextUsage, List<FieldInfo>> fieldDic = new Dictionary<ContextUsage, List<FieldInfo>>();
-            fieldDic.Add(ContextUsage.In, inFields);
-            fieldDic.Add(ContextUsage.Out, outFields);
+            fieldDic.Add(ContextUsage.Inject, injectFields);
+            fieldDic.Add(ContextUsage.Extract, extractFields);
 
             cachedTypeFieldDic.Add(type, fieldDic);
 
             FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             foreach (var field in fields)
             {
-                var attr = field.GetCustomAttribute<ContextFieldAttribute>();
+                var attr = field.GetCustomAttribute<ContextIEAttribute>();
                 if (attr == null)
                 {
                     continue;
                 }
 
-                if (attr.Usage != ContextUsage.In)
+                if (attr.Usage != ContextUsage.Inject)
                 {
-                    outFields.Add(field);
+                    extractFields.Add(field);
                 }
-                if (attr.Usage != ContextUsage.Out)
+                if (attr.Usage != ContextUsage.Extract)
                 {
-                    inFields.Add(field);
+                    injectFields.Add(field);
                 }
             }
         }
 
         private static void CachedProperties(Type type)
         {
-            List<PropertyInfo> inProperties = new List<PropertyInfo>();
-            List<PropertyInfo> outProperties = new List<PropertyInfo>();
+            List<PropertyInfo> injectProperties = new List<PropertyInfo>();
+            List<PropertyInfo> extractProperties = new List<PropertyInfo>();
 
             Dictionary<ContextUsage, List<PropertyInfo>> propertyDic = new Dictionary<ContextUsage, List<PropertyInfo>>();
-            propertyDic.Add(ContextUsage.In, inProperties);
-            propertyDic.Add(ContextUsage.Out, outProperties);
+            propertyDic.Add(ContextUsage.Inject, injectProperties);
+            propertyDic.Add(ContextUsage.Extract, extractProperties);
 
             cachedTypePropertyDic.Add(type, propertyDic);
 
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             foreach (var property in properties)
             {
-                var attr = property.GetCustomAttribute<ContextFieldAttribute>();
+                var attr = property.GetCustomAttribute<ContextIEAttribute>();
                 if (attr == null)
                 {
                     continue;
                 }
 
-                if (attr.Usage != ContextUsage.In && property.CanRead)
+                if (attr.Usage != ContextUsage.Inject && property.CanRead)
                 {
-                    outProperties.Add(property);
+                    extractProperties.Add(property);
                 }
-                if (attr.Usage != ContextUsage.Out && property.CanWrite)
+                if (attr.Usage != ContextUsage.Extract && property.CanWrite)
                 {
-                    inProperties.Add(property);
+                    injectProperties.Add(property);
                 }
             }
         }
 
-        private static void InjectFields<K>(IEnvContext<K> context, Type injectObjType,object injectObj)
+
+
+        private static void InjectFields<K>(IContextContainer<K> context, IContextObject injectObj)
         {
-            List<FieldInfo> fields = cachedTypeFieldDic[injectObjType][ContextUsage.In];
+            List<FieldInfo> fields = cachedTypeFieldDic[injectObj.GetType()][ContextUsage.Inject];
             if (fields != null && fields.Count > 0)
             {
                 foreach (var field in fields)
                 {
-                    var attr = field.GetCustomAttribute<ContextFieldAttribute>();
+                    var attr = field.GetCustomAttribute<ContextIEAttribute>();
 
-                    if (!context.TryGet((K)attr.Key, out object fieldValue))
+                    if (!context.TryGet((K)attr.Key, out object value))
                     {
-                        if (fieldValue == null && !attr.Optional)
+                        if (value == null && !attr.Optional)
                         {
-                            throw new Exception($"ContextUtil::Inject->Data not found.fieldName = {field.Name},key = {attr.Key}");
+                            throw new ContextValueNullException(attr.Key);
                         }
                     }
-                    field.SetValue(injectObj, fieldValue);
+                    field.SetValue(injectObj, value);
                 }
             }
         }
 
-        private static void InjectProperties<K>(IEnvContext<K> context, Type injectObjType,object injectObj)
+        private static void InjectProperties<K>(IContextContainer<K> context, IContextObject injectObj)
         {
-            List<PropertyInfo> properties = cachedTypePropertyDic[injectObjType][ContextUsage.Out];
+            List<PropertyInfo> properties = cachedTypePropertyDic[injectObj.GetType()][ContextUsage.Inject];
             if(properties!=null && properties.Count>0)
             {
                 foreach(var property in properties)
                 {
-                    var attr = property.GetCustomAttribute<ContextFieldAttribute>();
+                    var attr = property.GetCustomAttribute<ContextIEAttribute>();
 
-                    if (!context.TryGet((K)attr.Key, out object fieldValue))
+                    if (!context.TryGet((K)attr.Key, out object value))
                     {
-                        if (fieldValue == null && !attr.Optional)
+                        if (value == null && !attr.Optional)
                         {
-                            throw new Exception($"ContextUtil::Inject->Data not found.fieldName = {property.Name},key = {attr.Key}");
+                            throw new ContextValueNullException(attr.Key);
                         }
                     }
-                    property.SetValue(injectObj, fieldValue);
+                    property.SetValue(injectObj, value);
                 }
             }
         }
 
-        public static void Inject<K>(IEnvContext<K> context, object injectObj)
+        public static void Inject<K>(IContextContainer<K> context, IContextObject injectObj)
         {
             if (injectObj == null || context == null)
             {
-                throw new ArgumentNullException("ContextUtil::Inject->argument is null.");
+                throw new ArgumentNullException("argument is null.");
             }
             Type injectObjType = injectObj.GetType();
 
@@ -131,51 +135,49 @@ namespace DotEngine.Context
                 CachedProperties(injectObjType);
             }
 
-            InjectFields(context, injectObjType, injectObj);
-            InjectProperties(context, injectObjType, injectObj);
+            InjectFields(context, injectObj);
+            InjectProperties(context, injectObj);
         }
 
-        private static void ExtractFields<K>(IEnvContext<K> context, Type extractObjType, object extractObj)
+        private static void ExtractFields<K>(IContextContainer<K> context, IContextObject extractObj)
         {
-            List<FieldInfo> fields = cachedTypeFieldDic[extractObjType][ContextUsage.Out];
+            List<FieldInfo> fields = cachedTypeFieldDic[extractObj.GetType()][ContextUsage.Extract];
             if (fields != null && fields.Count > 0)
             {
                 foreach (var field in fields)
                 {
-                    if (typeof(IEnvContext<>).IsAssignableFrom(field.FieldType))
+                    if (typeof(IContextContainer<>).IsAssignableFrom(field.FieldType))
                     {
                         throw new InvalidOperationException("Context can only be used with the InjectUsage.In option.");
                     }
 
-                    var attr = field.GetCustomAttribute<ContextFieldAttribute>();
-
-                    object fieldValue = field.GetValue(extractObj);
+                    var attr = field.GetCustomAttribute<ContextIEAttribute>();
+                    object value = field.GetValue(extractObj);
                     if (!attr.Optional)
                     {
-                        context.AddOrUpdate((K)attr.Key, fieldValue);
+                        context.AddOrUpdate((K)attr.Key, value);
                     }
-                    else if (fieldValue != null)
+                    else if (value != null)
                     {
-                        context.AddOrUpdate((K)attr.Key, fieldValue);
+                        context.AddOrUpdate((K)attr.Key, value);
                     }
                 }
             }
         }
 
-        private static void ExtractProperties<K>(IEnvContext<K> context, Type extractObjType, object extractObj)
+        private static void ExtractProperties<K>(IContextContainer<K> context, IContextObject extractObj)
         {
-            List<PropertyInfo> properties = cachedTypePropertyDic[extractObjType][ContextUsage.Out];
+            List<PropertyInfo> properties = cachedTypePropertyDic[extractObj.GetType()][ContextUsage.Extract];
             if (properties != null && properties.Count > 0)
             {
                 foreach (var property in properties)
                 {
-                    if (typeof(IEnvContext<>).IsAssignableFrom(property.PropertyType))
+                    if (typeof(IContextContainer<>).IsAssignableFrom(property.PropertyType))
                     {
                         throw new InvalidOperationException("Context can only be used with the InjectUsage.In option.");
                     }
 
-                    var attr = property.GetCustomAttribute<ContextFieldAttribute>();
-
+                    var attr = property.GetCustomAttribute<ContextIEAttribute>();
                     object fieldValue = property.GetValue(extractObj);
                     if (!attr.Optional)
                     {
@@ -189,7 +191,7 @@ namespace DotEngine.Context
             }
         }
 
-        public static void Extract<K>(IEnvContext<K> context, object extractObj)
+        public static void Extract<K>(IContextContainer<K> context, IContextObject extractObj)
         {
             if (extractObj == null || context == null)
             {
@@ -208,8 +210,8 @@ namespace DotEngine.Context
                 CachedProperties(extractObjType);
             }
 
-            ExtractFields(context, extractObjType, extractObj);
-            ExtractProperties(context, extractObjType, extractObj);
+            ExtractFields(context, extractObj);
+            ExtractProperties(context, extractObj);
         }
     }
 }

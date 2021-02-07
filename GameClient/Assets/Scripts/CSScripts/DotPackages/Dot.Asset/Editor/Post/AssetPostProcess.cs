@@ -37,7 +37,7 @@ namespace DotEditor.Asset.Post
             string[] assets = Filter.GetResults();
             if (assets != null && assets.Length > 0)
             {
-                StringContext context = new StringContext();
+                StringContextContainer context = new StringContextContainer();
                 context.Add(AssetPostContextKeys.ASSET_FILTER_KEY, Filter);
                 context.Add(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, assets);
 

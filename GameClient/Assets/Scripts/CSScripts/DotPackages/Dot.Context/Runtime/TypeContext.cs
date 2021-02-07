@@ -2,9 +2,10 @@
 
 namespace DotEngine.Context
 {
+    [Obsolete("it has been obsoleted.please fixed it if it was used")]
     public class TypeContext
     {
-        private EnvContext<Type> context = new EnvContext<Type>();
+        private ContextContainer<Type> context = new ContextContainer<Type>();
 
         public object this[Type type]
         {
@@ -20,7 +21,7 @@ namespace DotEngine.Context
 
         public bool Contains(Type type)
         {
-            return context.ContainsKey(type);
+            return context.Contains(type);
         }
 
         public T Get<T>(Type type)
@@ -78,14 +79,5 @@ namespace DotEngine.Context
             context.Clear();
         }
 
-        public void Inject(object injectObj)
-        {
-            ContextUtil.Inject<Type>(context, injectObj);
-        }
-
-        public void Extract(object extractObj)
-        {
-            ContextUtil.Extract<Type>(context, extractObj);
-        }
     }
 }

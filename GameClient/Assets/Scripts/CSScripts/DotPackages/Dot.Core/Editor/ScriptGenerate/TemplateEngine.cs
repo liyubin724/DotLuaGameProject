@@ -15,7 +15,7 @@ namespace DotTool.ScriptGenerate
     {
         private static string[] DefaultAssemblies = new string[]
         {
-            typeof(StringContext).Assembly.Location,
+            typeof(StringContextContainer).Assembly.Location,
             typeof(StringBuilder).Assembly.Location,
         };
 
@@ -31,7 +31,7 @@ public static class TemplateRunner {
 @"            return output.ToString();
     }
 }";
-        public static string Execute(StringContext context, string template, string[] assemblies)
+        public static string Execute(StringContextContainer context, string template, string[] assemblies)
         {
             string code = ComposeCode(template);
 
