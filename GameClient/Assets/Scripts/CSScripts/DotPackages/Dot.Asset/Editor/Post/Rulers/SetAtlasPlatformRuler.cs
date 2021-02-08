@@ -1,4 +1,4 @@
-﻿using DotEngine.Context;
+﻿using DotEngine.Context.Attributes;
 using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine.U2D;
@@ -12,7 +12,7 @@ namespace DotEditor.Asset.Post.Rulers
         public int MaxSize = 2048;
         public int Format = 5;
 
-        [ContextField(AssetPostContextKeys.OPERATE_ATLAS_RESULT_KEY, ContextUsage.In)]
+        [ContextIE(AssetPostContextKeys.OPERATE_ATLAS_RESULT_KEY, ContextUsage.Inject)]
         private SpriteAtlas atlas = null;
 
         public override void Execute()

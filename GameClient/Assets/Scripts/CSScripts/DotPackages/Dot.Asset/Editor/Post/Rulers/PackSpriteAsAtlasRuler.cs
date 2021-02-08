@@ -1,4 +1,4 @@
-﻿using DotEngine.Context;
+﻿using DotEngine.Context.Attributes;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -19,9 +19,9 @@ namespace DotEditor.Asset.Post.Rulers
         public bool TightPacking = false;
         public int Padding = 2;
 
-        [ContextField(AssetPostContextKeys.ASSET_FILTER_KEY, ContextUsage.In, true)]
+        [ContextIE(AssetPostContextKeys.ASSET_FILTER_KEY, ContextUsage.Inject, true)]
         private AssetPostFilter filter = null;
-        [ContextField(AssetPostContextKeys.OPERATE_ATLAS_RESULT_KEY,ContextUsage.Out)]
+        [ContextIE(AssetPostContextKeys.OPERATE_ATLAS_RESULT_KEY,ContextUsage.Extract)]
         private SpriteAtlas atlas = null;
 
         public override void Execute()

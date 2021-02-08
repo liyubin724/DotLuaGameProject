@@ -1,11 +1,12 @@
-﻿using DotEngine.Context;
+﻿using DotEngine.Context.Attributes;
+using DotEngine.Context.Interfaces;
 using UnityEngine;
 
 namespace DotEditor.Asset.Post
 {
-    public class AssetPostRuler : ScriptableObject
+    public class AssetPostRuler : ScriptableObject,IContextObject
     {
-        [ContextField(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, ContextUsage.In, false)]
+        [ContextIE(AssetPostContextKeys.ASSET_FILTER_RESULT_KEY, ContextUsage.Inject, false)]
         protected string[] assetPaths;
 
         public virtual void Execute() 

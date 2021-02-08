@@ -1,5 +1,5 @@
 ﻿using DotEditor.FBX;
-using DotEngine.Context;
+using DotEngine.Context.Attributes;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ namespace DotEditor.Asset.Post.Rulers
     {
         public string TargetFolder = "Assets";
 
-        [ContextField(AssetPostContextKeys.OPERATE_CLIP_RESULT_KEY, ContextUsage.Out)]
+        [ContextIE(AssetPostContextKeys.OPERATE_CLIP_RESULT_KEY, ContextUsage.Extract)]
         private Dictionary<string, List<AnimationClip>> results = null;
 
         public override void Execute()

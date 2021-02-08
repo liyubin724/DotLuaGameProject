@@ -1,5 +1,5 @@
 ﻿using DotEditor.FBX;
-using DotEngine.Context;
+using DotEngine.Context.Attributes;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +12,7 @@ namespace DotEditor.Asset.Post.Rulers
         [Range(3,6)]
         public int precision = 4;
 
-        [ContextField(AssetPostContextKeys.OPERATE_CLIP_RESULT_KEY, ContextUsage.InOut)]
+        [ContextIE(AssetPostContextKeys.OPERATE_CLIP_RESULT_KEY, ContextUsage.InjectAndExtract)]
         private Dictionary<string, List<AnimationClip>> results = null;
 
         public override void Execute()

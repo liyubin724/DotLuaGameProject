@@ -2,7 +2,7 @@
 
 namespace DotEngine.BehaviourLine
 {
-    public class LineContext : TypeContext
+    public class LineContext : StringContextContainer
     {
     }
 }

@@ -43,11 +43,11 @@ namespace DotEditor.Asset.Post
 
                 foreach (var ruler in Rulers)
                 {
-                    context.Inject(ruler);
+                    context.InjectTo(ruler);
                     {
                         ruler.Execute();
                     }
-                    context.Extract(ruler);
+                    context.ExtractFrom(ruler);
                 }
 
                 context.Clear();
