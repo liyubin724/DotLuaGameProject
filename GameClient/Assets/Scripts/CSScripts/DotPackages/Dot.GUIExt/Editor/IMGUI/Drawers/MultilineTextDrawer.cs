@@ -4,8 +4,6 @@ namespace DotEditor.GUIExt.IMGUI
 {
     public class MultilineTextDrawer : ValueProviderLayoutDrawable<string>
     {
-        private bool isLineCountChanged = false;
-
         private int lineCount = 4;
         public int LineCount
         {
@@ -18,22 +16,21 @@ namespace DotEditor.GUIExt.IMGUI
                 if(lineCount!=value)
                 {
                     lineCount = value;
-                    isLineCountChanged = true;
+                    Height = EditorGUIUtility.singleLineHeight * LineCount;
                 }
             }
         }
 
+        public MultilineTextDrawer()
+        {
+            Height = EditorGUIUtility.singleLineHeight * LineCount;
+        }
+
         protected override void OnLayoutDraw()
         {
-           if(isLineCountChanged)
-            {
-                Width = EditorGUIUtility.singleLineHeight * LineCount;
-                isLineCountChanged = false;
-            }
-
             EditorGUILayout.BeginVertical();
             {
-                EditorGUILayout.PrefixLabel(Label);
+                EditorGUILayout.LabelField(Label);
                 EGUI.BeginIndent();
                 {
                     Value = EditorGUILayout.TextArea(Value, LayoutOptions);

@@ -1,12 +1,15 @@
 ﻿using DotEditor.Utilities;
+using DotEngine.GUIExt.NativeDrawer;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace DotEditor.AAS
 {
     [CreateAssetMenu(fileName ="asset_bundle_gen_config",menuName ="AseetBundle/Gen Config")]
+    [NativeDrawerEditor]
     public class AssetBundleGenerateConfig : ScriptableObject
     {
+        [MultilineText]
         public string desc;
 
         public string rootFolder = string.Empty;
