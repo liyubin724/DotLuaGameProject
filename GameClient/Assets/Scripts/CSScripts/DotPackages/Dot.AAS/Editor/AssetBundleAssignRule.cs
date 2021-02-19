@@ -1,4 +1,5 @@
 ﻿using DotEngine.Crypto;
+using DotEngine.GUIExt.NativeDrawer;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -22,6 +23,7 @@ namespace DotEditor.AAS
         public bool usedMd5AsName = false;
 
         public AssetBundleAssignType assignType = AssetBundleAssignType.FullPath;
+        [VisibleIf("IsShowBundleName")]
         public string bundleName = string.Empty;
 
         public string appendSuffix = string.Empty;
@@ -66,5 +68,7 @@ namespace DotEditor.AAS
         {
             return Regex.Replace(str, "[ \\[ \\] \\^ \\-*×――(^)|'$%~!@#$…&%￥—+=<>《》!！??？:：•`·、。，；,.;\"‘’“”-]", replaceStr);
         }
+
+        private bool IsShowBundleName() => assignType == AssetBundleAssignType.Manual;
     }
 }

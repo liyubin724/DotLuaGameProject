@@ -10,7 +10,7 @@ namespace DotEditor.AAS
     public class AssetBundleGenerateConfig : ScriptableObject
     {
         [MultilineText]
-        public string desc;
+        public string desc = string.Empty;
 
         public string rootFolder = string.Empty;
         public bool isIncludeChildFolder = false;

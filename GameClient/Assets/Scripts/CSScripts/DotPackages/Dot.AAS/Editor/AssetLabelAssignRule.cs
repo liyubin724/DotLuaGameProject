@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.GUIExt.NativeDrawer;
+using System;
 using System.Collections.Generic;
 
 namespace DotEditor.AAS
@@ -13,6 +14,7 @@ namespace DotEditor.AAS
     public class AssetLabelAssignRule
     {
         public AssetLabelAssignType assignType = AssetLabelAssignType.None;
+        [VisibleIf("IsShowLabels")]
         public List<string> labels = new List<string>();
 
         public string[] GetLabels(string assetPath)
@@ -25,5 +27,7 @@ namespace DotEditor.AAS
                 return labels.ToArray();
             }
         }
+
+        private bool IsShowLabels() => assignType == AssetLabelAssignType.Manual;
     }
 }
