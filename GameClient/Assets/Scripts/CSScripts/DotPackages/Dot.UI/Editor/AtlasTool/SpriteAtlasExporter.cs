@@ -58,8 +58,13 @@ namespace DotEditor.UI
             return texturePathList.ToArray();
         }
 
+        [MenuItem("Game/UI/Atlas/Pcak All")]
+        private static void PackAllAtlas()
+        {
+            SpriteAtlasUtility.PackAllAtlases(EditorUserBuildSettings.activeBuildTarget);
+        }
 
-        [MenuItem("Game/UI/SpriteAtlas Exporter")]
+        [MenuItem("Game/UI/Atlas/Export Selected Atlas")]
         private static void ExportAltas()
         {
             List<SpriteAtlas> atlasList = new List<SpriteAtlas>();
