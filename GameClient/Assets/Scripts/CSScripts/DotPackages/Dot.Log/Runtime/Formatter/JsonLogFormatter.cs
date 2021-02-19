@@ -1,49 +1,35 @@
-﻿using Newtonsoft.Json;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Text;
 
-namespace DotEngine.Log.Formatter
+namespace DotEngine.Log
 {
     [Serializable]
     public class LogData
     {
         public LogLevel Level { get; set; }
-        public long Time { get; set; }
         public string Tag { get; set; }
         public string Message { get; set; }
         public string StackTrace { get; set; }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Level:      {Level}");
-            sb.AppendLine($"Time:      {new DateTime(Time)}");
-            sb.AppendLine($"Tag:        {Tag}");
-            sb.AppendLine($"Message:{Message}");
-            if (!string.IsNullOrEmpty(StackTrace))
-            {
-                sb.AppendLine($"StackTrace:\n{StackTrace}");
-            }
-            return sb.ToString();
-        }
+        public long Time { get; set; }
     }
 
     public class JsonLogFormatter : ILogFormatter
     {
-        private LogData m_LogData = new LogData();
+        private JObject jsonObj = new JObject();
         public JsonLogFormatter()
         {
         }
 
         public string FormatMessage(LogLevel level, string tag, string message, string stackTrace)
         {
-            m_LogData.Level = level;
-            m_LogData.Tag = tag;
-            m_LogData.Message = message;
-            m_LogData.StackTrace = stackTrace;
-            m_LogData.Time = DateTime.Now.Ticks;
+            jsonObj["Level"] = level.ToString().ToUpper();
+            jsonObj["Tag"] = tag;
+            jsonObj["Message"] = message;
+            jsonObj["StackTrace"] = stackTrace;
+            jsonObj["Time"] = DateTime.Now.ToString("yy-MM-dd HH: mm:ss: ffff");
 
-            return JsonConvert.SerializeObject(m_LogData);
+            return jsonObj.ToString();
         }
     }
 }

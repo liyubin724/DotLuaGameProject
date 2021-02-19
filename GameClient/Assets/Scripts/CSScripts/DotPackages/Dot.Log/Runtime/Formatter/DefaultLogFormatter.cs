@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotEngine.Log.Formatter
+namespace DotEngine.Log
 {
     public class DefaultLogFormatter : ILogFormatter
     {

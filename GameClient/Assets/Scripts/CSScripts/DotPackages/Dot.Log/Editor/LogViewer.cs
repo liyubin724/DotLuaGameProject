@@ -1,7 +1,6 @@
 ﻿using DotEditor.GUIExtension;
 using DotEngine.Log;
 using DotEngine.Log.Appender;
-using DotEngine.Log.Formatter;
 using DotEngine.NetworkEx;
 using Newtonsoft.Json;
 using System.Collections.Generic;

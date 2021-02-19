@@ -2,56 +2,55 @@
 
 namespace DotEngine.Log
 {
-    public delegate void LogMessage(Logger logger, LogLevel level, string message, string stackTrace);
+    public delegate void LogHandler(LogLevel level, string tag, string message, string stackTrace);
 
     public class Logger
     {
-        public string Name { get; private set; }
+        public string Tag { get; private set; }
         public LogLevel MinLogLevel { get; set; } = LogLevel.On;
         public LogLevel StackTraceLogLevel { get; set; } = LogLevel.Error;
-        public LogMessage OnLogMessage { get; set; }
 
-        internal Logger(string name)
+        private LogHandler Handler;
+
+        internal Logger(string tag,LogHandler handler)
         {
-            Name = name;
+            Tag = tag;
+            Handler = handler;
         }
 
         private string GetStackTrace(LogLevel level)
         {
-            if(level< StackTraceLogLevel)
+            if(level < StackTraceLogLevel)
             {
                 return string.Empty;
             }
-            return new StackTrace(3,true).ToString();
+            return new StackTrace(3, true).ToString();
         }
 
-        public void Dispose()
-        {
-            OnLogMessage = null;
-            LogUtil.RemoveLogger(Name);
-        }
-
+        [Conditional("DEBUG")]
         public void Trace(string message)
         {
-            if(MinLogLevel<LogLevel.Trace)
+            if (MinLogLevel < LogLevel.Trace)
             {
-                OnLogMessage?.Invoke(this, LogLevel.Trace, message, GetStackTrace(LogLevel.Trace));
+                Handler?.Invoke(LogLevel.Trace,Tag, message, GetStackTrace(LogLevel.Trace));
             }
         }
 
+        [Conditional("DEBUG")]
         public void Debug(string message)
         {
             if (MinLogLevel < LogLevel.Debug)
             {
-                OnLogMessage?.Invoke(this, LogLevel.Debug, message, GetStackTrace(LogLevel.Debug));
+                Handler?.Invoke(LogLevel.Debug, Tag, message, GetStackTrace(LogLevel.Debug));
             }
         }
 
+        [Conditional("DEBUG")]
         public void Info(string message)
         {
             if (MinLogLevel < LogLevel.Info)
             {
-                OnLogMessage?.Invoke(this, LogLevel.Info, message, GetStackTrace(LogLevel.Info));
+                Handler?.Invoke(LogLevel.Info, Tag, message, GetStackTrace(LogLevel.Info));
             }
         }
 
@@ -59,7 +58,7 @@ namespace DotEngine.Log
         {
             if (MinLogLevel < LogLevel.Warning)
             {
-                OnLogMessage?.Invoke(this, LogLevel.Warning, message, GetStackTrace(LogLevel.Warning));
+                Handler?.Invoke(LogLevel.Warning,Tag, message, GetStackTrace(LogLevel.Warning));
             }
         }
 
@@ -67,7 +66,7 @@ namespace DotEngine.Log
         {
             if (MinLogLevel < LogLevel.Error)
             {
-                OnLogMessage?.Invoke(this, LogLevel.Error, message, GetStackTrace(LogLevel.Error));
+                Handler?.Invoke(LogLevel.Error, Tag, message, GetStackTrace(LogLevel.Error));
             }
         }
 
@@ -75,7 +74,7 @@ namespace DotEngine.Log
         {
             if (MinLogLevel < LogLevel.Fatal)
             {
-                OnLogMessage?.Invoke(this, LogLevel.Fatal, message, GetStackTrace(LogLevel.Fatal));
+                Handler?.Invoke(LogLevel.Fatal, Tag, message, GetStackTrace(LogLevel.Fatal));
             }
         }
     }

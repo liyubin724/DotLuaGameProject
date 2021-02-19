@@ -1,28 +1,32 @@
-﻿using DotEngine.Log.Formatter;
-using System;
-
-namespace DotEngine.Log.Appender
+﻿namespace DotEngine.Log
 {
-    public abstract class ALogAppender : IDisposable
+    public abstract class ALogAppender : ILogAppender
     {
-        public string Name { get; protected set; }
-        protected ILogFormatter logFormatter;
+        public string Name { get; private set; }
+        public ILogFormatter Formatter { get; private set; }
+
+        public ALogAppender(string name) : this(name, new DefaultLogFormatter())
+        { }
 
         protected ALogAppender(string name,ILogFormatter formatter)
         {
             Name = name;
-            logFormatter = formatter;
+            Formatter = formatter;
         }
 
         public void OnLogReceived(LogLevel level, string tag, string message,string stackTrace)
         {
-            string logMessage = logFormatter.FormatMessage(level, tag, message, stackTrace);
-            DoLogMessage(level, logMessage);
+            string logMessage = Formatter.FormatMessage(level, tag, message, stackTrace);
+            OutputLogMessage(level, logMessage);
         }
 
-        protected abstract void DoLogMessage(LogLevel level,string message);
+        protected abstract void OutputLogMessage(LogLevel level,string message);
 
-        public virtual void Dispose()
+        public virtual void OnAppended()
+        {
+        }
+
+        public virtual void OnRemoved()
         {
         }
     }

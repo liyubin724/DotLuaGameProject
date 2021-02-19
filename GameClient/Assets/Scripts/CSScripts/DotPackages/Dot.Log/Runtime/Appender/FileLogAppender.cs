@@ -1,81 +1,123 @@
-﻿using DotEngine.Log.Formatter;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
+using System.Text;
+using System.Threading;
 
-namespace DotEngine.Log.Appender
+namespace DotEngine.Log
 {
     public class FileLogAppender : ALogAppender
     {
-        public static readonly string NAME = "FileLog";
+        private string outputDir = string.Empty;
+        private StreamWriter fileWriter = null;
 
-        private StreamWriter m_Writer = null;
-        private bool m_IsDisposed = false;
+        private List<string> cachedLogs = new List<string>();
+        private Thread fileWriterThread = null;
+        private object locker = new object();
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-        public FileLogAppender(ILogFormatter formatter) : base(NAME, formatter)
+        public FileLogAppender(string logFileDir, ILogFormatter formatter) : base(typeof(FileLogAppender).Name, formatter)
         {
-            string dirPath = null;
-#if UNITY_EDITOR
-            dirPath = Application.dataPath + "/../Log";
-#endif
-            if (!Directory.Exists(dirPath))
+            outputDir = logFileDir;
+        }
+
+        public FileLogAppender(string logFileDir) : this(logFileDir,new DefaultLogFormatter())
+        {
+        }
+
+        public override void OnAppended()
+        {
+            if(string.IsNullOrEmpty(outputDir))
             {
-                DirectoryInfo dInfo = Directory.CreateDirectory(dirPath);
-                if (dInfo == null || !dInfo.Exists)
+                return;
+            }
+
+            string fileName = $"log-{DateTime.Now.ToString("yy-MM-dd")}.log";
+            if(Directory.Exists(outputDir))
+            {
+                string[] files = Directory.GetFiles(outputDir, "log-*.log", SearchOption.TopDirectoryOnly);
+                if (files != null && files.Length > 0)
                 {
-                    dirPath = null;
+                    foreach (var file in files)
+                    {
+                        if (Path.GetFileName(file) != fileName)
+                        {
+                            File.Delete(file);
+                        }
+                    }
+                }
+            }else
+            {
+                DirectoryInfo dInfo = Directory.CreateDirectory(outputDir);
+                if(!dInfo.Exists)
+                {
+                    return;
                 }
             }
 
-            if (!string.IsNullOrEmpty(dirPath))
+            string filePath = $"{outputDir}/{fileName}";
+            try
             {
-                try
+                fileWriter = new StreamWriter(filePath,true,Encoding.UTF8);
+                fileWriter.AutoFlush = true;
+
+                fileWriterThread = new Thread(() =>
                 {
-                    m_Writer = new StreamWriter($"{dirPath}/log-{DateTime.Now.ToString("yy-MM-dd")}.txt");
-                    m_Writer.AutoFlush = true;
-                }
-                catch
-                {
-                    m_Writer?.Close();
-                    m_Writer = null;
-                }
+                    while (true)
+                    {
+                        if (tokenSource.Token.IsCancellationRequested)
+                        {
+                            break;
+                        }
+
+                        lock (locker)
+                        {
+                            if (cachedLogs.Count > 0)
+                            {
+                                foreach (var line in cachedLogs)
+                                {
+                                    fileWriter.WriteLine(line);
+                                }
+                                cachedLogs.Clear();
+                            }
+                        }
+                        Thread.Sleep(3000);
+                    }
+                });
+                fileWriterThread.IsBackground = true;
+                fileWriterThread.Start();
             }
-
-        }
-
-        public FileLogAppender() : this(new DefaultLogFormatter())
-        {
-        }
-
-        ~FileLogAppender()
-        {
-            Dispose(false);
-        }
-
-        protected override void DoLogMessage(LogLevel level, string message)
-        {
-            m_Writer?.WriteLine(message);
-        }
-
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (m_IsDisposed) return;
-
-            if (disposing)
+            catch
             {
-                
+                fileWriter?.Close();
+                fileWriter = null;
             }
-            m_Writer?.Flush();
-            m_Writer?.Close();
-            m_Writer = null;
+        }
 
-            m_IsDisposed = true;
+        public override void OnRemoved()
+        {
+            tokenSource.Cancel();
+            lock (locker)
+            {
+                fileWriter?.Flush();
+                fileWriter?.Close();
+            }
+            fileWriterThread = null;
+            fileWriter = null;
+
+            cachedLogs.Clear();
+        }
+
+        protected override void OutputLogMessage(LogLevel level, string message)
+        {
+            if (fileWriter == null)
+            {
+                return;
+            }
+            lock (locker)
+            {
+                cachedLogs.Add(message);
+            }
         }
     }
 }

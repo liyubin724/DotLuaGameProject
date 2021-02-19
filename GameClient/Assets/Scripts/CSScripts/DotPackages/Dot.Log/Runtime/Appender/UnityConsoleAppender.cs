@@ -1,29 +1,28 @@
-﻿using DotEngine.Log.Formatter;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace DotEngine.Log.Appender
+namespace DotEngine.Log
 {
     public class UnityConsoleAppender : ALogAppender
     {
-        public static readonly string NAME = "UnityConsole";
-
-        public UnityConsoleAppender(ILogFormatter formatter) : base(NAME, formatter)
+        public UnityConsoleAppender(ILogFormatter formatter) : base(typeof(UnityConsoleAppender).Name, formatter)
         {
         }
 
-        public UnityConsoleAppender() : base(NAME, new DefaultLogFormatter())
+        public UnityConsoleAppender() : this(new DefaultLogFormatter())
         {
         }
 
-        protected override void DoLogMessage(LogLevel level, string message)
+        protected override void OutputLogMessage(LogLevel level, string message)
         {
             if (level <= LogLevel.Info)
             {
                 Debug.Log(message);
-            }else if(level == LogLevel.Warning)
+            }
+            else if (level == LogLevel.Warning)
             {
                 Debug.LogWarning(message);
-            }else if(level >= LogLevel.Error)
+            }
+            else if (level >= LogLevel.Error)
             {
                 Debug.LogError(message);
             }

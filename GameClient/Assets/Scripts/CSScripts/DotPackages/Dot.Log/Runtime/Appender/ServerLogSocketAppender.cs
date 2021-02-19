@@ -1,4 +1,4 @@
-﻿using DotEngine.Log.Formatter;
+﻿using DotEngine.Log;
 using DotEngine.NetworkEx;
 using Newtonsoft.Json;
 using System;
@@ -76,11 +76,11 @@ namespace DotEngine.Log.Appender
                 GlobalLogLevel = LogUtil.GlobalLogLevel,
             };
             setting.LoggerSettings = new List<LogNetLoggerSetting>();
-            foreach (var kvp in LogUtil.Loggers)
+            foreach (var kvp in LogUtil.loggerDic)
             {
                 LogNetLoggerSetting loggerSetting = new LogNetLoggerSetting()
                 {
-                    Name = kvp.Value.Name,
+                    Name = kvp.Value.Tag,
                     MinLogLevel = kvp.Value.MinLogLevel,
                     StackTraceLogLevel = kvp.Value.StackTraceLogLevel,
                 };
@@ -112,7 +112,7 @@ namespace DotEngine.Log.Appender
 
             if(loggerSetting!=null)
             {
-                if(LogUtil.Loggers.TryGetValue(loggerSetting.Name,out var logger))
+                if(LogUtil.loggerDic.TryGetValue(loggerSetting.Name,out var logger))
                 {
                     logger.MinLogLevel = loggerSetting.MinLogLevel;
                     logger.StackTraceLogLevel = loggerSetting.StackTraceLogLevel;
@@ -122,15 +122,9 @@ namespace DotEngine.Log.Appender
             //m_ServerNetwork.SendMessage(LogNetUtill.S2C_SET_LOGGER_LOG_LEVEL_RESPONSE, message.Message);
         }
 
-        protected override void DoLogMessage(LogLevel level, string message)
+        protected override void OutputLogMessage(LogLevel level, string message)
         {
             m_ServerNetwork.SendMessage(LogNetUtill.S2C_RECEIVE_LOG_REQUEST, Encoding.UTF8.GetBytes(message));
-        }
-
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)

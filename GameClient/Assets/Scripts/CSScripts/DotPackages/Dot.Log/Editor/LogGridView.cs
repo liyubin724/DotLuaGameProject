@@ -1,7 +1,6 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.GUIExtension.DataGrid;
 using DotEngine.Log;
-using DotEngine.Log.Formatter;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
