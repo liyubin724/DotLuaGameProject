@@ -26,7 +26,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             Type[] allTypes = DrawerUtility.GetAllBaseTypes(Target.GetType());
             if (allTypes != null && allTypes.Length > 0)
             {
-                if(!IsShowInherit)
+                if(IsShowInherit)
                 {
                     itemDrawers.Add(new HeaderDrawer()
                     {

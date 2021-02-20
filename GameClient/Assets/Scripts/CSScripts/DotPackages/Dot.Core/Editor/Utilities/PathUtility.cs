@@ -35,7 +35,7 @@ namespace DotEditor.Utilities
             assetPath = assetPath.Replace("\\", "/");
             if (!assetPath.StartsWith("Assets"))
             {
-                return string.Empty;
+                return assetPath;
             }
             return Application.dataPath + assetPath.Substring(assetPath.IndexOf("Assets") + 6);
         }

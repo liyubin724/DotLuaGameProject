@@ -287,15 +287,21 @@ namespace DotEditor.GUIExt
             return value;
         }
 
-        public static string DrawOpenFolder(string label,string value,bool isAbsolute = false)
+        public static string DrawOpenFolder(string label,string value,bool isAbsolute = false, bool isReadonly = true)
         {
             EditorGUILayout.BeginHorizontal();
             {
-                value = EditorGUILayout.TextField(label, value);
+                EditorGUI.BeginDisabledGroup(isReadonly);
+                {
+                    value = EditorGUILayout.TextField(label, value);
+                }
+                EditorGUI.EndDisabledGroup();
 
                 if (GUILayout.Button(new GUIContent(EGUIResources.DefaultFolderIcon), GUIStyle.none, GUILayout.Width(17), GUILayout.Height(17)))
                 {
-                    string folderPath = EditorUtility.OpenFolderPanel("Open Folder", value, "");
+                    string defaultFolder = string.IsNullOrEmpty(value) ? Application.dataPath : PathUtility.GetDiskPath(value);
+
+                    string folderPath = EditorUtility.OpenFolderPanel("Open Folder", defaultFolder, "");
                     if (!string.IsNullOrEmpty(folderPath))
                     {
                         if(isAbsolute)

@@ -1,22 +1,21 @@
 ﻿using DotEngine.GUIExt.NativeDrawer;
 using System;
 using UnityEditor;
-using UnityEngine;
 
 namespace DotEditor.GUIExt.NativeDrawer
 {
-    [CustomEditor(typeof(ScriptableObject),true, isFallback = true)]
-    public class NativeDrawerEditor : Editor
+    [CustomEditor(typeof(UnityEngine.Object), true, isFallback = true)]
+    public class CustomDrawerEditor : Editor
     {
         private ObjectDrawer objectDrawer = null;
-
+        private CustomDrawerEditorAttribute attr = null;
         private void OnEnable()
         {
             Type targetType = target.GetType();
-            var attrs = targetType.GetCustomAttributes(typeof(NativeDrawerEditorAttribute), false);
+            var attrs = targetType.GetCustomAttributes(typeof(CustomDrawerEditorAttribute), true);
             if(attrs!=null && attrs.Length>0)
             {
-                NativeDrawerEditorAttribute attr = attrs[0] as NativeDrawerEditorAttribute;
+                attr = attrs[0] as CustomDrawerEditorAttribute;
                 if(attr.Enable)
                 {
                     objectDrawer = new ObjectDrawer(target)
@@ -39,7 +38,20 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             if(objectDrawer!=null)
             {
-                objectDrawer.OnGUILayout();
+                EGUILayout.DrawScript(target);
+                EditorGUILayout.Space();
+
+                float labelWidth = attr.LabelWidth;
+                if(labelWidth<=0)
+                {
+                    labelWidth = EditorGUIUtility.labelWidth;
+                }
+
+                EGUI.BeginLabelWidth(labelWidth);
+                {
+                    objectDrawer.OnGUILayout();
+                }
+                EGUI.EndLableWidth();
             }else
             {
                 base.OnInspectorGUI();

@@ -18,19 +18,7 @@ public class TestScreenCapture
         //File.WriteAllBytes("D:/c2.png", bytes);
     }
 
-    [MenuItem("Test/AAS")]
-    public static void TestAAS()
-    {
-        var configs = AssetDatabaseUtility.FindInstances<AssetBundleGenerateConfig>();
-        foreach(var config in configs)
-        {
-            var datas = config.GetDatas();
-            foreach(var data in datas)
-            {
-                Debug.Log(data.ToString());
-            }
-        }
-    }
+   
 
     public static Texture GrabScreenSwatch(Rect rect)
     {
