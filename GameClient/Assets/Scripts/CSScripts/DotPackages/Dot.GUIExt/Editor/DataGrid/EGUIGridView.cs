@@ -14,15 +14,13 @@ namespace DotEditor.GUIExt.DataGrid
 
         public TreeViewState ViewState { get; private set; }
         public GridViewModel ViewModel { get; private set; }
-        public GridViewHeader ViewHeader { get; private set; }
 
         public EGUIGridView(GridViewModel model,string[] columnTitles)
         {
             ViewState = new TreeViewState();
             ViewModel = model;
-            ViewHeader = new GridViewHeader(columnTitles);
 
-            treeView = new GridTreeView(ViewState, ViewHeader.GetTreeViewHeader(), ViewModel)
+            treeView = new GridTreeView(ViewState, GridViewHeader.CreateTreeViewHeader(columnTitles), ViewModel)
             {
                 OnDrawColumnItem = OnDrawColumnItem,
                 OnGetRowHeight = GetRowHeight,
@@ -34,13 +32,12 @@ namespace DotEditor.GUIExt.DataGrid
             treeView.multiColumnHeader.ResizeToFit();
         }
 
-        public EGUIGridView(GridViewModel model,GridViewHeader header)
+        public EGUIGridView(GridViewModel model,GridViewColumn[] columns)
         {
             ViewState = new TreeViewState();
             ViewModel = model;
-            ViewHeader = header;
 
-            treeView = new GridTreeView(ViewState, header.GetTreeViewHeader(), ViewModel)
+            treeView = new GridTreeView(ViewState, GridViewHeader.CreateTreeViewHeader(columns), ViewModel)
             {
                 OnDrawColumnItem = OnDrawColumnItem,
                 OnGetRowHeight = GetRowHeight,

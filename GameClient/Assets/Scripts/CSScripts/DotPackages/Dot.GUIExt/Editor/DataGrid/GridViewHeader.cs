@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEditor.IMGUI.Controls;
+﻿using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using static UnityEditor.IMGUI.Controls.MultiColumnHeaderState;
 
@@ -47,59 +46,33 @@ namespace DotEditor.GUIExt.DataGrid
                 c.minWidth = column.MinWidth;
             }
 
-
             return c;
         }
     }
 
     public class GridViewHeader
     {
-        public List<GridViewColumn> m_Columns = new List<GridViewColumn>();
-
-        public GridViewHeader()
+        public static MultiColumnHeader CreateTreeViewHeader(string[] titles,string[] tooltips = null)
         {
-        }
-
-        public GridViewHeader(string[] titles)
-        {
-            foreach(var title in titles)
+            Column[] columns = new Column[titles.Length];
+            for(int i =0;i<titles.Length;++i)
             {
-                m_Columns.Add(new GridViewColumn(title));
+                columns[i] = new GridViewColumn(titles[i], tooltips != null ? tooltips[i] : string.Empty);
             }
+
+            return new MultiColumnHeader(new MultiColumnHeaderState(columns));
         }
 
-        public void AddColumn(string title,string tooltip = "")
+        public static MultiColumnHeader CreateTreeViewHeader(GridViewColumn[] values)
         {
-            m_Columns.Add(new GridViewColumn(title, tooltip));
-        }
-
-        public void AddColumn(GridViewColumn column)
-        {
-            m_Columns.Add(column);
-        }
-
-        public string GetColumnTitle(int index)
-        {
-            if (index < 0 || index >= m_Columns.Count)
+            Column[] columns = new Column[values.Length];
+            for (int i = 0; i < values.Length; ++i)
             {
-                return string.Empty;
+                columns[i] = values[i];
             }
-            return m_Columns[index].Title;
+
+            return new MultiColumnHeader(new MultiColumnHeaderState(columns));
         }
 
-        private Column[] GetTreeViewColumns()
-        {
-            Column[] columns = new Column[m_Columns.Count];
-            for(int i =0;i<m_Columns.Count;++i)
-            {
-                columns[i] = m_Columns[i];
-            }
-            return columns;
-        }
-
-        public MultiColumnHeader GetTreeViewHeader()
-        {
-            return new MultiColumnHeader(new MultiColumnHeaderState(GetTreeViewColumns()));
-        }
     }
 }
