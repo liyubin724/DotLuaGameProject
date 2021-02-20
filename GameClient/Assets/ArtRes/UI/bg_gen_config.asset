@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: bg_gen_config
   m_EditorClassIdentifier: 
   desc: 
-  rootFolder: 
-  isIncludeChildFolder: 0
-  usedAsAddress: 0
+  rootFolder: Assets/ArtRes/UI/BG
+  isIncludeChildFolder: 1
+  usedAsAddress: 1
   folderFilterRule:
     filterType: 0
     folderNames: []
   nameFilterRule:
     usedNameAsLowcase: 0
     nameFilter: 
-    usedExtAsLowcase: 0
-    extFilter: 
+    usedExtAsLowcase: 1
+    extFilter: ^.png$
   bundleAssignRule:
-    usedMd5AsName: 0
-    assignType: 0
+    assignType: 4
     bundleName: 
     appendSuffix: 
   addressAssignRule:
     assignType: 2
   labelAssignRule:
-    assignType: 0
-    labels: []
+    assignType: 1
+    labels:
+    - bg

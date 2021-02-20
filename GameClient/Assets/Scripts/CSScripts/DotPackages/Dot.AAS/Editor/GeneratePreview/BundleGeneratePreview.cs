@@ -8,12 +8,12 @@ using UnityEngine;
 
 namespace DotEditor.AAS
 {
-    public class AssetBundleGeneratePreview : EditorWindow
+    public class BundleGeneratePreview : EditorWindow
     {
         [MenuItem("Game/AAS/Generate Preview")]
         public static void ShowWin()
         {
-            AssetBundleGeneratePreview win = EditorWindow.GetWindow<AssetBundleGeneratePreview>();
+            BundleGeneratePreview win = EditorWindow.GetWindow<BundleGeneratePreview>();
             win.titleContent = new GUIContent("Generate Preview");
             win.Show();
         }
@@ -23,7 +23,7 @@ namespace DotEditor.AAS
         private ToolbarDrawer toolbarDrawer;
         private EasyListView bundleListView;
         private DragLineDrawer dragLineDrawer = null;
-        private AssetBundleGridView assetGridView = null;
+        private AssetGridView assetGridView = null;
 
         private List<string> bundleNames = new List<string>();
         private Dictionary<string, List<AssetBundleBuildData>> bundleDataDic = new Dictionary<string, List<AssetBundleBuildData>>();
@@ -88,7 +88,7 @@ namespace DotEditor.AAS
             {
                 SetSelectedBundleName((string)selected);
             };
-            assetGridView = new AssetBundleGridView();
+            assetGridView = new AssetGridView();
 
             RefreshGenerateConfigs();
 

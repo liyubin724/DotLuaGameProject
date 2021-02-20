@@ -1,5 +1,4 @@
-﻿using DotEngine.Crypto;
-using DotEngine.GUIExt.NativeDrawer;
+﻿using DotEngine.GUIExt.NativeDrawer;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -20,8 +19,6 @@ namespace DotEditor.AAS
     [Serializable]
     public class AssetBundleAssignRule
     {
-        public bool usedMd5AsName = false;
-
         public AssetBundleAssignType assignType = AssetBundleAssignType.FullPath;
         [VisibleIf("IsShowBundleName")]
         public string bundleName = string.Empty;
@@ -55,13 +52,7 @@ namespace DotEditor.AAS
                 bName = bundleName + appendSuffix;
             }
 
-            if(usedMd5AsName)
-            {
-                return MD5Crypto.Md5(bName).ToLower();
-            }else
-            {
-                return bName.ToLower();
-            }
+            return bName.ToLower();
         }
 
         private string ReplaceSpecialCharacter(string str, string replaceStr)

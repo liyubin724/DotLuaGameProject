@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace DotEditor.AAS
 {
-    internal class AssetBundleGridView : EGUIGridView 
+    internal class AssetGridView : EGUIGridView 
     {
-        internal AssetBundleGridView():base(new GridViewModel(),new string[] { "Path","Address","Labels","Used Address"})
+        internal AssetGridView():base(new GridViewModel(),new string[] { "Path","Address","Labels","Used Address"})
         {
-
         }
 
         internal void SetDatas(List<AssetBundleBuildData> list)
