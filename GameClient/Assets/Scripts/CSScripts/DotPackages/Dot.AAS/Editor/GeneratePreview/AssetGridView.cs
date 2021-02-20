@@ -1,10 +1,25 @@
 ﻿using DotEditor.GUIExt.DataGrid;
+using DotEditor.Utilities;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.AAS
 {
+    internal enum DataStatus
+    {
+        None = 0,
+        Error,
+        Warning,
+    }
+
+    internal class AssetGridViewData : GridViewData
+    {
+        public DataStatus status = DataStatus.None;
+        public string statusTooltip = string.Empty;
+        public string configAssetPath = string.Empty;
+    }
+
     internal class AssetGridView : EGUIGridView 
     {
         internal AssetGridView() : base(new GridViewModel(), new GridViewColumn[] { 
@@ -28,32 +43,54 @@ namespace DotEditor.AAS
         {
         }
 
-        internal void SetDatas(List<AssetBundleBuildData> list)
+        internal void SetDatas(List<AssetGridViewData> datas)
         {
             ViewModel.Clear();
-            foreach(var data in list)
+            foreach(var data in datas)
             {
-                ViewModel.AddData(new GridViewData(data.path, data));
+                ViewModel.AddData(data);
             }
+
             Reload();
         }
 
         protected override void OnDrawColumnItem(Rect rect, int columnIndex, GridViewData columnItemData)
         {
-            AssetBundleBuildData data = columnItemData.GetData<AssetBundleBuildData>();
-            if(columnIndex == 1)
+            AssetGridViewData viewData = columnItemData as AssetGridViewData;
+            AssetBundleBuildData buildData = viewData.Userdata as AssetBundleBuildData;
+            if(columnIndex == 0)
             {
-                EditorGUI.TextField(rect, data.path);
+
+            }else if(columnIndex == 1)
+            {
+                EditorGUI.TextField(rect, buildData.path);
             }else if(columnIndex == 2)
             {
-                EditorGUI.TextField(rect, data.address);
+                EditorGUI.TextField(rect, buildData.address);
             }else if(columnIndex == 3)
             {
-                EditorGUI.TextField(rect, (data.labels == null || data.labels.Length == 0) ? string.Empty : string.Join(",", data.labels));
+                EditorGUI.TextField(rect, (buildData.labels == null || buildData.labels.Length == 0) ? string.Empty : string.Join(",", buildData.labels));
             }else if(columnIndex == 4)
             {
-                EditorGUI.Toggle(rect, data.usedAsAddress);
+                EditorGUI.Toggle(rect, buildData.usedAsAddress);
             }
+        }
+
+        protected override void OnItemContextClicked(GridViewData itemData)
+        {
+            AssetGridViewData viewData = itemData as AssetGridViewData;
+            AssetBundleBuildData buildData = viewData.Userdata as AssetBundleBuildData;
+
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Selected Item"), false, () =>
+            {
+                SelectionUtility.ActiveObject(buildData.path);
+            });
+            menu.AddItem(new GUIContent("Selected Config"), false, () =>
+              {
+                  SelectionUtility.ActiveObject(viewData.configAssetPath);
+              });
+            menu.ShowAsContext();
         }
     }
 }

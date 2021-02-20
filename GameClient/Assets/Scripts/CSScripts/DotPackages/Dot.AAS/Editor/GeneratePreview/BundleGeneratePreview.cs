@@ -4,6 +4,7 @@ using DotEditor.GUIExt.IMGUI;
 using DotEditor.Utilities;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace DotEditor.AAS
@@ -13,8 +14,16 @@ namespace DotEditor.AAS
         [MenuItem("Game/AAS/Generate Preview")]
         public static void ShowWin()
         {
-            BundleGeneratePreview win = EditorWindow.GetWindow<BundleGeneratePreview>();
+            BundleGeneratePreview win = GetWindow<BundleGeneratePreview>();
             win.titleContent = new GUIContent("Generate Preview");
+            win.Show();
+        }
+
+        public static void ShowWin(AssetBundleGenerateConfig[] configs)
+        {
+            BundleGeneratePreview win = GetWindow<BundleGeneratePreview>();
+            win.titleContent = new GUIContent("Generate Preview");
+            win.generateConfigs = configs;
             win.Show();
         }
 
@@ -26,76 +35,86 @@ namespace DotEditor.AAS
         private AssetGridView assetGridView = null;
 
         private List<string> bundleNames = new List<string>();
-        private Dictionary<string, List<AssetBundleBuildData>> bundleDataDic = new Dictionary<string, List<AssetBundleBuildData>>();
+        private Dictionary<string, List<AssetGridViewData>> assetInBundleDataDic = new Dictionary<string, List<AssetGridViewData>>();
 
-        private void SetGenerateConfigs(AssetBundleGenerateConfig[] configs)
+        private void OnEnable()
         {
-            generateConfigs = configs;
-            RefreshGenerateConfigs();
+            RefreshDatas();
         }
 
-        private void SetSelectedBundleName(string bundleName)
+        private string selectedBundleName = string.Empty;
+        private void RefreshAssetGridView()
         {
-            if(!string.IsNullOrEmpty(bundleName)&& bundleDataDic.TryGetValue(bundleName, out var list))
+            if (assetGridView != null)
             {
-                assetGridView.SetDatas(list);
-            }else
-            {
-                assetGridView.SetDatas(new List<AssetBundleBuildData>());
+                if (!string.IsNullOrEmpty(selectedBundleName) && assetInBundleDataDic.TryGetValue(selectedBundleName, out var list))
+                {
+                    assetGridView.SetDatas(list);
+                }
+                else
+                {
+                    assetGridView.SetDatas(new List<AssetGridViewData>());
+                }
             }
         }
 
-        private void RefreshGenerateConfigs()
+        private void RefreshBundleListView()
+        {
+            if (bundleListView != null)
+            {
+                bundleListView.Clear();
+
+                foreach (var bName in bundleNames)
+                {
+                    bundleListView.AddItem(bName, bName);
+                }
+                bundleListView.SetSelectedItem(selectedBundleName, TreeViewSelectionOptions.None);
+            }
+        }
+
+        private void RefreshDatas()
         {
             bundleNames.Clear();
-            bundleDataDic.Clear();
-            SetSelectedBundleName(null);
+            assetInBundleDataDic.Clear();
 
             AssetBundleGenerateConfig[] targetConfigs = generateConfigs;
-            if(targetConfigs == null)
+            if (targetConfigs == null)
             {
                 targetConfigs = AssetDatabaseUtility.FindInstances<AssetBundleGenerateConfig>();
             }
 
-            if(targetConfigs!=null)
+            if (targetConfigs != null)
             {
-                foreach(var config in targetConfigs)
+                foreach (var config in targetConfigs)
                 {
                     AssetBundleBuildData[] datas = config.GetDatas();
-                    if(datas!=null && datas.Length>0)
+                    if (datas != null && datas.Length > 0)
                     {
-                        foreach(var data in datas)
+                        foreach (var data in datas)
                         {
-                            if(!bundleDataDic.TryGetValue(data.bundle,out var list))
+                            if (!assetInBundleDataDic.TryGetValue(data.bundle, out var list))
                             {
-                                list = new List<AssetBundleBuildData>();
-                                bundleDataDic.Add(data.bundle, list);
+                                list = new List<AssetGridViewData>();
+                                assetInBundleDataDic.Add(data.bundle, list);
                             }
-                            list.Add(data);
+                            list.Add(new AssetGridViewData()
+                            {
+                                Userdata = data,
+                                configAssetPath = AssetDatabase.GetAssetPath(config)
+                            });
                         }
                     }
                 }
             }
 
-            bundleNames.AddRange(bundleDataDic.Keys);
-        }
-
-        private void OnEnable()
-        {
-            bundleListView = new EasyListView();
-            bundleListView.HeaderContent = "Bundle Names";
-            bundleListView.OnSelectedChange = (selected) =>
+            bundleNames.AddRange(assetInBundleDataDic.Keys);
+            if(!string.IsNullOrEmpty(selectedBundleName) && bundleNames.IndexOf(selectedBundleName)<0)
             {
-                SetSelectedBundleName((string)selected);
-            };
-            assetGridView = new AssetGridView();
-
-            RefreshGenerateConfigs();
-
-            foreach(var bName in bundleNames)
-            {
-                bundleListView.AddItem(bName, bName);
+                selectedBundleName = null;
             }
+
+            RefreshBundleListView();
+            RefreshAssetGridView();
         }
 
         private Rect contentRect;
@@ -128,7 +147,26 @@ namespace DotEditor.AAS
                             Text = Contents.refreshContent,
                             OnClicked = () =>
                             {
-                                RefreshGenerateConfigs();
+                                RefreshDatas();
+                                Repaint();
+                            }
+                        },
+                        new ToolbarButtonDrawer()
+                        {
+                            Text = Contents.buildContent,
+                            OnClicked = () =>
+                            {
+                                GenericMenu menu = new GenericMenu();
+                                menu.AddItem(Contents.buildWinContent, false, () =>
+                                  {
+                                  });
+                                menu.AddItem(Contents.buildAndroidContent, false, () =>
+                                {
+                                });
+                                menu.AddItem(Contents.buildIOSContent, false, () =>
+                                {
+                                });
+                                menu.ShowAsContext();
                             }
                         }
                     ),
@@ -139,7 +177,6 @@ namespace DotEditor.AAS
                             Text = Contents.settingContent,
                             OnClicked = () =>
                             {
-
                             }
                         }
                     ),
@@ -161,6 +198,19 @@ namespace DotEditor.AAS
 
         private void DrawBundleListView()
         {
+            if(bundleListView == null)
+            {
+                bundleListView = new EasyListView();
+                bundleListView.HeaderContent = "Bundle Names";
+                bundleListView.OnSelectedChange = (selected) =>
+                {
+                    selectedBundleName = (string)selected;
+                    RefreshAssetGridView();
+                };
+
+                RefreshBundleListView();
+            }
+
             Rect listViewRect = new Rect(contentRect.x, contentRect.y, dragLineDrawer.MinX - contentRect.x, contentRect.height);
             EGUI.DrawAreaLine(listViewRect, Color.blue);
             GUILayout.BeginArea(listViewRect);
@@ -172,6 +222,12 @@ namespace DotEditor.AAS
 
         private void DrawAssetGridView()
         {
+            if(assetGridView==null)
+            {
+                assetGridView = new AssetGridView();
+                RefreshAssetGridView();
+            }
+
             Rect gridViewRect = new Rect(dragLineDrawer.MaxX, contentRect.y, contentRect.width - dragLineDrawer.MaxX, contentRect.height);
             EGUI.DrawAreaLine(gridViewRect, Color.yellow);
             assetGridView.OnGUI(gridViewRect);
@@ -180,7 +236,13 @@ namespace DotEditor.AAS
         class Contents 
         {
             public static string refreshContent = "Refresh";
+            public static string buildContent = "Build";
             public static string settingContent = "Setting";
+
+            public static GUIContent buildWinContent = new GUIContent("Window"); 
+            public static GUIContent buildAndroidContent = new GUIContent("Android");
+            public static GUIContent buildIOSContent = new GUIContent("iOS");
+
         }
     }
 }

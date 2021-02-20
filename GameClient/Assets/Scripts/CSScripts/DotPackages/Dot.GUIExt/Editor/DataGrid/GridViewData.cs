@@ -14,6 +14,10 @@ namespace DotEditor.GUIExt.DataGrid
         public GridViewData Parent { get; set; } = null;
         public List<GridViewData> Children { get; } = new List<GridViewData>();
 
+        public GridViewData()
+        {
+        }
+
         public GridViewData(string displayName, SystemObject userdata = null)
         {
             DisplayName = displayName;

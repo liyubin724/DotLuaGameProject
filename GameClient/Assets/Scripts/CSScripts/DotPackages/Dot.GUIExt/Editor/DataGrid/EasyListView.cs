@@ -28,17 +28,16 @@ namespace DotEditor.GUIExt.DataGrid
             }
             set
             {
-                if(value == null)
-                {
-                    treeView.SetSelection(new List<int>() { });
-                }else
+                List<int> selectedItems = new List<int>();
+                if(value!=null)
                 {
                     int id = GetIDByItem(value);
-                    if(id>=0)
+                    if (id >= 0)
                     {
-                        treeView.SetSelection(new List<int>() { id }, TreeViewSelectionOptions.FireSelectionChanged);
+                        selectedItems.Add(id);
                     }
                 }
+                treeView.SetSelection(selectedItems, TreeViewSelectionOptions.FireSelectionChanged);
             }
         }
 
@@ -53,6 +52,30 @@ namespace DotEditor.GUIExt.DataGrid
                 ViewModel.AddData(new GridViewData(displayNames[i], datas[i]));
             }
             Reload();
+        }
+
+        public void SetSelectedItem(SystemObject value,TreeViewSelectionOptions selectionOption = TreeViewSelectionOptions.FireSelectionChanged)
+        {
+            List<int> selectedItems = new List<int>();
+            if (value != null)
+            {
+                int id = GetIDByItem(value);
+                if (id >= 0)
+                {
+                    selectedItems.Add(id);
+                }
+            }
+            treeView.SetSelection(selectedItems, selectionOption);
+        }
+
+        public SystemObject GetSelectedItem()
+        {
+            IList<int> selectedIDList = treeView.GetSelection();
+            if (selectedIDList != null && selectedIDList.Count > 0)
+            {
+                return GetItemByID(selectedIDList[0]);
+            }
+            return null;
         }
 
         public void AddItem (string displayName,SystemObject data)
@@ -122,7 +145,7 @@ namespace DotEditor.GUIExt.DataGrid
             var rootChilds = ViewModel.RootData.Children;
             for(int i =0;i<rootChilds.Count;++i)
             {
-                if(rootChilds[i].Userdata == data)
+                if(rootChilds[i].Userdata.Equals(data))
                 {
                     return rootChilds[i].ID;
                 }
