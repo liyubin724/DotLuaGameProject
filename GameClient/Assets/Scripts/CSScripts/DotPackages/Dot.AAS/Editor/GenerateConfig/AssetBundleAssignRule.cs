@@ -30,7 +30,7 @@ namespace DotEditor.AAS
             string bName = string.Empty;
 
             string dirPath = Path.GetDirectoryName(assetPath).Replace("\\", "/");
-            string fileName = ReplaceSpecialCharacter(Path.GetFileName(assetPath),"_");
+            string fileName = ReplaceSpecialCharacter(Path.GetFileNameWithoutExtension(assetPath),"_");
             string fileExt = ReplaceSpecialCharacter(Path.GetExtension(assetPath),"_");
             if(assignType == AssetBundleAssignType.FullPath)
             {

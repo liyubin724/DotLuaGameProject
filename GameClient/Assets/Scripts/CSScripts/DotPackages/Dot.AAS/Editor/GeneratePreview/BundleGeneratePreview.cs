@@ -3,6 +3,7 @@ using DotEditor.GUIExt.DataGrid;
 using DotEditor.GUIExt.IMGUI;
 using DotEditor.Utilities;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -36,6 +37,9 @@ namespace DotEditor.AAS
 
         private List<string> bundleNames = new List<string>();
         private Dictionary<string, List<AssetGridViewData>> assetInBundleDataDic = new Dictionary<string, List<AssetGridViewData>>();
+
+        private bool usedMD5AsBundleName = false;
+        private bool isForceRebuild = false;
 
         private void OnEnable()
         {
@@ -150,6 +154,27 @@ namespace DotEditor.AAS
                                 RefreshDatas();
                                 Repaint();
                             }
+                        }
+                    ),
+                    RightDrawable = new HorizontalLayoutDrawer
+                    (
+                        new ToolbarToggleDrawer()
+                        {
+                            Text = Contents.isForceRebuild,
+                            Value = isForceRebuild,
+                            OnValueChanged = (isSelected) =>
+                            {
+                                isForceRebuild = isSelected;
+                            }
+                        },
+                        new ToolbarToggleDrawer()
+                        {
+                            Text = Contents.usedMD5AsBundleName,
+                            Value = usedMD5AsBundleName,
+                            OnValueChanged = (isSelected) =>
+                            {
+                                usedMD5AsBundleName = isSelected;
+                            }
                         },
                         new ToolbarButtonDrawer()
                         {
@@ -158,25 +183,18 @@ namespace DotEditor.AAS
                             {
                                 GenericMenu menu = new GenericMenu();
                                 menu.AddItem(Contents.buildWinContent, false, () =>
-                                  {
-                                  });
+                                {
+                                    BuildBundle(BuildTarget.StandaloneWindows);
+                                });
                                 menu.AddItem(Contents.buildAndroidContent, false, () =>
                                 {
+                                    BuildBundle(BuildTarget.Android);
                                 });
                                 menu.AddItem(Contents.buildIOSContent, false, () =>
                                 {
+                                    BuildBundle(BuildTarget.iOS);
                                 });
                                 menu.ShowAsContext();
-                            }
-                        }
-                    ),
-                    RightDrawable = new HorizontalLayoutDrawer
-                    (
-                        new ToolbarButtonDrawer()
-                        {
-                            Text = Contents.settingContent,
-                            OnClicked = () =>
-                            {
                             }
                         }
                     ),
@@ -233,11 +251,17 @@ namespace DotEditor.AAS
             assetGridView.OnGUI(gridViewRect);
         }
 
+        private void BuildBundle(BuildTarget buildTarget)
+        {
+            AssetBundlePacker.PackBundle(buildTarget, usedMD5AsBundleName, isForceRebuild);
+        }
+
         class Contents 
         {
             public static string refreshContent = "Refresh";
             public static string buildContent = "Build";
-            public static string settingContent = "Setting";
+            public static string isForceRebuild = "Force Rebuild";
+            public static string usedMD5AsBundleName = "Used MD5";
 
             public static GUIContent buildWinContent = new GUIContent("Window"); 
             public static GUIContent buildAndroidContent = new GUIContent("Android");

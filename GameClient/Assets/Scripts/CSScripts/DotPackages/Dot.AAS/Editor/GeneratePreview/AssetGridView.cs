@@ -72,7 +72,7 @@ namespace DotEditor.AAS
                 EditorGUI.TextField(rect, (buildData.labels == null || buildData.labels.Length == 0) ? string.Empty : string.Join(",", buildData.labels));
             }else if(columnIndex == 4)
             {
-                EditorGUI.Toggle(rect, buildData.usedAsAddress);
+                EditorGUI.Toggle(rect, buildData.isMainAsset);
             }
         }
 

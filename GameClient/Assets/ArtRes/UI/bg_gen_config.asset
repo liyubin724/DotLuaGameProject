@@ -15,7 +15,7 @@ MonoBehaviour:
   desc: 
   rootFolder: Assets/ArtRes/UI/BG
   isIncludeChildFolder: 1
-  usedAsAddress: 1
+  usedAsAddress: 0
   folderFilterRule:
     filterType: 0
     folderNames: []
@@ -25,7 +25,7 @@ MonoBehaviour:
     usedExtAsLowcase: 1
     extFilter: ^.png$
   bundleAssignRule:
-    assignType: 4
+    assignType: 0
     bundleName: 
     appendSuffix: 
   addressAssignRule:

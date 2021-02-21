@@ -2,6 +2,7 @@ Library
 Log/*.*
 Logs
 Temp
+AssetBundle/
 obj
 bin
 .vs

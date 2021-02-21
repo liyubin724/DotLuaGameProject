@@ -14,15 +14,17 @@ namespace DotEditor.AAS
         [OpenFolderPath]
         public string rootFolder = string.Empty;
         public bool isIncludeChildFolder = false;
-        public bool usedAsAddress = false;
+        public bool isMainAsset = false;
+        public bool isNeedPreload = false;
+        public bool isNeverDestroy = false;
 
         public AssetFolderFilterRule folderFilterRule = new AssetFolderFilterRule();
         public AssetNameFilterRule nameFilterRule = new AssetNameFilterRule();
 
         public AssetBundleAssignRule bundleAssignRule = new AssetBundleAssignRule();
-        [VisibleIf("usedAsAddress")]
+        [VisibleIf("isMainAsset")]
         public AssetAddressAssignRule addressAssignRule = new AssetAddressAssignRule();
-        [VisibleIf("usedAsAddress")]
+        [VisibleIf("isMainAsset")]
         public AssetLabelAssignRule labelAssignRule = new AssetLabelAssignRule();
 
         public AssetBundleBuildData[] GetDatas()
@@ -49,8 +51,11 @@ namespace DotEditor.AAS
                 AssetBundleBuildData data = new AssetBundleBuildData();
                 data.path = assetPath;
                 data.bundle = bundleAssignRule.GetBundleName(assetPath);
-                data.usedAsAddress = usedAsAddress;
-                if(usedAsAddress)
+                data.isMainAsset = isMainAsset;
+                data.isNeedPreload = isNeedPreload;
+                data.isNeverDestroy = isNeverDestroy;
+
+                if(isMainAsset)
                 {
                     data.address = addressAssignRule.GetAddress(assetPath);
                     data.labels = labelAssignRule.GetLabels(assetPath);
