@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build.Content;
 using UnityEditor.Build.Pipeline;
 using UnityEditor.Build.Pipeline.Interfaces;
 
@@ -89,7 +90,8 @@ namespace DotEditor.AAS
                 return null;
             }
 
-            IBundleBuildParameters buildParams = new BundleBuildParameters(buildTarget, buildTargetGroup, outputFolderPath);
+            BundleBuildParameters buildParams = new BundleBuildParameters(buildTarget, buildTargetGroup, outputFolderPath);
+            //buildParams.BundleCompression = UnityEngine.BuildCompression.Uncompressed;
             buildParams.TempOutputFolder = tmpFolderPath;
             return buildParams;
         }
