@@ -12,7 +12,7 @@ namespace DotEditor.AAS
 {
     public class BundleGeneratePreview : EditorWindow
     {
-        [MenuItem("Game/AAS/Generate Preview")]
+        [MenuItem("Game/Asset/Packer/Generate Preview")]
         public static void ShowWin()
         {
             BundleGeneratePreview win = GetWindow<BundleGeneratePreview>();
