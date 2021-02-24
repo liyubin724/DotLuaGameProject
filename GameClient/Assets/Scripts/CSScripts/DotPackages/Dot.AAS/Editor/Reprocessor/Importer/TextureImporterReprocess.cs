@@ -31,6 +31,7 @@ namespace DotEditor.AAS.Reprocessor
     }
 
     [Serializable]
+    [CustomReprocessMenu("Texture Importer")]
     public class TextureImporterReprocess : AAssetImporterReprocess
     {
         public TexturePropertySetting propertySetting = new TexturePropertySetting();

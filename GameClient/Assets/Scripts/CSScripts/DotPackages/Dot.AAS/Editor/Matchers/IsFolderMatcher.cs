@@ -5,7 +5,7 @@ using System;
 namespace DotEditor.AAS.Matchers
 {
     [Serializable]
-    [CustomMatcherMenuAttribute("Matcher/Is Folder")]
+    [CustomMatcherMenu("Is Folder")]
     public class IsFolderMatcher : IAssetMatcher
     {
         public bool IsMatch(string assetPath)

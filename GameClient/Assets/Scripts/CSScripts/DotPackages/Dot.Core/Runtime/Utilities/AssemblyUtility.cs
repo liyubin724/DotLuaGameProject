@@ -91,7 +91,7 @@ namespace DotEngine.Utilities
             {
                 try
                 {
-                    types.AddRange(assembly.GetTypes().Where(t => !t.IsAbstract && baseType.IsAssignableFrom(t)).ToArray());
+                    types.AddRange(assembly.GetTypes().Where(t => !t.IsAbstract&&!t.IsInterface && baseType.IsAssignableFrom(t)).ToArray());
                 }
                 catch (ReflectionTypeLoadException) { }
             }

@@ -212,6 +212,7 @@ namespace DotEditor.GUIExt.NativeDrawer
 
                         instanceDrawer.IsShowInherit = ParentDrawer.IsShowInherit;
                         instanceDrawer.IsShowBox = ParentDrawer.IsShowBox;
+                        instanceDrawer.IsShowTargetType = ParentDrawer.IsShowTargetType;
 
                         innerDrawer = instanceDrawer;
                     }

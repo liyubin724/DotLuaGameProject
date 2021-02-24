@@ -71,8 +71,6 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 list.Clear();
             }
-
-            Refresh();
         }
 
         private void AddNewItemAtLast()
@@ -94,8 +92,6 @@ namespace DotEditor.GUIExt.NativeDrawer
                         list.Add(item);
                     }
                 }
-
-                Refresh();
             }
         }
 
@@ -114,11 +110,10 @@ namespace DotEditor.GUIExt.NativeDrawer
                 {
                     list.RemoveAt(index);
                 }
-
-                Refresh();
             }
         }
 
+        private int deleteIndex = -1;
         protected override void DrawInstance()
         {
             EditorGUILayout.BeginVertical(EGUIStyles.BoxStyle);
@@ -132,10 +127,25 @@ namespace DotEditor.GUIExt.NativeDrawer
                     if(ClearAllItem!=null)
                     {
                         ClearAllItem.Invoke();
-                    }else
+                    }
+                    else
                     {
                         Clear();
+                        Refresh();
                     }
+                }
+                if(deleteIndex>=0)
+                {
+                    if (DeleteItemAt != null)
+                    {
+                        DeleteItemAt(deleteIndex);
+                    }
+                    else
+                    {
+                        RemoveItemAtIndex(deleteIndex);
+                        Refresh();
+                    }
+                    deleteIndex = -1;
                 }
 
                 IList list = Target as IList;
@@ -154,13 +164,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                         {
                             if (GUILayout.Button("-"))
                             {
-                                if(DeleteItemAt!=null)
-                                {
-                                    DeleteItemAt(i);
-                                }else
-                                {
-                                    RemoveItemAtIndex(i);
-                                }
+                                deleteIndex = i;
                             }
                         }
                         EditorGUILayout.EndVertical();
@@ -178,9 +182,11 @@ namespace DotEditor.GUIExt.NativeDrawer
                     if(CreateNewItem!=null)
                     {
                         CreateNewItem.Invoke();
-                    }else
+                    }
+                    else
                     {
                         AddNewItemAtLast();
+                        Refresh();
                     }
                 }
             }

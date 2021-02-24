@@ -2,6 +2,6 @@
 {
     public interface IAssetScan
     {
-        ResultCode Scan(string assetPath);
+        void Scan(string assetPath);
     }
 }

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88806213450d22945a31e14ade275f03, type: 3}
+  m_Name: asset_reprocess
+  m_EditorClassIdentifier: 
+  enable: 0
+  matcherJson: '{"$type":"DotEditor.AAS.Matchers.ComposedMatcher, DotEditor.AAS","matchers":{"$type":"System.Collections.Generic.List`1[[DotEditor.AAS.Matchers.IAssetMatcher,
+    DotEditor.AAS]], mscorlib","$values":[{"$type":"DotEditor.AAS.Matchers.AssetExtensionMatcher,
+    DotEditor.AAS","ingoreCase":true,"extRegex":""}]}}'
+  reprocessJson: '{"$type":"DotEditor.AAS.Reprocessor.ComposedReprocess, DotEditor.AAS","reprocesses":{"$type":"System.Collections.Generic.List`1[[DotEditor.AAS.Reprocessor.IAssetReprocess,
+    DotEditor.AAS]], mscorlib","$values":[]}}'

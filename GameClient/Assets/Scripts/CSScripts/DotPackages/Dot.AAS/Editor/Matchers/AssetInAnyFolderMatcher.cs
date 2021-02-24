@@ -6,7 +6,7 @@ using System.Linq;
 namespace DotEditor.AAS.Matchers
 {
     [Serializable]
-    [CustomMatcherMenuAttribute("Matcher/In Any Folder")]
+    [CustomMatcherMenu("In Any Folder")]
     public class AssetInAnyFolderMatcher : IAssetMatcher
     {
         public bool ignoreCase = true;

@@ -24,6 +24,20 @@ namespace DotEditor.GUIExt.NativeDrawer
             }
         }
 
+        private bool isShowTargetType = false;
+        public bool IsShowTargetType
+        {
+            get { return isShowTargetType; }
+            set 
+            {
+                if(isShowTargetType!=value)
+                {
+                    isShowTargetType = value;
+                    Refresh();
+                }
+            }
+        }
+
         private bool isShowInherit = false;
         public bool IsShowInherit
         {

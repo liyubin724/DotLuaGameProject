@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace DotEditor.AAS.Matchers
 {
     [Serializable]
-    [CustomMatcherMenuAttribute("Matcher/Name")]
+    [CustomMatcherMenu("Name")]
     public class AssetNameMatcher : IAssetMatcher
     {
         public bool ignoreCase = true;

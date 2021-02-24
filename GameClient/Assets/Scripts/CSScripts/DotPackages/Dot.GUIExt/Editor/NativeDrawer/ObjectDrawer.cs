@@ -26,11 +26,11 @@ namespace DotEditor.GUIExt.NativeDrawer
             Type[] allTypes = DrawerUtility.GetAllBaseTypes(Target.GetType());
             if (allTypes != null && allTypes.Length > 0)
             {
-                if(IsShowInherit)
+                if(IsShowTargetType && !IsShowInherit)
                 {
                     itemDrawers.Add(new HeaderDrawer()
                     {
-                        Header = allTypes[allTypes.Length-1].Name,
+                        Header = allTypes[allTypes.Length - 1].Name,
                     });
                 }
                 foreach (var type in allTypes)
@@ -61,10 +61,6 @@ namespace DotEditor.GUIExt.NativeDrawer
                                 TargetType = field.FieldType,
                             });
                         }
-                    }
-                    if (IsShowInherit)
-                    {
-                        itemDrawers.Add(new HorizontalLineDrawer());
                     }
                 }
             }

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace DotEditor.AAS.Matchers
 {
     [Serializable]
-    [CustomMatcherMenuAttribute("Matcher/Extension")]
+    [CustomMatcherMenu("Extension")]
     public class AssetExtensionMatcher : IAssetMatcher
     {
         public bool ingoreCase = true;
