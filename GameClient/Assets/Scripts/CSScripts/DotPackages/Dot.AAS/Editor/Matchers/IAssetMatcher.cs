@@ -2,6 +2,6 @@
 {
     public interface IAssetMatcher
     {
-        public bool IsMatch(string assetPath);
+        bool IsMatch(string assetPath);
     }
 }

@@ -5,6 +5,7 @@ namespace DotEditor.AAS.Reprocessor
 {
     public class AssetReprocessor : ScriptableObject, IAssetMatcher, IAssetReprocess
     {
+        public bool enable = true;
         public ComposedMatcher matcher = new ComposedMatcher();
         public ComposedReprocess reprocessor = new ComposedReprocess();
 

@@ -30,7 +30,7 @@ namespace DotEditor.AAS.Reprocessor
         public int anisoLevel = 0;
     }
 
-    [SerializeField]
+    [Serializable]
     public class TextureImporterReprocess : AAssetImporterReprocess
     {
         public TexturePropertySetting propertySetting = new TexturePropertySetting();
