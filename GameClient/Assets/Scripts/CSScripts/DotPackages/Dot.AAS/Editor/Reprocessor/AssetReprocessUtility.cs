@@ -162,8 +162,8 @@ namespace DotEditor.AAS.Reprocessor
             return results.Count == 0;
         }
 
-        [MenuItem("Game/Assets/AAS/Reprocess All")]
-        public static void StartReprocessor()
+        [MenuItem("Game/Asset/AAS/Reprocess All")]
+        static void StartReprocessor()
         {
             AssetReprocessorSetting[] settings = AssetDatabaseUtility.FindInstances<AssetReprocessorSetting>();
             List<string> files = new List<string>();
