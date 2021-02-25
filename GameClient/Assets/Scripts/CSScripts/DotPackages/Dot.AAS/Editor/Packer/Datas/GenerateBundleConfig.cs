@@ -38,7 +38,6 @@ namespace DotEditor.AAS.Packer
                 GeneratedBundleData data = new GeneratedBundleData();
                 data.path = assetPath;
                 data.bundle = bundleAssignRule.GetBundleName(assetPath);
-
                 data.isMainAsset = isMainAsset;
                 data.isNeedPreload = isNeedPreload;
                 data.isNeverDestroy = isNeverDestroy;

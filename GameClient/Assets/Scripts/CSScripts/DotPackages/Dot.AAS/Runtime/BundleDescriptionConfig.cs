@@ -1,6 +1,8 @@
-﻿namespace DotEngine.AAS
+﻿using UnityEngine;
+
+namespace DotEngine.AAS
 {
-    public class BundleDescriptionConfig
+    public class BundleDescriptionConfig : ScriptableObject
     {
         public BundleDetail[] bundleDetails = new BundleDetail[0];
         public AssetDetail[] assetDetails = new AssetDetail[0];
