@@ -42,7 +42,7 @@ namespace DotEditor.AAS.Reprocessor
 
         protected override bool IsValid(UnityEngine.Object uObj)
         {
-            return uObj != null && typeof(Texture).IsAssignableFrom(uObj.GetType());
+            return typeof(Texture).IsAssignableFrom(uObj.GetType());
         }
 
         protected override void SetImporter(AssetImporter importer)
