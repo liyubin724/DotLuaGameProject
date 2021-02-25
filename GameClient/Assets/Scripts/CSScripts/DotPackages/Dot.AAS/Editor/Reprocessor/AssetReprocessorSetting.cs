@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace DotEditor.AAS.Reprocessor
@@ -10,31 +11,36 @@ namespace DotEditor.AAS.Reprocessor
     [CustomDrawerEditor(IsShowBox = true)]
     public class AssetReprocessorSetting : ScriptableObject
     {
-        public bool ignoreCase = true;
-        public List<string> folders = new List<string>();
+        public bool ignoreFolder = true;
+        public List<string> targetFolders = new List<string>();
+        public List<string> ignoreFileNameRegex = new List<string>();
 
         public bool IsValid(string assetPath)
         {
-            string assetFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
-            if (string.IsNullOrEmpty(assetFolder) || folders.Count == 0)
+            string fileName = Path.GetFileName(assetPath).ToLower();
+            if (ignoreFileNameRegex.Any((regex) =>
+            {
+                return Regex.IsMatch(fileName, regex);
+            }))
             {
                 return false;
             }
-            List<string> matchFolders = folders;
-            if (ignoreCase)
+
+            string assetFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
+            if (string.IsNullOrEmpty(assetFolder) || targetFolders.Count == 0)
             {
-                assetFolder = assetFolder.ToLower();
-                matchFolders = (from f in folders select f.ToLower()).ToList();
+                return false;
             }
-            bool result = matchFolders.IndexOf(assetFolder) >= 0;
-            if (!result)
+            assetFolder = assetFolder.ToLower();
+            List<string> matchFolders = (from f in targetFolders select f.ToLower()).ToList();
+            if (matchFolders.IndexOf(assetFolder) >= 0 || matchFolders.Any((folder) =>
             {
-                result = matchFolders.Any((folder) =>
-                {
-                    return assetFolder.StartsWith(folder);
-                });
+                return assetFolder.StartsWith(folder);
+            }))
+            {
+                return true;
             }
-            return result;
+            return false;
         }
 
     }
