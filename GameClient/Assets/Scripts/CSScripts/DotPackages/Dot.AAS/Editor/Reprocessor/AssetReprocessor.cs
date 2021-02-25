@@ -2,15 +2,19 @@
 using Newtonsoft.Json;
 using UnityEngine;
 using System;
+using DotEditor.GUIExt.NativeDrawer;
+using DotEngine.GUIExt.NativeDrawer;
 
 namespace DotEditor.AAS.Reprocessor
 {
     [CreateAssetMenu(fileName ="asset_reprocess",menuName = "AAS/Reprocessor")]
+    [CustomDrawerEditor(IsShowBox =true,IsShowInherit =false,IsShowTargetType =true)]
     public class AssetReprocessor : ScriptableObject, IAssetMatcher, IAssetReprocess,ISerializationCallbackReceiver
     {
         public bool enable = true;
-
+        [Hide]
         public string matcherJson = string.Empty;
+        [Hide]
         public string reprocessJson = string.Empty;
          
         [NonSerialized]

@@ -23,6 +23,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                         IsShowBox = attr.IsShowBox,
                         IsShowInherit = attr.IsShowInherit,
                         IsShowScroll = attr.IsShowScroll,
+                        IsShowTargetType = attr.IsShowTargetType,
                         Header = attr.Header,
                     };
                 }

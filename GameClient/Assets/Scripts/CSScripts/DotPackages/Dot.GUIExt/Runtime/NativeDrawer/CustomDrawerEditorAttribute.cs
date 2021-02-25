@@ -8,6 +8,7 @@ namespace DotEngine.GUIExt.NativeDrawer
         public bool Enable { get; set; } = true;
         public bool IsShowScroll { get; set; } = true;
         public bool IsShowInherit { get; set; } = false;
+        public bool IsShowTargetType { get; set; } = false;
         public bool IsShowBox { get; set; } = true;
         public string Header { get; set; } = string.Empty;
         public int LabelWidth { get; set; } = 0;
