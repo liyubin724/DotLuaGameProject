@@ -7,7 +7,7 @@ using DotEngine.GUIExt.NativeDrawer;
 
 namespace DotEditor.AAS.Reprocessor
 {
-    [CreateAssetMenu(fileName ="asset_reprocess",menuName = "AAS/Reprocessor")]
+    [CreateAssetMenu(fileName ="asset_reprocess",menuName = "AAS/Reprocess Rule")]
     [CustomDrawerEditor(IsShowBox =true,IsShowInherit =false,IsShowTargetType =true)]
     public class AssetReprocessor : ScriptableObject, IAssetMatcher, IAssetReprocess,ISerializationCallbackReceiver
     {

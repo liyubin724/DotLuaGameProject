@@ -42,7 +42,7 @@ namespace DotEditor.AAS.Reprocessor
 
         protected override bool IsValid(UnityEngine.Object uObj)
         {
-            return uObj != null && uObj.GetType().IsAssignableFrom(typeof(Texture));
+            return uObj != null && typeof(Texture).IsAssignableFrom(uObj.GetType());
         }
 
         protected override void SetImporter(AssetImporter importer)
@@ -94,6 +94,7 @@ namespace DotEditor.AAS.Reprocessor
             tips.maxTextureSize = iOSSetting.maxSize;
             tips.format = iOSSetting.format;
             ti.SetPlatformTextureSettings(tips);
+
         }
     }
 }
