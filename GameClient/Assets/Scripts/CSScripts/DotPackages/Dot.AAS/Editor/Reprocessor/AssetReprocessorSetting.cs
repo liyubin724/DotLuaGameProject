@@ -11,8 +11,7 @@ namespace DotEditor.AAS.Reprocessor
     [CustomDrawerEditor(IsShowBox = true)]
     public class AssetReprocessorSetting : ScriptableObject
     {
-        public bool ignoreFolder = true;
-        public List<string> targetFolders = new List<string>();
+        public List<string> validFolders = new List<string>();
         public List<string> ignoreFileNameRegex = new List<string>();
 
         public bool IsValid(string assetPath)
@@ -27,12 +26,12 @@ namespace DotEditor.AAS.Reprocessor
             }
 
             string assetFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
-            if (string.IsNullOrEmpty(assetFolder) || targetFolders.Count == 0)
+            if (string.IsNullOrEmpty(assetFolder) || validFolders.Count == 0)
             {
                 return false;
             }
             assetFolder = assetFolder.ToLower();
-            List<string> matchFolders = (from f in targetFolders select f.ToLower()).ToList();
+            List<string> matchFolders = (from f in validFolders select f.ToLower()).ToList();
             if (matchFolders.IndexOf(assetFolder) >= 0 || matchFolders.Any((folder) =>
             {
                 return assetFolder.StartsWith(folder);

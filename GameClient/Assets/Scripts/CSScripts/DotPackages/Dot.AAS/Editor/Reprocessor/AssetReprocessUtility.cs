@@ -2,6 +2,9 @@
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,7 +42,99 @@ namespace DotEditor.AAS.Reprocessor
             menu.ShowAsContext();
         }
 
-        public static bool ImportAssets(string[] assetPaths,out string[] unknownAssetPaths)
+
+        private static string POSTPROCESS_FOLDER_NAME = "AAS";
+        private static string FAILED_FILE_NAME = "postprocess-failed.txt";
+        private static string[] ReadFailedRecord()
+        {
+            string filePath = PathUtility.GetProjectDiskPath() + "/" + POSTPROCESS_FOLDER_NAME + "/" + FAILED_FILE_NAME;
+
+            if (File.Exists(filePath))
+            {
+                string[] files = File.ReadAllLines(filePath);
+                File.Delete(filePath);
+                return files;
+            }
+            return new string[0];
+        }
+
+        private static void SaveFailedRecord(string[] assetPaths)
+        {
+            if (assetPaths != null && assetPaths.Length > 0)
+            {
+                string folderPath = PathUtility.GetProjectDiskPath() + "/" + POSTPROCESS_FOLDER_NAME;
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                string filePath = folderPath + "/" + FAILED_FILE_NAME;
+                File.WriteAllLines(filePath, assetPaths);
+            }
+        }
+
+        private static List<string> ignoreFileNameRegex = new List<string>()
+        {
+            @"\w*(.cs|.lua|.txt|.xml|.log|.dll|.md|.pdf|.bin)$",
+            @"^~\w*",
+        };
+        public static string[] PostprocessImportAssets(string[] importedAssets)
+        {
+            List<string> allAssets = new List<string>();
+            string[] prefailedAssets = ReadFailedRecord();
+            if (prefailedAssets != null && prefailedAssets.Length > 0)
+            {
+                allAssets.AddRange(prefailedAssets);
+            }
+            allAssets.AddRange(importedAssets);
+
+            allAssets.RemoveAll((assetPath) =>
+            {
+                if (AssetDatabase.IsValidFolder(assetPath))
+                {
+                    return true;
+                }
+
+                string fileName = Path.GetFileName(assetPath).ToLower();
+                if (ignoreFileNameRegex.Any((regex) =>
+                {
+                    return Regex.IsMatch(fileName, regex);
+                }))
+                {
+                    return true;
+                }
+                return false;
+            });
+
+            AssetReprocessorSetting[] settings = AssetDatabaseUtility.FindInstances<AssetReprocessorSetting>();
+            bool hasSetting = settings != null && settings.Length > 0;
+            if (hasSetting)
+            {
+                allAssets.RemoveAll((assetPath) =>
+                {
+                    return !settings.Any((setting) =>
+                    {
+                        return setting.IsValid(assetPath);
+                    });
+                });
+            }
+
+            if (allAssets.Count > 0)
+            {
+                if (!ImportAssets(importedAssets, out var unknownAssetPaths))
+                {
+                    if (hasSetting)
+                    {
+                        SaveFailedRecord(unknownAssetPaths);
+                    }
+                    return unknownAssetPaths;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool ImportAssets(string[] assetPaths,out string[] unknownAssetPaths)
         {
             List<string> results = new List<string>();
             AssetReprocessor[] reprocessors = AssetDatabaseUtility.FindInstances<AssetReprocessor>();
@@ -67,21 +162,26 @@ namespace DotEditor.AAS.Reprocessor
             return results.Count == 0;
         }
 
-        public static bool ImportAsset(string assetPath)
+        [MenuItem("Game/Assets/AAS/Reprocess All")]
+        public static void StartReprocessor()
         {
-            AssetReprocessor[] reprocessors = AssetDatabaseUtility.FindInstances<AssetReprocessor>();
-            if (reprocessors != null && reprocessors.Length>0)
+            AssetReprocessorSetting[] settings = AssetDatabaseUtility.FindInstances<AssetReprocessorSetting>();
+            List<string> files = new List<string>();
+            foreach(var setting in settings)
             {
-                foreach(var reprocessor in reprocessors)
+                setting.validFolders.ForEach((folder) =>
                 {
-                    if(reprocessor.IsMatch(assetPath))
-                    {
-                        reprocessor.Execute(assetPath);
-                        return true;
-                    }
-                }
+                    files.AddRange(DirectoryUtility.GetAsset(folder, true, true));
+                });
             }
-            return false;
+            files = files.Distinct().ToList();
+
+            string[] failedAssets = PostprocessImportAssets(files.ToArray());
+            if(failedAssets!=null)
+            {
+                EditorUtility.DisplayDialog("Error", "", "OK");
+                Debug.LogError(string.Join("\n", failedAssets));
+            }
         }
     }
 }
