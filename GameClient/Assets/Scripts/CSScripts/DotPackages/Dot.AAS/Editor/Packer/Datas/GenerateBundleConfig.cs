@@ -1,25 +1,22 @@
-﻿using DotEditor.Utilities;
+﻿using DotEditor.AAS.Filters;
 using DotEngine.GUIExt.NativeDrawer;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
-    [CreateAssetMenu(fileName ="asset_bundle_gen_config",menuName ="AseetBundle/Gen Config")]
+    [CreateAssetMenu(fileName ="gen_bundle_config",menuName ="AAS/Gen Bundle Config")]
     [CustomDrawerEditor]
-    public class AssetBundleGenerateConfig : ScriptableObject
+    public class GenerateBundleConfig : ScriptableObject
     {
         [MultilineText]
         public string desc = string.Empty;
-        [OpenFolderPath]
-        public string rootFolder = string.Empty;
-        public bool isIncludeChildFolder = false;
+        
+        public AssetFilter filter = new AssetFilter();
+
         public bool isMainAsset = false;
         public bool isNeedPreload = false;
         public bool isNeverDestroy = false;
-
-        public AssetFolderFilterRule folderFilterRule = new AssetFolderFilterRule();
-        public AssetNameFilterRule nameFilterRule = new AssetNameFilterRule();
 
         public AssetBundleAssignRule bundleAssignRule = new AssetBundleAssignRule();
         [VisibleIf("isMainAsset")]
@@ -27,30 +24,21 @@ namespace DotEditor.AAS
         [VisibleIf("isMainAsset")]
         public AssetLabelAssignRule labelAssignRule = new AssetLabelAssignRule();
 
-        public AssetBundleBuildData[] GetDatas()
+        public GeneratedBundleData[] GetDatas()
         {
-            if(string.IsNullOrEmpty(rootFolder))
-            {
-                return null;
-            }
-
-            string[] assetPathes = DirectoryUtility.GetAsset(PathUtility.GetDiskPath(rootFolder), isIncludeChildFolder, true);
+            string[] assetPathes = filter.Filter();
             if(assetPathes == null || assetPathes.Length == 0)
             {
                 return null;
             }
 
-            List<AssetBundleBuildData> dataList = new List<AssetBundleBuildData>();
+            List<GeneratedBundleData> dataList = new List<GeneratedBundleData>();
             foreach(var assetPath in assetPathes)
             {
-                if(!folderFilterRule.IsValid(assetPath) || !nameFilterRule.IsValid(assetPath))
-                {
-                    continue;
-                }
-
-                AssetBundleBuildData data = new AssetBundleBuildData();
+                GeneratedBundleData data = new GeneratedBundleData();
                 data.path = assetPath;
                 data.bundle = bundleAssignRule.GetBundleName(assetPath);
+
                 data.isMainAsset = isMainAsset;
                 data.isNeedPreload = isNeedPreload;
                 data.isNeverDestroy = isNeverDestroy;

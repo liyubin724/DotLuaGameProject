@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.Build.Content;
 using UnityEditor.Build.Pipeline;
 using UnityEditor.Build.Pipeline.Interfaces;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
-    public static class AssetBundlePacker
+    public static class BundlePackerUtility
     {
         public static bool PackBundle(
             BuildTarget buildTarget, 
@@ -22,7 +21,7 @@ namespace DotEditor.AAS
         {
             string outputFolderPath = $"AssetBundle/{buildTarget}";
             string tmpFolderPath = $"{outputFolderPath}-Temp";
-            AssetBundleBuildData[] datas = (from config in AssetDatabaseUtility.FindInstances<AssetBundleGenerateConfig>()
+            GeneratedBundleData[] datas = (from config in AssetDatabaseUtility.FindInstances<GenerateBundleConfig>()
                                             from data in config.GetDatas()
                                             where data!=null
                                             select data).ToArray();
@@ -34,7 +33,7 @@ namespace DotEditor.AAS
             BuildTarget buildTarget, 
             string outputFolderPath, 
             string tmpFolderPath,
-            AssetBundleBuildData[] datas, 
+            GeneratedBundleData[] datas, 
             bool isBundleAsMD5 = false,
             bool isForceRebuild = false)
         {
@@ -96,7 +95,7 @@ namespace DotEditor.AAS
             return buildParams;
         }
 
-        private static AssetBundleBuild CreateBundleBuild(string bundleName, AssetBundleBuildData[] datas)
+        private static AssetBundleBuild CreateBundleBuild(string bundleName, GeneratedBundleData[] datas)
         {
             string[] assetPaths = new string[datas.Length];
             string[] assetAddresses = new string[datas.Length];
@@ -115,14 +114,14 @@ namespace DotEditor.AAS
             };
         }
 
-        private static IBundleBuildContent CreateBundleBuildContent(AssetBundleBuildData[] datas,bool isBundleAsMd5)
+        private static IBundleBuildContent CreateBundleBuildContent(GeneratedBundleData[] datas,bool isBundleAsMd5)
         {
-            Dictionary<string, List<AssetBundleBuildData>> assetInBundleDic = new Dictionary<string, List<AssetBundleBuildData>>();
+            Dictionary<string, List<GeneratedBundleData>> assetInBundleDic = new Dictionary<string, List<GeneratedBundleData>>();
             foreach(var data in datas)
             {
                 if(!assetInBundleDic.TryGetValue(data.bundle,out var list))
                 {
-                    list = new List<AssetBundleBuildData>();
+                    list = new List<GeneratedBundleData>();
                     assetInBundleDic.Add(data.bundle, list);
                 }
                 list.Add(data);
@@ -139,7 +138,7 @@ namespace DotEditor.AAS
             return bundleBuildContent;
         }
 
-        private static BundleDescriptionConfig CreateBundleConfig(AssetBundleBuildData[] buildDatas, IBundleBuildResults buildResults)
+        private static BundleDescriptionConfig CreateBundleConfig(GeneratedBundleData[] buildDatas, IBundleBuildResults buildResults)
         {
             List<BundleDescriptionConfig.AssetDetail> assetDetails = new List<BundleDescriptionConfig.AssetDetail>();
             foreach(var data in buildDatas)

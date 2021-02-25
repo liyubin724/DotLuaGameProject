@@ -1,4 +1,4 @@
-﻿using DotEditor.AAS;
+﻿using DotEditor.AAS.Packer;
 using DotEditor.Utilities;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ public class TestAAS
     [MenuItem("Test/AAS/Find Config")]
     public static void TestAAS_FindConfig()
     {
-        var configs = AssetDatabaseUtility.FindInstances<AssetBundleGenerateConfig>();
+        var configs = AssetDatabaseUtility.FindInstances<GenerateBundleConfig>();
         foreach (var config in configs)
         {
             var datas = config.GetDatas();

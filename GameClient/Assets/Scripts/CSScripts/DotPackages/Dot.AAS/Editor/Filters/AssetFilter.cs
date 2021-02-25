@@ -2,16 +2,18 @@
 using DotEditor.Utilities;
 using System;
 using System.Collections.Generic;
+using DotEngine.GUIExt.NativeDrawer;
 
 namespace DotEditor.AAS.Filters
 {
     [Serializable]
     public class AssetFilter : IAssetFilter
     {
-        public ComposedMatcher matcher = new ComposedMatcher();
-        public bool ignoreMetaFile = true;
-        public bool includeChildFolder = true;
+        [OpenFolderPath(CanEditText =true)]
         public string assetFolder = string.Empty;
+        public bool includeSubFolder = true;
+
+        public ComposedMatcher matcher = new ComposedMatcher();
 
         public string[] Filter()
         {
@@ -20,7 +22,7 @@ namespace DotEditor.AAS.Filters
                 return new string[0];
             }
 
-            string[] assetPaths = DirectoryUtility.GetAsset(assetFolder, includeChildFolder, ignoreMetaFile);
+            string[] assetPaths = DirectoryUtility.GetAsset(assetFolder, includeSubFolder, true);
             if(assetPaths == null || assetPaths.Length == 0)
             {
                 return new string[0];

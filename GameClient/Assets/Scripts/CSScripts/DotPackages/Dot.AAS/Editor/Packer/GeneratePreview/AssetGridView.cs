@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
     internal enum DataStatus
     {
@@ -57,7 +57,7 @@ namespace DotEditor.AAS
         protected override void OnDrawColumnItem(Rect rect, int columnIndex, GridViewData columnItemData)
         {
             AssetGridViewData viewData = columnItemData as AssetGridViewData;
-            AssetBundleBuildData buildData = viewData.Userdata as AssetBundleBuildData;
+            GeneratedBundleData buildData = viewData.Userdata as GeneratedBundleData;
             if(columnIndex == 0)
             {
 
@@ -79,7 +79,7 @@ namespace DotEditor.AAS
         protected override void OnItemContextClicked(GridViewData itemData)
         {
             AssetGridViewData viewData = itemData as AssetGridViewData;
-            AssetBundleBuildData buildData = viewData.Userdata as AssetBundleBuildData;
+            GeneratedBundleData buildData = viewData.Userdata as GeneratedBundleData;
 
             GenericMenu menu = new GenericMenu();
             menu.AddItem(new GUIContent("Selected Item"), false, () =>

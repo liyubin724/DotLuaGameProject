@@ -6,6 +6,7 @@ namespace DotEngine.GUIExt.NativeDrawer
     public class OpenFolderPathAttribute : ContentAttribute
     {
         public bool IsAbsolute { get; set; } = false;
+        public bool CanEditText { get; set; } = false;
 
         public OpenFolderPathAttribute()
         {

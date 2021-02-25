@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
     [Serializable]
-    public class AssetBundleBuildData
+    public class GeneratedBundleData
     {
         public string path = string.Empty;
         public string bundle = string.Empty;

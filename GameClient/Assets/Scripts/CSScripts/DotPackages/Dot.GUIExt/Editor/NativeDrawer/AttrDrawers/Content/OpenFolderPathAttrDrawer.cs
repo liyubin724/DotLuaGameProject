@@ -8,7 +8,7 @@ namespace DotEditor.GUIExt.NativeDrawer
         protected override void DrawContent()
         {
             OpenFolderPathAttribute attr = GetAttr<OpenFolderPathAttribute>();
-            ItemDrawer.Value = EGUILayout.DrawOpenFolder(ItemDrawer.Label, (string)ItemDrawer.Value, attr.IsAbsolute,true);
+            ItemDrawer.Value = EGUILayout.DrawOpenFolder(ItemDrawer.Label, (string)ItemDrawer.Value, attr.IsAbsolute, !attr.CanEditText);
         }
 
         protected override bool IsValidValueType()

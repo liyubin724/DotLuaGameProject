@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
     public class BundleGeneratePreview : EditorWindow
     {
@@ -20,7 +20,7 @@ namespace DotEditor.AAS
             win.Show();
         }
 
-        public static void ShowWin(AssetBundleGenerateConfig[] configs)
+        public static void ShowWin(GenerateBundleConfig[] configs)
         {
             BundleGeneratePreview win = GetWindow<BundleGeneratePreview>();
             win.titleContent = new GUIContent("Generate Preview");
@@ -28,7 +28,7 @@ namespace DotEditor.AAS
             win.Show();
         }
 
-        private AssetBundleGenerateConfig[] generateConfigs = null;
+        private GenerateBundleConfig[] generateConfigs = null;
 
         private ToolbarDrawer toolbarDrawer;
         private EasyListView bundleListView;
@@ -81,17 +81,17 @@ namespace DotEditor.AAS
             bundleNames.Clear();
             assetInBundleDataDic.Clear();
 
-            AssetBundleGenerateConfig[] targetConfigs = generateConfigs;
+            GenerateBundleConfig[] targetConfigs = generateConfigs;
             if (targetConfigs == null)
             {
-                targetConfigs = AssetDatabaseUtility.FindInstances<AssetBundleGenerateConfig>();
+                targetConfigs = AssetDatabaseUtility.FindInstances<GenerateBundleConfig>();
             }
 
             if (targetConfigs != null)
             {
                 foreach (var config in targetConfigs)
                 {
-                    AssetBundleBuildData[] datas = config.GetDatas();
+                    GeneratedBundleData[] datas = config.GetDatas();
                     if (datas != null && datas.Length > 0)
                     {
                         foreach (var data in datas)
@@ -253,7 +253,7 @@ namespace DotEditor.AAS
 
         private void BuildBundle(BuildTarget buildTarget)
         {
-            AssetBundlePacker.PackBundle(buildTarget, usedMD5AsBundleName, isForceRebuild);
+            BundlePackerUtility.PackBundle(buildTarget, usedMD5AsBundleName, isForceRebuild);
         }
 
         class Contents 

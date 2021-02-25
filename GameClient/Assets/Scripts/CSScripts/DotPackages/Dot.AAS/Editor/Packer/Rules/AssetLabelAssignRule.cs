@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
     public enum AssetLabelAssignType
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
     public enum AssetAddressAssignType
     {

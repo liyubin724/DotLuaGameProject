@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DotEditor.AAS
+namespace DotEditor.AAS.Packer
 {
     public enum AssetFolderFilterType
     {
