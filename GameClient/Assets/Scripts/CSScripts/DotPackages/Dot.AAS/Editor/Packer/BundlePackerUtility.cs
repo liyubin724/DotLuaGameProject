@@ -15,8 +15,6 @@ namespace DotEditor.AAS.Packer
 {
     public static class BundlePackerUtility
     {
-        
-
         public static bool PackBundle(
             BuildTarget buildTarget, 
             bool isBundleAsMD5 = false,
@@ -67,8 +65,12 @@ namespace DotEditor.AAS.Packer
                 return false;
             }
 
+            AssetConfig assetConfig = CreateAssetConfig(datas);
+            SaveAssetConfig(assetConfig, BundleConst.AssetConfigPath);
+
             BundleConfig config = CreateBundleConfig(buildResults);
             SaveBundleConfig(config, BundleConst.BundleConfigPath);
+
             return true;
         }
 
