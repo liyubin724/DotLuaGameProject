@@ -19,9 +19,9 @@ namespace DotEditor.AAS.Packer
             bool isBundleAsMD5 = false,
             bool isForceRebuild = false)
         {
-            string outputFolderPath = $"AssetBundle/{buildTarget}";
+            string outputFolderPath = $"{BundleConst.RootPath}/{buildTarget}";
             string tmpFolderPath = $"{outputFolderPath}-Temp";
-            GeneratedBundleData[] datas = (from config in AssetDatabaseUtility.FindInstances<GenerateBundleConfig>()
+            GeneratedAssetData[] datas = (from config in AssetDatabaseUtility.FindInstances<GenerateBundleConfig>()
                                             from data in config.GetDatas()
                                             where data!=null
                                             select data).ToArray();
@@ -33,7 +33,7 @@ namespace DotEditor.AAS.Packer
             BuildTarget buildTarget, 
             string outputFolderPath, 
             string tmpFolderPath,
-            GeneratedBundleData[] datas, 
+            GeneratedAssetData[] datas, 
             bool isBundleAsMD5 = false,
             bool isForceRebuild = false)
         {
@@ -66,7 +66,7 @@ namespace DotEditor.AAS.Packer
 
             BundleDescriptionConfig config = CreateBundleConfig(datas, buildResults);
             string jsonStr = JsonConvert.SerializeObject(config);
-            File.WriteAllText(outputFolderPath+"/" + BundleConst.TXT_BUNDLE_DETAIL_FILE, jsonStr);
+            File.WriteAllText(outputFolderPath+"/" + BundleConst.BundleConfigPath, jsonStr);
             return true;
         }
 
@@ -95,7 +95,7 @@ namespace DotEditor.AAS.Packer
             return buildParams;
         }
 
-        private static AssetBundleBuild CreateBundleBuild(string bundleName, GeneratedBundleData[] datas)
+        private static AssetBundleBuild CreateBundleBuild(string bundleName, GeneratedAssetData[] datas)
         {
             string[] assetPaths = new string[datas.Length];
             string[] assetAddresses = new string[datas.Length];
@@ -114,14 +114,14 @@ namespace DotEditor.AAS.Packer
             };
         }
 
-        private static IBundleBuildContent CreateBundleBuildContent(GeneratedBundleData[] datas,bool isBundleAsMd5)
+        private static IBundleBuildContent CreateBundleBuildContent(GeneratedAssetData[] datas,bool isBundleAsMd5)
         {
-            Dictionary<string, List<GeneratedBundleData>> assetInBundleDic = new Dictionary<string, List<GeneratedBundleData>>();
+            Dictionary<string, List<GeneratedAssetData>> assetInBundleDic = new Dictionary<string, List<GeneratedAssetData>>();
             foreach(var data in datas)
             {
                 if(!assetInBundleDic.TryGetValue(data.bundle,out var list))
                 {
-                    list = new List<GeneratedBundleData>();
+                    list = new List<GeneratedAssetData>();
                     assetInBundleDic.Add(data.bundle, list);
                 }
                 list.Add(data);
@@ -138,7 +138,7 @@ namespace DotEditor.AAS.Packer
             return bundleBuildContent;
         }
 
-        private static BundleDescriptionConfig CreateBundleConfig(GeneratedBundleData[] buildDatas, IBundleBuildResults buildResults)
+        private static BundleDescriptionConfig CreateBundleConfig(GeneratedAssetData[] buildDatas, IBundleBuildResults buildResults)
         {
             List<BundleDescriptionConfig.AssetDetail> assetDetails = new List<BundleDescriptionConfig.AssetDetail>();
             foreach(var data in buildDatas)

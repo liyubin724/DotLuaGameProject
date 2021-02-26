@@ -4,7 +4,7 @@ using System.Text;
 namespace DotEditor.AAS.Packer
 {
     [Serializable]
-    public class GeneratedBundleData
+    public class GeneratedAssetData
     {
         public string path = string.Empty;
         public string bundle = string.Empty;

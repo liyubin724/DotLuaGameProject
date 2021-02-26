@@ -1,29 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DotEngine.AAS
 {
     public static class BundleConst
     {
-        public static readonly string BUNDLE_DETAIL_FILE_NAME = "bundle_detail";
-        public static readonly string BIN_FILE_EXT = ".bin";
+        public static readonly string ASSET_CONFIG_NAME = "asset_config";
+        public static readonly string BUNDLE_CONFIG_NAME = "bundle_config";
+
         public static readonly string TXT_FILE_EXT = ".txt";
 
-        public static readonly string BIN_BUNDLE_DETAIL_FILE = $"{BUNDLE_DETAIL_FILE_NAME}{BIN_FILE_EXT}";
-        public static readonly string TXT_BUNDLE_DETAIL_FILE = $"{BUNDLE_DETAIL_FILE_NAME}{TXT_FILE_EXT}";
+        public static readonly string ASSET_CONFIG_FILE_NAME = $"{ASSET_CONFIG_NAME}{TXT_FILE_EXT}";
+        public static readonly string BUNDLE_CONFIG_FILE_NAME = $"{BUNDLE_CONFIG_NAME}{TXT_FILE_EXT}";
 
-        public static readonly string BUNDLE_FOLDER = "AssetBundle";
+        public static readonly string ROOT_FOLDER_NAME = "AssetBundle";
 
-        public static string GetBundleFolder()
+        private static string rootPath = null;
+        public static string RootPath
         {
-            return string.Empty;
+            get
+            {
+                if(string.IsNullOrEmpty(rootPath))
+                {
+                    rootPath = $"{Application.dataPath.Replace("/Assets", "/AAS")}/${ROOT_FOLDER_NAME}";
+                }
+                return rootPath;
+            }
+            set
+            {
+                rootPath = value;
+            }
         }
 
-        public static string GetBundleFolderInEditor()
+        public static string AssetConfigPath
         {
-            return $"{Application.dataPath.Replace("/Assets", "")}/AssetBundle";
+            get
+            {
+                return $"{RootPath}/{ASSET_CONFIG_FILE_NAME}";
+            }
         }
+
+        public static string BundleConfigPath
+        {
+            get
+            {
+                return $"{RootPath}/{BUNDLE_CONFIG_FILE_NAME}";
+            }
+        }
+
     }
 }
 

@@ -57,7 +57,7 @@ namespace DotEditor.AAS.Packer
         protected override void OnDrawColumnItem(Rect rect, int columnIndex, GridViewData columnItemData)
         {
             AssetGridViewData viewData = columnItemData as AssetGridViewData;
-            GeneratedBundleData buildData = viewData.Userdata as GeneratedBundleData;
+            GeneratedAssetData buildData = viewData.Userdata as GeneratedAssetData;
             if(columnIndex == 0)
             {
 
@@ -79,7 +79,7 @@ namespace DotEditor.AAS.Packer
         protected override void OnItemContextClicked(GridViewData itemData)
         {
             AssetGridViewData viewData = itemData as AssetGridViewData;
-            GeneratedBundleData buildData = viewData.Userdata as GeneratedBundleData;
+            GeneratedAssetData buildData = viewData.Userdata as GeneratedAssetData;
 
             GenericMenu menu = new GenericMenu();
             menu.AddItem(new GUIContent("Selected Item"), false, () =>

@@ -24,7 +24,7 @@ namespace DotEditor.AAS.Packer
         [VisibleIf("isMainAsset")]
         public AssetLabelAssignRule labelAssignRule = new AssetLabelAssignRule();
 
-        public GeneratedBundleData[] GetDatas()
+        public GeneratedAssetData[] GetDatas()
         {
             string[] assetPathes = filter.Filter();
             if(assetPathes == null || assetPathes.Length == 0)
@@ -32,10 +32,10 @@ namespace DotEditor.AAS.Packer
                 return null;
             }
 
-            List<GeneratedBundleData> dataList = new List<GeneratedBundleData>();
+            List<GeneratedAssetData> dataList = new List<GeneratedAssetData>();
             foreach(var assetPath in assetPathes)
             {
-                GeneratedBundleData data = new GeneratedBundleData();
+                GeneratedAssetData data = new GeneratedAssetData();
                 data.path = assetPath;
                 data.bundle = bundleAssignRule.GetBundleName(assetPath);
                 data.isMainAsset = isMainAsset;

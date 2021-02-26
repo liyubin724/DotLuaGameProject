@@ -91,7 +91,7 @@ namespace DotEditor.AAS.Packer
             {
                 foreach (var config in targetConfigs)
                 {
-                    GeneratedBundleData[] datas = config.GetDatas();
+                    GeneratedAssetData[] datas = config.GetDatas();
                     if (datas != null && datas.Length > 0)
                     {
                         foreach (var data in datas)
