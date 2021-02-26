@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace DotEngine.AAS
 {
-    public class AssetConfig : ScriptableObject
+    public class AssetConfig
     {
         public AssetDetail[] assetDetails = new AssetDetail[0];
 

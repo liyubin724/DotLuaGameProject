@@ -9,11 +9,14 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Pipeline;
 using UnityEditor.Build.Pipeline.Interfaces;
+using static DotEngine.AAS.AssetConfig;
 
 namespace DotEditor.AAS.Packer
 {
     public static class BundlePackerUtility
     {
+        
+
         public static bool PackBundle(
             BuildTarget buildTarget, 
             bool isBundleAsMD5 = false,
@@ -64,9 +67,8 @@ namespace DotEditor.AAS.Packer
                 return false;
             }
 
-            BundleDescriptionConfig config = CreateBundleConfig(datas, buildResults);
-            string jsonStr = JsonConvert.SerializeObject(config);
-            File.WriteAllText(outputFolderPath+"/" + BundleConst.BundleConfigPath, jsonStr);
+            BundleConfig config = CreateBundleConfig(buildResults);
+            SaveBundleConfig(config, BundleConst.BundleConfigPath);
             return true;
         }
 
@@ -138,31 +140,12 @@ namespace DotEditor.AAS.Packer
             return bundleBuildContent;
         }
 
-        private static BundleDescriptionConfig CreateBundleConfig(GeneratedAssetData[] buildDatas, IBundleBuildResults buildResults)
+        private static BundleConfig CreateBundleConfig(IBundleBuildResults buildResults)
         {
-            List<BundleDescriptionConfig.AssetDetail> assetDetails = new List<BundleDescriptionConfig.AssetDetail>();
-            foreach(var data in buildDatas)
-            {
-                if(!data.isMainAsset)
-                {
-                    continue;
-                }
-                BundleDescriptionConfig.AssetDetail assetDetail = new BundleDescriptionConfig.AssetDetail();
-                assetDetail.path = data.path;
-                assetDetail.bundle = data.bundle;
-                assetDetail.address = data.address;
-                if(data.labels!=null && data.labels.Length>0)
-                {
-                    assetDetail.labels = new string[data.labels.Length];
-                    Array.Copy(data.labels, assetDetail.labels, data.labels.Length);
-                }
-                assetDetails.Add(assetDetail);
-            }
-
-            List<BundleDescriptionConfig.BundleDetail> bundleDetails = new List<BundleDescriptionConfig.BundleDetail>();
+            List<BundleConfig.BundleDetail> bundleDetails = new List<BundleConfig.BundleDetail>();
             foreach(var kvp in buildResults.BundleInfos)
             {
-                bundleDetails.Add(new BundleDescriptionConfig.BundleDetail
+                bundleDetails.Add(new BundleConfig.BundleDetail
                 {
                     fileName = kvp.Value.FileName,
                     hash = kvp.Value.Hash.ToString(),
@@ -172,12 +155,77 @@ namespace DotEditor.AAS.Packer
                 });
             }
 
-            return new BundleDescriptionConfig()
+            return new BundleConfig()
             {
-                assetDetails = assetDetails.ToArray(),
                 bundleDetails = bundleDetails.ToArray(),
             };
+        }
 
+        public static void SaveBundleConfig(BundleConfig config, string filePath = null)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                filePath = BundleConst.AssetConfigPath;
+            }
+            string dirPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
+            string jsonStr = JsonConvert.SerializeObject(config, Formatting.Indented);
+            File.WriteAllText(filePath, jsonStr);
+        }
+
+        public static AssetConfig CreateAssetConfig(GeneratedAssetData[] assetDatas)
+        {
+            if (assetDatas == null)
+            {
+                assetDatas = (from config in AssetDatabaseUtility.FindInstances<GenerateBundleConfig>()
+                              from data in config.GetDatas()
+                              where data != null
+                              select data).ToArray();
+            }
+
+            List<AssetDetail> assets = new List<AssetDetail>();
+            foreach (var assetData in assetDatas)
+            {
+                if (assetData.isMainAsset)
+                {
+                    AssetDetail assetDetail = new AssetDetail()
+                    {
+                        path = assetData.path,
+                        bundle = assetData.bundle,
+                        address = assetData.address,
+                        isPreload = assetData.isNeedPreload,
+                        isNeverDestroy = assetData.isNeverDestroy,
+                    };
+                    assetDetail.labels = new string[assetData.labels.Length];
+                    Array.Copy(assetData.labels, assetDetail.labels, assetData.labels.Length);
+                    assets.Add(assetDetail);
+                }
+            }
+
+            return new AssetConfig()
+            {
+                assetDetails = assets.ToArray(),
+            };
+        }
+
+        public static void SaveAssetConfig(AssetConfig config,string filePath = null)
+        {
+            if(string.IsNullOrEmpty(filePath))
+            {
+                filePath = BundleConst.AssetConfigPath;
+            }
+            string dirPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
+            string jsonStr = JsonConvert.SerializeObject(config, Formatting.Indented);
+            File.WriteAllText(filePath, jsonStr);
         }
     }
 
