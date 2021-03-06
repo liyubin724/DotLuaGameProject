@@ -21,7 +21,7 @@ namespace DotEngine.AAS
             {
                 if(string.IsNullOrEmpty(rootPath))
                 {
-                    rootPath = $"{Application.dataPath.Replace("/Assets", "/AAS")}/${ROOT_FOLDER_NAME}";
+                    rootPath = $"{Application.dataPath.Replace("/Assets", "/AAS")}/{ROOT_FOLDER_NAME}";
                 }
                 return rootPath;
             }
@@ -44,6 +44,14 @@ namespace DotEngine.AAS
             get
             {
                 return $"{RootPath}/{BUNDLE_CONFIG_FILE_NAME}";
+            }
+        }
+
+        public static string BundlePath
+        {
+            get
+            {
+                return $"{RootPath}";
             }
         }
 
