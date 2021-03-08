@@ -1,6 +1,9 @@
 require('DotLua/Utils/stringEx')
 require('DotLua/Utils/tableEx')
-require('DotLua/using')
 require('DotLua/class')
-require("DotLua/enum")
+require('DotLua/enum')
+
+function using(path)
+    return require(path)
+end
 

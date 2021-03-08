@@ -1,4 +1,4 @@
-require('DotLua/init')
+require('DotLua/oop')
 
 local Object = require('DotLua/Object')
 local A =
@@ -123,8 +123,14 @@ local PlayerType = enum("PlayerType",{"MainPlayer","Player","NPC"})
 local testEnum = function()
     print(tostring(PlayerType))
 end
+
+local DebugLogger = using("DotLua/Log/DebugLogger")
+local List = using("DotLua/Generic/Collections/List")
 local function main()
-    testEnum()
+    local list = List(1,2,3,4,5,6)
+    for i, v in ipairs(list) do
+        print(string.format("Index = %d,value = %d",i,v))
+    end
 end
 
 main()

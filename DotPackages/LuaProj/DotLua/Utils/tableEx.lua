@@ -58,12 +58,25 @@ function table.values(tbl)
     return t
 end
 
-function table.contains(tbl, key)
+function table.containskey(tbl, key)
     if type(tbl) ~= 'table' then
         return false
     end
 
     return tbl[key] ~= nil
+end
+
+function table.containsvalue(tbl, value)
+    if type(tbl) ~= 'table' then
+        return false
+    end
+
+    for _, v in pairs(tbl) do
+        if v == value then
+            return true
+        end
+    end
+    return false
 end
 
 function table.foreach(tbl, func)
@@ -95,7 +108,7 @@ function table.all(tbl, checkFunc)
     end
 
     for key, value in pairs(tbl) do
-        if not checkFunc(key,value) then
+        if not checkFunc(key, value) then
             return false
         end
     end
@@ -129,15 +142,22 @@ function table.key(tbl, value)
 end
 
 function table.copy(tbl)
-
 end
 
 function table.deepcopy(tbl)
-
 end
 
 function table.clear(tbl)
     for k, _ in pairs(tbl) do
         tbl[k] = nil
     end
+end
+
+function table.tostring(tbl)
+    if type(tbl) ~= 'table' then
+        return tostring(tbl)
+    end
+
+    local serpent = require('DotLua/Tools/serpent')
+    return serpent.dump(tbl)
 end
