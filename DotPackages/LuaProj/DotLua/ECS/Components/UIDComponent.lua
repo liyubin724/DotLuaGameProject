@@ -1,7 +1,8 @@
-local Component = using('DotLua/ECS/Components/Component')
+local oop = require('DotLua/OOP/oop')
+local Component = oop.using('DotLua/ECS/Components/Component')
 
 local UIDComponent =
-    class(
+    oop.class(
     'UIDComponent',
     function(self)
         self.uid = -1

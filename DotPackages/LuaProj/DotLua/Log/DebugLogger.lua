@@ -6,7 +6,7 @@ DebugLogger.isErrorEnable = true
 
 DebugLogger.info = print
 DebugLogger.warning = print
-DebugLogger.error = error
+DebugLogger.error = print
 
 local getMessage = function(logLevel, tag, message, ...)
     local mess = message

@@ -1,5 +1,7 @@
+local oop = require('DotLua/OOP/oop')
+
 local Component =
-    class(
+    oop.class(
     'Component',
     function(self)
     end
