@@ -1,23 +1,19 @@
-local List = using('DotLua/Generic/Collections/List')
-local isDebug = _G.isDebug or true
-local DebugLogger = using('DotLua/Log/DebugLogger')
-local Event = using("DotLua/Core/Event")
+local oop = require('DotLua/OOP/oop')
+local DebugLogger = oop.using('DotLua/Log/DebugLogger')
+
+local tinsert = table.insert
+local tremove = table.remove
+local tlength = table.length
+local tcopy = table.copy
 
 local Entity =
-    class(
+    oop.class(
     'Entity',
     function(self, context)
         self.isEnable = true
         self.context = context
 
-        self.components = List()
-
-        self.onComponentAdded = Event()
-        self.onComponentRemoved = Event()
-        self.onComponentReplaced = Event()
-
-        self.onEntityReleased = Event()
-        self.onDestroyEntity = Event()
+        self.components = {}
     end
 )
 
@@ -29,8 +25,16 @@ function Entity:SetIsEnable(isEnable)
     self.isEnable = isEnable
 end
 
+function Entity:GetContext()
+    return self.context
+end
+
 function Entity:ComponentCount()
-    return #self.components
+    return tlength(self.components)
+end
+
+function Entity:GetComponents()
+    return tcopy(self.components)
 end
 
 function Entity:HasComponent(componentClass)
@@ -72,10 +76,6 @@ function Entity:GetComponent(componentClass)
     return nil
 end
 
-function Entity:GetComponents()
-    return self.components
-end
-
 function Entity:AddComponent(componentClass)
     if not self.isEnable then
         DebugLogger.Error('Entity', '')
@@ -90,7 +90,7 @@ function Entity:AddComponent(componentClass)
     local component = componentClass()
     self.components:Add(component)
 
-    self.onComponentAdded:Invoke(self,component)
+    return component
 end
 
 function Entity:RemoveComponent(componentClass)
@@ -99,7 +99,7 @@ function Entity:RemoveComponent(componentClass)
         return
     end
 
-    if self:HasComponent(componentClass) then
+    if not self:HasComponent(componentClass) then
         DebugLogger.Error('Entity', '')
         return
     end
@@ -123,8 +123,6 @@ end
 function Entity:RemoveAllComponents()
 end
 
-
 function Entity:replaceComp(oldComponentClass, newComponentClass)
-
 end
 return Entity

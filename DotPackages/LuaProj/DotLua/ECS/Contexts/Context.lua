@@ -1,6 +1,8 @@
-local Event = using("DotLua/Core/Event")
+local oop = require('DotLua/OOP/oop')
+local DebugLogger = oop.using('DotLua/Log/DebugLogger')
+local Entity = oop.using("DotLua/ECS/Entities/Entity")
+
 local ObjectPool = using("DotLua/Pool/ObjectPool")
-local Entity = using("DotLua/ECS/Entities/Entity")
 local List = using('DotLua/Generic/Collections/List')
 
 local Context =
@@ -30,8 +32,3 @@ function Context:CreateEntity()
 end
 
 return Context
-
-
-
-
-return EntityContext

@@ -14,6 +14,8 @@ local MessageDispatcher =
     end
 )
 
+MessageDispatcher.NAME = "Dispatcher"
+
 function MessageDispatcher:RegistListener(name, receiver, func, userdata)
     local listenerList = self.listenerMapList[name]
     if not listenerList then

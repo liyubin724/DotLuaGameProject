@@ -1,8 +1,12 @@
+local oop = require('DotLua/OOP/oop')
+
 local tinsert = table.insert
 local tcontainsvalue = table.containsvalue
 local tsort = table.sort
+local tcopy = table.copy
 local select = _G.select
 local type = _G.type
+
 
 ----public----
 -- 使用table表模拟List的实现
@@ -15,7 +19,7 @@ local type = _G.type
 -- 3.1 local len = #list
 -- 3.2 local len = list:Count()
 local List =
-    class(
+    oop.class(
     'List',
     function(self, ...)
         self.list = {}
@@ -229,6 +233,10 @@ end
 
 function List:Sort(compareFunc)
     tsort(self.list, compareFunc)
+end
+
+function List:ToTable()
+    return tcopy(self.list)
 end
 
 return List

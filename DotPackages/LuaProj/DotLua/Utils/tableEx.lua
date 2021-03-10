@@ -27,6 +27,25 @@ function table.isarray(tbl)
     return true
 end
 
+function table.length(tbl)
+    if type(tbl) ~= 'table' then
+        return 0
+    end
+
+    local len = 0
+    for _, _ in pairs(tbl) do
+        len = len + 1
+    end
+    return len
+end
+
+function table.arrlength(tbl)
+    if type(tbl) ~= 'table' then
+        return 0
+    end
+    return #(tbl)
+end
+
 function table.keys(tbl)
     local t = {}
     if type(tbl) ~= 'table' then
@@ -142,9 +161,26 @@ function table.key(tbl, value)
 end
 
 function table.copy(tbl)
+    if type(tbl) ~= 'table' then
+        return nil
+    end
+
+    local rtbl = {}
+    for _, item in ipairs(tbl) do
+        table.insert(rtbl, item)
+    end
+    return rtbl
 end
 
-function table.deepcopy(tbl)
+function table.copyto(sourceTbl, destinationTbl)
+    if type(sourceTbl) ~= 'table' then
+        return
+    end
+
+    destinationTbl = {}
+    for _, item in ipairs(sourceTbl) do
+        table.insert(destinationTbl, item)
+    end
 end
 
 function table.clear(tbl)

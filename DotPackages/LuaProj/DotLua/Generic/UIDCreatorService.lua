@@ -1,5 +1,7 @@
+local oop = require('DotLua/OOP/oop')
+
 local UIDCreator =
-    class(
+    oop.class(
     'UIDCreator',
     function(self,start)
         self.uid = start or 0
