@@ -7,4 +7,7 @@ local Component =
     end
 )
 
+function Component:OnRelease()
+end
+
 return Component

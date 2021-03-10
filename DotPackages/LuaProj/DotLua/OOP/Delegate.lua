@@ -1,9 +1,9 @@
 local Delegate =
     class(
     'Delegate',
-    function(self)
-        self.receiver = nil
-        self.func = nil
+    function(self,receiver,func)
+        self.receiver = receiver
+        self.func = func
     end
 )
 

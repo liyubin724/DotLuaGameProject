@@ -18,4 +18,8 @@ function UIDComponent:SetUID(uid)
     self.uid = uid
 end
 
+function UIDComponent:OnRelease()
+    self.uid = -1
+end
+
 return UIDComponent

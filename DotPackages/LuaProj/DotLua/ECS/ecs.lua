@@ -1,26 +1,22 @@
 local oop = require('DotLua/OOP/oop')
 local MessageDispatcher = oop.using('DotLua/Message/MessageDispatcher')
-local DebugLogger = oop.using('DotLua/Log/DebugLogger')
-local UIDCreator = oop.using("DotLua/ECS/Services/UIDCreatorService")
+local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
+local Context = oop.using('DotLua/ECS/Contexts/Context')
 
 local ecs = {}
-ecs.isDebug = oop.isDebug
-ecs.logger = DebugLogger
+
 ecs.dispatcher = MessageDispatcher()
 ecs.uidCreator = UIDCreator()
 
 ecs.services = {}
-
-function ecs.GetIsDebug()
-    return ecs.isDebug
-end
-
-function ecs.GetLogger()
-    return ecs.logger
-end
+ecs.contexts = {}
 
 function ecs.GetDispatcher()
     return ecs.dispatcher
+end
+
+function ecs.GetNextUID()
+    return ecs.uidCreator:NextUID()
 end
 
 function ecs.GetService(name)
@@ -52,6 +48,28 @@ function ecs.RemoveService(name)
     end
 end
 
+function ecs.HasContext(name)
+    return ecs.contexts[name] ~= nil
+end
 
-ecs.AddService(UIDCreatorService.NAME, UIDCreatorService())
+function ecs.GetContext(name)
+    return ecs.contexts[name]
+end
+
+function ecs.CreateContext(name)
+    local context = ecs.contexts[name]
+    if not context then
+        context = Context(name,ecs.uidCreator)
+        ecs.contexts[name] = context
+    end
+    return context
+end
+
+function ecs.DestroyContext(name)
+    local context = ecs.GetContext(name)
+    if context then
+        context:Destroy()
+    end
+end
+
 return ecs

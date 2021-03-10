@@ -1,4 +1,5 @@
 local oop = require('DotLua/OOP/oop')
+local Delegate = oop.using('DotLua/OOP/Delegate')
 local DebugLogger = oop.using('DotLua/Log/DebugLogger')
 
 local tinsert = table.insert
@@ -14,6 +15,10 @@ local Entity =
         self.context = context
 
         self.components = {}
+
+        self.onComponentAdded = nil
+        self.onComponentRemoved = nil
+        self.onComponentReplaced = nil
     end
 )
 
@@ -29,7 +34,19 @@ function Entity:GetContext()
     return self.context
 end
 
-function Entity:ComponentCount()
+function Entity:BindDelegateToAdded(receiver, func)
+    self.onComponentAdded = Delegate(receiver, func)
+end
+
+function Entity:BindDelegateToRemoved(receiver, func)
+    self.onComponentRemoved = Delegate(receiver, func)
+end
+
+function Entity:BindDelegateToReplaced(receiver, func)
+    self.onComponentReplaced = Delegate(receiver, func)
+end
+
+function Entity:GetComponentCount()
     return tlength(self.components)
 end
 
@@ -87,10 +104,16 @@ function Entity:AddComponent(componentClass)
         return
     end
 
-    local component = componentClass()
-    self.components:Add(component)
+    local component = context:GetComponent(componentClass)
+    self:AddComponentInstance(component)
+end
 
-    return component
+function Entity:AddComponentInstance(componentInstance)
+    tinsert(self.components, componentInstance)
+
+    if self.onComponentAdded then
+        self.onComponentAdded:Invoke(self, componentInstance)
+    end
 end
 
 function Entity:RemoveComponent(componentClass)
@@ -99,12 +122,22 @@ function Entity:RemoveComponent(componentClass)
         return
     end
 
-    if not self:HasComponent(componentClass) then
-        DebugLogger.Error('Entity', '')
-        return
+    local removedComponent = nil
+    for index, component in ipairs(self.components) do
+        if component:IsKindOf(componentClass) then
+            removedComponent = component
+            tremove(self.components, index)
+            break
+        end
     end
 
-    self:replaceComp(componentClass, nil)
+    if removedComponent then
+        if self.onComponentRemoved then
+            self.onComponentRemoved:Invoke(self, removedComponent)
+        end
+
+        context:ReleaseComponent(removedComponent)
+    end
 end
 
 function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
@@ -113,16 +146,49 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
         return
     end
 
+    if oldComponentClass == newComponentClass then
+        return
+    end
     if self:HasComponent(oldComponentClass) then
-        self:replaceComp(oldComponentClass, newComponentClass)
+        if newComponentClass then
+            local oldComponent = nil
+            for index, component in ipairs(self.components) do
+                if component:IsKindOf(oldComponentClass) then
+                    oldComponent = component
+                    tremove(self.components, index)
+                    break
+                end
+            end
+
+            local newComponent = context:GetComponent(newComponentClass)
+            self:AddComponentInstance(newComponent)
+
+            if self.onComponentReplaced then
+                self.onComponentReplaced(self,oldComponent,newComponent)
+            end
+
+            context:ReleaseComponent(oldComponent)
+        else
+            self:RemoveComponent(oldComponentClass)
+        end
     else
-        self:AddComponent(newComponentClass)
+        if newComponentClass then
+            self:AddComponent(newComponentClass)
+        end
     end
 end
 
 function Entity:RemoveAllComponents()
+    for i = #(self.components), 1, -1 do
+        tremove(self.components, i)
+        context:ReleaseComponent(self.components[i])
+    end
 end
 
-function Entity:replaceComp(oldComponentClass, newComponentClass)
+function Entity:Destroy()
+    self:RemoveAllComponents()
+
+    context:ReleaseEntity(self)
 end
+
 return Entity

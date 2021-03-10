@@ -1,8 +1,11 @@
-local remove = _G.table.remove
-local insert = _G.table.insert
+local oop = require('DotLua/OOP/oop')
+
+local tremove = table.remove
+local tinsert = table.insert
+local tclear = table.clear
 
 local ObjectPool =
-    class(
+    oop.class(
     'ObjectPool',
     function(self, itemClass)
         self.itemClass = itemClass
@@ -15,12 +18,12 @@ function ObjectPool:Get()
 
     if #(self.items) > 0 then
         item = self.items[1]
-        remove(self.items, 1)
+        tremove(self.items, 1)
     else
         item = self.itemClass()
     end
 
-    if item["OnGet"] ~= nil then
+    if item['OnGet'] ~= nil then
         item:OnGet()
     end
 
@@ -29,16 +32,16 @@ end
 
 function ObjectPool:Release(item)
     if item then
-        if item["OnRelease"] then
+        if item['OnRelease'] then
             item:OnRelease()
         end
 
-        insert(self.items, item)
+        tinsert(self.items, item)
     end
 end
 
 function ObjectPool:Clear()
-    table.clear(self.items)
+    tclear(self.items)
 end
 
 return ObjectPool
