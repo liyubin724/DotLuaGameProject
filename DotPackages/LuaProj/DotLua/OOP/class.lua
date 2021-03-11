@@ -1,0 +1,45 @@
+local Object = require('DotLua/OOP/Object')
+
+local call = function(c, ...)
+    local obj = setmetatable({}, c)
+    obj._isInstance = true
+
+    c._ctor(obj, ...)
+
+    return obj
+end
+
+local class = function(name, ctor, base)
+    if not base then
+        base = Object
+    end
+
+    local c = {}
+    c._base = base
+    c._className = name
+
+    c.__index = c
+
+    c._ctor = function(instance, ...)
+        if base then
+            base._ctor(instance, ...)
+        end
+
+        ctor(instance, ...)
+    end
+
+    local meta = {}
+    meta.__index = function(instance, k)
+        if base then
+            return base[k]
+        end
+        return nil
+    end
+    meta.__call = call
+
+    setmetatable(c, meta)
+
+    return c
+end
+
+return class

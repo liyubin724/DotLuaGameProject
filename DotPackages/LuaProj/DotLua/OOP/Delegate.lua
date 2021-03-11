@@ -1,8 +1,15 @@
-local Object = require('DotLua/OOP/Object')
 local ObjectType = require('DotLua/OOP/ObjectType')
+local class = require('DotLua/OOP/class')
 
-local Delegate = {}
-Delegate.__index = Delegate
+local Delegate =
+    class(
+    'Delegate',
+    function(self, receiver, func)
+        self.receiver = receiver
+        self.func = func
+    end
+)
+
 Delegate.__eq = function(d1, d2)
     if d1 == d2 then
         return true
@@ -13,20 +20,7 @@ Delegate.__eq = function(d1, d2)
     end
 end
 
-Delegate.__call = function(_, receiver, func)
-    local delegate = setmetatable({}, Delegate)
-    Delegate._ctor(delegate, receiver, func)
-
-    return delegate
-end
-
-Delegate._base = Object
-Delegate._className = 'Delegate'
 Delegate._type = ObjectType.Delegate
-Delegate._ctor = function(obj, receiver, func)
-    obj.receiver = receiver
-    obj.func = func
-end
 
 function Delegate:GetReceiver()
     return self.receiver
@@ -57,7 +51,5 @@ function Delegate:FuncInvoke(...)
 
     return nil
 end
-
-setmetatable(Delegate, Object)
 
 return Delegate

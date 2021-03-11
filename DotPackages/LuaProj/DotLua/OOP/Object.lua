@@ -19,10 +19,7 @@ Object._className = 'Object'
 Object._type = ObjectType.Class
 Object._isInstance = false
 
-function Object:_ctor(instance, ...)
-    if self._base then
-        self._base:_ctor(instance, ...)
-    end
+Object._ctor = function(instance, ...)
 end
 
 function Object:GetClassName()

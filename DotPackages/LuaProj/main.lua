@@ -12,17 +12,16 @@ local function TestObject(obj)
     print('Object.ToString = ' .. tostring(obj:ToString()))
 end
 
-
-local function TestDelegate()
-    print(Delegate:GetClassName())
-end
-
-
-
 local function main()
-    local obj = Object()
-    TestObject(obj)
+    local tbl = {}
+    tbl.callback = function(tbl,message)
+        print(message)
+    end
 
+    local delegate = Delegate(tbl,tbl.callback)
+    TestObject(delegate)
+
+    delegate:ActionInvoke("Just for a messagae")
 end
 
 main()

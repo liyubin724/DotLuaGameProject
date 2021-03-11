@@ -1,32 +1,13 @@
-local oop = require('DotLua/OOP/oop')
+local ObjectType = require('DotLua/OOP/ObjectType')
+local Delegate = require('DotLua/OOP/Delegate')
+local class = require('DotLua/OOP/class')
 
+local tremove = table.remove
+local tinsert = table.insert
 local tclear = table.clear
 
-local EventListener =
-    oop.class(
-    'EventListener',
-    function(self,receiver,func)
-        self.receiver = receiver
-        self.func = func
-    end
-)
-
-function EventListener:Invoke(...)
-    if self.func then
-        if self.receiver then
-            self.func(self.receiver, ...)
-        else
-            self.func(...)
-        end
-    end
-end
-
-function EventListener:IsEqualTo(receiver,func)
-    return self.receiver == receiver and self.func == func
-end
-
 local Event =
-    oop.class(
+    class(
     'Event',
     function(self)
         self.listeners = {}
@@ -52,7 +33,7 @@ Event.__add = function(self, data)
         end
 
         if func and type(func) == 'function' then
-            table.insert(self.listeners, EventListener(receiver,func))
+            tinsert(self.listeners, Delegate(receiver, func))
         end
     end
     return self
@@ -75,8 +56,8 @@ Event.__sub = function(self, data)
         if func and type(func) == 'function' then
             for i = #(self.listeners), 1, -1 do
                 local listener = self.listeners[i]
-                if listener:IsEqualTo(receiver,func) then
-                    table.remove(self.listeners, i)
+                if listener:GetReceiver() == receiver and listener:GetFunc() == func then
+                    tremove(self.listeners, i)
                 end
             end
         end
@@ -85,14 +66,29 @@ Event.__sub = function(self, data)
     return self
 end
 
-function Event:Invoke(...)
-    for _, listener in ipairs(self.listeners) do
-        listener:Invoke(...)
+Event._type = ObjectType.Event
+
+function Event:Add(receiver, func)
+    tinsert(self.listeners, Delegate(receiver, func))
+end
+
+function Event:Remove(receiver, func)
+    for i = #(self.listeners), 1, -1 do
+        local listener = self.listeners[i]
+        if listener:GetReceiver() == receiver and listener:GetFunc() == func then
+            tremove(self.listeners, i)
+        end
     end
 end
 
-function Event:ClearAll()
-    table.clear(self.listeners)
+function Event:Clear()
+    tclear(self.listeners)
+end
+
+function Event:ActionInvoke(...)
+    for _, listener in ipairs(self.listeners) do
+        listener:ActionInvoke(...)
+    end
 end
 
 return Event
