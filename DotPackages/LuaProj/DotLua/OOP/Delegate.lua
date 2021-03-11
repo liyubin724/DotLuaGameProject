@@ -52,4 +52,8 @@ function Delegate:FuncInvoke(...)
     return nil
 end
 
+function Delegate:ToString()
+    return string.format('{Delegate:{receiver:%s,func:%s}}', tostring(self.receiver), tostring(self.func))
+end
+
 return Delegate

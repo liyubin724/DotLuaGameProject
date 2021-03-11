@@ -1,20 +1,20 @@
-local ObjectPool = using('DotLua/Pool/ObjectPool')
-local MessageListener = using('DotLua/Message/MessageListener')
+local oop = require('DotLua/OOP/oop')
+
+local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
+local MessageListener = oop.using('DotLua/Message/MessageListener')
 
 local tinsert = table.insert
 local tremove = table.remove
 local tkeys = table.keys
 
 local MessageDispatcher =
-    class(
+    oop.class(
     'MessageDispatcher',
     function(self)
         self.listenerPool = ObjectPool(MessageListener)
         self.listenerMapList = {}
     end
 )
-
-MessageDispatcher.NAME = "Dispatcher"
 
 function MessageDispatcher:RegistListener(name, receiver, func, userdata)
     local listenerList = self.listenerMapList[name]

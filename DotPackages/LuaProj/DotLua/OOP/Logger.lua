@@ -1,22 +1,22 @@
-local LogLevel = require('DotLua/Log/LogLevel')
-
 local Logger = {}
 
 Logger.isInfoEnable = true
 Logger.isWarningEnable = true
 Logger.isErrorEnable = true
 
-local print = function(logLevel, tag, message)
-    print(string.format('[%s] %s : %s', LogLevel.GetNameByValue(logLevel), tag, message))
+Logger.info = function(tag, message)
+    print(string.format('%s [INFO] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
 end
-
-Logger.info = print
-Logger.warning = print
-Logger.error = print
+Logger.warning = function(tag, message)
+    print(string.format('%s [WARNING] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+end
+Logger.error = function(tag, message)
+    print(string.format('%s [ERROR] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+end
 
 local getMessage = function(message, ...)
     local mess = message
-    if #(...) > 0 then
+    if select("#",...) > 0 then
         mess = string.format(mess, ...)
     end
 
@@ -37,24 +37,20 @@ end
 
 function Logger.Info(tag, message, ...)
     if Logger.isInfoEnable and not Logger.infoFunc then
-        Logger.info(LogLevel.Info, tag, getMessage(message, ...))
+        Logger.info(tag, getMessage(message, ...))
     end
 end
 
 function Logger.Warning(tag, message, ...)
     if Logger.isWarningEnable and not Logger.warning then
-        Logger.warning(LogLevel.Warning, tag, getMessage(message, ...))
+        Logger.warning(tag, getMessage(message, ...))
     end
 end
 
 function Logger.Error(tag, message, ...)
     if Logger.isErrorEnable and not Logger.error then
-        Logger.error(LogLevel.Error, tag, getMessage(message, ...))
+        Logger.error(tag, getMessage(message, ...))
     end
-end
-
-if not _G.Logger then
-    _G.Logger = Logger
 end
 
 return Logger

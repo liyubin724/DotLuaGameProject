@@ -1,5 +1,7 @@
+local oop = require('DotLua/OOP/oop')
+
 local MessageListener =
-    class(
+    oop.class(
     'MessageListener',
     function(self)
         self.name = nil

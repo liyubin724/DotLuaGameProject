@@ -1,8 +1,7 @@
-local Object = require("DotLua/OOP/Object")
-local Delegate = require("DotLua/OOP/Delegate")
+local oop = require('DotLua/OOP/oop')
 
 local function TestObject(obj)
-    print("Object.GetClassName = "..obj:GetClassName())
+    print('Object.GetClassName = ' .. obj:GetClassName())
     print('Object.GetBaseClass = ' .. tostring(obj:GetBaseClass()))
     print('Object.GetType = ' .. obj:GetType())
     print('Object.IsClass = ' .. tostring(obj:IsClass()))
@@ -14,14 +13,22 @@ end
 
 local function main()
     local tbl = {}
-    tbl.callback = function(tbl,message)
-        print(message)
+    tbl.callback = function(tbl, message)
+        oop.Logger.Info('TBL', message)
     end
 
-    local delegate = Delegate(tbl,tbl.callback)
-    TestObject(delegate)
+    local tbl2 = {}
+    tbl2.callback = function(tbl, message)
+        oop.Logger.Info('TBL2', message)
+    end
 
-    delegate:ActionInvoke("Just for a messagae")
+    local event = oop.event()
+    event = event + {tbl, tbl.callback}
+    event = event + {tbl2, tbl2.callback}
+
+    local GameState = oop.enum('GameState', {'Playing', 'Stopped', 'Paused', 'Finished'})
+
+    event:ActionInvoke(GameState:GetNameByValue(2))
 end
 
 main()
