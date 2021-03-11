@@ -1,37 +1,64 @@
-local ObjectType = require('DotLua/ObjectType')
+local ObjectType = require('DotLua/OOP/ObjectType')
 
-local Object = {}
+local ObjectMeta = {}
+ObjectMeta.__call = function(class,...)
+    local instance = setmetatable({}, class)
+    instance._isInstance = true
+
+    if class._ctor then
+        class._ctor(class, instance, ...)
+    end
+    return instance
+end
+
+local Object = setmetatable({}, ObjectMeta)
 Object.__index = Object
 
 Object._base = nil
-Object._typeName = 'Object'
+Object._className = 'Object'
 Object._type = ObjectType.Class
-Object._ctor = function(obj, ...)
+Object._isInstance = false
+
+function Object:_ctor(instance, ...)
+    if self._base then
+        self._base:_ctor(instance, ...)
+    end
 end
 
 function Object:GetClassName()
-    return self._typeName
+    return self._className
+end
+
+function Object:GetBaseClass()
+    return self._base
+end
+
+function Object:GetType()
+    return self._type
+end
+
+function Object:GetIsInstance()
+    return self._isInstance
 end
 
 function Object:IsClass()
     return self._type == ObjectType.Class
 end
 
-function Object:IsInstance()
-    return self._type == ObjectType.Instance
+function Object:IsEnum()
+    return self._type == ObjectType.Enum
 end
 
-function Object:GetClass()
-    if self:IsInstance() then
-        return getmetatable(self)
-    elseif self:IsClass() then
-        return self
-    end
-    return nil
+function Object:IsDelegate()
+    return self._type == ObjectType.Delegate
+end
+
+function Object:IsEvent()
+    return self._type == ObjectType.Event
 end
 
 function Object:IsKindOf(baseClass)
-    local c = self:GetClass()
+    local c = self
     while c do
         if c == baseClass then
             return true
@@ -43,7 +70,7 @@ function Object:IsKindOf(baseClass)
 end
 
 function Object:ToString()
-    return self.__typeName
+    return self._className
 end
 
 return Object

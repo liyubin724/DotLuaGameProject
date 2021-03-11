@@ -1,5 +1,9 @@
+local oop = require('DotLua/OOP/oop')
+
+local tclear = table.clear
+
 local EventListener =
-    class(
+    oop.class(
     'EventListener',
     function(self,receiver,func)
         self.receiver = receiver
@@ -22,7 +26,7 @@ function EventListener:IsEqualTo(receiver,func)
 end
 
 local Event =
-    class(
+    oop.class(
     'Event',
     function(self)
         self.listeners = {}

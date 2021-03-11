@@ -1,14 +1,10 @@
-local Delegate =
-    class(
-    'Delegate',
-    function(self,receiver,func)
-        self.receiver = receiver
-        self.func = func
-    end
-)
+local Object = require('DotLua/OOP/Object')
+local ObjectType = require('DotLua/OOP/ObjectType')
 
-Delegate.__eq = function(d1,d2)
-    if d1 == nil and d2 == nil then
+local Delegate = {}
+Delegate.__index = Delegate
+Delegate.__eq = function(d1, d2)
+    if d1 == d2 then
         return true
     elseif d1 ~= nil and d2 ~= nil then
         return d1.receiver == d2.receiver and d1.func == d2.func
@@ -17,16 +13,20 @@ Delegate.__eq = function(d1,d2)
     end
 end
 
-function Delegate:Bind(receiver,func)
-    self.receiver = receiver
-    self.func = func
+Delegate.__call = function(_, receiver, func)
+    local delegate = setmetatable({}, Delegate)
+    Delegate._ctor(delegate, receiver, func)
+
+    return delegate
 end
 
-function Delegate:Unbind()
-    self.receiver = nil
-    self.func = nil
+Delegate._base = Object
+Delegate._className = 'Delegate'
+Delegate._type = ObjectType.Delegate
+Delegate._ctor = function(obj, receiver, func)
+    obj.receiver = receiver
+    obj.func = func
 end
-
 
 function Delegate:GetReceiver()
     return self.receiver
@@ -36,7 +36,17 @@ function Delegate:GetFunc()
     return self.func
 end
 
-function Delegate:Invoke(...)
+function Delegate:ActionInvoke(...)
+    if self.func then
+        if self.receiver then
+            self.func(self.receiver, ...)
+        else
+            self.func(...)
+        end
+    end
+end
+
+function Delegate:FuncInvoke(...)
     if self.func then
         if self.receiver then
             return self.func(self.receiver, ...)
@@ -48,12 +58,6 @@ function Delegate:Invoke(...)
     return nil
 end
 
-function Delegate:Equal(otherDelegate)
-    if self == otherDelegate then
-        return true
-    else
-        return self.receiver == otherDelegate.receiver and self.func == otherDelegate.func
-    end
-end
+setmetatable(Delegate, Object)
 
 return Delegate

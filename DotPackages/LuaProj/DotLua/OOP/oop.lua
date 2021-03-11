@@ -1,6 +1,11 @@
 require('DotLua/Utils/stringEx')
 require('DotLua/Utils/tableEx')
 
+local Delegate = require("DotLua/OOP/Delegate")
+
+local tisarray = table.isarray
+local tall = table.all
+
 local oop = {}
 oop.isDebug = _G.isDebug or true
 
@@ -27,7 +32,7 @@ local call = function(classTbl, ...)
     end
 
     local obj = setmetatable({}, classTbl)
-    obj._type = ObjectType.Instance
+    obj._type = oop.ObjectType.Instance
     classTbl._ctor(obj, ...)
     return obj
 end
@@ -49,13 +54,13 @@ oop.class = function(name, ctor, base)
     end
 
     if not base then
-        base = Object
+        base = oop.Object
     end
 
     local c = {}
     c._base = base
     c._typeName = name
-    c._type = ObjectType.Class
+    c._type = oop.ObjectType.Class
     c.__index = c
 
     c._ctor = function(obj, ...)
@@ -103,15 +108,15 @@ local enumMeta = {
 oop.enum = function(name, values)
     local e = {}
     e._typeName = name
-    e._type = ObjectType.Enum
+    e._type = oop.ObjectType.Enum
     e._values = {}
 
     local isValid = true
     if oop.isDebug then
         if values and type(values) == 'table' then
-            if table.isarray(values) then
+            if tisarray(values) then
                 isValid =
-                    table.all(
+                    tall(
                     values,
                     function(k, v)
                         return v and type(v) == 'string'
@@ -119,7 +124,7 @@ oop.enum = function(name, values)
                 )
             else
                 isValid =
-                    table.all(
+                    tall(
                     values,
                     function(k, v)
                         return v and k and type(k) == 'string' and type(v) == 'number'
@@ -132,7 +137,7 @@ oop.enum = function(name, values)
     end
 
     if isValid then
-        if table.isarray(values) then
+        if tisarray(values) then
             for i, v in ipairs(values) do
                 e._values[v] = i
             end
@@ -147,6 +152,15 @@ oop.enum = function(name, values)
 
     setmetatable(e, enumMeta)
     return e
+end
+
+oop.delegate = function(receiver,func)
+    local d = {}
+    d.receiver = receiver
+    d.func = func
+
+    setmetatable(d, Delegate)
+    return d
 end
 
 return oop

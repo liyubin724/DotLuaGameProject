@@ -1,7 +1,8 @@
 local ObjectType = {
     Class = 1,
-    Instance = 2,
-    Enum = 3,
+    Enum = 2,
+    Delegate = 3,
+    Event = 4,
 }
 
 return ObjectType
