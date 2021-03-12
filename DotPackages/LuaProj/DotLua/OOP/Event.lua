@@ -85,7 +85,7 @@ function Event:Clear()
     tclear(self.listeners)
 end
 
-function Event:ActionInvoke(...)
+function Event:Invoke(...)
     for _, listener in ipairs(self.listeners) do
         listener:ActionInvoke(...)
     end

@@ -28,7 +28,7 @@ local function main()
 
     local GameState = oop.enum('GameState', {'Playing', 'Stopped', 'Paused', 'Finished'})
 
-    event:ActionInvoke(GameState:GetNameByValue(2))
+    event:Invoke(GameState:GetNameByValue(2))
 end
 
 main()

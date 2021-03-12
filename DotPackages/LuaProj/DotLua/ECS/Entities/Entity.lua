@@ -1,24 +1,21 @@
 local oop = require('DotLua/OOP/oop')
-local Delegate = oop.using('DotLua/OOP/Delegate')
-local DebugLogger = oop.using('DotLua/Log/DebugLogger')
 
 local tinsert = table.insert
 local tremove = table.remove
-local tlength = table.length
-local tcopy = table.copy
+local tcopyto = table.copyto
 
 local Entity =
     oop.class(
     'Entity',
-    function(self, context)
+    function(self)
         self.isEnable = true
-        self.context = context
 
+        self.cachedComponents = {}
         self.components = {}
 
-        self.onComponentAdded = nil
-        self.onComponentRemoved = nil
-        self.onComponentReplaced = nil
+        self.onComponentAddedEvent = oop.event()
+        self.onComponentRemovedEvent = oop.event()
+        self.onComponentReplacedEvent = oop.event()
     end
 )
 
@@ -30,28 +27,27 @@ function Entity:SetIsEnable(isEnable)
     self.isEnable = isEnable
 end
 
-function Entity:GetContext()
-    return self.context
+function Entity:GetComponentAddedEvent()
+    return self.onComponentAddedEvent
 end
 
-function Entity:BindDelegateToAdded(receiver, func)
-    self.onComponentAdded = Delegate(receiver, func)
+function Entity:GetComponentRemovedEvent()
+    return self.onComponentRemovedEvent
 end
 
-function Entity:BindDelegateToRemoved(receiver, func)
-    self.onComponentRemoved = Delegate(receiver, func)
+function Entity:GetComponentReplacedEvent()
+    return self.onComponentReplacedEvent
 end
 
-function Entity:BindDelegateToReplaced(receiver, func)
-    self.onComponentReplaced = Delegate(receiver, func)
+function Entity:GetComponentTotalCount()
+    return #(self.components)
 end
 
-function Entity:GetComponentCount()
-    return tlength(self.components)
-end
-
-function Entity:GetComponents()
-    return tcopy(self.components)
+function Entity:GetAllComponents()
+    if not self.cachedComponents then
+        tcopyto(self.components, self.cachedComponents)
+    end
+    return self.cachedComponents
 end
 
 function Entity:HasComponent(componentClass)
@@ -95,76 +91,96 @@ end
 
 function Entity:AddComponent(componentClass)
     if not self.isEnable then
-        DebugLogger.Error('Entity', '')
+        oop.Logger.Error('Entity', 'The enity has been disabled')
         return
     end
 
     if self:HasComponent(componentClass) then
-        DebugLogger.Error('Entity', '')
+        oop.Logger.Error('Entity', string.format('The component of %s has beend added!', componentClass:GetClassName()))
         return
     end
 
-    local component = context:GetComponent(componentClass)
-    self:AddComponentInstance(component)
-end
+    local component = self.context:CreateComponent(componentClass)
+    tinsert(self.components, component)
 
-function Entity:AddComponentInstance(componentInstance)
-    tinsert(self.components, componentInstance)
+    self.cachedComponents = nil
 
-    if self.onComponentAdded then
-        self.onComponentAdded:Invoke(self, componentInstance)
-    end
+    self.onComponentAddedEvent:Invoke(self, component)
+
+    return component
 end
 
 function Entity:RemoveComponent(componentClass)
     if not self.isEnable then
-        DebugLogger.Error('Entity', '')
+        oop.Logger.Error('Entity', 'The enity has been disabled')
         return
     end
 
-    local removedComponent = nil
-    for index, component in ipairs(self.components) do
-        if component:IsKindOf(componentClass) then
-            removedComponent = component
-            tremove(self.components, index)
-            break
-        end
-    end
-
-    if removedComponent then
-        if self.onComponentRemoved then
-            self.onComponentRemoved:Invoke(self, removedComponent)
-        end
-
-        context:ReleaseComponent(removedComponent)
+    local index,component = self:getComponentAndIndex(componentClass)
+    if index > 0 then
+        tremove(self.components,index)
+        self.onComponentRemovedEvent:Invoke(self,component)
     end
 end
 
 function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
     if not self.isEnable then
-        DebugLogger.Error('Entity', '')
+        oop.Logger.Error('Entity', 'The enity has been disabled')
         return
     end
+
+    local index, oldComponent = self:getComponentAndIndex(oldComponentClass)
+    if index > 0 then
+        if not newComponentClass then
+            tremove(self.components, index)
+            self.onComponentRemovedEvent:Invoke(self, oldComponent)
+        else
+
+        end
+    else
+        if newComponentClass then
+            local component = self.context:CreateComponent(newComponentClass)
+            tinsert(self.components, component)
+
+            self.cachedComponents = nil
+
+            self.onComponentAddedEvent:Invoke(self, component)
+        end
+    end
+
 
     if oldComponentClass == newComponentClass then
         return
     end
-    if self:HasComponent(oldComponentClass) then
-        if newComponentClass then
-            local oldComponent = nil
-            for index, component in ipairs(self.components) do
-                if component:IsKindOf(oldComponentClass) then
-                    oldComponent = component
-                    tremove(self.components, index)
-                    break
-                end
-            end
 
+
+
+    local oldComponent = self:removeComp(oldComponentClass)
+    if not oldComponent and newComponentClass then
+        self:AddComponent(newComponentClass)
+    elseif oldComponent then
+        if newComponentClass then
+        else
+        end
+    end
+
+    if self:HasComponent(oldComponentClass) then
+        local oldComponent = self:removeComp(componentClass)
+
+        for index, component in ipairs(self.components) do
+            if component:IsKindOf(oldComponentClass) then
+                oldComponent = component
+                tremove(self.components, index)
+                break
+            end
+        end
+
+        if newComponentClass then
             local newComponent = context:GetComponent(newComponentClass)
             self:AddComponentInstance(newComponent)
 
             if self.onComponentReplaced then
-                self.onComponentReplaced(self,oldComponent,newComponent)
+                self.onComponentReplaced(self, oldComponent, newComponent)
             end
 
             context:ReleaseComponent(oldComponent)
@@ -189,6 +205,15 @@ function Entity:Destroy()
     self:RemoveAllComponents()
 
     context:ReleaseEntity(self)
+end
+
+function Entity:getComponentIndex(componentClass)
+    for index, component in ipairs(self.components) do
+        if component:IsKindOf(componentClass) then
+            return index
+        end
+    end
+    return -1
 end
 
 return Entity
