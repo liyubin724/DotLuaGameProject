@@ -8,7 +8,7 @@ local UIDCreator =
     end
 )
 
-function UIDCreator:NextUID()
+function UIDCreator:GetNextUID()
     self.uid = self.uid + 1
 
     return self.uid

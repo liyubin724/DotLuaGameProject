@@ -1,17 +1,19 @@
 local oop = require('DotLua/OOP/oop')
 
-local tinsert = table.insert
 local tremove = table.remove
-local tcopyto = table.copyto
+local tlength = table.length
+local tvalues = table.values
+local tkeys = table.keys
 
 local Entity =
     oop.class(
     'Entity',
     function(self)
-        self.isEnable = true
+        self.enable = true
+        self.context = nil
 
-        self.cachedComponents = {}
-        self.components = {}
+        self.cachedComponents = nil
+        self.componentDic = {}
 
         self.onComponentAddedEvent = oop.event()
         self.onComponentRemovedEvent = oop.event()
@@ -19,12 +21,20 @@ local Entity =
     end
 )
 
-function Entity:GetIsEnable()
-    return self.isEnable
+function Entity:GetEnable()
+    return self.enable
 end
 
-function Entity:SetIsEnable(isEnable)
-    self.isEnable = isEnable
+function Entity:SetEnable(enable)
+    self.enable = enable
+end
+
+function Entity:GetContext()
+    return self.context
+end
+
+function Entity:SetContext(context)
+    self.context = context
 end
 
 function Entity:GetComponentAddedEvent()
@@ -39,25 +49,30 @@ function Entity:GetComponentReplacedEvent()
     return self.onComponentReplacedEvent
 end
 
-function Entity:GetComponentTotalCount()
-    return #(self.components)
+function Entity:GetComponentCount()
+    return tlength(self.componentDic)
 end
 
 function Entity:GetAllComponents()
     if not self.cachedComponents then
-        tcopyto(self.components, self.cachedComponents)
+        self.cachedComponents = tvalues(self.componentDic)
     end
     return self.cachedComponents
 end
 
 function Entity:HasComponent(componentClass)
-    for _, component in ipairs(self.components) do
-        if component:IsKindOf(componentClass) then
-            return true
+    local component = self.componentDic[componentClass]
+    if not component then
+        for k, _ in pairs(self.componentDic) do
+            if k:IsKindOf(componentClass) then
+                return true
+            end
         end
-    end
 
-    return false
+        return false
+    else
+        return true
+    end
 end
 
 function Entity:HasComponents(componentClasses)
@@ -70,7 +85,7 @@ function Entity:HasComponents(componentClasses)
     return true
 end
 
-function Entity:HasAnyComponents(componentClasses)
+function Entity:HasAnyComponent(componentClasses)
     for _, component in ipairs(componentClasses) do
         if self:HasComponent(component) then
             return true
@@ -81,16 +96,22 @@ function Entity:HasAnyComponents(componentClasses)
 end
 
 function Entity:GetComponent(componentClass)
-    for _, component in ipairs(self.components) do
-        if component:IsKindOf(componentClass) then
-            return component
+    local component = self.componentDic[componentClass]
+    if not component then
+        for k, v in pairs(self.componentDic) do
+            if k:IsKindOf(componentClass) then
+                return v
+            end
         end
+
+        return nil
+    else
+        return component
     end
-    return nil
 end
 
 function Entity:AddComponent(componentClass)
-    if not self.isEnable then
+    if not self.enable then
         oop.Logger.Error('Entity', 'The enity has been disabled')
         return
     end
@@ -100,120 +121,104 @@ function Entity:AddComponent(componentClass)
         return
     end
 
-    local component = self.context:CreateComponent(componentClass)
-    tinsert(self.components, component)
-
     self.cachedComponents = nil
 
+    local component = self:addComp(componentClass)
     self.onComponentAddedEvent:Invoke(self, component)
 
     return component
 end
 
+function Entity:addComp(componentClass)
+    local component = self.context:CreateComponent(componentClass)
+    self.componentDic[componentClass] = component
+
+    return component
+end
+
 function Entity:RemoveComponent(componentClass)
-    if not self.isEnable then
+    if not self.enable then
         oop.Logger.Error('Entity', 'The enity has been disabled')
         return
     end
 
-    local index,component = self:getComponentAndIndex(componentClass)
-    if index > 0 then
-        tremove(self.components,index)
-        self.onComponentRemovedEvent:Invoke(self,component)
+    self.cachedComponents = nil
+
+    local component = self:removeComp(componentClass)
+    if component then
+        self.onComponentRemovedEvent:Invoke(self, component)
+
+        self.context:ReleaseComponent(component)
     end
 end
 
+function Entity:removeComp(componentClass)
+    local key = componentClass
+
+    local component = self.componentDic[key]
+    if not component then
+        for k, v in pairs(self.componentDic) do
+            if k:IsKindOf(componentClass) then
+                key = k
+                component = v
+                break
+            end
+        end
+    end
+
+    if not component then
+        self.componentDic[key] = nil
+    end
+    return component
+end
+
 function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
-    if not self.isEnable then
+    if not self.enable then
         oop.Logger.Error('Entity', 'The enity has been disabled')
         return
     end
 
-    local index, oldComponent = self:getComponentAndIndex(oldComponentClass)
-    if index > 0 then
-        if not newComponentClass then
-            tremove(self.components, index)
-            self.onComponentRemovedEvent:Invoke(self, oldComponent)
-        else
-
-        end
-    else
-        if newComponentClass then
-            local component = self.context:CreateComponent(newComponentClass)
-            tinsert(self.components, component)
-
-            self.cachedComponents = nil
-
-            self.onComponentAddedEvent:Invoke(self, component)
-        end
-    end
-
-
-    if oldComponentClass == newComponentClass then
-        return
-    end
-
-
+    self.cachedComponents = nil
 
     local oldComponent = self:removeComp(oldComponentClass)
-    if not oldComponent and newComponentClass then
-        self:AddComponent(newComponentClass)
-    elseif oldComponent then
+    if oldComponent then
         if newComponentClass then
+            local newComponent = self:addComp(newComponentClass)
+            self.onComponentReplacedEvent:Invoke(oldComponent, newComponent)
         else
-        end
-    end
-
-    if self:HasComponent(oldComponentClass) then
-        local oldComponent = self:removeComp(componentClass)
-
-        for index, component in ipairs(self.components) do
-            if component:IsKindOf(oldComponentClass) then
-                oldComponent = component
-                tremove(self.components, index)
-                break
-            end
+            self.onComponentRemovedEvent:Invoke(oldComponent)
         end
 
-        if newComponentClass then
-            local newComponent = context:GetComponent(newComponentClass)
-            self:AddComponentInstance(newComponent)
-
-            if self.onComponentReplaced then
-                self.onComponentReplaced(self, oldComponent, newComponent)
-            end
-
-            context:ReleaseComponent(oldComponent)
-        else
-            self:RemoveComponent(oldComponentClass)
-        end
+        self.context:ReleaseComponent(oldComponent)
     else
         if newComponentClass then
-            self:AddComponent(newComponentClass)
+            local newComponent = self:addComp(newComponentClass)
+            self.onComponentAddedEvent:Invoke(newComponent)
         end
     end
 end
 
 function Entity:RemoveAllComponents()
-    for i = #(self.components), 1, -1 do
-        tremove(self.components, i)
-        context:ReleaseComponent(self.components[i])
+    local keys = tkeys(self.componentDic)
+    for i = 1, #(keys), 1 do
+        local component = self.componentDic[keys[i]]
+        self.componentDic[keys[i]] = nil
+
+        self.context:ReleaseComponent(component)
     end
+end
+
+function Entity:OnRelease()
+    self.cachedComponents = nil
+    self.componentDic = {}
+
+    self.onComponentAddedEvent:Clear()
+    self.onComponentRemovedEvent:Clear()
+    self.onComponentReplacedEvent:Clear()
 end
 
 function Entity:Destroy()
-    self:RemoveAllComponents()
-
-    context:ReleaseEntity(self)
-end
-
-function Entity:getComponentIndex(componentClass)
-    for index, component in ipairs(self.components) do
-        if component:IsKindOf(componentClass) then
-            return index
-        end
-    end
-    return -1
+    self.context:ReleaseEntity(self)
 end
 
 return Entity

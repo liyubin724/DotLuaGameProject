@@ -38,6 +38,10 @@ end
 
 oop.Logger = require("DotLua/OOP/Logger")
 
+oop.info = oop.Logger.Info
+oop.warning = oop.Logger.Warning
+oop.error = oop.Logger.Error
+
 return oop
 
 -- local call = function(classTbl, ...)

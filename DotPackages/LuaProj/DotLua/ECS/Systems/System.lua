@@ -1,5 +1,7 @@
+local oop = require('DotLua/OOP/oop')
+
 local System =
-    class(
+    oop.class(
     'System',
     function(self)
     end
