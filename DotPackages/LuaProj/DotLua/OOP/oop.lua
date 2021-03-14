@@ -1,12 +1,12 @@
 require('DotLua/Utils/stringEx')
 require('DotLua/Utils/tableEx')
-
-local Logger = require("DotLua/OOP/Logger")
 local Enum = require('DotLua/OOP/Enum')
 local Delegate = require('DotLua/OOP/Delegate')
 local Event = require('DotLua/OOP/Event')
 
 local oop = {}
+
+oop.isDebug = _G.isDebug or true
 
 oop.assembly = {}
 oop.using = function(path)
@@ -36,141 +36,72 @@ oop.event = function()
     return Event()
 end
 
-oop.Logger = require("DotLua/OOP/Logger")
+oop.isclass = function(target)
+    if not target then
+        return false
+    end
 
+    local isClassFunc = target.IsClass
+    if not isClassFunc then
+        return false
+    end
+
+    return isClassFunc(target)
+end
+
+oop.isinstance = function(target)
+    if not target then
+        return false
+    end
+
+    local isInstanceFunc = target.IsInstance
+    if not isInstanceFunc then
+        return false
+    end
+
+    return isInstanceFunc(target)
+end
+
+oop.isclassorinstance = function(target)
+    return oop.isclass(target) and oop.isinstance(target)
+end
+
+oop.isenum = function(target)
+    if not target then
+        return false
+    end
+
+    local isEnumFunc = target.IsEnum
+    if not isEnumFunc then
+        return false
+    end
+
+    return isEnumFunc(target)
+end
+
+oop.isdelegate = function(target)
+    if not target then
+        return false
+    end
+
+    local isDelegateFunc = target.IsDelegate
+    if not isDelegateFunc then
+        return false
+    end
+    return isDelegateFunc(target)
+end
+
+oop.iskindof = function(target, baseClass)
+    if not oop.isclassorinstance(target) or not oop.isclass(baseClass) then
+        return false
+    end
+
+    return target:IsKindOf(baseClass)
+end
+
+oop.Logger = require('DotLua/OOP/Logger')
 oop.info = oop.Logger.Info
 oop.warning = oop.Logger.Warning
 oop.error = oop.Logger.Error
 
 return oop
-
--- local call = function(classTbl, ...)
---     if oop.isDebug then
---         if not classTbl:IsClass() then
---             error('it is not a class')
---             return nil
---         end
---     end
-
---     local obj = setmetatable({}, classTbl)
---     obj._type = oop.ObjectType.Instance
---     classTbl._ctor(obj, ...)
---     return obj
--- end
-
--- oop.class = function(name, ctor, base)
---     if oop.isDebug then
---         if type(name) ~= 'string' then
---             error('the name of the class should be str!')
---             return nil
---         end
---         if ctor == nil or type(ctor) ~= 'function' then
---             error('the ctor of the class should be a function')
---             return nil
---         end
---         if base ~= nil and type(base) ~= 'table' then
---             error('the base of the clas should be a class')
---             return nil
---         end
---     end
-
---     if not base then
---         base = oop.Object
---     end
-
---     local c = {}
---     c._base = base
---     c._typeName = name
---     c._type = oop.ObjectType.Class
---     c.__index = c
-
---     c._ctor = function(obj, ...)
---         if base then
---             base._ctor(obj, ...)
---         end
-
---         ctor(obj, ...)
---     end
-
---     local meta = {}
---     meta.__index = function(obj, k)
---         if k == 'new' then
---             return call
---         end
---         if base then
---             return base[k]
---         end
---         return nil
---     end
---     meta.__call = call
-
---     setmetatable(c, meta)
-
---     return c
--- end
-
--- local enumMeta = {
---     __index = function(t, k)
---         return t._values[k]
---     end,
---     __newindex = function(t, k, v)
---         error(string.format('add new kv(%s) in to the enum is not allowed', tostring(k)))
---     end,
---     __tostring = function(e)
---         local info = string.format('%s:{', e._typeName)
---         for k, v in pairs(e._values) do
---             info = info .. string.format('%s:%d,', k, v)
---         end
---         info = info .. '}'
---         return info
---     end
--- }
-
--- oop.enum = function(name, values)
---     local e = {}
---     e._typeName = name
---     e._type = oop.ObjectType.Enum
---     e._values = {}
-
---     local isValid = true
---     if oop.isDebug then
---         if values and type(values) == 'table' then
---             if tisarray(values) then
---                 isValid =
---                     tall(
---                     values,
---                     function(k, v)
---                         return v and type(v) == 'string'
---                     end
---                 )
---             else
---                 isValid =
---                     tall(
---                     values,
---                     function(k, v)
---                         return v and k and type(k) == 'string' and type(v) == 'number'
---                     end
---                 )
---             end
---         else
---             isValid = false
---         end
---     end
-
---     if isValid then
---         if tisarray(values) then
---             for i, v in ipairs(values) do
---                 e._values[v] = i
---             end
---         else
---             for k, v in pairs(values) do
---                 e._values[k] = v
---             end
---         end
---     else
---         error('')
---     end
-
---     setmetatable(e, enumMeta)
---     return e
--- end

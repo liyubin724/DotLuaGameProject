@@ -4,17 +4,20 @@ local System = oop.using('DotLua/ECS/Systems/System')
 local MessageSystem =
     oop.class(
     'MessageSystem',
-    function(self,dispatcher)
-        self.dispatcher = dispatcher
+    function(self)
     end,
     System
 )
+
+function MessageSystem:SetDispatcher(dispatcher)
+    self.dispatcher = dispatcher
+end
 
 function MessageSystem:DoInitialize()
     local eventNames = self:ListEventNames()
     if eventNames and #(eventNames) > 0 and self.dispatcher then
         for _, name in ipairs(eventNames) do
-            self.dispatcher:RegistListener(name,self,self.HandleEvent)
+            self.dispatcher:RegistListener(name, self, self.HandleEvent)
         end
     end
 end
@@ -23,14 +26,14 @@ function MessageSystem:ListEventNames()
     return nil
 end
 
-function MessageSystem:HandleEvent(eventName,...)
+function MessageSystem:HandleEvent(eventName, ...)
 end
 
 function MessageSystem:DoTeardown()
     local eventNames = self:ListEventNames()
     if eventNames and #(eventNames) > 0 and self.dispatcher then
         for _, name in ipairs(eventNames) do
-            self.dispatcher:UnregistListener(name,self,self.HandleEvent)
+            self.dispatcher:UnregistListener(name, self, self.HandleEvent)
         end
     end
 end

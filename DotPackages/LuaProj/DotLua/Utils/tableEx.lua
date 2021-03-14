@@ -98,6 +98,21 @@ function table.containsvalue(tbl, value)
     return false
 end
 
+function table.removevalue(tbl,value)
+    if type(tbl) ~= 'table' then
+        return false
+    end
+
+    for k, v in pairs(tbl) do
+        if v == value then
+            tbl[k] = nil
+            return true
+        end
+    end
+
+    return false
+end
+
 function table.foreach(tbl, func)
     if type(tbl) ~= 'table' then
         return

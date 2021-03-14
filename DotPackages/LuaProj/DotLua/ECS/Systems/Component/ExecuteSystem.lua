@@ -9,7 +9,7 @@ local ExecuteSystem =
     System
 )
 
-function ExecuteSystem:DoExecute(deltaTime,unscaleDeltaTime)
+function ExecuteSystem:DoExecute(deltaTime, unscaleDeltaTime)
 end
 
 return ExecuteSystem

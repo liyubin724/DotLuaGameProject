@@ -1,18 +1,18 @@
 local oop = require('DotLua/OOP/oop')
 
-local ExecuteSystem = oop.using("DotLua/ECS/Systems/Component/ExecuteSystem")
-local InitializeSystem = oop.using("DotLua/ECS/Systems/LifeCycle/InitializeSystem")
-local TeardownSystem = oop.using("DotLua/ECS/Systems/LifeCycle/TeardownSystem")
-local CleanupSystem = oop.using("DotLua/ECS/Systems/LifeCycle/CleanupSystem")
-local MessageSystem = oop.using("DotLua/ECS/Systems/LifeCycle/MessageSystem")
+local ExecuteSystem = oop.using('DotLua/ECS/Systems/Component/ExecuteSystem')
+local InitializeSystem = oop.using('DotLua/ECS/Systems/LifeCycle/InitializeSystem')
+local TeardownSystem = oop.using('DotLua/ECS/Systems/LifeCycle/TeardownSystem')
+local CleanupSystem = oop.using('DotLua/ECS/Systems/LifeCycle/CleanupSystem')
+local MessageSystem = oop.using('DotLua/ECS/Systems/LifeCycle/MessageSystem')
 
 local tinsert = table.insert
-local tremove = table.remove
+local tremovevalue = table.removevalue
 
 local CombinedSystem =
     oop.class(
     'CombinedSystem',
-    function(self,dispatcher)
+    function(self, dispatcher)
         self.dispatcher = dispatcher
 
         self.initializeSystems = {}
@@ -23,65 +23,45 @@ local CombinedSystem =
     end
 )
 
-function CombinedSystem:Add(systemClass)
-    if systemClass and systemClass.IsKindOf then
-        if systemClass:IsKindOf(ExecuteSystem) then
-            tinsert(self.executeSystems,systemClass())
-        elseif systemClass:IsKindOf(InitializeSystem) then
-            tinsert(self.initializeSystems,systemClass())
-        elseif systemClass:IsKindOf(TeardownSystem) then
-            tinsert(self.teardownSystems,systemClass())
-        elseif systemClass:IsKindOf(CleanupSystem) then
-            tinsert(self.cleanupSystems,systemClass())
-        elseif systemClass:IsKindOf(MessageSystem) then
-            tinsert(self.messSystems,systemClass())
+function CombinedSystem:LaunchSubsystem(system)
+    if oop.isinstance(system) then
+        if oop.iskindof(system, ExecuteSystem) then
+            tinsert(self.executeSystems, system)
+        elseif oop.iskindof(system, InitializeSystem) then
+            tinsert(self.initializeSystems, system)
+        elseif oop.iskindof(system, TeardownSystem) then
+            tinsert(self.teardownSystems, system)
+        elseif oop.iskindof(system, CleanupSystem) then
+            tinsert(self.cleanupSystems, system)
+        elseif oop.iskindof(system, MessageSystem) then
+            system:SetDispatcher(self.dispatcher)
+            tinsert(self.messSystems, system)
         else
-            oop.error("CombinedSystem","the \"systemClass\" is not a subclass of System")
+            oop.error('CombinedSystem', 'the "system" is not a subclass of System')
         end
     else
-        oop.error("CombinedSystem","the \"systemClass\" is not a class")
+        oop.error('CombinedSystem', 'the "system" is not a instance')
     end
 end
 
-function CombinedSystem:Remove(systemClass)
-    if systemClass and systemClass.IsKindOf then
-        if systemClass:IsKindOf(ExecuteSystem) then
-            self:removeSystem(self.executeSystems,systemClass)
-        elseif systemClass:IsKindOf(InitializeSystem) then
-            self:removeSystem(self.initializeSystems,systemClass)
-        elseif systemClass:IsKindOf(TeardownSystem) then
-            self:removeSystem(self.teardownSystems,systemClass)
-        elseif systemClass:IsKindOf(CleanupSystem) then
-            self:removeSystem(self.cleanupSystems,systemClass)
-        elseif systemClass:IsKindOf(MessageSystem) then
-            self:removeSystem(self.messSystems,systemClass)
+function CombinedSystem:AbortSubsystem(system)
+    if oop.isinstance(system) then
+        if oop.iskindof(system, ExecuteSystem) then
+            tremovevalue(self.executeSystems, system)
+        elseif oop.iskindof(system, InitializeSystem) then
+            tremovevalue(self.initializeSystems, system)
+        elseif oop.iskindof(system, TeardownSystem) then
+            tremovevalue(self.teardownSystems, system)
+        elseif oop.iskindof(system, CleanupSystem) then
+            tremovevalue(self.cleanupSystems, system)
+        elseif oop.iskindof(system, MessageSystem) then
+            tremovevalue(self.messSystems, system)
         else
-            oop.error("CombinedSystem","the \"systemClass\" is not a subclass of System")
+            oop.error('CombinedSystem', 'the "system" is not a subclass of System')
         end
     else
-        oop.error("CombinedSystem","the \"systemClass\" is not a class")
+        oop.error('CombinedSystem', 'the "system" is not a instance')
     end
-end
-
-function CombinedSystem:removeSystem(systems,systemClass)
-    for i, s in ipairs(systems) do
-        if s:GetClass() == systemClass then
-            tremove(systems,i)
-            break
-        end
-    end
-end
-
-function CombinedSystem:DoUpdate(deltaTime,unscaleDeltaTime)
-    self:DoExecute(deltaTime,unscaleDeltaTime)
-end
-
-function CombinedSystem:DoLateUpdate(deltaTime,unscaleDeltaTime)
-    self:DoCleanup()
-end
-
-function CombinedSystem:DoDestroy()
-    self:DoTeardown()
 end
 
 function CombinedSystem:DoInitialize()
@@ -94,9 +74,9 @@ function CombinedSystem:DoInitialize()
     end
 end
 
-function CombinedSystem:DoExecute()
+function CombinedSystem:DoExecute(deltaTime, unscaleDeltaTime)
     for _, system in ipairs(self.executeSystems) do
-        system:DoExecute()
+        system:DoExecute(deltaTime, unscaleDeltaTime)
     end
 end
 

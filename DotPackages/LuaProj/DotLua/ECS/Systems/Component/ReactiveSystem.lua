@@ -1,20 +1,21 @@
-local System = using('DotLua/ECS/Systems/System')
+local oop = require('DotLua/OOP/oop')
+local ExecuteSystem = oop.using('Dotlua/ECS/Systems/Component/ExecuteSystem')
 
 local ReactiveSystem =
-    class(
+    oop.class(
     'ReactiveSystem',
     function(self)
     end,
-    System
+    ExecuteSystem
 )
 
-function ReactiveSystem:Active()
+function ReactiveSystem:Filter(entity)
+    oop.error("ReactiveSystem","")
+    return false
 end
 
-function ReactiveSystem:Deactive()
-end
+function ReactiveSystem:DoExecute(deltaTime,unscaleDeltaTime)
 
-function ReactiveSystem:Clear()
 end
 
 return ReactiveSystem

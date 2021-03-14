@@ -34,7 +34,7 @@ function Object:GetType()
     return self._type
 end
 
-function Object:GetIsInstance()
+function Object:IsInstance()
     return self._isInstance
 end
 

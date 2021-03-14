@@ -1,6 +1,5 @@
 local oop = require('DotLua/OOP/oop')
 
-local tremove = table.remove
 local tlength = table.length
 local tvalues = table.values
 local tkeys = table.keys
@@ -23,10 +22,6 @@ local Entity =
 
 function Entity:GetEnable()
     return self.enable
-end
-
-function Entity:SetEnable(enable)
-    self.enable = enable
 end
 
 function Entity:GetContext()
@@ -130,7 +125,7 @@ function Entity:AddComponent(componentClass)
 end
 
 function Entity:addComp(componentClass)
-    local component = self.context:CreateComponent(componentClass)
+    local component = self.context:createComponent(componentClass)
     self.componentDic[componentClass] = component
 
     return component
@@ -148,7 +143,7 @@ function Entity:RemoveComponent(componentClass)
     if component then
         self.onComponentRemovedEvent:Invoke(self, component)
 
-        self.context:ReleaseComponent(component)
+        self.context:releaseComponent(component)
     end
 end
 
@@ -189,7 +184,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
             self.onComponentRemovedEvent:Invoke(oldComponent)
         end
 
-        self.context:ReleaseComponent(oldComponent)
+        self.context:releaseComponent(oldComponent)
     else
         if newComponentClass then
             local newComponent = self:addComp(newComponentClass)
@@ -204,21 +199,22 @@ function Entity:RemoveAllComponents()
         local component = self.componentDic[keys[i]]
         self.componentDic[keys[i]] = nil
 
-        self.context:ReleaseComponent(component)
+        self.context:releaseComponent(component)
     end
 end
 
+function Entity:OnGet()
+    self.enable = true
+end
+
 function Entity:OnRelease()
+    self.enable = false
     self.cachedComponents = nil
-    self.componentDic = {}
+    self:RemoveAllComponents()
 
     self.onComponentAddedEvent:Clear()
     self.onComponentRemovedEvent:Clear()
     self.onComponentReplacedEvent:Clear()
-end
-
-function Entity:Destroy()
-    self.context:ReleaseEntity(self)
 end
 
 return Entity

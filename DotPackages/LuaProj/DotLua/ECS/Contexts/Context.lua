@@ -1,13 +1,16 @@
 local oop = require('DotLua/OOP/oop')
 local Component = require('DotLua/ECS/Components/Component')
-local Group = require("DotLua/ECS/Groups/Group")
+local Group = require('DotLua/ECS/Groups/Group')
 local UIDComponent = oop.using('DotLua/ECS/Components/UIDComponent')
 local Entity = oop.using('DotLua/ECS/Entities/Entity')
 local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
 
 local select = select
 local tinsert = table.insert
+local tremove = table.remove
 local tcontainsvalue = table.containsvalue
+local tcopyto = table.copyto
+local tindexof = table.indexof
 
 local Context =
     oop.class(
@@ -19,6 +22,7 @@ local Context =
         self.componentClassPools = {}
         self.entityPool = ObjectPool(Entity)
 
+        self.entitiesCache = nil
         self.entities = {}
         self.groupDic = {}
 
@@ -30,9 +34,20 @@ function Context:GetName()
     return self.name
 end
 
+function Context:GetEntities()
+    if not self.entitiesCache then
+        tcopyto(self.entities, self.entitiesCache)
+    end
+
+    return self.entitiesCache
+end
+
+function Context:HasEntity(entity)
+    return tcontainsvalue(self.entities, entity)
+end
+
 function Context:CreateEntity(...)
     local entity = self.entityPool:Get()
-    entity:SetEnable(true)
     entity:SetContext(self)
 
     local addEvent = entity:GetComponentAddedEvent()
@@ -60,37 +75,47 @@ function Context:CreateEntity(...)
     end
 
     tinsert(self.entities, entity)
+
+    self.entitiesCache = nil
     return entity
 end
 
 function Context:ReleaseEntity(entity)
-    entity:RemoveAllComponents()
-    self.entityPool:Release(entity)
+    local index = tindexof(self.entities, entity)
+    if index > 0 then
+        self.entitiesCache = nil
+
+        tremove(self.entities, index)
+        self.entityPool:Release(entity)
+    end
 end
 
-function Context:HasEntity(entity)
-    return tcontainsvalue(self.entities, entity)
+function Context:ReleaseAllEntity()
+    self.entitiesCache = nil
+
+    for i = #self.entities, 1, -1 do
+        local entity = self.entities[i]
+        tremove(self.entities, i)
+        self.entityPool:Release(entity)
+    end
 end
 
-function Context:ReleaseAllEntities()
-end
+function Context:createComponent(componentClass)
+    if oop.isclass(componentClass) and oop.iskindof(componentClass, Component) then
+        local pool = self.componentClassPools[componentClass]
+        if not pool then
+            pool = ObjectPool(componentClass)
+            self.componentClassPools[componentClass] = pool
+        end
 
-function Context:GetEntities()
-end
-
-function Context:CreateComponent(componentClass)
-    local pool = self.componentClassPools[componentClass]
-    if not pool then
-        pool = ObjectPool(componentClass)
-        self.componentClassPools[componentClass] = pool
+        return pool:Get()
     end
 
-    return pool:Get()
+    return nil
 end
 
-function Context:ReleaseComponent(componentObj)
+function Context:releaseComponent(componentObj)
     local componentClass = componentObj:GetClass()
-
     local pool = self.componentClassPools[componentClass]
     if pool then
         pool:Release(componentObj)
@@ -107,21 +132,21 @@ function Context:CreateGroup(matcher)
     self.groupDic[matcher] = group
 
     for _, entity in ipairs(self.entities) do
-        
+        if matcher:IsMatch(entity) then
+        end
     end
+
+    self.onGroupCreated:Invoke(self,group)
     return group
 end
 
-function Context:Destroy()
+function Context:onEntityComponentAdded(entity, component)
 end
 
-function Context:onEntityComponentAdded(component)
+function Context:onEntityComponentRemoved(entity, component)
 end
 
-function Context:onEntityComponentRemoved(component)
-end
-
-function Context:onEntityComponentReplace(oldComponent, newComponent)
+function Context:onEntityComponentReplace(entity, oldComponent, newComponent)
 end
 
 return Context
