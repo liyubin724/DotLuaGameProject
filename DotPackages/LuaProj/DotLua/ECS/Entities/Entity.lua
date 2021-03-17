@@ -217,4 +217,8 @@ function Entity:OnRelease()
     self.onComponentReplacedEvent:Clear()
 end
 
+function Entity:Destroy()
+    self.context:ReleaseEntity(self)
+end
+
 return Entity
