@@ -4,6 +4,7 @@ local type = _G.type
 local tostring = _G.tostring
 local pairs = _G.pairs
 local ipairs = _G.ipairs
+local tinsert = table.insert
 
 function table.isempty(tbl)
     if tbl == nil or next(tbl) == nil then
@@ -51,11 +52,9 @@ function table.keys(tbl)
     if type(tbl) ~= 'table' then
         return t
     end
-
-    local n = 0
+    
     for key, _ in pairs(tbl) do
-        n = n + 1
-        t[n] = tostring(key)
+        tinsert(t,key)
     end
 
     return t
@@ -67,11 +66,8 @@ function table.values(tbl)
         return t
     end
 
-    local n = 0
-
     for _, value in pairs(tbl) do
-        n = n + 1
-        t[n] = value
+        tinsert(t, value)
     end
 
     return t
@@ -98,7 +94,7 @@ function table.containsvalue(tbl, value)
     return false
 end
 
-function table.removevalue(tbl,value)
+function table.removevalue(tbl, value)
     if type(tbl) ~= 'table' then
         return false
     end
@@ -162,7 +158,7 @@ function table.indexof(tbl, value)
     return -1
 end
 
-function table.key(tbl, value)
+function table.keyof(tbl, value)
     if type(tbl) ~= 'table' then
         return nil
     end
@@ -176,31 +172,32 @@ function table.key(tbl, value)
 end
 
 function table.copy(tbl)
+    local t = {}
     if type(tbl) ~= 'table' then
-        return nil
+        return t
     end
 
-    local rtbl = {}
-    for _, item in ipairs(tbl) do
-        table.insert(rtbl, item)
+    for k, v in pairs(tbl) do
+        t[k] = v
     end
-    return rtbl
+    return t
 end
 
 function table.copyto(sourceTbl, destinationTbl)
+    destinationTbl = destinationTbl or {}
     if type(sourceTbl) ~= 'table' then
         return
     end
 
-    destinationTbl = {}
-    for _, item in ipairs(sourceTbl) do
-        table.insert(destinationTbl, item)
+    for k, v in pairs(sourceTbl) do
+        destinationTbl[k] = v
     end
 end
 
 function table.clear(tbl)
-    for k, _ in pairs(tbl) do
-        tbl[k] = nil
+    local keys = table.keys(tbl)
+    for i = 1, #keys, 1 do
+        tbl[keys[i]]= nil
     end
 end
 

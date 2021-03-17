@@ -8,15 +8,18 @@ globals = {
     "table.containskey",
     "table.containsvalue",
     "table.removevalue",
+    "table.indexof",
     "table.foreach",
     "table.any",
     "table.all",
-    "table.key",
+    "table.keyof",
     "table.copy",
     "table.copyto",
     "table.clear",
     "table.tostring",
 }
 ignore = {
-    "212",
+    "212",--
+    "611",--line only contains whitespace
+    "614",--trailing whitespace in a comment
 }

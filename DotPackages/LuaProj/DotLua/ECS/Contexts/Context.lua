@@ -1,16 +1,15 @@
 local oop = require('DotLua/OOP/oop')
 local Component = require('DotLua/ECS/Components/Component')
 local Group = require('DotLua/ECS/Groups/Group')
-local UIDComponent = oop.using('DotLua/ECS/Components/UIDComponent')
 local Entity = oop.using('DotLua/ECS/Entities/Entity')
 local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
+local EntityEventType = oop.using('DotLua/ECS/Entities/EntityEventType')
 
 local select = select
 local tinsert = table.insert
 local tremove = table.remove
 local tcontainsvalue = table.containsvalue
-local tcopyto = table.copyto
-local tindexof = table.indexof
+local tvalues = table.values
 
 local Context =
     oop.class(
@@ -24,8 +23,9 @@ local Context =
 
         self.entitiesCache = nil
         self.entities = {}
-        self.groupDic = {}
 
+        self.groupDic = {}
+        self.groupPool = ObjectPool(Group)
         self.onGroupCreated = oop.event()
     end
 )
@@ -36,7 +36,7 @@ end
 
 function Context:GetEntities()
     if not self.entitiesCache then
-        tcopyto(self.entities, self.entitiesCache)
+        self.entitiesCache = tvalues(self.entities)
     end
 
     return self.entitiesCache
@@ -46,107 +46,146 @@ function Context:HasEntity(entity)
     return tcontainsvalue(self.entities, entity)
 end
 
+function Context:HasEntityByUID(uid)
+    return self.entities[uid] ~= nil
+end
+
+function Context:GetEntityByUID(uid)
+    return self.entities[uid]
+end
+
+function Context:GetEntityByUIDs(uids)
+    local result = {}
+    for _, uid in ipairs(uids) do
+        local entity = self.entities[uid]
+        if not entity then
+            oop.error('ECS', 'Context:GetEntityByUIDs->the entity of %d is not found')
+            return nil
+        end
+        tinsert(result, entity)
+    end
+    return result
+end
+
 function Context:CreateEntity(...)
     local entity = self.entityPool:Get()
-    entity:SetContext(self)
+    local uid = self.uidCreator:GetNextUID()
+    entity:SetData(self, uid)
 
-    local addEvent = entity:GetComponentAddedEvent()
-    local removeEvent = entity:GetComponentRemovedEvent()
-    local replaceEvent = entity:GetComponentReplacedEvent()
-
-    addEvent:Add(self, self.onEntityComponentAdded)
-    removeEvent:Add(self, self.onEntityComponentRemoved)
-    replaceEvent:Add(self, self.onEntityComponentReplace)
-
-    local uidComp = entity:AddComponent(UIDComponent)
-    uidComp:SetUID(self.uidCreator:GetNextUID())
+    local componentEvent = entity:GetComponentEvent()
+    componentEvent:Add(self, self.onEntityComponentChanged)
 
     if select('#', ...) > 0 then
         for i = 1, select('#', ...), 1 do
             local componentClass = select(i, ...)
-            if not componentClass or not componentClass.IsKindOf or not componentClass:IsKindOf(Component) then
-                oop.error('Context', 'the class is not a subclass of Component')
-                self:ReleaseEntity(entity)
-
-                return nil
+            if oop.isDebug then
+                if not oop.isclass(componentClass) or not oop.iskindof(componentClass, Component) then
+                    oop.error('ECS', 'Context:CreateEntity->the class is not a subclass of Component')
+                    self:ReleaseEntity(entity)
+                    return nil
+                end
             end
             entity:AddComponent(componentClass)
         end
     end
 
-    tinsert(self.entities, entity)
-
     self.entitiesCache = nil
+    self.entities[uid] = entity
+
+    for matcher, group in pairs(self.groupDic) do
+        if matcher.IsMatch(entity) then
+            group:TryAddEntity(entity)
+        end
+    end
+
     return entity
 end
 
 function Context:ReleaseEntity(entity)
-    local index = tindexof(self.entities, entity)
-    if index > 0 then
-        self.entitiesCache = nil
+    local uid = entity:GetUID()
+    if uid and uid > 0 then
+        self:ReleaseEntityByUID(uid)
+    end
+end
 
-        tremove(self.entities, index)
+function Context:ReleaseEntityByUID(uid)
+    local entity = self.entities[uid]
+    if entity then
+        self.entitiesCache = nil
+        self.entities[uid] = nil
+
+        for matcher, group in pairs(self.groupDic) do
+            if matcher.IsMatch(entity) then
+                group:TryRemoveEntity(entity)
+            end
+        end
+
         self.entityPool:Release(entity)
     end
 end
 
 function Context:ReleaseAllEntity()
-    self.entitiesCache = nil
-
-    for i = #self.entities, 1, -1 do
-        local entity = self.entities[i]
-        tremove(self.entities, i)
-        self.entityPool:Release(entity)
-    end
+    -- self.entitiesCache = nil
+    -- for i = #self.entities, 1, -1 do
+    --     local entity = self.entities[i]
+    --     tremove(self.entities, i)
+    --     self.entityPool:Release(entity)
+    -- end
 end
 
-function Context:createComponent(componentClass)
-    if oop.isclass(componentClass) and oop.iskindof(componentClass, Component) then
-        local pool = self.componentClassPools[componentClass]
-        if not pool then
-            pool = ObjectPool(componentClass)
-            self.componentClassPools[componentClass] = pool
-        end
-
-        return pool:Get()
-    end
-
-    return nil
-end
-
-function Context:releaseComponent(componentObj)
-    local componentClass = componentObj:GetClass()
-    local pool = self.componentClassPools[componentClass]
-    if pool then
-        pool:Release(componentObj)
-    end
-end
-
-function Context:CreateGroup(matcher)
+function Context:GetGroup(matcher)
     local group = self.groupDic[matcher]
     if group then
         return group
     end
 
-    group = Group(matcher)
-    self.groupDic[matcher] = group
-
+    group = self.groupPool:Get()
     for _, entity in ipairs(self.entities) do
         if matcher:IsMatch(entity) then
+            group:AddEntity(entity)
         end
     end
 
-    self.onGroupCreated:Invoke(self,group)
+    self.groupDic[matcher] = group
     return group
 end
 
-function Context:onEntityComponentAdded(entity, component)
+function Context:onEntityComponentChanged(entity, eventType, oldComponent, newComponent)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            if eventType == EntityEventType.ComponentModified then
+                group:ModifyEntity(entity)
+            else
+                group:TryAddEntity(entity)
+            end
+        else
+            group:RemoveEntity(entity)
+        end
+    end
 end
 
-function Context:onEntityComponentRemoved(entity, component)
+function Context:createComponent(componentClass)
+    if oop.isDebug then
+        if not oop.isclass(componentClass) or not oop.iskindof(componentClass, Component) then
+            oop.error('ECS', 'Context:createComponent->the param is not a class of component')
+            return nil
+        end
+    end
+    local pool = self.componentClassPools[componentClass]
+    if not pool then
+        pool = ObjectPool(componentClass)
+        self.componentClassPools[componentClass] = pool
+    end
+
+    return pool:Get()
 end
 
-function Context:onEntityComponentReplace(entity, oldComponent, newComponent)
+function Context:releaseComponent(component)
+    local componentClass = component:GetClass()
+    local pool = self.componentClassPools[componentClass]
+    if pool then
+        pool:Release(component)
+    end
 end
 
 return Context

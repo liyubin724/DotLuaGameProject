@@ -1,75 +1,52 @@
 local oop = require('DotLua/OOP/oop')
+local GroupEventType = oop.using('DotLua/ECS/Groups/GroupEventType')
 
-local tcontainsvalue = table.containsvalue
-local tinsert = table.insert
-local tindexof = table.indexof
-local tremove = talbe.remove
+local tlength = table.length
 
 local Group =
     oop.class(
     'Group',
-    function(self, matcher)
-        self.matcher = matcher
-
+    function(self)
         self.entities = {}
 
-        self.onEntityAdded = oop.event()
-        self.onEntityRemoved = oop.event()
-        self.onEntityUpdated = oop.event()
+        self.onEntityEvent = oop.event()
     end
 )
 
-function Group:GetMatcher()
-    return self.matcher
-end
-
-function Group:GetEntityAddedEvent()
-    return self.onEntityAdded
-end
-
-function Group:GetEntityRemovedEvent()
-    return self.onEntityRemoved
-end
-
-function Group:GetEntityUpdatedEvent()
-    return self.onEntityUpdated
+function Group:GetEntityEvent()
+    return self.onEntityEvent
 end
 
 function Group:GetEntityCount()
-    return #(self.entities)
+    return tlength(self.entities)
 end
 
 function Group:HasEntity(entity)
-    return tcontainsvalue(self.entities, entity)
+    local uid = entity:GetUID()
+    return self.entities[uid] ~= nil
 end
 
-function Group:AddEntity(entity)
-    if self.matcher:IsMatch(entity) then
-        tinsert(self.entities, entity)
+function Group:TryAddEntity(entity)
+    local uid = entity:GetUID()
+    if not self.entities[uid] then
+        self.entities[uid] = entity
 
-        self.onEntityAdded:Invoke(self, entity)
+        self.onEntityEvent:Invoke(GroupEventType.EntityAdded, entity)
     end
 end
 
-function Group:RemoveEntity(entity)
+function Group:TryRemoveEntity(entity)
+    local uid = entity:GetUID()
+    if self.entities[uid] then
+        self.entities[uid] = nil
+
+        self.onEntityEvent:Invoke(GroupEventType.EntityRemoved, entity)
+    end
+end
+
+function Group:ModifyEntity(entity)
     if self:HasEntity(entity) then
-        local index = tindexof(self.entities, entity)
-
-        tremove(self.entities, index)
-
-        self.onEntityRemoved:Invoke(self, entity)
-    end
-end
-
-function Group:UpdateEntity(entity,oldComponent,newComponent)
-    local isMatch = self.matcher:IsMatch(entity)
-    local hasEntity = self:HasEntity(entity)
-    if isMatch and hasEntity then
-
-    elseif isMatch and not hasEntity then
-
-    elseif not isMatch and hasEntity then
-        
+        self.onEntityEvent:Invoke(GroupEventType.EntityModified, entity)
     end
 end
 
