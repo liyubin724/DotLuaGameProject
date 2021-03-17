@@ -1,3 +1,6 @@
+local select = select
+local sformat = string.format
+
 local Logger = {}
 
 Logger.isInfoEnable = true
@@ -17,7 +20,7 @@ end
 local getMessage = function(message, ...)
     local mess = message
     if select("#",...) > 0 then
-        mess = string.format(mess, ...)
+        mess = sformat(mess, ...)
     end
 
     return mess
@@ -36,19 +39,19 @@ function Logger.SetFunc(infoFunc, warningFunc, errorFunc)
 end
 
 function Logger.Info(tag, message, ...)
-    if Logger.isInfoEnable and not Logger.infoFunc then
+    if Logger.isInfoEnable and Logger.info then
         Logger.info(tag, getMessage(message, ...))
     end
 end
 
 function Logger.Warning(tag, message, ...)
-    if Logger.isWarningEnable and not Logger.warning then
+    if Logger.isWarningEnable and Logger.warning then
         Logger.warning(tag, getMessage(message, ...))
     end
 end
 
 function Logger.Error(tag, message, ...)
-    if Logger.isErrorEnable and not Logger.error then
+    if Logger.isErrorEnable and Logger.error then
         Logger.error(tag, getMessage(message, ...))
     end
 end
