@@ -9,12 +9,22 @@ local oop = {}
 oop.isDebug = _G.isDebug or true
 
 oop.assembly = {}
+oop.classes = {}
 oop.using = function(path)
     local c = oop.assembly[path]
     if not c then
         c = require(path)
 
         oop.assembly[path] = c
+
+        local className = oop.getclassname(c)
+        if className then
+            if oop.classes[className] then
+                oop.classes[className] = c
+            else
+                oop.error('oop', 'the name of the class is repeated.clssname = ' .. className)
+            end
+        end
     end
     return c
 end
@@ -23,6 +33,29 @@ oop.ObjectType = oop.using('DotLua/OOP/ObjectType')
 oop.Object = oop.using('DotLua/OOP/Object')
 
 oop.class = require('DotLua/OOP/class')
+
+oop.getclassname = function(target)
+    if oop.isclassorinstance(target) then
+        return target:GetClassName()
+    end
+
+    return nil
+end
+
+oop.getclassbyname = function(className)
+    if type(className) ~= 'string' then
+        oop.error('oop', 'the param of className should be a string')
+        return nil
+    end
+
+    local c = oop.classes[className]
+    if c then
+        return c
+    else
+        oop.error('oop', string.format('the class which named (%s) is not founded', className))
+        return nil
+    end
+end
 
 oop.enum = function(name, values)
     return Enum(name, values)
