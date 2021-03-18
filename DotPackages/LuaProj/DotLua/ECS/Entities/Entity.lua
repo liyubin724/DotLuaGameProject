@@ -17,8 +17,10 @@ local Entity =
         self.cachedComponents = nil
         self.componentDic = {}
 
-        --params:EntityEventType,preComponent,newComponent
-        self.onComponentEvent = oop.event()
+        self.onComponentAddedEvent = oop.event()
+        self.onComponentRemovedEvent = oop.event()
+        self.onComponentReplacedEvent = oop.event()
+        self.onComponentModifiedEvent = oop.event()
     end
 )
 
@@ -34,13 +36,44 @@ function Entity:GetUID()
     return self.uid
 end
 
-function Entity:SetData(context,uid)
+function Entity:SetData(context, uid)
     self.context = context
     self.uid = uid
 end
 
-function Entity:GetComponentEvent()
-    return self.onComponentEvent
+function Entity:BindEvent(eventType, receiver, func)
+    if eventType == EntityEventType.ComponentAdded then
+        self.onComponentAddedEvent:Add(receiver, func)
+    elseif eventType == EntityEventType.ComponentRemoved then
+        self.onComponentRemovedEvent:Add(receiver, func)
+    elseif eventType == EntityEventType.ComponentReplaced then
+        self.onComponentReplacedEvent:Add(receiver, func)
+    elseif eventType == EntityEventType.ComponentModified then
+        self.onComponentModifiedEvent:Add(receiver, func)
+    else
+        oop.error('Ecs', 'Entity:BindEvent->eventType is invalid!')
+    end
+end
+
+function Entity:UnbindEvent(eventType, receiver, func)
+    if eventType == EntityEventType.ComponentAdded then
+        self.onComponentAddedEvent:Remove(receiver, func)
+    elseif eventType == EntityEventType.ComponentRemoved then
+        self.onComponentRemovedEvent:Remove(receiver, func)
+    elseif eventType == EntityEventType.ComponentReplaced then
+        self.onComponentReplacedEvent:Remove(receiver, func)
+    elseif eventType == EntityEventType.ComponentModified then
+        self.onComponentModifiedEvent:Remove(receiver, func)
+    else
+        oop.error('Ecs', 'Entity:UnbindEvent->eventType is invalid!')
+    end
+end
+
+function Entity:UnbindAllEvent()
+    self.onComponentAddedEvent:Clear()
+    self.onComponentRemovedEvent:Clear()
+    self.onComponentReplacedEvent:Clear()
+    self.onComponentModifiedEvent:Clear()
 end
 
 function Entity:GetComponentCount()
@@ -130,7 +163,7 @@ function Entity:AddComponent(componentClass)
 
     self.cachedComponents = nil
     local component = self:addComp(componentClass)
-    self.onComponentEvent:Invoke(self, EntityEventType.ComponentAdded, component, nil)
+    self.onComponentAddedEvent:Invoke(self, component)
 
     return component
 end
@@ -151,7 +184,7 @@ function Entity:RemoveComponent(componentClass)
     self.cachedComponents = nil
     local component = self:removeComp(componentClass)
     if component then
-        self.onComponentEvent:Invoke(self, EntityEventType.ComponentRemoved, component, nil)
+        self.onComponentRemovedEvent:Invoke(self, component)
         self.context:releaseComponent(component)
     end
 end
@@ -188,12 +221,12 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
         if newComponentClass then
             local newComponent = self:addComp(newComponentClass)
             if newComponentClass then
-                self.onComponentEvent:Invoke(self, EntityEventType.ComponentReplaced, oldComponent, newComponent)
+                self.onComponentReplacedEvent:Invoke(self, oldComponent, newComponent)
             else
                 oop.error('ECS', 'Entity:ReplaceComponent->Added Failed')
             end
         else
-            self.onComponentEvent:Invoke(self, EntityEventType.ComponentRemoved, oldComponent, nil)
+            self.onComponentRemovedEvent:Invoke(self, oldComponent)
         end
 
         self.context:releaseComponent(oldComponent)
@@ -201,7 +234,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
         if newComponentClass then
             local newComponent = self:addComp(newComponentClass)
             if newComponent then
-                self.onComponentEvent:Invoke(self, EntityEventType.ComponentAdded, newComponent, nil)
+                self.onComponentAddedEvent:Invoke(self, newComponent)
             else
                 oop.error('ECS', 'Entity:ReplaceComponent->Added Failed')
             end
@@ -209,7 +242,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
     end
 end
 
-function Entity:ModifyComponent(componentClass, modifyDelegate)
+function Entity:ModifyComponent(componentClass, modifyDelegate, modifyTag)
     if not self.enable then
         oop.error('ECS', 'Entity:ModifyComponent->The enity has been disabled')
         return
@@ -218,28 +251,19 @@ function Entity:ModifyComponent(componentClass, modifyDelegate)
     local component = self:GetComponent(componentClass)
     if not component then
         modifyDelegate:ActionInvoke(self, component)
-        self.onComponentEvent:Invoke(self, EntityEventType.ComponentModified, component, nil)
+        self.onComponentModifiedEvent:Invoke(self, component, modifyTag)
     else
         oop.error('ECS', 'Entity:ModifyComponent->The component is not found')
     end
 end
 
-function Entity:MarkComponentModified(component)
+function Entity:MarkComponentModified(component, modifyTag)
     if not self.enable then
         oop.error('ECS', 'Entity:ModifyComponent->The enity has been disabled')
         return
     end
     if component then
-        self.onComponentEvent:Invoke(self, EntityEventType.ComponentModified, component, nil)
-    end
-end
-
-function Entity:removeAllComponents()
-    local keys = tkeys(self.componentDic)
-    for i = 1, #(keys), 1 do
-        local component = self.componentDic[keys[i]]
-        self.componentDic[keys[i]] = nil
-        self.context:releaseComponent(component)
+        self.onComponentModifiedEvent:Invoke(self, component, modifyTag)
     end
 end
 
@@ -252,9 +276,16 @@ function Entity:OnRelease()
     self.uid = -1
     self.context = nil
     self.cachedComponents = nil
-    self:removeAllComponents()
 
-    self.onComponentEvent:Clear()
+    self:UnbindAllEvent()
+
+    local keys = tkeys(self.componentDic)
+    for i = 1, #(keys), 1 do
+        local component = self.componentDic[keys[i]]
+        self.componentDic[keys[i]] = nil
+
+        self.context:releaseComponent(component)
+    end
 end
 
 function Entity:Destroy()

@@ -9,7 +9,9 @@ local Group =
     function(self)
         self.entities = {}
 
-        self.onEntityEvent = oop.event()
+        self.onEntityAdded = oop.event()
+        self.onEntityRemoved = oop.event()
+        self.onEntityModified = oop.event()
     end
 )
 

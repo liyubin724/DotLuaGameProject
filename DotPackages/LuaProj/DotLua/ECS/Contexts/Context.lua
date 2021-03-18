@@ -3,9 +3,8 @@ local Component = require('DotLua/ECS/Components/Component')
 local Group = require('DotLua/ECS/Groups/Group')
 local Entity = oop.using('DotLua/ECS/Entities/Entity')
 local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
-local EntityEventType = oop.using('DotLua/ECS/Entities/EntityEventType')
+local ContextEntityEvent = oop.using('DotLua/ECS/Contexts/ContextEntityEvent')
 
-local select = select
 local tinsert = table.insert
 local tcontainsvalue = table.containsvalue
 local tvalues = table.values
@@ -69,9 +68,6 @@ function Context:CreateEntity(uid, componentClasses)
     local entity = self.entityPool:Get()
     entity:SetData(self, uid)
 
-    local componentEvent = entity:GetComponentEvent()
-    componentEvent:Add(self, self.onEntityComponentChanged)
-
     if componentClasses and #(componentClasses) > 0 then
         for _, componentClass in ipairs(componentClasses) do
             if oop.isDebug then
@@ -88,11 +84,12 @@ function Context:CreateEntity(uid, componentClasses)
     self.entitiesCache = nil
     self.entities[uid] = entity
 
-    for matcher, group in pairs(self.groupDic) do
-        if matcher.IsMatch(entity) then
-            group:TryAddEntity(entity)
-        end
-    end
+    entity:BindEvent(EntityEventType.ComponentAdded, self.onEntityComponentAdded)
+    entity:BindEvent(EntityEventType.ComponentRemoved, self.onEntityComponentRemoved)
+    entity:BindEvent(EntityEventType.ComponentReplaced, self.onEntityComponentReplaced)
+    entity:BindEvent(EntityEventType.ComponentModified, self.onEntityComponentModified)
+
+    self:onEntityCreated(entity)
 
     return entity
 end
@@ -110,11 +107,7 @@ function Context:ReleaseEntityByUID(uid)
         self.entitiesCache = nil
         self.entities[uid] = nil
 
-        for matcher, group in pairs(self.groupDic) do
-            if matcher.IsMatch(entity) then
-                group:TryRemoveEntity(entity)
-            end
-        end
+        self:onEntityReleased(entity)
 
         self.entityPool:Release(entity)
     end
@@ -136,28 +129,33 @@ function Context:GetGroup(matcher)
     end
 
     group = self.groupPool:Get()
-    for _, entity in ipairs(self.entities) do
-        if matcher:IsMatch(entity) then
-            group:AddEntity(entity)
-        end
-    end
+    --TODO:对于新创建的Group，进行分类Entity如何处理，是否需要通知Group的变化
+    -- for _, entity in ipairs(self.entities) do
+    --     if matcher:IsMatch(entity) then
+    --         group:AddEntity(entity)
+    --     end
+    -- end
 
     self.groupDic[matcher] = group
     return group
 end
 
-function Context:onEntityComponentChanged(entity, eventType, oldComponent, newComponent)
-    for matcher, group in pairs(self.groupDic) do
-        if matcher:IsMatch(entity) then
-            if eventType == EntityEventType.ComponentModified then
-                group:ModifyEntity(entity)
-            else
-                group:TryAddEntity(entity)
-            end
-        else
-            group:RemoveEntity(entity)
-        end
-    end
+function Context:onEntityCreated(entity)
+end
+
+function Context:onEntityReleased(entity)
+end
+
+function Context:onEntityComponentAdded(entity, addedComponent)
+end
+
+function Context:onEntityComponentRemoved(entity, removedComponent)
+end
+
+function Context:onEntityComponentReplaced(entity, oldComponent, newComponent)
+end
+
+function Context:onEntityComponentModified(entity, modifyComponent, modifyTag)
 end
 
 function Context:createComponent(componentClass)

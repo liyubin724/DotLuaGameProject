@@ -10,6 +10,10 @@ oop.isDebug = _G.isDebug or true
 
 oop.assembly = {}
 oop.classes = {}
+
+---comment
+---@param path modname
+---@return any
 oop.using = function(path)
     local c = oop.assembly[path]
     if not c then

@@ -6,8 +6,7 @@ local GroupEventType =
     {
         EntityAdded = 1,
         EntityRemoved = 2,
-        EntityAddedOrRemoved = 3,
-        EntityModified = 4,
+        EntityModified = 3
     }
 )
 return GroupEventType
