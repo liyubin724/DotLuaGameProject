@@ -4,12 +4,13 @@ local ContextEntityEvent =
     oop.enum(
     'ContextEntityEvent',
     {
-        Created = 1,
-        Released = 2,
+        EntityCreated = 1,
+        EntityReleased = 2,
         ComponentAdded = 1,
         ComponentRemoved = 2,
         ComponentReplaced = 3,
-        ComponentModified = 4
+        ComponentModified = 4,
+        GroupCreated = 5
     }
 )
 

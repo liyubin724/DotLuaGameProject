@@ -1,12 +1,12 @@
 local oop = require('DotLua/OOP/oop')
 
-local GroupEventType =
+local GroupEvent =
     oop.enum(
-    'GroupEventType',
+    'GroupEvent',
     {
         EntityAdded = 1,
         EntityRemoved = 2,
         EntityModified = 3
     }
 )
-return GroupEventType
+return GroupEvent

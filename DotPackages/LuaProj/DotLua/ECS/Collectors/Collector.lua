@@ -1,16 +1,16 @@
 local oop = require('DotLua/OOP/oop')
+local GroupEvent = oop.using('DotLua/ECS/Groups/GroupEvent')
 
 local tinsert = table.insert
-local tcontainsvalue = table.containsvalue
 local tclear = table.clear
 
 local Collector =
     oop.class(
     'Collector',
-    function(self, group, groupEventType)
+    function(self, group, groupEvents)
         self.collectedEntities = {}
         self.group = group
-        self.groupEventType = groupEventType
+        self.groupEvents = groupEvents
     end
 )
 
@@ -27,23 +27,47 @@ function Collector:ClearCollectedEntities()
 end
 
 function Collector:Activate()
-    if self.group then
-        local groupEvent = self.group:GetEntityEvent()
-        groupEvent:Add(self, self.onGroupChanged)
+    if self.groupEvents and #self.groupEvents > 0 and self.group then
+        local addedFunc = nil
+        local removedFunc = nil
+        local modifiedFunc = nil
+
+        for _, eventType in ipairs(self.groupEvents) do
+            if eventType == GroupEvent.EntityRemoved then
+                addedFunc = self.onGroupChanged
+            elseif eventType == GroupEvent.EntityAdded then
+                removedFunc = self.onGroupChanged
+            elseif eventType == GroupEvent.EntityModified then
+                modifiedFunc = self.onGroupChanged
+            end
+        end
+
+        self.group:BindEvent(self, addedFunc, removedFunc, modifiedFunc)
     end
 end
 
 function Collector:Deactivate()
-    if self.group then
-        local groupEvent = self.group:GetEntityEvent()
-        groupEvent:Remove(self, self.onGroupChanged)
+    if self.groupEvents and #self.groupEvents > 0 and self.group then
+        local addedFunc = nil
+        local removedFunc = nil
+        local modifiedFunc = nil
+
+        for _, eventType in ipairs(self.groupEvents) do
+            if eventType == GroupEvent.EntityRemoved then
+                addedFunc = self.onGroupChanged
+            elseif eventType == GroupEvent.EntityAdded then
+                removedFunc = self.onGroupChanged
+            elseif eventType == GroupEvent.EntityModified then
+                modifiedFunc = self.onGroupChanged
+            end
+        end
+
+        self.group:UnbindEvent(self, addedFunc, removedFunc, modifiedFunc)
     end
 end
 
-function Collector:onGroupChanged(groupEventType, entity)
-    if groupEventType == self.groupEventType and not tcontainsvalue(entity) then
-        tinsert(self.collectedEntities, entity)
-    end
+function Collector:onGroupChanged(entity, _, _, _)
+    tinsert(self.collectedEntities, entity)
 end
 
 return Collector

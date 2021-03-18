@@ -1,5 +1,4 @@
 local oop = require('DotLua/OOP/oop')
-local EntityEventType = oop.using('DotLua/ECS/Entities/EntityEventType')
 
 local tlength = table.length
 local tvalues = table.values
@@ -8,8 +7,9 @@ local tkeys = table.keys
 local Entity =
     oop.class(
     'Entity',
-    function(self)
+    function(self, uid, context)
         self.enable = true
+        self.uid = uid
         self.context = nil
 
         self.uid = -1
@@ -24,8 +24,27 @@ local Entity =
     end
 )
 
-function Entity:GetEnable()
-    return self.enable
+function Entity:Init(context, uid)
+    self.uid = uid
+    self.context = context
+end
+
+function Entity:BindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifiedFunc)
+    if addedFunc then
+        self.onComponentAddedEvent:Add(receiver, addedFunc)
+    end
+
+    if removedFunc then
+        self.onComponentRemovedEvent:Add(receiver, removedFunc)
+    end
+
+    if replacedFunc then
+        self.onComponentReplacedEvent:Add(receiver, replacedFunc)
+    end
+
+    if modifiedFunc then
+        self.onComponentModifiedEvent:Add(receiver, modifiedFunc)
+    end
 end
 
 function Entity:GetContext()
@@ -34,46 +53,6 @@ end
 
 function Entity:GetUID()
     return self.uid
-end
-
-function Entity:SetData(context, uid)
-    self.context = context
-    self.uid = uid
-end
-
-function Entity:BindEvent(eventType, receiver, func)
-    if eventType == EntityEventType.ComponentAdded then
-        self.onComponentAddedEvent:Add(receiver, func)
-    elseif eventType == EntityEventType.ComponentRemoved then
-        self.onComponentRemovedEvent:Add(receiver, func)
-    elseif eventType == EntityEventType.ComponentReplaced then
-        self.onComponentReplacedEvent:Add(receiver, func)
-    elseif eventType == EntityEventType.ComponentModified then
-        self.onComponentModifiedEvent:Add(receiver, func)
-    else
-        oop.error('Ecs', 'Entity:BindEvent->eventType is invalid!')
-    end
-end
-
-function Entity:UnbindEvent(eventType, receiver, func)
-    if eventType == EntityEventType.ComponentAdded then
-        self.onComponentAddedEvent:Remove(receiver, func)
-    elseif eventType == EntityEventType.ComponentRemoved then
-        self.onComponentRemovedEvent:Remove(receiver, func)
-    elseif eventType == EntityEventType.ComponentReplaced then
-        self.onComponentReplacedEvent:Remove(receiver, func)
-    elseif eventType == EntityEventType.ComponentModified then
-        self.onComponentModifiedEvent:Remove(receiver, func)
-    else
-        oop.error('Ecs', 'Entity:UnbindEvent->eventType is invalid!')
-    end
-end
-
-function Entity:UnbindAllEvent()
-    self.onComponentAddedEvent:Clear()
-    self.onComponentRemovedEvent:Clear()
-    self.onComponentReplacedEvent:Clear()
-    self.onComponentModifiedEvent:Clear()
 end
 
 function Entity:GetComponentCount()
@@ -277,7 +256,10 @@ function Entity:OnRelease()
     self.context = nil
     self.cachedComponents = nil
 
-    self:UnbindAllEvent()
+    self.onComponentAddedEvent:Clear()
+    self.onComponentRemovedEvent:Clear()
+    self.onComponentReplacedEvent:Clear()
+    self.onComponentModifiedEvent:Clear()
 
     local keys = tkeys(self.componentDic)
     for i = 1, #(keys), 1 do

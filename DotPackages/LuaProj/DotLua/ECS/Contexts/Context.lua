@@ -19,7 +19,7 @@ local Context =
         self.entityPool = ObjectPool(Entity)
 
         self.entitiesCache = nil
-        self.entities = {}
+        self.entitieDic = {}
 
         self.groupDic = {}
         self.groupPool = ObjectPool(Group)
@@ -33,28 +33,28 @@ end
 
 function Context:GetEntities()
     if not self.entitiesCache then
-        self.entitiesCache = tvalues(self.entities)
+        self.entitiesCache = tvalues(self.entitieDic)
     end
 
     return self.entitiesCache
 end
 
 function Context:HasEntity(entity)
-    return tcontainsvalue(self.entities, entity)
+    return tcontainsvalue(self.entitieDic, entity)
 end
 
 function Context:HasEntityByUID(uid)
-    return self.entities[uid] ~= nil
+    return self.entitieDic[uid] ~= nil
 end
 
 function Context:GetEntityByUID(uid)
-    return self.entities[uid]
+    return self.entitieDic[uid]
 end
 
 function Context:GetEntityByUIDs(uids)
     local result = {}
     for _, uid in ipairs(uids) do
-        local entity = self.entities[uid]
+        local entity = self.entitieDic[uid]
         if not entity then
             oop.error('ECS', 'Context:GetEntityByUIDs->the entity of %d is not found')
             return nil
@@ -66,7 +66,6 @@ end
 
 function Context:CreateEntity(uid, componentClasses)
     local entity = self.entityPool:Get()
-    entity:SetData(self, uid)
 
     if componentClasses and #(componentClasses) > 0 then
         for _, componentClass in ipairs(componentClasses) do
@@ -81,13 +80,17 @@ function Context:CreateEntity(uid, componentClasses)
         end
     end
 
-    self.entitiesCache = nil
-    self.entities[uid] = entity
+    entity:Init(self, uid)
+    entity:BindEvent(
+        self,
+        self.onEntityComponentAdded,
+        self.onEntityComponentRemoved,
+        self.onEntityComponentReplaced,
+        self.onEntityComponentModified
+    )
 
-    entity:BindEvent(EntityEventType.ComponentAdded, self.onEntityComponentAdded)
-    entity:BindEvent(EntityEventType.ComponentRemoved, self.onEntityComponentRemoved)
-    entity:BindEvent(EntityEventType.ComponentReplaced, self.onEntityComponentReplaced)
-    entity:BindEvent(EntityEventType.ComponentModified, self.onEntityComponentModified)
+    self.entitiesCache = nil
+    self.entitieDic[uid] = entity
 
     self:onEntityCreated(entity)
 
@@ -105,7 +108,7 @@ function Context:ReleaseEntityByUID(uid)
     local entity = self.entities[uid]
     if entity then
         self.entitiesCache = nil
-        self.entities[uid] = nil
+        self.entitieDic[uid] = nil
 
         self:onEntityReleased(entity)
 
@@ -122,40 +125,84 @@ function Context:ReleaseAllEntity()
     -- end
 end
 
-function Context:GetGroup(matcher)
+function Context:CreateGroup(matcher)
     local group = self.groupDic[matcher]
+    group:RetainRef()
+
     if group then
         return group
     end
 
     group = self.groupPool:Get()
-    --TODO:对于新创建的Group，进行分类Entity如何处理，是否需要通知Group的变化
-    -- for _, entity in ipairs(self.entities) do
-    --     if matcher:IsMatch(entity) then
-    --         group:AddEntity(entity)
-    --     end
-    -- end
+    group:SetMatcher(matcher)
+
+    for _, entity in pairs(self.entitieDic) do
+        if matcher:IsMatch(entity) then
+            group:AddEntity(entity, ContextEntityEvent.GroupCreated)
+        end
+    end
 
     self.groupDic[matcher] = group
     return group
 end
 
+function Context:ReleaseGroup(group)
+end
+
 function Context:onEntityCreated(entity)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEntityEvent.EntityCreated)
+        end
+    end
 end
 
 function Context:onEntityReleased(entity)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryRemoveEntity(entity, ContextEntityEvent.EntityReleased)
+        end
+    end
 end
 
 function Context:onEntityComponentAdded(entity, addedComponent)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEntityEvent.ComponentAdded, addedComponent)
+        else
+            group:TryRemoveEntity(entity, ContextEntityEvent.ComponentAdded, addedComponent)
+        end
+    end
 end
 
 function Context:onEntityComponentRemoved(entity, removedComponent)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEntityEvent.ComponentRemoved, removedComponent)
+        else
+            group:TryRemoveEntity(entity, ContextEntityEvent.ComponentRemoved, removedComponent)
+        end
+    end
 end
 
 function Context:onEntityComponentReplaced(entity, oldComponent, newComponent)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEntityEvent.ComponentReplaced, oldComponent, newComponent)
+        else
+            group:TryRemoveEntity(entity, ContextEntityEvent.ComponentReplaced, oldComponent, newComponent)
+        end
+    end
 end
 
 function Context:onEntityComponentModified(entity, modifyComponent, modifyTag)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEntityEvent.ComponentModified, modifyComponent, modifyTag)
+        else
+            group:TryRemoveEntity(entity, ContextEntityEvent.ComponentModified, modifyComponent, modifyTag)
+        end
+    end
 end
 
 function Context:createComponent(componentClass)
