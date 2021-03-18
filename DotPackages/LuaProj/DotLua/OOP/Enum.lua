@@ -4,7 +4,6 @@ local class = require('DotLua/OOP/class')
 local tisarray = table.isarray
 local tkeys = table.keys
 local tvalues = table.values
-local type = type
 
 local Enum =
     class(
@@ -61,10 +60,6 @@ function Enum:GetValues()
 end
 
 function Enum:GetNameByValue(value)
-    if type(value) ~= 'number' then
-        return nil
-    end
-
     for k, v in pairs(self._values) do
         if v == value then
             return k

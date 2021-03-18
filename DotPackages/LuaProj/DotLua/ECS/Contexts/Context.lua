@@ -7,16 +7,14 @@ local EntityEventType = oop.using('DotLua/ECS/Entities/EntityEventType')
 
 local select = select
 local tinsert = table.insert
-local tremove = table.remove
 local tcontainsvalue = table.containsvalue
 local tvalues = table.values
 
 local Context =
     oop.class(
     'Context',
-    function(self, name, uidCreator)
+    function(self, name)
         self.name = name
-        self.uidCreator = uidCreator
 
         self.componentClassPools = {}
         self.entityPool = ObjectPool(Entity)
@@ -67,17 +65,15 @@ function Context:GetEntityByUIDs(uids)
     return result
 end
 
-function Context:CreateEntity(...)
+function Context:CreateEntity(uid, componentClasses)
     local entity = self.entityPool:Get()
-    local uid = self.uidCreator:GetNextUID()
     entity:SetData(self, uid)
 
     local componentEvent = entity:GetComponentEvent()
     componentEvent:Add(self, self.onEntityComponentChanged)
 
-    if select('#', ...) > 0 then
-        for i = 1, select('#', ...), 1 do
-            local componentClass = select(i, ...)
+    if componentClasses and #(componentClasses) > 0 then
+        for _, componentClass in ipairs(componentClasses) do
             if oop.isDebug then
                 if not oop.isclass(componentClass) or not oop.iskindof(componentClass, Component) then
                     oop.error('ECS', 'Context:CreateEntity->the class is not a subclass of Component')
