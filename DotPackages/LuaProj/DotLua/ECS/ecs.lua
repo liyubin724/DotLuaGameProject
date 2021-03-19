@@ -1,9 +1,35 @@
 local oop = require('DotLua/OOP/oop')
+
+local CycleTime = oop.using("DotLua/ECS/CycleTime")
+
+local ecs = {}
+
+ecs.time = CycleTime()
+
+
+ecs.init = function()
+
+end
+
+ecs.update = function(deltaTime,unscaleDeltaTime)
+    ecs.time:DoUpdate(deltaTime,unscaleDeltaTime)
+end
+
+ecs.lateUpdate = function()
+
+end
+
+ecs.destroy = function()
+
+end
+
+
+
+
 local MessageDispatcher = oop.using('DotLua/Message/MessageDispatcher')
 local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
 local Context = oop.using('DotLua/ECS/Contexts/Context')
 
-local ecs = {}
 
 ecs.dispatcher = MessageDispatcher()
 ecs.uidCreator = UIDCreator()

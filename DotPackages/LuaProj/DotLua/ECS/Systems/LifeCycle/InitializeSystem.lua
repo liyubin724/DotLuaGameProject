@@ -10,6 +10,7 @@ local InitializeSystem =
 )
 
 function InitializeSystem:DoInitialize()
+    oop.error("ECS","InitializeSystem:DoInitialize->this is a abstract class")
 end
 
 return InitializeSystem

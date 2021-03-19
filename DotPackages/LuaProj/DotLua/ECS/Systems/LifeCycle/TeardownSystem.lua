@@ -10,6 +10,7 @@ local TeardownSystem =
 )
 
 function TeardownSystem:DoTeardown()
+    oop.error('ECS', 'InitializeSystem:DoInitialize->this is a abstract class')
 end
 
 return TeardownSystem
