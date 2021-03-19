@@ -11,11 +11,11 @@ local DetailReactiveSystem =
     ExecuteSystem
 )
 
-function DetailReactiveSystem:Activate()
+function DetailReactiveSystem:DoInitialize()
     self.detailCollector:Activate()
 end
 
-function DetailReactiveSystem:Deactivate()
+function DetailReactiveSystem:DoTeardown()
     self.detailCollector:Deactivate()
 end
 

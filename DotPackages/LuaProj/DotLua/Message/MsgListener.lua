@@ -1,8 +1,8 @@
 local oop = require('DotLua/OOP/oop')
 
-local MessageListener =
+local MsgListener =
     oop.class(
-    'MessageListener',
+    'MsgListener',
     function(self)
         self.name = nil
         self.receiver = nil
@@ -11,7 +11,7 @@ local MessageListener =
     end
 )
 
-MessageListener.__eq = function(listener1, listener2)
+MsgListener.__eq = function(listener1, listener2)
     if listener1 == nil and listener2 == nil then
         return true
     end
@@ -23,37 +23,30 @@ MessageListener.__eq = function(listener1, listener2)
         listener1.func == listener2.func
 end
 
-function MessageListener:Set(name, receiver, func, userdata)
+function MsgListener:GetName()
+    return self.name
+end
+
+function MsgListener:GetReceiver()
+    return self.receiver
+end
+
+function MsgListener:GetFunc()
+    return self.func
+end
+
+function MsgListener:GetUserdata()
+    return self.userdata
+end
+
+function MsgListener:Set(name, receiver, func, userdata)
     self.name = name
     self.receiver = receiver
     self.func = func
     self.userdata = userdata
 end
 
-function MessageListener:GetName()
-    return self.name
-end
-
-function MessageListener:GetReceiver()
-    return self.receiver
-end
-
-function MessageListener:GetFunc()
-    return self.func
-end
-
-function MessageListener:GetUserdata()
-    return self.userdata
-end
-
-function MessageListener:OnRelease()
-    self.name = nil
-    self.receiver = nil
-    self.func = nil
-    self.userdata = nil
-end
-
-function MessageListener:Invoke(...)
+function MsgListener:Invoke(...)
     if self.func then
         if self.receiver then
             if self.userdata then
@@ -71,4 +64,11 @@ function MessageListener:Invoke(...)
     end
 end
 
-return MessageListener
+function MsgListener:OnRelease()
+    self.name = nil
+    self.receiver = nil
+    self.func = nil
+    self.userdata = nil
+end
+
+return MsgListener

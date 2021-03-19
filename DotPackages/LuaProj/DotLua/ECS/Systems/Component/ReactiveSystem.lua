@@ -11,11 +11,11 @@ local ReactiveSystem =
     ExecuteSystem
 )
 
-function ReactiveSystem:Activate()
+function ReactiveSystem:DoInitialize()
     self.collector:Activate()
 end
 
-function ReactiveSystem:Deactivate()
+function ReactiveSystem:DoTeardown()
     self.collector:Deactivate()
 end
 

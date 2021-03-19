@@ -18,16 +18,8 @@ function CycleTime:GetDeltaTime()
     return self.deltaTime * self.timeScale
 end
 
-function CycleTime:SetDeltaTime(deltaTime)
-    self.deltaTime = deltaTime
-end
-
 function CycleTime:GetUnscaleDeltaTime()
     return self.unscaleDeltaTime
-end
-
-function CycleTime:SetUnscaleDeltaTime(unscaleDeltaTime)
-    self.unscaleDeltaTime = unscaleDeltaTime
 end
 
 function CycleTime:GetTimeScale()

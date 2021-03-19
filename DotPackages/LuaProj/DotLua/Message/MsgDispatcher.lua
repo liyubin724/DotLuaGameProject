@@ -1,22 +1,23 @@
 local oop = require('DotLua/OOP/oop')
 
 local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
-local MessageListener = oop.using('DotLua/Message/MessageListener')
+local MsgListener = oop.using("DotLua/Message/MsgListener")
 
 local tinsert = table.insert
 local tremove = table.remove
 local tkeys = table.keys
 
-local MessageDispatcher =
+local MsgDispatcher =
     oop.class(
-    'MessageDispatcher',
+    'MsgDispatcher',
     function(self)
-        self.listenerPool = ObjectPool(MessageListener)
+        self.listenerPool = ObjectPool(MsgListener)
+
         self.listenerMapList = {}
     end
 )
 
-function MessageDispatcher:RegistListener(name, receiver, func, userdata)
+function MsgDispatcher:RegistListener(name, receiver, func, userdata)
     local listenerList = self.listenerMapList[name]
     if not listenerList then
         listenerList = {}
@@ -28,7 +29,7 @@ function MessageDispatcher:RegistListener(name, receiver, func, userdata)
     tinsert(listenerList, listener)
 end
 
-function MessageDispatcher:UnregistListener(name, receiver, func)
+function MsgDispatcher:UnregistListener(name, receiver, func)
     local listenerList = self.listenerMapList[name]
     if listenerList then
         for i = #listenerList, 1, -1 do
@@ -42,7 +43,7 @@ function MessageDispatcher:UnregistListener(name, receiver, func)
     end
 end
 
-function MessageDispatcher:UnregistAll(name)
+function MsgDispatcher:UnregistAll(name)
     local listenerList = self.listenerMapList[name]
     if listenerList then
         for i = #(listenerList), 1, -1 do
@@ -52,7 +53,7 @@ function MessageDispatcher:UnregistAll(name)
     end
 end
 
-function MessageDispatcher:Trigger(name, ...)
+function MsgDispatcher:Trigger(name, ...)
     local listenerList = self.listenerMapList[name]
     if listenerList then
         for _, listener in ipairs(listenerList) do
@@ -61,7 +62,7 @@ function MessageDispatcher:Trigger(name, ...)
     end
 end
 
-function MessageDispatcher:Clear()
+function MsgDispatcher:Clear()
     local names = tkeys(self.listenerMapList)
     for _, name in ipairs(names) do
         local listenerList = self.listenerMapList[name]
@@ -72,4 +73,4 @@ function MessageDispatcher:Clear()
     end
 end
 
-return MessageDispatcher
+return MsgDispatcher

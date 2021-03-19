@@ -4,14 +4,11 @@ local System = oop.using('DotLua/ECS/Systems/System')
 local MessageSystem =
     oop.class(
     'MessageSystem',
-    function(self)
+    function(self,dispatcher)
+        self.dispatcher = dispatcher
     end,
     System
 )
-
-function MessageSystem:SetDispatcher(dispatcher)
-    self.dispatcher = dispatcher
-end
 
 function MessageSystem:DoInitialize()
     local eventNames = self:ListEventNames()

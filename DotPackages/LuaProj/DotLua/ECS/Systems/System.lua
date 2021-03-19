@@ -7,4 +7,12 @@ local System =
     end
 )
 
+function System:DoInitialize()
+
+end
+
+function System:DoTeardown()
+
+end
+
 return System
