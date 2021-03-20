@@ -1,0 +1,72 @@
+local oop = require('DotLua/OOP/oop')
+
+local CycleTime = oop.using('DotLua/ECS/CycleTime')
+local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
+local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
+
+local SystemSet = oop.using('DotLua/ECS/Systems/SystemSet')
+local ServicerSet = oop.using('DotLua/ECS/Servicers/ServicerSet')
+
+local ecs = {}
+
+ecs.time = CycleTime()
+ecs.dispatcher = MsgDispatcher()
+ecs.uidcreator = UIDCreator()
+ecs.isruning = false
+
+ecs.servicerset = ServicerSet()
+ecs.addservicer = function(name, servicer)
+    ecs.servicerset:Add(name, servicer)
+end
+
+ecs.removeservicer = function(name)
+    ecs.servicerset:Remove(name)
+end
+
+ecs.getservicer = function(name)
+    return ecs.servicerset:Get(name)
+end
+
+ecs.systemset = SystemSet(ecs.dispatcher)
+ecs.addsystem = function(systemClass)
+    local system = ecs.systemset:Add(systemClass)
+    if system and ecs.isruning then
+        system:DoInitialize()
+    end
+end
+
+ecs.removesystem = function(systemClass)
+    local system = ecs.systemset:Remove(systemClass)
+    if system and ecs.isruning then
+        system:DoTeardown()
+    end
+end
+
+ecs.nextuid = function()
+    return ecs.uidcreator:GetNextUID()
+end
+
+ecs.init = function()
+    ecs.isruning = true
+    ecs.systemset:DoInitialize()
+end
+
+ecs.update = function(deltaTime, unscaleDeltaTime)
+    ecs.time:DoUpdate(deltaTime, unscaleDeltaTime)
+
+    ecs.systemset:DoUpdate()
+    ecs.servicerset:DoUpdate()
+end
+
+ecs.lateupdate = function()
+    ecs.systemset:DoLateUpdate()
+    ecs.servicerset:DoLateUpdate()
+end
+
+ecs.teardown = function()
+    ecs.isruning = false
+    ecs.systemset:DoTeardown()
+    ecs.servicerset:DoTeardown()
+end
+
+return ecs

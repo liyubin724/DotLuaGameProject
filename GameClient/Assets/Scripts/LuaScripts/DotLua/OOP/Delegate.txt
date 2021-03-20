@@ -1,115 +1,59 @@
-require("DotLua/OOP/Callback")
+local ObjectType = require('DotLua/OOP/ObjectType')
+local class = require('DotLua/OOP/class')
 
-local Logger = Logger
-
-----public----
--- 代理的实现
--- example:
---[[
-    local delegate = Delegate()
-    delegate = delegate + {self,XXXClass.XXXFunction}
-
-    delegate = delegate - {self,XXXClass.XXXFunction}
-
-    delegate:Invoke(value1,value2....valuen)
---]]
-Delegate =
+local Delegate =
     class(
-    function(self)
-        self.callbacks = {}
+    'Delegate',
+    function(self, receiver, func)
+        self.receiver = receiver
+        self.func = func
     end
 )
 
-Delegate.__len = function(self)
-    return #(self.callbacks)
-end
-
-----private----
--- 添加侦听
--- @param data 格式{self,XXXClass.XXXFunction}/{XXXClass.XXXFunction}
-Delegate.__add = function(self, data)
-    if data then
-        if type(data) == "table" then
-
-            local dataLen = #(data)
-
-            local receiver = nil
-            local func = nil
-
-            if dataLen == 2 then
-                receiver = data[1]
-                func = data[2]
-            elseif dataLen == 1 then
-                func = data[1]
-            end
-
-            if func and type(func) == "function" then
-                local callback = Callback(receiver,func)
-                table.insert(self.callbacks, callback)
-            else
-                Logger.Error("Delegate", "data is nil")
-            end
-        else
-            Logger.Error("Delegate", "data is not a table")
-        end
+Delegate.__eq = function(d1, d2)
+    if d1 == d2 then
+        return true
+    elseif d1 ~= nil and d2 ~= nil then
+        return d1.receiver == d2.receiver and d1.func == d2.func
     else
-        Logger.Error("Delegate", "data is nil")
+        return false
     end
-
-    return self
 end
 
-----private----
--- 删除侦听
--- @param data 格式{self,XXXClass.XXXFunction}/{XXXClass.XXXFunction}
-Delegate.__sub = function(self,data)
-    if data then
-        if type(data) == "table" then
+Delegate._type = ObjectType.Delegate
 
-            local dataLen = #(data)
+function Delegate:GetReceiver()
+    return self.receiver
+end
 
-            local receiver = nil
-            local func = nil
+function Delegate:GetFunc()
+    return self.func
+end
 
-            if dataLen == 2 then
-                receiver = data[1]
-                func = data[2]
-            elseif dataLen == 1 then
-                func = data[1]
-            end
-
-            if func and type(func) == "function" then
-                for i = #(self.callbacks),1,-1 do
-                    local callback = self.callbacks[i]
-                    if callback:GetReceiver() == receiver and callback:GetFunc() == func then
-                        table.remove(self.callbacks, i)
-                    end
-                end
-            else
-                Logger.Error("Delegate", "data is nil")
-            end
+function Delegate:ActionInvoke(...)
+    if self.func then
+        if self.receiver then
+            self.func(self.receiver, ...)
         else
-            Logger.Error("Delegate", "data is not a table")
+            self.func(...)
         end
-    else
-        Logger.Error("Delegate", "data is nil")
-    end
-
-    return self
-end
-
-----public----
--- 调用执行
-function Delegate:Invoke(...)
-    for _, value in ipairs(self.callbacks) do
-        value:Invoke(...)
     end
 end
 
-function Delegate:Clear()
-    self.callbacks = {}
+function Delegate:FuncInvoke(...)
+    if self.func then
+        if self.receiver then
+            return self.func(self.receiver, ...)
+        else
+            return self.func(...)
+        end
+    end
+
+    return nil
 end
 
-function Delegate.CreateListener(receiver,func)
-    return {receiver,func}
+function Delegate:ToString()
+    return string.format('{Delegate:{receiver:%s,func:%s}}', tostring(self.receiver), tostring(self.func))
 end
+
+return Delegate

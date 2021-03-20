@@ -1,0 +1,13 @@
+local Logger = require('DotLua/Debug/Logger')
+local HTimer = require('DotLua/Timer/HierarchicalTimer')
+
+local oop = require('DotLua/OOP/oop')
+local ecs = require('DotLua/ECS/ecs')
+
+if _G.isDebug then
+    Logger.SetEnable(true, true, true)
+else
+    Logger.SetEnable(false, false, true)
+end
+
+ecs.addservicer('HTimer', HTimer())

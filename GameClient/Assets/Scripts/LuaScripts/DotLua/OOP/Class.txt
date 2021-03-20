@@ -1,55 +1,45 @@
-function class(base, init)
-    local c = {} -- a new class instance
+local Object = require('DotLua/OOP/Object')
 
-    if not init and type(base) == 'function' then
-        init = base
-        base = nil
-    elseif type(base) == 'table' then
-        -- our new class is a shallow copy of the base class!
-        for i, v in pairs(base) do
-            c[i] = v
-        end
-        c._base = base
+local call = function(c, ...)
+    local obj = setmetatable({}, c)
+    obj._isInstance = true
+
+    c._ctor(obj, ...)
+
+    return obj
+end
+
+local class = function(name, ctor, base)
+    if not base then
+        base = Object
     end
+
+    local c = {}
+    c._base = base
+    c._className = name
 
     c.__index = c
 
-    c._init = function(obj, ...)
-        if base and base._init then
-            base._init(obj, ...)
+    c._ctor = function(instance, ...)
+        if base then
+            base._ctor(instance, ...)
         end
 
-        if init then
-            init(obj, ...)
+        ctor(instance, ...)
+    end
+
+    local meta = {}
+    meta.__index = function(instance, k)
+        if base then
+            return base[k]
         end
+        return nil
     end
+    meta.__call = call
 
-    c.is_a = function(self, klass)
-        local m = getmetatable(self)
-        while m do
-            if m == klass then
-                return true
-            end
-            m = m._base
-        end
-        return false
-    end
-
-    -- expose a constructor which can be called by <classname>(<args>)
-    local mt = {}
-    mt.__index = mt
-    mt.__call = function(class_tbl, ...)
-        local obj = {}
-
-        setmetatable(obj, class_tbl)
-
-        class_tbl._init(obj, ...)
-
-        return obj
-    end
-
-    setmetatable(c, mt)
+    setmetatable(c, meta)
 
     return c
 end
 
+return class

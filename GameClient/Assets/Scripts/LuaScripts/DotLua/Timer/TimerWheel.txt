@@ -1,9 +1,12 @@
-require('DotLua/Utility/math')
+local oop = require('DotLua/OOP/oop')
+
+local mfloor = math.floor
 
 ----internal----
 -- 时间轮
 local TimerWheel =
-    class(
+    oop.class(
+    'TimerWheel',
     function(self, level, tickInMS, slotSize)
         self.level = level
         self.tickInMS = tickInMS
@@ -15,8 +18,8 @@ local TimerWheel =
             self.allTasks[i] = {}
         end
 
-        self.completeDelegate = Delegate()
-        self.soltTriggerDelegate = Delegate()
+        self.completeDelegate = nil
+        self.soltTriggerDelegate = nil
     end
 )
 
@@ -36,25 +39,9 @@ function TimerWheel:GetTotalTickInMS()
     return self.tickInMS * self.slotSize
 end
 
-function TimerWheel:AddCompleteDelegate(listener)
-    self.completeDelegate = self.completeDelegate + listener
-end
-
-function TimerWheel:RemoveCompleteDelegate(listener)
-    self.completeDelegate = self.completeDelegate - listener
-end
-
-function TimerWheel:AddSoltTriggerDelegate(listener)
-    self.soltTriggerDelegate = self.soltTriggerDelegate + listener
-end
-
-function TimerWheel:RemoveSoltTriggerDelegate(listener)
-    self.soltTriggerDelegate = self.soltTriggerDelegate - listener
-end
-
 function TimerWheel:AddTask(task)
     local taskLeftTime = task:GetTriggerLeftInMS()
-    local solt = math.floor(taskLeftTime / self.tickInMS)
+    local solt = mfloor(taskLeftTime / self.tickInMS)
     task:SetTriggerLeftInMS(taskLeftTime % self.tickInMS)
 
     local slotIndex = self.currentSlotIndex + solt
@@ -84,13 +71,17 @@ function TimerWheel:DoPushWheel(pushNum)
 
         if self.currentSlotIndex > self.slotSize then
             self.currentSlotIndex = 1
-            self.completeDelegate:Invoke(self.level)
+            if self.completeDelegate then
+                self.completeDelegate:Invoke(self.level)
+            end
         end
 
         local tasks = self.allTasks[self.currentSlotIndex]
         if tasks then
             self.allTasks[self.currentSlotIndex] = {}
-            self.soltTriggerDelegate:Invoke(tasks)
+            if self.soltTriggerDelegate then
+                self.soltTriggerDelegate:Invoke(tasks)
+            end
         end
     end
 end

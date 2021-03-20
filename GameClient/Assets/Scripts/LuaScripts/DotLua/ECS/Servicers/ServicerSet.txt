@@ -1,0 +1,92 @@
+local oop = require('DotLua/OOP/oop')
+
+local INIT_FUNC_NAME = 'DoInitialize'
+local UPDATE_FUNC_NAME = 'DoUpdate'
+local LATEUPDATE_FUNC_NAME = 'DoLateUpdate'
+local TEARDOWN_FUNC_NAME = 'DoTeardown'
+
+local tinsert = table.insert
+local tforeach = table.foreach
+local tclear = table.clear
+
+local ServicerSet =
+    oop.class(
+    'ServicerSet',
+    function(self)
+        self.servicerDic = {}
+
+        self.updateServicers = {}
+        self.lateUpdateServicers = {}
+        self.teardownServicers = {}
+    end
+)
+
+function ServicerSet:Has(name)
+    return self.servicerDic[name] ~= nil
+end
+
+function ServicerSet:Add(name, servicer)
+    if not self.servicerDic[name] then
+        self.servicerDic[name] = servicer
+
+        if servicer[INIT_FUNC_NAME] then
+            servicer[INIT_FUNC_NAME](servicer)
+        end
+
+        if servicer[LATEUPDATE_FUNC_NAME] then
+            tinsert(self.updateServicers, servicer)
+        end
+        if servicer[UPDATE_FUNC_NAME] then
+            tinsert(self.lateUpdateServicers, servicer)
+        end
+        if servicer[TEARDOWN_FUNC_NAME] then
+            tinsert(self.teardownServicers, servicer)
+        end
+    end
+end
+
+function ServicerSet:Remove(name)
+    local servicer = self.servicerDic[name]
+    if servicer then
+        self.servicerDic[name] = nil
+    end
+    return servicer
+end
+
+function ServicerSet:Get(name)
+    return self.servicerDic[name]
+end
+
+function ServicerSet:DoUpdate()
+    tforeach(
+        self.updateServicers,
+        function(servicer)
+            servicer[UPDATE_FUNC_NAME](servicer)
+        end
+    )
+end
+
+function ServicerSet:DoLateUpdate()
+    tforeach(
+        self.lateUpdateServicers,
+        function(servicer)
+            servicer[LATEUPDATE_FUNC_NAME](servicer)
+        end
+    )
+end
+
+function ServicerSet:DoTeardown()
+    tforeach(
+        self.teardownServicers,
+        function(servicer)
+            servicer[TEARDOWN_FUNC_NAME](servicer)
+        end
+    )
+
+    tclear(self.servicerDic)
+    tclear(self.updateServicers)
+    tclear(self.lateUpdateServicers)
+    tclear(self.teardownServicers)
+end
+
+return ServicerSet

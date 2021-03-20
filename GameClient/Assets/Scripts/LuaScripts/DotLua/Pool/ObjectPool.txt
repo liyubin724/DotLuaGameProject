@@ -1,5 +1,12 @@
+local oop = require('DotLua/OOP/oop')
+
+local tremove = table.remove
+local tinsert = table.insert
+local tclear = table.clear
+
 local ObjectPool =
-    class(
+    oop.class(
+    'ObjectPool',
     function(self, itemClass)
         self.itemClass = itemClass
         self.items = {}
@@ -11,15 +18,13 @@ function ObjectPool:Get()
 
     if #(self.items) > 0 then
         item = self.items[1]
-
-        table.remove(self.items, 1)
+        tremove(self.items, 1)
     else
         item = self.itemClass()
     end
 
-    local doGetFunc = item['DoGet']
-    if doGetFunc and type(doGetFunc) == 'function' then
-        doGetFunc(item)
+    if item['OnGet'] ~= nil then
+        item:OnGet()
     end
 
     return item
@@ -27,17 +32,16 @@ end
 
 function ObjectPool:Release(item)
     if item then
-        local doReleaseFunc = item['DoRelease']
-        if doReleaseFunc and type(doReleaseFunc) == 'function' then
-            doReleaseFunc(item)
+        if item['OnRelease'] then
+            item:OnRelease()
         end
 
-        table.insert(self.items, item)
+        tinsert(self.items, item)
     end
 end
 
 function ObjectPool:Clear()
-    self.items = {}
+    tclear(self.items)
 end
 
 return ObjectPool
