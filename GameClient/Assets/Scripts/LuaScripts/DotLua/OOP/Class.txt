@@ -27,6 +27,7 @@ local class = function(name, ctor, base)
 
         ctor(instance, ...)
     end
+    c.new = call
 
     local meta = {}
     meta.__index = function(instance, k)

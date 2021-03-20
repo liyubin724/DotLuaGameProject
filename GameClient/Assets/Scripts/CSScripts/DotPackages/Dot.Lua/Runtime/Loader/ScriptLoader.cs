@@ -4,33 +4,23 @@ namespace DotEngine.Lua
 {
     public abstract class ScriptLoader
     {
-        private string[] pathFormats = new string[0];
-
-        public ScriptLoader(string[] formats)
+        public byte[] LoadScript(ref string scriptPath)
         {
-            pathFormats = formats;
-        }
-
-        public byte[] LoadScript(ref string filePath)
-        {
-            if(pathFormats!=null && pathFormats.Length>0)
+            string filePath = GetFilePath(scriptPath);
+            byte[] scriptBytes = ReadBytes(filePath);
+            if (scriptBytes == null || scriptBytes.Length == 0)
             {
-                foreach (var f in pathFormats)
-                {
-                    string fp = string.Format(f, filePath);
-                    if(IsExist(fp))
-                    {
-                        filePath = fp;
-                        return ReadBytes(fp);
-                    }
-                }
+                LogUtil.Error(LuaUtility.LOGGER_NAME, $"load luaScript failed.scriptPath = {scriptPath}");
+                return null;
             }
-            LogUtil.Warning(LuaConst.LOGGER_NAME, $"ScriptLoader::LoadScript->Script not found.filePath = {filePath}");
 
-            return null;
+            scriptPath = filePath;
+
+            return scriptBytes;
         }
 
-        protected abstract bool IsExist(string filePath);
-        protected abstract byte[] ReadBytes(string filePath);
+        protected abstract string GetFilePath(string scriptPath);
+
+        protected abstract byte[] ReadBytes(string scriptPath);
     }
 }

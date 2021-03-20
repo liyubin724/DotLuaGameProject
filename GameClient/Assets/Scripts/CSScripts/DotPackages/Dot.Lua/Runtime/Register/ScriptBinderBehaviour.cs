@@ -64,29 +64,29 @@ namespace DotEngine.Lua.Register
         protected virtual void Awake()
         {
             InitBinder();
-            CallAction(LuaConst.AWAKE_FUNCTION_NAME);
+            CallAction(LuaUtility.AWAKE_FUNCTION_NAME);
         }
 
         protected virtual void Start()
         {
-            CallAction(LuaConst.START_FUNCTION_NAME);
+            CallAction(LuaUtility.START_FUNCTION_NAME);
         }
 
         protected virtual void OnEnable()
         {
-            CallAction(LuaConst.ENABLE_FUNCTION_NAME);
+            CallAction(LuaUtility.ENABLE_FUNCTION_NAME);
         }
 
         protected virtual void OnDisable()
         {
-            CallAction(LuaConst.DISABLE_FUNCTION_NAME);
+            CallAction(LuaUtility.DISABLE_FUNCTION_NAME);
         }
 
         protected virtual void OnDestroy()
         {
             if (IsValid())
             {
-                CallAction(LuaConst.DESTROY_FUNCTION_NAME);
+                CallAction(LuaUtility.DESTROY_FUNCTION_NAME);
                 m_LuaTable.Dispose();
                 m_LuaTable = null;
                 m_IsInited = false;

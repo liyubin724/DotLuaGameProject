@@ -1,0 +1,13 @@
+local oop = require('DotLua/OOP/oop')
+
+local Component = oop.using('DotLua/ECS/Components/Component')
+
+local ViewComponent =
+    oop.class(
+    'ViewComponent',
+    function(self)
+    end,
+    Component
+)
+
+return ViewComponent

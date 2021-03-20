@@ -1,0 +1,21 @@
+local ecs = require('DotLua/ECS/ecs')
+
+Launcher = {}
+Launcher.__index = Launcher
+
+function Launcher.DoStart()
+    require('Game/Init')
+    ecs.init()
+end
+
+function Launcher.DoUpdate(deltaTime, unscaleDeltaTime)
+    ecs.update(deltaTime, unscaleDeltaTime)
+end
+
+function Launcher.DoLateUpdate()
+    ecs.lateupdate()
+end
+
+function Launcher.DoDestroy()
+    ecs.teardown()
+end

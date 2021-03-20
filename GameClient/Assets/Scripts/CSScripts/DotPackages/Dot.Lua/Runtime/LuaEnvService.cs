@@ -42,12 +42,12 @@ namespace DotEngine.Lua
         {
             Env = new LuaEnv();
 
-            m_ScriptLoader = new FileScriptLoader(new string[] { LuaConst.GetScriptPathFormat() });
+            m_ScriptLoader = new FileScriptLoader(new string[] { LuaUtility.GetScriptPathFormat() });
             Env.AddLoader(m_ScriptLoader.LoadScript);
 
             if (!RequireScript(PreloadScript))
             {
-                LogUtil.Error(LuaConst.LOGGER_NAME, "Load script failed. path = " + PreloadScript);
+                LogUtil.Error(LuaUtility.LOGGER_NAME, "Load script failed. path = " + PreloadScript);
                 return;
             }
 
@@ -57,13 +57,13 @@ namespace DotEngine.Lua
             GameTable = Env.Global.Get<LuaTable>(MGR_NAME);
             if(GameTable == null)
             {
-                LogUtil.Error(LuaConst.LOGGER_NAME, "the table which name game is not found. ");
+                LogUtil.Error(LuaUtility.LOGGER_NAME, "the table which name game is not found. ");
             }else
             {
-                m_UpdateAction = GameTable.Get<Action<float>>(LuaConst.UPDATE_FUNCTION_NAME);
-                m_UnscaleUpdateAction = GameTable.Get<Action<float>>(LuaConst.UNSCALEUPDATE_FUNCTION_NAME);
-                m_LateUpdateAction = GameTable.Get<Action<float>>(LuaConst.LATEUPDATE_FUNCTION_NAME);
-                m_FixedUpdateAction = GameTable.Get<Action<float>>(LuaConst.FIXEDUPDATE_FUNCTION_NAME);
+                m_UpdateAction = GameTable.Get<Action<float>>(LuaUtility.UPDATE_FUNCTION_NAME);
+                m_UnscaleUpdateAction = GameTable.Get<Action<float>>(LuaUtility.UNSCALEUPDATE_FUNCTION_NAME);
+                m_LateUpdateAction = GameTable.Get<Action<float>>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
+                m_FixedUpdateAction = GameTable.Get<Action<float>>(LuaUtility.FIXEDUPDATE_FUNCTION_NAME);
             }
         }
 
@@ -73,13 +73,13 @@ namespace DotEngine.Lua
             {
                 if (string.IsNullOrEmpty(scriptPath))
                 {
-                    LogUtil.Error(LuaConst.LOGGER_NAME, "script is empty");
+                    LogUtil.Error(LuaUtility.LOGGER_NAME, "script is empty");
                     return false;
                 }
                 string scriptName = GetScriptName(scriptPath);
                 if (string.IsNullOrEmpty(scriptName))
                 {
-                    LogUtil.Error(LuaConst.LOGGER_NAME, "scriptName is empty");
+                    LogUtil.Error(LuaUtility.LOGGER_NAME, "scriptName is empty");
                     return false;
                 }
 
@@ -96,7 +96,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(script))
             {
-                LogUtil.Error(LuaConst.LOGGER_NAME, "script is empty");
+                LogUtil.Error(LuaUtility.LOGGER_NAME, "script is empty");
                 return null;
             }
 
@@ -196,7 +196,7 @@ namespace DotEngine.Lua
 
         public override void DoRemove()
         {
-            CallAction(LuaConst.DESTROY_FUNCTION_NAME);
+            CallAction(LuaUtility.DESTROY_FUNCTION_NAME);
 
             DoDispose();
         }

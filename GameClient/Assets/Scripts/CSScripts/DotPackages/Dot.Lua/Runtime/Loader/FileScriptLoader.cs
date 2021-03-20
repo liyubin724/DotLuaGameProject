@@ -4,18 +4,18 @@ namespace DotEngine.Lua
 {
     public class FileScriptLoader : ScriptLoader
     {
-        public FileScriptLoader(string[] formats) : base(formats)
+        protected override string GetFilePath(string scriptPath)
         {
-        }
-
-        protected override bool IsExist(string filePath)
-        {
-            return File.Exists(filePath);
+            return LuaUtility.GetScriptFilePathInProject(scriptPath);
         }
 
         protected override byte[] ReadBytes(string filePath)
         {
-            return File.ReadAllBytes(filePath);
+            if(File.Exists(filePath))
+            {
+                return File.ReadAllBytes(filePath);
+            }
+            return null;
         }
     }
 }

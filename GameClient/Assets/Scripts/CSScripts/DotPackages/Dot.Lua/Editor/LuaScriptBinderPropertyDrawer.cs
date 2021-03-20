@@ -25,7 +25,7 @@ namespace DotEditor.Lua
             string scriptAssetPath = string.Empty;
             if (!string.IsNullOrEmpty(scriptPathProperty.stringValue))
             {
-                scriptAssetPath = LuaConst.GetScriptAssetPath(scriptPathProperty.stringValue);
+                scriptAssetPath = LuaUtility.GetScriptAssetPath(scriptPathProperty.stringValue);
                 scriptAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(scriptAssetPath);
                 if (scriptAsset == null)
                 {
@@ -56,7 +56,7 @@ namespace DotEditor.Lua
                 else
                 {
                     string assetPath = AssetDatabase.GetAssetPath(newScriptAsset);
-                    scriptPathProperty.stringValue = LuaConst.GetScriptPath(assetPath);
+                    scriptPathProperty.stringValue = LuaUtility.GetScriptPath(assetPath);
                 }
             }
         }
