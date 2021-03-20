@@ -1,5 +1,7 @@
 require('DotLua/Utils/stringEx')
 require('DotLua/Utils/tableEx')
+require('DotLua/Utils/mathEx')
+
 local Enum = require('DotLua/OOP/Enum')
 local Delegate = require('DotLua/OOP/Delegate')
 local Event = require('DotLua/OOP/Event')
@@ -8,12 +10,13 @@ local oop = {}
 
 oop.isDebug = _G.isDebug or true
 
+oop.Logger = require('DotLua/Debug/Logger')
+oop.info = oop.Logger.Info
+oop.warning = oop.Logger.Warning
+oop.error = oop.Logger.Error
+
 oop.assembly = {}
 oop.classes = {}
-
----comment
----@param path modname
----@return any
 oop.using = function(path)
     local c = oop.assembly[path]
     if not c then
@@ -135,10 +138,5 @@ oop.iskindof = function(target, baseClass)
 
     return target:IsKindOf(baseClass)
 end
-
-oop.Logger = require('DotLua/OOP/Logger')
-oop.info = oop.Logger.Info
-oop.warning = oop.Logger.Warning
-oop.error = oop.Logger.Error
 
 return oop

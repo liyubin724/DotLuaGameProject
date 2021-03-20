@@ -1,0 +1,152 @@
+local oop = require('DotLua/OOP/oop')
+
+local mround = math.round
+
+local TimerTaskCategory =
+    oop.enum(
+    'TimerTaskCategory',
+    {
+        None = 0,
+        Interval = 1,
+        End = 2,
+        IntervalAndEnd = 3
+    }
+)
+
+----internal----
+local TimerTask =
+    oop.class(
+    'TimerTask',
+    function(self)
+        self.index = 0
+        self.intervalInMS = 0
+        self.totalInMS = 0
+
+        self.intervalCallback = nil
+        self.endCallback = nil
+        self.userdata = nil
+
+        self.category = 0
+        self.triggerLeftInMS = 0
+    end
+)
+
+----internal----
+function TimerTask:GetIndex()
+    return self.index
+end
+
+----internal----
+-- 获取剩余时间
+function TimerTask:GetTriggerLeftInMS()
+    return self.triggerLeftInMS
+end
+
+----internal----
+function TimerTask:SetTriggerLeftInMS(timeInMS)
+    self.triggerLeftInMS = timeInMS
+end
+
+----internal----
+function TimerTask:SetData(index, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
+    self.index = index
+
+    if intervalInSec <= 0 and totalInSec > 0 then
+        self.category = TimerTaskCategory.End
+        self.totalInMS = mround(totalInSec * 1000)
+
+        self.triggerLeftInMS = self.totalInMS
+    elseif intervalInSec > 0 and totalInSec <= 0 then
+        self.category = TimerTaskCategory.Interval
+        self.intervalInMS = mround(intervalInSec * 1000)
+
+        self.triggerLeftInMS = self.intervalInMS
+    elseif intervalInSec > 0 and totalInSec > 0 then
+        self.category = TimerTaskCategory.IntervalAndEnd
+        self.intervalInMS = mround(intervalInSec * 1000)
+        self.totalInMS = mround(totalInSec * 1000)
+
+        self.triggerLeftInMS = self.intervalInMS
+    else
+        oop.error('Timer', 'timer error')
+    end
+
+    if intervalFunc then
+        self.intervalCallback = oop.delegate(receiver, intervalFunc)
+    end
+    if endFunc then
+        self.endCallback = oop.delegate(receiver, endFunc)
+    end
+    self.userdata = userdata
+end
+
+----internal----
+-- 触发定时任务，根据定时任务的状态来决定触发的行为
+-- @return bool 返回定时任务是否结束
+function TimerTask:Trigger()
+    if self.triggerLeftInMS <= 0 then
+        if self.category == TimerTaskCategory.End then
+            self:OnTaskEnd()
+            return true
+        elseif self.category == TimerTaskCategory.Interval then
+            self:OnTaskInterval()
+            self.triggerLeftInMS = self.intervalInMS
+            return false
+        elseif self.category == TimerTaskCategory.IntervalAndEnd then
+            self:OnTaskInterval()
+            self.totalInMS = self.totalInMS - self.intervalInMS
+            if self.totalInMS <= 0 then
+                self:OnTaskEnd()
+                return true
+            else
+                if self.totalInMS >= self.intervalInMS then
+                    self.triggerLeftInMS = self.intervalInMS
+                    return false
+                else
+                    self.category = TimerTaskCategory.End
+                    self.triggerLeftInMS = self.totalInMS
+                    return false
+                end
+            end
+        end
+
+        return true
+    else
+        return false
+    end
+end
+
+----internal----
+-- 定时任务触发周期性回调
+-- @return void
+function TimerTask:OnTaskInterval()
+    if self.intervalCallback then
+        self.intervalCallback:ActionInvoke(self.userdata)
+    end
+end
+
+----internal----
+-- 定时任务触发结束回调
+-- @return void
+function TimerTask:OnTaskEnd()
+    if self.endCallback then
+        self.endCallback:ActionInvoke(self.userdata)
+    end
+end
+
+----internal----
+-- 重置定时任务的数据
+-- @return void
+function TimerTask:OnRelease()
+    self.index = 0
+    self.intervalInMS = 0
+    self.totalInMS = 0
+
+    self.intervalCallback = nil
+    self.endCallback = nil
+    self.userdata = nil
+
+    self.triggerLeftInMS = 0
+end
+
+return TimerTask

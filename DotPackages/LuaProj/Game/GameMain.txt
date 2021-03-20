@@ -5,7 +5,6 @@ GameMain.__index = GameMain
 
 function GameMain.Init()
     require('Game/Init')
-
     ecs.init()
 end
 
