@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TestRList : MonoBehaviour
 {
-    public LuaScriptBinder[] intValues = new LuaScriptBinder[0];
+    public LuaBinder[] intValues = new LuaBinder[0];
 
 
     void Start()

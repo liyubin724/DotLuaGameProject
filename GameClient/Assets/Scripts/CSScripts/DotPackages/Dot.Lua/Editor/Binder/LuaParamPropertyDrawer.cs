@@ -1,4 +1,4 @@
-﻿using DotEditor.GUIExtension;
+﻿using DotEditor.GUIExt;
 using DotEditor.Utilities;
 using DotEngine.Lua.Binder;
 using System.Collections.Generic;
@@ -8,15 +8,15 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.Lua.Binder
 {
-    [CustomPropertyDrawer(typeof(LuaOperateParam))]
-    public class LuaOperateParamPropertyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(LuaParam))]
+    public class LuaParamPropertyDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             float height = EditorGUIUtility.singleLineHeight * 4;
 
             SerializedProperty paramTypeProperty = property.FindPropertyRelative("paramType");
-            if(paramTypeProperty.intValue == (int)LuaOperateParamType.UObject)
+            if(paramTypeProperty.intValue == (int)LuaParamType.UObject)
             {
                 SerializedProperty gObjectProperty = property.FindPropertyRelative("gObject");
                 if(gObjectProperty.objectReferenceValue != null)
@@ -54,23 +54,23 @@ namespace DotEditor.Lua.Binder
             SerializedProperty typeProperty = property.FindPropertyRelative("paramType");
             EditorGUI.PropertyField(propertyDrawRect, typeProperty);
 
-            LuaOperateParamType paramType = (LuaOperateParamType)typeProperty.intValue;
+            LuaParamType paramType = (LuaParamType)typeProperty.intValue;
             propertyDrawRect.y += propertyDrawRect.height;
-            if (paramType == LuaOperateParamType.Integer)
+            if (paramType == LuaParamType.Integer)
             {
                 SerializedProperty valueProperty = property.FindPropertyRelative("intValue");
                 EditorGUI.PropertyField(propertyDrawRect, valueProperty);
-            }else if(paramType == LuaOperateParamType.Float)
+            }else if(paramType == LuaParamType.Float)
             {
                 SerializedProperty valueProperty = property.FindPropertyRelative("floatValue");
                 EditorGUI.PropertyField(propertyDrawRect, valueProperty);
             }
-            else if(paramType == LuaOperateParamType.String)
+            else if(paramType == LuaParamType.String)
             {
                 SerializedProperty valueProperty = property.FindPropertyRelative("strValue");
                 EditorGUI.PropertyField(propertyDrawRect, valueProperty);
             }
-            else if(paramType == LuaOperateParamType.UObject)
+            else if(paramType == LuaParamType.UObject)
             {
                 SerializedProperty gObjectProperty = property.FindPropertyRelative("gObject");
                 EditorGUI.PropertyField(propertyDrawRect, gObjectProperty);

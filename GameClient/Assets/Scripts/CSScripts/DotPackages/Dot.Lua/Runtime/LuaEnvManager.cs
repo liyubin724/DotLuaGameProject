@@ -196,7 +196,7 @@ namespace DotEngine.Lua
             return instanceFunc(scriptPath);
         }
 
-        public LuaTable InstanceClassWith(string scriptPath,params LuaOperateParam[] operateParams)
+        public LuaTable InstanceClassWith(string scriptPath,params LuaParam[] operateParams)
         {
             List<SystemObject> list = new List<SystemObject>();
             list.Add(scriptPath);

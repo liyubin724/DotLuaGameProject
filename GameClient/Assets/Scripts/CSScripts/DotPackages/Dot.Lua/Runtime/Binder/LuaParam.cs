@@ -5,7 +5,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Lua.Binder
 {
-    public enum LuaOperateParamType
+    public enum LuaParamType
     {
         Integer,
         Float,
@@ -14,10 +14,10 @@ namespace DotEngine.Lua.Binder
     }
 
     [Serializable]
-    public class LuaOperateParam
+    public class LuaParam
     {
         public string name;
-        public LuaOperateParamType paramType = LuaOperateParamType.Integer;
+        public LuaParamType paramType = LuaParamType.Integer;
 
         public int intValue;
         public float floatValue;
@@ -36,11 +36,11 @@ namespace DotEngine.Lua.Binder
         {
             switch(paramType)
             {
-                case LuaOperateParamType.Integer:
+                case LuaParamType.Integer:
                     return intValue;
-                case LuaOperateParamType.Float:
+                case LuaParamType.Float:
                     return floatValue;
-                case LuaOperateParamType.String:
+                case LuaParamType.String:
                     return strValue;
                 default:
                     return null;

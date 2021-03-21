@@ -9,11 +9,11 @@ namespace DotEngine.Lua.UI.Handler
     public class EventHandlerData
     {
         [SerializeField]
-        private ScriptBinderBehaviour m_BindBehaviour = null;
+        private LuaBinderBehaviour m_BindBehaviour = null;
         [SerializeField]
         private string m_FuncName = string.Empty;
         [SerializeField]
-        private LuaOperateParam[] m_OperateParams = new LuaOperateParam[0];
+        private LuaParam[] m_OperateParams = new LuaParam[0];
 
         public void Invoke()
         {

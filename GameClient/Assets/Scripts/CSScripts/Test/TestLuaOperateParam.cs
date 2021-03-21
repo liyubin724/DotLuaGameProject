@@ -11,7 +11,7 @@ namespace ETest
 {
     public class TestLuaOperateParam : MonoBehaviour
     {
-        public LuaScriptBinder scriptBinder = new LuaScriptBinder();
-        public LuaOperateParam loParam = new LuaOperateParam();
+        public LuaBinder scriptBinder = new LuaBinder();
+        public LuaParam loParam = new LuaParam();
     }
 }

@@ -5,17 +5,13 @@ using SystemObject = System.Object;
 
 namespace DotEngine.Lua.Binder
 {
-    public class ScriptBinderBehaviour : MonoBehaviour
+    public class LuaBinderBehaviour : MonoBehaviour
     {
-        public LuaScriptBinder bindScript = new LuaScriptBinder();
-        public LuaOperateParam[] constructorParams = new LuaOperateParam[0];
+        public LuaBinder binder = new LuaBinder();
 
-        private bool m_IsInited = false;
-        private LuaTable m_LuaTable = null;
-        public LuaTable Table
-        {
-            get => m_LuaTable;
-        }
+        public LuaTable Table { get; private set; }
+
+        private bool isInited = false;
 
         public LuaEnv Env
         {
@@ -32,7 +28,7 @@ namespace DotEngine.Lua.Binder
 
         public bool IsValid()
         {
-            if (m_IsInited && Env != null && Table != null)
+            if (isInited && Env != null && Table != null)
             {
                 return true;
             }
@@ -42,10 +38,10 @@ namespace DotEngine.Lua.Binder
 
         public void InitBinder()
         {
-            if (!m_IsInited)
+            if (!isInited)
             {
-                m_IsInited = true;
-                m_LuaTable = bindScript.InstanceWith(constructorParams);
+                isInited = true;
+                Table = binder.GetInstance();
 
                 OnInitFinished();
             }
@@ -84,17 +80,17 @@ namespace DotEngine.Lua.Binder
             {
                 CallAction(LuaUtility.DESTROY_FUNCTION_NAME);
 
-                m_LuaTable.Dispose();
-                m_LuaTable = null;
-                m_IsInited = false;
+                Table.Dispose();
             }
+            Table = null;
+            isInited = false;
         }
 
         public void SetValue<T>(string name, T value)
         {
             if (IsValid())
             {
-                m_LuaTable.Set(name, value);
+                Table.Set(name, value);
             }
         }
 
@@ -107,9 +103,9 @@ namespace DotEngine.Lua.Binder
             else
             {
                 SystemObject[] paramValues = new SystemObject[values.Length + 1];
-                paramValues[0] = m_LuaTable;
+                paramValues[0] = Table;
                 Array.Copy(values, 0, paramValues, 1, values.Length);
-                LuaFunction func = m_LuaTable.Get<LuaFunction>(funcName);
+                LuaFunction func = Table.Get<LuaFunction>(funcName);
                 if (func != null)
                 {
                     func.ActionParams(paramValues);
@@ -122,8 +118,8 @@ namespace DotEngine.Lua.Binder
         {
             if (IsValid())
             {
-                Action<LuaTable> action = m_LuaTable.Get<Action<LuaTable>>(funcName);
-                action?.Invoke(m_LuaTable);
+                Action<LuaTable> action = Table.Get<Action<LuaTable>>(funcName);
+                action?.Invoke(Table);
             }
         }
 
@@ -131,8 +127,8 @@ namespace DotEngine.Lua.Binder
         {
             if (IsValid())
             {
-                Action<LuaTable, T> action = m_LuaTable.Get<Action<LuaTable, T>>(funcName);
-                action?.Invoke(m_LuaTable, value);
+                Action<LuaTable, T> action = Table.Get<Action<LuaTable, T>>(funcName);
+                action?.Invoke(Table, value);
             }
         }
 
@@ -140,8 +136,8 @@ namespace DotEngine.Lua.Binder
         {
             if (IsValid())
             {
-                Action<LuaTable, T1, T2> action = m_LuaTable.Get<Action<LuaTable, T1, T2>>(funcName);
-                action?.Invoke(m_LuaTable, value1, value2);
+                Action<LuaTable, T1, T2> action = Table.Get<Action<LuaTable, T1, T2>>(funcName);
+                action?.Invoke(Table, value1, value2);
             }
         }
 
@@ -149,8 +145,8 @@ namespace DotEngine.Lua.Binder
         {
             if (IsValid())
             {
-                Func<LuaTable, R> func = m_LuaTable.Get<Func<LuaTable, R>>(funcName);
-                return func(m_LuaTable);
+                Func<LuaTable, R> func = Table.Get<Func<LuaTable, R>>(funcName);
+                return func(Table);
             }
             return default(R);
         }
@@ -159,8 +155,8 @@ namespace DotEngine.Lua.Binder
         {
             if (IsValid())
             {
-                Func<LuaTable, T, R> func = m_LuaTable.Get<Func<LuaTable, T, R>>(funcName);
-                return func(m_LuaTable, value);
+                Func<LuaTable, T, R> func = Table.Get<Func<LuaTable, T, R>>(funcName);
+                return func(Table, value);
             }
             return default(R);
         }
@@ -169,8 +165,8 @@ namespace DotEngine.Lua.Binder
         {
             if (IsValid())
             {
-                Func<LuaTable, T1, T2, R> func = m_LuaTable.Get<Func<LuaTable, T1, T2, R>>(funcName);
-                return func(m_LuaTable, value1, value2);
+                Func<LuaTable, T1, T2, R> func = Table.Get<Func<LuaTable, T1, T2, R>>(funcName);
+                return func(Table, value1, value2);
             }
             return default(R);
         }

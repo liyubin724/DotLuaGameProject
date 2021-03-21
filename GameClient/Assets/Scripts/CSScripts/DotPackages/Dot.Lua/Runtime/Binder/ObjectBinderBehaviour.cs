@@ -7,17 +7,17 @@ using SystemObject = System.Object;
 
 namespace DotEngine.Lua.Binder
 {
-    public class ObjectBinderBehaviour : ScriptBinderBehaviour
+    public class ObjectBinderBehaviour : LuaBinderBehaviour
     {
         [Serializable]
         public class LuaOperateParamArray
         {
             public string name;
-            public List<LuaOperateParam> operateParams = new List<LuaOperateParam>();
+            public List<LuaParam> operateParams = new List<LuaParam>();
         }
 
         [SerializeField]
-        private List<LuaOperateParam> m_RegistObjects = new List<LuaOperateParam>();
+        private List<LuaParam> m_RegistObjects = new List<LuaParam>();
         [SerializeField]
         private List<LuaOperateParamArray> m_RegistArrayObjects = new List<LuaOperateParamArray>();
 
@@ -36,7 +36,7 @@ namespace DotEngine.Lua.Binder
             {
                 for (int i = 0; i < m_RegistObjects.Count; i++)
                 {
-                    LuaOperateParam operateParam = m_RegistObjects[i];
+                    LuaParam operateParam = m_RegistObjects[i];
                     if (string.IsNullOrEmpty(operateParam.name))
                     {
                         LogUtil.Error(LuaUtility.LOGGER_NAME, "ObjectBinderBehaviour::OnInitFinished->the name of param is empty");
@@ -77,7 +77,7 @@ namespace DotEngine.Lua.Binder
             }
         }
 
-        private SystemObject GetRegistObject(LuaOperateParam operateParam)
+        private SystemObject GetRegistObject(LuaParam operateParam)
         {
             if (operateParam != null)
             {
@@ -88,11 +88,11 @@ namespace DotEngine.Lua.Binder
                 }
                 else
                 {
-                    if (operateParam.paramType == LuaOperateParamType.UObject)
+                    if (operateParam.paramType == LuaParamType.UObject)
                     {
-                        if (regObject.GetType().IsSubclassOf(typeof(ScriptBinderBehaviour)))
+                        if (regObject.GetType().IsSubclassOf(typeof(LuaBinderBehaviour)))
                         {
-                            ScriptBinderBehaviour binderBehaviour = (ScriptBinderBehaviour)regObject;
+                            LuaBinderBehaviour binderBehaviour = (LuaBinderBehaviour)regObject;
                             binderBehaviour.InitBinder();
                             regObject = binderBehaviour.Table;
                         }

@@ -1,21 +1,21 @@
-﻿using DotEditor.GUIExtension.RList;
+﻿using DotEditor.GUIExt.IMGUI.RList;
 using DotEngine.Lua.Binder;
 using UnityEditor;
 
 namespace DotEditor.Lua.Binder
 {
-    [CustomEditor(typeof(ScriptBinderBehaviour),true)]
+    //[CustomEditor(typeof(LuaBinderBehaviour),true)]
     public class ScriptBinderBehaviourEditor : Editor
     {
         SerializedProperty bindScriptProperty;
-        SerializedProperty constructorParamsProperty;
+        //SerializedProperty constructorParamsProperty;
 
         ReorderableListProperty constructorParamsRLProperty;
         protected virtual void OnEnable()
         {
-            bindScriptProperty = serializedObject.FindProperty("bindScript");
-            constructorParamsProperty = serializedObject.FindProperty("constructorParams");
-            constructorParamsRLProperty = new ReorderableListProperty(constructorParamsProperty);
+            bindScriptProperty = serializedObject.FindProperty("binder");
+           // constructorParamsProperty = serializedObject.FindProperty("constructorParams");
+            //constructorParamsRLProperty = new ReorderableListProperty(constructorParamsProperty);
         }
 
         public override void OnInspectorGUI()
@@ -26,7 +26,7 @@ namespace DotEditor.Lua.Binder
                 {
                     EditorGUILayout.PropertyField(bindScriptProperty);
                     EditorGUILayout.Space();
-                    constructorParamsRLProperty.OnGUILayout();
+                    //constructorParamsRLProperty.OnGUILayout();
                 }
                 EditorGUILayout.EndVertical();
             }
