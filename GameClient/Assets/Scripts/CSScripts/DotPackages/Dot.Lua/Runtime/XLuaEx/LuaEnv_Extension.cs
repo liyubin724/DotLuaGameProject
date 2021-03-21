@@ -16,5 +16,10 @@ namespace XLua
             
             return memoryInK + (memoryInB / 1024.0f);
         }
+
+        public static bool IsValid(this LuaEnv luaEnv)
+        {
+            return luaEnv.L != RealStatePtr.Zero;
+        }
     }
 }
