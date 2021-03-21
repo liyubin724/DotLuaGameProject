@@ -1,13 +1,23 @@
 local Logger = require('DotLua/Debug/Logger')
 local HTimer = require('DotLua/Timer/HierarchicalTimer')
 
+local CSLogUtil = CS.DotEngine.Log.LogUtil
+
 local oop = require('DotLua/OOP/oop')
 local ecs = require('DotLua/ECS/ecs')
 
+_G.isDebug = true
+
 if _G.isDebug then
+    --require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+
     Logger.SetEnable(true, true, true)
 else
     Logger.SetEnable(false, false, true)
 end
 
+Logger.SetFunc(CSLogUtil.Info,CSLogUtil.Warning,CSLogUtil.Error)
+
 ecs.addservicer('HTimer', HTimer())
+
+require("Tests/Timer/TestTimer")

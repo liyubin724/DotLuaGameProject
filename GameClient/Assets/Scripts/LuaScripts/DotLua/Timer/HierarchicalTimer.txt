@@ -1,4 +1,5 @@
 local oop = require('DotLua/OOP/oop')
+local CycleTime = require('DotLua/CycleTime')
 
 local TimerWheel = require('DotLua/Timer/TimerWheel')
 local TimerTask = require('DotLua/Timer/TimerTask')
@@ -38,8 +39,8 @@ local HierarchicalTimer =
         end
 
         for _, wheel in ipairs(self.wheels) do
-            wheel.completeDelegate = oop.delegate(self,self.OnWheelComplete)
-            wheel.soltTriggerDelegate = oop.delegate(self,self.OnWheelSoltTrigger)
+            wheel.completeDelegate = oop.delegate(self, self.OnWheelComplete)
+            wheel.soltTriggerDelegate = oop.delegate(self, self.OnWheelSoltTrigger)
         end
 
         self.wheel = self.wheels[1]
@@ -65,7 +66,7 @@ function HierarchicalTimer:AddTimer(intervalInSec, totalInSec, receiver, interva
     task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
 
     self:AddTask(task, nil)
-    
+
     return self.uniqueIndex
 end
 
@@ -101,13 +102,13 @@ end
 -- @return bool 返回是否成功删除定时器
 function HierarchicalTimer:RemoveTimer(timerIndex)
     if not timerIndex then
-        oop.error("Timer","the timerIndex is nil")
+        oop.error('Timer', 'the timerIndex is nil')
         return
     end
 
     local handler = self.handlers[timerIndex]
     if not handler then
-        oop.warning("Timer","the index is error or the timer has been finished")
+        oop.warning('Timer', 'the index is error or the timer has been finished')
         return
     end
 
@@ -126,7 +127,9 @@ end
 -- 驱动多层时间轮进行轮转
 -- @param deltaTime 流逝的时间
 -- @return void
-function HierarchicalTimer:DoUpdate(deltaTime)
+function HierarchicalTimer:DoUpdate()
+    local deltaTime = CycleTime.GetDeltaTime()
+
     if self.isPaused then
         return
     end

@@ -33,10 +33,11 @@ function ServicerSet:Add(name, servicer)
             servicer[INIT_FUNC_NAME](servicer)
         end
 
-        if servicer[LATEUPDATE_FUNC_NAME] then
+        if servicer[UPDATE_FUNC_NAME] then
             tinsert(self.updateServicers, servicer)
         end
-        if servicer[UPDATE_FUNC_NAME] then
+
+        if servicer[LATEUPDATE_FUNC_NAME] then
             tinsert(self.lateUpdateServicers, servicer)
         end
         if servicer[TEARDOWN_FUNC_NAME] then

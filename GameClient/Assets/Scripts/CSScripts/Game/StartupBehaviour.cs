@@ -14,7 +14,8 @@ namespace Game
             DontDestroyUtility.AddTransform(transform);
 
             LogUtil.AddAppender(new UnityConsoleAppender());
-            new LuaEnvManager();
+            LuaEnvManager envManager = new LuaEnvManager();
+            envManager.Startup();
 
         }
 
@@ -24,6 +25,9 @@ namespace Game
 
         private void OnDestroy()
         {
+            LuaEnvManager envManager = LuaEnvManager.GetInstance();
+            envManager.Shuntdown();
+            
             LogUtil.Reset();
         }
     }

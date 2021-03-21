@@ -13,10 +13,5 @@ namespace DotEngine.Lua
         {
             LuaEnvManager.GetInstance().DoLateUpdate();
         }
-
-        private void OnDestroy()
-        {
-            LuaEnvManager.GetInstance().DoDestroy();
-        }
     }
 }

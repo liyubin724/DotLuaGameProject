@@ -1,0 +1,45 @@
+local CycleTime = {}
+CycleTime.deltaTime = 0
+CycleTime.unscaleDeltaTime = 0
+
+CycleTime.timeScale = 1.0
+
+CycleTime.frameTime = 0.1
+CycleTime.frameIndex = 0
+
+function CycleTime.GetDeltaTime()
+    return CycleTime.deltaTime * CycleTime.timeScale
+end
+
+function CycleTime.GetUnscaleDeltaTime()
+    return CycleTime.unscaleDeltaTime
+end
+
+function CycleTime.GetTimeScale()
+    return CycleTime.timeScale
+end
+
+function CycleTime.SetTimeScale(timeScale)
+    CycleTime.timeScale = timeScale
+end
+
+function CycleTime.SetFrameTime(frameTime)
+    CycleTime.frameTime = frameTime
+end
+
+function CycleTime.GetFrameTime()
+    return CycleTime.frameTime
+end
+
+function CycleTime.GetFrameIndex()
+    return CycleTime.frameIndex
+end
+
+function CycleTime.DoUpdate(deltaTime, unscaleDeltaTime)
+    CycleTime.deltaTime = deltaTime
+    CycleTime.unscaleDeltaTime = unscaleDeltaTime
+
+    CycleTime.frameIndex = CycleTime.frameIndex + 1
+end
+
+return CycleTime

@@ -1,0 +1,15 @@
+local ecs = require("DotLua/ECS/ecs")
+
+local oop = require("DotLua/OOP/oop")
+oop.info("Test","Test Timer")
+
+local HTimer = ecs.getservicer("HTimer")
+
+TestTimer = {}
+TestTimer.__index = TestTimer
+
+function TestTimer:HandIntervalTimer(userdata)
+    oop.info("Test","TestTimer:HandIntervalTimer->userdata = "..userdata)
+end
+
+HTimer:AddIntervalTimer(1,TestTimer,TestTimer.HandIntervalTimer,"Test")

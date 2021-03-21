@@ -72,7 +72,7 @@ function TimerWheel:DoPushWheel(pushNum)
         if self.currentSlotIndex > self.slotSize then
             self.currentSlotIndex = 1
             if self.completeDelegate then
-                self.completeDelegate:Invoke(self.level)
+                self.completeDelegate:ActionInvoke(self.level)
             end
         end
 
@@ -80,7 +80,7 @@ function TimerWheel:DoPushWheel(pushNum)
         if tasks then
             self.allTasks[self.currentSlotIndex] = {}
             if self.soltTriggerDelegate then
-                self.soltTriggerDelegate:Invoke(tasks)
+                self.soltTriggerDelegate:ActionInvoke(tasks)
             end
         end
     end

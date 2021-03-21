@@ -1,6 +1,6 @@
 local oop = require('DotLua/OOP/oop')
+local CycleTime = require('DotLua/CycleTime')
 
-local CycleTime = oop.using('DotLua/ECS/CycleTime')
 local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
 local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
 
@@ -9,7 +9,7 @@ local ServicerSet = oop.using('DotLua/ECS/Servicers/ServicerSet')
 
 local ecs = {}
 
-ecs.time = CycleTime()
+ecs.time = CycleTime
 ecs.dispatcher = MsgDispatcher()
 ecs.uidcreator = UIDCreator()
 ecs.isruning = false
@@ -52,7 +52,7 @@ ecs.init = function()
 end
 
 ecs.update = function(deltaTime, unscaleDeltaTime)
-    ecs.time:DoUpdate(deltaTime, unscaleDeltaTime)
+    ecs.time.DoUpdate(deltaTime, unscaleDeltaTime)
 
     ecs.systemset:DoUpdate()
     ecs.servicerset:DoUpdate()

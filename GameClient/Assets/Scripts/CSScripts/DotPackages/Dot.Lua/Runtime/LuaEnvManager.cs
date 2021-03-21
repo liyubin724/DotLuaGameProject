@@ -20,10 +20,9 @@ namespace DotEngine.Lua
         public LuaTable LaunchTable { get; private set; } = null;
         private Action<float, float> updateAction = null;
         private Action lateUpdateAction = null;
-        private Action destroyAction = null;
 
         public LuaTable OOPTable { get; private set; } = null;
-        private Func<string,LuaTable> usingFunc = null;
+        private Func<string, LuaTable> usingFunc = null;
         private Func<string, LuaTable> instanceFunc = null;
         private LuaFunction instanceWithFunc = null;
 
@@ -45,7 +44,7 @@ namespace DotEngine.Lua
 
         public LuaEnvManager()
         {
-            if(manager!=null)
+            if (manager != null)
             {
                 LogUtil.Error(LuaUtility.LOGGER_NAME, "");
                 return;
@@ -63,16 +62,15 @@ namespace DotEngine.Lua
 #else
 #endif
             Env.AddLoader(scriptLoader.LoadScript);
-            
+
             OOPTable = Require(LUA_OOP_PATH);
-            usingFunc = OOPTable.Get<Func<string,LuaTable>>("using");
+            usingFunc = OOPTable.Get<Func<string, LuaTable>>("using");
             instanceFunc = OOPTable.Get<Func<string, LuaTable>>("instance");
-            instanceWithFunc = OOPTable.Get<LuaFunction>("instanceWith");
+            instanceWithFunc = OOPTable.Get<LuaFunction>("instancewith");
 
             LaunchTable = RequireGlobal(LUA_LAUNCH_PATH);
             updateAction = LaunchTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
             lateUpdateAction = LaunchTable.Get<Action>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
-            destroyAction = LaunchTable.Get<Action>(LuaUtility.DESTROY_FUNCTION_NAME);
 
             Action startAction = LaunchTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
             startAction?.Invoke();
@@ -87,11 +85,37 @@ namespace DotEngine.Lua
         {
             UnityObject.Destroy(envBehaviour.gameObject);
             envBehaviour = null;
+            if (IsValid)
+            {
+                LuaFunction destroyFunc = LaunchTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
+                destroyFunc.Action();
+                destroyFunc.Dispose();
+
+                instanceWithFunc.Dispose();
+                LaunchTable.Dispose();
+                OOPTable.Dispose();
+            }
+
+            updateAction = null;
+            lateUpdateAction = null;
+            usingFunc = null;
+            instanceFunc = null;
+            instanceWithFunc = null;
+            LaunchTable = null;
+            OOPTable = null;
+
+            if (IsValid)
+            {
+                Env.FullGc();
+                Env.Dispose();
+            }
+            Env = null;
+            manager = null;
         }
 
         public void DoUpdate()
         {
-            if(IsValid)
+            if (IsValid)
             {
                 updateAction?.Invoke(Time.deltaTime, Time.unscaledDeltaTime);
                 Env.Tick();
@@ -100,38 +124,15 @@ namespace DotEngine.Lua
 
         public void DoLateUpdate()
         {
-            if(IsValid)
+            if (IsValid)
             {
                 lateUpdateAction?.Invoke();
             }
         }
 
-        public void DoDestroy()
-        {
-            if(IsValid)
-            {
-                destroyAction?.Invoke();
-
-                instanceWithFunc.Dispose();
-                LaunchTable.Dispose();
-                OOPTable.Dispose();
-            }
-            updateAction = null;
-            lateUpdateAction = null;
-            destroyAction = null;
-            usingFunc = null;
-            instanceFunc = null;
-
-            if(IsValid)
-            {
-                Env.Dispose();
-            }
-            Env = null;
-        }
-
         public void FullGC()
         {
-            if(IsValid)
+            if (IsValid)
             {
                 Env.FullGc();
             }
@@ -157,13 +158,13 @@ namespace DotEngine.Lua
 
         public LuaTable Require(string scriptPath)
         {
-            if(string.IsNullOrEmpty(scriptPath) || !IsValid)
+            if (string.IsNullOrEmpty(scriptPath) || !IsValid)
             {
                 LogUtil.Error(LuaUtility.LOGGER_NAME, "");
                 return null;
             }
 
-            SystemObject[] values = Env.DoString(string.Format(LuaUtility.REQUIRE_FORMAT,scriptPath));
+            SystemObject[] values = Env.DoString(string.Format(LuaUtility.REQUIRE_FORMAT, scriptPath));
             if (values != null && values.Length > 0)
             {
                 return values[0] as LuaTable;
@@ -177,7 +178,7 @@ namespace DotEngine.Lua
 
         public LuaTable UsingClass(string scriptPath)
         {
-            if(string.IsNullOrEmpty(scriptPath))
+            if (string.IsNullOrEmpty(scriptPath))
             {
                 LogUtil.Error(LuaUtility.LOGGER_NAME, "");
                 return null;
@@ -196,7 +197,7 @@ namespace DotEngine.Lua
             return instanceFunc(scriptPath);
         }
 
-        public LuaTable InstanceClassWith(string scriptPath,params LuaParam[] operateParams)
+        public LuaTable InstanceClassWith(string scriptPath, params LuaParam[] operateParams)
         {
             List<SystemObject> list = new List<SystemObject>();
             list.Add(scriptPath);
@@ -207,19 +208,19 @@ namespace DotEngine.Lua
                     list.Add(p.GetValue());
                 }
             }
-            return InstanceClassWith(scriptPath,list.ToArray());
+            return InstanceClassWith(scriptPath, list.ToArray());
         }
 
-        public LuaTable InstanceClassWith(string scriptPath,params SystemObject[] values)
+        public LuaTable InstanceClassWith(string scriptPath, params SystemObject[] values)
         {
-            return instanceWithFunc.Func<LuaTable>(scriptPath,values);
+            return instanceWithFunc.Func<LuaTable>(scriptPath, values);
         }
 
         private string GetScriptName(string scriptPath)
         {
             string name = scriptPath;
             int index = name.LastIndexOf("/");
-            if(index>0)
+            if (index > 0)
             {
                 name = name.Substring(index + 1);
             }
