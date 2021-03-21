@@ -1,4 +1,5 @@
 ﻿using DotEngine.Lua;
+using DotEngine.Lua.Binder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace ETest
 {
     public class TestLuaOperateParam : MonoBehaviour
     {
+        public LuaScriptBinder scriptBinder = new LuaScriptBinder();
         public LuaOperateParam loParam = new LuaOperateParam();
     }
 }

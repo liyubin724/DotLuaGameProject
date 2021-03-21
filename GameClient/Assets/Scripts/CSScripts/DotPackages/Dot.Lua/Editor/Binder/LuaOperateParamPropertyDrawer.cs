@@ -1,12 +1,12 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.Utilities;
-using DotEngine.Lua;
+using DotEngine.Lua.Binder;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEditor.Lua
+namespace DotEditor.Lua.Binder
 {
     [CustomPropertyDrawer(typeof(LuaOperateParam))]
     public class LuaOperateParamPropertyDrawer : PropertyDrawer

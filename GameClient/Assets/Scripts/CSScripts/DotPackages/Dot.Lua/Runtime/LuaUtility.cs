@@ -15,6 +15,7 @@ namespace DotEngine.Lua
         public const string FIXEDUPDATE_FUNCTION_NAME = "DoFixedUpdate";
         public const string DESTROY_FUNCTION_NAME = "DoDestroy";
 
+        private const string SCRIPT_ASSET_DIR = "Assets/Scripts/LuaScripts/";
         private const string SCRIPT_EXTENSION = ".txt";
 
         public static string GetScriptFilePathInProject(string scriptPath)
@@ -22,8 +23,17 @@ namespace DotEngine.Lua
             return $"{Application.dataPath}/Scripts/LuaScripts/{scriptPath}{SCRIPT_EXTENSION}";
         }
 
+        public static string GetScriptPath(string scriptAssetPath)
+        {
+            if (string.IsNullOrEmpty(scriptAssetPath))
+            {
+                return null;
+            }
+            return scriptAssetPath.Replace("\\", "/").Replace(SCRIPT_ASSET_DIR, "").Replace(SCRIPT_EXTENSION, "");
+        }
+
+
         //----------------------------------
-        private const string SCRIPT_ASSET_DIR = "Assets/Scripts/LuaScripts/";
         private const string SCRIPT_DIR = "Scripts/LuaScripts/";
 
         public static string GetScriptAssetPath(string scriptPath)
@@ -36,15 +46,7 @@ namespace DotEngine.Lua
             return $"{Application.dataPath}/{SCRIPT_DIR}{scriptPath}{SCRIPT_EXTENSION}";
         }
 
-        public static string GetScriptPath(string scriptAssetPath)
-        {
-            if(string.IsNullOrEmpty(scriptAssetPath))
-            {
-                return null;
-            }
-            return scriptAssetPath.Replace("\\","/").Replace(SCRIPT_ASSET_DIR, "").Replace(SCRIPT_EXTENSION,"");
-        }
-
+        
         public static string GetScriptPathFormat()
         {
 #if UNITY_EDITOR

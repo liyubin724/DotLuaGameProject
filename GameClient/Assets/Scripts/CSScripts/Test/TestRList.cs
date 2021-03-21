@@ -1,4 +1,5 @@
 ﻿using DotEngine.Lua;
+using DotEngine.Lua.Binder;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

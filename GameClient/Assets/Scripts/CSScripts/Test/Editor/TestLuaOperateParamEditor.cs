@@ -9,7 +9,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(TestLuaOperateParam))]
+//[CustomEditor(typeof(TestLuaOperateParam))]
 public class TestLuaOperateParamEditor : Editor
 {
     public override void OnInspectorGUI()

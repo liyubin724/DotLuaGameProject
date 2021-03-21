@@ -1,8 +1,8 @@
 ﻿using DotEditor.GUIExtension.RList;
-using DotEngine.Lua.Register;
+using DotEngine.Lua.Binder;
 using UnityEditor;
 
-namespace DotEditor.Lua.Register
+namespace DotEditor.Lua.Binder
 {
     [CustomEditor(typeof(ScriptBinderBehaviour),true)]
     public class ScriptBinderBehaviourEditor : Editor
@@ -22,9 +22,13 @@ namespace DotEditor.Lua.Register
         {
             serializedObject.Update();
             {
-                EditorGUILayout.PropertyField(bindScriptProperty);
-                EditorGUILayout.Space();
-                constructorParamsRLProperty.OnGUILayout();
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                {
+                    EditorGUILayout.PropertyField(bindScriptProperty);
+                    EditorGUILayout.Space();
+                    constructorParamsRLProperty.OnGUILayout();
+                }
+                EditorGUILayout.EndVertical();
             }
             serializedObject.ApplyModifiedProperties();
         }

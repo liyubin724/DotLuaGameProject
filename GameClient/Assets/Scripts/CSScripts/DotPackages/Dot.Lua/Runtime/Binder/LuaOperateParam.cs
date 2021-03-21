@@ -3,7 +3,7 @@ using UnityEngine;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.Lua
+namespace DotEngine.Lua.Binder
 {
     public enum LuaOperateParamType
     {
@@ -18,7 +18,7 @@ namespace DotEngine.Lua
     {
         public string name;
         public LuaOperateParamType paramType = LuaOperateParamType.Integer;
-        
+
         public int intValue;
         public float floatValue;
         public string strValue;
@@ -42,8 +42,6 @@ namespace DotEngine.Lua
                     return floatValue;
                 case LuaOperateParamType.String:
                     return strValue;
-                case LuaOperateParamType.UObject:
-                    return uObject;
                 default:
                     return null;
             }

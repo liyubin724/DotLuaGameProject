@@ -1,4 +1,5 @@
 ﻿using DotEngine.Log;
+using DotEngine.Lua.Binder;
 using DotEngine.Services;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace DotEngine.Lua
         {
             Env = new LuaEnv();
 
-            m_ScriptLoader = new FileScriptLoader(new string[] { LuaUtility.GetScriptPathFormat() });
+            //m_ScriptLoader = new FileScriptLoader(new string[] { LuaUtility.GetScriptPathFormat() });
             Env.AddLoader(m_ScriptLoader.LoadScript);
 
             if (!RequireScript(PreloadScript))
@@ -61,7 +62,7 @@ namespace DotEngine.Lua
             }else
             {
                 m_UpdateAction = GameTable.Get<Action<float>>(LuaUtility.UPDATE_FUNCTION_NAME);
-                m_UnscaleUpdateAction = GameTable.Get<Action<float>>(LuaUtility.UNSCALEUPDATE_FUNCTION_NAME);
+                //m_UnscaleUpdateAction = GameTable.Get<Action<float>>(LuaUtility.UNSCALEUPDATE_FUNCTION_NAME);
                 m_LateUpdateAction = GameTable.Get<Action<float>>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
                 m_FixedUpdateAction = GameTable.Get<Action<float>>(LuaUtility.FIXEDUPDATE_FUNCTION_NAME);
             }

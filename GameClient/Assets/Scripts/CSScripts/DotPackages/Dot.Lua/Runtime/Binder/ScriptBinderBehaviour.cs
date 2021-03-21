@@ -3,7 +3,7 @@ using UnityEngine;
 using XLua;
 using SystemObject = System.Object;
 
-namespace DotEngine.Lua.Register
+namespace DotEngine.Lua.Binder
 {
     public class ScriptBinderBehaviour : MonoBehaviour
     {
@@ -21,14 +21,10 @@ namespace DotEngine.Lua.Register
         {
             get
             {
-                Facade facade = Facade.GetInstance();
-                if (facade != null)
+                LuaEnvManager mgr = LuaEnvManager.GetInstance();
+                if (mgr != null && mgr.IsValid)
                 {
-                    LuaEnvService service = facade.GetServicer<LuaEnvService>(LuaEnvService.NAME);
-                    if(service!=null && service.IsValid())
-                    {
-                        return service.Env;
-                    }
+                    return mgr.Env;
                 }
                 return null;
             }
@@ -36,7 +32,7 @@ namespace DotEngine.Lua.Register
 
         public bool IsValid()
         {
-            if (m_IsInited && Env!=null && Table!=null)
+            if (m_IsInited && Env != null && Table != null)
             {
                 return true;
             }
@@ -49,7 +45,7 @@ namespace DotEngine.Lua.Register
             if (!m_IsInited)
             {
                 m_IsInited = true;
-                m_LuaTable = bindScript.InstanceScriptWith(constructorParams);
+                m_LuaTable = bindScript.InstanceWith(constructorParams);
 
                 OnInitFinished();
             }
@@ -87,6 +83,7 @@ namespace DotEngine.Lua.Register
             if (IsValid())
             {
                 CallAction(LuaUtility.DESTROY_FUNCTION_NAME);
+
                 m_LuaTable.Dispose();
                 m_LuaTable = null;
                 m_IsInited = false;
@@ -101,18 +98,19 @@ namespace DotEngine.Lua.Register
             }
         }
 
-        public void CallActionWithParams(string funcName,params SystemObject[] values)
+        public void CallActionWith(string funcName, params SystemObject[] values)
         {
-            if(values == null || values.Length == 0)
+            if (values == null || values.Length == 0)
             {
                 CallAction(funcName);
-            }else
+            }
+            else
             {
                 SystemObject[] paramValues = new SystemObject[values.Length + 1];
                 paramValues[0] = m_LuaTable;
                 Array.Copy(values, 0, paramValues, 1, values.Length);
                 LuaFunction func = m_LuaTable.Get<LuaFunction>(funcName);
-                if(func!=null)
+                if (func != null)
                 {
                     func.ActionParams(paramValues);
                 }

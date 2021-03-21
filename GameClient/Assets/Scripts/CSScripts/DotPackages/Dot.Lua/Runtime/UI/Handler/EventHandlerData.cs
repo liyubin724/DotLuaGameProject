@@ -1,4 +1,4 @@
-﻿using DotEngine.Lua.Register;
+﻿using DotEngine.Lua.Binder;
 using System;
 using UnityEngine;
 using SystemObject = System.Object;
@@ -24,7 +24,7 @@ namespace DotEngine.Lua.UI.Handler
                 {
                         values[i] = m_OperateParams[i].GetValue();
                 }
-                m_BindBehaviour.CallActionWithParams(m_FuncName,values);
+                m_BindBehaviour.CallActionWith(m_FuncName,values);
             }
         }
 
@@ -38,7 +38,7 @@ namespace DotEngine.Lua.UI.Handler
                 {
                     values[i+1] = m_OperateParams[i].GetValue();
                 }
-                m_BindBehaviour.CallActionWithParams(m_FuncName, values);
+                m_BindBehaviour.CallActionWith(m_FuncName, values);
             }
         }
     }

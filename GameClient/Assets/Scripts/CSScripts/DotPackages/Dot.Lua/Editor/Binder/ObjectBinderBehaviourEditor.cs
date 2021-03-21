@@ -1,12 +1,12 @@
 ﻿using DotEditor.GUIExtension;
 using DotEditor.GUIExtension.RList;
 using DotEditor.Utilities;
-using DotEngine.Lua.Register;
+using DotEngine.Lua.Binder;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Lua.Register
+namespace DotEditor.Lua.Binder
 {
     [CustomEditor(typeof(ObjectBinderBehaviour), true)]
     public class ObjectBinderBehaviourEditor : ScriptBinderBehaviourEditor

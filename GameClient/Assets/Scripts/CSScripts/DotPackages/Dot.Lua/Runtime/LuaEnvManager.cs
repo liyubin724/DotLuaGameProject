@@ -1,4 +1,5 @@
 ﻿using DotEngine.Log;
+using DotEngine.Lua.Binder;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ namespace DotEngine.Lua
 
         public LuaTable OOPTable { get; private set; } = null;
         private Func<string,LuaTable> usingFunc = null;
-
-        private Dictionary<string, LuaTable> cachedClassDic = new Dictionary<string, LuaTable>();
+        private Func<string, LuaTable> instanceFunc = null;
+        private LuaFunction instanceWithFunc = null;
 
         private LuaEnvBehaviour envBehaviour = null;
         public bool IsValid
@@ -65,6 +66,8 @@ namespace DotEngine.Lua
             
             OOPTable = Require(LUA_OOP_PATH);
             usingFunc = OOPTable.Get<Func<string,LuaTable>>("using");
+            instanceFunc = OOPTable.Get<Func<string, LuaTable>>("instance");
+            instanceWithFunc = OOPTable.Get<LuaFunction>("instanceWith");
 
             LaunchTable = RequireGlobal(LUA_LAUNCH_PATH);
             updateAction = LaunchTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
@@ -109,20 +112,15 @@ namespace DotEngine.Lua
             {
                 destroyAction?.Invoke();
 
+                instanceWithFunc.Dispose();
                 LaunchTable.Dispose();
                 OOPTable.Dispose();
-
-                foreach(var kvp in cachedClassDic)
-                {
-                    kvp.Value.Dispose();
-                }
-
             }
-            cachedClassDic.Clear();
             updateAction = null;
             lateUpdateAction = null;
             destroyAction = null;
             usingFunc = null;
+            instanceFunc = null;
 
             if(IsValid)
             {
@@ -179,70 +177,42 @@ namespace DotEngine.Lua
 
         public LuaTable UsingClass(string scriptPath)
         {
-            if(!cachedClassDic.TryGetValue(scriptPath,out LuaTable table))
+            if(string.IsNullOrEmpty(scriptPath))
             {
-                return table;
+                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                return null;
             }
-            table = usingFunc(scriptPath);
-            cachedClassDic.Add(scriptPath, table);
-
-            return table;
+            return usingFunc(scriptPath);
         }
 
         public LuaTable InstanceClass(string scriptPath)
         {
-            LuaTable classTable = UsingClass(scriptPath);
-            if(classTable !=null)
+            if (string.IsNullOrEmpty(scriptPath))
             {
-                Func<LuaTable> newFunc = classTable.Get<Func<LuaTable>>("new");
-                if(newFunc!=null)
-                {
-                    return newFunc();
-                }
+                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                return null;
             }
-            return null;
+
+            return instanceFunc(scriptPath);
         }
 
-        public LuaTable InstanceClassWith<P>(string scriptPath,P p)
+        public LuaTable InstanceClassWith(string scriptPath,params LuaOperateParam[] operateParams)
         {
-            LuaTable classTable = UsingClass(scriptPath);
-            if (classTable != null)
+            List<SystemObject> list = new List<SystemObject>();
+            list.Add(scriptPath);
+            if (operateParams != null && operateParams.Length > 0)
             {
-                Func<P, LuaTable> newFunc = classTable.Get<Func<P, LuaTable>>("new");
-                if (newFunc != null)
+                foreach (var p in operateParams)
                 {
-                    return newFunc(p);
+                    list.Add(p.GetValue());
                 }
             }
-            return null;
+            return InstanceClassWith(scriptPath,list.ToArray());
         }
 
-        public LuaTable InstanceClassWith<P1,P2>(string scriptPath,P1 p1,P2 p2)
+        public LuaTable InstanceClassWith(string scriptPath,params SystemObject[] values)
         {
-            LuaTable classTable = UsingClass(scriptPath);
-            if (classTable != null)
-            {
-                Func<P1, P2, LuaTable> newFunc = classTable.Get<Func<P1, P2, LuaTable>>("new");
-                if (newFunc != null)
-                {
-                    return newFunc(p1, p2);
-                }
-            }
-            return null;
-        }
-
-        public LuaTable InstanceClassWith<P1, P2,P3>(string scriptPath, P1 p1, P2 p2,P3 p3)
-        {
-            LuaTable classTable = UsingClass(scriptPath);
-            if (classTable != null)
-            {
-                Func<P1,P2,P3,LuaTable> newFunc = classTable.Get<Func<P1, P2, P3, LuaTable>>("new");
-                if (newFunc != null)
-                {
-                    return newFunc(p1,p2,p3);
-                }
-            }
-            return null;
+            return instanceWithFunc.Func<LuaTable>(scriptPath,values);
         }
 
         private string GetScriptName(string scriptPath)

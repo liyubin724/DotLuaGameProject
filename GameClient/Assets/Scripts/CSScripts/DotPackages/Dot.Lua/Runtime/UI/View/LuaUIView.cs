@@ -1,4 +1,4 @@
-﻿using DotEngine.Lua.Register;
+﻿using DotEngine.Lua.Binder;
 
 namespace DotEngine.Lua.UI.View
 {

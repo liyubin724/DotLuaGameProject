@@ -5,7 +5,7 @@ using UnityEngine;
 using XLua;
 using SystemObject = System.Object;
 
-namespace DotEngine.Lua.Register
+namespace DotEngine.Lua.Binder
 {
     public class ObjectBinderBehaviour : ScriptBinderBehaviour
     {

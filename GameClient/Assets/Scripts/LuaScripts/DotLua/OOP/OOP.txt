@@ -36,6 +36,22 @@ oop.using = function(path)
     return c
 end
 
+oop.instance = function(path)
+    local c = oop.using(path)
+    if c then
+        return c()
+    end
+    return nil
+end
+
+oop.instancewith = function(path,...)
+    local c = oop.using(path)
+    if c then
+        return c(...)
+    end
+    return nil
+end
+
 oop.ObjectType = oop.using('DotLua/OOP/ObjectType')
 oop.Object = oop.using('DotLua/OOP/Object')
 

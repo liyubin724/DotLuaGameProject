@@ -1,8 +1,9 @@
 ﻿using DotEngine.Lua;
+using DotEngine.Lua.Binder;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Lua
+namespace DotEditor.Lua.Binder
 {
     [CustomPropertyDrawer(typeof(LuaScriptBinder))]
     public class LuaScriptBinderPropertyDrawer : PropertyDrawer
@@ -19,7 +20,7 @@ namespace DotEditor.Lua
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            SerializedProperty scriptPathProperty = property.FindPropertyRelative("m_ScriptFilePath");
+            SerializedProperty scriptPathProperty = property.FindPropertyRelative("scriptPath");
 
             TextAsset scriptAsset = null;
             string scriptAssetPath = string.Empty;
