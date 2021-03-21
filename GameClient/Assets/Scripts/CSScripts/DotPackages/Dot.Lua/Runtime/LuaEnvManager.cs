@@ -43,7 +43,7 @@ namespace DotEngine.Lua
             return manager;
         }
 
-        private LuaEnvManager()
+        public LuaEnvManager()
         {
             if(manager!=null)
             {

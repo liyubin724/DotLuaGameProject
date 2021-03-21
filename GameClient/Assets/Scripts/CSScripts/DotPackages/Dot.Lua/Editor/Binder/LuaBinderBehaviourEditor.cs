@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DotEditor.Lua.Binder
 {
-    [CustomEditor(typeof(LuaBinderBehaviour),true)]
+    [CustomEditor(typeof(LuaBinderBehaviour),false)]
     public class LuaBinderBehaviourEditor : Editor
     {
         SerializedProperty bindScriptProperty;
@@ -17,7 +17,7 @@ namespace DotEditor.Lua.Binder
 
         ReorderableListProperty registParamsRLProperty;
         List<ReorderableListProperty> registParamGroupsRLProperties = new List<ReorderableListProperty>();
-        protected virtual void OnEnable()
+        void OnEnable()
         {
             bindScriptProperty = serializedObject.FindProperty("binder");
             registParamsProperty = serializedObject.FindProperty("registParams");

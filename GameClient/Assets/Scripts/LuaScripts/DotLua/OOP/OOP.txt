@@ -1,4 +1,3 @@
-require('DotLua/Utils/stringEx')
 require('DotLua/Utils/tableEx')
 require('DotLua/Utils/mathEx')
 
@@ -7,6 +6,8 @@ local Delegate = require('DotLua/OOP/Delegate')
 local Event = require('DotLua/OOP/Event')
 
 local oop = {}
+oop.ObjectType = require('DotLua/OOP/ObjectType')
+oop.Object = require('DotLua/OOP/Object')
 
 oop.isDebug = _G.isDebug or true
 
@@ -14,6 +15,31 @@ oop.Logger = require('DotLua/Debug/Logger')
 oop.info = oop.Logger.Info
 oop.warning = oop.Logger.Warning
 oop.error = oop.Logger.Error
+
+oop.class = require('DotLua/OOP/class')
+
+oop.getclassname = function(target)
+    if oop.isclassorinstance(target) then
+        return target:GetClassName()
+    end
+
+    return nil
+end
+
+oop.getclassbyname = function(className)
+    if type(className) ~= 'string' then
+        oop.error('oop', 'the param of className should be a string')
+        return nil
+    end
+
+    local c = oop.classes[className]
+    if c then
+        return c
+    else
+        oop.error('oop', string.format('the class which named (%s) is not founded', className))
+        return nil
+    end
+end
 
 oop.assembly = {}
 oop.classes = {}
@@ -44,40 +70,12 @@ oop.instance = function(path)
     return nil
 end
 
-oop.instancewith = function(path,...)
+oop.instancewith = function(path, ...)
     local c = oop.using(path)
     if c then
         return c(...)
     end
     return nil
-end
-
-oop.ObjectType = oop.using('DotLua/OOP/ObjectType')
-oop.Object = oop.using('DotLua/OOP/Object')
-
-oop.class = require('DotLua/OOP/class')
-
-oop.getclassname = function(target)
-    if oop.isclassorinstance(target) then
-        return target:GetClassName()
-    end
-
-    return nil
-end
-
-oop.getclassbyname = function(className)
-    if type(className) ~= 'string' then
-        oop.error('oop', 'the param of className should be a string')
-        return nil
-    end
-
-    local c = oop.classes[className]
-    if c then
-        return c
-    else
-        oop.error('oop', string.format('the class which named (%s) is not founded', className))
-        return nil
-    end
 end
 
 oop.enum = function(name, values)
