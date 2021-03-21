@@ -14,6 +14,7 @@ namespace Game
             DontDestroyUtility.AddTransform(transform);
 
             LogUtil.AddAppender(new UnityConsoleAppender());
+            LogUtil.AddAppender(new FileLogAppender(@"D:/logs"));
             LuaEnvManager envManager = new LuaEnvManager();
             envManager.Startup();
 

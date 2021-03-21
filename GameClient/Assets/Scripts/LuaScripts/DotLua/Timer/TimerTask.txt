@@ -149,4 +149,15 @@ function TimerTask:OnRelease()
     self.triggerLeftInMS = 0
 end
 
+function TimerTask:ToString()
+    return string.format(
+        'TimerTask:{index = %d,intervalInMS = %d,totalInMS = %d,category = %d,triggerLeftInMS = %d}',
+        self.index,
+        self.intervalInMS,
+        self.totalInMS,
+        self.category,
+        self.triggerLeftInMS
+    )
+end
+
 return TimerTask

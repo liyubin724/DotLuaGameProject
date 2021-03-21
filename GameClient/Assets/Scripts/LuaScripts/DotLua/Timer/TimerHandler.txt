@@ -1,5 +1,7 @@
 local oop = require('DotLua/OOP/oop')
 
+local tostring = tostring
+
 ----public----
 -- 添加Timer后得到对于任务的标识
 local TimerHandler =
@@ -19,17 +21,6 @@ TimerHandler.__eq = function(handler1, handler2)
         return handler1.index == handler2.index
     end
     return false
-end
-
-----private----
---输出日志
-TimerHandler.__tostring = function(handler)
-    return string.format(
-        'TimerHandler:handlerID=%d,wheelIndex=%d,wheelSlotIndex=%d',
-        handler.index,
-        handler.wheelIndex,
-        handler.wheelSlotIndex
-    )
 end
 
 ----interval----
@@ -83,6 +74,15 @@ function TimerHandler:Clear()
     self.index = -1
     self.wheelIndex = -1
     self.wheelSlotIndex = -1
+end
+
+function TimerHandler:ToString()
+    return string.format(
+        'TimerHandler:{index = %d,wheelIndex = %d,slotIndex = %d}',
+        self.index,
+        self.wheelIndex,
+        self.wheelSlotIndex
+    )
 end
 
 return TimerHandler

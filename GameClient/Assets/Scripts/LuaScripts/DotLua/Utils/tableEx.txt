@@ -52,9 +52,9 @@ function table.keys(tbl)
     if type(tbl) ~= 'table' then
         return t
     end
-    
+
     for key, _ in pairs(tbl) do
-        tinsert(t,key)
+        tinsert(t, key)
     end
 
     return t
@@ -197,7 +197,7 @@ end
 function table.clear(tbl)
     local keys = table.keys(tbl)
     for i = 1, #keys, 1 do
-        tbl[keys[i]]= nil
+        tbl[keys[i]] = nil
     end
 end
 

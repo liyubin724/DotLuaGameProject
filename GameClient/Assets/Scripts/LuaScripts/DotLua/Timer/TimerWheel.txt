@@ -1,14 +1,17 @@
 local oop = require('DotLua/OOP/oop')
 
 local mfloor = math.floor
+local tlength = table.length
+local tclear = table.clear
+local tcopyto = table.copyto
 
 ----internal----
 -- 时间轮
 local TimerWheel =
     oop.class(
     'TimerWheel',
-    function(self, level, tickInMS, slotSize)
-        self.level = level
+    function(self, index, tickInMS, slotSize)
+        self.index = index
         self.tickInMS = tickInMS
         self.slotSize = slotSize
 
@@ -20,11 +23,13 @@ local TimerWheel =
 
         self.completeDelegate = nil
         self.soltTriggerDelegate = nil
+
+        self.taskCache = {}
     end
 )
 
-function TimerWheel:GetLevel()
-    return self.level
+function TimerWheel:GetIndex()
+    return self.index
 end
 
 function TimerWheel:GetTickInMS()
@@ -71,19 +76,38 @@ function TimerWheel:DoPushWheel(pushNum)
 
         if self.currentSlotIndex > self.slotSize then
             self.currentSlotIndex = 1
-            if self.completeDelegate then
-                self.completeDelegate:ActionInvoke(self.level)
-            end
+            self.completeDelegate:ActionInvoke(self.index)
         end
 
         local tasks = self.allTasks[self.currentSlotIndex]
-        if tasks then
-            self.allTasks[self.currentSlotIndex] = {}
-            if self.soltTriggerDelegate then
-                self.soltTriggerDelegate:ActionInvoke(tasks)
-            end
+        if tlength(tasks) > 0 then
+            tcopyto(tasks, self.taskCache)
+
+            tclear(tasks)
+            self.soltTriggerDelegate:ActionInvoke(self.taskCache)
+            tclear(self.taskCache)
         end
     end
+end
+
+function TimerWheel:ToString()
+    local str =
+        string.format(
+        'TimerWheel:{index = %d,tickInMS = %d,slotSize = %d,currentSlotIndex = %d,tasks = {',
+        self.index,
+        self.tickInMS,
+        self.slotSize,
+        self.currentSlotIndex
+    )
+    for _, v in pairs(self.allTasks) do
+        str = str .. '{'
+        for _, v2 in pairs(v) do
+            str = str .. string.format('{%s},', v2:ToString())
+        end
+        str = str .. '},'
+    end
+    str = str .. '}'
+    return str
 end
 
 return TimerWheel

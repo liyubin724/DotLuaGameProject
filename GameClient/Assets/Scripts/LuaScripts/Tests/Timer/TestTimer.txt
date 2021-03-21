@@ -12,4 +12,13 @@ function TestTimer:HandIntervalTimer(userdata)
     oop.info("Test","TestTimer:HandIntervalTimer->userdata = "..userdata)
 end
 
-HTimer:AddIntervalTimer(1,TestTimer,TestTimer.HandIntervalTimer,"Test")
+function TestTimer:HandTickTimer(userdata)
+    oop.info("Test","TestTimer:HandTickTimer->userdata = "..userdata)
+end
+
+local index = HTimer:AddIntervalTimer(0.5,TestTimer,TestTimer.HandIntervalTimer,"Test11111111111")
+local index2 = HTimer:AddIntervalTimer(0.6,TestTimer,TestTimer.HandIntervalTimer,"Test22222222222")
+--HTimer:AddTickTimer(TestTimer,TestTimer.HandTickTimer,"Test Tick Timer")
+
+oop.info("Test","TimerIndex = "..tostring(index))
+oop.info("Test","TimerIndex = "..tostring(index2))

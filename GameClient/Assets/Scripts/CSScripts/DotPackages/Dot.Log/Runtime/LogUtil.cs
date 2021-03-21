@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace DotEngine.Log
 {
@@ -71,6 +72,12 @@ namespace DotEngine.Log
 
         public static void Reset()
         {
+            var keys = loggerDic.Keys.ToArray();
+            foreach(var key in keys)
+            {
+                RemoveLogger(key);
+            }
+
             appenderDic.Clear();
             loggerDic.Clear();
         }

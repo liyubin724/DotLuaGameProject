@@ -50,6 +50,16 @@ local HierarchicalTimer =
     end
 )
 
+function HierarchicalTimer:ToString()
+    local str =
+        string.format('HierarchicalTimer:{uniqueIndex = %d, isPaused = %s,wheels={', self.uniqueIndex, self.isPaused)
+    for i = 1, #(self.wheels), 1 do
+        str = str .. self.wheels[i]:ToString()
+    end
+    str = str .. '}'
+    return str
+end
+
 ----public----
 -- 添加定时器，定时器总时长结束后会自动删除
 -- @param intervalInSec 定时器触发的周期
@@ -65,9 +75,9 @@ function HierarchicalTimer:AddTimer(intervalInSec, totalInSec, receiver, interva
     local task = self.taskPool:Get()
     task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
 
-    self:AddTask(task, nil)
+    local handler = self:AddTask(task, nil)
 
-    return self.uniqueIndex
+    return handler
 end
 
 ----public----
@@ -133,6 +143,8 @@ function HierarchicalTimer:DoUpdate()
     if self.isPaused then
         return
     end
+
+    oop.info(self:ToString())
 
     if #(self.handlers) > 0 then
         self.elapseInMS = self.elapseInMS + mround(deltaTime * 1000)
