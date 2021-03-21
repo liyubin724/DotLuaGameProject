@@ -15,7 +15,7 @@ namespace DotEditor.Lua.Binder
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            float height = EditorGUIUtility.singleLineHeight * 6;
+            float height = EditorGUIUtility.singleLineHeight * 7;
 
             SerializedProperty paramValuesProperty = property.FindPropertyRelative("paramValues");
             for(int i =0;i<paramValuesProperty.arraySize;++i)

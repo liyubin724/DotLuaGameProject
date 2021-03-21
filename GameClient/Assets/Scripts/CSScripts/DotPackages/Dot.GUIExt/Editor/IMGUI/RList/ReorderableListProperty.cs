@@ -24,22 +24,18 @@ namespace DotEditor.GUIExt.IMGUI.RList
         public ReorderableListProperty(SerializedProperty property)
         {
             m_Property = property;
-            CreateList();
+
+            m_RList = new ReorderableList(m_Property.serializedObject, m_Property, true, true, true, true);
+            m_RList.drawHeaderCallback += OnListDrawHeader;
+            m_RList.onCanRemoveCallback += GetListCanRemove;
+            m_RList.drawElementCallback += OnListDrawElement;
+            m_RList.elementHeightCallback += GetListElementHeight;
         }
 
         ~ReorderableListProperty()
         {
             m_Property = null;
             m_RList = null;
-        }
-
-        private void CreateList()
-        {
-            m_RList = new ReorderableList(m_Property.serializedObject, m_Property, true, true, true, true);
-            m_RList.drawHeaderCallback += OnListDrawHeader;
-            m_RList.onCanRemoveCallback += GetListCanRemove;
-            m_RList.drawElementCallback += OnListDrawElement;
-            m_RList.elementHeightCallback += GetListElementHeight;
         }
 
         private void OnListDrawHeader(Rect rect)
