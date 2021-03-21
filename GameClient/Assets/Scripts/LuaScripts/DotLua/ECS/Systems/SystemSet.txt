@@ -1,7 +1,7 @@
 local oop = require('DotLua/OOP/oop')
 
 local UpdateSystem = oop.using('DotLua/ECS/Systems/LifeCycle/UpdateSystem')
-local LateUpdateSystem = oop.using('DotLua/ECS/LifeCycle/LateUpdateSystem')
+local LateUpdateSystem = oop.using('DotLua/ECS/Systems/LifeCycle/LateUpdateSystem')
 local FrameSystem = oop.using('DotLua/ECS/Systems/LifeCycle/FrameSystem')
 
 local select = select

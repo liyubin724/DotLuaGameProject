@@ -14,19 +14,8 @@ namespace Game
             DontDestroyUtility.AddTransform(transform);
 
             LogUtil.AddAppender(new UnityConsoleAppender());
-            //new LuaEnvManager();
+            new LuaEnvManager();
 
-            LuaEnv env = new LuaEnv();
-            env.AddLoader(new FileScriptLoader().LoadScript);
-
-            System.Object[] values = env.DoString("require(\"DotLua/OOP/oop\")");
-            if(values == null)
-            {
-                Debug.Log("SSSSSSSSSSSSSSSSS");
-            }else
-            {
-                Debug.Log("SSSFFFFFFFFFFFFFFFFFFF");
-            }
         }
 
         private void Update()

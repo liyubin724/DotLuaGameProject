@@ -163,7 +163,7 @@ namespace DotEngine.Lua
                 return null;
             }
 
-            SystemObject[] values = Env.DoString($"require(\"{scriptPath}\")");
+            SystemObject[] values = Env.DoString(string.Format(LuaUtility.REQUIRE_FORMAT,scriptPath));
             if (values != null && values.Length > 0)
             {
                 return values[0] as LuaTable;

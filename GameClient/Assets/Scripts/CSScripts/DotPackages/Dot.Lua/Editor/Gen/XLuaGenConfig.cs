@@ -19,6 +19,20 @@ namespace DotEditor.Lua.Gen
             }
         }
 
+        public static List<Type> GetInnerCSharpCallLuaTypeList
+        {
+            get
+            {
+                List<Type> callTypes = new List<Type>();
+
+                callTypes.Add(typeof(Action));
+                callTypes.Add(typeof(Action<float, float>));
+                callTypes.Add(typeof(Func<string, LuaTable>));
+
+                return callTypes;
+            }
+        }
+
         [LuaCallCSharp]
         public static List<Type> GetLuaCallCSharpTypeList
         {
@@ -81,7 +95,7 @@ namespace DotEditor.Lua.Gen
         {
             get
             {
-                List<Type> callTypes = new List<Type>();
+                List<Type> callTypes = new List<Type>(GetInnerCSharpCallLuaTypeList);
                 GenConfig genConfig = GenConfig.GetConfig(false);
                 if (genConfig != null)
                 {
