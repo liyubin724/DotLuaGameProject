@@ -2,16 +2,13 @@ local oop = require('DotLua/OOP/oop')
 
 local mround = math.round
 
-local TimerTaskCategory =
-    oop.enum(
-    'TimerTaskCategory',
-    {
-        None = 0,
-        Interval = 1,
-        End = 2,
-        IntervalAndEnd = 3
-    }
-)
+local TimerTaskCategory = {
+    None = 0,
+    Interval = 1,
+    End = 2,
+    IntervalAndEnd = 3
+}
+oop.asenum('TimerTaskCategory', TimerTaskCategory)
 
 ----internal----
 local TimerTask =

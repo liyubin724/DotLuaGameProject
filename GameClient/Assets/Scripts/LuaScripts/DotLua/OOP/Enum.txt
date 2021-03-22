@@ -1,66 +1,50 @@
 local ObjectType = require('DotLua/OOP/ObjectType')
 local class = require('DotLua/OOP/class')
 
-local tisarray = table.isarray
+local tinsert = table.insert
 local tkeys = table.keys
-local tvalues = table.values
+local sstartswith = string.startswith
 
 local Enum =
     class(
     'Enum',
-    function(self, name, values)
+    function(self)
         self._isInstance = false
-
-        self._name = name
-        self._values = {}
-        if values then
-            if tisarray(values) then
-                for i, v in ipairs(values) do
-                    self._values[v] = i
-                end
-            else
-                for k, v in pairs(values) do
-                    self._values[k] = v
-                end
-            end
-        end
     end
 )
 
-Enum.__index = function(e, k)
-    local v = e._values[k]
-    if not v then
-        v = Enum[k]
-    end
-
-    return v
-end
-
-Enum.__tostring = function(e)
-    local info = string.format('%s:{', e._name)
-    for k, v in pairs(e._values) do
-        info = info .. string.format('%s:%d,', k, v)
-    end
-    info = info .. '}'
-    return info
+Enum.__newindex = function(e, k, v)
+    error('Enum', "can't add new key in to the Enum")
 end
 
 Enum._type = ObjectType.Enum
 
-function Enum:GetName()
-    return self._name
-end
-
 function Enum:GetNames()
-    return tkeys(self._values)
+    local names = {}
+
+    local keys = tkeys(self)
+    for i = 1, #keys, 1 do
+        if not sstartswith(keys[i],"_") and rawget(self, keys[i]) then
+            tinsert(names, keys[i])
+        end
+    end
+
+    return names
 end
 
 function Enum:GetValues()
-    return tvalues(self._values)
+    local values = {}
+
+    local names = self:GetNames()
+    for i = 1, #names, 1 do
+        tinsert(values, rawget(self, names[i]))
+    end
+
+    return values
 end
 
 function Enum:GetNameByValue(value)
-    for k, v in pairs(self._values) do
+    for k, v in pairs(self) do
         if v == value then
             return k
         end
@@ -70,7 +54,14 @@ function Enum:GetNameByValue(value)
 end
 
 function Enum:ToString()
-    return tostring(self)
+    local str = string.format('%s:{', self:GetClassName())
+    local names = self:GetNames()
+    for i = 1, #names, 1 do
+        str = str + string.format('%s = %s', names[i], tostring(rawget(self, names[i])))
+    end
+    str = str + '}'
+
+    return str
 end
 
 return Enum
