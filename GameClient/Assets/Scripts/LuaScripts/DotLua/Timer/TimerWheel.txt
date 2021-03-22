@@ -1,7 +1,6 @@
 local oop = require('DotLua/OOP/oop')
 
 local mfloor = math.floor
-local tlength = table.length
 local tclear = table.clear
 local tcopyto = table.copyto
 local tisempty = table.isempty
@@ -60,15 +59,10 @@ function TimerWheel:AddTask(task)
     return slotIndex
 end
 
-function TimerWheel:RemoveTask(handler)
-    local taskIndex = handler:GetIndex()
-    local wheelSoltIndex = handler:GetWheelSoltIndex()
-
-    local task = self.allTasks[wheelSoltIndex][taskIndex]
-    if task then
-        self.allTasks[wheelSoltIndex][taskIndex] = nil
-    end
-    return task
+function TimerWheel:RemoveTask(task)
+    local taskIndex = task:GetIndex()
+    local wheelSoltIndex = task:GetWheelSoltIndex()
+    self.allTasks[wheelSoltIndex][taskIndex] = nil
 end
 
 function TimerWheel:DoPushWheel(pushNum)

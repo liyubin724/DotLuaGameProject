@@ -3,7 +3,6 @@ local CycleTime = require('DotLua/CycleTime')
 
 local TimerWheel = require('DotLua/Timer/TimerWheel')
 local TimerTask = require('DotLua/Timer/TimerTask')
-local TimerHandler = require('DotLua/Timer/TimerHandler')
 
 local ObjectPool = require('DotLua/Pool/ObjectPool')
 
@@ -48,7 +47,6 @@ local HierarchicalTimer =
 
         self.wheel = self.wheels[1]
 
-        self.handlers = {}
         self.elapseInMS = 0
     end
 )
@@ -108,23 +106,17 @@ function HierarchicalTimer:RemoveTimer(timerIndex)
         return
     end
 
-    --local task = 
-
-    local handler = self.handlers[timerIndex]
-    if not handler then
+    local task = self.tasks[timerIndex]
+    if not task then
         oop.warning('Timer', 'the index is error or the timer has been finished')
         return
     end
-
-    self.handlers[timerIndex] = nil
-    if handler:IsValid() then
-        local task = self.wheels[handler:GetWheelIndex()]:RemoveTask(handler)
-        handler:Clear()
-        if task then
-            self.taskPool:Release(task)
-            return true
-        end
+    self.tasks[timerIndex] = nil
+    if task:IsValid() then
+        local wheel = self.wheels[task:GetWheelIndex()]
+        wheel:RemoveTask(task)
     end
+    self.taskPool:Release(task)
 end
 
 ----internal----
@@ -137,8 +129,6 @@ function HierarchicalTimer:DoUpdate()
     if self.isPaused then
         return
     end
-
-    --oop.info(self:ToString())
 
     self.elapseInMS = self.elapseInMS + mround(deltaTime * 1000)
     if self.elapseInMS >= self.wheel:GetTickInMS() then
@@ -183,29 +173,23 @@ end
 -- @return void
 function HierarchicalTimer:OnWheelSoltTrigger(tasks)
     if not tisempty(tasks) then
-        for _, task in pairs(tasks) do
-            local handler = self.handlers[task:GetIndex()]
-            if handler then
-                if handler:IsValid() then
-                    if task:Trigger() then
-                        handler:Clear()
-                        self.handlers[task:GetIndex()] = nil
-                        self.taskPool:Release(task)
-                    else
-                        self:AddTask(task, handler)
-                    end
-                else
-                    self.handlers[task:GetIndex()] = nil
+        for taskIndex, task in pairs(tasks) do
+            if task:IsValid() then
+                if task:Trigger() then
+                    self.tasks[taskIndex] = nil
                     self.taskPool:Release(task)
+                else
+                    self:AddTask(task)
                 end
             else
+                self.task[taskIndex] = nil
                 self.taskPool:Release(task)
             end
         end
     end
 end
 
-function HierarchicalTimer:AddTask(task, handler)
+function HierarchicalTimer:AddTask(task)
     local wheelIndex = -1
     local soltIndex = -1
     for i = 1, #(self.wheels) do
@@ -219,8 +203,8 @@ function HierarchicalTimer:AddTask(task, handler)
     end
 
     if wheelIndex > 0 and soltIndex > 0 then
-        handler:SetWheelIndex(wheelIndex)
-        handler:SetWheelSoltIndex(soltIndex)
+        task:SetWheelIndex(wheelIndex)
+        task:SetWheelSoltIndex(soltIndex)
     else
         oop.error('Timer', '')
     end
