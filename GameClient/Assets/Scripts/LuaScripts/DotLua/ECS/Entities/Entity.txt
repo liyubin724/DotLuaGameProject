@@ -3,6 +3,9 @@ local oop = require('DotLua/OOP/oop')
 local tlength = table.length
 local tvalues = table.values
 local tkeys = table.keys
+local tindexof = table.indexof
+local tinsert = table.insert
+local tremove = table.remove
 
 local Entity =
     oop.class(
@@ -16,6 +19,8 @@ local Entity =
 
         self.cachedComponents = nil
         self.componentDic = {}
+
+        self.unpooledComponentClasses = {}
 
         self.onComponentAddedEvent = oop.event()
         self.onComponentRemovedEvent = oop.event()
@@ -122,12 +127,16 @@ function Entity:GetComponent(componentClass)
     end
 end
 
-function Entity:AddComponent(componentClass)
+function Entity:AddComponent(componentClassOrInstance)
     if not self.enable then
         oop.error('ECS', 'Entity:AddComponent->The enity has been disabled')
         return
     end
     if oop.isDebug then
+        local componentClass = componentClassOrInstance
+        if oop.isinstance(componentClassOrInstance) then
+            componentClass = componentClassOrInstance:GetBaseClass()
+        end
         if self:HasComponent(componentClass) then
             oop.error(
                 'ECS',
@@ -141,34 +150,64 @@ function Entity:AddComponent(componentClass)
     end
 
     self.cachedComponents = nil
-    local component = self:addComp(componentClass)
-    self.onComponentAddedEvent:Invoke(self, component)
 
-    return component
+    if oop.isinstance(componentClassOrInstance) then
+        local component = self:addComponentInstance(componentClassOrInstance)
+        self.onComponentAddedEvent:Invoke(self, component)
+
+        return component
+    elseif oop.isclass(componentClassOrInstance) then
+        local component = self:addComponentClass(componentClassOrInstance)
+        self.onComponentAddedEvent:Invoke(self, component)
+
+        return component
+    else
+        oop.error('ECS', 'The component is not a class of Component')
+        return nil
+    end
 end
 
-function Entity:addComp(componentClass)
+function Entity:addComponentClass(componentClass)
     local component = self.context:createComponent(componentClass)
     self.componentDic[componentClass] = component
 
     return component
 end
 
-function Entity:RemoveComponent(componentClass)
+function Entity:addComponentInstance(component)
+    local componentClass = component:GetBaseClass()
+    self.componentDic[componentClass] = component
+
+    tinsert(self.unpooledComponentClasses, componentClass)
+
+    return component
+end
+
+function Entity:RemoveComponent(componentClassOrInstance)
     if not self.enable then
         oop.error('ECS', 'Entity:RemoveComponent->The enity has been disabled')
         return
     end
 
     self.cachedComponents = nil
-    local component = self:removeComp(componentClass)
-    if component then
-        self.onComponentRemovedEvent:Invoke(self, component)
+
+    local componentClass = componentClassOrInstance
+    if oop.isinstance(componentClassOrInstance) then
+        componentClass = componentClassOrInstance:GetBaseClass()
+    end
+
+    local component = self:removeComponentClass(componentClass)
+    self.onComponentRemovedEvent:Invoke(self, component)
+
+    local unpooledIndex = tindexof(self.unpooledComponentClasses, componentClass)
+    if unpooledIndex < 0 then
+        tremove(self.unpooledComponentClasses, unpooledIndex)
+    else
         self.context:releaseComponent(component)
     end
 end
 
-function Entity:removeComp(componentClass)
+function Entity:removeComponentClass(componentClass)
     local key = componentClass
     local component = self.componentDic[key]
     if not component then
@@ -195,10 +234,10 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
 
     self.cachedComponents = nil
 
-    local oldComponent = self:removeComp(oldComponentClass)
+    local oldComponent = self:removeComponentClass(oldComponentClass)
     if oldComponent then
         if newComponentClass then
-            local newComponent = self:addComp(newComponentClass)
+            local newComponent = self:addComponentClass(newComponentClass)
             if newComponentClass then
                 self.onComponentReplacedEvent:Invoke(self, oldComponent, newComponent)
             else
@@ -211,7 +250,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
         self.context:releaseComponent(oldComponent)
     else
         if newComponentClass then
-            local newComponent = self:addComp(newComponentClass)
+            local newComponent = self:addComponentClass(newComponentClass)
             if newComponent then
                 self.onComponentAddedEvent:Invoke(self, newComponent)
             else

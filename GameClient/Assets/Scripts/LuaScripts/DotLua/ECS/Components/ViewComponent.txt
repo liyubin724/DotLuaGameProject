@@ -6,8 +6,13 @@ local ViewComponent =
     oop.class(
     'ViewComponent',
     function(self)
+        self.entity = nil
     end,
     Component
 )
+
+function ViewComponent:SetEntity(entity)
+    self.entity = entity
+end
 
 return ViewComponent
