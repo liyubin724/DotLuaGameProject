@@ -10,6 +10,8 @@ local ObjectPool = require('DotLua/Pool/ObjectPool')
 local tinsert = table.insert
 local select = select
 local mround = math.round
+local mfloor = math.floor
+local tisempty = table.isempty
 
 ----private----
 -- 多层时间轮定时器
@@ -144,17 +146,14 @@ function HierarchicalTimer:DoUpdate()
         return
     end
 
-    oop.info(self:ToString())
+    --oop.info(self:ToString())
 
-    if #(self.handlers) > 0 then
-        self.elapseInMS = self.elapseInMS + mround(deltaTime * 1000)
+    self.elapseInMS = self.elapseInMS + mround(deltaTime * 1000)
+    if self.elapseInMS >= self.wheel:GetTickInMS() then
+        local count = mfloor(self.elapseInMS / self.wheel:GetTickInMS())
+        self.wheel:DoPushWheel(count)
 
-        if self.elapseInMS >= self.wheel:GetTickInMS() then
-            local count = math.floor(self.elapseInMS / self.wheel:GetTickInMS())
-            self.wheel:DoPushWheel(count)
-
-            self.elapseInMS = self.elapseInMS % self.wheel:GetTickInMS()
-        end
+        self.elapseInMS = self.elapseInMS % self.wheel:GetTickInMS()
     end
 end
 
@@ -191,7 +190,7 @@ end
 -- @param tasks 当前刻度上的任务
 -- @return void
 function HierarchicalTimer:OnWheelSoltTrigger(tasks)
-    if tasks and #tasks > 0 then
+    if not tisempty(tasks) then
         for _, task in pairs(tasks) do
             local handler = self.handlers[task:GetIndex()]
             if handler then

@@ -146,6 +146,7 @@ function TimerTask:OnRelease()
     self.endCallback = nil
     self.userdata = nil
 
+    self.category = 0
     self.triggerLeftInMS = 0
 end
 

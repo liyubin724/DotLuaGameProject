@@ -4,6 +4,7 @@ local mfloor = math.floor
 local tlength = table.length
 local tclear = table.clear
 local tcopyto = table.copyto
+local tisempty = table.isempty
 
 ----internal----
 -- 时间轮
@@ -80,7 +81,7 @@ function TimerWheel:DoPushWheel(pushNum)
         end
 
         local tasks = self.allTasks[self.currentSlotIndex]
-        if tlength(tasks) > 0 then
+        if not tisempty(tasks) then
             tcopyto(tasks, self.taskCache)
 
             tclear(tasks)
