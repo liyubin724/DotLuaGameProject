@@ -18,7 +18,10 @@ local TimerTask =
     oop.class(
     'TimerTask',
     function(self)
-        self.index = 0
+        self.index = -1
+        self.wheelIndex = -1
+        self.wheelSlotIndex = -1
+
         self.intervalInMS = 0
         self.totalInMS = 0
 
@@ -34,6 +37,26 @@ local TimerTask =
 ----internal----
 function TimerTask:GetIndex()
     return self.index
+end
+
+function TimerTask:SetWheelIndex(index)
+    self.wheelIndex = index
+end
+
+function TimerTask:GetWheelIndex()
+    return self.wheelIndex
+end
+
+function TimerTask:GetWheelSoltIndex()
+    return self.wheelSlotIndex
+end
+
+function TimerTask:SetWheelSoltIndex(index)
+    self.wheelSlotIndex = index
+end
+
+function TimerTask:IsValid()
+    return self.index > 0 and self.wheelIndex > 0 and self.wheelSlotIndex > 0
 end
 
 ----internal----
@@ -138,7 +161,10 @@ end
 -- 重置定时任务的数据
 -- @return void
 function TimerTask:OnRelease()
-    self.index = 0
+    self.index = -1
+    self.wheelIndex = -1
+    self.wheelSlotIndex = -1
+
     self.intervalInMS = 0
     self.totalInMS = 0
 

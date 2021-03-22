@@ -23,6 +23,7 @@ local HierarchicalTimer =
         self.uniqueIndex = 0
 
         self.taskPool = ObjectPool(TimerTask)
+        self.taskDic = {}
         self.isPaused = false
         self.wheels = {}
 
@@ -52,16 +53,6 @@ local HierarchicalTimer =
     end
 )
 
-function HierarchicalTimer:ToString()
-    local str =
-        string.format('HierarchicalTimer:{uniqueIndex = %d, isPaused = %s,wheels={', self.uniqueIndex, self.isPaused)
-    for i = 1, #(self.wheels), 1 do
-        str = str .. self.wheels[i]:ToString()
-    end
-    str = str .. '}'
-    return str
-end
-
 ----public----
 -- 添加定时器，定时器总时长结束后会自动删除
 -- @param intervalInSec 定时器触发的周期
@@ -76,10 +67,9 @@ function HierarchicalTimer:AddTimer(intervalInSec, totalInSec, receiver, interva
 
     local task = self.taskPool:Get()
     task:SetData(self.uniqueIndex, intervalInSec, totalInSec, receiver, intervalFunc, endFunc, userdata)
+    self:AddTask(task, nil)
 
-    local handler = self:AddTask(task, nil)
-
-    return handler
+    return self.uniqueIndex
 end
 
 ----public----
@@ -117,6 +107,8 @@ function HierarchicalTimer:RemoveTimer(timerIndex)
         oop.error('Timer', 'the timerIndex is nil')
         return
     end
+
+    --local task = 
 
     local handler = self.handlers[timerIndex]
     if not handler then
@@ -226,14 +218,22 @@ function HierarchicalTimer:AddTask(task, handler)
         end
     end
 
-    if not handler then
-        handler = TimerHandler(task:GetIndex(), wheelIndex, soltIndex)
-        self.handlers[task:GetIndex()] = handler
-    else
+    if wheelIndex > 0 and soltIndex > 0 then
         handler:SetWheelIndex(wheelIndex)
         handler:SetWheelSoltIndex(soltIndex)
+    else
+        oop.error('Timer', '')
     end
-    return handler
+end
+
+function HierarchicalTimer:ToString()
+    local str =
+        string.format('HierarchicalTimer:{uniqueIndex = %d, isPaused = %s,wheels={', self.uniqueIndex, self.isPaused)
+    for i = 1, #(self.wheels), 1 do
+        str = str .. self.wheels[i]:ToString()
+    end
+    str = str .. '}'
+    return str
 end
 
 return HierarchicalTimer
