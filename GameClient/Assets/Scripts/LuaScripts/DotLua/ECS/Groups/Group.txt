@@ -1,8 +1,8 @@
 local oop = require('DotLua/OOP/oop')
-local GroupEvent = oop.using('DotLua/ECS/Groups/GroupEvent')
 
 local tlength = table.length
 local tvalues = table.values
+local tclear = table.clear
 
 local Group =
     oop.class(
@@ -79,6 +79,11 @@ end
 
 function Group:ReleaseRef()
     self.refCount = self.refCount - 1
+    if self.refCount < 0 then
+        oop.error('ECS', 'Group:ReleaseRef->')
+
+        self.refCount = 0
+    end
 end
 
 function Group:TryAddEntity(entity, eventType, param1, param2)
@@ -106,6 +111,19 @@ function Group:ModifyEntity(entity, eventType, param1, param2)
     if self.entityDic[uid] then
         self.onEntityModifiedEvent:Invoke(entity, eventType, param1, param2)
     end
+end
+
+function Group:OnRelease()
+    self.matcher = nil
+
+    self.entitiesCache = nil
+    tclear(self.entityDic)
+
+    self.onEntityAddedEvent:Clear()
+    self.onEntityRemovedEvent:Clear()
+    self.onEntityModifiedEvent:Clear()
+
+    self.refCount = 0
 end
 
 return Group

@@ -14,7 +14,7 @@ local Collector =
     end
 )
 
-function Collector:GetEntityCount()
+function Collector:GetCollectedEntityCount()
     return #self.collectedEntities
 end
 

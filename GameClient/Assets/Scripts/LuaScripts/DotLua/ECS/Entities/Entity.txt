@@ -2,10 +2,10 @@ local oop = require('DotLua/OOP/oop')
 
 local tlength = table.length
 local tvalues = table.values
-local tkeys = table.keys
 local tindexof = table.indexof
 local tinsert = table.insert
 local tremove = table.remove
+local tclear = table.clear
 
 local Entity =
     oop.class(
@@ -198,12 +198,7 @@ function Entity:RemoveComponent(componentClassOrInstance)
     local component = self:removeComponentClass(componentClass)
     self.onComponentRemovedEvent:Invoke(self, component)
 
-    local unpooledIndex = tindexof(self.unpooledComponentClasses, componentClass)
-    if unpooledIndex < 0 then
-        tremove(self.unpooledComponentClasses, unpooledIndex)
-    else
-        self.context:releaseComponent(component)
-    end
+    self:releaseComponent(component)
 end
 
 function Entity:removeComponentClass(componentClass)
@@ -222,6 +217,7 @@ function Entity:removeComponentClass(componentClass)
     if not component then
         self.componentDic[key] = nil
     end
+
     return component
 end
 
@@ -231,31 +227,22 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
         return
     end
 
+    if not oldComponentClass and not newComponentClass then
+        oop.error('ECS', 'Entity:ReplaceComponent->The component is nil')
+        return
+    end
+
     self.cachedComponents = nil
 
-    local oldComponent = self:removeComponentClass(oldComponentClass)
-    if oldComponent then
-        if newComponentClass then
-            local newComponent = self:addComponentClass(newComponentClass)
-            if newComponentClass then
-                self.onComponentReplacedEvent:Invoke(self, oldComponent, newComponent)
-            else
-                oop.error('ECS', 'Entity:ReplaceComponent->Added Failed')
-            end
-        else
-            self.onComponentRemovedEvent:Invoke(self, oldComponent)
-        end
-
-        self.context:releaseComponent(oldComponent)
-    else
-        if newComponentClass then
-            local newComponent = self:addComponentClass(newComponentClass)
-            if newComponent then
-                self.onComponentAddedEvent:Invoke(self, newComponent)
-            else
-                oop.error('ECS', 'Entity:ReplaceComponent->Added Failed')
-            end
-        end
+    if oldComponentClass and not newComponentClass then
+        self:RemoveComponent(oldComponentClass)
+    elseif oldComponentClass and newComponentClass then
+        local oldComponent = self:removeComponentClass(oldComponentClass)
+        local newComponent = self:addComponentClass(newComponentClass)
+        self.onComponentReplacedEvent:Invoke(self, oldComponent, newComponent)
+        self:releaseComponent(oldComponent)
+    elseif not oldComponentClass and newComponentClass then
+        self:AddComponent(newComponentClass)
     end
 end
 
@@ -284,6 +271,16 @@ function Entity:MarkComponentModified(component, modifyTag)
     end
 end
 
+function Entity:releaseComponent(component)
+    local componentClass = component:GetBaseClass()
+    local unpooledIndex = tindexof(self.unpooledComponentClasses, componentClass)
+    if unpooledIndex < 0 then
+        tremove(self.unpooledComponentClasses, unpooledIndex)
+    else
+        self.context:releaseComponent(component)
+    end
+end
+
 function Entity:OnGet()
     self.enable = true
 end
@@ -299,12 +296,12 @@ function Entity:OnRelease()
     self.onComponentReplacedEvent:Clear()
     self.onComponentModifiedEvent:Clear()
 
-    local keys = tkeys(self.componentDic)
-    for i = 1, #(keys), 1 do
-        local component = self.componentDic[keys[i]]
-        self.componentDic[keys[i]] = nil
+    tclear(self.unpooledComponentClasses)
 
-        self.context:releaseComponent(component)
+    local values = tvalues(self.componentDic)
+    tclear(self.componentDic)
+    for i = 1, #values, 1 do
+        self:releaseComponent(values[i])
     end
 end
 

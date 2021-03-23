@@ -6,9 +6,12 @@ local DetailEntityData =
     'DetailEntityData',
     function(self)
         self.entity = nil
-        self.eventType = nil
-        self.param1 = nil
-        self.param2 = nil
+        self.entityEventType = nil
+
+        self.addedComponent = nil
+        self.removedComponentClass = nil
+        self.modifiedComponent = nil
+        self.modifiedTag = nil
     end
 )
 
@@ -17,64 +20,64 @@ function DetailEntityData:GetEntity()
 end
 
 function DetailEntityData:GetEventType()
-    return self.eventType
+    return self.entityEventType
 end
 
-function DetailEntityData:GetAddedComponent()
-    if self.eventType == ContextEntityEvent.ComponentAdded then
-        return self.param1
+function DetailEntityData:GetAddedData()
+    if self.entityEventType == ContextEntityEvent.ComponentAdded then
+        return self.entity, self.addedComponent
     end
 
-    return nil
+    return nil, nil
 end
 
-function DetailEntityData:GetRemovedComponentClass()
-    if self.eventType == ContextEntityEvent.ComponentRemoved then
-        return self.param1
+function DetailEntityData:GetRemovedData()
+    if self.entityEventType == ContextEntityEvent.ComponentRemoved then
+        return self.entity, self.removedComponentClass
     end
-    return nil
+    return nil, nil
 end
 
-function DetailEntityData:GetReplacedOldComponentClass()
-    if self.eventType == ContextEntityEvent.ComponentReplaced then
-        return self.param1
+function DetailEntityData:GetReplacedData()
+    if self.entityEventType == ContextEntityEvent.ComponentReplaced then
+        return self.entity, self.removedComponentClass, self.addedComponent
     end
-    return nil
+
+    return nil, nil, nil
 end
 
-function DetailEntityData:GetReplacedNewComponentClass()
-    if self.eventType == ContextEntityEvent.ComponentReplaced then
-        return self.param2
+function DetailEntityData:GetModifiedData()
+    if self.entityEventType == ContextEntityEvent.ComponentModified then
+        return self.entity, self.modifiedComponent, self.modifiedTag
     end
-    return nil
+
+    return nil, nil, nil
 end
 
-function DetailEntityData:GetModifiedComponent()
-    if self.eventType == ContextEntityEvent.ComponentModified then
-        return self.param1
-    end
-    return nil
-end
-
-function DetailEntityData:GetModifiedTag()
-    if self.eventType == ContextEntityEvent.ComponentModified then
-        return self.param2
-    end
-    return nil
-end
-
-function DetailEntityData:Init(entity, eventType, param1, param2)
+function DetailEntityData:Init(entity, entityEventType, param1, param2)
     self.entity = entity
-    self.eventType = eventType
-    self.param1 = param1
-    self.param2 = param2
+    self.entityEventType = entityEventType
+    if entityEventType == ContextEntityEvent.ComponentAdded then
+        self.addedComponent = param1
+    elseif entityEventType == ContextEntityEvent.ComponentRemoved then
+        self.removedComponentClass = param1:GetBaseClass()
+    elseif entityEventType == ContextEntityEvent.ComponentReplaced then
+        self.removedComponentClass = param1:GetBaseClass()
+        self.addedComponent = param2
+    elseif entityEventType == ContextEntityEvent.ComponentModified then
+        self.modifiedComponent = param1
+        self.modifiedTag = param2
+    end
 end
 
 function DetailEntityData:OnRelease()
     self.entity = nil
-    self.eventType = nil
-    self.param1 = nil
-    self.param2 = nil
+    self.entityEventType = nil
+
+    self.addedComponent = nil
+    self.removedComponentClass = nil
+    self.modifiedComponent = nil
+    self.modifiedTag = nil
 end
 
 return DetailEntityData

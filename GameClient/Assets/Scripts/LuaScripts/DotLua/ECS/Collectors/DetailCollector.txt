@@ -29,7 +29,7 @@ function DetailCollector:GetRemovedEntityCount()
     return #(self.removedEntities)
 end
 
-function DetailCollector:GetModifyEntityCount()
+function DetailCollector:GetModifiedEntityCount()
     return #(self.modifiedEntities)
 end
 

@@ -23,7 +23,6 @@ local Context =
 
         self.groupDic = {}
         self.groupPool = ObjectPool(Group)
-        self.onGroupCreated = oop.event()
     end
 )
 
@@ -78,6 +77,11 @@ function Context:CreateEntity(uid, componentClasses)
             end
             entity:AddComponent(componentClass)
         end
+    end
+
+    if self:HasEntityByUID(uid) then
+        oop.error('ECS', 'Context:CreateEntity->The uid has been added into context')
+        return nil
     end
 
     entity:Init(self, uid)
