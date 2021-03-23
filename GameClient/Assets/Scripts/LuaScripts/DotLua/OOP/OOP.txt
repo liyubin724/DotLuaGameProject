@@ -96,12 +96,26 @@ oop.isclass = function(target)
         return false
     end
 
-    local isClassFunc = target.IsClass
-    if not isClassFunc then
+    if not target.IsClass then
+        return false
+    end
+    return target:IsClass()
+end
+
+oop.isclassof = function(targetClass, baseClass)
+    if not targetClass or not baseClass then
         return false
     end
 
-    return isClassFunc(target)
+    if not baseClass.IsClass or not baseClass:IsClass() then
+        return false
+    end
+
+    if not targetClass.IsClass or not targetClass:IsClass() then
+        return false
+    end
+
+    return targetClass:IsKindOf(baseClass)
 end
 
 oop.isinstance = function(target)
@@ -109,16 +123,39 @@ oop.isinstance = function(target)
         return false
     end
 
-    local isInstanceFunc = target.IsInstance
-    if not isInstanceFunc then
+    if not target.IsInstance then
         return false
     end
 
-    return isInstanceFunc(target)
+    return target:IsInstance()
+end
+
+oop.isinstanceof = function(target, baseClass)
+    if not target or not baseClass then
+        return false
+    end
+
+    if not baseClass.IsClass or not baseClass:IsClass() then
+        return false
+    end
+
+    if not target.IsInstance or not target:IsInstance() then
+        return false
+    end
+
+    return target:IsKindOf(baseClass)
 end
 
 oop.isclassorinstance = function(target)
-    return oop.isclass(target) and oop.isinstance(target)
+    return oop.isclass(target) or oop.isinstance(target)
+end
+
+oop.iskindof = function(target, baseClass)
+    if not oop.isclassorinstance(target) or not oop.isclass(baseClass) then
+        return false
+    end
+
+    return target:IsKindOf(baseClass)
 end
 
 oop.isenum = function(target)
@@ -146,12 +183,6 @@ oop.isdelegate = function(target)
     return isDelegateFunc(target)
 end
 
-oop.iskindof = function(target, baseClass)
-    if not oop.isclassorinstance(target) or not oop.isclass(baseClass) then
-        return false
-    end
-
-    return target:IsKindOf(baseClass)
-end
+oop.asreadonly = require('DotLua/OOP/asreadonly')
 
 return oop
