@@ -10,12 +10,11 @@ local tremove = table.remove
 local Entity =
     oop.class(
     'Entity',
-    function(self, uid, context)
+    function(self)
         self.enable = true
-        self.uid = uid
-        self.context = nil
 
         self.uid = -1
+        self.context = nil
 
         self.cachedComponents = nil
         self.componentDic = {}
@@ -28,6 +27,14 @@ local Entity =
         self.onComponentModifiedEvent = oop.event()
     end
 )
+
+function Entity:GetContext()
+    return self.context
+end
+
+function Entity:GetUID()
+    return self.uid
+end
 
 function Entity:Init(context, uid)
     self.uid = uid
@@ -50,14 +57,6 @@ function Entity:BindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifi
     if modifiedFunc then
         self.onComponentModifiedEvent:Add(receiver, modifiedFunc)
     end
-end
-
-function Entity:GetContext()
-    return self.context
-end
-
-function Entity:GetUID()
-    return self.uid
 end
 
 function Entity:GetComponentCount()
