@@ -6,7 +6,10 @@ GameLauncher = {}
 GameLauncher.__index = GameLauncher
 
 function GameLauncher.DoStart()
+    _G.isDebug = true
     
+    _G.GameApp = require("Game/GameApplication")
+
 end
 
 function GameLauncher.DoUpdate(deltaTime, unscaleDeltaTime)

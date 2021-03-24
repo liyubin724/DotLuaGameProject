@@ -1,0 +1,22 @@
+local UEApplication = CS.UnityEngine.Application
+
+local App = {}
+
+App.platform = nil
+App.persistentDataPath = nil
+
+function App.GetPlatform()
+    if not App.platform then
+        App.platform = UEApplication.platform
+    end
+    return App.platform
+end
+
+function App.GetPersistentDataPath()
+    if not App.persistentDataPath then
+        App.persistentDataPath = UEApplication.persistentDataPath
+    end
+    return App.persistentDataPath
+end
+
+return App

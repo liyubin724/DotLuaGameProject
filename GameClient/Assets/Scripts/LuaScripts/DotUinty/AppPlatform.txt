@@ -1,0 +1,14 @@
+local oop = require('DotLua/OOP/oop')
+
+local AppPlatform = {
+    OSXEditor = 0,
+    OSXPlayer = 1,
+    WindowsPlayer = 2,
+    WindowsEditor = 7,
+    IPhonePlayer = 8,
+    Android = 11
+}
+
+oop.asenum(AppPlatform)
+
+return AppPlatform
