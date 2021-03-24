@@ -1,7 +1,6 @@
 local oop = require('DotLua/OOP/oop')
-
 local System = require('DotLua/ECS/Systems/System')
-local SystemUtility = require('DotLua/ECS/Systems/SystemUtility')
+local FuncNameUtility = require('DotLua/ECS/Utility/FuncNameUtility')
 local CycleTime = require('DotLua/CycleTime')
 
 local tinsert = table.insert
@@ -13,6 +12,12 @@ local SystemSet =
     'SystemSet',
     function(self)
         self.isInited = false
+
+        self.systems = {}
+        self.updateSystems = {}
+        self.lateUpdateSystems = {}
+        self.frameSystems = {}
+
         self.elapseTime = 0
     end
 )
@@ -27,8 +32,18 @@ function SystemSet:Add(system)
 
     tinsert(self.systems, system)
 
-    if self.isInited and system[SystemUtility.FUNC_NAME_INITIZLIZE] then
-        system[SystemUtility.FUNC_NAME_INITIZLIZE]()
+    if self.isInited and system[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
+        system[FuncNameUtility.FUNC_NAME_INITIZLIZE](system)
+    end
+
+    if system[FuncNameUtility.FUNC_NAME_UPDATE] then
+        tinsert(self.updateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+        tinsert(self.lateUpdateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_FRAME] then
+        tinsert(self.frameSystems, system)
     end
 end
 
@@ -42,34 +57,40 @@ function SystemSet:Remove(system)
 
     tremovevalue(self.systems, system)
 
-    if self.isInited and system[SystemUtility.FUNC_NAME_TEARDOWN] then
-        system[SystemUtility.FUNC_NAME_TEARDOWN]()
+    if system[FuncNameUtility.FUNC_NAME_UPDATE] then
+        tremovevalue(self.updateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+        tremovevalue(self.lateUpdateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_FRAME] then
+        tremovevalue(self.frameSystems, system)
+    end
+
+    if self.isInited and system[FuncNameUtility.FUNC_NAME_TEARDOWN] then
+        system[FuncNameUtility.FUNC_NAME_TEARDOWN](system)
     end
 end
 
 function SystemSet:DoInitialize()
     self.isInited = true
     for _, system in ipairs(self.systems) do
-        if system[SystemUtility.FUNC_NAME_INITIZLIZE] then
-            system[SystemUtility.FUNC_NAME_INITIZLIZE]()
+        if system[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
+            system[FuncNameUtility.FUNC_NAME_INITIZLIZE](system)
         end
     end
 end
 
 function SystemSet:DoUpdate()
     if self.isInited then
-        for _, system in ipairs(self.systems) do
-            if system[SystemUtility.FUNC_NAME_UPDATE] then
-                system[SystemUtility.FUNC_NAME_UPDATE]()
-            end
+        for _, system in ipairs(self.updateSystems) do
+            system[FuncNameUtility.FUNC_NAME_UPDATE](system)
         end
 
         self.elapseTime = self.elapseTime + CycleTime.GetDeltaTime()
         while self.elapseTime > CycleTime.GetFrameTime() do
-            for _, system in ipairs(self.systems) do
-                if system[SystemUtility.FUNC_NAME_FRAME] then
-                    system[SystemUtility.FUNC_NAME_FRAME]()
-                end
+            for _, system in ipairs(self.frameSystems) do
+                system[FuncNameUtility.FUNC_NAME_FRAME](system)
             end
 
             self.elapseTime = self.elapseTime - CycleTime.GetFrameTime()
@@ -79,10 +100,8 @@ end
 
 function SystemSet:DoLateUpdate()
     if self.isInited then
-        for _, system in ipairs(self.systems) do
-            if system[SystemUtility.FUNC_NAME_LATEUPDATE] then
-                system[SystemUtility.FUNC_NAME_LATEUPDATE]()
-            end
+        for _, system in ipairs(self.lateUpdateSystems) do
+            system[FuncNameUtility.FUNC_NAME_LATEUPDATE](system)
         end
     end
 end
@@ -90,11 +109,15 @@ end
 function SystemSet:DoTeardown()
     if self.isInited then
         for _, system in ipairs(self.systems) do
-            if system[SystemUtility.FUNC_NAME_TEARDOWN] then
-                system[SystemUtility.FUNC_NAME_TEARDOWN]()
+            if system[FuncNameUtility.FUNC_NAME_TEARDOWN] then
+                system[FuncNameUtility.FUNC_NAME_TEARDOWN](system)
             end
         end
     end
+    tclear(self.updateSystems)
+    tclear(self.lateUpdateSystems)
+    tclear(self.frameSystems)
+
     tclear(self.systems)
     self.elapseTime = 0
 end

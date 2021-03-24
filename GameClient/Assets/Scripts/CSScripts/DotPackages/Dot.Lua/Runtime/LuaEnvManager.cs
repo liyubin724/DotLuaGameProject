@@ -13,11 +13,33 @@ namespace DotEngine.Lua
     public sealed class LuaEnvManager
     {
         private static readonly string LUA_OOP_PATH = "DotLua/OOP/oop";
-        private static readonly string LUA_LAUNCH_PATH = "DotLua/Launcher";
+
+        private static readonly string LUA_INIT_PATH = "Game/GameInit";
+        private static readonly string LUA_GLOBAL_NAME = "Game";
 
         public LuaEnv Env { get; private set; } = null;
 
-        public LuaTable LaunchTable { get; private set; } = null;
+        public bool IsValid
+        {
+            get
+            {
+                return Env != null && Env.IsValid();
+            }
+        }
+
+        public LuaTable Global
+        {
+            get
+            {
+                if(IsValid)
+                {
+                    return Env.Global;
+                }
+                return null;
+            }
+        }
+
+        public LuaTable GameTable { get; private set; } = null;
         private Action<float, float> updateAction = null;
         private Action lateUpdateAction = null;
 
@@ -27,13 +49,7 @@ namespace DotEngine.Lua
         private LuaFunction instanceWithFunc = null;
 
         private LuaEnvBehaviour envBehaviour = null;
-        public bool IsValid
-        {
-            get
-            {
-                return Env != null && Env.IsValid();
-            }
-        }
+        
 
         private static LuaEnvManager manager = null;
 
@@ -61,18 +77,23 @@ namespace DotEngine.Lua
             scriptLoader = new FileScriptLoader();
 #else
 #endif
+
+#if DEBUG
+            Global.Set("isDebug", true);
+#endif
             Env.AddLoader(scriptLoader.LoadScript);
 
-            OOPTable = Require(LUA_OOP_PATH);
+            Require(LUA_INIT_PATH);
+            GameTable = Global.Get<LuaTable>(LUA_GLOBAL_NAME);
+            updateAction = GameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
+            lateUpdateAction = GameTable.Get<Action>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
+
+            OOPTable = RequireAndGetLocalTable(LUA_OOP_PATH);
             usingFunc = OOPTable.Get<Func<string, LuaTable>>("using");
             instanceFunc = OOPTable.Get<Func<string, LuaTable>>("instance");
             instanceWithFunc = OOPTable.Get<LuaFunction>("instancewith");
 
-            LaunchTable = RequireGlobal(LUA_LAUNCH_PATH);
-            updateAction = LaunchTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
-            lateUpdateAction = LaunchTable.Get<Action>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
-
-            Action startAction = LaunchTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
+            Action startAction = GameTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
             startAction?.Invoke();
         }
 
@@ -83,17 +104,21 @@ namespace DotEngine.Lua
 
         public void Shuntdown()
         {
-            UnityObject.Destroy(envBehaviour.gameObject);
-            envBehaviour = null;
+            if(envBehaviour !=null)
+            {
+                UnityObject.Destroy(envBehaviour.gameObject);
+                envBehaviour = null;
+            }
+
             if (IsValid)
             {
-                LuaFunction destroyFunc = LaunchTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
+                LuaFunction destroyFunc = GameTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
                 destroyFunc.Action();
                 destroyFunc.Dispose();
 
                 instanceWithFunc.Dispose();
-                LaunchTable.Dispose();
                 OOPTable.Dispose();
+                GameTable.Dispose();
             }
 
             updateAction = null;
@@ -101,7 +126,7 @@ namespace DotEngine.Lua
             usingFunc = null;
             instanceFunc = null;
             instanceWithFunc = null;
-            LaunchTable = null;
+            GameTable = null;
             OOPTable = null;
 
             if (IsValid)
@@ -138,7 +163,18 @@ namespace DotEngine.Lua
             }
         }
 
-        public LuaTable RequireGlobal(string scriptPath)
+        public void Require(string scriptPath)
+        {
+            if (string.IsNullOrEmpty(scriptPath) || !IsValid)
+            {
+                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                return;
+            }
+
+            Env.DoString($"require(\"{scriptPath}\")");
+        }
+
+        public LuaTable RequireAndGetGlobalTable(string scriptPath)
         {
             if (string.IsNullOrEmpty(scriptPath) || !IsValid)
             {
@@ -156,7 +192,7 @@ namespace DotEngine.Lua
             return table;
         }
 
-        public LuaTable Require(string scriptPath)
+        public LuaTable RequireAndGetLocalTable(string scriptPath)
         {
             if (string.IsNullOrEmpty(scriptPath) || !IsValid)
             {
@@ -164,7 +200,7 @@ namespace DotEngine.Lua
                 return null;
             }
 
-            SystemObject[] values = Env.DoString(string.Format(LuaUtility.REQUIRE_FORMAT, scriptPath));
+            SystemObject[] values = Env.DoString(string.Format(LuaUtility.LOCAL_REQUIRE_FORMAT, scriptPath));
             if (values != null && values.Length > 0)
             {
                 return values[0] as LuaTable;

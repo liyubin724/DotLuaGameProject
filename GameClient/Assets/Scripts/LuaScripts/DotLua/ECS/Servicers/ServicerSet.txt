@@ -1,13 +1,10 @@
 local oop = require('DotLua/OOP/oop')
-
-local INIT_FUNC_NAME = 'DoInitialize'
-local UPDATE_FUNC_NAME = 'DoUpdate'
-local LATEUPDATE_FUNC_NAME = 'DoLateUpdate'
-local TEARDOWN_FUNC_NAME = 'DoTeardown'
+local FuncNameUtility = require('DotLua/ECS/Utility/FuncNameUtility')
 
 local tinsert = table.insert
 local tforeach = table.foreach
 local tclear = table.clear
+local tremovevalue = table.removevalue
 
 local ServicerSet =
     oop.class(
@@ -17,7 +14,8 @@ local ServicerSet =
 
         self.updateServicers = {}
         self.lateUpdateServicers = {}
-        self.teardownServicers = {}
+
+        self.isInited = false
     end
 )
 
@@ -29,20 +27,18 @@ function ServicerSet:Add(name, servicer)
     if not self.servicerDic[name] then
         self.servicerDic[name] = servicer
 
-        if servicer[INIT_FUNC_NAME] then
-            servicer[INIT_FUNC_NAME](servicer)
-        end
-
-        if servicer[UPDATE_FUNC_NAME] then
+        if servicer[FuncNameUtility.FUNC_NAME_UPDATE] then
             tinsert(self.updateServicers, servicer)
         end
-
-        if servicer[LATEUPDATE_FUNC_NAME] then
+        if servicer[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
             tinsert(self.lateUpdateServicers, servicer)
         end
-        if servicer[TEARDOWN_FUNC_NAME] then
-            tinsert(self.teardownServicers, servicer)
+
+        if self.isInited and servicer[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
+            servicer[FuncNameUtility.FUNC_NAME_INITIZLIZE](servicer)
         end
+    else
+        oop.error('ECS', 'Servicer:Add->the servicer has been added')
     end
 end
 
@@ -50,6 +46,17 @@ function ServicerSet:Remove(name)
     local servicer = self.servicerDic[name]
     if servicer then
         self.servicerDic[name] = nil
+
+        if servicer[FuncNameUtility.FUNC_NAME_UPDATE] then
+            tremovevalue(self.updateServicers, servicer)
+        end
+        if servicer[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+            tremovevalue(self.lateUpdateServicers, servicer)
+        end
+
+        if self.isInited and servicer[FuncNameUtility.FUNC_NAME_TEARDOWN] then
+            servicer[FuncNameUtility.FUNC_NAME_TEARDOWN](servicer)
+        end
     end
     return servicer
 end
@@ -58,36 +65,55 @@ function ServicerSet:Get(name)
     return self.servicerDic[name]
 end
 
-function ServicerSet:DoUpdate()
+function ServicerSet:DoInitialize()
     tforeach(
-        self.updateServicers,
+        self.servicerDic,
         function(servicer)
-            servicer[UPDATE_FUNC_NAME](servicer)
+            if servicer[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
+                servicer[FuncNameUtility.FUNC_NAME_INITIZLIZE](servicer)
+            end
         end
     )
+
+    self.isInited = true
+end
+
+function ServicerSet:DoUpdate()
+    if self.isInited then
+        tforeach(
+            self.updateServicers,
+            function(servicer)
+                servicer[FuncNameUtility.FUNC_NAME_UPDATE](servicer)
+            end
+        )
+    end
 end
 
 function ServicerSet:DoLateUpdate()
-    tforeach(
-        self.lateUpdateServicers,
-        function(servicer)
-            servicer[LATEUPDATE_FUNC_NAME](servicer)
-        end
-    )
+    if self.isInited then
+        tforeach(
+            self.lateUpdateServicers,
+            function(servicer)
+                servicer[FuncNameUtility.FUNC_NAME_LATEUPDATE](servicer)
+            end
+        )
+    end
 end
 
 function ServicerSet:DoTeardown()
-    tforeach(
-        self.teardownServicers,
-        function(servicer)
-            servicer[TEARDOWN_FUNC_NAME](servicer)
-        end
-    )
+    if self.isInited then
+        tforeach(
+            self.teardownServicers,
+            function(servicer)
+                servicer[FuncNameUtility.FUNC_NAME_TEARDOWN](servicer)
+            end
+        )
+    end
 
     tclear(self.servicerDic)
     tclear(self.updateServicers)
     tclear(self.lateUpdateServicers)
-    tclear(self.teardownServicers)
+    self.isInited = false
 end
 
 return ServicerSet

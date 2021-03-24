@@ -6,7 +6,7 @@ namespace DotEngine.Lua
     {
         public const string LOGGER_NAME = "Lua";
 
-        public const string REQUIRE_FORMAT = "local table = require('{0}') return table";
+        public const string LOCAL_REQUIRE_FORMAT = "local table = require('{0}') return table";
 
         public const string AWAKE_FUNCTION_NAME = "DoAwake";
         public const string ENABLE_FUNCTION_NAME = "DoEnable";

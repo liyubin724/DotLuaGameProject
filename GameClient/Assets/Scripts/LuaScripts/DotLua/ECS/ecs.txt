@@ -64,28 +64,35 @@ end
 function ecs:DoInitialize()
     self.isRunning = true
 
-    ecs.systemset:DoInitialize()
-    ecs.servicerSet:DoInitialize()
+    self.systemSet:DoInitialize()
+    self.servicerSet:DoInitialize()
 end
 
 function ecs:DoUpdate()
     if self.isRunning then
-        ecs.systemset:DoUpdate()
-        ecs.servicerset:DoUpdate()
+        self.systemSet:DoUpdate()
+        self.servicerSet:DoUpdate()
+    end
+end
+
+function ecs:DoFrame()
+    if self.isRunning then
+        self.systemSet:DoFrame()
+        self.servicerSet:DoFrame()
     end
 end
 
 function ecs:DoLateUpdate()
     if self.isRunning then
-        ecs.systemset:DoLateUpdate()
-        ecs.servicerset:DoLateUpdate()
+        self.systemSet:DoLateUpdate()
+        self.servicerSet:DoLateUpdate()
     end
 end
 
 function ecs:DoTeardown()
     if self.isRunning then
-        ecs.systemset:DoTeardown()
-        ecs.servicerset:DoTeardown()
+        self.systemSet:DoTeardown()
+        self.servicerSet:DoTeardown()
     end
     self.isRunning = false
 end

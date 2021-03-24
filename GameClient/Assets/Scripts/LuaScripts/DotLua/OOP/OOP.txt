@@ -52,7 +52,7 @@ oop.using = function(path)
 
         local className = oop.getclassname(c)
         if className then
-            if oop.classes[className] then
+            if not oop.classes[className] then
                 oop.classes[className] = c
             else
                 oop.error('oop', 'the name of the class is repeated.clssname = ' .. className)

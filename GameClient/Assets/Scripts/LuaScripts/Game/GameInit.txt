@@ -1,0 +1,48 @@
+local oop = require('DotLua/OOP/oop')
+local Logger = require('DotLua/Debug/Logger')
+local HTimer = require('DotLua/Timer/HierarchicalTimer')
+local CycleTime = require('DotLua/CycleTime')
+local ecs = oop.using('DotLua/ECS/ecs')
+
+local StartupSystem = oop.using('Game/Startup/StartupSystem')
+
+local DELogUtil = CS.DotEngine.Log.LogUtil
+
+if _G.isDebug then
+    require('Debugger/LuaPanda').start('127.0.0.1', 8818)
+    Logger.SetEnable(true, true, true)
+else
+    Logger.SetEnable(false, false, true)
+end
+Logger.SetFunc(DELogUtil.Info, DELogUtil.Warning, DELogUtil.Error)
+
+local Game = _G.Game
+if not Game then
+    Game = {}
+    _G.Game = Game
+end
+
+Game.DoStart = function()
+    local gameECS = ecs()
+    Game.gameECS = gameECS
+
+    gameECS:AddSystem(StartupSystem())
+
+    gameECS:AddServicer('HTimer', HTimer())
+
+    gameECS:DoInitialize()
+end
+
+Game.DoUpdate = function(deltaTime, unscaleDeltaTime)
+    CycleTime.DoUpdate(deltaTime, unscaleDeltaTime)
+    Game.gameECS:DoUpdate()
+end
+
+Game.DoLateUpdate = function()
+    Game.gameECS:DoLateUpdate()
+end
+
+Game.DoDestroy = function()
+    Game.gameECS:DoTeardown()
+    Game.gameECS = nil
+end

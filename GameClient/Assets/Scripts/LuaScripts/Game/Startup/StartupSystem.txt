@@ -1,0 +1,17 @@
+local oop = require('DotLua/OOP/oop')
+local InitializeSystem = oop.using('DotLua/ECS/Systems/LifeCycle/InitializeSystem')
+
+local StartupSystem =
+    oop.class(
+    'StartupSystem',
+    function(self)
+    end,
+    InitializeSystem
+)
+
+function StartupSystem:DoInitialize()
+    local UEGameObject = CS.UnityEngine.GameObject
+    UEGameObject("StartUp")
+end
+
+return StartupSystem

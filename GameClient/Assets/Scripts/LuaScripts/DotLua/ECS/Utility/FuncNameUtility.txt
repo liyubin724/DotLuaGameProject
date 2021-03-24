@@ -1,0 +1,11 @@
+local asreadonly = require('DotLua/OOP/asreadonly')
+
+local FuncNameUtility = {}
+
+FuncNameUtility.FUNC_NAME_INITIZLIZE = 'DoInitialize'
+FuncNameUtility.FUNC_NAME_TEARDOWN = 'DoTeardown'
+FuncNameUtility.FUNC_NAME_UPDATE = 'DoUpdate'
+FuncNameUtility.FUNC_NAME_LATEUPDATE = 'DoLateUpdate'
+FuncNameUtility.FUNC_NAME_FRAME = 'DoFrame'
+
+return asreadonly(FuncNameUtility)
