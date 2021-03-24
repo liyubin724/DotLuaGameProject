@@ -4,8 +4,11 @@ local HTimer = require('DotLua/Timer/HierarchicalTimer')
 local CycleTime = require('DotLua/CycleTime')
 local ecs = oop.using('DotLua/ECS/ecs')
 
-local StartupSystem = oop.using('Game/Startup/StartupSystem')
+local ContextNames = require('Game/ECS/Contexts/ContextNames')
+local GameContext = require('Game/ECS/Contexts/GameContext')
 
+
+local StartupSystem = oop.using('Game/Startup/StartupSystem')
 local DELogUtil = CS.DotEngine.Log.LogUtil
 
 if _G.isDebug then
@@ -16,19 +19,28 @@ else
 end
 Logger.SetFunc(DELogUtil.Info, DELogUtil.Warning, DELogUtil.Error)
 
-local Game = _G.Game
-if not Game then
-    Game = {}
-    _G.Game = Game
+_G.Game = {}
+
+Game.GetECS = function()
+    if not Game.gameECS then
+        Game.gameECS = ecs()
+    end
+
+    return Game.gameECS
+end
+
+Game.GetContext = function()
+
 end
 
 Game.DoStart = function()
-    local gameECS = ecs()
-    Game.gameECS = gameECS
+    local gameECS = Game.GetECS()
+
+    gameECS:AddContext(GameContext(ContextNames.GameContextName))
+    
+    gameECS:AddServicer('HTimer', HTimer())
 
     gameECS:AddSystem(StartupSystem())
-
-    gameECS:AddServicer('HTimer', HTimer())
 
     gameECS:DoInitialize()
 end

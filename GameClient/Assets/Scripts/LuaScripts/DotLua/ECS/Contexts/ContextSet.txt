@@ -18,23 +18,23 @@ function ContextSet:Get(name)
     return self.contextDic[name]
 end
 
-function ContextSet:Create(name)
+function ContextSet:Add(context)
+    local name = context:GetName()
     if self:Has(name) then
-        oop.error('ECS', 'ContextSet:Create')
-        return nil
+        oop.error('ECS', 'ContextSet:Add->the context has been add')
+        return
     end
-    local context = Context(name)
-    self.contextDic[name] = context
 
-    return context
+    self.contextDic[name] = context
 end
 
-function ContextSet:Destroy(name)
+function ContextSet:Remove(name)
     local context = self.contextDic[name]
     if context then
         context:Destroy()
-
         self.contextDic[name] = nil
+    else
+        oop.error('ECS', 'ContextSet:Add->the context was not found')
     end
 end
 

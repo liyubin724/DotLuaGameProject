@@ -33,12 +33,12 @@ function ecs:GetContext(name)
     return self.contextSet:Get(name)
 end
 
-function ecs:CreateContext(name)
-    return self.contextSet:Create(name)
+function ecs:AddContext(context)
+    self.contextSet:Add(context)
 end
 
-function ecs:DestroyContext(name)
-    self.contextSet:Distroy(name)
+function ecs:RemoveContext(name)
+    self.contextSet:Remove(name)
 end
 
 function ecs:GetServicer(name)

@@ -1,0 +1,5 @@
+local ContextNames = {}
+
+ContextNames.GameContextName = "gameContext"
+
+return ContextNames

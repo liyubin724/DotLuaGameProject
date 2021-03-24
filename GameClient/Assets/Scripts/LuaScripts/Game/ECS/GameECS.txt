@@ -1,0 +1,8 @@
+local oop = require('DotLua/OOP/oop')
+local ecs = oop.using('DotLua/ECS/ecs')
+
+local ContextNames = require('Game/ECS/Contexts/ContextNames')
+local GameContext = require('Game/ECS/Contexts/GameContext')
+
+
+_G.gameECS = ecs()
