@@ -21,17 +21,14 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(DotEngine.UI.UIRoot);
-			Utils.BeginObjectRegister(type, L, translator, 0, 2, 2, 2);
+			Utils.BeginObjectRegister(type, L, translator, 0, 1, 1, 1);
 			
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetLayer", _m_GetLayer);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetLayerTransform", _m_GetLayerTransform);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetRootComponent", _m_GetRootComponent);
 			
 			
-			Utils.RegisterFunc(L, Utils.GETTER_IDX, "uiCamera", _g_get_uiCamera);
-            Utils.RegisterFunc(L, Utils.GETTER_IDX, "layers", _g_get_layers);
+			Utils.RegisterFunc(L, Utils.GETTER_IDX, "binderBehaviour", _g_get_binderBehaviour);
             
-			Utils.RegisterFunc(L, Utils.SETTER_IDX, "uiCamera", _s_set_uiCamera);
-            Utils.RegisterFunc(L, Utils.SETTER_IDX, "layers", _s_set_layers);
+			Utils.RegisterFunc(L, Utils.SETTER_IDX, "binderBehaviour", _s_set_binderBehaviour);
             
 			
 			Utils.EndObjectRegister(type, L, translator, null, null,
@@ -80,7 +77,7 @@ namespace XLua.CSObjectWrap
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_GetLayer(RealStatePtr L)
+        static int _m_GetRootComponent(RealStatePtr L)
         {
 		    try {
             
@@ -92,38 +89,8 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    DotEngine.UI.UILayerLevel _layerLevel;translator.Get(L, 2, out _layerLevel);
                     
-                        DotEngine.UI.UILayer gen_ret = gen_to_be_invoked.GetLayer( _layerLevel );
-                        translator.Push(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_GetLayerTransform(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-                DotEngine.UI.UIRoot gen_to_be_invoked = (DotEngine.UI.UIRoot)translator.FastGetCSObj(L, 1);
-            
-            
-                
-                {
-                    int _layer = LuaAPI.xlua_tointeger(L, 2);
-                    
-                        UnityEngine.RectTransform gen_ret = gen_to_be_invoked.GetLayerTransform( _layer );
+                        XLua.LuaTable gen_ret = gen_to_be_invoked.GetRootComponent(  );
                         translator.Push(L, gen_ret);
                     
                     
@@ -153,27 +120,13 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_uiCamera(RealStatePtr L)
+        static int _g_get_binderBehaviour(RealStatePtr L)
         {
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			
                 DotEngine.UI.UIRoot gen_to_be_invoked = (DotEngine.UI.UIRoot)translator.FastGetCSObj(L, 1);
-                translator.Push(L, gen_to_be_invoked.uiCamera);
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 1;
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _g_get_layers(RealStatePtr L)
-        {
-		    try {
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			
-                DotEngine.UI.UIRoot gen_to_be_invoked = (DotEngine.UI.UIRoot)translator.FastGetCSObj(L, 1);
-                translator.Push(L, gen_to_be_invoked.layers);
+                translator.Push(L, gen_to_be_invoked.binderBehaviour);
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }
@@ -196,28 +149,13 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _s_set_uiCamera(RealStatePtr L)
+        static int _s_set_binderBehaviour(RealStatePtr L)
         {
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			
                 DotEngine.UI.UIRoot gen_to_be_invoked = (DotEngine.UI.UIRoot)translator.FastGetCSObj(L, 1);
-                gen_to_be_invoked.uiCamera = (DotEngine.UI.UICamera)translator.GetObject(L, 2, typeof(DotEngine.UI.UICamera));
-            
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            return 0;
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _s_set_layers(RealStatePtr L)
-        {
-		    try {
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			
-                DotEngine.UI.UIRoot gen_to_be_invoked = (DotEngine.UI.UIRoot)translator.FastGetCSObj(L, 1);
-                gen_to_be_invoked.layers = (DotEngine.UI.UILayer[])translator.GetObject(L, 2, typeof(DotEngine.UI.UILayer[]));
+                gen_to_be_invoked.binderBehaviour = (DotEngine.Lua.Binder.LuaBinderBehaviour)translator.GetObject(L, 2, typeof(DotEngine.Lua.Binder.LuaBinderBehaviour));
             
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);

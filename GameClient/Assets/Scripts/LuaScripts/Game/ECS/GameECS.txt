@@ -3,8 +3,16 @@ local ecs = oop.using('DotLua/ECS/ecs')
 
 local ContextNames = require('Game/ECS/Contexts/ContextNames')
 local GameContext = require('Game/ECS/Contexts/GameContext')
+local HTimer = require('DotLua/Timer/HierarchicalTimer')
+local ServiceNames = require('Game/ECS/Servicers/ServicerNames')
 
+local StartupSystem = oop.using('Game/Startup/StartupSystem')
 
 _G.gameECS = ecs()
+_G.gameECS.GetGameContext = function()
+    return _G.gameECS:GetContext(ContextNames.GameContextName)
+end
 
-gameECS:AddContext(GameContext(ContextNames.GameContextName))
+_G.gameECS:AddContext(GameContext(ContextNames.GameContextName))
+_G.gameECS:AddServicer(ServiceNames.HTimerName, HTimer())
+_G.gameECS:AddSystem(StartupSystem())

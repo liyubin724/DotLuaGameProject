@@ -1,6 +1,8 @@
 local oop = require('DotLua/OOP/oop')
-local ContextNames = require "ECS.Contexts.ContextNames"
+local UIRootComponent = require "Game.UI.Root.UIRootComponent"
 local InitializeSystem = oop.using('DotLua/ECS/Systems/LifeCycle/InitializeSystem')
+
+local DEUIRoot = CS.DotEngine.UI.UIRoot
 
 local StartupSystem =
     oop.class(
@@ -11,8 +13,9 @@ local StartupSystem =
 )
 
 function StartupSystem:DoInitialize()
-    local UEGameObject = CS.UnityEngine.GameObject
-    local gameContext = Game.GetECS():GetContext(ContextNames.GameContextName)
+    local gameECS = _G.gameECS
+    local uiRootEntity = gameECS:GetUIRootEntity()
+    uiRootEntity:AddComponent(DEUIRoot.Root:GetRootComponent())
 end
 
 return StartupSystem

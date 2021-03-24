@@ -15,7 +15,7 @@ namespace DotEngine.Lua
         private static readonly string LUA_OOP_PATH = "DotLua/OOP/oop";
 
         private static readonly string LUA_INIT_PATH = "Game/GameInit";
-        private static readonly string LUA_GLOBAL_NAME = "Game";
+        private static readonly string LUA_GLOBAL_NAME = "gameLauncher";
 
         public LuaEnv Env { get; private set; } = null;
 
@@ -83,18 +83,15 @@ namespace DotEngine.Lua
 #endif
             Env.AddLoader(scriptLoader.LoadScript);
 
-            Require(LUA_INIT_PATH);
-            GameTable = Global.Get<LuaTable>(LUA_GLOBAL_NAME);
-            updateAction = GameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
-            lateUpdateAction = GameTable.Get<Action>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
-
             OOPTable = RequireAndGetLocalTable(LUA_OOP_PATH);
             usingFunc = OOPTable.Get<Func<string, LuaTable>>("using");
             instanceFunc = OOPTable.Get<Func<string, LuaTable>>("instance");
             instanceWithFunc = OOPTable.Get<LuaFunction>("instancewith");
 
-            Action startAction = GameTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
-            startAction?.Invoke();
+            Require(LUA_INIT_PATH);
+            GameTable = Global.Get<LuaTable>(LUA_GLOBAL_NAME);
+            updateAction = GameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
+            lateUpdateAction = GameTable.Get<Action>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
         }
 
         public void Startup()
@@ -136,6 +133,12 @@ namespace DotEngine.Lua
             }
             Env = null;
             manager = null;
+        }
+
+        public void DoStart()
+        {
+            Action startAction = GameTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
+            startAction?.Invoke();
         }
 
         public void DoUpdate()

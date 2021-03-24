@@ -1,0 +1,51 @@
+local oop = require('DotLua/OOP/oop')
+local Component = oop.using('DotLua/ECS/Components/Component')
+
+local UIRootComponent =
+    oop.class(
+    'UIRootComponent',
+    function(self)
+        self.uiCamera = nil
+        self.gameObject = nil
+        self.transform = nil
+
+        self.layerGameObjects = nil
+        self.layerTransforms = nil
+    end,
+    Component
+)
+
+function UIRootComponent:GetUICamera()
+    return self.uiCamera
+end
+
+function UIRootComponent:GetRootGameObject()
+    return self.gameObject
+end
+
+function UIRootComponent:GetRootTransform()
+    return self.transform
+end
+
+function UIRootComponent:GetLayerGameObject(layer)
+    return self.layerGameObjects[layer]
+end
+
+function UIRootComponent:GetLayerTransform(layer)
+    if not self.layerTransforms then
+        self.layerTransforms = {}
+        for i, v in ipairs(self.layerGameObjects) do
+            self.layerTransforms[i] = v
+        end
+    end
+    return self.layerTransforms[layer]
+end
+
+function UIRootComponent:SetLayerVisible(layer, visible)
+    local layerGameObject = self:GetLayerGameObject(layer)
+    if layerGameObject then
+        layerGameObject:SetVisible(visible)
+    end
+end
+
+return UIRootComponent

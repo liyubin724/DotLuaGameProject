@@ -1,41 +1,27 @@
-﻿using DotEngine.Utilities;
-using System.Collections.Generic;
+﻿using DotEngine.Lua.Binder;
 using UnityEngine;
+using XLua;
 
 namespace DotEngine.UI
 {
     public class UIRoot : MonoBehaviour
     {
         public static UIRoot Root = null;
+        public LuaBinderBehaviour binderBehaviour = null;
 
-        public UICamera uiCamera;
-        public UILayer[] layers = new UILayer[0];
-
-        private Dictionary<UILayerLevel, UILayer> layerDic = new Dictionary<UILayerLevel, UILayer>();
         private void Awake()
         {
+            if(binderBehaviour == null)
+            {
+                binderBehaviour = GetComponent<LuaBinderBehaviour>();
+            }
             Root = this;
-            DontDestroyUtility.AddTransform(transform);
-
-            foreach(var layer in layers)
-            {
-                layerDic.Add(layer.layerLevel, layer);
-            }
         }
 
-        public UILayer GetLayer(UILayerLevel layerLevel)
+        public LuaTable GetRootComponent()
         {
-            if(layerDic.TryGetValue(layerLevel,out UILayer layer))
-            {
-                return layer;
-            }
-            return null;
-        }
-
-        public RectTransform GetLayerTransform(int layer)
-        {
-            UILayer uiLayer = GetLayer((UILayerLevel)layer);
-            return uiLayer?.LayerTransform;
+            binderBehaviour.InitBinder();
+            return binderBehaviour.Table;
         }
     }
 }

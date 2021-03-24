@@ -2,13 +2,7 @@ local oop = require('DotLua/OOP/oop')
 local Logger = require('DotLua/Debug/Logger')
 local HTimer = require('DotLua/Timer/HierarchicalTimer')
 local CycleTime = require('DotLua/CycleTime')
-local ecs = oop.using('DotLua/ECS/ecs')
 
-local ContextNames = require('Game/ECS/Contexts/ContextNames')
-local GameContext = require('Game/ECS/Contexts/GameContext')
-
-
-local StartupSystem = oop.using('Game/Startup/StartupSystem')
 local DELogUtil = CS.DotEngine.Log.LogUtil
 
 if _G.isDebug then
@@ -19,42 +13,23 @@ else
 end
 Logger.SetFunc(DELogUtil.Info, DELogUtil.Warning, DELogUtil.Error)
 
-_G.Game = {}
+_G.gameLauncher = {}
 
-Game.GetECS = function()
-    if not Game.gameECS then
-        Game.gameECS = ecs()
-    end
-
-    return Game.gameECS
+_G.gameLauncher.DoStart = function()
+    require('Game/ECS/GameECS')
+    _G.gameECS:DoInitialize()
 end
 
-Game.GetContext = function()
-
-end
-
-Game.DoStart = function()
-    local gameECS = Game.GetECS()
-
-    gameECS:AddContext(GameContext(ContextNames.GameContextName))
-    
-    gameECS:AddServicer('HTimer', HTimer())
-
-    gameECS:AddSystem(StartupSystem())
-
-    gameECS:DoInitialize()
-end
-
-Game.DoUpdate = function(deltaTime, unscaleDeltaTime)
+_G.gameLauncher.DoUpdate = function(deltaTime, unscaleDeltaTime)
     CycleTime.DoUpdate(deltaTime, unscaleDeltaTime)
-    Game.gameECS:DoUpdate()
+    _G.gameECS:DoUpdate()
 end
 
-Game.DoLateUpdate = function()
-    Game.gameECS:DoLateUpdate()
+_G.gameLauncher.DoLateUpdate = function()
+    _G.gameECS:DoLateUpdate()
 end
 
-Game.DoDestroy = function()
-    Game.gameECS:DoTeardown()
-    Game.gameECS = nil
+_G.gameLauncher.DoDestroy = function()
+    _G.gameECS:DoTeardown()
+    _G.gameECS = nil
 end

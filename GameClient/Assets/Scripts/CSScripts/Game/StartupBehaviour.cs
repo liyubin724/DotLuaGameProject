@@ -8,7 +8,7 @@ namespace Game
 {
     public class StartupBehaviour : MonoBehaviour
     {
-        private void Start()
+        private void Awake()
         {
             Application.targetFrameRate = 30;
             DontDestroyUtility.AddTransform(transform);
