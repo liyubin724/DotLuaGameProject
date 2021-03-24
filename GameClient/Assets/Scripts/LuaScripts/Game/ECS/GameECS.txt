@@ -6,3 +6,5 @@ local GameContext = require('Game/ECS/Contexts/GameContext')
 
 
 _G.gameECS = ecs()
+
+gameECS:AddContext(GameContext(ContextNames.GameContextName))
