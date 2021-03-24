@@ -1,0 +1,15 @@
+local oop = require('DotLua/OOP/oop')
+local System = require('DotLua/ECS/Systems/System')
+
+local InitializeSystem =
+    oop.class(
+    'InitializeSystem',
+    function(self)
+    end,
+    System
+)
+
+function InitializeSystem:DoInitialize()
+end
+
+return InitializeSystem

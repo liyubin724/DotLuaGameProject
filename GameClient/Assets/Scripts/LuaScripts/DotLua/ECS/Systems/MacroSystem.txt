@@ -11,6 +11,8 @@ local MacroSystem =
     oop.class(
     'MacroSystem',
     function(self)
+        self.systems = {}
+
         self.initializeSystmes = {}
         self.teardownSystems = {}
         self.updateSystems = {}
@@ -27,6 +29,8 @@ function MacroSystem:Add(system)
             return
         end
     end
+
+    tinsert(self.systems, system)
 
     if system[SystemUtility.FUNC_NAME_INITIZLIZE] then
         tinsert(self.initializeSystmes, system)
@@ -52,6 +56,8 @@ function MacroSystem:Remove(system)
             return
         end
     end
+
+    tremovevalue(self.systems, system)
 
     if system[SystemUtility.FUNC_NAME_INITIZLIZE] then
         tremovevalue(self.initializeSystmes, system)

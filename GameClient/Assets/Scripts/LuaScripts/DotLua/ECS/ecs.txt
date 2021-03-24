@@ -1,72 +1,93 @@
 local oop = require('DotLua/OOP/oop')
-local CycleTime = require('DotLua/CycleTime')
 
 local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
 local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
-
+local ContextSet = oop.using('DotLua/ECS/Contexts/ContextSet')
 local SystemSet = oop.using('DotLua/ECS/Systems/SystemSet')
 local ServicerSet = oop.using('DotLua/ECS/Servicers/ServicerSet')
 
-local ecs = {}
+local ecs =
+    oop.class(
+    'ecs',
+    function(self)
+        self.dispatcher = MsgDispatcher()
+        self.idCreator = UIDCreator()
 
-ecs.time = CycleTime
-ecs.dispatcher = MsgDispatcher()
-ecs.uidcreator = UIDCreator()
-ecs.isruning = false
+        self.contextSet = ContextSet()
+        self.servicerSet = ServicerSet()
+        self.systemSet = SystemSet()
 
-ecs.servicerset = ServicerSet()
-ecs.addservicer = function(name, servicer)
-    ecs.servicerset:Add(name, servicer)
-end
-
-ecs.removeservicer = function(name)
-    ecs.servicerset:Remove(name)
-end
-
-ecs.getservicer = function(name)
-    return ecs.servicerset:Get(name)
-end
-
-ecs.systemset = SystemSet(ecs.dispatcher)
-ecs.addsystem = function(systemClass)
-    local system = ecs.systemset:Add(systemClass)
-    if system and ecs.isruning then
-        system:DoInitialize()
+        self.isRunning = false
     end
+)
+
+function ecs:GetDispatcher()
+    return self.dispatcher
 end
 
-ecs.removesystem = function(systemClass)
-    local system = ecs.systemset:Remove(systemClass)
-    if system and ecs.isruning then
-        system:DoTeardown()
-    end
+function ecs:GetNextUID()
+    return self.idCreator:GetNextUID()
 end
 
-ecs.nextuid = function()
-    return ecs.uidcreator:GetNextUID()
+function ecs:GetContext(name)
+    return self.contextSet:Get(name)
 end
 
-ecs.init = function()
-    ecs.isruning = true
+function ecs:CreateContext(name)
+    return self.contextSet:Create(name)
+end
+
+function ecs:DestroyContext(name)
+    self.contextSet:Distroy(name)
+end
+
+function ecs:GetServicer(name)
+    return self.servicerSet:Get(name)
+end
+
+function ecs:AddServicer(name, servicer)
+    self.servicerSet:Add(name, servicer)
+end
+
+function ecs:RemoveServicer(name)
+    self.servicerSet:Remove(name)
+end
+
+function ecs:AddSystem(system)
+    self.systemSet:Add(system)
+end
+
+function ecs:RemoveSystem(system)
+    self.systemSet:Remove(system)
+end
+
+function ecs:DoInitialize()
+    self.isRunning = true
+
     ecs.systemset:DoInitialize()
+    ecs.servicerSet:DoInitialize()
 end
 
-ecs.update = function(deltaTime, unscaleDeltaTime)
-    ecs.time.DoUpdate(deltaTime, unscaleDeltaTime)
-
-    ecs.systemset:DoUpdate()
-    ecs.servicerset:DoUpdate()
+function ecs:DoUpdate()
+    if self.isRunning then
+        ecs.systemset:DoUpdate()
+        ecs.servicerset:DoUpdate()
+    end
 end
 
-ecs.lateupdate = function()
-    ecs.systemset:DoLateUpdate()
-    ecs.servicerset:DoLateUpdate()
+function ecs:DoLateUpdate()
+    if self.isRunning then
+        ecs.systemset:DoLateUpdate()
+        ecs.servicerset:DoLateUpdate()
+    end
 end
 
-ecs.teardown = function()
-    ecs.isruning = false
-    ecs.systemset:DoTeardown()
-    ecs.servicerset:DoTeardown()
+function ecs:DoTeardown()
+    if self.isRunning then
+        ecs.systemset:DoTeardown()
+        ecs.servicerset:DoTeardown()
+    end
+    self.isRunning = false
 end
 
 return ecs

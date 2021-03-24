@@ -1,0 +1,41 @@
+local oop = require('DotLua/OOP/oop')
+
+local Context = oop.using('DotLua/ECS/Contexts/Context')
+
+local ContextSet =
+    oop.class(
+    'ContextSet',
+    function(self)
+        self.contextDic = {}
+    end
+)
+
+function ContextSet:Has(name)
+    return self.contextDic[name] ~= nil
+end
+
+function ContextSet:Get(name)
+    return self.contextDic[name]
+end
+
+function ContextSet:Create(name)
+    if self:Has(name) then
+        oop.error('ECS', 'ContextSet:Create')
+        return nil
+    end
+    local context = Context(name)
+    self.contextDic[name] = context
+
+    return context
+end
+
+function ContextSet:Destroy(name)
+    local context = self.contextDic[name]
+    if context then
+        context:Destroy()
+
+        self.contextDic[name] = nil
+    end
+end
+
+return ContextSet
