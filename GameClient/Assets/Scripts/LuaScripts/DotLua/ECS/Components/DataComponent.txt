@@ -1,0 +1,10 @@
+local oop = require('DotLua/OOP/oop')
+
+local DataComponent =
+    oop.class(
+    'DataComponent',
+    function(self)
+    end
+)
+
+return DataComponent
