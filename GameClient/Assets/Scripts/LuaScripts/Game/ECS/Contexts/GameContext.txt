@@ -5,18 +5,9 @@ local GameContext =
     oop.class(
     'GameContext',
     function(self, name)
-        self.uiRootEntity = nil
+
     end,
     Context
 )
-
-function GameContext:GetUIRootEntity()
-    if not self.uiRootEntity then
-        local entityUID = Game.GetECS():GetNextUID()
-
-        self.uiRootEntity = self:CreateEntity(entityUID, nil)
-    end
-    return self.uiRootEntity
-end
 
 return GameContext

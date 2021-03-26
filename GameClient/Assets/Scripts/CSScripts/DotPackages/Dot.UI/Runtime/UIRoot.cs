@@ -1,4 +1,5 @@
 ﻿using DotEngine.Lua.Binder;
+using DotEngine.Utilities;
 using UnityEngine;
 using XLua;
 
@@ -16,6 +17,7 @@ namespace DotEngine.UI
                 binderBehaviour = GetComponent<LuaBinderBehaviour>();
             }
             Root = this;
+            DontDestroyUtility.AddTransform(transform);
         }
 
         public LuaTable GetRootComponent()
