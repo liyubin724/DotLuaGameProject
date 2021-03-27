@@ -77,11 +77,15 @@ namespace DotEngine.Lua
             scriptLoader = new FileScriptLoader();
 #else
 #endif
+            Env.AddLoader(scriptLoader.LoadScript);
 
 #if DEBUG
             Global.Set("isDebug", true);
 #endif
-            Env.AddLoader(scriptLoader.LoadScript);
+            Env.AddBuildin("rapidjson", XLua.LuaDLL.Lua.LoadRapidJson);
+            Global.Set("isUsingRapidjson", true);
+
+            Env.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
 
             OOPTable = RequireAndGetLocalTable(LUA_OOP_PATH);
             usingFunc = OOPTable.Get<Func<string, LuaTable>>("using");

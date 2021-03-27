@@ -42,6 +42,8 @@ namespace DotEngine.Lua.Binder
                     return floatValue;
                 case LuaParamType.String:
                     return strValue;
+                case LuaParamType.UObject:
+                    return uObject;
                 default:
                     return null;
             }

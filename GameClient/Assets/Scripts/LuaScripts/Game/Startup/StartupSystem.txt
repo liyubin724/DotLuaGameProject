@@ -1,5 +1,5 @@
 local oop = require('DotLua/OOP/oop')
-local UIRootComponent = require "Game.UI.Root.UIRootComponent"
+--local UIRootComponent = require "Game.UI.Root.UIRootComponent"
 local InitializeSystem = oop.using('DotLua/ECS/Systems/LifeCycle/InitializeSystem')
 
 local DEUIRoot = CS.DotEngine.UI.UIRoot
@@ -14,8 +14,8 @@ local StartupSystem =
 
 function StartupSystem:DoInitialize()
     local gameECS = _G.gameECS
-    local uiRootEntity = gameECS:GetUIRootEntity()
-    uiRootEntity:AddComponent(DEUIRoot.Root:GetRootComponent())
+    --local uiRootEntity = gameECS:GetUIRootEntity()
+    --uiRootEntity:AddComponent(DEUIRoot.Root:GetRootComponent())
 end
 
 return StartupSystem

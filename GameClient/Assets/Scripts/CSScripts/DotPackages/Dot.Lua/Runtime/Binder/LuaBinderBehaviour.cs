@@ -95,7 +95,7 @@ namespace DotEngine.Lua.Binder
                 SystemObject value = GetValueFromParam(param);
                 if (value == null)
                 {
-                    LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                    LogUtil.Error(LuaUtility.LOGGER_NAME, $"LuaBinderBehaviour:RegistParamToTable->the value of the param({name}) is null");
                 }
                 else
                 {

@@ -18,6 +18,15 @@ _G.gameLauncher = {}
 _G.gameLauncher.DoStart = function()
     require('Game/ECS/GameECS')
     _G.gameECS:DoInitialize()
+
+    local rapidjson = require("rapidjson")
+    local t = {
+        a = 1,
+        b = {"A","B","C"},
+        c = "SSSS"
+    }
+    local tJson = rapidjson.encode(t)
+    oop.info("rapidjson",tJson)
 end
 
 _G.gameLauncher.DoUpdate = function(deltaTime, unscaleDeltaTime)
