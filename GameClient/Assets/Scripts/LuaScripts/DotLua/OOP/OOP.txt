@@ -78,9 +78,10 @@ oop.instancewith = function(path, ...)
     return nil
 end
 
-oop.asenum = function(name, value)
+oop.enum = function(name, value)
     value._className = name
     setmetatable(value, Enum)
+    return value
 end
 
 oop.delegate = function(receiver, func)

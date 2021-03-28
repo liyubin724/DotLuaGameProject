@@ -1,13 +1,15 @@
 local oop = require('DotLua/OOP/oop')
 
-local UIRootLayer = {
-    Lowest = 1,
-    Bottom = 2,
-    Default = 3,
-    Top = 4,
-    Most = 5
-}
-
-oop.asenum(UIRootLayer)
+local UIRootLayer =
+    oop.enum(
+    'UIRootLayer',
+    {
+        Lowest = 1,
+        Bottom = 2,
+        Default = 3,
+        Top = 4,
+        Most = 5
+    }
+)
 
 return UIRootLayer
