@@ -1,28 +1,42 @@
-﻿using DotEngine.Lua.Binder;
+﻿using DotEngine.Log;
+using DotEngine.Lua.Binder;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace DotEngine.Lua.UI
 {
+    [AddComponentMenu("DotEngine/UI/Lua Button", 100)]
     public class LuaButton : Button
     {
         public LuaBinderBehaviour binderBehaviour = null;
-        public string funcName = string.Empty;
+        public string clickedFuncName = string.Empty;
         public LuaParam[] paramValues = new LuaParam[0];
 
-        public override void OnPointerClick(PointerEventData eventData)
+        protected override void Awake()
         {
-            if (eventData.button != PointerEventData.InputButton.Left)
-                return;
+            base.Awake();
 
-            if (!IsActive() || !IsInteractable())
-                return;
+            onClick.AddListener(OnClicked);
+        }
 
-            UISystemProfilerApi.AddMarker("LuaButton.onClick", this);
-            if(binderBehaviour!=null && !string.IsNullOrEmpty(funcName))
+        private void OnClicked()
+        {
+            if(binderBehaviour == null)
             {
-                binderBehaviour.CallActionWith(funcName, paramValues);
+                LogUtil.Error("UI", "LuaButton:OnClicked->the behaviour is null");
+                return;
+            }
+            if(string.IsNullOrEmpty(clickedFuncName))
+            {
+                LogUtil.Error("UI", "LuaButton:OnClicked->the funcName is empty");
+                return;
+            }
+            if(paramValues == null || paramValues.Length == 0)
+            {
+                binderBehaviour.CallAction(clickedFuncName);
+            }else
+            {
+                binderBehaviour.CallActionWith(clickedFuncName, paramValues);
             }
         }
     }

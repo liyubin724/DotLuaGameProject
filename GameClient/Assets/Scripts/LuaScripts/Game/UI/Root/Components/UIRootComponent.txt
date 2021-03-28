@@ -48,8 +48,4 @@ function UIRootComponent:SetLayerVisible(layer, visible)
     end
 end
 
-function UIRootComponent:TestFunc(value)
-    oop.info("UI","BtnClicked->"..value)
-end
-
 return UIRootComponent

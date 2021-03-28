@@ -9,7 +9,7 @@ namespace DotEditor.Lua.UI
     public class LuaButtonEditor : ButtonEditor
     {
         SerializedProperty binderBehaviourProperty;
-        SerializedProperty funcNameProperty;
+        SerializedProperty clickedFuncNameProperty;
         SerializedProperty paramValuesProperty;
 
         ReorderableListProperty paramValuesRLProperty;
@@ -17,7 +17,7 @@ namespace DotEditor.Lua.UI
         {
             base.OnEnable();
             binderBehaviourProperty = serializedObject.FindProperty("binderBehaviour");
-            funcNameProperty = serializedObject.FindProperty("funcName");
+            clickedFuncNameProperty = serializedObject.FindProperty("clickedFuncName");
             paramValuesProperty = serializedObject.FindProperty("paramValues");
 
             paramValuesRLProperty = new ReorderableListProperty(paramValuesProperty);
@@ -28,7 +28,7 @@ namespace DotEditor.Lua.UI
             serializedObject.Update();
             {
                 EditorGUILayout.PropertyField(binderBehaviourProperty);
-                EditorGUILayout.PropertyField(funcNameProperty);
+                EditorGUILayout.PropertyField(clickedFuncNameProperty);
 
                 paramValuesRLProperty.OnGUILayout();
             }
