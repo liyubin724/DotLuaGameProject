@@ -48,7 +48,10 @@ namespace DotEngine.UI
             base.Awake();
             if (sprite == null)
             {
-                ChangeSprite();
+                if (Atlas != null && !string.IsNullOrEmpty(SpriteName))
+                {
+                    ChangeSprite();
+                }
             }
             else
             {
@@ -62,7 +65,26 @@ namespace DotEngine.UI
 
         private void ChangeSprite()
         {
-            sprite = Atlas ? Atlas.GetSprite(SpriteName) : null;
+            if (Atlas == null || string.IsNullOrEmpty(SpriteName))
+            {
+                sprite = null;
+            }
+            else
+            {
+                sprite = Atlas.GetSprite(SpriteName);
+            }
+        }
+
+        protected override void OnPopulateMesh(VertexHelper toFill)
+        {
+            if (Atlas == null || string.IsNullOrEmpty(SpriteName))
+            {
+                toFill.Clear();
+            }
+            else
+            {
+                base.OnPopulateMesh(toFill);
+            }
         }
 
 #if UNITY_EDITOR

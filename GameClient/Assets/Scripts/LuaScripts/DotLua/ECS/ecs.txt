@@ -9,9 +9,9 @@ local ServicerSet = oop.using('DotLua/ECS/Servicers/ServicerSet')
 local ecs =
     oop.class(
     'ecs',
-    function(self)
-        self.dispatcher = MsgDispatcher()
-        self.idCreator = UIDCreator()
+    function(self,uidCreator,dispather)
+        self.uidCreator = uidCreator or UIDCreator()
+        self.dispatcher = dispather or MsgDispatcher()
 
         self.contextSet = ContextSet()
         self.servicerSet = ServicerSet()
@@ -26,7 +26,7 @@ function ecs:GetDispatcher()
 end
 
 function ecs:GetNextUID()
-    return self.idCreator:GetNextUID()
+    return self.uidCreator:GetNextUID()
 end
 
 function ecs:GetContext(name)

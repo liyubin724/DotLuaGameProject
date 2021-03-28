@@ -1,8 +1,6 @@
 local oop = require('DotLua/OOP/oop')
 local Context = oop.using('DotLua/ECS/Contexts/Context')
 
-local DEUIRoot = CS.DotEngine.UI.UIRoot
-
 local UIContext =
     oop.class(
     'UIContext',
@@ -12,12 +10,11 @@ local UIContext =
     Context
 )
 
-function UIContext:GetUIRootEntity()
-    if not self.uiRootEntity then
-        local entityUID = _G.gameECS:GetNextUID()
-        self.uiRootEntity = self:CreateEntity(entityUID, nil)
-        self.uiRootEntity:AddComponent(DEUIRoot.Root:GetRootComponent())
-    end
+function UIContext:SetRootEntity(entity)
+    self.uiRootEntity = entity
+end
+
+function UIContext:GetRootEntity()
     return self.uiRootEntity
 end
 

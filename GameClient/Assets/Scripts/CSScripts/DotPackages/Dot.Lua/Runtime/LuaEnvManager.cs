@@ -15,7 +15,7 @@ namespace DotEngine.Lua
         private static readonly string LUA_OOP_PATH = "DotLua/OOP/oop";
 
         private static readonly string LUA_INIT_PATH = "Game/GameInit";
-        private static readonly string LUA_GLOBAL_NAME = "gameLauncher";
+        private static readonly string LUA_GLOBAL_NAME = "game";
 
         public LuaEnv Env { get; private set; } = null;
 

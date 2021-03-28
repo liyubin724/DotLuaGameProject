@@ -1,7 +1,9 @@
 local oop = require('DotLua/OOP/oop')
-local Logger = require('DotLua/Debug/Logger')
-local HTimer = require('DotLua/Timer/HierarchicalTimer')
 local CycleTime = require('DotLua/CycleTime')
+local Logger = require('DotLua/Debug/Logger')
+local GameECS = oop.using('Game/ECS/GameECS')
+local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
+local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
 
 local DELogUtil = CS.DotEngine.Log.LogUtil
 
@@ -13,32 +15,29 @@ else
 end
 Logger.SetFunc(DELogUtil.Info, DELogUtil.Warning, DELogUtil.Error)
 
-_G.gameLauncher = {}
+game = {}
 
-_G.gameLauncher.DoStart = function()
-    require('Game/ECS/GameECS')
-    _G.gameECS:DoInitialize()
+game.DoStart = function()
+    game.uidCreator = UIDCreator()
+    game.dispatcher = MsgDispatcher()
 
-    local rapidjson = require("rapidjson")
-    local t = {
-        a = 1,
-        b = {"A","B","C"},
-        c = "SSSS"
-    }
-    local tJson = rapidjson.encode(t)
-    oop.info("rapidjson",tJson)
+    game.ecs = GameECS(game.uidCreator, game.dispatcher)
+    local StartupSystem = oop.using('Game/Startup/StartupSystem')
+    game.ecs:AddSystem(StartupSystem())
+
+    game.ecs:DoInitialize()
 end
 
-_G.gameLauncher.DoUpdate = function(deltaTime, unscaleDeltaTime)
+game.DoUpdate = function(deltaTime, unscaleDeltaTime)
     CycleTime.DoUpdate(deltaTime, unscaleDeltaTime)
-    _G.gameECS:DoUpdate()
+    game.ecs:DoUpdate()
 end
 
-_G.gameLauncher.DoLateUpdate = function()
-    _G.gameECS:DoLateUpdate()
+game.DoLateUpdate = function()
+    game.ecs:DoLateUpdate()
 end
 
-_G.gameLauncher.DoDestroy = function()
-    _G.gameECS:DoTeardown()
-    _G.gameECS = nil
+game.DoDestroy = function()
+    game.ecs:DoTeardown()
+    game.ecs = nil
 end

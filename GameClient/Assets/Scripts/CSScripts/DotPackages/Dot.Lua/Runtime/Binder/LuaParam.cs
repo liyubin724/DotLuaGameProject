@@ -34,7 +34,7 @@ namespace DotEngine.Lua.Binder
 
         public SystemObject GetValue()
         {
-            switch(paramType)
+            switch (paramType)
             {
                 case LuaParamType.Integer:
                     return intValue;

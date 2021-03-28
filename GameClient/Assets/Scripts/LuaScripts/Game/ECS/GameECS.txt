@@ -1,18 +1,39 @@
 local oop = require('DotLua/OOP/oop')
 local ecs = oop.using('DotLua/ECS/ecs')
 
-local ContextNames = require('Game/ECS/Contexts/ContextNames')
-local GameContext = require('Game/ECS/Contexts/GameContext')
-local HTimer = require('DotLua/Timer/HierarchicalTimer')
-local ServiceNames = require('Game/ECS/Servicers/ServicerNames')
+local ContextNames = oop.using('Game/ECS/Contexts/ContextNames')
+local GameContext = oop.using('Game/ECS/Contexts/GameContext')
+local UIContext = oop.using('Game/ECS/Contexts/UIContext')
+local HTimer = oop.using('DotLua/Timer/HierarchicalTimer')
+local ServiceNames = oop.using('Game/ECS/Servicers/ServicerNames')
 
-local StartupSystem = oop.using('Game/Startup/StartupSystem')
+local GameECS =
+    oop.class(
+    'GameECS',
+    function(self)
+        self.gameContext = nil
+        self.uiContext = nil
+    end,
+    ecs
+)
 
-_G.gameECS = ecs()
-_G.gameECS.GetGameContext = function()
-    return _G.gameECS:GetContext(ContextNames.GameContextName)
+function GameECS:GetUIContext()
+    return self.uiContext
 end
 
-_G.gameECS:AddContext(GameContext(ContextNames.GameContextName))
-_G.gameECS:AddServicer(ServiceNames.HTimerName, HTimer())
-_G.gameECS:AddSystem(StartupSystem())
+function GameECS:GetGameContext()
+    return self.gameContext
+end
+
+function GameECS:DoInitialize()
+    self._base.DoInitialize(self)
+
+    self.uiContext = UIContext(ContextNames.UIContextName)
+    self:AddContext(self.uiContext)
+    self.gameContext = GameContext(ContextNames.GameContextName)
+    self:AddContext(self.gameContext)
+
+    self:AddServicer(ServiceNames.HTimerName, HTimer())
+end
+
+return GameECS

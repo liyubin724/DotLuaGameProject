@@ -9,10 +9,10 @@ namespace DotEngine.UI
         Pingpong,
     }
 
-    [AddComponentMenu("UI/Atlas Image Animation", 13)]
+    [AddComponentMenu("DotEngine/UI/Atlas Image Animation", 13)]
     [ExecuteInEditMode]
     public class UIAtlasImageAnimation : UIAtlasImage
-    {   
+    {
         public bool isSetNativeSize = false;
         public int frameRate = 8;
         public bool autoPlayOnAwake = true;
@@ -45,54 +45,56 @@ namespace DotEngine.UI
         {
             if (isPlaying && frameRate > 0)
             {
-                elapseTime += Time.deltaTime;
+                elapseTime += Time.unscaledDeltaTime;
                 if (elapseTime >= frameTime)
                 {
-                    if (playMode == UIAtlasImageAnimationMode.Once)
+                    if (isForward)
                     {
                         ++spriteIndex;
-                        if (spriteIndex == spriteEndIndex)
+                    }
+                    else
+                    {
+                        --spriteIndex;
+                    }
+
+                    if (spriteIndex > spriteEndIndex)
+                    {
+                        if (playMode == UIAtlasImageAnimationMode.Once)
                         {
                             isPlaying = false;
                         }
-                    }
-                    else if (playMode == UIAtlasImageAnimationMode.Loop)
-                    {
-                        ++spriteIndex;
-                        if (spriteIndex > spriteEndIndex)
+                        else if (playMode == UIAtlasImageAnimationMode.Loop)
                         {
                             spriteIndex = spriteStartIndex;
                         }
-                    }
-                    else if (playMode == UIAtlasImageAnimationMode.Pingpong)
-                    {
-                        if (isForward)
+                        else if (playMode == UIAtlasImageAnimationMode.Pingpong)
                         {
-                            ++spriteIndex;
-                        }
-                        else
-                        {
-                            --spriteIndex;
-                        }
-                        if (spriteIndex == spriteEndIndex)
-                        {
+                            spriteIndex = spriteEndIndex;
                             isForward = false;
                         }
-                        else if (spriteIndex == spriteStartIndex)
-                        {
-                            isForward = true;
-                        }
+                    }
+                    else if (spriteIndex < spriteStartIndex && playMode == UIAtlasImageAnimationMode.Pingpong)
+                    {
+                        spriteIndex = spriteStartIndex;
+                        isForward = true;
+                    }
+                    else
+                    {
+                        isPlaying = false;
                     }
                     ChangeAnimation();
-
-                    elapseTime -= frameTime;
+                    elapseTime = 0;
                 }
             }
         }
 
         public void ChangeAnimation()
         {
-            if (spriteIndex > spriteEndIndex || spriteIndex < spriteStartIndex)
+            if (spriteIndex > spriteEndIndex)
+            {
+                spriteIndex = spriteEndIndex;
+            }
+            if (spriteIndex < spriteStartIndex)
             {
                 spriteIndex = spriteStartIndex;
             }
@@ -116,18 +118,22 @@ namespace DotEngine.UI
         {
             isPlaying = true;
             spriteIndex = index;
+
             ChangeAnimation();
         }
 
         public void Stop()
         {
             isPlaying = false;
+            elapseTime = 0f;
         }
 
         public void StopAt(int index)
         {
             isPlaying = false;
             spriteIndex = index;
+            elapseTime = 0f;
+
             ChangeAnimation();
         }
 
