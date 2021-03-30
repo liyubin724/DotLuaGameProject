@@ -1,0 +1,18 @@
+local oop = require('DotLua/OOP/oop')
+
+local SystemLanguage =
+    oop.enum(
+    'SystemLanguage',
+    {
+        Chinese = 6,
+        English = 10,
+        French = 14,
+        German = 15,
+        Japanese = 22,
+        Korean = 23,
+        ChineseSimplified = 40,
+        ChineseTraditional = 41
+    }
+)
+
+return SystemLanguage

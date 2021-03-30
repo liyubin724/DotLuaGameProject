@@ -4,6 +4,7 @@ local App = {}
 
 App.platform = nil
 App.persistentDataPath = nil
+App.systemLanguage = nil
 
 function App.GetPlatform()
     if not App.platform then
@@ -17,6 +18,14 @@ function App.GetPersistentDataPath()
         App.persistentDataPath = UEApplication.persistentDataPath
     end
     return App.persistentDataPath
+end
+
+function App.GetSystemLanguage()
+    if not App.systemLanguage then
+        App.systemLanguage = CS.UnityEngine.SystemLanguage(UEApplication.systemLanguage)
+    end
+
+    return App.systemLanguage
 end
 
 return App

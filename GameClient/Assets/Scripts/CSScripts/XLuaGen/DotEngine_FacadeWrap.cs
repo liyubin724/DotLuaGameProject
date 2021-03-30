@@ -72,7 +72,7 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                        DotEngine.Facade gen_ret = DotEngine.Facade.GetInstance(  );
+                        var gen_ret = DotEngine.Facade.GetInstance(  );
                         translator.Push(L, gen_ret);
                     
                     
@@ -129,7 +129,7 @@ namespace XLua.CSObjectWrap
                 {
                     string _name = LuaAPI.lua_tostring(L, 2);
                     
-                        DotEngine.Services.IServicer gen_ret = gen_to_be_invoked.RetrieveServicer( _name );
+                        var gen_ret = gen_to_be_invoked.RetrieveServicer( _name );
                         translator.PushAny(L, gen_ret);
                     
                     
@@ -186,7 +186,7 @@ namespace XLua.CSObjectWrap
                 {
                     string _name = LuaAPI.lua_tostring(L, 2);
                     
-                        bool gen_ret = gen_to_be_invoked.HasServicer( _name );
+                        var gen_ret = gen_to_be_invoked.HasServicer( _name );
                         LuaAPI.lua_pushboolean(L, gen_ret);
                     
                     

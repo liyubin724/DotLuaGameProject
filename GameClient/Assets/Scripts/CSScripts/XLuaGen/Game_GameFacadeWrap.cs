@@ -51,7 +51,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					Game.GameFacade gen_ret = new Game.GameFacade();
+					var gen_ret = new Game.GameFacade();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -84,7 +84,7 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                        DotEngine.Framework.IFacade gen_ret = Game.GameFacade.GetInstance(  );
+                        var gen_ret = Game.GameFacade.GetInstance(  );
                         translator.PushAny(L, gen_ret);
                     
                     

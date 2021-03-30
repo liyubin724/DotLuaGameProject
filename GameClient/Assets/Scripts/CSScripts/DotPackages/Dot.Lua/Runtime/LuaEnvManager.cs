@@ -1,5 +1,6 @@
 ﻿using DotEngine.Log;
 using DotEngine.Lua.Binder;
+using DotEngine.Lua.Localization;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,8 @@ namespace DotEngine.Lua
         private static readonly string LUA_OOP_PATH = "DotLua/OOP/oop";
 
         private static readonly string LUA_INIT_PATH = "Game/GameInit";
-        private static readonly string LUA_GLOBAL_NAME = "game";
+        private static readonly string LUA_GLOBAL_NAME = "Game";
+        private static readonly string LUA_GET_LANGUAGE_FUNC_NAME = "GetLanguage";
 
         public LuaEnv Env { get; private set; } = null;
 
@@ -49,7 +51,15 @@ namespace DotEngine.Lua
         private LuaFunction instanceWithFunc = null;
 
         private LuaEnvBehaviour envBehaviour = null;
-        
+
+        private LuaLocalLanguage localLanguage = null;
+        public LuaLocalLanguage Language
+        {
+            get
+            {
+                return localLanguage;
+            }
+        }
 
         private static LuaEnvManager manager = null;
 
@@ -96,6 +106,20 @@ namespace DotEngine.Lua
             GameTable = Global.Get<LuaTable>(LUA_GLOBAL_NAME);
             updateAction = GameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
             lateUpdateAction = GameTable.Get<Action>(LuaUtility.LATEUPDATE_FUNCTION_NAME);
+
+            Action initAction = GameTable.Get<Action>(LuaUtility.INIT_FUNCTION_NAME);
+            initAction?.Invoke();
+        }
+
+        public void SetLanguage(LuaTable language)
+        {
+            if(localLanguage == null)
+            {
+                localLanguage = new LuaLocalLanguage(language);
+            }else
+            {
+                localLanguage.ChangeLanguage(language);
+            }
         }
 
         public void Startup()
@@ -113,6 +137,11 @@ namespace DotEngine.Lua
 
             if (IsValid)
             {
+                if(localLanguage!=null)
+                {
+                    localLanguage.Dispose();
+                }
+
                 LuaFunction destroyFunc = GameTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
                 destroyFunc.Action();
                 destroyFunc.Dispose();
@@ -121,6 +150,8 @@ namespace DotEngine.Lua
                 OOPTable.Dispose();
                 GameTable.Dispose();
             }
+
+            localLanguage = null;
 
             updateAction = null;
             lateUpdateAction = null;

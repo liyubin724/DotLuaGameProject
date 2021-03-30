@@ -8,6 +8,7 @@ namespace DotEngine.Lua
 
         public const string LOCAL_REQUIRE_FORMAT = "local table = require('{0}') return table";
 
+        public const string INIT_FUNCTION_NAME = "DoInit";
         public const string AWAKE_FUNCTION_NAME = "DoAwake";
         public const string ENABLE_FUNCTION_NAME = "DoEnable";
         public const string START_FUNCTION_NAME = "DoStart";

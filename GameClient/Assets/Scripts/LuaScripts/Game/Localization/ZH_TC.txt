@@ -1,0 +1,3 @@
+local ZH_TC = {}
+ZH_TC.Test = "測試"
+return ZH_TC

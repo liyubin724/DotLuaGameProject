@@ -73,7 +73,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					UnityEngine.RectTransform gen_ret = new UnityEngine.RectTransform();
+					var gen_ret = new UnityEngine.RectTransform();
 					translator.Push(L, gen_ret);
                     
 					return 1;

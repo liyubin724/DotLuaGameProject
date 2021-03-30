@@ -5,6 +5,7 @@ local tostring = _G.tostring
 local pairs = _G.pairs
 local ipairs = _G.ipairs
 local tinsert = table.insert
+local rawget = _G.rawget
 
 function table.isempty(tbl)
     if tbl == nil or next(tbl) == nil then
@@ -199,6 +200,18 @@ function table.clear(tbl)
     for i = 1, #keys, 1 do
         tbl[keys[i]] = nil
     end
+end
+
+function table.rawgetkeys(tbl)
+    local keys = {}
+
+    for k, v in pairs(tbl) do
+        if k and v and rawget(tbl,k) == v then
+            tinsert(keys,k)
+        end
+    end
+
+    return keys
 end
 
 function table.tostring(tbl)

@@ -2,8 +2,8 @@ local ObjectType = require('DotLua/OOP/ObjectType')
 local class = require('DotLua/OOP/class')
 
 local tinsert = table.insert
-local tkeys = table.keys
 local sstartswith = string.startswith
+local trawgetkeys = table.rawgetkeys
 
 local Enum =
     class(
@@ -20,27 +20,35 @@ end
 Enum._type = ObjectType.Enum
 
 function Enum:GetNames()
-    local names = {}
+    if self._names then
+        return self._names
+    end
 
-    local keys = tkeys(self)
+    self._names = {}
+
+    local keys = trawgetkeys(self)
     for i = 1, #keys, 1 do
-        if not sstartswith(keys[i],"_") and rawget(self, keys[i]) then
-            tinsert(names, keys[i])
+        if not sstartswith(keys[i], '_') then
+            tinsert(self._names, keys[i])
         end
     end
 
-    return names
+    return self._names
 end
 
 function Enum:GetValues()
-    local values = {}
+    if self._values then
+        return self._values
+    end
+
+    self._values = {}
 
     local names = self:GetNames()
     for i = 1, #names, 1 do
-        tinsert(values, rawget(self, names[i]))
+        tinsert(self._values, rawget(self, names[i]))
     end
 
-    return values
+    return self._values
 end
 
 function Enum:GetNameByValue(value)
@@ -51,6 +59,25 @@ function Enum:GetNameByValue(value)
     end
 
     return nil
+end
+
+function Enum:IsValidName(name)
+    for _, n in ipairs(self:GetNames()) do
+        if n == name then
+            return true
+        end
+    end
+
+    return false
+end
+
+function Enum:IsValidValue(value)
+    for _, v in ipairs(self:GetValues()) do
+        if v == value then
+            return true
+        end
+    end
+    return false
 end
 
 function Enum:ToString()

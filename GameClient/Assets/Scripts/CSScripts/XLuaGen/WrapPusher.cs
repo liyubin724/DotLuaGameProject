@@ -36,6 +36,7 @@ namespace XLua
 				translator.RegisterPushAndGetAndUpdate<UnityEngine.Ray2D>(translator.PushUnityEngineRay2D, translator.Get, translator.UpdateUnityEngineRay2D);
 				translator.RegisterPushAndGetAndUpdate<DotEngine.Asset.AssetLoaderPriority>(translator.PushDotEngineAssetAssetLoaderPriority, translator.Get, translator.UpdateDotEngineAssetAssetLoaderPriority);
 				translator.RegisterPushAndGetAndUpdate<DotEngine.UI.UILayerLevel>(translator.PushDotEngineUIUILayerLevel, translator.Get, translator.UpdateDotEngineUIUILayerLevel);
+				translator.RegisterPushAndGetAndUpdate<UnityEngine.SystemLanguage>(translator.PushUnityEngineSystemLanguage, translator.Get, translator.UpdateUnityEngineSystemLanguage);
 			
 			}
         }
@@ -740,6 +741,90 @@ namespace XLua
             }
         }
         
+        int UnityEngineSystemLanguage_TypeID = -1;
+		int UnityEngineSystemLanguage_EnumRef = -1;
+        
+        public void PushUnityEngineSystemLanguage(RealStatePtr L, UnityEngine.SystemLanguage val)
+        {
+            if (UnityEngineSystemLanguage_TypeID == -1)
+            {
+			    bool is_first;
+                UnityEngineSystemLanguage_TypeID = getTypeId(L, typeof(UnityEngine.SystemLanguage), out is_first);
+				
+				if (UnityEngineSystemLanguage_EnumRef == -1)
+				{
+				    Utils.LoadCSTable(L, typeof(UnityEngine.SystemLanguage));
+				    UnityEngineSystemLanguage_EnumRef = LuaAPI.luaL_ref(L, LuaIndexes.LUA_REGISTRYINDEX);
+				}
+				
+            }
+			
+			if (LuaAPI.xlua_tryget_cachedud(L, (int)val, UnityEngineSystemLanguage_EnumRef) == 1)
+            {
+			    return;
+			}
+			
+            IntPtr buff = LuaAPI.xlua_pushstruct(L, 4, UnityEngineSystemLanguage_TypeID);
+            if (!CopyByValue.Pack(buff, 0, (int)val))
+            {
+                throw new Exception("pack fail fail for UnityEngine.SystemLanguage ,value="+val);
+            }
+			
+			LuaAPI.lua_getref(L, UnityEngineSystemLanguage_EnumRef);
+			LuaAPI.lua_pushvalue(L, -2);
+			LuaAPI.xlua_rawseti(L, -2, (int)val);
+			LuaAPI.lua_pop(L, 1);
+			
+        }
+		
+        public void Get(RealStatePtr L, int index, out UnityEngine.SystemLanguage val)
+        {
+		    LuaTypes type = LuaAPI.lua_type(L, index);
+            if (type == LuaTypes.LUA_TUSERDATA )
+            {
+			    if (LuaAPI.xlua_gettypeid(L, index) != UnityEngineSystemLanguage_TypeID)
+				{
+				    throw new Exception("invalid userdata for UnityEngine.SystemLanguage");
+				}
+				
+                IntPtr buff = LuaAPI.lua_touserdata(L, index);
+				int e;
+                if (!CopyByValue.UnPack(buff, 0, out e))
+                {
+                    throw new Exception("unpack fail for UnityEngine.SystemLanguage");
+                }
+				val = (UnityEngine.SystemLanguage)e;
+                
+            }
+            else
+            {
+                val = (UnityEngine.SystemLanguage)objectCasters.GetCaster(typeof(UnityEngine.SystemLanguage))(L, index, null);
+            }
+        }
+		
+        public void UpdateUnityEngineSystemLanguage(RealStatePtr L, int index, UnityEngine.SystemLanguage val)
+        {
+		    
+            if (LuaAPI.lua_type(L, index) == LuaTypes.LUA_TUSERDATA)
+            {
+			    if (LuaAPI.xlua_gettypeid(L, index) != UnityEngineSystemLanguage_TypeID)
+				{
+				    throw new Exception("invalid userdata for UnityEngine.SystemLanguage");
+				}
+				
+                IntPtr buff = LuaAPI.lua_touserdata(L, index);
+                if (!CopyByValue.Pack(buff, 0,  (int)val))
+                {
+                    throw new Exception("pack fail for UnityEngine.SystemLanguage ,value="+val);
+                }
+            }
+			
+            else
+            {
+                throw new Exception("try to update a data with lua type:" + LuaAPI.lua_type(L, index));
+            }
+        }
+        
         
 		// table cast optimze
 		
@@ -811,6 +896,12 @@ namespace XLua
 				translator.PushDotEngineUIUILayerLevel(L, array[index]);
 				return true;
 			}
+			else if (type == typeof(UnityEngine.SystemLanguage[]))
+			{
+			    UnityEngine.SystemLanguage[] array = obj as UnityEngine.SystemLanguage[];
+				translator.PushUnityEngineSystemLanguage(L, array[index]);
+				return true;
+			}
             return false;
 		}
 		
@@ -874,6 +965,12 @@ namespace XLua
 			else if (type == typeof(DotEngine.UI.UILayerLevel[]))
 			{
 			    DotEngine.UI.UILayerLevel[] array = obj as DotEngine.UI.UILayerLevel[];
+				translator.Get(L, obj_idx, out array[array_idx]);
+				return true;
+			}
+			else if (type == typeof(UnityEngine.SystemLanguage[]))
+			{
+			    UnityEngine.SystemLanguage[] array = obj as UnityEngine.SystemLanguage[];
 				translator.Get(L, obj_idx, out array[array_idx]);
 				return true;
 			}

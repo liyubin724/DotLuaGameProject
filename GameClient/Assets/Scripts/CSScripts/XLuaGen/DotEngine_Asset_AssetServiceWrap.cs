@@ -65,7 +65,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					DotEngine.Asset.AssetService gen_ret = new DotEngine.Asset.AssetService();
+					var gen_ret = new DotEngine.Asset.AssetService();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -245,7 +245,7 @@ namespace XLua.CSObjectWrap
                     string _address = LuaAPI.lua_tostring(L, 2);
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 3);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _complete );
+                        var gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _complete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -258,7 +258,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnAssetLoadProgress _progress = translator.GetDelegate<DotEngine.Asset.OnAssetLoadProgress>(L, 3);
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 4);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _progress, _complete );
+                        var gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _progress, _complete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -271,7 +271,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 3);
                     object _userData = translator.GetObject(L, 4, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _complete, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _complete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -286,7 +286,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 5, out _priority);
                     object _userData = translator.GetObject(L, 6, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _progress, _complete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadAssetAsync( _address, _progress, _complete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -320,7 +320,7 @@ namespace XLua.CSObjectWrap
                     string _address = LuaAPI.lua_tostring(L, 2);
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 3);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _complete );
+                        var gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _complete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -333,7 +333,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnAssetLoadProgress _progress = translator.GetDelegate<DotEngine.Asset.OnAssetLoadProgress>(L, 3);
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 4);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _progress, _complete );
+                        var gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _progress, _complete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -346,7 +346,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 3);
                     object _userData = translator.GetObject(L, 4, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _complete, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _complete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -361,7 +361,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 5, out _priority);
                     object _userData = translator.GetObject(L, 6, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _progress, _complete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceAssetAsync( _address, _progress, _complete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -395,7 +395,7 @@ namespace XLua.CSObjectWrap
                     string[] _addresses = (string[])translator.GetObject(L, 2, typeof(string[]));
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _batchComplete );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _batchComplete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -408,7 +408,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 3);
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 4);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _complete, _batchComplete );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _complete, _batchComplete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -421,7 +421,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     object _userData = translator.GetObject(L, 4, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -435,7 +435,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 4);
                     object _userData = translator.GetObject(L, 5, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _complete, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _complete, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -450,7 +450,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 5, out _priority);
                     object _userData = translator.GetObject(L, 6, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _complete, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _complete, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -467,7 +467,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 7, out _priority);
                     object _userData = translator.GetObject(L, 8, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsync( _addresses, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -501,7 +501,7 @@ namespace XLua.CSObjectWrap
                     string _label = LuaAPI.lua_tostring(L, 2);
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _batchComplete );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _batchComplete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -514,7 +514,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     object _userData = translator.GetObject(L, 4, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -528,7 +528,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 4);
                     object _userData = translator.GetObject(L, 5, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -543,7 +543,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 5, out _priority);
                     object _userData = translator.GetObject(L, 6, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -560,7 +560,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 7, out _priority);
                     object _userData = translator.GetObject(L, 8, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.LoadBatchAssetAsyncByLabel( _label, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -594,7 +594,7 @@ namespace XLua.CSObjectWrap
                     string[] _addresses = (string[])translator.GetObject(L, 2, typeof(string[]));
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _batchComplete );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _batchComplete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -607,7 +607,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnAssetLoadComplete _complete = translator.GetDelegate<DotEngine.Asset.OnAssetLoadComplete>(L, 3);
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 4);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _complete, _batchComplete );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _complete, _batchComplete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -620,7 +620,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     object _userData = translator.GetObject(L, 4, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -634,7 +634,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 4);
                     object _userData = translator.GetObject(L, 5, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _complete, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _complete, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -649,7 +649,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 5, out _priority);
                     object _userData = translator.GetObject(L, 6, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _complete, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _complete, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -666,7 +666,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 7, out _priority);
                     object _userData = translator.GetObject(L, 8, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsync( _addresses, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -700,7 +700,7 @@ namespace XLua.CSObjectWrap
                     string _label = LuaAPI.lua_tostring(L, 2);
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _batchComplete );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _batchComplete );
                         translator.Push(L, gen_ret);
                     
                     
@@ -713,7 +713,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 3);
                     object _userData = translator.GetObject(L, 4, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -727,7 +727,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.OnBatchAssetLoadComplete _batchComplete = translator.GetDelegate<DotEngine.Asset.OnBatchAssetLoadComplete>(L, 4);
                     object _userData = translator.GetObject(L, 5, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -742,7 +742,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 5, out _priority);
                     object _userData = translator.GetObject(L, 6, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _complete, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -759,7 +759,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Asset.AssetLoaderPriority _priority;translator.Get(L, 7, out _priority);
                     object _userData = translator.GetObject(L, 8, typeof(object));
                     
-                        DotEngine.Asset.AssetHandler gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
+                        var gen_ret = gen_to_be_invoked.InstanceBatchAssetAsyncByLabel( _label, _progress, _complete, _batchProgress, _batchComplete, _priority, _userData );
                         translator.Push(L, gen_ret);
                     
                     
@@ -834,7 +834,7 @@ namespace XLua.CSObjectWrap
                     string _address = LuaAPI.lua_tostring(L, 2);
                     UnityEngine.Object _asset = (UnityEngine.Object)translator.GetObject(L, 3, typeof(UnityEngine.Object));
                     
-                        UnityEngine.Object gen_ret = gen_to_be_invoked.InstantiateAsset( _address, _asset );
+                        var gen_ret = gen_to_be_invoked.InstantiateAsset( _address, _asset );
                         translator.Push(L, gen_ret);
                     
                     

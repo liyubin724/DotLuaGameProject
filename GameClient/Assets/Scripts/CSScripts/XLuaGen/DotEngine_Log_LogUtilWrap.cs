@@ -134,7 +134,7 @@ namespace XLua.CSObjectWrap
                     DotEngine.Log.LogLevel _logLevel;translator.Get(L, 2, out _logLevel);
                     DotEngine.Log.LogLevel _stackTraceLevel;translator.Get(L, 3, out _stackTraceLevel);
                     
-                        DotEngine.Log.Logger gen_ret = DotEngine.Log.LogUtil.GetLogger( _tag, _logLevel, _stackTraceLevel );
+                        var gen_ret = DotEngine.Log.LogUtil.GetLogger( _tag, _logLevel, _stackTraceLevel );
                         translator.Push(L, gen_ret);
                     
                     
@@ -146,7 +146,7 @@ namespace XLua.CSObjectWrap
                     string _tag = LuaAPI.lua_tostring(L, 1);
                     DotEngine.Log.LogLevel _logLevel;translator.Get(L, 2, out _logLevel);
                     
-                        DotEngine.Log.Logger gen_ret = DotEngine.Log.LogUtil.GetLogger( _tag, _logLevel );
+                        var gen_ret = DotEngine.Log.LogUtil.GetLogger( _tag, _logLevel );
                         translator.Push(L, gen_ret);
                     
                     
@@ -157,7 +157,7 @@ namespace XLua.CSObjectWrap
                 {
                     string _tag = LuaAPI.lua_tostring(L, 1);
                     
-                        DotEngine.Log.Logger gen_ret = DotEngine.Log.LogUtil.GetLogger( _tag );
+                        var gen_ret = DotEngine.Log.LogUtil.GetLogger( _tag );
                         translator.Push(L, gen_ret);
                     
                     

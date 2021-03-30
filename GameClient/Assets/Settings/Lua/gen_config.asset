@@ -28,6 +28,7 @@ MonoBehaviour:
   - DotEngine.UI.UIRoot
   - DotEngine.UI.UILayerLevel
   - DotEngine.UI.UILayer
+  - UnityEngine.SystemLanguage
   callLuaTypeNames:
   - DotEngine.Asset.OnAssetLoadComplete
   - DotEngine.Asset.OnAssetLoadProgress

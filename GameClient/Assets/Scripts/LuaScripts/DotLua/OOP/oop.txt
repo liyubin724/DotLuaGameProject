@@ -1,6 +1,8 @@
 require('DotLua/Utils/tableEx')
 require('DotLua/Utils/mathEx')
 
+local require = _G.require
+
 local Enum = require('DotLua/OOP/Enum')
 local Delegate = require('DotLua/OOP/Delegate')
 local Event = require('DotLua/OOP/Event')
@@ -43,27 +45,46 @@ end
 
 oop.assembly = {}
 oop.classes = {}
-oop.using = function(path)
+
+oop.load = function(path)
     local c = oop.assembly[path]
     if not c then
         c = require(path)
 
-        oop.assembly[path] = c
+        if not c then
+            oop.assembly[path] = c
 
-        local className = oop.getclassname(c)
-        if className then
-            if not oop.classes[className] then
-                oop.classes[className] = c
-            else
-                oop.error('oop', 'the name of the class is repeated.clssname = ' .. className)
+            local className = oop.getclassname(c)
+            if className then
+                if not oop.classes[className] then
+                    oop.classes[className] = c
+                else
+                    oop.error('oop', 'the name of the class is repeated.clssname = ' .. className)
+                end
             end
         end
     end
+
     return c
 end
 
+oop.unload = function(path)
+    local c = oop.assembly[path]
+    if c then
+        oop.assembly[path] = nil
+        package.loaded[path] = nil
+
+        local className = oop.getclassname(c)
+        if className then
+            oop.classes[className] = nil
+        end
+    end
+end
+
+oop.using = oop.load
+
 oop.instance = function(path)
-    local c = oop.using(path)
+    local c = oop.load(path)
     if c then
         return c()
     end
@@ -71,17 +92,19 @@ oop.instance = function(path)
 end
 
 oop.instancewith = function(path, ...)
-    local c = oop.using(path)
+    local c = oop.load(path)
     if c then
         return c(...)
     end
     return nil
 end
 
-oop.enum = function(name, value)
-    value._className = name
-    setmetatable(value, Enum)
-    return value
+oop.enum = function(name, enumTable)
+    enumTable._className = name
+    enumTable._isInstance = false
+
+    setmetatable(enumTable, Enum)
+    return enumTable
 end
 
 oop.delegate = function(receiver, func)

@@ -56,7 +56,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					DotEngine.UI.UILayer gen_ret = new DotEngine.UI.UILayer();
+					var gen_ret = new DotEngine.UI.UILayer();
 					translator.Push(L, gen_ret);
                     
 					return 1;

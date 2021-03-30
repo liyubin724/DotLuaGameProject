@@ -58,6 +58,9 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(DotEngine.UI.UILayer), DotEngineUIUILayerWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(UnityEngine.SystemLanguage), UnityEngineSystemLanguageWrap.__Register);
+        
+        
         
         }
         

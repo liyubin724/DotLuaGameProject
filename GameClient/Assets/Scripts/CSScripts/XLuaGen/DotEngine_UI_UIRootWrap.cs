@@ -55,7 +55,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					DotEngine.UI.UIRoot gen_ret = new DotEngine.UI.UIRoot();
+					var gen_ret = new DotEngine.UI.UIRoot();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -90,7 +90,7 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                        XLua.LuaTable gen_ret = gen_to_be_invoked.GetRootComponent(  );
+                        var gen_ret = gen_to_be_invoked.GetRootComponent(  );
                         translator.Push(L, gen_ret);
                     
                     

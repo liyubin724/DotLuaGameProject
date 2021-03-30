@@ -2,7 +2,7 @@ local oop = require('DotLua/OOP/oop')
 local InitializeSystem = oop.using('DotLua/ECS/Systems/LifeCycle/InitializeSystem')
 
 local DEUIRoot = CS.DotEngine.UI.UIRoot
-local gameECS = game.ecs
+local gameECS = Game.ecs
 
 local StartupSystem =
     oop.class(

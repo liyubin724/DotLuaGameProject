@@ -1,9 +1,11 @@
 local oop = require('DotLua/OOP/oop')
 local CycleTime = require('DotLua/CycleTime')
 local Logger = require('DotLua/Debug/Logger')
-local GameECS = oop.using('Game/ECS/GameECS')
-local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
-local UIDCreator = oop.using('DotLua/Generic/UIDCreator')
+local GameECS = oop.load('Game/ECS/GameECS')
+local MsgDispatcher = oop.load('DotLua/Message/MsgDispatcher')
+local UIDCreator = oop.load('DotLua/Generic/UIDCreator')
+local SystemLanguage = oop.load('DotUnity/SystemLanguage')
+local App = oop.load('DotUnity/App')
 
 local DELogUtil = CS.DotEngine.Log.LogUtil
 
@@ -15,29 +17,65 @@ else
 end
 Logger.SetFunc(DELogUtil.Info, DELogUtil.Warning, DELogUtil.Error)
 
-game = {}
+local GetLanguageFileName = function(languageType)
+    if languageType == SystemLanguage.Chinese or languageType == SystemLanguage.ChineseSimplified then
+        return 'ZH_CN'
+    elseif languageType == SystemLanguage.ChineseTraditional then
+        return 'ZH_TC'
+    end
 
-game.DoStart = function()
-    game.uidCreator = UIDCreator()
-    game.dispatcher = MsgDispatcher()
+    return nil
+end
 
-    game.ecs = GameECS(game.uidCreator, game.dispatcher)
+Game = {}
+Game.languageType = nil
+Game.language = nil
+
+Game.SetLanguage = function(languageType)
+    if Game.languageType == languageType then
+        return
+    end
+
+    if Game.languageType then
+        Game.language = nil
+        local languagePath = string.format('Game/Localization/%s',GetLanguageFileName(Game.languageType))
+        oop.unload(languagePath)
+    end
+
+    Game.languageType = languageType
+
+    if Game.languageType then
+        local languagePath = string.format('Game/Localization/%s',GetLanguageFileName(Game.languageType))
+        Game.language = oop.load(languagePath)
+    end
+
+    CS.DotEngine.Lua.LuaEnvManager.GetInstance():SetLanguage(Game.language)
+end
+
+Game.DoInit = function()
+    Game.SetLanguage(App.GetSystemLanguage())
+    Game.uidCreator = UIDCreator()
+    Game.dispatcher = MsgDispatcher()
+end
+
+Game.DoStart = function()
+    Game.ecs = GameECS(Game.uidCreator, Game.dispatcher)
     local StartupSystem = oop.using('Game/Startup/StartupSystem')
-    game.ecs:AddSystem(StartupSystem())
+    Game.ecs:AddSystem(StartupSystem())
 
-    game.ecs:DoInitialize()
+    Game.ecs:DoInitialize()
 end
 
-game.DoUpdate = function(deltaTime, unscaleDeltaTime)
+Game.DoUpdate = function(deltaTime, unscaleDeltaTime)
     CycleTime.DoUpdate(deltaTime, unscaleDeltaTime)
-    game.ecs:DoUpdate()
+    Game.ecs:DoUpdate()
 end
 
-game.DoLateUpdate = function()
-    game.ecs:DoLateUpdate()
+Game.DoLateUpdate = function()
+    Game.ecs:DoLateUpdate()
 end
 
-game.DoDestroy = function()
-    game.ecs:DoTeardown()
-    game.ecs = nil
+Game.DoDestroy = function()
+    Game.ecs:DoTeardown()
+    Game.ecs = nil
 end
