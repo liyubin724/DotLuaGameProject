@@ -36,52 +36,66 @@ namespace DotEditor.UI
             return s_StandardResources;
         }
 
-        [MenuItem("GameObject/UI/DotEngine.UI/Atlas Image", false, 1000)]
+        [MenuItem("GameObject/Dot Engine/UI/Atlas Image", false, 1)]
         static public void AddAtlasImage(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateAtlasImage(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/DotEngine.UI/Atlas Image Animation", false, 1001)]
+        [MenuItem("GameObject/Dot Engine/UI/Atlas Image Animation", false, 2)]
         static public void AddAtlasImageAnimation(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateAtlasImageAnimation(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/DotEngine.UI/Raw Image", false, 1003)]
+        [MenuItem("GameObject/Dot Engine/UI/Raw Image", false, 3)]
         static public void AddRawImage(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateRawImage(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/DotEngine.UI/Bitmap Text", false, 1004)]
+        [MenuItem("GameObject/Dot Engine/UI/Bitmap Text", false, 4)]
         static public void AddBitmapText(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateBitmapText(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/DotEngine.Lua/Button(Image)", false, 1100)]
+        [MenuItem("GameObject/Dot Engine/Lua UI/Button-Image", false, 100)]
         static public void AddLuaButtonWithImage(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateLuaButton<Image>(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/DotEngine.Lua/Button(Atlas Image)", false, 1101)]
+        [MenuItem("GameObject/Dot Engine/Lua UI/Button-Atlas Image", false, 101)]
         static public void AddLuaButtonWithAtlasImage(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateLuaButton<UIAtlasImage>(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/DotEngine.Lua/Input Field", false, 1101)]
+        [MenuItem("GameObject/Dot Engine/Lua UI/Input Field", false, 102)]
         static public void AddInputField(MenuCommand menuCommand)
         {
             GameObject go = UIExtensionDefaultControls.CreateInputField(GetStandardResources());
+            PlaceUIElementRoot(go, menuCommand);
+        }
+
+        [MenuItem("GameObject/Dot Engine/Lua UI/Localization Text", false, 103)]
+        static public void AddLocalizationText(MenuCommand menuCommand)
+        {
+            GameObject go = UIExtensionDefaultControls.CreateLocalizationText(GetStandardResources());
+            PlaceUIElementRoot(go, menuCommand);
+        }
+
+        [MenuItem("GameObject/Dot Engine/Lua UI/Localization TMText", false, 104)]
+        static public void AddLocalizationTMText(MenuCommand menuCommand)
+        {
+            GameObject go = UIExtensionDefaultControls.CreateLocalizationTMText(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 

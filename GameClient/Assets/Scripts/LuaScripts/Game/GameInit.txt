@@ -4,7 +4,7 @@ local Logger = require('DotLua/Debug/Logger')
 local GameECS = oop.load('Game/ECS/GameECS')
 local MsgDispatcher = oop.load('DotLua/Message/MsgDispatcher')
 local UIDCreator = oop.load('DotLua/Generic/UIDCreator')
-local SystemLanguage = oop.load('DotUnity/SystemLanguage')
+local Language = oop.load('DotUnity/Language')
 local App = oop.load('DotUnity/App')
 
 local DELogUtil = CS.DotEngine.Log.LogUtil
@@ -18,9 +18,9 @@ end
 Logger.SetFunc(DELogUtil.Info, DELogUtil.Warning, DELogUtil.Error)
 
 local GetLanguageFileName = function(languageType)
-    if languageType == SystemLanguage.Chinese or languageType == SystemLanguage.ChineseSimplified then
+    if languageType == Language.Chinese or languageType == Language.ChineseSimplified then
         return 'ZH_CN'
-    elseif languageType == SystemLanguage.ChineseTraditional then
+    elseif languageType == Language.ChineseTraditional then
         return 'ZH_TC'
     end
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace DotEngine.Lua.Localization
+namespace DotEngine.Lua.UI
 {
     public class LuaLocalizationText : Text
     {
@@ -9,7 +9,6 @@ namespace DotEngine.Lua.Localization
 
         protected override void Awake()
         {
-            Debug.Log("SSSSSSSSSSSSSSS");
             if(Application.isPlaying && !string.IsNullOrEmpty(localizationName))
             {
                 LuaEnvManager envMgr = LuaEnvManager.GetInstance();

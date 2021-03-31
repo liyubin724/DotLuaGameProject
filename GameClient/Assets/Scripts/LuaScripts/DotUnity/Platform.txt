@@ -1,0 +1,16 @@
+local oop = require('DotLua/OOP/oop')
+
+local UERuntimePlatform = CS.UnityEngine.RuntimePlatform
+
+local Platform =
+    oop.enum(
+    'Platform',
+    {
+        WindowsPlayer = UERuntimePlatform.WindowsPlayer,
+        WindowsEditor = UERuntimePlatform.WindowsEditor,
+        IPhonePlayer = UERuntimePlatform.IPhonePlayer,
+        Android = UERuntimePlatform.Android
+    }
+)
+
+return Platform

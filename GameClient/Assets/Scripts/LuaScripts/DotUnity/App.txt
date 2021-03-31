@@ -22,7 +22,7 @@ end
 
 function App.GetSystemLanguage()
     if not App.systemLanguage then
-        App.systemLanguage = CS.UnityEngine.SystemLanguage(UEApplication.systemLanguage)
+        App.systemLanguage = UEApplication.systemLanguage
     end
 
     return App.systemLanguage

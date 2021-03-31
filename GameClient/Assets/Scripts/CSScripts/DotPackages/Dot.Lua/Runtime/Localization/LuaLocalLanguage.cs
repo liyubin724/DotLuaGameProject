@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using XLua;
 
 namespace DotEngine.Lua.Localization
 {
     public class LuaLocalLanguage : IDisposable
     {
+
         public event Action OnLanguageChanged = null;
 
         private Dictionary<string, string> cachedTextDic = new Dictionary<string, string>();

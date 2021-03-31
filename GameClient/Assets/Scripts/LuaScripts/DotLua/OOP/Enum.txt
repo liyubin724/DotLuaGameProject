@@ -14,7 +14,7 @@ local Enum =
 )
 
 Enum.__newindex = function(e, k, v)
-    error('Enum', "can't add new key in to the Enum")
+    error("Enum::can't add new key in to the Enum.key = "..k)
 end
 
 Enum._type = ObjectType.Enum

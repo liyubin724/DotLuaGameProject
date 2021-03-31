@@ -1,0 +1,20 @@
+local oop = require('DotLua/OOP/oop')
+
+local UESystemLanguage = CS.UnityEngine.SystemLanguage
+
+local Language =
+    oop.enum(
+    'Language',
+    {
+        Chinese = UESystemLanguage.Chinese,
+        English = UESystemLanguage.English,
+        French = UESystemLanguage.French,
+        German = UESystemLanguage.German,
+        Japanese = UESystemLanguage.Japanese,
+        Korean = UESystemLanguage.Korean,
+        ChineseSimplified = UESystemLanguage.ChineseSimplified,
+        ChineseTraditional = UESystemLanguage.ChineseTraditional,
+    }
+)
+
+return Language

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using System.Reflection;
 using System.IO;
 using DotEngine.UI;
+using DotEngine.Lua.UI;
+using TMPro;
 //using DotEngine.Lua.UI;
 //using DotEngine.Lua.UI.Handler;
 
@@ -86,37 +88,37 @@ namespace DotEditor.UI
 
         public static GameObject CreateAtlasImage(Resources resources)
         {
-            GameObject go = CreateUIElementRoot("AtlasImage", s_ImageElementSize);
+            GameObject go = CreateUIElementRoot("Atlas Image", s_ImageElementSize);
             go.AddComponent<UIAtlasImage>();
             return go;
         }
 
         public static GameObject CreateAtlasImageAnimation(Resources resources)
         {
-            GameObject go = CreateUIElementRoot("AtlasImageAnimation", s_ImageElementSize);
+            GameObject go = CreateUIElementRoot("Atlas Image Animation", s_ImageElementSize);
             go.AddComponent<UIAtlasImageAnimation>();
             return go;
         }
 
         public static GameObject CreateRawImage(Resources resources)
         {
-            GameObject go = CreateUIElementRoot("RawImage", s_ImageElementSize);
+            GameObject go = CreateUIElementRoot("Raw Image", s_ImageElementSize);
             go.AddComponent<UIRawImage>();
             return go;
         }
 
         public static GameObject CreateBitmapText(Resources resources)
         {
-            GameObject go = CreateUIElementRoot("BitmapText", s_ImageElementSize);
+            GameObject go = CreateUIElementRoot("Bitmap Text", s_ImageElementSize);
             //go.AddComponent<BitmapFontUIText>();
             return go;
         }
 
         public static GameObject CreateLuaButton<T>(Resources resources) where T:Image
         {
-            GameObject buttonRoot = CreateUIElementRoot("LuaButton", s_ThickElementSize);
+            GameObject buttonRoot = CreateUIElementRoot("Lua Button", s_ThickElementSize);
 
-            GameObject childText = new GameObject("Text");
+            GameObject childText = new GameObject("TMText");
             childText.AddComponent<RectTransform>();
             SetParentAndAlign(childText, buttonRoot);
 
@@ -125,17 +127,16 @@ namespace DotEditor.UI
             image.type = Image.Type.Sliced;
             image.color = s_DefaultSelectableColor;
 
-            Button bt = buttonRoot.AddComponent<Button>();
+            LuaButton bt = buttonRoot.AddComponent<LuaButton>();
             SetDefaultColorTransitionValues(bt);
 
-            //LuaButtonHandler handler = buttonRoot.AddComponent<LuaButtonHandler>();
-            //handler.button = bt;
-
-            Text text = childText.AddComponent<Text>();
+            TextMeshProUGUI text = childText.AddComponent<TextMeshProUGUI>();
             text.text = "Lua Button";
-            text.alignment = TextAnchor.MiddleCenter;
-            SetDefaultTextValues(text);
-
+            text.fontSize = 24;
+            text.color = Color.black;
+            text.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            text.verticalAlignment = VerticalAlignmentOptions.Middle;
+            
             RectTransform textRectTransform = childText.GetComponent<RectTransform>();
             textRectTransform.anchorMin = Vector2.zero;
             textRectTransform.anchorMax = Vector2.one;
@@ -146,7 +147,7 @@ namespace DotEditor.UI
 
         public static GameObject CreateInputField(Resources resources)
         {
-            GameObject root = CreateUIElementRoot("LuaInputField", s_ThickElementSize);
+            GameObject root = CreateUIElementRoot("Lua Input Field", s_ThickElementSize);
 
             GameObject childPlaceholder = CreateUIObject("Placeholder", root);
             GameObject childText = CreateUIObject("Text", root);
@@ -156,7 +157,7 @@ namespace DotEditor.UI
             image.type = Image.Type.Sliced;
             image.color = s_DefaultSelectableColor;
 
-            InputField inputField = root.AddComponent<InputField>();
+            LuaInputField inputField = root.AddComponent<LuaInputField>();
             SetDefaultColorTransitionValues(inputField);
 
             //LuaInputFieldHandler handler = root.AddComponent<LuaInputFieldHandler>();
@@ -193,6 +194,20 @@ namespace DotEditor.UI
             inputField.placeholder = placeholder;
 
             return root;
+        }
+
+        public static GameObject CreateLocalizationText(Resources resources)
+        {
+            GameObject go = CreateUIElementRoot("Lua Text", s_ThickElementSize);
+            go.AddComponent<LuaLocalizationText>();
+            return go;
+        }
+
+        public static GameObject CreateLocalizationTMText(Resources resources)
+        {
+            GameObject go = CreateUIElementRoot("Lua TMText", s_ThickElementSize);
+            go.AddComponent<LuaLocalizationTMText>();
+            return go;
         }
     }
 }

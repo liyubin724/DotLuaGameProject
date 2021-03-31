@@ -22,13 +22,13 @@ namespace DotEditor.Lua.UI
         protected override void OnEnable()
         {
             base.OnEnable();
-            binderBehaviourProperty = serializedObject.FindProperty("");
+            binderBehaviourProperty = serializedObject.FindProperty("binderBehaviour");
 
-            changedFuncNameProperty = serializedObject.FindProperty("");
-            changedParamValuesProperty = serializedObject.FindProperty("");
+            changedFuncNameProperty = serializedObject.FindProperty("changedFuncName");
+            changedParamValuesProperty = serializedObject.FindProperty("changedParamValues");
 
-            submitedFuncNameProperty = serializedObject.FindProperty("");
-            submitedParamValuesProperty = serializedObject.FindProperty("");
+            submitedFuncNameProperty = serializedObject.FindProperty("submitedFuncName");
+            submitedParamValuesProperty = serializedObject.FindProperty("submitedParamValues");
 
             changedParamValuesRLProperty = new ReorderableListProperty(changedParamValuesProperty);
             submitedParamValuesRLProperty = new ReorderableListProperty(submitedParamValuesProperty);
