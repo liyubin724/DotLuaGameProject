@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package game.net.protos;
+
+message ShopListRequest
+{
+    int32 shop_type = 1;
+    int32 page_number = 2;
+}
+
+message ShopListResponse
+{
+    string names = 1;
+}

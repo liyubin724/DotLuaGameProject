@@ -56,6 +56,16 @@ Game.DoInit = function()
     Game.SetLanguage(App.GetSystemLanguage())
     Game.uidCreator = UIDCreator()
     Game.dispatcher = MsgDispatcher()
+
+    local pb = require("pb")
+    pb.loadfile("D:/pb/Shop.pb")
+
+    local req = {shop_type = 10,page_number = 1}
+    local bytes = pb.encode("game.net.protos.ShopListRequest",req)
+    oop.info("PB",pb.tohex(bytes))
+    local rep = pb.decode("game.net.protos.ShopListRequest",bytes)
+    oop.info("PB","Type = "..tostring(rep.shop_type))
+
 end
 
 Game.DoStart = function()
