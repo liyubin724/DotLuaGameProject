@@ -42,9 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Appender\ALogAppender.cs" />
+    <Compile Include="Appender\ConsoleAppender.cs" />
+    <Compile Include="Appender\FileLogAppender.cs" />
+    <Compile Include="Formatter\DefaultLogFormatter.cs" />
+    <Compile Include="ILogAppender.cs" />
+    <Compile Include="ILogFormatter.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="LogUtil.cs" />
-    <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
