@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace DotEngine.Log
 {
     public static class LogUtil
     {
-        public static LogLevel GlobalLogLevel { get; set; } = LogLevel.On;
+        public static LogLevel GlobalMinLogLevel { get; set; } = LogLevel.On;
 
         internal static Dictionary<string, Logger> loggerDic = new Dictionary<string, Logger>();
-        private readonly static Dictionary<string, ILogAppender> appenderDic = new Dictionary<string, ILogAppender>();
+        private static Dictionary<string, ILogAppender> appenderDic = new Dictionary<string, ILogAppender>();
 
         private static Logger defaultLogger = null;
         static LogUtil()
@@ -19,7 +18,7 @@ namespace DotEngine.Log
 
         public static void AddAppender(ILogAppender appender)
         {
-            if(!appenderDic.ContainsKey(appender.Name))
+            if (!appenderDic.ContainsKey(appender.Name))
             {
                 appenderDic.Add(appender.Name, appender);
                 appender.DoStart();
@@ -28,7 +27,7 @@ namespace DotEngine.Log
 
         public static void RemoveAppender(string name)
         {
-            if(appenderDic.TryGetValue(name,out var appender))
+            if (appenderDic.TryGetValue(name, out var appender))
             {
                 appenderDic.Remove(name);
                 appender.DoEnd();
@@ -37,83 +36,85 @@ namespace DotEngine.Log
 
         public static Logger GetLogger(string tag, LogLevel logLevel = LogLevel.Trace, LogLevel stackTraceLevel = LogLevel.Error)
         {
-            if(!loggerDic.TryGetValue(tag,out var logger))
+            if (!loggerDic.TryGetValue(tag, out var logger))
             {
-                logger = new Logger(tag,OnLogMessage)
+                logger = new Logger(tag)
                 {
+                    Handler = OnLogMessage,
                     MinLogLevel = logLevel,
                     StackTraceLogLevel = stackTraceLevel,
                 };
                 loggerDic.Add(tag, logger);
             }
+
             return logger;
         }
 
         public static void RemoveLogger(string name)
         {
-            if(loggerDic.ContainsKey(name))
+            if (loggerDic.ContainsKey(name))
             {
                 loggerDic.Remove(name);
             }
         }
 
-        private static void OnLogMessage(LogLevel level, string tag, string message,string stackTrace)
+        private static void OnLogMessage(LogLevel level, string tag, string message, string stackTrace)
         {
-            if (level < GlobalLogLevel)
+            if (level <= GlobalMinLogLevel)
             {
                 return;
             }
 
             foreach (var kvp in appenderDic)
             {
-                kvp.Value.OnLogReceived(level, tag, message,stackTrace);
+                if (level > kvp.Value.MinLogLevel)
+                {
+                    kvp.Value.OnLogReceived(level, tag, message, stackTrace);
+                }
             }
         }
 
         public static void Reset()
         {
             var keys = loggerDic.Keys.ToArray();
-            foreach(var key in keys)
+            foreach (var key in keys)
             {
                 RemoveLogger(key);
             }
 
-            appenderDic.Clear();
-            loggerDic.Clear();
+            keys = appenderDic.Keys.ToArray();
+            foreach(var key in keys)
+            {
+                RemoveAppender(key);
+            }
         }
 
-        [Conditional("DEBUG")]
         public static void Trace(string message)
         {
             defaultLogger.Trace(message);
         }
 
-        [Conditional("DEBUG")]
-        public static void Trace(string tag,string message)
+        public static void Trace(string tag, string message)
         {
             GetLogger(tag)?.Trace(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Debug(string message)
         {
             defaultLogger.Debug(message);
         }
 
-        [Conditional("DEBUG")]
-        public static void Debug(string tag,string message)
+        public static void Debug(string tag, string message)
         {
             GetLogger(tag)?.Debug(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Info(string message)
         {
             defaultLogger.Info(message);
         }
 
-        [Conditional("DEBUG")]
-        public static void Info(string tag,string message)
+        public static void Info(string tag, string message)
         {
             GetLogger(tag)?.Info(message);
         }
@@ -123,7 +124,7 @@ namespace DotEngine.Log
             defaultLogger.Warning(message);
         }
 
-        public static void Warning(string tag,string message)
+        public static void Warning(string tag, string message)
         {
             GetLogger(tag)?.Warning(message);
         }
@@ -133,7 +134,7 @@ namespace DotEngine.Log
             defaultLogger.Error(message);
         }
 
-        public static void Error(string tag,string message)
+        public static void Error(string tag, string message)
         {
             GetLogger(tag)?.Error(message);
         }
@@ -143,7 +144,7 @@ namespace DotEngine.Log
             defaultLogger.Fatal(message);
         }
 
-        public static void Fatal(string tag,string message)
+        public static void Fatal(string tag, string message)
         {
             GetLogger(tag)?.Fatal(message);
         }

@@ -8,6 +8,8 @@ namespace DotEngine.Log
 {
     public class FileLogAppender : ALogAppender
     {
+        public static readonly string NAME = "Console";
+
         private string outputDir = string.Empty;
         private StreamWriter fileWriter = null;
 
@@ -16,7 +18,7 @@ namespace DotEngine.Log
         private object locker = new object();
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-        public FileLogAppender(string logFileDir) : base(typeof(FileLogAppender).Name)
+        public FileLogAppender(string logFileDir) : base(NAME)
         {
             outputDir = logFileDir;
         }

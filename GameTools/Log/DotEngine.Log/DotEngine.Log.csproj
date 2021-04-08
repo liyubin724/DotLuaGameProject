@@ -40,11 +40,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\Depends\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Appender\ALogAppender.cs" />
     <Compile Include="Appender\ConsoleAppender.cs" />
     <Compile Include="Appender\FileLogAppender.cs" />
+    <Compile Include="Appender\UnityAppender.cs" />
     <Compile Include="Formatter\DefaultLogFormatter.cs" />
     <Compile Include="ILogAppender.cs" />
     <Compile Include="ILogFormatter.cs" />

@@ -4,7 +4,9 @@ namespace DotEngine.Log
 {
     public class ConsoleAppender : ALogAppender
     {
-        public ConsoleAppender() : base(typeof(ConsoleAppender).Name)
+        public static readonly string NAME = "Console";
+
+        public ConsoleAppender() : base(NAME)
         {
         }
 

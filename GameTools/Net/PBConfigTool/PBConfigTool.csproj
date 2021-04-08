@@ -67,10 +67,6 @@
       <Project>{973ba58f-3fd4-4a7d-aeee-c9e0f135b12a}</Project>
       <Name>DotEngine.Context</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Log\DotEngine.ConsoleLog\DotEngine.ConsoleLog.csproj">
-      <Project>{76de2445-da47-408c-8fb6-74e87695b5dc}</Project>
-      <Name>DotEngine.ConsoleLog</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Log\DotEngine.Log\DotEngine.Log.csproj">
       <Project>{0529df75-4325-42bd-9833-7cc273955c41}</Project>
       <Name>DotEngine.Log</Name>

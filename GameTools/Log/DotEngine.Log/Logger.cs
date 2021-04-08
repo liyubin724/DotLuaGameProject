@@ -10,17 +10,16 @@ namespace DotEngine.Log
         public LogLevel MinLogLevel { get; set; } = LogLevel.On;
         public LogLevel StackTraceLogLevel { get; set; } = LogLevel.Error;
 
-        private LogHandler Handler;
+        public LogHandler Handler;
 
-        internal Logger(string tag,LogHandler handler)
+        internal Logger(string tag)
         {
             Tag = tag;
-            Handler = handler;
         }
 
         private string GetStackTrace(LogLevel level)
         {
-            if(level < StackTraceLogLevel)
+            if (level < StackTraceLogLevel)
             {
                 return string.Empty;
             }
@@ -31,7 +30,7 @@ namespace DotEngine.Log
         {
             if (MinLogLevel < LogLevel.Trace)
             {
-                Handler?.Invoke(LogLevel.Trace,Tag, message, GetStackTrace(LogLevel.Trace));
+                Handler?.Invoke(LogLevel.Trace, Tag, message, GetStackTrace(LogLevel.Trace));
             }
         }
 
@@ -55,7 +54,7 @@ namespace DotEngine.Log
         {
             if (MinLogLevel < LogLevel.Warning)
             {
-                Handler?.Invoke(LogLevel.Warning,Tag, message, GetStackTrace(LogLevel.Warning));
+                Handler?.Invoke(LogLevel.Warning, Tag, message, GetStackTrace(LogLevel.Warning));
             }
         }
 
