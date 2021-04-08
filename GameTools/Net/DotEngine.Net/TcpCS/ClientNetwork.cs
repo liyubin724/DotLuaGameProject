@@ -14,7 +14,7 @@ namespace DotEngine.Net.TcpNetwork
         Disconnected,
     }
 
-    public class ClientNetwork : IUpdate
+    public class ClientNetwork
     {
         public string Name { get; private set; }
         private TcpClientSocket m_ClientSocket = null;
@@ -105,7 +105,7 @@ namespace DotEngine.Net.TcpNetwork
                             callback(contentBytes);
                         }else
                         {
-                            DebugLog.Warning("");
+                            //DebugLog.Warning("");
                         }
                     }
 
@@ -129,8 +129,6 @@ namespace DotEngine.Net.TcpNetwork
             Status = ClientNetworkStatus.Connecting;
 
             m_ClientSocket.Connect(IPAddress.Parse(ipString), port);
-
-            UpdateRunner.AddUpdate(this);
 
             return true;
         }
@@ -172,7 +170,7 @@ namespace DotEngine.Net.TcpNetwork
                         RegistMessageHandler(attr.ID, messageHandler);
                     }else
                     {
-                        DebugLog.Warning("");
+                        //DebugLog.Warning("");
                     }
                 }
             }
@@ -221,8 +219,6 @@ namespace DotEngine.Net.TcpNetwork
         {
             if(m_ClientSocket !=null && (Status == ClientNetworkStatus.Connecting || Status == ClientNetworkStatus.Connected))
             {
-                UpdateRunner.RemoveUpdate(this);
-
                 Status = ClientNetworkStatus.Disconnecting;
                 m_ClientSocket.Disconnect();
                 return true;
@@ -248,8 +244,6 @@ namespace DotEngine.Net.TcpNetwork
 
         private void OnDisconnected(object sender, EventArgs eventArgs)
         {
-            UpdateRunner.RemoveUpdate(this);
-
             Status = ClientNetworkStatus.Disconnected;
             m_ClientSocket.OnConnect -= OnConnected;
             m_ClientSocket.OnReceive -= OnReceived;

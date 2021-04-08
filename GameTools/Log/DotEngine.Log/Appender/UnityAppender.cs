@@ -1,6 +1,4 @@
-﻿#if LOG_PLATFORM_UNITY
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DotEngine.Log
 {
@@ -29,4 +27,3 @@ namespace DotEngine.Log
         }
     }
 }
-#endif

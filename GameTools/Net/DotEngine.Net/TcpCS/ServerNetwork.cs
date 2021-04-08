@@ -1,27 +1,24 @@
-﻿using DotEngine.Network;
-using DotEngine.Pool;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Reflection;
 
 namespace DotEngine.Net.TcpNetwork
 {
-    public class ServerLogMessage
+    public struct ServerLogMessage
     {
         public Socket Client { get; set; }
         public int ID { get; set; }
         public byte[] Message { get; set; }
     }
 
-    public class ServerNetwork : IUpdate
+    public class ServerNetwork
     {
         public string Name { get; private set; }
         private int m_Port = 0;
         private TcpServerSocket m_serverSocket;
 
         private readonly object m_MessageLocker = new object();
-        private GenericObjectPool<ServerLogMessage> m_MessagePool = null;
         private List<ServerLogMessage> m_ReceivedMessages = new List<ServerLogMessage>();
 
         private Dictionary<int, Action<ServerLogMessage>> m_MessageHandlerDic = new Dictionary<int, Action<ServerLogMessage>>();
@@ -29,18 +26,13 @@ namespace DotEngine.Net.TcpNetwork
         public ServerNetwork(string name)
         {
             Name = name;
-
-            m_MessagePool = new GenericObjectPool<ServerLogMessage>(
-                () => new ServerLogMessage() { Client = null, Message = null },
-                null,
-                (message) => { message.Client = null; message.Message = null; });
         }
 
         public void Listen(int port)
         {
             if(m_Port!=port && m_serverSocket!=null)
             {
-                DebugLog.Warning("");
+                //DebugLog.Warning("");
                 Disconnect();
             }
 
@@ -55,8 +47,6 @@ namespace DotEngine.Net.TcpNetwork
             m_serverSocket.OnDisconnect += OnDisconnected;
 
             m_serverSocket.Listen(m_Port);
-
-            UpdateRunner.AddUpdate(this);
         }
 
         public void RegistAllMessageHandler(object instance)
@@ -78,7 +68,7 @@ namespace DotEngine.Net.TcpNetwork
                     }
                     else
                     {
-                        DebugLog.Warning("");
+                        //DebugLog.Warning("");
                     }
                 }
             }
@@ -108,7 +98,7 @@ namespace DotEngine.Net.TcpNetwork
                 m_MessageHandlerDic.Add(id, handler);
             }else
             {
-                DebugLog.Error("");
+                //DebugLog.Error("");
             }
         }
 
@@ -119,7 +109,7 @@ namespace DotEngine.Net.TcpNetwork
                 m_MessageHandlerDic.Remove(id);
             }else
             {
-                DebugLog.Error("");
+                //DebugLog.Error("");
             }
         }
 
@@ -127,8 +117,6 @@ namespace DotEngine.Net.TcpNetwork
         {
             if(m_serverSocket!=null)
             {
-                UpdateRunner.RemoveUpdate(this);
-
                 m_serverSocket.OnClientConnect -= OnClientConnected;
                 m_serverSocket.OnClientDisconnect -= OnClientDisconnected;
 
@@ -160,8 +148,6 @@ namespace DotEngine.Net.TcpNetwork
 
                         }
                     }
-
-                    m_MessagePool.Release(message);
                 }
 
                 m_ReceivedMessages.Clear();
@@ -227,7 +213,7 @@ namespace DotEngine.Net.TcpNetwork
         {
             lock (m_MessageLocker)
             {
-                ServerLogMessage message = m_MessagePool.Get();
+                ServerLogMessage message = new ServerLogMessage();
 
                 int id = BitConverter.ToInt32(e.bytes, 0);
                 byte[] contentBytes = new byte[0];

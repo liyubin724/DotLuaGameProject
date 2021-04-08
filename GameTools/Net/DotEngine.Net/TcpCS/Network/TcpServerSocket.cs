@@ -16,6 +16,7 @@ namespace DotEngine.Net.TcpNetwork
 
         public TcpServerSocket()
         {
+            logTag = NetUtil.SERVER_LOG_TAG;
             clients = new List<Socket>();
         }
 
@@ -29,14 +30,14 @@ namespace DotEngine.Net.TcpNetwork
                 socket.Listen(backlog);
                 IsConnected = true;
 
-                DebugLog.Debug($"TcpServerSocket::Listen->Listening on port {port}..."); 
+                NetUtil.LogInfo(logTag, $"Listening on port {port}..."); 
 
                 Accept();
             }
             catch (Exception ex)
             {
                 socket = null;
-                DebugLog.Warning(ex.Message);
+                NetUtil.LogError(logTag, $"Listen failed.message = {ex.Message}");
             }
         }
 
@@ -61,7 +62,7 @@ namespace DotEngine.Net.TcpNetwork
 
             IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
 
-            DebugLog.Info($"TcpServerSocket::AcceptedClientConnection->New client connection accepted ({clientEndPoint.Address}:{clientEndPoint.Port})");
+            NetUtil.LogInfo(logTag, $"New client connection accepted ({clientEndPoint.Address}:{clientEndPoint.Port})");
 
             OnClientConnect?.Invoke(this, new TcpSocketEventArgs(client));
 
@@ -74,11 +75,11 @@ namespace DotEngine.Net.TcpNetwork
             {
                 IPEndPoint clientEndPoint = (IPEndPoint)socket.RemoteEndPoint;
 
-                DebugLog.Info($"TcpServerSocket::DisconnectedByRemote->Client disconnected ({clientEndPoint.Address}:{clientEndPoint.Port})");
+                NetUtil.LogInfo(logTag, $"Client disconnected ({clientEndPoint.Address}:{clientEndPoint.Port})");
             }
             catch (Exception)
             {
-                DebugLog.Info("TcpServerSocket::DisconnectedByRemote->Client disconnected.");
+                NetUtil.LogWarning(logTag, "TcpServerSocket::DisconnectedByRemote->Client disconnected.");
             }
 
             socket.Close();
@@ -114,7 +115,7 @@ namespace DotEngine.Net.TcpNetwork
 
             if (IsConnected)
             {
-                DebugLog.Info("TcpServerSocket::Disconnect->Stopped listening.");
+                NetUtil.LogInfo(logTag, "Stopped listening.");
 
                 IsConnected = false;
                 socket.Close();
@@ -122,7 +123,7 @@ namespace DotEngine.Net.TcpNetwork
             }
             else
             {
-                DebugLog.Info("TcpServerSocket::Disconnect->Already diconnected.");
+                NetUtil.LogWarning(logTag, "Already disconnected.");
             }
         }
 

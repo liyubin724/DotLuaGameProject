@@ -15,6 +15,7 @@ namespace DotEngine.Net.TcpNetwork
         public event EventHandler OnDisconnect;
 
         protected Socket socket;
+        protected string logTag = string.Empty;
 
         public bool IsConnected { get; protected set; }
 
@@ -52,13 +53,13 @@ namespace DotEngine.Net.TcpNetwork
 
                 if (bytesReceived == 0)
                 {
-                    NetUtil.LogInfo("AbstractTcpSocket","the length of bytes which was received from net is zero.the net was closed by remote");
+                    NetUtil.LogInfo(logTag,"the length of bytes which was received from net is zero.the net was closed by remote");
 
                     DisconnectedByRemote(receiveVO.socket);
                 }
                 else
                 {
-                    NetUtil.LogInfo("AbstractTcpSocket", $"Received {bytesReceived} bytes.");
+                    NetUtil.LogInfo(logTag, $"Received {bytesReceived} bytes.");
                     TriggerOnReceive(receiveVO, bytesReceived);
 
                     Receive(receiveVO);
@@ -73,7 +74,7 @@ namespace DotEngine.Net.TcpNetwork
                 socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, OnSended, socket);
             }else
             {
-                NetUtil.LogInfo("AbstractTcpSocket", "the net is disconnected");
+                NetUtil.LogError(logTag, "the net is disconnected");
             }
         }
 
