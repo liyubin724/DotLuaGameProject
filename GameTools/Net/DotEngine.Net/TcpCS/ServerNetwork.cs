@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Reflection;
 
-namespace DotEngine.NetworkEx
+namespace DotEngine.Net.TcpNetwork
 {
     public class ServerLogMessage
     {

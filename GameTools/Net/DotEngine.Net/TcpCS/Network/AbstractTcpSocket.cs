@@ -1,7 +1,7 @@
 using System;
 using System.Net.Sockets;
 
-namespace DotEngine.TcpNetwork
+namespace DotEngine.Net.TcpNetwork
 {
     public struct ReceiveVO
     {
@@ -52,13 +52,13 @@ namespace DotEngine.TcpNetwork
 
                 if (bytesReceived == 0)
                 {
-                    DebugLog.Info("AbstractTcpSocket::OnReceived->the length of bytes which was received from net is zero.the net was closed by remote");
+                    NetUtil.LogInfo("AbstractTcpSocket","the length of bytes which was received from net is zero.the net was closed by remote");
 
                     DisconnectedByRemote(receiveVO.socket);
                 }
                 else
                 {
-                    DebugLog.Debug($"AbstractTcpSocket::OnReceived->Received {bytesReceived} bytes.");
+                    NetUtil.LogInfo("AbstractTcpSocket", $"Received {bytesReceived} bytes.");
                     TriggerOnReceive(receiveVO, bytesReceived);
 
                     Receive(receiveVO);
@@ -73,7 +73,7 @@ namespace DotEngine.TcpNetwork
                 socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, OnSended, socket);
             }else
             {
-                DebugLog.Info("AbstractTcpSocket::SendWith->the net is disconnected");
+                NetUtil.LogInfo("AbstractTcpSocket", "the net is disconnected");
             }
         }
 

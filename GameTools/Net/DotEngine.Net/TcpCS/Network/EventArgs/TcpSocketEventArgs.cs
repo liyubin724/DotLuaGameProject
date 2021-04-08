@@ -1,7 +1,7 @@
 using System;
 using System.Net.Sockets;
 
-namespace DotEngine.TcpNetwork
+namespace DotEngine.Net.TcpNetwork
 {
     public class TcpSocketEventArgs : EventArgs
     {

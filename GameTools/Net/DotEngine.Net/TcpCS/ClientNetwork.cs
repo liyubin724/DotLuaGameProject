@@ -1,10 +1,9 @@
-﻿using DotEngine.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
-namespace DotEngine.NetworkEx
+namespace DotEngine.Net.TcpNetwork
 {
     public enum ClientNetworkStatus
     {
