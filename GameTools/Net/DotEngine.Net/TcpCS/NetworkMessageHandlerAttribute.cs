@@ -2,21 +2,21 @@
 
 namespace DotEngine.Net.TcpNetwork
 {
-    [AttributeUsage(AttributeTargets.Method,AllowMultiple =false,Inherited =false)]
-    public class ClientNetworkMessageHandlerAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    public class ClientMessageHandlerAttribute : Attribute
     {
         public int ID { get; set; }
-        public ClientNetworkMessageHandlerAttribute(int id)
+        public ClientMessageHandlerAttribute(int id)
         {
             ID = id;
         }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class ServerNetworkMessageHandlerAttribute : Attribute
+    public class ServerMessageHandlerAttribute : Attribute
     {
         public int ID { get; set; }
-        public ServerNetworkMessageHandlerAttribute(int id)
+        public ServerMessageHandlerAttribute(int id)
         {
             ID = id;
         }

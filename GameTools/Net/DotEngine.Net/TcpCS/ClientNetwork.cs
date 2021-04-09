@@ -25,7 +25,7 @@ namespace DotEngine.Net.TcpNetwork
         {
             get
             {
-                lock(m_StatusLocker)
+                lock (m_StatusLocker)
                 {
                     return m_Status;
                 }
@@ -33,7 +33,7 @@ namespace DotEngine.Net.TcpNetwork
 
             set
             {
-                lock(m_StatusLocker)
+                lock (m_StatusLocker)
                 {
                     m_Status = value;
                 }
@@ -60,23 +60,26 @@ namespace DotEngine.Net.TcpNetwork
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
-            if(m_ClientSocket==null)
+            if (m_ClientSocket == null)
             {
                 return;
             }
             ClientNetworkStatus curStatus = Status;
             if (m_PreStatus != curStatus)
-            { 
-                if(curStatus == ClientNetworkStatus.Connecting)
+            {
+                if (curStatus == ClientNetworkStatus.Connecting)
                 {
                     OnConnectingCallback?.Invoke();
-                }else if(curStatus == ClientNetworkStatus.Connected)
+                }
+                else if (curStatus == ClientNetworkStatus.Connected)
                 {
                     OnConnectedCallback?.Invoke();
-                }else if(curStatus == ClientNetworkStatus.Disconnecting)
+                }
+                else if (curStatus == ClientNetworkStatus.Disconnecting)
                 {
                     OnDisconnectingCallback?.Invoke();
-                }else if(curStatus == ClientNetworkStatus.Disconnected)
+                }
+                else if (curStatus == ClientNetworkStatus.Disconnected)
                 {
                     OnDisconnectedCallback?.Invoke();
                 }
@@ -84,28 +87,26 @@ namespace DotEngine.Net.TcpNetwork
                 m_PreStatus = curStatus;
             }
 
-            if(curStatus == ClientNetworkStatus.Connected)
+            if (curStatus == ClientNetworkStatus.Connected)
             {
                 lock (m_MessageLocker)
                 {
-                    foreach(var bytes in m_Messages)
+                    foreach (var bytes in m_Messages)
                     {
                         int id = BitConverter.ToInt32(bytes, 0);
-                        if(m_MessagHandlerDic.TryGetValue(id,out var callback))
+                        if (m_MessagHandlerDic.TryGetValue(id, out var callback))
                         {
-                            byte[] contentBytes;
-                            if(bytes.Length>sizeof(int))
+                            byte[] contentBytes = new byte[0];
+                            if (bytes.Length > sizeof(int))
                             {
                                 contentBytes = new byte[bytes.Length - sizeof(int)];
                                 Array.Copy(bytes, sizeof(int), contentBytes, 0, contentBytes.Length);
-                            }else
-                            {
-                                contentBytes = new byte[0];
                             }
                             callback(contentBytes);
-                        }else
+                        }
+                        else
                         {
-                            //DebugLog.Warning("");
+                            NetUtil.LogWarning(NetUtil.CLIENT_LOG_TAG,$"the handler of  id({id}) is not found");
                         }
                     }
 
@@ -114,10 +115,11 @@ namespace DotEngine.Net.TcpNetwork
             }
         }
 
-        public bool Connect(string ipString,int port)
+        public bool Connect(string ipString, int port)
         {
-            if(m_ClientSocket != null)
+            if (m_ClientSocket != null)
             {
+                NetUtil.LogError(NetUtil.CLIENT_LOG_TAG, "The socket has been created");
                 return false;
             }
 
@@ -133,91 +135,78 @@ namespace DotEngine.Net.TcpNetwork
             return true;
         }
 
-        public void SendMessage(int id,byte[] messageBytes)
+        public void SendMessage(int id, byte[] messageBytes)
         {
-            if(IsConnected)
+            if (IsConnected)
             {
                 byte[] idBytes = BitConverter.GetBytes(id);
-                if(messageBytes!=null && messageBytes.Length>0)
+                if (messageBytes != null && messageBytes.Length > 0)
                 {
                     byte[] bytes = new byte[sizeof(int) + messageBytes.Length];
                     Array.Copy(idBytes, 0, bytes, 0, idBytes.Length);
                     Array.Copy(messageBytes, 0, bytes, idBytes.Length, messageBytes.Length);
 
                     m_ClientSocket.Send(bytes);
-                }else
+                }
+                else
                 {
                     m_ClientSocket.Send(idBytes);
                 }
             }
         }
 
-        public void RegistAllMessageHandler(object instance)
+        public void RegistMessageHandler(int id, Action<byte[]> messageHandler)
         {
-            if(instance == null)
+            if (!m_MessagHandlerDic.ContainsKey(id))
             {
-                return;
+                m_MessagHandlerDic.Add(id, messageHandler);
             }
-            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public|BindingFlags.NonPublic);
-            foreach(var method in methods)
+            else
             {
-                var attr = method.GetCustomAttribute<ClientNetworkMessageHandlerAttribute>();
+                NetUtil.LogError(NetUtil.CLIENT_LOG_TAG, "The handler has been added.id = " + id);
+            }
+        }
+
+        public void RegistMessageHandler(Type handlerType)
+        {
+            var methodInfos = handlerType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var method in methodInfos)
+            {
+                var attr = method.GetCustomAttribute<ClientMessageHandlerAttribute>();
                 if (attr != null)
                 {
-                    Action<byte[]> messageHandler = Delegate.CreateDelegate(typeof(Action<byte[]>), instance, method) as Action<byte[]>;
-                    if(messageHandler!=null)
+                    if (Delegate.CreateDelegate(typeof(Action<byte[]>), null, method) is Action<byte[]> messageHandler)
                     {
                         RegistMessageHandler(attr.ID, messageHandler);
-                    }else
-                    {
-                        //DebugLog.Warning("");
                     }
                 }
             }
         }
 
-        public void UnregistAllMessageHandler(object instance)
-        {
-            if (instance == null)
-            {
-                return;
-            }
-            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
-            foreach (var method in methods)
-            {
-                var attr = method.GetCustomAttribute<ClientNetworkMessageHandlerAttribute>();
-                if (attr != null)
-                {
-                    UnregistAllMessageHandler(attr.ID);
-                }
-            }
-        }
-
-        public void RegistMessageHandler(int id,Action<byte[]> messageHandler)
-        {
-            if(!m_MessagHandlerDic.ContainsKey(id))
-            {
-                m_MessagHandlerDic.Add(id, messageHandler);
-            }else
-            {
-
-            }
-        }
-
         public void UnregistMessageHandler(int id)
         {
-            if(m_MessagHandlerDic.ContainsKey(id))
+            if (m_MessagHandlerDic.ContainsKey(id))
             {
                 m_MessagHandlerDic.Remove(id);
-            }else
-            {
+            }
+        }
 
+        public void UnregistMessageHandler(Type handlerType)
+        {
+            var methodInfos = handlerType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var method in methodInfos)
+            {
+                var attr = method.GetCustomAttribute<ClientMessageHandlerAttribute>();
+                if (attr != null)
+                {
+                    UnregistMessageHandler(attr.ID);
+                }
             }
         }
 
         public bool Disconnect()
         {
-            if(m_ClientSocket !=null && (Status == ClientNetworkStatus.Connecting || Status == ClientNetworkStatus.Connected))
+            if (m_ClientSocket != null && (Status == ClientNetworkStatus.Connecting || Status == ClientNetworkStatus.Connected))
             {
                 Status = ClientNetworkStatus.Disconnecting;
                 m_ClientSocket.Disconnect();
@@ -233,12 +222,14 @@ namespace DotEngine.Net.TcpNetwork
 
         private void OnReceived(object sender, ReceiveEventArgs eventArgs)
         {
-            if(Status == ClientNetworkStatus.Connected)
+            if (Status != ClientNetworkStatus.Connected)
             {
-                lock(m_MessageLocker)
-                {
-                    m_Messages.Add(eventArgs.bytes);
-                }
+                return;
+            }
+
+            lock (m_MessageLocker)
+            {
+                m_Messages.Add(eventArgs.bytes);
             }
         }
 
@@ -248,6 +239,11 @@ namespace DotEngine.Net.TcpNetwork
             m_ClientSocket.OnConnect -= OnConnected;
             m_ClientSocket.OnReceive -= OnReceived;
             m_ClientSocket.OnDisconnect -= OnDisconnected;
+
+            lock (m_MessageLocker)
+            {
+                m_Messages.Clear();
+            }
 
             m_ClientSocket = null;
         }

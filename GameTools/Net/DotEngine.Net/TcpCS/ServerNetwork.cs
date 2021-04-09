@@ -58,7 +58,7 @@ namespace DotEngine.Net.TcpNetwork
             var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public|BindingFlags.NonPublic);
             foreach (var method in methods)
             {
-                var attr = method.GetCustomAttribute<ServerNetworkMessageHandlerAttribute>();
+                var attr = method.GetCustomAttribute<ServerMessageHandlerAttribute>();
                 if (attr != null)
                 {
                     Action<ServerLogMessage> messageHandler = Delegate.CreateDelegate(typeof(Action<ServerLogMessage>), instance, method) as Action<ServerLogMessage>;
@@ -83,7 +83,7 @@ namespace DotEngine.Net.TcpNetwork
             var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
             foreach (var method in methods)
             {
-                var attr = method.GetCustomAttribute<ServerNetworkMessageHandlerAttribute>();
+                var attr = method.GetCustomAttribute<ServerMessageHandlerAttribute>();
                 if (attr != null)
                 {
                     UnregistAllMessageHandler(attr.ID);
