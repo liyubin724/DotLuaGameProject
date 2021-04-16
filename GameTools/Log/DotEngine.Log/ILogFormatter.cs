@@ -1,7 +1,9 @@
-﻿namespace DotEngine.Log
+﻿using System;
+
+namespace DotEngine.Log
 {
     public interface ILogFormatter
     {
-        string FormatMessage(LogLevel level, string tag, string message, string stackTrace);
+        string FormatMessage(LogLevel level, string tag, DateTime time, string message, string stacktrace);
     }
 }

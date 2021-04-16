@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if PLATFORM_CONSOLE
+using System;
 
 namespace DotEngine.Log
 {
@@ -6,9 +7,12 @@ namespace DotEngine.Log
     {
         public static readonly string NAME = "Console";
 
-        public ConsoleAppender() : base(NAME)
+        public ConsoleAppender() : this(LogLevelConst.All)
         {
         }
+
+        public ConsoleAppender(LogLevel validLevel) : base(NAME, validLevel)
+        { }
 
         protected override void OutputLogMessage(LogLevel level, string message)
         {
@@ -16,3 +20,4 @@ namespace DotEngine.Log
         }
     }
 }
+#endif

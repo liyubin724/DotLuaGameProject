@@ -1,15 +1,14 @@
-﻿namespace DotEngine.Log
+﻿using System;
+
+namespace DotEngine.Log
 {
     public interface ILogAppender
     {
         string Name { get; }
-
-        LogLevel MinLogLevel { get; set; }
-        ILogFormatter Formatter { get; set; }
-
-        void OnLogReceived(LogLevel level, string tag, string message, string stackTrace);
+        LogLevel ValidLevel { get; }
 
         void DoStart();
+        void OnLogReceived(LogLevel level, string tag, DateTime time, string message, string stacktrace);
         void DoEnd();
     }
 }
