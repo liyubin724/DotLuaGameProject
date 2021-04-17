@@ -7,7 +7,7 @@
     <ProjectGuid>{C83EE816-83F0-4D5F-A013-212E0DB6EAFA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotEngine.ULog</RootNamespace>
+    <RootNamespace>DotEngine.Log</RootNamespace>
     <AssemblyName>DotEngine.ULog</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

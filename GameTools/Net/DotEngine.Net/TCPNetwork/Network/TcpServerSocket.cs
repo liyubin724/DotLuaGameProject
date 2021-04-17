@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
-namespace DotEngine.Net.TcpNetwork
+namespace DotEngine.Net.TCPNetwork
 {
     public class TcpServerSocket : AbstractTcpSocket
     {

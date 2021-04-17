@@ -46,14 +46,14 @@
   <ItemGroup>
     <Compile Include="NetUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TcpCS\ClientNetwork.cs" />
-    <Compile Include="TcpCS\NetworkMessageHandlerAttribute.cs" />
-    <Compile Include="TcpCS\Network\AbstractTcpSocket.cs" />
-    <Compile Include="TcpCS\Network\EventArgs\ReceiveEventArgs.cs" />
-    <Compile Include="TcpCS\Network\EventArgs\TcpSocketEventArgs.cs" />
-    <Compile Include="TcpCS\Network\TcpClientSocket.cs" />
-    <Compile Include="TcpCS\Network\TcpServerSocket.cs" />
-    <Compile Include="TcpCS\ServerNetwork.cs" />
+    <Compile Include="TCPNetwork\ClientNetwork.cs" />
+    <Compile Include="TCPNetwork\NetworkMessageHandlerAttribute.cs" />
+    <Compile Include="TCPNetwork\Network\AbstractTcpSocket.cs" />
+    <Compile Include="TCPNetwork\Network\EventArgs\ReceiveEventArgs.cs" />
+    <Compile Include="TCPNetwork\Network\EventArgs\TcpSocketEventArgs.cs" />
+    <Compile Include="TCPNetwork\Network\TcpClientSocket.cs" />
+    <Compile Include="TCPNetwork\Network\TcpServerSocket.cs" />
+    <Compile Include="TCPNetwork\ServerNetwork.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

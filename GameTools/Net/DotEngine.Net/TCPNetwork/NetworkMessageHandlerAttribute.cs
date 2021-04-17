@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotEngine.Net.TcpNetwork
+namespace DotEngine.Net.TCPNetwork
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class ClientMessageHandlerAttribute : Attribute

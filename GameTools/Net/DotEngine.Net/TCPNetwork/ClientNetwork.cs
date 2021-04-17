@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 
-namespace DotEngine.Net.TcpNetwork
+namespace DotEngine.Net.TCPNetwork
 {
     public enum ClientNetworkStatus
     {
