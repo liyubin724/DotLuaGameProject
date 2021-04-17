@@ -21,13 +21,13 @@ namespace DotEngine.Log
         {
         }
 
-        public string FormatMessage(LogLevel level, string tag, string message, string stackTrace)
+        public string FormatMessage(LogLevel level, DateTime dateTime, string tag, string message, string stacktrace)
         {
-            jsonObj["Level"] = level.ToString().ToUpper();
-            jsonObj["Tag"] = tag;
-            jsonObj["Message"] = message;
-            jsonObj["StackTrace"] = stackTrace;
-            jsonObj["Time"] = DateTime.Now.ToString("yy-MM-dd HH: mm:ss: ffff");
+            jsonObj["tag"] = tag;
+            jsonObj["time"] = dateTime.Ticks  / 10000;
+            jsonObj["level"] = level.ToString().ToUpper();
+            jsonObj["message"] = message;
+            jsonObj["stackTrace"] = stacktrace;
 
             return jsonObj.ToString();
         }

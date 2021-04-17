@@ -7,48 +7,44 @@ namespace DotEngine.Log
     public class Logger
     {
         public string Tag { get; private set; }
-        public LogLevel MinLogLevel { get; set; } = LogLevel.On;
-        public LogLevel StackTraceLogLevel { get; set; } = LogLevel.Error;
+        public LogLevel ValidLevel { get; set; } = LogLevelConst.All;
+        public LogLevel StacktraceLevel { get; set; } = LogLevelConst.Serious;
 
-        private LogHandler Handler;
+        internal LogHandler Handler;
 
-        internal Logger(string tag,LogHandler handler)
+        internal Logger(string tag)
         {
             Tag = tag;
-            Handler = handler;
         }
 
         private string GetStackTrace(LogLevel level)
         {
-            if(level < StackTraceLogLevel)
+            if((StacktraceLevel & level) > 0)
             {
-                return string.Empty;
+                return new StackTrace(3, true).ToString();
             }
-            return new StackTrace(3, true).ToString();
+            return string.Empty;
         }
 
-        [Conditional("DEBUG")]
         public void Trace(string message)
         {
-            if (MinLogLevel < LogLevel.Trace)
+            if ((ValidLevel & LogLevel.Trace) > 0)
             {
                 Handler?.Invoke(LogLevel.Trace,Tag, message, GetStackTrace(LogLevel.Trace));
             }
         }
 
-        [Conditional("DEBUG")]
         public void Debug(string message)
         {
-            if (MinLogLevel < LogLevel.Debug)
+            if ((ValidLevel & LogLevel.Debug) > 0)
             {
                 Handler?.Invoke(LogLevel.Debug, Tag, message, GetStackTrace(LogLevel.Debug));
             }
         }
 
-        [Conditional("DEBUG")]
         public void Info(string message)
         {
-            if (MinLogLevel < LogLevel.Info)
+            if ((ValidLevel & LogLevel.Info) > 0)
             {
                 Handler?.Invoke(LogLevel.Info, Tag, message, GetStackTrace(LogLevel.Info));
             }
@@ -56,7 +52,7 @@ namespace DotEngine.Log
 
         public void Warning(string message)
         {
-            if (MinLogLevel < LogLevel.Warning)
+            if ((ValidLevel & LogLevel.Warning) > 0)
             {
                 Handler?.Invoke(LogLevel.Warning,Tag, message, GetStackTrace(LogLevel.Warning));
             }
@@ -64,7 +60,7 @@ namespace DotEngine.Log
 
         public void Error(string message)
         {
-            if (MinLogLevel < LogLevel.Error)
+            if ((ValidLevel & LogLevel.Error) > 0)
             {
                 Handler?.Invoke(LogLevel.Error, Tag, message, GetStackTrace(LogLevel.Error));
             }
@@ -72,7 +68,7 @@ namespace DotEngine.Log
 
         public void Fatal(string message)
         {
-            if (MinLogLevel < LogLevel.Fatal)
+            if ((ValidLevel & LogLevel.Fatal) > 0)
             {
                 Handler?.Invoke(LogLevel.Fatal, Tag, message, GetStackTrace(LogLevel.Fatal));
             }

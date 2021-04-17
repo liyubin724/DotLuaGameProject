@@ -4,15 +4,15 @@ namespace DotEngine
 {
     public static class DebugLog
     {
-        private static readonly string DEFAULT_TAG = "debug-log";
+        private static readonly string DEFAULT_TAG = "DebugLog";
 
-        private static Action<string, string> sm_LogInfoAction = (tag, message) => { UnityEngine.Debug.Log($"{tag} {message}"); };
-        private static Action<string, string> sm_LogWarningAction = (tag, message) => { UnityEngine.Debug.LogWarning($"{tag} {message}"); };
-        private static Action<string, string> sm_LogErrorAction = (tag, message) => { UnityEngine.Debug.LogError($"{tag} {message}"); };
+        public static bool IsDebugging { get; set; } = true;
 
-    public static bool IsDebugging { get; set; } = true;
+        private static Action<string, string> sm_LogInfoAction = (tag, message) => { UnityEngine.Debug.Log(GetMessage("INFO", tag, message); };
+        private static Action<string, string> sm_LogWarningAction = (tag, message) => { UnityEngine.Debug.LogWarning(GetMessage("WARNING", tag, message); };
+        private static Action<string, string> sm_LogErrorAction = (tag, message) => { UnityEngine.Debug.LogError(GetMessage("ERROR", tag, message); };
 
-        public static void SetLogAction(Action<string,string> logInfo, Action<string,string> logWarning, Action<string,string> logError)
+        public static void SetAction(Action<string, string> logInfo, Action<string, string> logWarning, Action<string, string> logError)
         {
             sm_LogInfoAction = logInfo;
             sm_LogWarningAction = logWarning;
@@ -24,9 +24,9 @@ namespace DotEngine
             sm_LogErrorAction?.Invoke(DEFAULT_TAG, message);
         }
 
-        public static void Error(string tag,string message)
+        public static void Error(string tag, string message)
         {
-            sm_LogErrorAction?.Invoke(tag,message);
+            sm_LogErrorAction?.Invoke(tag, message);
         }
 
         public static void Warning(string message)
@@ -34,7 +34,7 @@ namespace DotEngine
             sm_LogWarningAction?.Invoke(DEFAULT_TAG, message);
         }
 
-        public static void Warning(string tag,string message)
+        public static void Warning(string tag, string message)
         {
             sm_LogWarningAction?.Invoke(tag, message);
         }
@@ -54,11 +54,11 @@ namespace DotEngine
         {
             if (IsDebugging && sm_LogInfoAction != null)
             {
-                sm_LogInfoAction(DEFAULT_TAG,message);
+                sm_LogInfoAction(DEFAULT_TAG, message);
             }
         }
 
-        public static void Debug(string tag,string message)
+        public static void Debug(string tag, string message)
         {
             if (IsDebugging && sm_LogInfoAction != null)
             {
@@ -66,5 +66,9 @@ namespace DotEngine
             }
         }
 
+        private static string GetMessage(string level, string tag, string message)
+        {
+            return $"{DateTime.Now.ToString("MM-dd HH:mm:ss-fff")} {level} {tag} {message}";
+        }
     }
 }

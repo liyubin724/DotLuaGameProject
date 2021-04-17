@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DotEngine.Log
 {
     public static class LogUtil
     {
-        public static LogLevel GlobalLogLevel { get; set; } = LogLevel.On;
+        public static LogLevel GlobalValidLevel { get; set; } = LogLevelConst.All;
+        public static LogLevel GlobalStacktraceLevel { get; set; } = LogLevelConst.Serious;
 
-        internal static Dictionary<string, Logger> loggerDic = new Dictionary<string, Logger>();
+        private static Dictionary<string, Logger> loggerDic = new Dictionary<string, Logger>();
         private readonly static Dictionary<string, ILogAppender> appenderDic = new Dictionary<string, ILogAppender>();
 
         private static Logger defaultLogger = null;
         static LogUtil()
         {
-            defaultLogger = GetLogger("Logger", LogLevel.On, LogLevel.Error);
+            defaultLogger = GetLogger("Logger", LogLevel.Off, LogLevel.Error);
         }
 
         public static void AddAppender(ILogAppender appender)
@@ -22,7 +23,7 @@ namespace DotEngine.Log
             if(!appenderDic.ContainsKey(appender.Name))
             {
                 appenderDic.Add(appender.Name, appender);
-                appender.OnAppended();
+                appender.DoStart();
             }
         }
 
@@ -31,88 +32,90 @@ namespace DotEngine.Log
             if(appenderDic.TryGetValue(name,out var appender))
             {
                 appenderDic.Remove(name);
-                appender.OnRemoved();
+                appender.DoEnd();
             }
         }
 
-        public static Logger GetLogger(string tag, LogLevel logLevel = LogLevel.Trace, LogLevel stackTraceLevel = LogLevel.Error)
+        public static Logger GetLogger(string tag)
         {
-            if(!loggerDic.TryGetValue(tag,out var logger))
+            return GetLogger(tag, GlobalValidLevel, GlobalStacktraceLevel);
+        }
+
+        public static Logger GetLogger(string tag, LogLevel logLevel, LogLevel stackTraceLevel)
+        {
+            if (!loggerDic.TryGetValue(tag, out var logger))
             {
-                logger = new Logger(tag,OnLogMessage)
+                logger = new Logger(tag)
                 {
-                    MinLogLevel = logLevel,
-                    StackTraceLogLevel = stackTraceLevel,
+                    ValidLevel = logLevel,
+                    StacktraceLevel = stackTraceLevel,
+                    Handler = OnLogMessage,
                 };
+
                 loggerDic.Add(tag, logger);
             }
             return logger;
         }
 
-        public static void RemoveLogger(string name)
+        public static void RemoveLogger(string tag)
         {
-            if(loggerDic.ContainsKey(name))
+            if(loggerDic.ContainsKey(tag))
             {
-                loggerDic.Remove(name);
+                loggerDic.Remove(tag);
             }
         }
 
         private static void OnLogMessage(LogLevel level, string tag, string message,string stackTrace)
         {
-            if (level < GlobalLogLevel)
+            if((GlobalValidLevel & level) > 0)
             {
-                return;
-            }
-
-            foreach (var kvp in appenderDic)
-            {
-                kvp.Value.OnLogReceived(level, tag, message,stackTrace);
+                foreach (var kvp in appenderDic)
+                {
+                    kvp.Value.OnLogReceived(level, DateTime.Now, tag, message,stackTrace);
+                }
             }
         }
 
         public static void Reset()
         {
             var keys = loggerDic.Keys.ToArray();
-            foreach(var key in keys)
+            foreach (var key in keys)
             {
                 RemoveLogger(key);
             }
 
-            appenderDic.Clear();
-            loggerDic.Clear();
+            keys = appenderDic.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                RemoveAppender(key);
+            }
         }
 
-        [Conditional("DEBUG")]
         public static void Trace(string message)
         {
             defaultLogger.Trace(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Trace(string tag,string message)
         {
             GetLogger(tag)?.Trace(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Debug(string message)
         {
             defaultLogger.Debug(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Debug(string tag,string message)
         {
             GetLogger(tag)?.Debug(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Info(string message)
         {
             defaultLogger.Info(message);
         }
 
-        [Conditional("DEBUG")]
         public static void Info(string tag,string message)
         {
             GetLogger(tag)?.Info(message);

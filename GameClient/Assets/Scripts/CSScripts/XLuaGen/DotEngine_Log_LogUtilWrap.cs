@@ -462,7 +462,7 @@ namespace XLua.CSObjectWrap
         {
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			    translator.Push(L, DotEngine.Log.LogUtil.GlobalLogLevel);
+			    translator.Push(L, DotEngine.Log.LogUtil.GlobalValidLevel);
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }
@@ -477,7 +477,7 @@ namespace XLua.CSObjectWrap
 		    try {
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			DotEngine.Log.LogLevel gen_value;translator.Get(L, 1, out gen_value);
-				DotEngine.Log.LogUtil.GlobalLogLevel = gen_value;
+				DotEngine.Log.LogUtil.GlobalValidLevel = gen_value;
             
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);

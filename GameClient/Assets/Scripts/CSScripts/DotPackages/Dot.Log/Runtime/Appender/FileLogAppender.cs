@@ -8,6 +8,8 @@ namespace DotEngine.Log
 {
     public class FileLogAppender : ALogAppender
     {
+        public static readonly string NAME = "FileLogAppender";
+
         private string outputDir = string.Empty;
         private StreamWriter fileWriter = null;
 
@@ -16,24 +18,24 @@ namespace DotEngine.Log
         private object locker = new object();
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-        public FileLogAppender(string logFileDir, ILogFormatter formatter) : base(typeof(FileLogAppender).Name, formatter)
+        public FileLogAppender(string logFileDir) : this(logFileDir, new JsonLogFormatter())
+        {
+        }
+
+        public FileLogAppender(string logFileDir, ILogFormatter formatter) : base(NAME, formatter)
         {
             outputDir = logFileDir;
         }
 
-        public FileLogAppender(string logFileDir) : this(logFileDir,new DefaultLogFormatter())
+        public override void DoStart()
         {
-        }
-
-        public override void OnAppended()
-        {
-            if(string.IsNullOrEmpty(outputDir))
+            if (string.IsNullOrEmpty(outputDir))
             {
                 return;
             }
 
             string fileName = $"log-{DateTime.Now.ToString("yy-MM-dd")}.log";
-            if(Directory.Exists(outputDir))
+            if (Directory.Exists(outputDir))
             {
                 string[] files = Directory.GetFiles(outputDir, "log-*.log", SearchOption.TopDirectoryOnly);
                 if (files != null && files.Length > 0)
@@ -46,10 +48,11 @@ namespace DotEngine.Log
                         }
                     }
                 }
-            }else
+            }
+            else
             {
                 DirectoryInfo dInfo = Directory.CreateDirectory(outputDir);
-                if(!dInfo.Exists)
+                if (!dInfo.Exists)
                 {
                     return;
                 }
@@ -58,7 +61,7 @@ namespace DotEngine.Log
             string filePath = $"{outputDir}/{fileName}";
             try
             {
-                fileWriter = new StreamWriter(filePath,true,Encoding.UTF8);
+                fileWriter = new StreamWriter(filePath, true, Encoding.UTF8);
                 fileWriter.AutoFlush = true;
 
                 fileWriterThread = new Thread(() =>
@@ -94,7 +97,7 @@ namespace DotEngine.Log
             }
         }
 
-        public override void OnRemoved()
+        public override void DoEnd()
         {
             tokenSource.Cancel();
             lock (locker)

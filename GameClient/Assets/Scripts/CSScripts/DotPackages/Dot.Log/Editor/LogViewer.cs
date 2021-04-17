@@ -170,7 +170,7 @@ namespace DotEditor.Log
                 GUILayout.FlexibleSpace();
 
                 Color oldBGColor = GUI.color;
-                for (int i = (int)LogLevel.On + 1; i < (int)LogLevel.Off; ++i)
+                for (int i = (int)LogLevel.Off + 1; i < (int)LogLevel.Off; ++i)
                 {
                     LogLevel level = (LogLevel)i;
 

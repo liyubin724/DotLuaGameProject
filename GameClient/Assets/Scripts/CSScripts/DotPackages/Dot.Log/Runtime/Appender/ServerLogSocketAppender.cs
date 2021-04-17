@@ -26,14 +26,14 @@ namespace DotEngine.Log.Appender
     public class LogNetLoggerSetting
     {
         public string Name = string.Empty;
-        public LogLevel MinLogLevel = LogLevel.On;
+        public LogLevel MinLogLevel = LogLevel.Off;
         public LogLevel StackTraceLogLevel = LogLevel.Error;
     }
 
     [Serializable]
     public class LogNetGlobalSetting
     {
-        public LogLevel GlobalLogLevel = LogLevel.On;
+        public LogLevel GlobalLogLevel = LogLevel.Off;
     }
 
     [Serializable]
@@ -73,7 +73,7 @@ namespace DotEngine.Log.Appender
             LogNetSetting setting = new LogNetSetting();
             setting.GlobalSetting = new LogNetGlobalSetting()
             {
-                GlobalLogLevel = LogUtil.GlobalLogLevel,
+                GlobalLogLevel = LogUtil.GlobalValidLevel,
             };
             setting.LoggerSettings = new List<LogNetLoggerSetting>();
             foreach (var kvp in LogUtil.loggerDic)
@@ -81,8 +81,8 @@ namespace DotEngine.Log.Appender
                 LogNetLoggerSetting loggerSetting = new LogNetLoggerSetting()
                 {
                     Name = kvp.Value.Tag,
-                    MinLogLevel = kvp.Value.MinLogLevel,
-                    StackTraceLogLevel = kvp.Value.StackTraceLogLevel,
+                    MinLogLevel = kvp.Value.ValidLevel,
+                    StackTraceLogLevel = kvp.Value.StacktraceLevel,
                 };
                 setting.LoggerSettings.Add(loggerSetting);
             }
@@ -99,7 +99,7 @@ namespace DotEngine.Log.Appender
             LogNetGlobalSetting globalSetting = JsonConvert.DeserializeObject<LogNetGlobalSetting>(jsonStr);
             if(globalSetting!=null)
             {
-                LogUtil.GlobalLogLevel = globalSetting.GlobalLogLevel;
+                LogUtil.GlobalValidLevel = globalSetting.GlobalLogLevel;
             }
             //m_ServerNetwork.SendMessage(message.Client,LogNetUtill.S2C_SET_GLOBAL_LOG_LEVEL_RESPONSE, message.Message);
         }
@@ -114,8 +114,8 @@ namespace DotEngine.Log.Appender
             {
                 if(LogUtil.loggerDic.TryGetValue(loggerSetting.Name,out var logger))
                 {
-                    logger.MinLogLevel = loggerSetting.MinLogLevel;
-                    logger.StackTraceLogLevel = loggerSetting.StackTraceLogLevel;
+                    logger.ValidLevel = loggerSetting.MinLogLevel;
+                    logger.StacktraceLevel = loggerSetting.StackTraceLogLevel;
                 }
             }
 
