@@ -32,7 +32,6 @@ namespace DotEngine.Net.TcpNetwork
         {
             if(m_Port!=port && m_serverSocket!=null)
             {
-                //DebugLog.Warning("");
                 Disconnect();
             }
 
@@ -49,67 +48,49 @@ namespace DotEngine.Net.TcpNetwork
             m_serverSocket.Listen(m_Port);
         }
 
-        public void RegistAllMessageHandler(object instance)
+        public void RegistMessageHandler(int id, Action<ServerLogMessage> handler)
         {
-            if (instance == null)
+            if (!m_MessageHandlerDic.ContainsKey(id))
             {
-                return;
+                m_MessageHandlerDic.Add(id, handler);
             }
-            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public|BindingFlags.NonPublic);
+        }
+
+        public void RegistMessageHandler(Type handlerType)
+        {
+            var methods = handlerType.GetMethods(BindingFlags.Static | BindingFlags.Public|BindingFlags.NonPublic);
             foreach (var method in methods)
             {
                 var attr = method.GetCustomAttribute<ServerMessageHandlerAttribute>();
                 if (attr != null)
                 {
-                    Action<ServerLogMessage> messageHandler = Delegate.CreateDelegate(typeof(Action<ServerLogMessage>), instance, method) as Action<ServerLogMessage>;
+                    Action<ServerLogMessage> messageHandler = Delegate.CreateDelegate(typeof(Action<ServerLogMessage>), null, method) as Action<ServerLogMessage>;
                     if (messageHandler != null)
                     {
                         RegistMessageHandler(attr.ID, messageHandler);
                     }
-                    else
-                    {
-                        //DebugLog.Warning("");
-                    }
                 }
-            }
-        }
-
-        public void UnregistAllMessageHandler(object instance)
-        {
-            if (instance == null)
-            {
-                return;
-            }
-            var methods = instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
-            foreach (var method in methods)
-            {
-                var attr = method.GetCustomAttribute<ServerMessageHandlerAttribute>();
-                if (attr != null)
-                {
-                    UnregistAllMessageHandler(attr.ID);
-                }
-            }
-        }
-
-        public void RegistMessageHandler(int id,Action<ServerLogMessage> handler)
-        {
-            if(!m_MessageHandlerDic.ContainsKey(id))
-            {
-                m_MessageHandlerDic.Add(id, handler);
-            }else
-            {
-                //DebugLog.Error("");
             }
         }
 
         public void UnregistMessageHandler(int id)
         {
-            if(m_MessageHandlerDic.ContainsKey(id))
+            if (m_MessageHandlerDic.ContainsKey(id))
             {
                 m_MessageHandlerDic.Remove(id);
-            }else
+            }
+        }
+
+        public void UnregistMessageHandler(Type handerType)
+        {
+            var methods = handerType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var method in methods)
             {
-                //DebugLog.Error("");
+                var attr = method.GetCustomAttribute<ServerMessageHandlerAttribute>();
+                if (attr != null)
+                {
+                    UnregistMessageHandler(attr.ID);
+                }
             }
         }
 

@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Log
 {
-    public static class NetLogConst
+    public static class NetLogServerHandler
     {
-        public static readonly int NET_SERVER_PORT = 8899;
-
-        public static readonly int S2C_LOG_MESSAGE_NOTIFY = 1;
     }
 }

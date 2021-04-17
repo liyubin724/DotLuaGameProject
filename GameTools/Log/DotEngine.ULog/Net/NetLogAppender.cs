@@ -11,7 +11,7 @@ namespace DotEngine.Log
     {
         public static readonly string NAME = "Console";
 
-        private NetLogServer netLogServer = null;
+        private ServerNetwork serverNetwork = null;
         public NetLogAppender() : this(LogLevelConst.All)
         {
         }
@@ -23,15 +23,20 @@ namespace DotEngine.Log
 
         public override void DoStart()
         {
+            serverNetwork = new ServerNetwork("NetLogServer");
+            serverNetwork.RegistMessageHandler(typeof(NetLogServerHandler));
+            serverNetwork.Listen(NetLogConst.NET_SERVER_PORT);
         }
 
         public override void DoEnd()
         {
+            serverNetwork?.Disconnect();
+            serverNetwork = null;
         }
 
         protected override void OutputLogMessage(LogLevel level, string message)
         {
-            netLogServer?.OnLogMessage(message);
+            serverNetwork?.SendMessage(NetLogConst.S2C_LOG_MESSAGE_NOTIFY, Encoding.UTF8.GetBytes(message));
         }
     }
 }

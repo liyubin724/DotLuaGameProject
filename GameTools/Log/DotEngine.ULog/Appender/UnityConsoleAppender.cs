@@ -20,16 +20,17 @@ namespace DotEngine.Log
         {
         }
 
-        public UnityConsoleAppender(LogLevel validLevel) : base(NAME,validLevel)
+        public UnityConsoleAppender(LogLevel validLevel) : base(NAME, validLevel)
         {
         }
 
         protected override void OutputLogMessage(LogLevel level, string message)
         {
-            if(colorDic.TryGetValue(level,out string color))
+            if (colorDic.TryGetValue(level, out string color))
             {
                 Debug.Log($"<color={color}>{message}</color>");
-            }else
+            }
+            else
             {
                 Debug.Log(message);
             }

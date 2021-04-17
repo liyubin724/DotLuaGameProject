@@ -81,7 +81,7 @@
     <Compile Include="Appender\UnityConsoleAppender.cs" />
     <Compile Include="Net\NetLogAppender.cs" />
     <Compile Include="Net\NetLogConst.cs" />
-    <Compile Include="Net\NetLogServer.cs" />
+    <Compile Include="Net\NetLogServerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
