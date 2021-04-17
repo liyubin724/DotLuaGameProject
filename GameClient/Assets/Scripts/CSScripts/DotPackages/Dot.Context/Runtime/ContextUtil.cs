@@ -74,7 +74,6 @@ namespace DotEngine.Context
         }
 
 
-
         private static void InjectFields<K>(IContextContainer<K> context, IContextObject injectObj)
         {
             List<FieldInfo> fields = cachedTypeFieldDic[injectObj.GetType()][ContextUsage.Inject];

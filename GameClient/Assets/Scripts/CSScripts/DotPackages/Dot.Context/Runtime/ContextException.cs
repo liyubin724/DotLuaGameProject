@@ -4,38 +4,40 @@ namespace DotEngine.Context
 {
     public class ContextException : Exception
     {
-        public ContextException(string message) : base(message)
+        public ContextException(string messageFormat,params object[] values) 
+            : base(string.Format(messageFormat,values))
         {
         }
     }
 
     public class ContextKeyRepeatException:ContextException
     {
-        public object Key { get; private set; }
-
-        public ContextKeyRepeatException(object key) : base($"The key (${key}) has been added!")
+        public ContextKeyRepeatException(object key) 
+            : base("The key ({0}) has been added!",key)
         {
-            Key = key;
         }
     }
 
     public class ContextKeyNotFoundException:ContextException
     {
-        public object Key { get; private set; }
-
-        public ContextKeyNotFoundException(object key) : base($"The key (${key}) was not found!")
+        public ContextKeyNotFoundException(object key) 
+            : base("The key ({0}) was not found!",key)
         {
-            Key = key;
+        }
+    }
+
+    public class ContextValueCastFailedException:ContextException
+    {
+        public ContextValueCastFailedException(object key,Type valueType,Type targetType)
+            :base("The key ({0}) is typeof {1},can't cast to be {2}",key,valueType,targetType)
+        {
         }
     }
 
     public class ContextValueNullException:ContextException
     {
-        public object Key { get; private set; }
-
-        public ContextValueNullException(object key) : base($"The value of the key (${key}) is null!")
+        public ContextValueNullException(object key) : base("The value of the key ({0}) is null!",key)
         {
-            Key = key;
         }
     }
 }

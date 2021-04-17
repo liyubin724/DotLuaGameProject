@@ -1,6 +1,8 @@
 ﻿using DotEngine.Context.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace DotEngine.Context
 {
@@ -43,17 +45,39 @@ namespace DotEngine.Context
 
         public object Get(K key)
         {
-            if (TryGet(key, out object v))
+            if(!Contains(key))
             {
-                return v;
+                throw new ContextKeyNotFoundException(key);
+            }else
+            {
+                object value = itemDic[key];
+                if (value == null)
+                {
+                    throw new ContextValueNullException(key);
+                }
+                return value;
             }
-            return null;
         }
 
         public V Get<V>(K key)
         {
-            TryGet<V>(key, out V value);
-            return value;
+            if(!Contains(key))
+            {
+                throw new ContextKeyNotFoundException(key);
+            }else
+            {
+                object value = itemDic[key];
+                if(value == null)
+                {
+                    throw new ContextValueNullException(key);
+                }else if(!IsCastableTo(value.GetType(),typeof(V)))
+                {
+                    throw new ContextValueCastFailedException(key, value.GetType(), typeof(V));
+                }else
+                {
+                    return (V)value;
+                }
+            }
         }
 
         public bool TryGet(K key, out object value)
@@ -71,9 +95,17 @@ namespace DotEngine.Context
         {
             if (itemDic.TryGetValue(key, out object item))
             {
-                value = (V)item;
-                return true;
+                if(item == null || !IsCastableTo(item.GetType(), typeof(V)))
+                {
+                    value = default;
+                    return false;
+                }else
+                {
+                    value = (V)item;
+                    return true;
+                }
             }
+
             value = default;
             return false;
         }
@@ -118,10 +150,6 @@ namespace DotEngine.Context
             {
                 itemDic.Remove(key);
             }
-            else
-            {
-                throw new ContextKeyNotFoundException(key);
-            }
         }
 
         public void RemoveRange(K[] keys)
@@ -148,6 +176,19 @@ namespace DotEngine.Context
         public void ExtractFrom(IContextObject extractObject)
         {
             ContextUtil.Extract(this, extractObject);
+        }
+
+        private bool IsCastableTo(Type from, Type to)
+        {
+            if (to.IsAssignableFrom(from)) return true;
+
+            var methods = from.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where(
+                    m => m.ReturnType == to &&
+                    (m.Name == "op_Implicit" ||
+                        m.Name == "op_Explicit")
+                );
+            return methods.Count() > 0;
         }
     }
 
