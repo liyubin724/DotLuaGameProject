@@ -1,5 +1,4 @@
-﻿#if PLATFORM_CONSOLE
-using System;
+﻿using System;
 
 namespace DotEngine.Log
 {
@@ -20,4 +19,3 @@ namespace DotEngine.Log
         }
     }
 }
-#endif

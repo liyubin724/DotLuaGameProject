@@ -4,22 +4,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0529DF75-4325-42BD-9833-7CC273955C41}</ProjectGuid>
+    <ProjectGuid>{C83EE816-83F0-4D5F-A013-212E0DB6EAFA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotEngine.Log</RootNamespace>
-    <AssemblyName>DotEngine.Log</AssemblyName>
+    <RootNamespace>DotEngine.ULog</RootNamespace>
+    <AssemblyName>DotEngine.ULog</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -49,18 +48,47 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Appender\ALogAppender.cs" />
-    <Compile Include="Appender\ConsoleAppender.cs" />
-    <Compile Include="Appender\FileLogAppender.cs" />
-    <Compile Include="Formatter\DefaultLogFormatter.cs" />
-    <Compile Include="Formatter\JsonLogFormatter.cs" />
-    <Compile Include="ILogAppender.cs" />
-    <Compile Include="ILogFormatter.cs" />
-    <Compile Include="LogLevel.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="LogUtil.cs" />
+    <Compile Include="..\DotEngine.Log\Appender\ALogAppender.cs">
+      <Link>Appender\ALogAppender.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\Appender\ConsoleAppender.cs">
+      <Link>Appender\ConsoleAppender.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\Appender\FileLogAppender.cs">
+      <Link>Appender\FileLogAppender.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\Formatter\DefaultLogFormatter.cs">
+      <Link>Formatter\DefaultLogFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\Formatter\JsonLogFormatter.cs">
+      <Link>Formatter\JsonLogFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\ILogAppender.cs">
+      <Link>ILogAppender.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\ILogFormatter.cs">
+      <Link>ILogFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\Logger.cs">
+      <Link>Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\LogLevel.cs">
+      <Link>LogLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\DotEngine.Log\LogUtil.cs">
+      <Link>LogUtil.cs</Link>
+    </Compile>
+    <Compile Include="Appender\UnityConsoleAppender.cs" />
+    <Compile Include="Net\NetLogAppender.cs" />
+    <Compile Include="Net\NetLogConst.cs" />
+    <Compile Include="Net\NetLogServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Net\DotEngine.Net\DotEngine.Net.csproj">
+      <Project>{509886d7-130c-498e-902a-7198e8fc28ff}</Project>
+      <Name>DotEngine.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

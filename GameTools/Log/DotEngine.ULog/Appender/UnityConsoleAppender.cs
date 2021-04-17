@@ -1,6 +1,4 @@
-﻿#if PLATFORM_UNITY
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DotEngine.Log
@@ -38,4 +36,3 @@ namespace DotEngine.Log
         }
     }
 }
-#endif

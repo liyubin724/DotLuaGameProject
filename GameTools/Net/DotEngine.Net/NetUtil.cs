@@ -12,18 +12,18 @@ namespace DotEngine.Net
         {
             if(EnableLog)
             {
-                UnityEngine.Debug.Log($"{DateTime.Now.ToString("yy-MM-dd HH: mm:ss-fff")} INFO {tag} {message}");
+                UnityEngine.Debug.Log($"{DateTime.Now.ToString("yy-MM-dd HH:mm:ss-fff")} INFO {tag} {message}");
             }
         }
 
         public static void LogError(string tag,string message)
         {
-            UnityEngine.Debug.LogError($"{DateTime.Now.ToString("yy-MM-dd HH: mm:ss-fff")} INFO {tag} {message}");
+            UnityEngine.Debug.LogError($"{DateTime.Now.ToString("yy-MM-dd HH:mm:ss-fff")} INFO {tag} {message}");
         }
 
         public static void LogWarning(string tag,string message)
         {
-            UnityEngine.Debug.LogWarning($"{DateTime.Now.ToString("yy-MM-dd HH: mm:ss-fff")} INFO {tag} {message}");
+            UnityEngine.Debug.LogWarning($"{DateTime.Now.ToString("yy-MM-dd HH:mm:ss-fff")} INFO {tag} {message}");
         }
     }
 }
