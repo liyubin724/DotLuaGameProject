@@ -10,16 +10,17 @@ namespace DotEngine.Log
         public LogLevel ValidLevel { get; set; } = LogLevelConst.All;
         public LogLevel StacktraceLevel { get; set; } = LogLevelConst.Serious;
 
-        internal LogHandler Handler;
+        private LogHandler logHandler = null;
 
-        internal Logger(string tag)
+        internal Logger(string tag, LogHandler handler)
         {
             Tag = tag;
+            logHandler = handler;
         }
 
         private string GetStackTrace(LogLevel level)
         {
-            if((StacktraceLevel & level) > 0)
+            if ((StacktraceLevel & level) > 0)
             {
                 return new StackTrace(3, true).ToString();
             }
@@ -30,7 +31,7 @@ namespace DotEngine.Log
         {
             if ((ValidLevel & LogLevel.Trace) > 0)
             {
-                Handler?.Invoke(LogLevel.Trace,Tag, message, GetStackTrace(LogLevel.Trace));
+                logHandler?.Invoke(LogLevel.Trace, Tag, message, GetStackTrace(LogLevel.Trace));
             }
         }
 
@@ -38,7 +39,7 @@ namespace DotEngine.Log
         {
             if ((ValidLevel & LogLevel.Debug) > 0)
             {
-                Handler?.Invoke(LogLevel.Debug, Tag, message, GetStackTrace(LogLevel.Debug));
+                logHandler?.Invoke(LogLevel.Debug, Tag, message, GetStackTrace(LogLevel.Debug));
             }
         }
 
@@ -46,7 +47,7 @@ namespace DotEngine.Log
         {
             if ((ValidLevel & LogLevel.Info) > 0)
             {
-                Handler?.Invoke(LogLevel.Info, Tag, message, GetStackTrace(LogLevel.Info));
+                logHandler?.Invoke(LogLevel.Info, Tag, message, GetStackTrace(LogLevel.Info));
             }
         }
 
@@ -54,7 +55,7 @@ namespace DotEngine.Log
         {
             if ((ValidLevel & LogLevel.Warning) > 0)
             {
-                Handler?.Invoke(LogLevel.Warning,Tag, message, GetStackTrace(LogLevel.Warning));
+                logHandler?.Invoke(LogLevel.Warning, Tag, message, GetStackTrace(LogLevel.Warning));
             }
         }
 
@@ -62,7 +63,7 @@ namespace DotEngine.Log
         {
             if ((ValidLevel & LogLevel.Error) > 0)
             {
-                Handler?.Invoke(LogLevel.Error, Tag, message, GetStackTrace(LogLevel.Error));
+                logHandler?.Invoke(LogLevel.Error, Tag, message, GetStackTrace(LogLevel.Error));
             }
         }
 
@@ -70,7 +71,7 @@ namespace DotEngine.Log
         {
             if ((ValidLevel & LogLevel.Fatal) > 0)
             {
-                Handler?.Invoke(LogLevel.Fatal, Tag, message, GetStackTrace(LogLevel.Fatal));
+                logHandler?.Invoke(LogLevel.Fatal, Tag, message, GetStackTrace(LogLevel.Fatal));
             }
         }
     }
