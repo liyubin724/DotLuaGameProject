@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>5293ff86-548e-44b6-a0db-948752c6e781</ProjectGuid>
+    <ProjectGuid>{5293FF86-548E-44B6-A0DB-948752C6E781}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotEngine.Core</RootNamespace>
@@ -31,24 +31,51 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Depends\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Cypto\AESCrypto.cs" />
+    <Compile Include="Cypto\CryptoHelper.cs" />
+    <Compile Include="Cypto\DESCrypto.cs" />
+    <Compile Include="Cypto\MD5Crypto.cs" />
+    <Compile Include="Pool\ListPool.cs" />
+    <Compile Include="Pool\ObjectPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ArrayUtility.cs" />
+    <Compile Include="Utilities\AssemblyUtility.cs" />
+    <Compile Include="Utilities\BitUtility.cs" />
+    <Compile Include="JSON\JsonUtility.cs" />
+    <Compile Include="Utilities\MathUtil.cs" />
+    <Compile Include="Utilities\ReflectionUtility.cs" />
+    <Compile Include="Utilities\StringUtility.cs" />
+    <Compile Include="Utilities\StructUtility.cs" />
+    <Compile Include="Utilities\SystemObjectUtility.cs" />
+    <Compile Include="Utilities\TypeUtility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Log\DotEngine.Log\DotEngine.Log.csproj">
+      <Project>{0529df75-4325-42bd-9833-7cc273955c41}</Project>
+      <Name>DotEngine.Log</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net\DotEngine.Net\DotEngine.Net.csproj">
+      <Project>{509886d7-130c-498e-902a-7198e8fc28ff}</Project>
+      <Name>DotEngine.Net</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>

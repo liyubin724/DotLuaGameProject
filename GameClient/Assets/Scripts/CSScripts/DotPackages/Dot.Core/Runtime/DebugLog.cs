@@ -8,9 +8,9 @@ namespace DotEngine
 
         public static bool IsDebugging { get; set; } = true;
 
-        private static Action<string, string> sm_LogInfoAction = (tag, message) => { UnityEngine.Debug.Log(GetMessage("INFO", tag, message); };
-        private static Action<string, string> sm_LogWarningAction = (tag, message) => { UnityEngine.Debug.LogWarning(GetMessage("WARNING", tag, message); };
-        private static Action<string, string> sm_LogErrorAction = (tag, message) => { UnityEngine.Debug.LogError(GetMessage("ERROR", tag, message); };
+        private static Action<string, string> sm_LogInfoAction = (tag, message) => { UnityEngine.Debug.Log(GetMessage("INFO", tag, message)); };
+        private static Action<string, string> sm_LogWarningAction = (tag, message) => { UnityEngine.Debug.LogWarning(GetMessage("WARNING", tag, message)); };
+        private static Action<string, string> sm_LogErrorAction = (tag, message) => { UnityEngine.Debug.LogError(GetMessage("ERROR", tag, message)); };
 
         public static void SetAction(Action<string, string> logInfo, Action<string, string> logWarning, Action<string, string> logError)
         {
