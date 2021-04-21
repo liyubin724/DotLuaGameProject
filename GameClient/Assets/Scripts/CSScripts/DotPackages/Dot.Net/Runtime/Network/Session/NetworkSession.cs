@@ -19,7 +19,7 @@ namespace DotEngine.Net
 
     public abstract class NetworkSession : INetworkSession
     {
-        private static readonly int RECEIVE_BUFFER_SIZE = 1024;
+        private static readonly int RECEIVE_BUFFER_SIZE = 4096;
 
         private NetMessageBuffer receivedMessageBuffer = new NetMessageBuffer();
         private NetMessageStream sendedMessageStream = new NetMessageStream();
@@ -35,7 +35,9 @@ namespace DotEngine.Net
         private object sendLocker = new object();
         private List<byte[]> cachedMessageList = new List<byte[]>();
 
-        public Socket NetSocket => throw new NotImplementedException();
+        public Socket NetSocket { get; set; }
+
+        public bool IsConnected => NetSocket != null && NetSocket.Connected;
 
         public NetworkSession()
         {
@@ -117,18 +119,19 @@ namespace DotEngine.Net
                 if(asyncOperationDic.TryGetValue(socketEvent.LastOperation,out var action))
                 {
                     action(socketEvent);
-                }else
-                {
-
                 }
-            }else
-            {
-
             }
+
+            //TODO:
         }
 
         protected void DoReceive()
         {
+            if(!IsConnected)
+            {
+                return;
+            }
+
             if(receiveAsyncEvent == null)
             {
                 receiveAsyncEvent = new SocketAsyncEventArgs();
@@ -138,9 +141,9 @@ namespace DotEngine.Net
 
             try
             {
-                if(!NetSocket.ReceiveAsync(receiveAsyncEvent))
+                if(NetSocket.ReceiveAsync(receiveAsyncEvent))
                 {
-
+                    return;
                 }
             }catch(Exception e)
             {
@@ -150,6 +153,11 @@ namespace DotEngine.Net
 
         protected void DoSend()
         {
+            if(!IsConnected)
+            {
+                return;
+            }
+
             if(sendAsyncEvent == null)
             {
                 sendAsyncEvent = new SocketAsyncEventArgs();
@@ -161,15 +169,56 @@ namespace DotEngine.Net
                 {
                     byte[] datas = cachedMessageList[0];
                     sendAsyncEvent.SetBuffer(datas, 0, datas.Length);
-                    if(!NetSocket.SendAsync(sendAsyncEvent))
+                    if(NetSocket.SendAsync(sendAsyncEvent))
                     {
-
+                        return;
                     }
                 }
             }
         }
 
         protected void DoDisconnect()
+        {
+
+            if(sendAsyncEvent !=null)
+            {
+                sendAsyncEvent.Completed -= OnHandleSocketEvent;
+                sendAsyncEvent = null;
+            }
+
+            if(receiveAsyncEvent != null)
+            {
+                receiveAsyncEvent.Completed -= OnHandleSocketEvent;
+                receiveAsyncEvent = null;
+            }
+            lock(sendLocker)
+            {
+                cachedMessageList.Clear();
+            }
+            
+            if(IsConnected)
+            {
+                try
+                {
+                    NetSocket.Shutdown(SocketShutdown.Both);
+                }catch(Exception e)
+                {
+
+                }finally
+                {
+                    NetSocket.Close();
+                }
+            }
+            NetSocket = null;
+
+        }
+
+        protected void DisconnectByError(Exception e)
+        {
+
+        }
+
+        protected void DisconnectByEvent()
         {
 
         }
@@ -195,13 +244,8 @@ namespace DotEngine.Net
             {
                 if(socketEvent.BytesTransferred>0)
                 {
-                    receivedMessageBuffer.WriteBytes(socketEvent.Buffer, socketEvent.BytesTransferred);
-
-                    byte[] bytes = receivedMessageBuffer.ReadMessage();
-                    while(bytes!=null)
-                    {
-                        bytes = receivedMessageBuffer.ReadMessage();
-                    }
+                    OnDataReceived(socketEvent.Buffer, socketEvent.BytesTransferred);
+                    return;
                 }
             }
             

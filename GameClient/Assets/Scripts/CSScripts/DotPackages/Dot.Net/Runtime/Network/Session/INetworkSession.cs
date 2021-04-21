@@ -20,7 +20,7 @@ namespace DotEngine.Net
 
     public interface INetworkSession : IMessageSerializer, IMessageDeserializer
     {
-        Socket NetSocket { get; }
+        Socket NetSocket { get; set; }
 
         void AddCompressor(MessageCompressType compressType, IMessageCompressor compressor);
         void RemoveCompressor(MessageCompressType compressType);
