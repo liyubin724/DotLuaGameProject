@@ -20,40 +20,24 @@
             GetStream().Write(bytes, 0, size);
         }
 
-        public bool ReadMessage(ref byte[] bytes,ref int size)
+        public byte[] ReadMessage()
         {
             NetMessageStream activedStream = GetStream();
             long messageLen = activedStream.Length;
             if (messageLen < sizeof(int))
             {
-                return false;
+                return null;
             }
             if (activedStream.ReadInt(0, out int totalMessageLen) && totalMessageLen <= messageLen)
             {
-                if(bytes.Length < totalMessageLen)
-                {
-                    bytes = new byte[totalMessageLen];
-                }
+                byte[] bytes = new byte[totalMessageLen];
+                activedStream.Read(bytes, sizeof(int), totalMessageLen);
 
+                MoveStream(sizeof(int) + totalMessageLen);
 
-                return true;
+                return bytes;
             }
-            return false;
-        }
-
-        public bool IsComplianceMessage()
-        {
-            NetMessageStream activedStream = GetStream();
-            long messageLen = activedStream.Length;
-            if (messageLen < sizeof(int))
-            {
-                return false;
-            }
-            if (activedStream.ReadInt(0, out int totalMessageLen) && totalMessageLen <= messageLen)
-            {
-                return true;
-            }
-            return false;
+            return null;
         }
 
         public void MoveStream(int startIndex)
