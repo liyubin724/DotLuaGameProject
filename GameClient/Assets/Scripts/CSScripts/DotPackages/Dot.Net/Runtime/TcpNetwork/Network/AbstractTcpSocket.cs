@@ -1,4 +1,5 @@
 using System;
+using System.Net.Mail;
 using System.Net.Sockets;
 
 namespace DotEngine.Net.TcpNetwork
@@ -17,7 +18,7 @@ namespace DotEngine.Net.TcpNetwork
         protected Socket socket;
         protected string logTag = string.Empty;
 
-        public bool IsConnected { get; protected set; }
+        public bool IsConnected => socket != null && socket.Connected;
 
         protected void TriggerOnReceive(ReceiveVO receiveVO, int bytesReceived)
         {

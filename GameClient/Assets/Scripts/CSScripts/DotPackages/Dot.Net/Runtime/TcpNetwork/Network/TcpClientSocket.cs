@@ -6,11 +6,18 @@ namespace DotEngine.Net.TcpNetwork
 {
     public class TcpClientSocket : AbstractTcpSocket
     {
+        private static readonly string TCP_CLIENT_LOG_TAG = "TcpClientLog";
+
         public event EventHandler OnConnect;
 
         public TcpClientSocket()
         {
-            logTag = NetUtil.CLIENT_LOG_TAG;
+            logTag = TCP_CLIENT_LOG_TAG;
+        }
+
+        public void Connect(string ipString, int port)
+        {
+            Connect(IPAddress.Parse(ipString), port);
         }
 
         public void Connect(IPAddress ip, int port)
@@ -27,7 +34,6 @@ namespace DotEngine.Net.TcpNetwork
             try
             {
                 socket.EndConnect(ar);
-                IsConnected = true;
 
                 NetLogger.LogInfo(logTag, "Connected");
 
@@ -38,6 +44,7 @@ namespace DotEngine.Net.TcpNetwork
             catch (Exception ex)
             {
                 NetLogger.LogError(logTag, $"Connected failed .message = {ex.Message}");
+
                 TriggerOnDisconnect();
             }
         }
@@ -59,7 +66,6 @@ namespace DotEngine.Net.TcpNetwork
             if (IsConnected)
             {
                 NetLogger.LogInfo(logTag, "Disconnecting...");
-                IsConnected = false;
                 socket.BeginDisconnect(false, OnDisconnected, socket);
             }
             else
