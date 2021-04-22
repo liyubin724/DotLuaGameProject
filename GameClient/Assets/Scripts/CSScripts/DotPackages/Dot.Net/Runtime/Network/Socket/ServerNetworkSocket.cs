@@ -23,8 +23,25 @@ namespace DotEngine.Net
         public INetworkSession Session { get; set; }
     }
 
-    public class ServerNetworkSocket : INetworkSessionHandler
+    public class ServerNetworkSocket : ANetworkSocket
     {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private Socket socket = null;
         private Dictionary<INetworkSession, ClientData> clientDic = new Dictionary<INetworkSession, ClientData>();
         

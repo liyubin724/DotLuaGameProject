@@ -18,36 +18,21 @@ namespace DotEngine.Net
         Disconnected,
     }
 
-    public class ClientNetworkSocket : INetworkSessionHandler
+    public class ClientNetworkSocket : ANetworkSocket
     {
-        private Socket socket = null;
-        private INetworkSession session = null;
-
         private Dictionary<int, ClientMessageHandler> messageHandlerDic = new Dictionary<int, ClientMessageHandler>();
         public ClientMessageHandler FiniallyMessageHandler { get; set; } = null;
 
-        public event ClientNetworkStateChanged NetConnecting;
-        public event ClientNetworkStateChanged NetConnectedSuccess;
-        public event ClientNetworkStateChanged NetConnectedFailed;
-        public event ClientNetworkStateChanged NetDisconnected;
+        public ClientNetworkState State { get; set; } = ClientNetworkState.Unavailable;
 
-        private ClientNetworkState state = ClientNetworkState.Unavailable;
-
-        public ClientNetworkSocket() : base()
+        public override void DoConnect(string ip, int port)
         {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            session = new ClientNetworkSession();
-            session.BindSocket(socket, this);
+            throw new NotImplementedException();
         }
 
-        public void Startup(string ip,int port)
+        public override void DoConnect()
         {
-            session.DoConnect(ip, port);
-        }
-
-        public void Shuntdown()
-        {
-
+            throw new NotImplementedException();
         }
 
         public void RegistMessageHandler(int messageID, ClientMessageHandler handler)
@@ -94,6 +79,43 @@ namespace DotEngine.Net
                 }
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+        private Socket socket = null;
+        private INetworkSession session = null;
+
+        
+
+        private ClientNetworkState state = ClientNetworkState.Unavailable;
+
+        public ClientNetworkSocket() : base()
+        {
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            session = new ClientNetworkSession();
+            session.BindSocket(socket, this);
+        }
+
+        public void Startup(string ip,int port)
+        {
+            session.DoConnect(ip, port);
+        }
+
+        public void Shuntdown()
+        {
+
+        }
+
+        
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
