@@ -14,7 +14,7 @@ namespace DotEngine.Net
             AddAsyncOperationAction(SocketAsyncOperation.Disconnect, ProcessDisconnect);
         }
 
-        public void DoConnect(string ip, int port)
+        public override void DoConnect(string ip, int port)
         {
             if (NetSocket != null)
             {
@@ -39,6 +39,11 @@ namespace DotEngine.Net
                     }
                 }
             }
+        }
+
+        public override void DoConnect()
+        {
+            throw new NotImplementedException();
         }
 
         private void ProcessConnect(SocketAsyncEventArgs socketEvent)

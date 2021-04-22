@@ -8,6 +8,14 @@ using System.Reflection;
 namespace DotEngine.Net
 {
     public delegate void ServerMessageHandler(ClientData client, int messageID, byte[] dataBytes);
+    
+    public enum ServerNetworkState
+    {
+        Startup = 0,
+        Shuntdown,
+        ClientConnected,
+        ClientDisconnected,
+    }
 
     public class ClientData
     {
@@ -26,7 +34,7 @@ namespace DotEngine.Net
         public int ConnectedClients => clientDic.Count;
         public UniqueIntID sessionIndexCreator = new UniqueIntID(1);
 
-        public void Listen(int port,int maxCount)
+        public void Startup(int port,int maxCount)
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -39,6 +47,11 @@ namespace DotEngine.Net
             {
 
             }
+        }
+
+        public void Shuntdown()
+        {
+
         }
 
         private void DoAccept()

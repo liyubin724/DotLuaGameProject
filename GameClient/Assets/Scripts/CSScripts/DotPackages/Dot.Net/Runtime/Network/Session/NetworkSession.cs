@@ -21,7 +21,7 @@ namespace DotEngine.Net
         }
     }
 
-    public abstract class NetworkSession : INetworkSession
+    public abstract class NetworkSession
     {
         private Dictionary<MessageCompressType, IMessageCompressor> compressorDic = new Dictionary<MessageCompressType, IMessageCompressor>();
         private Dictionary<MessageCryptoType, IMessageCryptor> cryptorDic = new Dictionary<MessageCryptoType, IMessageCryptor>();
@@ -109,12 +109,13 @@ namespace DotEngine.Net
                 ++deserializedSeriousIndex;
 
                 byte seriousIndex = Desrialize(messageBytes, out int messageID, out byte[] dataBytes);
-                if(seriousIndex != deserializedSeriousIndex)
-                {
-                    OnSessionError(NetworkSessionError.ReadMessageSeriousError);
-                }else
+                if(seriousIndex == deserializedSeriousIndex)
                 {
                     OnMessageReceived(messageID, dataBytes);
+                }else
+                {
+                    OnSessionError(NetworkSessionError.ReadMessageSeriousError);
+                    break;
                 }
             }
         }
@@ -204,7 +205,7 @@ namespace DotEngine.Net
             DoSend();
         }
 
-        public void Dispose()
+        public void DoClose()
         {
 
         }
@@ -238,6 +239,9 @@ namespace DotEngine.Net
                 OnSessionError(NetworkSessionError.HandleSocketEventError, socketEvent);
             }
         }
+
+        public abstract void DoConnect(string ip, int port);
+        public abstract void DoConnect();
 
         public void DoReceive()
         {
@@ -315,7 +319,7 @@ namespace DotEngine.Net
             OnSessionError(NetworkSessionError.DoSendFailedError);
         }
 
-        protected void DoDisconnect()
+        public void DoDisconnect()
         {
             if(sendAsyncEvent !=null)
             {

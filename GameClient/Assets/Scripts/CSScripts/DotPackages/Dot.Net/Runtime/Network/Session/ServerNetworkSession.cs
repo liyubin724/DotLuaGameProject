@@ -11,7 +11,7 @@ namespace DotEngine.Net
             AddAsyncOperationAction(SocketAsyncOperation.Disconnect, ProcessDisconnect);
         }
 
-        public void DoConnect()
+        public override void DoConnect()
         {
             if(IsConnected)
             {
@@ -19,6 +19,11 @@ namespace DotEngine.Net
 
                 DoReceive();
             }
+        }
+
+        public override void DoConnect(string ip, int port)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

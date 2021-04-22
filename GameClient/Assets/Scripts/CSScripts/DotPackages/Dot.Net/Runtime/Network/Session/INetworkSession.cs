@@ -2,15 +2,6 @@
 
 namespace DotEngine.Net
 {
-    public enum NetworkSessionState
-    {
-        Unavailable = 0,
-        Connecting,
-        Normal,
-        ConnectedFailed,
-        Disconnected,
-    }
-
     public interface INetworkSession
     {
         Socket NetSocket { get; }
@@ -33,10 +24,9 @@ namespace DotEngine.Net
         void SendMessage(int messageID, MessageCompressType compressType, MessageCryptoType cryptoType, byte[] dataBytes);
 
         void DoConnect(string ip, int port);
-        void DoConnect(int port, int maxCount);
+        void DoConnect();
         void DoReceive();
         void DoDisconnect();
-
-        void Dispose();
+        void DoClose();
     }
 }
