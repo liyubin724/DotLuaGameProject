@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Sockets;
 
 namespace DotEngine.Net
 {
-    public enum MessageCompressType
+    public enum NetworkSessionState
     {
-        None = 0,
-        Snappy,
+        Unavailable = 0,
+        Connecting,
+        Normal,
+        ConnectedFailed,
+        Disconnected,
     }
 
-    public enum MessageCryptoType
+    public interface INetworkSession
     {
-        None = 0,
-    }
+        Socket NetSocket { get; }
+        INetworkSessionHandler SessionHandler { get; }
 
-    public interface INetworkSession : IMessageSerializer, IMessageDeserializer
-    {
-        Socket NetSocket { get; set; }
+        void BindSocket(Socket socket, INetworkSessionHandler handler);
 
         void AddCompressor(MessageCompressType compressType, IMessageCompressor compressor);
         void RemoveCompressor(MessageCompressType compressType);
@@ -28,6 +24,19 @@ namespace DotEngine.Net
         void AddCryptor(MessageCryptoType cryptoType, IMessageCryptor cryptor);
         void RemoveCryptor(MessageCryptoType cryptoType);
 
+        byte[] Serialize(int messageID, MessageCompressType compressType, MessageCryptoType cryptoType, byte[] dataBytes);
+        byte Desrialize(byte[] bytes, out int messageID, out byte[] dataBytes);
 
+        void OnDataReceived(byte[] bytes, int size);
+
+        void OnMessageReceived(int messageID, byte[] dataBytes);
+        void SendMessage(int messageID, MessageCompressType compressType, MessageCryptoType cryptoType, byte[] dataBytes);
+
+        void DoConnect(string ip, int port);
+        void DoConnect(int port, int maxCount);
+        void DoReceive();
+        void DoDisconnect();
+
+        void Dispose();
     }
 }
