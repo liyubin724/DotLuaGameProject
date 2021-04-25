@@ -6,11 +6,6 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Net
 {
-    public enum ENetworkOperation
-    {
-
-    }
-
     public interface INetworkHandler
     {
         byte[] EncodeMessage(MessageCryptoType cryptoType, byte[] dataBytes);
@@ -19,6 +14,7 @@ namespace DotEngine.Net
         byte[] UncompressMessage(MessageCompressType compressType, byte[] dataBytes);
 
         void OnMessageHandler(ANetworkSocket socket, int messageID, byte[] dataBytes);
-        void OnOperationLog(ENetworkOperation operation, string log);
+        void OnStateChanged(NetworkStates preState, NetworkStates curState);
+        void OnOperationLog(NetworkOperations operation, string log);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Net
 {
-    class ClientNetwork
+   public  class ClientNetwork : ANetwork
     {
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace DotEngine.Net
     {
         private Dictionary<MessageCompressType, IMessageCompressor> compressorDic = new Dictionary<MessageCompressType, IMessageCompressor>();
         private Dictionary<MessageCryptoType, IMessageCryptor> cryptorDic = new Dictionary<MessageCryptoType, IMessageCryptor>();
+
+        protected Socket socket;
 
         public void AddCompressor(MessageCompressType compressType, IMessageCompressor compressor)
         {
@@ -81,10 +84,7 @@ namespace DotEngine.Net
 
 
 
-        public void OnMessageHandler(ANetworkSocket socket, int messageID, byte[] dataBytes)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void OnMessageHandler(ANetworkSocket socket, int messageID, byte[] dataBytes);
 
         public void OnOperationLog(ENetworkOperation operation, string log)
         {
