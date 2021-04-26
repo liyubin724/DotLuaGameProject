@@ -10,6 +10,10 @@ namespace DotEngine.Net
     {
         public ClientNetworkSocket(Socket socket, INetworkHandler handler) : base(socket, handler)
         {
+            asyncOperationDic.Add(SocketAsyncOperation.Connect,ProcessConnect);
+            asyncOperationDic.Add(SocketAsyncOperation.Send,ProcessSend);
+            asyncOperationDic.Add(SocketAsyncOperation.Receive,ProcessReceive);
+            asyncOperationDic.Add(SocketAsyncOperation.Disconnect,ProcessDisconnect);
         }
 
         public override void Connect(string ip,int port)
@@ -26,6 +30,8 @@ namespace DotEngine.Net
 
                 netSocket.ConnectAsync(connectAsyncEvent);
                 State = NetworkStates.Connecting;
+
+                netHandler.OnOperationLog(NetworkOperations.Connecting,$"Start connect to the server({ip}:{port})");
             }
             catch
             {
@@ -36,6 +42,20 @@ namespace DotEngine.Net
         public override void Connect()
         {
             throw new NotImplementedException();
+        }
+
+        private void ProcessConnect(SocketAsyncEventArgs socketEvent)
+        {
+            socketEvent.Completed -= OnHandleSocketEvent;
+            if(socketEvent.SocketError == SocketError.Success)
+            {
+                netHandler.OnOperationLog(NetworkOperations.Connected,"Connect to the server sucess");
+                DoReceive();
+            }else
+            {
+                DoDisconnectByError(NetworkDisconnectErrors.ConnectError);
+            }
+            
         }
     }
 

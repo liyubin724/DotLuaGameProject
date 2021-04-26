@@ -15,7 +15,11 @@ namespace DotEngine.Net
 
     public enum NetworkDisconnectErrors
     {
-        ProcessReceiveError = 0,
+        None = 0,
+        ConnectError,
+        ProcessReceiveError,
+        ReceivedMessageSerousIndexError,
+        DoSendError,
     }
 
     public enum NetworkOperations
@@ -35,6 +39,8 @@ namespace DotEngine.Net
 
     public abstract class ANetworkSocket
     {
+        private static readonly int RECEIVE_BUFFER_SIZE = 1024;
+
         protected Socket netSocket;
         protected INetworkHandler netHandler;
 
@@ -49,7 +55,7 @@ namespace DotEngine.Net
                     return state;
                 }
             }
-            set
+            protected set
             {
                 lock(stateLocker)
                 {
@@ -69,6 +75,15 @@ namespace DotEngine.Net
         private byte receivedMessageSeriousIndex = 0;
         private NetMessageBuffer receivedMessageBuffer = new NetMessageBuffer();
 
+        private object isSendingLocker = new object();
+        private bool isSending = false;
+        private byte sendedMessageSeriousIndex = 0;
+        private object sendingMessageStreamLocker = new object();
+        private NetMessageStream sendingMessageStream = new NetMessageStream();
+
+        private SocketAsyncEventArgs sendAsyncEvent = null;
+        private SocketAsyncEventArgs receiveAsyncEvent = null;
+
         protected Dictionary<SocketAsyncOperation, Action<SocketAsyncEventArgs>> asyncOperationDic = new Dictionary<SocketAsyncOperation, Action<SocketAsyncEventArgs>>();
 
         public ANetworkSocket(Socket socket,INetworkHandler handler)
@@ -82,7 +97,12 @@ namespace DotEngine.Net
 
         public void Send(int messageID,MessageCompressType compressType,MessageCryptoType cryptoType,byte[] dataBytes)
         {
+            lock(sendingMessageStreamLocker)
+            {
+                Serialize(messageID, compressType, cryptoType, dataBytes);
+            }
 
+            DoSend();
         }
 
         public void Disconnect()
@@ -92,26 +112,83 @@ namespace DotEngine.Net
 
         protected void DoReceive()
         {
+            if(!IsConnected)
+            {
+                return;
+            }
+            if(receiveAsyncEvent == null)
+            {
+                receiveAsyncEvent = new SocketAsyncEventArgs();
+                receiveAsyncEvent.Completed += OnHandleSocketEvent;
+                receiveAsyncEvent.SetBuffer(new byte[RECEIVE_BUFFER_SIZE],0,RECEIVE_BUFFER_SIZE);
+            }
+            netHandler.OnOperationLog(NetworkOperations.Receiving,"Start receiving");
+            try
+            {
+                if(netSocket.ReceiveAsync(receiveAsyncEvent))
+                {
+                    return;
+                }
+            }catch(Exception e)
+            {
 
+            }
         }
 
         protected void DoSend()
         {
+            if(!IsConnected)
+            {
+                return;
+            }
+            if(sendAsyncEvent == null)
+            {
+                sendAsyncEvent = new SocketAsyncEventArgs();
+                sendAsyncEvent.Completed += OnHandleSocketEvent;
+            }
 
+            lock(isSendingLocker)
+            {
+                if(isSending)
+                {
+                    return;
+                }else
+                {
+                    isSending = true;
+                }
+            }
+
+            byte[] sendingBytes = null;
+            lock(sendingMessageStreamLocker)
+            {
+                sendingBytes = sendingMessageStream.ToArray();
+                sendingMessageStream.Clear();
+            }
+            sendAsyncEvent.SetBuffer(sendingBytes, 0, sendingBytes.Length);
+            if(!netSocket.SendAsync(sendAsyncEvent))
+            {
+                DoDisconnectByError(NetworkDisconnectErrors.DoSendError);
+            }
+        }
+
+        protected void DoDisconnect()
+        {
+            
+        }
+
+        protected void DoDisconnectByError(NetworkDisconnectErrors error)
+        {
+            Disconnect();
         }
 
         protected void OnHandleSocketEvent(object sender, SocketAsyncEventArgs socketEvent)
         {
-            if (socketEvent.SocketError == SocketError.Success)
+            if (asyncOperationDic.TryGetValue(socketEvent.LastOperation, out var action))
             {
-                if (asyncOperationDic.TryGetValue(socketEvent.LastOperation, out var action))
-                {
-                    action(socketEvent);
-                }
-            }
-            else
+                action(socketEvent);
+            }else
             {
-                
+
             }
         }
 
@@ -121,7 +198,11 @@ namespace DotEngine.Net
             {
                 if (socketEvent.BytesTransferred > 0)
                 {
+                    netHandler.OnOperationLog(NetworkOperations.ReceiveBytes,$"Received bytes.length = {socketEvent.BytesTransferred}");
+
                     OnDataReceived(socketEvent.Buffer, socketEvent.BytesTransferred);
+
+                    DoReceive();
                     return;
                 }
             }
@@ -129,9 +210,20 @@ namespace DotEngine.Net
             DoDisconnectByError(NetworkDisconnectErrors.ProcessReceiveError);
         }
 
-        private void DoDisconnectByError(NetworkDisconnectErrors error)
+        protected void ProcessSend(SocketAsyncEventArgs socketEvent)
         {
-            Disconnect();
+            if(socketEvent.SocketError == SocketError.Success)
+            {
+                lock(isSendingLocker)
+                {
+                    isSending = false;
+                }
+            }
+        }
+
+        protected void ProcessDisconnect(SocketAsyncEventArgs socketEvent)
+        {
+
         }
 
         private void OnDataReceived(byte[] bytes,int size)
@@ -145,13 +237,44 @@ namespace DotEngine.Net
 
                 if(seriousIndex != receivedMessageSeriousIndex)
                 {
-
+                    DoDisconnectByError(NetworkDisconnectErrors.ReceivedMessageSerousIndexError);
                     break;
                 }else
                 {
                     netHandler.OnMessageHandler(this, messageID, dataBytes);
                 }
             }
+        }
+
+        private void Serialize(int messageID, MessageCompressType compressType, MessageCryptoType cryptoType, byte[] dataBytes)
+        {
+            byte[] bodyBytes = dataBytes;
+            if (dataBytes != null && dataBytes.Length > 0)
+            {
+                bodyBytes = netHandler.CompressMessage(compressType, bodyBytes);
+                bodyBytes = netHandler.EncodeMessage(cryptoType, bodyBytes);
+            }
+
+            int messageLen = sizeof(int) + sizeof(byte);
+            if (bodyBytes != null && bodyBytes.Length > 0)
+            {
+                messageLen += sizeof(byte);
+                messageLen += sizeof(byte);
+                messageLen += bodyBytes.Length;
+            }
+            byte[] messageLenBytes = BitConverter.GetBytes(messageLen);
+            sendingMessageStream.Write(messageLenBytes, 0, messageLenBytes.Length);
+            byte[] messageIDBytes = BitConverter.GetBytes(messageID);
+            sendingMessageStream.Write(messageIDBytes, 0, messageIDBytes.Length);
+            sendingMessageStream.WriteByte(sendedMessageSeriousIndex);
+            if (bodyBytes != null && bodyBytes.Length > 0)
+            {
+                sendingMessageStream.WriteByte((byte)compressType);
+                sendingMessageStream.WriteByte((byte)cryptoType);
+                sendingMessageStream.Write(bodyBytes, 0, bodyBytes.Length);
+            }
+
+            ++sendedMessageSeriousIndex;
         }
 
         private void Desrialize(byte[] bytes, out int messageID, out byte seriousIndex, out byte[] dataBytes)
