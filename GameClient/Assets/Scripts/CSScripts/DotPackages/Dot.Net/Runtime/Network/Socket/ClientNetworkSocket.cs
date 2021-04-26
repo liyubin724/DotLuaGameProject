@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 
 namespace DotEngine.Net
 {
@@ -18,6 +16,13 @@ namespace DotEngine.Net
 
         public override void Connect(string ip,int port)
         {
+            NetworkStates state = State;
+            if(state== NetworkStates.Connecting|| state== NetworkStates.Normal|| state==NetworkStates.Disconnecting)
+            {
+                netHandler.OnOperationLog(NetworkOperations.Working, $"the network is working.({ip}:{port})");
+                return;
+            }
+
             try
             {
                 IPAddress ipAddress = IPAddress.Parse(ip);
@@ -35,7 +40,8 @@ namespace DotEngine.Net
             }
             catch
             {
-
+                State = NetworkStates.ConnectedFailed;
+                netHandler.OnOperationLog(NetworkOperations.ConnectedFailed, $"connected failed({ip}:{port})");
             }
         }
 
@@ -49,13 +55,15 @@ namespace DotEngine.Net
             socketEvent.Completed -= OnHandleSocketEvent;
             if(socketEvent.SocketError == SocketError.Success)
             {
+                State = NetworkStates.Normal;
                 netHandler.OnOperationLog(NetworkOperations.Connected,"Connect to the server sucess");
-                DoReceive();
+                
+                Receive();
             }else
             {
-                DoDisconnectByError(NetworkDisconnectErrors.ConnectError);
+                State = NetworkStates.ConnectedFailed;
+                netHandler.OnOperationLog(NetworkOperations.ConnectedFailed, "Connect to the server failed");
             }
-            
         }
     }
 
