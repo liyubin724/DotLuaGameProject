@@ -7,206 +7,110 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Config.Ini
 {
-    struct IniLineRange
+    public class IniParser
     {
-        public int Start { get; set; }
-        public int Size { get; set; }
+        private static IniSchemeStyle schemeStyle = null;
+        private static IniParserStyle parserStyle = null;
+        private static List<string> tempComments = new List<string>();
+        private static List<Exception> tempExceptions = new List<Exception>();
 
-        public int End => Start + Size - 1;
-
-        public bool IsEmpty
+        public static bool Parse(string iniString, out IniData iniData, IniSchemeStyle scheme = null, IniParserStyle parser = null)
         {
-            get
+            schemeStyle = scheme;
+            parserStyle = parser;
+
+            iniData = new IniData();
+
+            IniStringBuffer stringBuffer = new IniStringBuffer(iniString);
+            IniLineRange lineRange = new IniLineRange();
+            if (stringBuffer.ReadLine(ref lineRange))
             {
-                return Size == 0;
+                try
+                {
+                    ProcessLine(stringBuffer, lineRange, iniData);
+                }catch(Exception e)
+                {
+                    tempExceptions.Add(e);
+                    if(parser.ThrowExceptionsOnError)
+                    {
+                        throw;
+                    }
+                }
             }
-        }
-    }
 
-    class IniStringBuffer
-    {
-        private TextReader textReader = null;
-
-        private int currentLineNumber = -1;
-        public int LineNumber => currentLineNumber;
-
-        private string lineString = null;
-
-        private IniStringBuffer()
-        {
+            return true;
         }
 
-        public void Start(string iniString)
+        private static void ProcessLine(IniStringBuffer buffer, IniLineRange lineRange, IniData iniData)
         {
-            textReader = new StringReader(iniString);
+            if (buffer.IsEmpty(lineRange) || buffer.IsWhitespace(lineRange)) return;
+
+            if (ProcessComment(buffer, lineRange, iniData)) return;
+            if (ProcessOptionalValue(buffer, lineRange, iniData)) return;
+            if (ProcessSection(buffer, lineRange, iniData)) return;
+            if (ProcessProperty(buffer, lineRange, iniData)) return;
+
+
         }
 
-        public void End()
+        private static bool ProcessComment(IniStringBuffer buffer, IniLineRange lineRange, IniData iniData)
         {
-            textReader.Close();
-            textReader = null;
-            currentLineNumber = -1;
-            lineString = null;
-        }
-
-        public bool ReadLine(out IniLineRange lineRange)
-        {
-            lineRange = new IniLineRange();
-
-            currentLineNumber++;
-            lineString = textReader.ReadLine();
-            if (lineString == null)
+            IniLineRange range = lineRange.DeepCopy();
+            buffer.TrimStart(range);
+            if (!buffer.IsStartWith(range, schemeStyle.CommentString))
             {
                 return false;
             }
+            if (!parserStyle.IsParseComments)
+            {
+                return true;
+            }
+            int commentStartIndex = buffer.FindString(range, schemeStyle.CommentString);
 
-            lineRange.Start = 0;
-            lineRange.Size = lineString.Length;
-
+            range.Start = commentStartIndex + schemeStyle.CommentString.Length;
+            if (parserStyle.IsTrimComments)
+            {
+                buffer.Trim(range);
+            }
+            string comment = buffer.GetString(range);
+            tempComments.Add(comment);
             return true;
         }
 
-        public bool IsEmpty(IniLineRange lineRange)
+        private static bool ProcessSection(IniStringBuffer buffer, IniLineRange lineRange, IniData iniData)
         {
-            return lineRange.IsEmpty;
-        }
-
-        public bool IsWhitespace(IniLineRange lineRange)
-        {
-            int index = lineRange.Start;
-            while (index <= lineRange.End && char.IsWhiteSpace(lineString[index]))
+            IniLineRange range = lineRange.DeepCopy();
+            buffer.Trim(range);
+            if (!buffer.IsStartWith(range, schemeStyle.SectionStartString))
             {
-                ++index;
+                return false;
             }
-            return index > lineRange.End;
-        }
-
-        public IniLineRange TrimStart(IniLineRange lineRange)
-        {
-            if (!string.IsNullOrEmpty(lineString))
+            if (!buffer.IsEndWith(range, schemeStyle.SectionEndString))
             {
-                int index = lineRange.Start;
-                while (index <= lineRange.End && char.IsWhiteSpace(lineString[index]))
-                {
-                    ++index;
-                }
 
-                int endIndex = lineRange.End;
-                lineRange.Start = index;
-                lineRange.Size = endIndex - index + 1;
+                return false;
             }
-            return lineRange;
-        }
 
-        public IniLineRange TrimEnd(IniLineRange lineRange)
-        {
-            if (!string.IsNullOrEmpty(lineString))
+            int startIndex = range.Start + schemeStyle.SectionStartString.Length;
+            int endIndex = range.End - schemeStyle.SectionEndString.Length;
+            range.Start = startIndex;
+            range.Size = endIndex - startIndex + 1;
+
+            if (parserStyle.IsTrimSections)
             {
-                int index = lineRange.End;
-                while (index >= lineRange.Start && char.IsWhiteSpace(lineString[index]))
-                {
-                    --index;
-                }
-                lineRange.Size = index - lineRange.Start + 1;
+                buffer.Trim(range);
             }
 
-            return lineRange;
+            string sectionName = buffer.GetString(range);
+
         }
 
-        public IniLineRange Trim(IniLineRange lineRange)
-        {
-            lineRange = TrimStart(lineRange);
-            lineRange = TrimEnd(lineRange);
-            return lineRange;
-        }
-
-        public bool IsStartWith(IniLineRange lineRange, string str)
-        {
-            if (string.IsNullOrEmpty(str)) return false;
-
-            int strIndex = 0;
-            int lineIndex = lineRange.Start;
-            for (; strIndex < str.Length; ++strIndex, ++lineIndex)
-            {
-                if (str[strIndex] != lineString[lineIndex]) return false;
-            }
-
-            return true;
-        }
-
-        public bool IsEndWith(IniLineRange lineRange,string str)
-        {
-            if (string.IsNullOrEmpty(str)) return false;
-
-            return false;
-        }
-
-        public string Substring(IniLineRange lineRange)
-        {
-            if (lineRange.IsEmpty
-                || string.IsNullOrEmpty(lineString)
-                || lineRange.Start < 0
-                || lineRange.Start+lineRange.Size -1 > lineString.Length) 
-                return string.Empty;
-
-            return lineString.Substring(lineRange.Start, lineRange.Size);
-        }
-
-        public bool Search(IniLineRange lineRange,string str,out IniLineRange positonLineRange)
-        {
-            positonLineRange = new IniLineRange();
-            if (string.IsNullOrEmpty(str)) return false;
-
-            int strStartIndex = -1;
-
-            int strIndex = 0;
-            int lineIndex = lineRange.Start;
-            for (; lineIndex <= lineRange.End && strIndex < str.Length; ++lineIndex)
-            { 
-                if(str[strIndex] == lineString[lineIndex])
-                {
-                    if(strStartIndex<0)
-                    {
-                        strStartIndex = lineIndex;
-                    }
-                    ++strIndex;
-                }else
-                {
-                    strStartIndex = -1;
-                    strIndex = 0;
-                }
-            }
-
-            positonLineRange.Start = strStartIndex;
-            positonLineRange.Size = str.Length;
-
-            return strStartIndex >=0 && strIndex == str.Length;
-        }
-
-        
-    }
-
-    public class IniParser
-    {
-        private static IniLine line = new IniLine();
-        private static List<Exception> exceptions = new List<Exception>();
-
-        public static void Parse(string iniString, IniSchemeStyle schemeStyle = null, IniParserStyle parserStyle = null)
+        private static bool ProcessOptionalValue(IniStringBuffer buffer, IniLineRange lineRange, IniData iniData)
         {
 
         }
 
-        private static void StartParser()
-        {
-
-        }
-
-        private static void EndParse()
-        {
-            line.Reset();
-        }
-
-        private static void ProcessLine(IniLine line, IniData iniData)
+        private static bool ProcessProperty(IniStringBuffer buffer, IniLineRange lineRange, IniData iniData)
         {
 
         }

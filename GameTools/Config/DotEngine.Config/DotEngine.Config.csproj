@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDeepCopy.cs" />
+    <Compile Include="Ini\Exceptions\IniParserException.cs" />
     <Compile Include="Ini\Parser\IniParser.cs" />
+    <Compile Include="Ini\Parser\IniStringBuffer.cs" />
     <Compile Include="Ini\Styles\IniParserStyle.cs" />
     <Compile Include="Ini\Styles\IniSchemeStyle.cs" />
     <Compile Include="Ini\Models\IniData.cs" />
