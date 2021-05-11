@@ -2,17 +2,18 @@
 {
     public class IniSchemeStyle
     {
-        private string commentStr = ";";
+        private string commentStr = "#";
         private string sectionStartStr = "[";
         private string sectionEndStr = "]";
         private string optionalValueStartStr = "{";
         private string optionalValueEndStr = "}";
+        private string optionalValueAssigmentStr = ",";
         private string propertyAssigmentStr = "=";
 
         public string CommentString
         {
-            get =>string.IsNullOrEmpty(commentStr) ? ";" : commentStr;
-            set =>commentStr = value?.Trim();
+            get => string.IsNullOrEmpty(commentStr) ? ";" : commentStr;
+            set => commentStr = value?.Trim();
         }
 
         public string SectionStartString
@@ -37,6 +38,12 @@
         {
             get => string.IsNullOrEmpty(optionalValueEndStr) ? "}" : optionalValueEndStr;
             set => optionalValueEndStr = value?.Trim();
+        }
+
+        public string OptionalValueAssigmentString
+        {
+            get => string.IsNullOrEmpty(optionalValueAssigmentStr) ? "=" : optionalValueAssigmentStr;
+            set => optionalValueAssigmentStr = value?.Trim();
         }
 
         public string PropertyAssigmentString
