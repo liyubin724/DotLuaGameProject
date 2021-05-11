@@ -5,7 +5,7 @@
         private string commentStr = "#";
         private string sectionStartStr = "[";
         private string sectionEndStr = "]";
-        private string optionalValueStartStr = "{";
+        private string optionalValueStartStr = "--{";
         private string optionalValueEndStr = "}";
         private string optionalValueAssigmentStr = ",";
         private string propertyAssigmentStr = "=";

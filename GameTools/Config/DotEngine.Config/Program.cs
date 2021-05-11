@@ -12,11 +12,14 @@ namespace DotEngine.Config
     {
         static void Main(string[] args)
         {
-            string filePath = @"E:\GitHub\C#\C#-Ini\ini-parser\src\IniParser.Example\TestIniFile.ini";
+            string filePath = "D:/org.ini";
             string fileContent = File.ReadAllText(filePath);
-            if(IniReader.ReadFromString(fileContent,out var iniData))
+            var iniData = IniReader.ReadFromString(fileContent);
+
+            if(iniData!=null)
             {
-                Console.WriteLine("Success");
+                string content = IniWriter.WriteToString(iniData);
+                File.WriteAllText("D:/test.ini", content);
             }
 
             Console.ReadKey();

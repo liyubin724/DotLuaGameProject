@@ -97,6 +97,7 @@ namespace DotEngine.Config.Ini
                     property.OptionalValues.AddRange(optionalValues);
                 }
             }
+            properties.Add(propertyKey, property);
             return property;
         }
 

@@ -8,8 +8,6 @@ namespace DotEngine.Config.Ini
     {
         public static readonly string GLOBAL_SECTION_NAME = "__global__";
 
-        public bool CreateSectionsIfTheyDontExist { get; set; } = false;
-
         private Dictionary<string, Section> sections = null;
 
         public string[] SectionNames => sections.Keys.ToArray();
@@ -22,7 +20,6 @@ namespace DotEngine.Config.Ini
 
         public IniData(IniData data)
         {
-            CreateSectionsIfTheyDontExist = data.CreateSectionsIfTheyDontExist;
             sections = new Dictionary<string, Section>();
             foreach(Section section in data)
             {

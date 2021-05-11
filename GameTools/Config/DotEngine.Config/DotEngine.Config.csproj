@@ -48,6 +48,7 @@
     <Compile Include="Ini\Exceptions\IniReaderException.cs" />
     <Compile Include="Ini\IO\IniReader.cs" />
     <Compile Include="Ini\IO\IniTextBuffer.cs" />
+    <Compile Include="Ini\IO\IniWriter.cs" />
     <Compile Include="Ini\Styles\IniReaderStyle.cs" />
     <Compile Include="Ini\Styles\IniSchemeStyle.cs" />
     <Compile Include="Ini\Models\IniData.cs" />
