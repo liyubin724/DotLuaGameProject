@@ -47,12 +47,13 @@
     <Compile Include="IDeepCopy.cs" />
     <Compile Include="Ini\Exceptions\IniReaderException.cs" />
     <Compile Include="Ini\IO\IniReader.cs" />
-    <Compile Include="Ini\IO\IniStringBuffer.cs" />
+    <Compile Include="Ini\IO\IniTextBuffer.cs" />
     <Compile Include="Ini\Styles\IniReaderStyle.cs" />
     <Compile Include="Ini\Styles\IniSchemeStyle.cs" />
     <Compile Include="Ini\Models\IniData.cs" />
     <Compile Include="Ini\Models\Property.cs" />
     <Compile Include="Ini\Models\Section.cs" />
+    <Compile Include="Ini\Styles\IniWriterStyle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
