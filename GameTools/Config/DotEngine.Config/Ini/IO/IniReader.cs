@@ -106,8 +106,6 @@ namespace DotEngine.Config.Ini
             state = ProcessProperty(buffer, iniData);
             if (state == ProcessLineState.Error || state == ProcessLineState.Success) return;
 
-            if (readerStyle.IsSkipInvalidLines) return;
-
             throw new IniReaderException("Error:Couldn't parse text", buffer.LineNumber, buffer.LineContent);
         }
 

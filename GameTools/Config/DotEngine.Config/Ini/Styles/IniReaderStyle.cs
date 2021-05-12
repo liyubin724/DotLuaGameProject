@@ -4,7 +4,6 @@
     {
         public bool ThrowExceptionsOnError { get; set; } = true;
         public bool AllowKeysWithoutSection { get; set; } = true;
-        public bool IsSkipInvalidLines { get; set; } = false;
         public bool IsParseComments { get; set; } = true;
         public bool IsTrimComments { get; set; } = true;
         public bool IsTrimOptionalValues { get; set; } = true;
