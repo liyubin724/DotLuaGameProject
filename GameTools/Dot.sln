@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEditor.UCore", "Core\Dot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Config", "Config\DotEngine.Config\DotEngine.Config.csproj", "{1B841D28-7083-4B4A-9B01-32136323FA50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotTool.Config", "Config\ConfigTool\DotTool.Config.csproj", "{0998BA24-8A6D-4B29-9C64-853895FD8A8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{1B841D28-7083-4B4A-9B01-32136323FA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B841D28-7083-4B4A-9B01-32136323FA50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B841D28-7083-4B4A-9B01-32136323FA50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0998BA24-8A6D-4B29-9C64-853895FD8A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0998BA24-8A6D-4B29-9C64-853895FD8A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0998BA24-8A6D-4B29-9C64-853895FD8A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0998BA24-8A6D-4B29-9C64-853895FD8A8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,6 +153,7 @@ Global
 		{3874D8F3-0496-4DEC-A542-53019D8A9546} = {FC5F4340-7D33-49F2-A994-F26583AE7445}
 		{64F70386-4390-4AB4-9EE3-9AED7C4A63BF} = {FC5F4340-7D33-49F2-A994-F26583AE7445}
 		{1B841D28-7083-4B4A-9B01-32136323FA50} = {D17BA33B-BE22-4072-A99B-C6458E43F245}
+		{0998BA24-8A6D-4B29-9C64-853895FD8A8D} = {D17BA33B-BE22-4072-A99B-C6458E43F245}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0BA826F8-362A-4141-8324-7FD7111E3BBF}

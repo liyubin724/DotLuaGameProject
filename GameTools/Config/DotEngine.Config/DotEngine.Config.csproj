@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -44,6 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NDB\NDBConst.cs" />
+    <Compile Include="NDB\NDBManager.cs" />
+    <Compile Include="Utility\MarshalUtility.cs" />
+    <Compile Include="NDB\NDBData.cs" />
     <Compile Include="IDeepCopy.cs" />
     <Compile Include="Ini\Exceptions\IniReaderException.cs" />
     <Compile Include="Ini\IO\IniReader.cs" />
@@ -55,8 +61,11 @@
     <Compile Include="Ini\Models\Property.cs" />
     <Compile Include="Ini\Models\Section.cs" />
     <Compile Include="Ini\Styles\IniWriterStyle.cs" />
+    <Compile Include="NDB\NDBField.cs" />
+    <Compile Include="NDB\NDBHeader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
