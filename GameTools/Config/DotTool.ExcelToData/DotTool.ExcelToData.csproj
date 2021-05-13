@@ -110,10 +110,6 @@
       <Project>{973ba58f-3fd4-4a7d-aeee-c9e0f135b12a}</Project>
       <Name>DotEngine.Context</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DotEngine.NDB\DotEngine.NDB.csproj">
-      <Project>{eb608d38-fcc8-44d1-a37a-0ae0397a32d3}</Project>
-      <Name>DotEngine.NDB</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3B2E6250-8227-485E-9E78-053DC79FE70E}</ProjectGuid>
+    <ProjectGuid>{906496D5-04BC-48D9-93C4-F8F208602F47}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotEngine.NDB</RootNamespace>
-    <AssemblyName>DotEngine.NDB</AssemblyName>
+    <RootNamespace>DotEngine.Ini</RootNamespace>
+    <AssemblyName>DotEngine.Ini</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,16 +22,18 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,13 +46,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NDBConst.cs" />
-    <Compile Include="NDBData.cs" />
-    <Compile Include="NDBField.cs" />
-    <Compile Include="NDBHeader.cs" />
-    <Compile Include="NDBManager.cs" />
+    <Compile Include="Exceptions\IniReaderException.cs" />
+    <Compile Include="IDeepCopy.cs" />
+    <Compile Include="IO\IniReader.cs" />
+    <Compile Include="IO\IniTextBuffer.cs" />
+    <Compile Include="IO\IniWriter.cs" />
+    <Compile Include="Models\IniData.cs" />
+    <Compile Include="Models\IniProperty.cs" />
+    <Compile Include="Models\IniSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\MarshalUtility.cs" />
+    <Compile Include="Styles\IniReaderStyle.cs" />
+    <Compile Include="Styles\IniSchemeStyle.cs" />
+    <Compile Include="Styles\IniWriterStyle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

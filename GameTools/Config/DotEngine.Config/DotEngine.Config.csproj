@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="NDB\NDBConst.cs" />
     <Compile Include="NDB\NDBManager.cs" />
+    <Compile Include="Utility\AssemblyUtility.cs" />
     <Compile Include="Utility\MarshalUtility.cs" />
     <Compile Include="NDB\NDBData.cs" />
     <Compile Include="IDeepCopy.cs" />
@@ -69,20 +70,24 @@
     <Compile Include="WDB\IO\WDBExcelReader.cs" />
     <Compile Include="WDB\IO\WDBLuaWriter.cs" />
     <Compile Include="WDB\IO\WDBNDBWriter.cs" />
-    <Compile Include="WDB\Models\Fields\AddressField.cs" />
-    <Compile Include="WDB\Models\Fields\BoolField.cs" />
-    <Compile Include="WDB\Models\Fields\FloatField.cs" />
-    <Compile Include="WDB\Models\Fields\IdField.cs" />
-    <Compile Include="WDB\Models\Fields\IntField.cs" />
-    <Compile Include="WDB\Models\Fields\LongField.cs" />
-    <Compile Include="WDB\Models\Fields\LuaField.cs" />
-    <Compile Include="WDB\Models\Fields\RefField.cs" />
-    <Compile Include="WDB\Models\Fields\StringField.cs" />
-    <Compile Include="WDB\Models\Fields\TextField.cs" />
-    <Compile Include="WDB\Models\WDBCell.cs" />
-    <Compile Include="WDB\Models\WDBField.cs" />
-    <Compile Include="WDB\Models\WDBRow.cs" />
-    <Compile Include="WDB\Models\WDBSheet.cs" />
+    <Compile Include="WDB\Fields\AddressField.cs" />
+    <Compile Include="WDB\Fields\BoolField.cs" />
+    <Compile Include="WDB\Fields\FloatField.cs" />
+    <Compile Include="WDB\Fields\IdField.cs" />
+    <Compile Include="WDB\Fields\IntField.cs" />
+    <Compile Include="WDB\Fields\LongField.cs" />
+    <Compile Include="WDB\Fields\LuaField.cs" />
+    <Compile Include="WDB\Fields\RefField.cs" />
+    <Compile Include="WDB\Fields\StringField.cs" />
+    <Compile Include="WDB\Fields\TextField.cs" />
+    <Compile Include="WDB\Validations\BoolValidation.cs" />
+    <Compile Include="WDB\Verifications\IVerify.cs" />
+    <Compile Include="WDB\WDBCell.cs" />
+    <Compile Include="WDB\WDBField.cs" />
+    <Compile Include="WDB\WDBRow.cs" />
+    <Compile Include="WDB\WDBSheet.cs" />
+    <Compile Include="WDB\WDBValidation.cs" />
+    <Compile Include="WDB\WDBUtility.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

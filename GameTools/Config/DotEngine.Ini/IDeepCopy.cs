@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.WDB.IO
+namespace DotEngine.Ini
 {
-    class WDBNDBWriter
+    internal interface IDeepCopy<T> where T : class
     {
+        T DeepCopy();
     }
 }

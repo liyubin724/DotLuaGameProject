@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.WDB.IO
+namespace DotEngine.WDB.Validations
 {
-    class WDBNDBWriter
+    class BoolValidation
     {
     }
 }
