@@ -12,10 +12,13 @@ namespace DotEngine.WDB
         public const string CONTEXT_FIELD_NAME = "field";
         public const string CONTEXT_CELL_NAME = "cell";
 
+        public const string VALIDATION_FIELD_RULE_PARAM_ERR = "The params of the rule({0}) is error.";
+
         public const string VALIDATION_CELL_COMMON_ERR = "[Error At (row = {0},col = {1})]";
         public const string VALIDATION_CELL_ARG_NULL_ERR = "The argument is null.";
         public const string VALIDATION_CELL_CONVERT_ERR = "The value({0}) of the cell can't convert to {1}";
         public const string VALIDATION_CELL_VAULE_EMPTY_ERR = "The value of the cell is empty";
+        public const string VALIDATION_CELL_STRING_TOO_LONG_ERR = "The length of the value({0}) is ";
 
         private static StringBuilder tempMessageBuilder = new StringBuilder();
         public static string GetCellErrorMsg(int row,int col, string msgFormat, params object[] values)

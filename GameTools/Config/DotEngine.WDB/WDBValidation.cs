@@ -6,6 +6,7 @@ namespace DotEngine.WDB
     public abstract class WDBValidation
     {
         public string Rule { get; private set; }
+        public string[] Values { get; private set; }
 
         [ContextIE(WDBConst.CONTEXT_SHEET_NAME)]
         protected WDBSheet sheet;
@@ -16,9 +17,10 @@ namespace DotEngine.WDB
 
         private List<string> tempErrors = new List<string>();
 
-        public WDBValidation(string rule)
+        public virtual void SetRule(string rule,params string[] values)
         {
             Rule = rule;
+            Values = values;
         }
 
         public string GetCellValue()

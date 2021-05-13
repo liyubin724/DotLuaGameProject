@@ -4,10 +4,6 @@ namespace DotEngine.WDB.Validations
 {
     public class BoolValidation : WDBValidation
     {
-        public BoolValidation(string rule) : base(rule)
-        {
-        }
-
         protected override bool DoVerfy(List<string> errors)
         {
             string cellValue = GetCellValue();

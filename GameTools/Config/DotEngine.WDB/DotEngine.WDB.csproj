@@ -57,6 +57,7 @@
     <Compile Include="IO\WDBNDBWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validations\BoolValidation.cs" />
+    <Compile Include="Validations\ErrorValidation.cs" />
     <Compile Include="Validations\FloatValidation.cs" />
     <Compile Include="Validations\IntValidation.cs" />
     <Compile Include="Validations\LongValidation.cs" />

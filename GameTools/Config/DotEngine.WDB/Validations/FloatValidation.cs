@@ -4,10 +4,6 @@ namespace DotEngine.WDB
 {
     public class FloatValidation : WDBValidation
     {
-        public FloatValidation(string rule) : base(rule)
-        {
-        }
-
         protected override bool DoVerfy(List<string> errors)
         {
             string cellValue = GetCellValue();

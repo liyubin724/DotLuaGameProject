@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace DotEngine.WDB
 {
-
     public static class WDBUtility
     {
         private static Dictionary<WDBFieldType, Type> fieldDic = null;
@@ -16,12 +15,12 @@ namespace DotEngine.WDB
             fieldDic = new Dictionary<WDBFieldType, Type>();
 
             Assembly assembly = typeof(WDBField).Assembly;
-            foreach(var type in assembly.GetTypes())
+            foreach (var type in assembly.GetTypes())
             {
-                if(type.IsSubclassOf(typeof(WDBField)))
+                if (type.IsSubclassOf(typeof(WDBField)))
                 {
                     var attr = type.GetCustomAttribute<WDBFieldLinkAttribute>();
-                    if(attr!=null)
+                    if (attr != null)
                     {
                         fieldDic.Add(attr.FieldType, type);
                     }
@@ -36,7 +35,7 @@ namespace DotEngine.WDB
             {
                 fieldType = ft;
             }
-            if(fieldDic == null)
+            if (fieldDic == null)
             {
                 FindFields();
             }
@@ -45,7 +44,8 @@ namespace DotEngine.WDB
             if (fieldDic.TryGetValue(fieldType, out var fieldClass))
             {
                 field = (WDBField)Activator.CreateInstance(fieldClass, col);
-            }else
+            }
+            else
             {
                 field = new WDBField(col);
             }
@@ -68,42 +68,51 @@ namespace DotEngine.WDB
                          from type in assembly.GetTypes()
                          where type.IsSubclassOf(typeof(WDBValidation))
                          select type).ToArray();
-            foreach(var type in types)
+            foreach (var type in types)
             {
                 validationDic.Add(type.Name.ToLower(), type);
             }
         }
 
+        //用于查找校验规则
+        //比如：maxlen解析后 name : maxlen 
+        //            maxlen(1,2,ffff)匹配后:name:maxlen , params:1,2,ffff
+        private const string VALIDATION_RULE_PATTERN = @"(^(?<name>[A-Za-z]{1,})$|^(?<name>[A-Za-z]{1,})[\s]*\((?<params>\S*)\))";
         public static WDBValidation[] CreateValidation(string[] validationRules)
         {
-            if(validationDic == null)
+            if (validationDic == null)
             {
                 FindValidations();
             }
-            if(validationRules == null || validationRules.Length == 0)
+            if (validationRules == null || validationRules.Length == 0)
             {
                 return null;
             }
             WDBValidation[] validations = new WDBValidation[validationRules.Length];
-            for(int i =0;i<validations.Length;i++)
+            for (int i = 0; i < validations.Length; i++)
             {
                 string rule = validationRules[i];
-                Match nameMatch = new Regex(@"(?<name>[a-zA-Z]*)").Match(rule);
+                Match nameMatch = new Regex(VALIDATION_RULE_PATTERN).Match(rule);
                 Group nameGroup = nameMatch.Groups["name"];
-                if(nameGroup!=null)
-                {
-                    string ruleName = nameGroup.Value;
-                    if(!string.IsNullOrEmpty(ruleName) && validationDic.TryGetValue($"{ruleName.ToLower()}validation", out var type))
-                    {
+                Group paramsGroup = nameMatch.Groups["params"];
 
-
-                        WDBValidation validation = (WDBValidation)(Activator.CreateInstance(type, rule));
-                        validations[i] = validation;
-                        continue;
-                    }
-                }else
+                string ruleName = nameGroup.Success ? nameGroup.Value.Trim() : null;
+                string[] ruleParams = new string[0];
+                if (paramsGroup.Success && !string.IsNullOrEmpty(paramsGroup.Value))
                 {
-                    validations[i] = null;
+                    ruleParams = paramsGroup.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                }
+                if (!string.IsNullOrEmpty(ruleName) && validationDic.TryGetValue($"{ruleName.ToLower()}validation", out var type))
+                {
+                    WDBValidation validation = (WDBValidation)Activator.CreateInstance(type);
+                    validation.SetRule(rule, ruleParams);
+                    validations[i] = validation;
+                }
+                else
+                {
+                    ErrorValidation validation = new ErrorValidation();
+                    validation.SetRule(rule, null);
+                    validations[i] = validation;
                 }
             }
 
