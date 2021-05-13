@@ -33,8 +33,8 @@ namespace ExcelToDataTool
     {
         static void Main(string[] args)
         {
-            CommandLine.Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(RunOptions);
+            //CommandLine.Parser.Default.ParseArguments<Options>(args)
+            //    .WithParsed(RunOptions);
 
             Console.ReadKey();
         }

@@ -18,5 +18,10 @@ namespace DotEngine.WDB
         {
             return "0.0";
         }
+
+        protected override string[] GetInnerValidationRule()
+        {
+            return new string[] { "float" };
+        }
     }
 }

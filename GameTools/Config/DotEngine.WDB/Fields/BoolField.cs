@@ -11,5 +11,10 @@
         {
             return "false";
         }
+
+        protected override string[] GetInnerValidationRule()
+        {
+            return new string[] { "bool" };
+        }
     }
 }

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace DotEngine.WDB
 {
@@ -89,10 +88,19 @@ namespace DotEngine.WDB
             for(int i =0;i<validations.Length;i++)
             {
                 string rule = validationRules[i];
-                if (validationDic.TryGetValue($"{rule.ToLower()}validation", out var type))
+                Match nameMatch = new Regex(@"(?<name>[a-zA-Z]*)").Match(rule);
+                Group nameGroup = nameMatch.Groups["name"];
+                if(nameGroup!=null)
                 {
-                    WDBValidation validation = (WDBValidation)(Activator.CreateInstance(type, rule));
-                    validations[i] = validation;
+                    string ruleName = nameGroup.Value;
+                    if(!string.IsNullOrEmpty(ruleName) && validationDic.TryGetValue($"{ruleName.ToLower()}validation", out var type))
+                    {
+
+
+                        WDBValidation validation = (WDBValidation)(Activator.CreateInstance(type, rule));
+                        validations[i] = validation;
+                        continue;
+                    }
                 }else
                 {
                     validations[i] = null;

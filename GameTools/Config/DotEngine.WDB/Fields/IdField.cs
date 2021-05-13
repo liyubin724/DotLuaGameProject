@@ -12,5 +12,10 @@ namespace DotEngine.WDB
         public IdField(int col) : base(col)
         {
         }
+
+        protected override string[] GetInnerValidationRule()
+        {
+            return new string[] { "int", "NotEmpty"};
+        }
     }
 }

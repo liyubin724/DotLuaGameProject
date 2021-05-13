@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DotEngine.WDB.Validations
 {
-    class BoolValidation
+    public class BoolValidation : WDBValidation
     {
+        public BoolValidation(string rule) : base(rule)
+        {
+        }
+
+        protected override bool DoVerfy(List<string> errors)
+        {
+            string cellValue = GetCellValue();
+            if(!string.IsNullOrEmpty(cellValue))
+            {
+                if(!bool.TryParse(cellValue,out var value))
+                {
+                    errors.Add(GetErrorMessage(WDBConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "bool"));
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

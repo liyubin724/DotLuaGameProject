@@ -12,5 +12,10 @@ namespace DotEngine.WDB
         public RefField(int col) : base(col)
         {
         }
+
+        protected override string[] GetInnerValidationRule()
+        {
+            return new string[] { "int" };
+        }
     }
 }
