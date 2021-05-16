@@ -17,6 +17,16 @@
             this.value = value;
         }
 
+        public string GetValue(WDBField field)
+        {
+            string result = Value;
+            if (string.IsNullOrEmpty(result))
+            {
+                result = field.DefaultValue;
+            }
+            return result;
+        }
+
         public override string ToString()
         {
             return $"{{row = {row},col = {col},value = {(string.IsNullOrEmpty(value) ? "" : value)}}}";

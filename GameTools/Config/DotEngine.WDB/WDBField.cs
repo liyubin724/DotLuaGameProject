@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.Context;
+using System;
 using System.Collections.Generic;
 
 namespace DotEngine.WDB
@@ -41,7 +42,7 @@ namespace DotEngine.WDB
         Server,
     }
 
-    public class WDBField
+    public class WDBField : IVerify
     {
         public int Col { get; private set; }
         public string Name { get; set; }
@@ -204,6 +205,29 @@ namespace DotEngine.WDB
         protected virtual string[] GetInnerValidationRule()
         {
             return null;
+        }
+
+        public void Verify(StringContextContainer context)
+        {
+            List<string> errors = context.Get<List<string>>(WDBConst.CONTEXT_ERRORS_NAME);
+            if (string.IsNullOrEmpty(Name))
+            {
+                errors.Add(string.Format(WDBConst.VERIFY_FIELD_NAME_EMPTY_ERR, Col));
+            }
+            if (FieldType == WDBFieldType.None)
+            {
+                errors.Add(string.Format(WDBConst.VERIFY_FIELD_TYPE_NONE_ERR, Col,Name));
+            }
+            if (validations != null && validations.Length > 0)
+            {
+                foreach (var validation in validations)
+                {
+                   if(validation.GetType() == typeof(ErrorValidation))
+                    {
+                        errors.Add(string.Format(WDBConst.VERIFY_FIELD_VALIDATIONS_ERR, Col, Name, validationRule));
+                    }
+                }
+            }
         }
 
         public override string ToString()

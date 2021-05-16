@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DotEngine.WDB
+﻿namespace DotEngine.WDB
 {
     [WDBFieldLink(WDBFieldType.Text)]
     public class TextField : WDBField

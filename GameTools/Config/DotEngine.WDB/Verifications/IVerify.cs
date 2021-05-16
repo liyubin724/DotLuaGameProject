@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DotEngine.Context;
 
 namespace DotEngine.WDB
 {
-    public class IVerify
+    public interface IVerify
     {
+        void Verify(StringContextContainer context);
     }
 }

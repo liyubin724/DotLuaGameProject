@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace DotEngine.WDB
 {
     public class ErrorValidation : WDBValidation
     {
-        protected override bool DoVerfy(List<string> errors)
+        protected override string[] DoVerify(WDBSheet sheet, WDBField field, WDBCell cell)
         {
             throw new NotImplementedException();
         }

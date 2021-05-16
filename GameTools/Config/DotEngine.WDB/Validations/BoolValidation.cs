@@ -4,7 +4,9 @@ namespace DotEngine.WDB.Validations
 {
     public class BoolValidation : WDBValidation
     {
-        protected override bool DoVerfy(List<string> errors)
+        protected override DoVerify WDBSheet sheet, WDBField field, WDBCell cell)
+
+        protected override bool DoVerify(List<string> errors)
         {
             string cellValue = GetCellValue();
             if(!string.IsNullOrEmpty(cellValue))

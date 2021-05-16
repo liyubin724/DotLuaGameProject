@@ -4,7 +4,7 @@ namespace DotEngine.WDB
 {
     public class LongValidation : WDBValidation
     {
-        protected override bool DoVerfy(List<string> errors)
+        protected override bool DoVerify(List<string> errors)
         {
             string cellValue = GetCellValue();
             if (!string.IsNullOrEmpty(cellValue))
