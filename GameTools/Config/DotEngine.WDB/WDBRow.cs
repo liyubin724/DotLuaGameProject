@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace DotEngine.WDB
 {
-    public class WDBRow
+    public class WDBRow : IEnumerable<WDBCell>
     {
         private int row;
         private List<WDBCell> cells = new List<WDBCell>();
@@ -80,5 +81,17 @@ namespace DotEngine.WDB
             return sb.ToString();
         }
 
+        public IEnumerator<WDBCell> GetEnumerator()
+        {
+            return cells.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for(int i =0;i<cells.Count;++i)
+            {
+                yield return cells[i];
+            }
+        }
     }
 }

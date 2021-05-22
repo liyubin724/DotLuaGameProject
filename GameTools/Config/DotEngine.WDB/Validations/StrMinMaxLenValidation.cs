@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace DotEngine.WDB.Validations
+﻿namespace DotEngine.WDB.Validations
 {
-    public class StrMinMaxLenValidation : WDBValidation
+    public class StrMinMaxLenValidation : WDBCellValidation
     {
         private int minLength = -1;
         private int maxLength = -1;
@@ -21,28 +19,23 @@ namespace DotEngine.WDB.Validations
             }
         }
 
-        protected override bool DoVerfy(List<string> errors)
+        protected override void DoVerify()
         {
             if(minLength <0 || maxLength<0 || maxLength<minLength)
             {
-                errors.Add(GetErrorMessage(WDBConst.VALIDATION_FIELD_RULE_PARAM_ERR,Rule));
-                return false;
+                errors.Add(GetErrorMsg(WDBConst.VALIDATION_FIELD_RULE_PARAM_ERR,Rule));
             }
 
-            string cellValue = GetCellValue();
+            string cellValue = cell.GetValue(field);
             int len = string.IsNullOrEmpty(cellValue) ? 0 : cellValue.Length;
             if(len<minLength)
             {
-                errors.Add(GetErrorMessage(WDBConst.VALIDATION_CELL_STRING_TOO_SHORT_ERR));
-                return false;
+                errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_STRING_TOO_SHORT_ERR));
             }
-
             if(len > maxLength)
             {
-                errors.Add(GetErrorMessage(WDBConst.VALIDATION_CELL_STRLen_TOO_LONG_ERR));
-                return false;
+                errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_STRLen_TOO_LONG_ERR));
             }
-            return true;
         }
     }
 }

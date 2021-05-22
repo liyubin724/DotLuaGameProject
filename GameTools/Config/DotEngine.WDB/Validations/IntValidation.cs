@@ -1,21 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace DotEngine.WDB
+﻿namespace DotEngine.WDB
 {
-    public class IntValidation : WDBValidation
+    public class IntValidation : WDBCellValidation
     {
-        protected override bool DoVerify(List<string> errors)
+        protected override void DoVerify()
         {
-            string cellValue = GetCellValue();
+            string cellValue = cell.GetValue(field);
             if (!string.IsNullOrEmpty(cellValue))
             {
                 if (!int.TryParse(cellValue, out var value))
                 {
-                    errors.Add(GetErrorMessage(WDBConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "int"));
-                    return false;
+                    errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "int"));
                 }
             }
-            return true;
         }
     }
 }

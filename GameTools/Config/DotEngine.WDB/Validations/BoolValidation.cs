@@ -1,23 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace DotEngine.WDB.Validations
+﻿namespace DotEngine.WDB.Validations
 {
-    public class BoolValidation : WDBValidation
+    public class BoolValidation : WDBCellValidation
     {
-        protected override DoVerify WDBSheet sheet, WDBField field, WDBCell cell)
-
-        protected override bool DoVerify(List<string> errors)
+        protected override void DoVerify()
         {
-            string cellValue = GetCellValue();
-            if(!string.IsNullOrEmpty(cellValue))
+            string cellValue = cell.GetValue(field);
+            if (!string.IsNullOrEmpty(cellValue))
             {
-                if(!bool.TryParse(cellValue,out var value))
+                if (!bool.TryParse(cellValue, out var value))
                 {
-                    errors.Add(GetErrorMessage(WDBConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "bool"));
-                    return false;
+                    errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "bool"));
                 }
             }
-            return true;
         }
     }
 }

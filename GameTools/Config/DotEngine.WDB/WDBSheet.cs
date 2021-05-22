@@ -77,88 +77,84 @@ namespace DotEngine.WDB
             return null;
         }
 
-        public void Verify(StringContextContainer context)
+        public bool Verify(ref List<string> errors)
         {
-            List<string> errors = context.Get<List<string>>(WDBConst.CONTEXT_ERRORS_NAME);
             if(string.IsNullOrEmpty(Name))
             {
                 errors.Add(WDBConst.VERIFY_SHEET_NAME_EMPTY_ERR);
-            }else
+                return false;
+            }
+            if (!Regex.IsMatch(Name, WDBConst.VERIFY_SHEET_NAME_REGEX))
             {
-                if (!char.IsLetter(Name[0]))
+                errors.Add(string.Format(WDBConst.VERIFY_SHEET_NAME_REGEX_ERR, Name));
+                return false;
+            }
+
+            if(FieldCount == 0)
+            {
+                errors.Add(string.Format(WDBConst.VERIFY_SHEET_NO_FIELD_ERR, Name));
+                return false;
+             }
+            if(RowCount == 0)
+            {
+                errors.Add(string.Format(WDBConst.VERIFY_SHEET_NO_ROW_ERR, Name));
+                return false;
+            }
+
+            bool result = true;
+            foreach(var field in fields)
+            {
+                if(!field.Verify(ref errors))
                 {
-                    errors.Add(string.Format(WDBConst.VERIFY_SHEET_NAME_STARTWITH_ERROR, Name));
-                }
-
-                if(!Regex.IsMatch(Name,@"^[A-Za-z][A-Za-z0-9]{2,20}"))
-                {
-
+                    if (result) result = false;
                 }
             }
-
-
-
-        }
-
-        public string[] Verify()
-        {
-            if (string.IsNullOrEmpty(Name))
+            if(!result)
             {
-                return new string[] { WDBConst.VERIFY_SHEET_NAME_EMPTY_ERR };
+                return false;
             }
 
-            if (FieldCount == 0)
-            {
-                return new string[] { string.Format(WDBConst.VERIFY_SHEET_NO_FIELD_ERR, Name) };
-            }
-            if (RowCount == 0)
-            {
-                return new string[] { string.Format(WDBConst.VERIFY_SHEET_NO_ROW_ERR, Name) };
-            }
-
-            List<string> errors = new List<string>();
+            StringContextContainer context = new StringContextContainer();
+            context.Add(WDBConst.CONTEXT_SHEET_NAME, this);
+            context.Add(WDBConst.CONTEXT_ERRORS_NAME, errors);
             foreach (var row in rows)
             {
                 if (row.CellCount != FieldCount)
                 {
+                    if (result) result = false;
                     errors.Add(string.Format(WDBConst.VERIFY_SHEET_FIELD_ROW_ERR, FieldCount, row.Row));
                 }
             }
-            if (errors.Count > 0)
+
+            if(!result)
             {
-                return errors.ToArray();
+                return false;
             }
 
-            foreach (var field in fields)
+            for(int i =0;i<fields.Count;++i)
             {
-                field.Verify(errors);
-            }
-            if (errors.Count > 0)
-            {
-                return errors.ToArray();
-            }
-
-            foreach (var row in rows)
-            {
-                for (int i = 0; i < FieldCount; ++i)
+                var field = fields[i];
+                context.Add(WDBConst.CONTEXT_FIELD_NAME, field);
+                foreach(var row in rows)
                 {
-                    WDBField field = fields[i];
-                    WDBCell cell = row.GetCellByIndex(i);
-
-                    if (field.Validations != null && field.Validations.Length > 0)
+                    var cell = row.GetCellByIndex(i);
+                    if(cell.Col != field.Col)
                     {
-                        foreach (var validation in field.Validations)
+                        if (result) result = false;
+                        errors.Add(string.Format(WDBConst.VERIFY_CELL_COL_NOTSAME_ERR, cell.Row, cell.Col));
+                    }else
+                    {
+                        context.Add(WDBConst.CONTEXT_CELL_NAME, cell);
+                        foreach(var cellValidation in field.Validations)
                         {
-                            string[] results = validation.Verify(this, field, cell);
-                            if (results != null && results.Length > 0)
-                            {
-                                errors.AddRange(results);
-                            }
+                            context.InjectTo(cellValidation);
                         }
+                        context.Remove(WDBConst.CONTEXT_CELL_NAME);
                     }
                 }
+                context.Remove(WDBConst.CONTEXT_FIELD_NAME);
             }
-            return errors.Count > 0 ? errors.ToArray() : null;
+            return errors.Count == 0;
         }
 
         public override string ToString()

@@ -1,18 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace DotEngine.WDB
+﻿namespace DotEngine.WDB
 {
-    public class NotEmptyValidation : WDBValidation
+    public class NotEmptyValidation : WDBCellValidation
     {
-        protected override bool DoVerify(List<string> errors)
+        protected override void DoVerify()
         {
-            string cellValue = GetCellValue();
+            string cellValue = cell.GetValue(field);
             if (string.IsNullOrEmpty(cellValue))
             {
-                errors.Add(GetErrorMessage(WDBConst.VALIDATION_CELL_VAULE_EMPTY_ERR));
-                return false;
+                errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_VAULE_EMPTY_ERR));
             }
-            return true;
         }
     }
 }

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.WDB.IO
 {
-    public class WDBExcelReader
+    public interface IWDBWriter
     {
-        
     }
 }

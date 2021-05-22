@@ -2,9 +2,9 @@
 
 namespace DotEngine.WDB
 {
-    public class ErrorValidation : WDBValidation
+    public class ErrorValidation : WDBCellValidation
     {
-        protected override string[] DoVerify(WDBSheet sheet, WDBField field, WDBCell cell)
+        protected override void DoVerify()
         {
             throw new NotImplementedException();
         }

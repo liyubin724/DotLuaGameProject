@@ -1,6 +1,7 @@
 ﻿using DotEngine.Context;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace DotEngine.WDB
 {
@@ -144,8 +145,8 @@ namespace DotEngine.WDB
             }
         }
 
-        private WDBValidation[] validations = null;
-        public WDBValidation[] Validations
+        private WDBCellValidation[] validations = null;
+        public WDBCellValidation[] Validations
         {
             get
             {
@@ -207,16 +208,22 @@ namespace DotEngine.WDB
             return null;
         }
 
-        public void Verify(StringContextContainer context)
+        public bool Verify(ref List<string> errors)
         {
-            List<string> errors = context.Get<List<string>>(WDBConst.CONTEXT_ERRORS_NAME);
             if (string.IsNullOrEmpty(Name))
             {
                 errors.Add(string.Format(WDBConst.VERIFY_FIELD_NAME_EMPTY_ERR, Col));
+                return false;
+            }
+            if(!Regex.IsMatch(Name,WDBConst.VERIFY_FIELD_NAME_REGEX))
+            {
+                errors.Add(string.Format(WDBConst.VERIFY_FIELD_NAME_REGEX_ERR, Col));
+                return false;
             }
             if (FieldType == WDBFieldType.None)
             {
                 errors.Add(string.Format(WDBConst.VERIFY_FIELD_TYPE_NONE_ERR, Col,Name));
+                return false;
             }
             if (validations != null && validations.Length > 0)
             {
@@ -225,9 +232,11 @@ namespace DotEngine.WDB
                    if(validation.GetType() == typeof(ErrorValidation))
                     {
                         errors.Add(string.Format(WDBConst.VERIFY_FIELD_VALIDATIONS_ERR, Col, Name, validationRule));
+                        return false;
                     }
                 }
             }
+            return true;
         }
 
         public override string ToString()

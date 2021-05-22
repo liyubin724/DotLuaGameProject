@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.WDB.IO
+namespace DotEngine.WDB
 {
-    public class WDBExcelReader
+    public static class WDBConfig
     {
-        
+        public static string ProjectPath { get; set; }
     }
 }

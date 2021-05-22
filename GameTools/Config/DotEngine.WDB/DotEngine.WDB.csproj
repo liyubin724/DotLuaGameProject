@@ -51,6 +51,7 @@
     <Compile Include="Fields\RefField.cs" />
     <Compile Include="Fields\StringField.cs" />
     <Compile Include="Fields\TextField.cs" />
+    <Compile Include="IO\IWDBWriter.cs" />
     <Compile Include="IO\WDBCVSReader.cs" />
     <Compile Include="IO\WDBExcelReader.cs" />
     <Compile Include="IO\WDBLuaWriter.cs" />
@@ -62,15 +63,16 @@
     <Compile Include="Validations\IntValidation.cs" />
     <Compile Include="Validations\LongValidation.cs" />
     <Compile Include="Validations\NotEmptyValidation.cs" />
-    <Compile Include="Validations\StrMaxLenValidation.cs" />
+    <Compile Include="Validations\StrMinMaxLenValidation.cs" />
+    <Compile Include="Validations\WDBCellValidation.cs" />
     <Compile Include="Verifications\IVerify.cs" />
     <Compile Include="WDBCell.cs" />
+    <Compile Include="WDBConfig.cs" />
     <Compile Include="WDBConst.cs" />
     <Compile Include="WDBField.cs" />
     <Compile Include="WDBRow.cs" />
     <Compile Include="WDBSheet.cs" />
     <Compile Include="WDBUtility.cs" />
-    <Compile Include="WDBValidation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Context\DotEngine.Context\DotEngine.Context.csproj">
