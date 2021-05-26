@@ -1,4 +1,5 @@
 local oop = require('DotLua/OOP/oop')
+local Component = require('DotLua/ECS/Components/Component')
 
 local tlength = table.length
 local tvalues = table.values
@@ -7,7 +8,7 @@ local tinsert = table.insert
 local tremove = table.remove
 local tclear = table.clear
 
-local LogTag = "Entity"
+local LogTag = 'Entity'
 
 local Entity =
     oop.class(
@@ -15,13 +16,10 @@ local Entity =
     function(self)
         self.enable = true
 
-        self.uid = -1
         self.context = nil
+        self.guid = nil
 
-        self.cachedComponents = nil
-        self.componentDic = {}
-
-        self.unpooledComponentClasses = {}
+        self.componentClassToInstanceDic = {}
 
         self.onComponentAddedEvent = oop.event()
         self.onComponentRemovedEvent = oop.event()
@@ -34,13 +32,19 @@ function Entity:GetContext()
     return self.context
 end
 
-function Entity:GetUID()
-    return self.uid
+function Entity:GetGUID()
+    return self.guid
 end
 
-function Entity:Init(context, uid)
-    self.uid = uid
+function Entity:DoGet(context, guid)
+    self.enable = true
+
     self.context = context
+    self.guid = guid
+end
+
+function Entity:DoRelease()
+    self.enable = false
 end
 
 function Entity:BindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifiedFunc)
@@ -62,27 +66,24 @@ function Entity:BindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifi
 end
 
 function Entity:GetComponentCount()
-    return tlength(self.componentDic)
+    return tlength(self.componentClassToInstanceDic)
 end
 
 function Entity:GetAllComponents()
-    if not self.cachedComponents then
-        self.cachedComponents = tvalues(self.componentDic)
-    end
-    return self.cachedComponents
+    return tvalues(self.componentClassToInstanceDic)
 end
 
-function Entity:HasComponent(componentClass)
+function Entity:HasComponentByClass(componentClass)
     if oop.isDebug then
-        if not oop.isclass(componentClass) then
-            oop.error('ECS', 'Entity:HasComponent->the param is not a class')
+        if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
+            oop.error(LogTag, 'Entity:HasComponent->the param is not a class')
             return false
         end
     end
 
-    local component = self.componentDic[componentClass]
+    local component = self.componentClassToInstanceDic[componentClass]
     if not component then
-        for k, _ in pairs(self.componentDic) do
+        for k, _ in pairs(self.componentClassToInstanceDic) do
             if oop.iskindof(k, componentClass) then
                 return true
             end
@@ -93,9 +94,9 @@ function Entity:HasComponent(componentClass)
     end
 end
 
-function Entity:HasComponents(componentClasses)
-    for _, component in ipairs(componentClasses) do
-        if not self:HasComponent(component) then
+function Entity:HasAllComponentsByClass(componentClasses)
+    for _, componentClass in ipairs(componentClasses) do
+        if not self:HasComponentByClass(componentClass) then
             return false
         end
     end
@@ -103,9 +104,9 @@ function Entity:HasComponents(componentClasses)
     return true
 end
 
-function Entity:HasAnyComponent(componentClasses)
-    for _, component in ipairs(componentClasses) do
-        if self:HasComponent(component) then
+function Entity:HasAnyComponentByClass(componentClasses)
+    for _, componentClass in ipairs(componentClasses) do
+        if self:HasComponentByClass(componentClass) then
             return true
         end
     end
@@ -113,10 +114,10 @@ function Entity:HasAnyComponent(componentClasses)
     return false
 end
 
-function Entity:GetComponent(componentClass)
-    local component = self.componentDic[componentClass]
+function Entity:GetComponentByClass(componentClass)
+    local component = self.componentClassToInstanceDic[componentClass]
     if not component then
-        for k, v in pairs(self.componentDic) do
+        for k, v in pairs(self.componentClassToInstanceDic) do
             if oop.iskindof(k, componentClass) then
                 return v
             end
@@ -128,61 +129,46 @@ function Entity:GetComponent(componentClass)
     end
 end
 
-function Entity:AddComponent(componentClassOrInstance)
+function Entity:AddComponentByClass(componentClass, ...)
     if not self.enable then
-        oop.error('ECS', 'Entity:AddComponent->The enity has been disabled')
-        return
+        oop.error(LogTag, 'The enity has been disabled')
+        return nil
     end
+
     if oop.isDebug then
-        local componentClass = componentClassOrInstance
-        if oop.isinstance(componentClassOrInstance) then
-            componentClass = componentClassOrInstance:GetBaseClass()
-        end
-        if self:HasComponent(componentClass) then
-            oop.error(
-                'ECS',
-                string.format(
-                    'Entity:AddComponent->The component of %s has beend added!',
-                    componentClass:GetClassName()
-                )
-            )
+        if self:HasComponentByClass(componentClass) then
+            oop.error(LogTag, string.format('The component of %s has beend added!', componentClass:GetClassName()))
             return nil
         end
     end
 
-    self.cachedComponents = nil
-
-    if oop.isinstance(componentClassOrInstance) then
-        local component = self:addComponentInstance(componentClassOrInstance)
-        self.onComponentAddedEvent:Invoke(self, component)
-
-        return component
-    elseif oop.isclass(componentClassOrInstance) then
-        local component = self:addComponentClass(componentClassOrInstance)
-        self.onComponentAddedEvent:Invoke(self, component)
-
-        return component
-    else
-        oop.error('ECS', 'The component is not a class of Component')
+    local component = self.context:getComponent(componentClass, ...)
+    if not component then
+        oop.error(LogTag, 'the component is nil')
         return nil
     end
-end
 
-function Entity:addComponentClass(componentClass)
-    local component = self.context:createComponent(componentClass)
-    self.componentDic[componentClass] = component
+    self.componentClassToInstanceDic[componentClass] = component
 
-    return component
-end
-
-function Entity:addComponentInstance(component)
-    local componentClass = component:GetBaseClass()
-    self.componentDic[componentClass] = component
-
-    tinsert(self.unpooledComponentClasses, componentClass)
+    self.onComponentAddedEvent:Invoke(self, component)
 
     return component
 end
+
+function Entity:RemoveComponentByClass(componentClass,...)
+    if not self.enable then
+        oop.error(LogTag, 'The enity has been disabled')
+        return nil
+    end
+
+
+end
+
+function Entity:ReplaceComponentByClass(oldComponentClass,newComponentClass)
+
+end
+
+-------------------------------------------
 
 function Entity:RemoveComponent(componentClassOrInstance)
     if not self.enable then
