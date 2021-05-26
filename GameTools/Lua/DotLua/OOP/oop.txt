@@ -1,0 +1,212 @@
+require('DotLua/Utils/tableEx')
+require('DotLua/Utils/mathEx')
+
+local require = _G.require
+
+local Enum = require('DotLua/OOP/Enum')
+local Delegate = require('DotLua/OOP/Delegate')
+local Event = require('DotLua/OOP/Event')
+
+local oop = {}
+oop.ObjectType = require('DotLua/OOP/ObjectType')
+oop.Object = require('DotLua/OOP/Object')
+
+oop.isDebug = _G.isDebug or true
+
+oop.Logger = require('DotLua/Debug/Logger')
+oop.info = oop.Logger.Info
+oop.warning = oop.Logger.Warning
+oop.error = oop.Logger.Error
+
+oop.class = require('DotLua/OOP/class')
+
+oop.getclassname = function(target)
+    if oop.isclassorinstance(target) then
+        return target:GetClassName()
+    end
+
+    return nil
+end
+
+oop.getclassbyname = function(className)
+    if type(className) ~= 'string' then
+        oop.error('oop', 'the param of className should be a string')
+        return nil
+    end
+
+    local c = oop.classes[className]
+    if c then
+        return c
+    else
+        oop.error('oop', string.format('the class which named (%s) is not founded', className))
+        return nil
+    end
+end
+
+oop.assembly = {}
+oop.classes = {}
+
+oop.load = function(path)
+    local c = oop.assembly[path]
+    if not c then
+        c = require(path)
+
+        if not c then
+            oop.assembly[path] = c
+
+            local className = oop.getclassname(c)
+            if className then
+                if not oop.classes[className] then
+                    oop.classes[className] = c
+                else
+                    oop.error('oop', 'the name of the class is repeated.clssname = ' .. className)
+                end
+            end
+        end
+    end
+
+    return c
+end
+
+oop.unload = function(path)
+    local c = oop.assembly[path]
+    if c then
+        oop.assembly[path] = nil
+        package.loaded[path] = nil
+
+        local className = oop.getclassname(c)
+        if className then
+            oop.classes[className] = nil
+        end
+    end
+end
+
+oop.using = oop.load
+
+oop.instance = function(path)
+    local c = oop.load(path)
+    if c then
+        return c()
+    end
+    return nil
+end
+
+oop.instancewith = function(path, ...)
+    local c = oop.load(path)
+    if c then
+        return c(...)
+    end
+    return nil
+end
+
+oop.enum = function(name, enumTable)
+    enumTable._className = name
+    enumTable._isInstance = false
+
+    setmetatable(enumTable, Enum)
+    return enumTable
+end
+
+oop.delegate = function(receiver, func)
+    return Delegate(receiver, func)
+end
+
+oop.event = function()
+    return Event()
+end
+
+oop.isclass = function(target)
+    if not target then
+        return false
+    end
+
+    if not target.IsClass then
+        return false
+    end
+    return target:IsClass()
+end
+
+oop.isclassof = function(targetClass, baseClass)
+    if not targetClass or not baseClass then
+        return false
+    end
+
+    if not baseClass.IsClass or not baseClass:IsClass() then
+        return false
+    end
+
+    if not targetClass.IsClass or not targetClass:IsClass() then
+        return false
+    end
+
+    return targetClass:IsKindOf(baseClass)
+end
+
+oop.isinstance = function(target)
+    if not target then
+        return false
+    end
+
+    if not target.IsInstance then
+        return false
+    end
+
+    return target:IsInstance()
+end
+
+oop.isinstanceof = function(target, baseClass)
+    if not target or not baseClass then
+        return false
+    end
+
+    if not baseClass.IsClass or not baseClass:IsClass() then
+        return false
+    end
+
+    if not target.IsInstance or not target:IsInstance() then
+        return false
+    end
+
+    return target:IsKindOf(baseClass)
+end
+
+oop.isclassorinstance = function(target)
+    return oop.isclass(target) or oop.isinstance(target)
+end
+
+oop.iskindof = function(target, baseClass)
+    if not oop.isclassorinstance(target) or not oop.isclass(baseClass) then
+        return false
+    end
+
+    return target:IsKindOf(baseClass)
+end
+
+oop.isenum = function(target)
+    if not target then
+        return false
+    end
+
+    local isEnumFunc = target.IsEnum
+    if not isEnumFunc then
+        return false
+    end
+
+    return isEnumFunc(target)
+end
+
+oop.isdelegate = function(target)
+    if not target then
+        return false
+    end
+
+    local isDelegateFunc = target.IsDelegate
+    if not isDelegateFunc then
+        return false
+    end
+    return isDelegateFunc(target)
+end
+
+oop.asreadonly = require('DotLua/OOP/asreadonly')
+
+return oop

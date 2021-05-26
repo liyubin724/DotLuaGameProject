@@ -1,0 +1,13 @@
+local App = {}
+App.isDebug = nil
+App.platform = nil
+
+function App.GetIsDebug()
+    return App.isDebug
+end
+
+function App.GetPlatform()
+    
+end
+
+return App

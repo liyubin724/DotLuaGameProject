@@ -1,0 +1,6 @@
+local ServicerNames = {}
+
+ServicerNames.UpdaterServierName = "Updater Servicer"
+ServicerNames.GUIDServicerName = "GUID Servicer"
+
+return ServicerNames

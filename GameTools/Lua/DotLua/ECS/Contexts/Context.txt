@@ -1,0 +1,27 @@
+local oop = require('DotLua/OOP/oop')
+
+local Context =
+    oop.class(
+    'DotLua.ECS.Contexts.Context',
+    function(self)
+        self.guidToEntityDic = {}
+    end
+)
+
+function Context:DoCreate()
+end
+
+function Context:HasEntity(guid)
+    return self.guidToEntityDic[guid] ~= nil
+end
+
+function Context:GetEntity(guid)
+    return self.guidToEntityDic[guid]
+end
+
+function Context:DoDestroy()
+end
+
+
+
+return Context
