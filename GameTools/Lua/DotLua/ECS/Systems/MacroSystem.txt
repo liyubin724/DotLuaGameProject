@@ -1,0 +1,10 @@
+local oop = require('DotLua/OOP/oop')
+
+local MacroSystem =
+    oop.class(
+    'DotLua.ECS.Systems.MacroSystem',
+    function(self)
+    end
+)
+
+return MacroSystem

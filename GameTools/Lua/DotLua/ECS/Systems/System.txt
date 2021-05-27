@@ -1,0 +1,10 @@
+local oop = require('DotLua/OOP/oop')
+
+local System =
+    oop.class(
+    'DotLua.ECS.Systems.System',
+    function(self)
+    end
+)
+
+return System
