@@ -7,10 +7,7 @@ local Component =
     end
 )
 
-function Component:DoGet(...)
-end
-
-function Component:DoRelease(...)
+function Component:Reset()
 end
 
 return Component

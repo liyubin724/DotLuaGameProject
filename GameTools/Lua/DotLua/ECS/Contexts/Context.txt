@@ -3,6 +3,8 @@ local ObjectPool = require('DotLua/Pool/ObjectPool')
 local Entity = require('DotLua/ECS/Entities/Entity')
 local Component = require('DotLua/ECS/Components/Component')
 local GUIDComponent = require('DotLua/ECS/Components/Basic/GUIDComponent')
+local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
+local ContextEvent = require('DotLua/ECS/Contexts/ContextEvent')
 
 local tinsert = table.insert
 
@@ -20,6 +22,9 @@ local Context =
 )
 
 function Context:DoCreate()
+end
+
+function Context:DoDestroy()
 end
 
 function Context:HasEntity(guid)
@@ -44,19 +49,69 @@ function Context:GetEntities(guidList)
     return entities
 end
 
-function Context:CreateEntity(guid)
-    local entity = self.entityPool:GetItem(self, guid)
+function Context:CreateEntity(guid, catgory, componentClasses)
+    if oop.isDebug then
+        if self:HasEntity(guid) then
+            oop.error(LogTag, 'the entity has been created')
+            return nil
+        end
+    end
 
-    local guidComponent = self:getComponent(GUIDComponent, guid)
+    local entity = self.entityPool:GetItem(self)
+
+    local guidComponent = entity:addComponent(GUIDComponent)
+    guidComponent:SetGUID(guid)
+
+    local catgoryComponent = entity:addComponent(CatgoryComponent)
+    catgoryComponent:SetCatgory(catgory)
+
+    if componentClasses and #componentClasses > 0 then
+        for _, componentClass in ipairs(componentClasses) do
+            entity:AddComponentByClass(componentClass)
+        end
+    end
+
+    entity:BindEvent(
+        self,
+        self.onEntityComponentAdded,
+        self.onEntityComponentRemoved,
+        self.onEntityComponentReplaced,
+        self.onEntityComponentModified
+    )
+
+    self.guidToEntityDic[guid] = entity
+    self:onEntityCreated(entity)
+
+    return entity
 end
 
-function Context:CreateEntityWithComponents(guid, componentClassList)
+function Context:DestroyEntity(entity)
+    self:DestroyEntityByGUID(entity:GetGUID())
 end
 
-function Context:DoDestroy()
+function Context:DestroyEntityByGUID(guid)
+    local entity = self.guidToEntityDic[guid]
+    if not entity then
+        oop.error(LogTag, 'the entity is not found in context,guid = ' .. tostring(guid))
+        return
+    end
+
+    self.guidToEntityDic[guid] = nil
+
+    self:onEntityReleased(entity)
+
+    self.entityPool:ReleaseItem(entity)
 end
 
-function Context:getComponent(componentClass, ...)
+function Context:CreateGroup(matcher)
+    --TODO:
+end
+
+function Context:ReleaseGroup(group)
+    --TODO:
+end
+
+function Context:getComponent(componentClass)
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.iskindof(componentClass, Component) then
             oop.error(LogTag, 'the class is not a clas or is not a subclass of Component')
@@ -71,10 +126,10 @@ function Context:getComponent(componentClass, ...)
         self.componentClassPoolDic[componentClass] = pool
     end
 
-    return pool:GetItemWithParams(...)
+    return pool:GetItem()
 end
 
-function Context:releaseComponent(component, ...)
+function Context:releaseComponent(component)
     if oop.isDebug then
         if not oop.isinstanceof(component, Component) then
             oop.error(LogTag, 'the component is not a instance of Component')
@@ -86,7 +141,63 @@ function Context:releaseComponent(component, ...)
     if componentClass then
         local pool = self.componentClassPoolDic[componentClass]
         if pool then
-            pool:ReleaseItemWithParams(component, ...)
+            pool:ReleaseItem(component)
+        end
+    end
+end
+
+function Context:onEntityCreated(entity)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEvent.EntityCreated)
+        end
+    end
+end
+
+function Context:onEntityReleased(entity)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryRemoveEntity(entity, ContextEvent.EntityReleased)
+        end
+    end
+end
+
+function Context:onEntityComponentAdded(entity, addedComponentClass)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEvent.ComponentAdded, addedComponentClass)
+        else
+            group:TryRemoveEntity(entity, ContextEvent.ComponentAdded, addedComponentClass)
+        end
+    end
+end
+
+function Context:onEntityComponentRemoved(entity, removedComponentClass)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEvent.ComponentRemoved, removedComponentClass)
+        else
+            group:TryRemoveEntity(entity, ContextEvent.ComponentRemoved, removedComponentClass)
+        end
+    end
+end
+
+function Context:onEntityComponentReplaced(entity, oldComponentClass, newComponentClass)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEvent.ComponentReplaced, oldComponentClass, newComponentClass)
+        else
+            group:TryRemoveEntity(entity, ContextEvent.ComponentReplaced, oldComponentClass, newComponentClass)
+        end
+    end
+end
+
+function Context:onEntityComponentModified(entity, modifyComponentClass, modifyTag)
+    for matcher, group in pairs(self.groupDic) do
+        if matcher:IsMatch(entity) then
+            group:TryAddEntity(entity, ContextEvent.ComponentModified, modifyComponentClass, modifyTag)
+        else
+            group:TryRemoveEntity(entity, ContextEvent.ComponentModified, modifyComponentClass, modifyTag)
         end
     end
 end

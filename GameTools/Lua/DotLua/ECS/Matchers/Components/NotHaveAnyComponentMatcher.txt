@@ -1,0 +1,42 @@
+local oop = require('DotLua/OOP/oop')
+local Matcher = require('DotLua/ECS/Matchers/Matcher')
+local Component = require('DotLua/ECS/Components/Component')
+
+local tinsert = table.insert
+local tclear = table.clear
+
+local LogTag = 'Matcher'
+
+local NotHaveAnyComponentMatcher =
+    oop.class(
+    'DotLua.ECS.Matchers.Components.NotHaveAnyComponentMatcher',
+    function(self, name, ...)
+        self.componentClasses = {}
+
+        local length = select('#', ...)
+        if length > 0 then
+            for i = 1, length, 1 do
+                local componentClass = select(i, ...)
+                if oop.iskindof(componentClass, Component) then
+                    tinsert(self.componentClasses, componentClass)
+                else
+                    tclear(self.componentClasses)
+
+                    oop.error(LogTag, 'it is not a subclass of Component')
+                    return
+                end
+            end
+        end
+    end,
+    Matcher
+)
+
+function NotHaveAnyComponentMatcher:IsMatch(entity)
+    if #self.componentClasses == 0 then
+        return false
+    end
+
+    return not entity:HasAnyComponentByClass(self.componentClasses)
+end
+
+return NotHaveAnyComponentMatcher
