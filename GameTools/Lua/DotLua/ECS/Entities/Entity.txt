@@ -23,6 +23,9 @@ local Entity =
         self.onComponentRemovedEvent = oop.event()
         self.onComponentReplacedEvent = oop.event()
         self.onComponentModifiedEvent = oop.event()
+
+        self.guid = nil
+        self.catgory = nil
     end
 )
 
@@ -31,13 +34,21 @@ function Entity:GetContext()
 end
 
 function Entity:GetGUID()
-    local guidComponent = self:GetComponentByClass(GUIDComponent)
-    return guidComponent:GetGUID()
+    if not self.guid then
+        local guidComponent = self:GetComponentByClass(GUIDComponent)
+        self.guid = guidComponent:GetGUID()
+    end
+
+    return self.guid
 end
 
 function Entity:GetCatgory()
-    local catgoryComponent = self:GetComponentByClass(CatgoryComponent)
-    return catgoryComponent:GetCatgory()
+    if not self.catgory then
+        local catgoryComponent = self:GetComponentByClass(CatgoryComponent)
+        self.catgory = catgoryComponent:GetCatgory()
+    end
+
+    return self.catgory
 end
 
 function Entity:DoGet(context)
@@ -79,6 +90,31 @@ function Entity:BindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifi
     if modifiedFunc then
         self.onComponentModifiedEvent:Add(receiver, modifiedFunc)
     end
+end
+
+function Entity:UnbindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifiedFunc)
+    if addedFunc then
+        self.onComponentAddedEvent:Remove(receiver, addedFunc)
+    end
+
+    if removedFunc then
+        self.onComponentRemovedEvent:Remove(receiver, removedFunc)
+    end
+
+    if replacedFunc then
+        self.onComponentReplacedEvent:Remove(receiver, replacedFunc)
+    end
+
+    if modifiedFunc then
+        self.onComponentModifiedEvent:Remove(receiver, modifiedFunc)
+    end
+end
+
+function Entity:UnbindAllEvent()
+    self.onComponentAddedEvent:Clear()
+    self.onComponentRemovedEvent:Clear()
+    self.onComponentReplacedEvent:Clear()
+    self.onComponentModifiedEvent:Clear()
 end
 
 function Entity:GetComponentCount()

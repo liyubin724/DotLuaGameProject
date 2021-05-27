@@ -1,0 +1,121 @@
+local oop = require('DotLua/OOP/oop')
+
+local tlength = table.length
+local tvalues = table.values
+local tclear = table.clear
+
+local LogTag = 'Group'
+
+local Group =
+    oop.class(
+    'DotLua.ECS.Groups.Group',
+    function(self, matcher)
+        self.matcher = matcher
+
+        self.guidToEntityDic = {}
+
+        self.onEntityAddedEvent = oop.event()
+        self.onEntityRemovedEvent = oop.event()
+        self.onEntityModifiedEvent = oop.event()
+
+        self.refCount = 0
+    end
+)
+
+function Group:GetMatcher()
+    return self.matcher
+end
+
+function Group:GetEntityCount()
+    return tlength(self.guidToEntityDic)
+end
+
+function Group:GetEntities()
+    return tvalues(self.guidToEntityDic)
+end
+
+function Group:RetainRef()
+    self.refCount = self.refCount + 1
+end
+
+function Group:ReleaseRef()
+    self.refCount = self.refCount - 1
+    if self.refCount < 0 then
+        oop.error(LogTag, 'the count of the ref is less 0')
+        self.refCount = 0
+    end
+end
+
+function Group:IsInUsing()
+    return self.refCount > 0
+end
+
+function Group:BindEvent(receiver, addedFunc, removedFunc, modifiedFunc)
+    if addedFunc then
+        self.onEntityAddedEvent:Add(receiver, addedFunc)
+    end
+
+    if removedFunc then
+        self.onEntityRemovedEvent:Add(receiver, removedFunc)
+    end
+
+    if modifiedFunc then
+        self.onEntityModifiedEvent:Add(receiver, modifiedFunc)
+    end
+end
+
+function Group:UnbindEvent(receiver, addedFunc, removedFunc, modifiedFunc)
+    if addedFunc then
+        self.onEntityAddedEvent:Remove(receiver, addedFunc)
+    end
+
+    if removedFunc then
+        self.onEntityRemovedEvent:Remove(receiver, removedFunc)
+    end
+
+    if modifiedFunc then
+        self.onEntityModifiedEvent:Remove(receiver, modifiedFunc)
+    end
+end
+
+function Group:UnbindAllEvent()
+    self.onEntityAddedEvent:Clear()
+    self.onEntityRemovedEvent:Clear()
+    self.onEntityModifiedEvent:Clear()
+end
+
+function Group:TryAddEntity(entity, eventType, param1, param2)
+    local guid = entity:GetGUID()
+    if not self.guidToEntityDic[guid] then
+        self.guidToEntityDic[guid] = entity
+
+        self.onEntityAddedEvent:Invoke(entity, eventType, param1, param2)
+    end
+end
+
+function Group:TryRemoveEntity(entity, eventType, param1, param2)
+    local guid = entity:GetGUID()
+    if self.guidToEntityDic[guid] then
+        self.guidToEntityDic[guid] = nil
+
+        self.onEntityRemovedEvent:Invoke(entity, eventType, param1, param2)
+    end
+end
+
+function Group:ModifyEntity(entity, eventType, param1, param2)
+    local guid = entity:GetGUID()
+    if self.guidToEntityDic[guid] then
+        self.onEntityModifiedEvent:Invoke(entity, eventType, param1, param2)
+    end
+end
+
+function Group:Destroy()
+    self:UnbindAllEvent()
+
+    self.matcher = nil
+    tclear(self.guidToEntityDic)
+
+    self.refCount = 0
+end
+
+return Group

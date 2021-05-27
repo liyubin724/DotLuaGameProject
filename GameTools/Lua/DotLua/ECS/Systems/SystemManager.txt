@@ -1,0 +1,125 @@
+local oop = require('DotLua/OOP/oop')
+local System = require('DotLua/ECS/Systems/System')
+local FuncNameUtility = require('DotLua/ECS/Utility/FuncNameUtility')
+local CycleTime = require('DotLua/CycleTime')
+
+local tinsert = table.insert
+local tremovevalue = table.removevalue
+local tclear = table.clear
+
+local SystemSet =
+    oop.class(
+    'SystemSet',
+    function(self)
+        self.isInited = false
+
+        self.systems = {}
+        self.updateSystems = {}
+        self.lateUpdateSystems = {}
+        self.frameSystems = {}
+
+        self.elapseTime = 0
+    end
+)
+
+function SystemSet:Add(system)
+    if oop.isDebug then
+        if not system or not oop.isinstanceof(system, System) then
+            oop.error('ECS', 'MacroSystem:Add->the param is not a instance of System')
+            return
+        end
+    end
+
+    tinsert(self.systems, system)
+
+    if self.isInited and system[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
+        system[FuncNameUtility.FUNC_NAME_INITIZLIZE](system)
+    end
+
+    if system[FuncNameUtility.FUNC_NAME_UPDATE] then
+        tinsert(self.updateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+        tinsert(self.lateUpdateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_FRAME] then
+        tinsert(self.frameSystems, system)
+    end
+end
+
+function SystemSet:Remove(system)
+    if oop.isDebug then
+        if not system or not oop.isinstanceof(system, System) then
+            oop.error('ECS', 'MacroSystem:Remove->the param is not a instance of System')
+            return
+        end
+    end
+
+    tremovevalue(self.systems, system)
+
+    if system[FuncNameUtility.FUNC_NAME_UPDATE] then
+        tremovevalue(self.updateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+        tremovevalue(self.lateUpdateSystems, system)
+    end
+    if system[FuncNameUtility.FUNC_NAME_FRAME] then
+        tremovevalue(self.frameSystems, system)
+    end
+
+    if self.isInited and system[FuncNameUtility.FUNC_NAME_TEARDOWN] then
+        system[FuncNameUtility.FUNC_NAME_TEARDOWN](system)
+    end
+end
+
+function SystemSet:DoInitialize()
+    self.isInited = true
+    for _, system in ipairs(self.systems) do
+        if system[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
+            system[FuncNameUtility.FUNC_NAME_INITIZLIZE](system)
+        end
+    end
+end
+
+function SystemSet:DoUpdate()
+    if self.isInited then
+        for _, system in ipairs(self.updateSystems) do
+            system[FuncNameUtility.FUNC_NAME_UPDATE](system)
+        end
+
+        self.elapseTime = self.elapseTime + CycleTime.GetDeltaTime()
+        while self.elapseTime > CycleTime.GetFrameTime() do
+            for _, system in ipairs(self.frameSystems) do
+                system[FuncNameUtility.FUNC_NAME_FRAME](system)
+            end
+
+            self.elapseTime = self.elapseTime - CycleTime.GetFrameTime()
+        end
+    end
+end
+
+function SystemSet:DoLateUpdate()
+    if self.isInited then
+        for _, system in ipairs(self.lateUpdateSystems) do
+            system[FuncNameUtility.FUNC_NAME_LATEUPDATE](system)
+        end
+    end
+end
+
+function SystemSet:DoTeardown()
+    if self.isInited then
+        for _, system in ipairs(self.systems) do
+            if system[FuncNameUtility.FUNC_NAME_TEARDOWN] then
+                system[FuncNameUtility.FUNC_NAME_TEARDOWN](system)
+            end
+        end
+    end
+    tclear(self.updateSystems)
+    tclear(self.lateUpdateSystems)
+    tclear(self.frameSystems)
+
+    tclear(self.systems)
+    self.elapseTime = 0
+end
+
+return SystemSet
