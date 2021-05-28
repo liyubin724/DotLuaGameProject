@@ -1,0 +1,42 @@
+local oop = require('DotLua/OOP/oop')
+local TimeUpdateSystem = oop.using('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
+local Collector = oop.using('DotLua/ECS/Collectors/Collector')
+
+local LogTag = 'ReactiveTimeSystem'
+
+local ReactiveTimeSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Components.ReactiveTimeSystem',
+    function(self, group, groupEvents, frequencyInTime)
+        self.collector = Collector(group, groupEvents)
+
+        self:SetFrequency(frequencyInTime)
+    end,
+    TimeUpdateSystem
+)
+
+function ReactiveTimeSystem:onActivate()
+    self.collector:Activate()
+end
+
+function ReactiveTimeSystem:onDeactivate()
+    self.collector:Deactivate()
+end
+
+function ReactiveTimeSystem:onTimeUpdate(deltaTime)
+    local entities = self.collector:GetCollectedEntities()
+
+    if entities and #entities > 0 then
+        for _, entity in ipairs(entities) do
+            self:onEntityUpdate(entity, deltaTime)
+        end
+    end
+
+    self.collector:ClearCollectedEntities()
+end
+
+function ReactiveTimeSystem:onEntityUpdate(entity, deltaTime)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return ReactiveTimeSystem

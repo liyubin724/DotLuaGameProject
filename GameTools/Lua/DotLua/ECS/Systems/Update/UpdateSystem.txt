@@ -1,0 +1,21 @@
+local oop = require('DotLua/OOP/oop')
+local System = oop.using('DotLua/ECS/Systems/System')
+
+local UpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Update.UpdateSystem',
+    function(self)
+    end,
+    System
+)
+
+function UpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
+    if self.isEnable then
+        self:onUpdate(deltaTime, unscaleDeltaTime)
+    end
+end
+
+function UpdateSystem:onUpdate(deltaTime, unscaleDeltaTime)
+end
+
+return UpdateSystem

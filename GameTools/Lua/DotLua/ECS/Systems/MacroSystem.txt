@@ -17,11 +17,12 @@ local MacroSystem =
         self.lateUpdateSystems = {}
         self.frameUpdateSystems = {}
 
-        self:initilize()
-    end
+        self:onInitilize()
+    end,
+    System
 )
 
-function MacroSystem:initilize()
+function MacroSystem:onInitilize()
 end
 
 function MacroSystem:AddSubSystem(subSystem)
@@ -35,21 +36,19 @@ function MacroSystem:AddSubSystem(subSystem)
     tinsert(self.subSystems, subSystem)
 
     if subSystem[SystemFuncNames.FUNC_UPDATE] then
-        tinsert(self.updateSystems,subSystem)
+        tinsert(self.updateSystems, subSystem)
     end
 
     if subSystem[SystemFuncNames.FUNC_LATEUPDATE] then
-        tinsert(self.lateUpdateSystems,subSystem)
+        tinsert(self.lateUpdateSystems, subSystem)
     end
 
     if subSystem[SystemFuncNames.FUNC_FRAMEUPDATE] then
-        tinsert(self.frameUpdateSystems,subSystem)
+        tinsert(self.frameUpdateSystems, subSystem)
     end
 end
 
-function MacroSystem:DoActivate()
-    self:GetBaseClass().DoActivate(self)
-
+function MacroSystem:onActivate()
     if #(self.subSystems) > 0 then
         tforeach(
             self.subSystems,
@@ -87,15 +86,13 @@ function MacroSystem:DoFrameUpdate(deltaTime)
         tforeach(
             self.frameUpdateSystems,
             function(system)
-                system:DoFrame(deltaTime)
+                system:DoFrameUpdate(deltaTime)
             end
         )
     end
 end
 
-function MacroSystem:DoDeactivate()
-    self:GetBaseClass().DoDeactivate(self)
-
+function MacroSystem:onDeactivate()
     if #(self.teardownSystems) > 0 then
         tforeach(
             self.subSystems,

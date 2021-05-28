@@ -1,0 +1,61 @@
+local oop = require('DotLua/OOP/oop')
+local TimeUpdateSystem = oop.using('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
+local DetailCollector = oop.using('DotLua/ECS/Collectors/DetailCollector')
+
+local LogTag = 'DetailReactiveTimeSystem'
+
+local DetailReactiveTimeSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Components.DetailReactiveTimeSystem',
+    function(self, group, groupEvents, frequencyInFrame)
+        self.detailCollector = DetailCollector(group, groupEvents)
+
+        self:SetFrequency(frequencyInFrame)
+    end,
+    TimeUpdateSystem
+)
+
+function DetailReactiveTimeSystem:onActivate()
+    self.collector:Activate()
+end
+
+function DetailReactiveTimeSystem:onDeactivate()
+    self.collector:Deactivate()
+end
+
+function DetailReactiveTimeSystem:onTimeUpdate(deltaTime)
+    local addedEntities = self.detailCollector:GetAddedEntities()
+    if addedEntities and #(addedEntities) > 0 then
+        for _, data in ipairs(addedEntities) do
+            self:onEntityAdded(data, deltaTime)
+        end
+    end
+
+    local removedEntities = self.detailCollector:GetRemovedEntities()
+    if removedEntities and #(removedEntities) > 0 then
+        for _, data in ipairs(removedEntities) do
+            self:onEntityRemoved(data, deltaTime)
+        end
+    end
+
+    local modifiedEntities = self.detailCollector:GetModifiedEntities()
+    if modifiedEntities and #(modifiedEntities) > 0 then
+        for _, data in ipairs(modifiedEntities) do
+            self:onEnityModified(data, deltaTime)
+        end
+    end
+end
+
+function DetailReactiveTimeSystem:onEntityAdded(detailData, deltaTime)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+function DetailReactiveTimeSystem:onEntityRemoved(detailData, deltaTime)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+function DetailReactiveTimeSystem:onEnityModified(detailData, deltaTime)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return DetailReactiveTimeSystem

@@ -1,0 +1,21 @@
+local oop = require('DotLua/OOP/oop')
+local System = oop.using('DotLua/ECS/Systems/System')
+
+local LateUpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Update.LateUpdateSystem',
+    function(self)
+    end,
+    System
+)
+
+function LateUpdateSystem:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    if self.isEnable then
+        self:onLateUpdate(deltaTime, unscaleDeltaTime)
+    end
+end
+
+function LateUpdateSystem:onLateUpdate(deltaTime, unscaleDeltaTime)
+end
+
+return LateUpdateSystem

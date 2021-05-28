@@ -66,6 +66,20 @@ function Object:IsKindOf(baseClass)
     return false
 end
 
+function Object:TryActionInvoke(funcName,...)
+    local func = self[funcName]
+    if func and type(func) == "function" then
+        func(self,...)
+    end
+end
+
+function Object:TryFuncInvoke(funcName,...)
+    local func = self[funcName]
+    if func and type(func) == "function" then
+        return func(self,...)
+    end
+end
+
 function Object:ToString()
     return self._className
 end

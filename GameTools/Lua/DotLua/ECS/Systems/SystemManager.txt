@@ -2,11 +2,8 @@ local oop = require('DotLua/OOP/oop')
 local System = require('DotLua/ECS/Systems/System')
 local SystemFuncNames = oop.using('DotLua/ECS/Systems/SystemFuncNames')
 
-local CycleTime = require('DotLua/CycleTime')
-
 local tinsert = table.insert
 local tremovevalue = table.removevalue
-local tclear = table.clear
 local tforeach = table.foreach
 
 local LogTag = 'SystemMgr'
@@ -129,7 +126,7 @@ function SystemManager:LateUpdate(deltaTime, unscaleDeltaTime)
         tforeach(
             self.lateUpdateSystems,
             function(system)
-                system:DoUpdate(deltaTime, unscaleDeltaTime)
+                system:DoLateUpdate(deltaTime, unscaleDeltaTime)
             end
         )
     end
@@ -140,7 +137,7 @@ function SystemManager:FrameUpdate(deltaTime)
         tforeach(
             self.frameUpdateSystems,
             function(system)
-                system:DoUpdate(deltaTime)
+                system:DoFrameUpdate(deltaTime)
             end
         )
     end
