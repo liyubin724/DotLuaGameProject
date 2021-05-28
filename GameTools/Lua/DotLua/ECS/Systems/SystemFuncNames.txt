@@ -1,9 +1,7 @@
 local SystemFuncNames = {}
 
-SystemFuncNames.FUNC_INITIZLIZE = 'DoInitialize'
 SystemFuncNames.FUNC_UPDATE = 'DoUpdate'
 SystemFuncNames.FUNC_LATEUPDATE = 'DoLateUpdate'
 SystemFuncNames.FUNC_FRAMEUPDATE = 'DoFrameUpdate'
-SystemFuncNames.FUNC_TEARDOWN = 'DoTeardown'
 
 return SystemFuncNames

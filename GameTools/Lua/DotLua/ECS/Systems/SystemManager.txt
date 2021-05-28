@@ -1,125 +1,160 @@
 local oop = require('DotLua/OOP/oop')
 local System = require('DotLua/ECS/Systems/System')
-local FuncNameUtility = require('DotLua/ECS/Utility/FuncNameUtility')
+local SystemFuncNames = oop.using('DotLua/ECS/Systems/SystemFuncNames')
+
 local CycleTime = require('DotLua/CycleTime')
 
 local tinsert = table.insert
 local tremovevalue = table.removevalue
 local tclear = table.clear
+local tforeach = table.foreach
 
-local SystemSet =
+local LogTag = 'SystemMgr'
+
+local SystemManager =
     oop.class(
-    'SystemSet',
+    'DotLua.ECS.Systems.System',
     function(self)
-        self.isInited = false
+        self.isRunning = false
 
         self.systems = {}
+
         self.updateSystems = {}
         self.lateUpdateSystems = {}
-        self.frameSystems = {}
-
-        self.elapseTime = 0
+        self.frameUpdateSystems = {}
     end
 )
 
-function SystemSet:Add(system)
+function SystemManager:GetSystemByClass(systemClass)
     if oop.isDebug then
-        if not system or not oop.isinstanceof(system, System) then
-            oop.error('ECS', 'MacroSystem:Add->the param is not a instance of System')
+        if not systemClass or not oop.isclassof(systemClass, System) then
+            oop.error(LogTag, 'the param is not a subclass of System')
             return
         end
     end
 
+    for _, system in ipairs(self.systems) do
+        if system:GetClass() == systemClass then
+            return system
+        end
+    end
+
+    return nil
+end
+
+function SystemManager:AddSystemByClass(systemClass)
+    if oop.isDebug then
+        if not systemClass or not oop.isclassof(systemClass, System) then
+            oop.error(LogTag, 'the param is not a subclass of System')
+            return
+        end
+    end
+
+    local system = systemClass()
     tinsert(self.systems, system)
 
-    if self.isInited and system[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
-        system[FuncNameUtility.FUNC_NAME_INITIZLIZE](system)
-    end
-
-    if system[FuncNameUtility.FUNC_NAME_UPDATE] then
+    if system[SystemFuncNames.FUNC_UPDATE] then
         tinsert(self.updateSystems, system)
     end
-    if system[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+
+    if system[SystemFuncNames.FUNC_LATEUPDATE] then
         tinsert(self.lateUpdateSystems, system)
     end
-    if system[FuncNameUtility.FUNC_NAME_FRAME] then
-        tinsert(self.frameSystems, system)
+
+    if system[SystemFuncNames.FUNC_FRAMEUPDATE] then
+        tinsert(self.frameUpdateSystems, system)
+    end
+
+    if self.isRunning then
+        system:DoActivate()
     end
 end
 
-function SystemSet:Remove(system)
+function SystemManager:RemoveSystemByClass(systemClass)
     if oop.isDebug then
-        if not system or not oop.isinstanceof(system, System) then
-            oop.error('ECS', 'MacroSystem:Remove->the param is not a instance of System')
+        if not systemClass or not oop.isclassof(systemClass, System) then
+            oop.error(LogTag, 'the param is not a subclass of System')
             return
         end
+    end
+
+    local system = self:GetSystemByClass(systemClass)
+    if not system then
+        oop.error(LogTag, 'the system is not found by the class')
+        return
     end
 
     tremovevalue(self.systems, system)
-
-    if system[FuncNameUtility.FUNC_NAME_UPDATE] then
+    if system[SystemFuncNames.FUNC_UPDATE] then
         tremovevalue(self.updateSystems, system)
     end
-    if system[FuncNameUtility.FUNC_NAME_LATEUPDATE] then
+
+    if system[SystemFuncNames.FUNC_LATEUPDATE] then
         tremovevalue(self.lateUpdateSystems, system)
     end
-    if system[FuncNameUtility.FUNC_NAME_FRAME] then
-        tremovevalue(self.frameSystems, system)
+
+    if system[SystemFuncNames.FUNC_FRAMEUPDATE] then
+        tremovevalue(self.frameUpdateSystems, system)
     end
 
-    if self.isInited and system[FuncNameUtility.FUNC_NAME_TEARDOWN] then
-        system[FuncNameUtility.FUNC_NAME_TEARDOWN](system)
-    end
-end
-
-function SystemSet:DoInitialize()
-    self.isInited = true
-    for _, system in ipairs(self.systems) do
-        if system[FuncNameUtility.FUNC_NAME_INITIZLIZE] then
-            system[FuncNameUtility.FUNC_NAME_INITIZLIZE](system)
-        end
+    if self.isRunning then
+        system:DoDeactivate()
     end
 end
 
-function SystemSet:DoUpdate()
-    if self.isInited then
-        for _, system in ipairs(self.updateSystems) do
-            system[FuncNameUtility.FUNC_NAME_UPDATE](system)
-        end
+function SystemManager:Startup()
+    self.isRunning = true
 
-        self.elapseTime = self.elapseTime + CycleTime.GetDeltaTime()
-        while self.elapseTime > CycleTime.GetFrameTime() do
-            for _, system in ipairs(self.frameSystems) do
-                system[FuncNameUtility.FUNC_NAME_FRAME](system)
+    tforeach(
+        self.systems,
+        function(system)
+            system:DoActivate()
+        end
+    )
+end
+
+function SystemManager:Update(deltaTime, unscaleDeltaTime)
+    if self.isRunning then
+        tforeach(
+            self.updateSystems,
+            function(system)
+                system:DoUpdate(deltaTime, unscaleDeltaTime)
             end
-
-            self.elapseTime = self.elapseTime - CycleTime.GetFrameTime()
-        end
+        )
     end
 end
 
-function SystemSet:DoLateUpdate()
-    if self.isInited then
-        for _, system in ipairs(self.lateUpdateSystems) do
-            system[FuncNameUtility.FUNC_NAME_LATEUPDATE](system)
-        end
-    end
-end
-
-function SystemSet:DoTeardown()
-    if self.isInited then
-        for _, system in ipairs(self.systems) do
-            if system[FuncNameUtility.FUNC_NAME_TEARDOWN] then
-                system[FuncNameUtility.FUNC_NAME_TEARDOWN](system)
+function SystemManager:LateUpdate(deltaTime, unscaleDeltaTime)
+    if self.isRunning then
+        tforeach(
+            self.lateUpdateSystems,
+            function(system)
+                system:DoUpdate(deltaTime, unscaleDeltaTime)
             end
-        end
+        )
     end
-    tclear(self.updateSystems)
-    tclear(self.lateUpdateSystems)
-    tclear(self.frameSystems)
-
-    tclear(self.systems)
-    self.elapseTime = 0
 end
 
-return SystemSet
+function SystemManager:FrameUpdate(deltaTime)
+    if self.isRunning then
+        tforeach(
+            self.frameUpdateSystems,
+            function(system)
+                system:DoUpdate(deltaTime)
+            end
+        )
+    end
+end
+
+function SystemManager:Teardown()
+    self.isRunning = false
+
+    tforeach(
+        self.systems,
+        function(system)
+            system:DoDeactivate()
+        end
+    )
+end
+
+return SystemManager

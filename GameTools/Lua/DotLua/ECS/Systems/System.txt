@@ -4,7 +4,20 @@ local System =
     oop.class(
     'DotLua.ECS.Systems.System',
     function(self)
+        self.isEnable = false
     end
 )
+
+function System:IsEnable()
+    return self.isEnable
+end
+
+function System:DoActivate()
+    self.isEnable = true
+end
+
+function System:DoDeactivate()
+    self.isEnable = false
+end
 
 return System
