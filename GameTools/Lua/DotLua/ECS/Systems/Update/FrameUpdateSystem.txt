@@ -20,24 +20,31 @@ end
 function FrameUpdateSystem:SetFrequency(frequency)
     self.frequencyInFrame = math.floor(frequency)
 
-    if self.frequencyInFrame <= 0 then
-        self.elapseFrame = 0
-        self.elapseTime = 0
-    end
+    self.elapseFrame = 0
+    self.elapseTime = 0
+end
+
+function FrameUpdateSystem:onActivate()
+    self.elapseFrame = 0
+    self.elapseTime = 0
+end
+
+function FrameUpdateSystem:onDeactivate()
+    self.elapseFrame = 0
+    self.elapseTime = 0
 end
 
 function FrameUpdateSystem:DoFrameUpdate(deltaTime)
-    if self.frequencyInFrame <= 0 or not self.isEnable then
-        return
-    end
+    if self.isEnable then
+        self.elapseFrame = self.elapseFrame + 1
+        self.elapseTime = self.elapseTime + deltaTime
 
-    self.elapseFrame = self.elapseFrame + 1
-    self.elapseTime = self.elapseTime + deltaTime
-    if self.elapseFrame >= self.frequencyInFrame then
-        self:onFrameUpdate(self.elapseTime)
+        if self.elapseFrame >= self.frequencyInFrame then
+            self:onFrameUpdate(self.elapseTime)
 
-        self.elapseFrame = 0
-        self.elapseTime = 0
+            self.elapseFrame = 0
+            self.elapseTime = 0
+        end
     end
 end
 

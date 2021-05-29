@@ -5,8 +5,7 @@ local TimeUpdateSystem =
     oop.class(
     'DotLua.ECS.Systems.Update.TimeUpdateSystem',
     function(self)
-        self.frequencyInTime = 1
-
+        self.frequencyInTime = 0
         self.elapseDeltaTime = 0
     end,
     System
@@ -18,21 +17,30 @@ end
 
 function TimeUpdateSystem:SetFrequency(frequency)
     self.frequencyInTime = frequency
+    self.elapseDeltaTime = 0
+end
 
-    if self.frequencyInTime <= 0 then
-        self.elapseDeltaTime = 0
-    end
+function TimeUpdateSystem:onActivate()
+    self.elapseDeltaTime = 0
+end
+
+function TimeUpdateSystem:onDeactivate()
+    self.elapseDeltaTime = 0
 end
 
 function TimeUpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
-    if self.frequencyInTime <= 0 or not self.isEnable then
-        return
-    end
-
-    self.elapseDeltaTime = self.elapseDeltaTime + deltaTime
-    if self.elapseDeltaTime >= self.frequencyInTime then
-        self:onTimeUpdate(self.frequencyInTime)
-        self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyInTime
+    if self.isEnable then
+        self.elapseDeltaTime = self.elapseDeltaTime + deltaTime
+        
+        if self.elapseDeltaTime >= self.frequencyInTime then
+            if self.frequencyInTime<=0 then
+                self:onTimeUpdate(self.elapseDeltaTime)
+                self.elapseDeltaTime = 0
+            else
+                self:onTimeUpdate(self.frequencyInTime)
+                self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyInTime
+            end
+        end
     end
 end
 
