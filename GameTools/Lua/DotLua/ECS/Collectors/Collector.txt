@@ -16,6 +16,10 @@ local Collector =
     end
 )
 
+function Collector:IsEnable()
+    return self.isEnable
+end
+
 function Collector:GetCollectedEntityCount()
     return #self.collectedEntities
 end

@@ -1,8 +1,0 @@
-local ContextNames = {}
-
-ContextNames.UI = 'UI Context'
-ContextNames.Game = 'Game Context'
-ContextNames.Scene = 'Scene Context'
-ContextNames.Global = 'Global Context'
-
-return ContextNames

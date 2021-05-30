@@ -1,0 +1,46 @@
+local oop = require('DotLua/OOP/oop')
+
+local EntityManager =
+    oop.class(
+    'DotLua.ECS.Entities.EntityManager',
+    function(self)
+        self.guidToEntityDic = {}
+
+        self.catgoryToEntitiesDic = {}
+    end
+)
+
+function EntityManager:GetEntityByGUID(guid)
+    return self.guidToEntityDic[guid]
+end
+
+function EntityManager:GetEntitiesByGUIDs(guids)
+
+end
+
+function EntityManager:GetEntitiesByCatgory(catgory)
+end
+
+function EntityManager:GetEntityChildsByGUID(guid)
+
+end
+
+function EntityManager:GetEntityParentByGUID(guid)
+
+end
+
+--function EntityManager:GetDepend
+
+function EntityManager:AddEntity(entity)
+end
+
+function EntityManager:AddEntities(entities)
+end
+
+function EntityManager:RemoveEntity(entity)
+end
+
+function EntityManager:RemoveEntities(entities)
+end
+
+return EntityManager

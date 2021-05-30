@@ -1,4 +1,0 @@
-local ecs = {}
-
-
-return ecs

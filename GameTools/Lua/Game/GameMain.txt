@@ -1,0 +1,13 @@
+local GameECSEnv = require('Game/ECS/GameECSEnv')
+
+GameMain = {}
+
+function GameMain.Startup()
+    
+end
+
+function GameMain.Update(deltaTime, unscaleDeltaTime)
+end
+
+function GameMain.Teardown()
+end

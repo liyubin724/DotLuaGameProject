@@ -1,0 +1,8 @@
+local ContextNames = {}
+
+ContextNames.UI = 'UI'
+ContextNames.GAME = 'Game'
+ContextNames.SCENE = 'Scene'
+ContextNames.GLOBAL = 'Global'
+
+return ContextNames

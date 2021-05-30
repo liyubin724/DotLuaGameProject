@@ -1,0 +1,24 @@
+local oop = require('DotLua/OOP/oop')
+
+local ECSEnv = require('DotLua/ECS/ECSEnv')
+local ContextNames = require("Game/ECS/Contexts/ContextNames")
+
+local GameECSEnv =
+    oop.class(
+    'Game.ECS.GameECSEnv',
+    function(self)
+    end,
+    ECSEnv
+)
+
+function GameECSEnv:initilizeServicers()
+end
+
+function GameECSEnv:initilizeContexts()
+
+end
+
+function GameECSEnv:initilizeSystems()
+end
+
+return GameECSEnv

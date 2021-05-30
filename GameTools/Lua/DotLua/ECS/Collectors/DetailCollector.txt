@@ -10,6 +10,8 @@ local DetailCollector =
     oop.class(
     'DotLua.ECS.Collectors.DetailCollector',
     function(self, group, groupEvents)
+        self.isEnable = false
+
         self.addedEntities = {}
         self.removedEntities = {}
         self.modifiedEntities = {}
@@ -20,6 +22,10 @@ local DetailCollector =
         self.dataPool = ObjectPool(DetailCollectorData)
     end
 )
+
+function DetailCollector:IsEnable()
+    return self.isEnable
+end
 
 function DetailCollector:GetAddedEntityCount()
     return #(self.addedEntities)
@@ -110,6 +116,10 @@ function DetailCollector:Deactivate()
 
         self.group:UnbindEvent(self, addedFunc, removedFunc, modifiedFunc)
     end
+end
+
+function DetailCollector:Destroy()
+
 end
 
 function DetailCollector:onEntityAdded(entity, eventType, param1, param2)
