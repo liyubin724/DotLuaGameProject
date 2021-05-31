@@ -1,9 +1,14 @@
+package.path = '?.txt;' .. package.path
+
+_G.serpent = require('DotLua/Depends/Serpent/serpent')
+require("DotLua/Utils/tableEx")
+
 local GameECSEnv = require('Game/ECS/GameECSEnv')
 
 GameMain = {}
 
 function GameMain.Startup()
-    
+    _G.GameECS = GameECSEnv()
 end
 
 function GameMain.Update(deltaTime, unscaleDeltaTime)
@@ -11,3 +16,13 @@ end
 
 function GameMain.Teardown()
 end
+
+local Entity = require('DotLua/ECS/Entities/Entity')
+
+local entityClass = {a = "a",b = "b"}
+
+entityClass = entityClass and entityClass or Entity
+
+print(table.tostring(entityClass))
+
+GameMain.Startup()

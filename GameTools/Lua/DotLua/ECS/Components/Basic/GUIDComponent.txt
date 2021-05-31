@@ -1,9 +1,9 @@
 local oop = require('DotLua/OOP/oop')
-local Component = require('DotLua/Components/Component')
+local Component = require('DotLua/ECS/Components/Component')
 
 local GUIDComponent =
     oop.class(
-    'DotLua.Components.Component',
+    'DotLua.ECS.Components.Component',
     function(self)
         self.guid = nil
     end,

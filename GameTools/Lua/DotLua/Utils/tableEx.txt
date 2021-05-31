@@ -219,6 +219,9 @@ function table.tostring(tbl)
         return tostring(tbl)
     end
 
-    local serpent = require('DotLua/Tools/serpent')
-    return serpent.dump(tbl)
+    if _G.serpent then
+        return _G.serpent.dump(tbl)
+    else
+        return tostring(tbl)
+    end
 end

@@ -11,7 +11,7 @@ local LogTag = 'Entity'
 
 local Entity =
     oop.class(
-    'Entity',
+    'DotLua.ECS.Entities.Entity',
     function(self)
         self.enable = true
 

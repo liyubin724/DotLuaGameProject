@@ -13,11 +13,11 @@ local LogTag = 'Context'
 local Context =
     oop.class(
     'DotLua.ECS.Contexts.Context',
-    function(self)
+    function(self,entityClass)
         self.guidToEntityDic = {}
 
         self.componentClassPoolDic = {}
-        self.entityPool = ObjectPool(Entity)
+        self.entityPool = ObjectPool(entityClass and entityClass or Entity)
     end
 )
 

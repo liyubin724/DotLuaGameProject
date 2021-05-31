@@ -1,9 +1,9 @@
 local oop = require('DotLua/OOP/oop')
-local Component = require('DotLua/Components/Component')
+local Component = require('DotLua/ECS/Components/Component')
 
 local CatgoryComponent =
     oop.class(
-    'DotLua.Components.Basic.CatgoryComponent',
+    'DotLua.ECS.Components.Basic.CatgoryComponent',
     function(self)
         self.catgory = nil
     end,
