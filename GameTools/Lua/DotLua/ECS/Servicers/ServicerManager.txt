@@ -22,7 +22,7 @@ function ServicerManager:CreateServicer(name,servicerClass)
         return
     end
 
-    local servicer = servicerClass()
+    local servicer = servicerClass(name)
     self.servicerDic[name] = servicer
     servicer:DoRegister()
 

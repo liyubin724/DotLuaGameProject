@@ -1,0 +1,35 @@
+local oop = require('DotLua/OOP/oop')
+local Filter = require("DotLua/ECS/Entities/Filters/Filter")
+
+local tforeach = table.foreach
+local tvalues = table.values
+
+local LogTag = 'Filter'
+
+local AllEntityFilter =
+    oop.class(
+    'DotLua.ECS.Entities.Filters.AllEntityFilter',
+    function(self, name, contextNames)
+        self.guidToEntityDic = {}
+    end,
+    Filter
+)
+
+function AllEntityFilter:GetResult(guid)
+    if not guid then
+        return tvalues(self.guidToEntityDic)
+    end
+
+    return self.guidToEntityDic[guid]
+end
+
+function AllEntityFilter:IsNeedCatched(entity)
+    return false
+end
+
+function AllEntityFilter:DoCatchEntity(entity)
+    self.guidToEntityDic[entity:GetGUID()] = entity
+end
+
+return AllEntityFilter
+

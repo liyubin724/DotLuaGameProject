@@ -25,4 +25,5 @@ entityClass = entityClass and entityClass or Entity
 
 print(table.tostring(entityClass))
 
+
 GameMain.Startup()
