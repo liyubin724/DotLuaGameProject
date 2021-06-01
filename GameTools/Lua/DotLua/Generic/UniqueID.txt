@@ -1,0 +1,11 @@
+local UniqueID = {}
+
+UniqueID.id = 0
+
+function UniqueID.Create()
+    UniqueID.id = UniqueID.id + 1
+
+    return UniqueID.id
+end
+
+return UniqueID

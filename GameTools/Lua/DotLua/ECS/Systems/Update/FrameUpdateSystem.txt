@@ -4,8 +4,8 @@ local System = oop.using('DotLua/ECS/Systems/System')
 local FrameUpdateSystem =
     oop.class(
     'DotLua.ECS.Systems.Update.FrameUpdateSystem',
-    function(self)
-        self.frequencyInFrame = 1
+    function(self,frequencyInFrame)
+        self.frequencyInFrame = math.floor(frequencyInFrame or 1)
 
         self.elapseFrame = 0
         self.elapseTime = 0

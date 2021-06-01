@@ -25,18 +25,33 @@ function ECSEnv:GetContextMgr()
 end
 
 function ECSEnv:Startup()
+    if self.systemMgr then
+        self.systemMgr:Startup()
+    end
 end
 
 function ECSEnv:Update(deltaTime, unscaleDeltaTime)
+    if self.systemMgr then
+        self.systemMgr:Update(deltaTime,unscaleDeltaTime)
+    end
 end
 
 function ECSEnv:LateUpdate(deltaTime, unscaleDeltaTime)
+    if self.systemMgr then
+        self.systemMgr:LateUpdate(deltaTime,unscaleDeltaTime)
+    end
 end
 
 function ECSEnv:FrameUpdate(deltaTime)
+    if self.systemMgr then
+        self.systemMgr:FrameUpdate(deltaTime)
+    end
 end
 
 function ECSEnv:Teardown()
+    if self.systemMgr then
+        self.systemMgr:Teardown()
+    end
 end
 
 function ECSEnv:initilize()

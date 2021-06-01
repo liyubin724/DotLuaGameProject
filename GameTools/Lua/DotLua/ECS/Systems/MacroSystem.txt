@@ -52,7 +52,7 @@ function MacroSystem:onActivate()
     if #(self.subSystems) > 0 then
         tforeach(
             self.subSystems,
-            function(system)
+            function(_, system)
                 system:DoActivate()
             end
         )
@@ -60,10 +60,10 @@ function MacroSystem:onActivate()
 end
 
 function MacroSystem:DoUpdate(deltaTime, unscaleDeltaTime)
-    if #(self.updateSystems) > 0 then
+    if #(self.updateSystems) > 0 and self.isEnable then
         tforeach(
             self.updateSystems,
-            function(system)
+            function(_, system)
                 system:DoUpdate(deltaTime, unscaleDeltaTime)
             end
         )
@@ -71,10 +71,10 @@ function MacroSystem:DoUpdate(deltaTime, unscaleDeltaTime)
 end
 
 function MacroSystem:DoLateUpdate(deltaTime, unscaleDeltaTime)
-    if #(self.lateUpdateSystems) > 0 then
+    if #(self.lateUpdateSystems) > 0 and self.isEnable then
         tforeach(
             self.lateUpdateSystems,
-            function(system)
+            function(_, system)
                 system:DoLateUpdate(deltaTime, unscaleDeltaTime)
             end
         )
@@ -82,10 +82,10 @@ function MacroSystem:DoLateUpdate(deltaTime, unscaleDeltaTime)
 end
 
 function MacroSystem:DoFrameUpdate(deltaTime)
-    if #(self.frameSystems) > 0 then
+    if #(self.frameSystems) > 0 and self.isEnable then
         tforeach(
             self.frameUpdateSystems,
-            function(system)
+            function(_, system)
                 system:DoFrameUpdate(deltaTime)
             end
         )
@@ -93,10 +93,10 @@ function MacroSystem:DoFrameUpdate(deltaTime)
 end
 
 function MacroSystem:onDeactivate()
-    if #(self.teardownSystems) > 0 then
+    if #(self.teardownSystems) > 0 and self.isEnable then
         tforeach(
             self.subSystems,
-            function(system)
+            function(_, system)
                 system:DoDeactivate()
             end
         )

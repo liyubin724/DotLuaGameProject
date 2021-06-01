@@ -5,6 +5,7 @@ local tostring = _G.tostring
 local pairs = _G.pairs
 local ipairs = _G.ipairs
 local tinsert = table.insert
+local tremove = table.remove
 local rawget = _G.rawget
 
 function table.isempty(tbl)
@@ -100,10 +101,19 @@ function table.removevalue(tbl, value)
         return false
     end
 
-    for k, v in pairs(tbl) do
-        if v == value then
-            tbl[k] = nil
-            return true
+    if table.isarray(tbl) then
+        for i, v in ipairs(tbl) do
+            if v == value then
+                tremove(tbl, i)
+                return true
+            end
+        end
+    else
+        for k, v in pairs(tbl) do
+            if v == value then
+                tbl[k] = nil
+                return true
+            end
         end
     end
 
@@ -115,8 +125,8 @@ function table.foreach(tbl, func)
         return
     end
 
-    for _, value in pairs(tbl) do
-        func(value)
+    for key, value in pairs(tbl) do
+        func(key, value)
     end
 end
 
@@ -185,8 +195,11 @@ function table.copy(tbl)
 end
 
 function table.copyto(sourceTbl, destinationTbl)
-    destinationTbl = destinationTbl or {}
-    if type(sourceTbl) ~= 'table' then
+    if not sourceTbl or not destinationTbl then
+        return
+    end
+
+    if type(sourceTbl) ~= 'table' or type(destinationTbl) ~= 'table' then
         return
     end
 
@@ -206,8 +219,8 @@ function table.rawgetkeys(tbl)
     local keys = {}
 
     for k, v in pairs(tbl) do
-        if k and v and rawget(tbl,k) == v then
-            tinsert(keys,k)
+        if k and v and rawget(tbl, k) == v then
+            tinsert(keys, k)
         end
     end
 

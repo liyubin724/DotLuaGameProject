@@ -1,0 +1,23 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local FSMEventArgs = require('DotLua/ECS/Systems/FSM/EventArgs/FSMEventArgs')
+
+local FSMChangedEventArgs =
+    oop.class(
+    'DotLua.ECS.Systems.FSM.EventArgs.FSMChangedEventArgs',
+    function(self, oldState, newState,userdata)
+        self.oldState = oldState
+        self.newState = newState
+        self.userdata = userdata
+    end,
+    FSMEventArgs
+)
+
+function FSMChangedEventArgs:NewState()
+    return self.newState
+end
+
+function FSMChangedEventArgs:OldState()
+    return self.oldState
+end
+
+return FSMChangedEventArgs

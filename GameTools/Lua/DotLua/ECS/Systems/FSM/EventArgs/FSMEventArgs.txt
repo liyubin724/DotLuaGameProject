@@ -1,0 +1,15 @@
+local oop = require('DotLua/ECS/OOP/oop')
+
+local FSMEventArgs =
+    oop.class(
+    'DotLua.ECS.Systems.FSM.EventArgs.FSMEventArgs',
+    function(self)
+        self.userdata = nil
+    end
+)
+
+function FSMEventArgs:GetUserdata()
+    return self.userdata
+end
+
+return FSMEventArgs

@@ -1,0 +1,14 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local TimeUpdateSystem = require("DotLua/ECS/Systems/Update/TimeUpdateSystem")
+
+local FSMMatchineSystem =
+    oop.class(
+    'DotLua.ECS.Systems.FSM.FSMMatchineSystem',
+    function(self)
+        
+    end,
+    TimeUpdateSystem
+)
+
+
+return FSMMatchineSystem

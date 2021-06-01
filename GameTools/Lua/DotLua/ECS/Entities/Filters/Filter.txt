@@ -16,8 +16,8 @@ local Filter =
             self.contextNameDic = {}
             tforeach(
                 contextNames,
-                function(cn)
-                    self.contextNameDic[cn] = true
+                function(_,cName)
+                    self.contextNameDic[cName] = true
                 end
             )
         end

@@ -4,8 +4,8 @@ local System = oop.using('DotLua/ECS/Systems/System')
 local TimeUpdateSystem =
     oop.class(
     'DotLua.ECS.Systems.Update.TimeUpdateSystem',
-    function(self)
-        self.frequencyInTime = 0
+    function(self,frequencyInTime)
+        self.frequencyInTime = frequencyInTime or 0
         self.elapseDeltaTime = 0
     end,
     System
@@ -31,9 +31,9 @@ end
 function TimeUpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
     if self.isEnable then
         self.elapseDeltaTime = self.elapseDeltaTime + deltaTime
-        
+
         if self.elapseDeltaTime >= self.frequencyInTime then
-            if self.frequencyInTime<=0 then
+            if self.frequencyInTime <= 0 then
                 self:onTimeUpdate(self.elapseDeltaTime)
                 self.elapseDeltaTime = 0
             else

@@ -1,0 +1,125 @@
+local oop = require('DotLua/OOP/oop')
+
+local msqrt = math.sqrt
+local acos = math.cos
+
+local Vector2 =
+    oop.class(
+    'DotLua.Math.Vector2',
+    function(self, x, y)
+        self.x = x or 0
+        self.y = y or 0
+    end
+)
+
+function Vector2:Get()
+    return self.x, self.y
+end
+
+function Vector2:GetX()
+    return self.x
+end
+
+function Vector2:GetY()
+    return self.y
+end
+
+function Vector2:Set(newx, newy)
+    self.x = newx or 0
+    self.y = newy or 0
+end
+
+function Vector2:SetNormalize()
+end
+
+function Vector2:SqrMagnitude()
+    return self.x * self.x + self.y * self.y
+end
+
+function Vector2:Magnitude()
+    return msqrt(self.x * self.x + self.y * self.y)
+end
+
+function Vector2:Clone()
+    return Vector2(self.x, self.y)
+end
+
+function Vector2:CopyTo(targetVector2)
+    targetVector2:Set(self.x, self.y)
+end
+
+function Vector2:CopyFrom(sourceVector2)
+    self:Set(sourceVector2:Get())
+end
+
+Vector2.__add = function(a, b)
+end
+
+Vector2.__sub = function(a, b)
+end
+
+Vector2.__mul = function(a, b)
+end
+
+Vector2.__div = function(a, b)
+end
+
+Vector2.__len = function(a, b)
+end
+
+Vector2.__eq = function(vector2_a, vector2_b)
+    return vector2_a.x == vector2_b.x and vector2_a.y == vector2_b.y
+end
+
+Vector2.__tostring = function(a)
+end
+
+Vector2.zero = Vector2(0, 0)
+Vector2.one = Vector2(1, 1)
+
+Vector2.down = Vector2(0, -1)
+Vector2.left = Vector2(-1, 0)
+Vector2.right = Vector2(1, 0)
+Vector2.up = Vector2(0, 0)
+
+function Vector2.Normalize(v)
+
+end
+
+function Vector2.Angle(from, to)
+end
+
+function Vector2.ClampMagnitude(vector2, maxLength)
+end
+
+function Vector2.Distance(a, b)
+end
+
+function Vector2.Dot(lhs, rhs)
+end
+
+function Vector2.Lerp(a, b, t)
+end
+
+function Vector2.LerpUnclamped(a, b, t)
+end
+
+function Vector2.Max(lhs, rhs)
+end
+
+function Vector2.Min(lhs, rhs)
+end
+
+function Vector2.MoveTowards(current, target, maxDistanceDelta)
+end
+
+function Vector2.Reflect(inDirection, inNormal)
+end
+
+function Vector2.Scale(a, b)
+end
+
+function Vector2.SmoothDamp(current, target, refCurrentVelocity, smoothTime, maxSpeed, deltaTime)
+end
+
+return Vector2

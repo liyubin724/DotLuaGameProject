@@ -1,7 +1,6 @@
 local oop = require('DotLua/OOP/oop')
 local Filter = require("DotLua/ECS/Entities/Filters/Filter")
 
-local tforeach = table.foreach
 local tvalues = table.values
 
 local LogTag = 'Filter'

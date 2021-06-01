@@ -1,0 +1,44 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local GUID = require('DotLua/Generic/GUID')
+
+local FSMStatePlugin =
+    oop.class(
+    'DotLua.ECS.Systems.FSM.FSMStatePlugin',
+    function(self, stateToken)
+        self.stateToken = stateToken
+    end
+)
+
+function FSMStatePlugin:GetStateToken()
+    return self.stateToken
+end
+
+function FSMStatePlugin:OnEnter(enterEventArgs)
+
+end
+
+function FSMStatePlugin:OnExit(exitEventArgs)
+
+end
+
+function FSMStatePlugin:OnStateChanged(changedEventArgs)
+
+end
+
+function FSMStatePlugin:DoUpdate(deltaTime,unscaleDeltaTime)
+
+end
+
+function FSMStatePlugin:RegisterAction(actionToken)
+
+end
+
+function FSMStatePlugin:UnregisterAction(actionToken)
+
+end
+
+function FSMStatePlugin:ExecuteAction()
+
+end
+
+return FSMStatePlugin

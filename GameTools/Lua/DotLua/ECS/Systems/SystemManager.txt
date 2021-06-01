@@ -3,8 +3,10 @@ local System = require('DotLua/ECS/Systems/System')
 local SystemFuncNames = oop.using('DotLua/ECS/Systems/SystemFuncNames')
 
 local tinsert = table.insert
+local tremove = table.remove
 local tremovevalue = table.removevalue
 local tforeach = table.foreach
+local tclear = table.clear
 
 local LogTag = 'SystemMgr'
 
@@ -15,12 +17,17 @@ local SystemManager =
         self.isRunning = false
 
         self.systems = {}
+        self.systemClassToIndexDic = {}
 
         self.updateSystems = {}
         self.lateUpdateSystems = {}
         self.frameUpdateSystems = {}
     end
 )
+
+function SystemManager:HasSystemByClass(systemClass)
+    return self.systemClassToIndexDic[systemClass] ~= nil
+end
 
 function SystemManager:GetSystemByClass(systemClass)
     if oop.isDebug then
@@ -30,25 +37,31 @@ function SystemManager:GetSystemByClass(systemClass)
         end
     end
 
-    for _, system in ipairs(self.systems) do
-        if system:GetClass() == systemClass then
-            return system
-        end
+    local systemIndex = self.systemClassToIndexDic[systemClass]
+    if not systemIndex or type(systemIndex) ~= 'number' then
+        oop.warning(LogTag, 'the system is not found by the class')
+        return nil
     end
 
-    return nil
+    if systemIndex <= 0 or systemIndex > #self.systems then
+        oop.warning(LogTag, 'the system is not found by the class')
+        return nil
+    end
+
+    return self.systems[systemIndex]
 end
 
 function SystemManager:AddSystemByClass(systemClass)
-    if oop.isDebug then
-        if not systemClass or not oop.isclassof(systemClass, System) then
-            oop.error(LogTag, 'the param is not a subclass of System')
-            return
-        end
+    local system = self:GetSystemByClass(systemClass)
+    if system then
+        oop.warning(LogTag, 'the system has been added')
+        return system
     end
 
-    local system = systemClass()
+    system = systemClass()
+
     tinsert(self.systems, system)
+    self.systemClassToIndexDic[systemClass] = #self.systems
 
     if system[SystemFuncNames.FUNC_UPDATE] then
         tinsert(self.updateSystems, system)
@@ -75,13 +88,20 @@ function SystemManager:RemoveSystemByClass(systemClass)
         end
     end
 
-    local system = self:GetSystemByClass(systemClass)
-    if not system then
-        oop.error(LogTag, 'the system is not found by the class')
-        return
+    local systemIndex = self.systemClassToIndexDic[systemClass]
+    if not systemIndex or type(systemIndex) ~= 'number' then
+        oop.warning(LogTag, 'the system is not found by the class')
+        return nil
     end
 
-    tremovevalue(self.systems, system)
+    if systemIndex <= 0 or systemIndex > #self.systems then
+        oop.error(LogTag, 'the index of system is error')
+        return nil
+    end
+
+    local system = self.systems[systemIndex]
+    tremove(self.systems, systemIndex)
+
     if system[SystemFuncNames.FUNC_UPDATE] then
         tremovevalue(self.updateSystems, system)
     end
@@ -104,7 +124,7 @@ function SystemManager:Startup()
 
     tforeach(
         self.systems,
-        function(system)
+        function(_, system)
             system:DoActivate()
         end
     )
@@ -114,7 +134,7 @@ function SystemManager:Update(deltaTime, unscaleDeltaTime)
     if self.isRunning then
         tforeach(
             self.updateSystems,
-            function(system)
+            function(_, system)
                 system:DoUpdate(deltaTime, unscaleDeltaTime)
             end
         )
@@ -125,7 +145,7 @@ function SystemManager:LateUpdate(deltaTime, unscaleDeltaTime)
     if self.isRunning then
         tforeach(
             self.lateUpdateSystems,
-            function(system)
+            function(_, system)
                 system:DoLateUpdate(deltaTime, unscaleDeltaTime)
             end
         )
@@ -136,7 +156,7 @@ function SystemManager:FrameUpdate(deltaTime)
     if self.isRunning then
         tforeach(
             self.frameUpdateSystems,
-            function(system)
+            function(_, system)
                 system:DoFrameUpdate(deltaTime)
             end
         )
@@ -144,14 +164,30 @@ function SystemManager:FrameUpdate(deltaTime)
 end
 
 function SystemManager:Teardown()
+    if self.isRunning then
+        self.isRunning = false
+
+        tforeach(
+            self.systems,
+            function(_, system)
+                system:DoDeactivate()
+            end
+        )
+    end
+end
+
+function SystemManager:Destroy()
+    if self.isRunning then
+        self:Teardown()
+    end
+
     self.isRunning = false
 
-    tforeach(
-        self.systems,
-        function(system)
-            system:DoDeactivate()
-        end
-    )
+    tclear(self.systems)
+    tclear(self.updateSystems)
+    tclear(self.lateUpdateSystems)
+    tclear(self.frameUpdateSystems)
+    tclear(self.systemClassToIndexDic)
 end
 
 return SystemManager
