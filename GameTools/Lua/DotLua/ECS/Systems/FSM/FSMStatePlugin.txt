@@ -1,44 +1,66 @@
 local oop = require('DotLua/ECS/OOP/oop')
-local GUID = require('DotLua/Generic/GUID')
+local Delegate = require('DotLua/OOP/Delegate')
+
+local LogTag = 'FSMStatePlugin'
 
 local FSMStatePlugin =
     oop.class(
     'DotLua.ECS.Systems.FSM.FSMStatePlugin',
-    function(self, stateToken)
-        self.stateToken = stateToken
+    function(self, stateName)
+        self.stateName = stateName
+
+        self.nameToActionDic = {}
+
+        self.matchine = nil
     end
 )
 
-function FSMStatePlugin:GetStateToken()
-    return self.stateToken
+function FSMStatePlugin:GetStateName()
+    return self.stateName
 end
 
-function FSMStatePlugin:OnEnter(enterEventArgs)
+function FSMStatePlugin:DoInitilize(matchine)
+    self.matchine = matchine
 
+    local func = self['onInitilize']
+    if func then
+        func(self)
+    end
 end
 
-function FSMStatePlugin:OnExit(exitEventArgs)
-
+function FSMStatePlugin:DoEnter(fromStateName, ...)
 end
 
-function FSMStatePlugin:OnStateChanged(changedEventArgs)
-
+function FSMStatePlugin:DoExecute(deltaTime, unscaleDeltaTime)
 end
 
-function FSMStatePlugin:DoUpdate(deltaTime,unscaleDeltaTime)
-
+function FSMStatePlugin:DoExit(toStateName, ...)
 end
 
-function FSMStatePlugin:RegisterAction(actionToken)
-
+function FSMStatePlugin:DoChange(stateName, ...)
+    if self.stateName ~= stateName then
+        self.matchine:PerformTransitionTo(stateName, ...)
+    end
 end
 
-function FSMStatePlugin:UnregisterAction(actionToken)
+function FSMStatePlugin:RegisterAction(actionName, receiver, handleFunc)
+    if self.nameToActionDic[actionName] then
+        oop.error(LogTag, 'the action has been registered')
+        return
+    end
 
+    self.nameToActionDic[actionName] = Delegate(receiver, handleFunc)
 end
 
-function FSMStatePlugin:ExecuteAction()
+function FSMStatePlugin:UnregisterAction(actionName)
+    self.nameToActionDic[actionName] = nil
+end
 
+function FSMStatePlugin:ExecuteAction(actionName, ...)
+    local delegete = self.nameToActionDic[actionName]
+    if delegete then
+        delegete:ActionInvoke(...)
+    end
 end
 
 return FSMStatePlugin

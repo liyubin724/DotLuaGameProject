@@ -3,11 +3,17 @@ local oop = require('DotLua/OOP/oop')
 local Component =
     oop.class(
     'DotLua.Components.Component',
-    function(self)
+    function(self,name)
+        self.name = name
     end
 )
 
-function Component:Reset()
+function Component:GetName()
+    return self.name
+end
+
+function Component:DoRelease()
+    self.name = nil
 end
 
 return Component

@@ -1,11 +1,12 @@
 local oop = require('DotLua/OOP/oop')
 local Component = require('DotLua/ECS/Components/Component')
-local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
+local GUIDComponent = require('DotLua/ECS/Components/Basic/GUIDComponent')
 local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
 
 local tlength = table.length
 local tvalues = table.values
 local tclear = table.clear
+local tfindanyvalue = table.findanyvalue
 
 local LogTag = 'Entity'
 
@@ -17,7 +18,7 @@ local Entity =
 
         self.context = nil
 
-        self.componentClassToInstanceDic = {}
+        self.nameToComponnentDic = {}
 
         self.onComponentAddedEvent = oop.event()
         self.onComponentRemovedEvent = oop.event()
@@ -66,8 +67,8 @@ function Entity:DoRelease()
     self.onComponentReplacedEvent:Clear()
     self.onComponentModifiedEvent:Clear()
 
-    local values = tvalues(self.componentClassToInstanceDic)
-    tclear(self.componentClassToInstanceDic)
+    local values = tvalues(self.nameToComponnentDic)
+    tclear(self.nameToComponnentDic)
     for i = 1, #values, 1 do
         self.context:releaseComponent(values[i])
     end
@@ -118,11 +119,11 @@ function Entity:UnbindAllEvent()
 end
 
 function Entity:GetComponentCount()
-    return tlength(self.componentClassToInstanceDic)
+    return tlength(self.nameToComponnentDic)
 end
 
 function Entity:GetAllComponents()
-    return tvalues(self.componentClassToInstanceDic)
+    return tvalues(self.nameToComponnentDic)
 end
 
 function Entity:HasComponentByClass(componentClass)
@@ -133,12 +134,34 @@ function Entity:HasComponentByClass(componentClass)
         end
     end
 
-    return self.componentClassToInstanceDic[componentClass] ~= nil
+    return tfindanyvalue(
+        self.nameToComponnentDic,
+        function(v)
+            if v:GetBaseClass() == componentClass then
+                return true
+            end
+            return false
+        end
+    )
+end
+
+function Entity:HasComponentByName(name)
+    return self.nameToComponnentDic[name] ~= nil
 end
 
 function Entity:HasAllComponentsByClass(componentClasses)
     for _, componentClass in ipairs(componentClasses) do
         if not self:HasComponentByClass(componentClass) then
+            return false
+        end
+    end
+
+    return true
+end
+
+function Entity:HasAllComponentsByName(names)
+    for _, name in ipairs(names) do
+        if not self:HasComponentByClass(name) then
             return false
         end
     end
@@ -155,6 +178,17 @@ function Entity:HasAnyComponentByClass(componentClasses)
 
     return false
 end
+
+function Entity:HasAnyComponentByName(names)
+    for _, name in ipairs(names) do
+        if self:HasComponentByName(name) then
+            return true
+        end
+    end
+
+    return false
+end
+
 
 function Entity:GetComponentByClass(componentClass)
     if oop.isDebug then
@@ -277,7 +311,7 @@ function Entity:Destroy()
     self.context:DestroyEntity(self)
 end
 
-function Entity:MarkComponentModifiedByClass(componentClass,modifyTag)
+function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
     if not self.enable then
         oop.error(LogTag, 'The enity has been disabled')
         return

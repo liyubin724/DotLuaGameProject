@@ -156,7 +156,37 @@ function table.all(tbl, checkFunc)
     return true
 end
 
-function table.indexof(tbl, value)
+function table.findanyvalue(tbl,checkFunc)
+    if type(tbl) ~= 'table' then
+        return nil
+    end
+
+    for _, value in pairs(tbl) do
+        if checkFunc(value) then
+            return value
+        end
+    end
+
+    return nil
+end
+
+function table.findallvalue(tbl,checkFunc)
+    if type(tbl) ~= 'table' then
+        return nil
+    end
+
+    local result = {}
+
+    for _, value in pairs(tbl) do
+        if checkFunc(value) then
+            tinsert(result,value)
+        end
+    end
+
+    return result
+end
+
+function table.indexofvalue(tbl, value)
     if type(tbl) ~= 'table' then
         return -1
     end
@@ -169,7 +199,7 @@ function table.indexof(tbl, value)
     return -1
 end
 
-function table.keyof(tbl, value)
+function table.keyofvalue(tbl, value)
     if type(tbl) ~= 'table' then
         return nil
     end
