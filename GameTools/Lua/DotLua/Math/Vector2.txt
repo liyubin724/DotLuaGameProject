@@ -1,6 +1,6 @@
 local oop = require('DotLua/OOP/oop')
 
-local msqrt = math.sqrt
+local sqrt = math.sqrt
 local acos = math.cos
 
 local Vector2 =
@@ -29,15 +29,26 @@ function Vector2:Set(newx, newy)
     self.y = newy or 0
 end
 
-function Vector2:SetNormalize()
-end
-
-function Vector2:SqrMagnitude()
+function Vector2:GetSqrMagnitude()
     return self.x * self.x + self.y * self.y
 end
 
-function Vector2:Magnitude()
-    return msqrt(self.x * self.x + self.y * self.y)
+function Vector2:GetMagnitude()
+    return sqrt(self.x * self.x + self.y * self.y)
+end
+
+function Vector2:SetNormalize()
+    local magnitude = sqrt(self.x * self.x + self.y * self.y)
+
+    if magnitude > 1e-05 then
+        self.x = self.x / magnitude
+        self.y = self.y / magnitude
+    else
+        self.x = 0
+        self.y = 0
+    end
+
+    return self
 end
 
 function Vector2:Clone()
@@ -52,26 +63,229 @@ function Vector2:CopyFrom(sourceVector2)
     self:Set(sourceVector2:Get())
 end
 
+function Vector2:Add(v)
+    self.x = self.x + v.x
+    self.y = self.y + v.y
+
+    return self
+end
+
+function Vector2:Sub(v)
+    self.x = self.x - v.x
+    self.y = self.y - v.y
+
+    return self
+end
+
+function Vector2:Mul(n)
+    self.x = self.x * n
+    self.y = self.y * n
+
+    return self
+end
+
+function Vector2:Div(n)
+    self.x = self.x / n
+    self.y = self.y / n
+
+    return self
+end
+
 Vector2.__add = function(a, b)
+    return Vector2(a.x + b.x, a.y + b.y)
 end
 
 Vector2.__sub = function(a, b)
+    return Vector2(a.x - b.x, a.y - b.y)
 end
 
 Vector2.__mul = function(a, b)
+    return Vector2(a.x * b, a.y * b)
 end
 
 Vector2.__div = function(a, b)
+    return Vector2(a.x / b, a.y / b)
 end
 
-Vector2.__len = function(a, b)
+Vector2.__unm = function(v)
+    return Vector2(-v.x, -v.y)
 end
 
-Vector2.__eq = function(vector2_a, vector2_b)
-    return vector2_a.x == vector2_b.x and vector2_a.y == vector2_b.y
+Vector2.__eq = function(a, b)
+    return a.x == b.x and a.y == b.y
 end
 
 Vector2.__tostring = function(a)
+    return string.format('{x = %d,y = %d}', a.x, a.y)
+end
+
+function Vector2.Normalize(v)
+    local x = v.x
+    local y = v.y
+    local magnitude = sqrt(x * x + y * y)
+
+    if magnitude > 1e-05 then
+        x = x / magnitude
+        y = y / magnitude
+    else
+        x = 0
+        y = 0
+    end
+
+    return Vector2(x, y)
+end
+
+function Vector2.Angle(from, to)
+    local x1, y1 = from.x, from.y
+    local d = sqrt(x1 * x1 + y1 * y1)
+
+    if d > 1e-5 then
+        x1 = x1 / d
+        y1 = y1 / d
+    else
+        x1, y1 = 0, 0
+    end
+
+    local x2, y2 = to.x, to.y
+    d = sqrt(x2 * x2 + y2 * y2)
+
+    if d > 1e-5 then
+        x2 = x2 / d
+        y2 = y2 / d
+    else
+        x2, y2 = 0, 0
+    end
+
+    d = x1 * x2 + y1 * y2
+
+    if d < -1 then
+        d = -1
+    elseif d > 1 then
+        d = 1
+    end
+
+    return acos(d) * 57.29578
+end
+
+function Vector2.Magnaitude(v)
+    return sqrt(v.x * v.x + v.y * v.y)
+end
+
+function Vector2.ClampMagnitude(v, maxLength)
+    local x = v.x
+    local y = v.y
+    local sqrMag = x * x + y * y
+
+    if sqrMag > maxLength * maxLength then
+        local mag = maxLength / sqrt(sqrMag)
+        x = x * mag
+        y = y * mag
+        return Vector2(x, y)
+    end
+
+    return Vector2(x, y)
+end
+
+function Vector2.Distance(a, b)
+    return sqrt((a.x - b.x) ^ 2 + (a.y - b.y) ^ 2)
+end
+
+function Vector2.Dot(lhs, rhs)
+    return lhs.x * rhs.x + lhs.y * rhs.y
+end
+
+function Vector2.Lerp(a, b, t)
+    if t < 0 then
+        t = 0
+    elseif t > 1 then
+        t = 1
+    end
+
+    return Vector2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t)
+end
+
+function Vector2.LerpUnclamped(a, b, t)
+    return Vector2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t)
+end
+
+function Vector2.Max(a, b)
+    return Vector2(math.max(a.x, b.x), math.max(a.y, b.y))
+end
+
+function Vector2.Min(a, b)
+    return Vector2(math.min(a.x, b.x), math.min(a.y, b.y))
+end
+
+function Vector2.MoveTowards(current, target, maxDistanceDelta)
+    local cx = current.x
+    local cy = current.y
+    local x = target.x - cx
+    local y = target.y - cy
+    local s = x * x + y * y
+
+    if s > maxDistanceDelta * maxDistanceDelta and s ~= 0 then
+        s = maxDistanceDelta / sqrt(s)
+        return setmetatable({x = cx + x * s, y = cy + y * s}, Vector2)
+    end
+
+    return Vector2(target.x, target.y)
+end
+
+function Vector2.Reflect(dir, normal)
+    local dx = dir.x
+    local dy = dir.y
+    local nx = normal.x
+    local ny = normal.y
+    local s = -2 * (dx * nx + dy * ny)
+
+    return Vector2(s * nx + dx, s * ny + dy)
+end
+
+function Vector2.Scale(a, b)
+    return Vector2(a.x * b.x, a.y * b.y)
+end
+
+function Vector2.SmoothDamp(current, target, Velocity, smoothTime, maxSpeed, deltaTime)
+    maxSpeed = maxSpeed or math.huge
+    smoothTime = math.max(0.0001, smoothTime)
+
+    local num = 2 / smoothTime
+    local num2 = num * deltaTime
+    num2 = 1 / (1 + num2 + 0.48 * num2 * num2 + 0.235 * num2 * num2 * num2)
+
+    local tx = target.x
+    local ty = target.y
+    local cx = current.x
+    local cy = current.y
+    local vecx = cx - tx
+    local vecy = cy - ty
+    local m = vecx * vecx + vecy * vecy
+    local n = maxSpeed * smoothTime
+
+    if m > n * n then
+        m = n / sqrt(m)
+        vecx = vecx * m
+        vecy = vecy * m
+    end
+
+    m = Velocity.x
+    n = Velocity.y
+
+    local vec3x = (m + num * vecx) * deltaTime
+    local vec3y = (n + num * vecy) * deltaTime
+    Velocity.x = (m - num * vec3x) * num2
+    Velocity.y = (n - num * vec3y) * num2
+    m = cx - vecx + (vecx + vec3x) * num2
+    n = cy - vecy + (vecy + vec3y) * num2
+
+    if (tx - cx) * (m - tx) + (ty - cy) * (n - ty) > 0 then
+        m = tx
+        n = ty
+        Velocity.x = 0
+        Velocity.y = 0
+    end
+
+    return Vector2(m, n), Velocity
 end
 
 Vector2.zero = Vector2(0, 0)
@@ -81,45 +295,5 @@ Vector2.down = Vector2(0, -1)
 Vector2.left = Vector2(-1, 0)
 Vector2.right = Vector2(1, 0)
 Vector2.up = Vector2(0, 0)
-
-function Vector2.Normalize(v)
-
-end
-
-function Vector2.Angle(from, to)
-end
-
-function Vector2.ClampMagnitude(vector2, maxLength)
-end
-
-function Vector2.Distance(a, b)
-end
-
-function Vector2.Dot(lhs, rhs)
-end
-
-function Vector2.Lerp(a, b, t)
-end
-
-function Vector2.LerpUnclamped(a, b, t)
-end
-
-function Vector2.Max(lhs, rhs)
-end
-
-function Vector2.Min(lhs, rhs)
-end
-
-function Vector2.MoveTowards(current, target, maxDistanceDelta)
-end
-
-function Vector2.Reflect(inDirection, inNormal)
-end
-
-function Vector2.Scale(a, b)
-end
-
-function Vector2.SmoothDamp(current, target, refCurrentVelocity, smoothTime, maxSpeed, deltaTime)
-end
 
 return Vector2
