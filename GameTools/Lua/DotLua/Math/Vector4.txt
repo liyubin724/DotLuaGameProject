@@ -195,7 +195,11 @@ Vector4.__eq = function(va, vb)
     return delta < 1e-10
 end
 
-Vector4.zero = Vector4(0, 0, 0, 0)
-Vector4.one = Vector4(1, 1, 1, 1)
+Vector4.zero = function()
+    return Vector4(0, 0, 0, 0)
+end
+Vector4.one = function()
+    return Vector4(1, 1, 1, 1)
+end
 
 return Vector4

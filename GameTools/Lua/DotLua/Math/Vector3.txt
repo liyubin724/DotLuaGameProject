@@ -7,13 +7,8 @@ local sqrt = math.sqrt
 local max = math.max
 local min = math.min
 local clamp = Mathf.Clamp
-local cos = math.cos
 local sin = math.sin
 local abs = math.abs
-local sign = Mathf.Sign
-local setmetatable = setmetatable
-local rawset = rawset
-local rawget = rawget
 local type = type
 
 local rad2Deg = 57.295779513082
@@ -75,13 +70,73 @@ function Vector3:SetNormalize()
     return self
 end
 
-function Vector3:ClampMagnitude(maxLength)
-    if self:SqrMagnitude() > (maxLength * maxLength) then
-        self:SetNormalize()
-        self:Mul(maxLength)
+function Vector3:Mul(q)
+    if type(q) == 'number' then
+        self.x = self.x * q
+        self.y = self.y * q
+        self.z = self.z * q
+    else
+        self:MulQuat(q)
     end
 
     return self
+end
+
+function Vector3:Div(d)
+    self.x = self.x / d
+    self.y = self.y / d
+    self.z = self.z / d
+
+    return self
+end
+
+function Vector3:Add(vb)
+    self.x = self.x + vb.x
+    self.y = self.y + vb.y
+    self.z = self.z + vb.z
+
+    return self
+end
+
+function Vector3:Sub(vb)
+    self.x = self.x - vb.x
+    self.y = self.y - vb.y
+    self.z = self.z - vb.z
+
+    return self
+end
+
+function Vector3:MulQuat(quat)
+    local num = quat.x * 2
+    local num2 = quat.y * 2
+    local num3 = quat.z * 2
+    local num4 = quat.x * num
+    local num5 = quat.y * num2
+    local num6 = quat.z * num3
+    local num7 = quat.x * num2
+    local num8 = quat.x * num3
+    local num9 = quat.y * num3
+    local num10 = quat.w * num
+    local num11 = quat.w * num2
+    local num12 = quat.w * num3
+
+    local x = (((1 - (num5 + num6)) * self.x) + ((num7 - num12) * self.y)) + ((num8 + num11) * self.z)
+    local y = (((num7 + num12) * self.x) + ((1 - (num4 + num6)) * self.y)) + ((num9 - num10) * self.z)
+    local z = (((num8 - num11) * self.x) + ((num9 + num10) * self.y)) + ((1 - (num4 + num5)) * self.z)
+
+    self:Set(x, y, z)
+    return self
+end
+
+
+function Vector3.ClampMagnitude(v, maxLength)
+    if v:GetSqrMagnitude() > (maxLength * maxLength) then
+        local r = Vector3.Normalize(v)
+        r:Mul(maxLength)
+        return r
+    end
+
+    return Vector3(0, 0)
 end
 
 function Vector3.Distance(va, vb)
@@ -116,9 +171,8 @@ function Vector3.Normalize(v)
     return Vector3(0, 0, 0)
 end
 
-local dot = Vector3.Dot
 function Vector3.Angle(from, to)
-    return acos(clamp(dot(from:Normalize(), to:Normalize()), -1, 1)) * rad2Deg
+    return acos(clamp(Vector3.Dot(from:Normalize(), to:Normalize()), -1, 1)) * rad2Deg
 end
 
 function Vector3.OrthoNormalize(va, vb, vc)
@@ -195,7 +249,7 @@ function Vector3.RotateTowards(current, target, maxRadiansDelta, maxMagnitudeDel
     if len1 > 1e-6 and len2 > 1e-6 then
         local from = current / len1
         local to = target / len2
-        local cosom = dot(from, to)
+        local cosom = Vector3.Dot(from, to)
 
         if cosom > 1 - 1e-6 then
             return Vector3.MoveTowards(current, target, maxMagnitudeDelta)
@@ -263,7 +317,7 @@ function Vector3:Equals(other)
 end
 
 function Vector3.Reflect(inDirection, inNormal)
-    local num = -2 * dot(inNormal, inDirection)
+    local num = -2 * Vector3.Dot(inNormal, inDirection)
     inNormal = inNormal * num
     inNormal:Add(inDirection)
     return inNormal
@@ -276,7 +330,7 @@ function Vector3.Project(vector, onNormal)
         return Vector3(0, 0, 0)
     end
 
-    local num2 = dot(vector, onNormal)
+    local num2 = Vector3.Dot(vector, onNormal)
     local v3 = onNormal:Clone()
     v3:Mul(num2 / num)
     return v3
@@ -331,64 +385,6 @@ function Vector3.Slerp(from, to, t)
     return v2
 end
 
-function Vector3:Mul(q)
-    if type(q) == 'number' then
-        self.x = self.x * q
-        self.y = self.y * q
-        self.z = self.z * q
-    else
-        self:MulQuat(q)
-    end
-
-    return self
-end
-
-function Vector3:Div(d)
-    self.x = self.x / d
-    self.y = self.y / d
-    self.z = self.z / d
-
-    return self
-end
-
-function Vector3:Add(vb)
-    self.x = self.x + vb.x
-    self.y = self.y + vb.y
-    self.z = self.z + vb.z
-
-    return self
-end
-
-function Vector3:Sub(vb)
-    self.x = self.x - vb.x
-    self.y = self.y - vb.y
-    self.z = self.z - vb.z
-
-    return self
-end
-
-function Vector3:MulQuat(quat)
-    local num = quat.x * 2
-    local num2 = quat.y * 2
-    local num3 = quat.z * 2
-    local num4 = quat.x * num
-    local num5 = quat.y * num2
-    local num6 = quat.z * num3
-    local num7 = quat.x * num2
-    local num8 = quat.x * num3
-    local num9 = quat.y * num3
-    local num10 = quat.w * num
-    local num11 = quat.w * num2
-    local num12 = quat.w * num3
-
-    local x = (((1 - (num5 + num6)) * self.x) + ((num7 - num12) * self.y)) + ((num8 + num11) * self.z)
-    local y = (((num7 + num12) * self.x) + ((1 - (num4 + num6)) * self.y)) + ((num9 - num10) * self.z)
-    local z = (((num8 - num11) * self.x) + ((num9 + num10) * self.y)) + ((1 - (num4 + num5)) * self.z)
-
-    self:Set(x, y, z)
-    return self
-end
-
 function Vector3.AngleAroundAxis(from, to, axis)
     from = from - Vector3.Project(from, axis)
     to = to - Vector3.Project(to, axis)
@@ -432,14 +428,17 @@ Vector3.__eq = function(a, b)
     return delta < 1e-10
 end
 
-Vector3.zero = Vector3(0, 0, 0)
-Vector3.one = Vector3(1, 1, 1)
+Vector3.magnitude = Vector3.Magnitude
+Vector3.normalized = Vector3.Normalize
+Vector3.sqrMagnitude = Vector3.SqrMagnitude
 
-Vector3.up = Vector3(0, 1, 0)
-Vector3.down = Vector3(0, -1, 0)
-Vector3.right = Vector3(1, 0, 0)
-Vector3.left = Vector3(-1, 0, 0)
-Vector3.forward = Vector3(0, 0, 1)
-Vector3.back = Vector3(0, 0, -1)
+Vector3.zero = function() return Vector3(0, 0, 0) end
+Vector3.one = function() return Vector3(1, 1, 1) end
+Vector3.up = function() return Vector3(0, 1, 0) end
+Vector3.down = function() return Vector3(0, -1, 0) end
+Vector3.right = function() return Vector3(1, 0, 0) end
+Vector3.left = function() return Vector3(-1, 0, 0) end
+Vector3.forward = function() return Vector3(0, 0, 1) end
+Vector3.back = function() return Vector3(0, 0, -1) end
 
 return Vector3

@@ -1,7 +1,8 @@
 local oop = require('DotLua/OOP/oop')
 
 local sqrt = math.sqrt
-local acos = math.cos
+local math = math
+local acos = math.acos
 
 local Vector2 =
     oop.class(
@@ -51,72 +52,36 @@ function Vector2:SetNormalize()
     return self
 end
 
+function Vector2:Div(d)
+    self.x = self.x / d
+    self.y = self.y / d
+
+    return self
+end
+
+function Vector2:Mul(d)
+    self.x = self.x * d
+    self.y = self.y * d
+
+    return self
+end
+
+function Vector2:Add(b)
+    self.x = self.x + b.x
+    self.y = self.y + b.y
+
+    return self
+end
+
+function Vector2:Sub(b)
+    self.x = self.x - b.x
+    self.y = self.y - b.y
+
+    return
+end
+
 function Vector2:Clone()
     return Vector2(self.x, self.y)
-end
-
-function Vector2:CopyTo(targetVector2)
-    targetVector2:Set(self.x, self.y)
-end
-
-function Vector2:CopyFrom(sourceVector2)
-    self:Set(sourceVector2:Get())
-end
-
-function Vector2:Add(v)
-    self.x = self.x + v.x
-    self.y = self.y + v.y
-
-    return self
-end
-
-function Vector2:Sub(v)
-    self.x = self.x - v.x
-    self.y = self.y - v.y
-
-    return self
-end
-
-function Vector2:Mul(n)
-    self.x = self.x * n
-    self.y = self.y * n
-
-    return self
-end
-
-function Vector2:Div(n)
-    self.x = self.x / n
-    self.y = self.y / n
-
-    return self
-end
-
-Vector2.__add = function(a, b)
-    return Vector2(a.x + b.x, a.y + b.y)
-end
-
-Vector2.__sub = function(a, b)
-    return Vector2(a.x - b.x, a.y - b.y)
-end
-
-Vector2.__mul = function(a, b)
-    return Vector2(a.x * b, a.y * b)
-end
-
-Vector2.__div = function(a, b)
-    return Vector2(a.x / b, a.y / b)
-end
-
-Vector2.__unm = function(v)
-    return Vector2(-v.x, -v.y)
-end
-
-Vector2.__eq = function(a, b)
-    return a.x == b.x and a.y == b.y
-end
-
-Vector2.__tostring = function(a)
-    return string.format('{x = %d,y = %d}', a.x, a.y)
 end
 
 function Vector2.Normalize(v)
@@ -133,6 +98,10 @@ function Vector2.Normalize(v)
     end
 
     return Vector2(x, y)
+end
+
+function Vector2.Dot(lhs, rhs)
+    return lhs.x * rhs.x + lhs.y * rhs.y
 end
 
 function Vector2.Angle(from, to)
@@ -167,31 +136,26 @@ function Vector2.Angle(from, to)
     return acos(d) * 57.29578
 end
 
-function Vector2.Magnaitude(v)
+function Vector2.Magnitude(v)
     return sqrt(v.x * v.x + v.y * v.y)
 end
 
-function Vector2.ClampMagnitude(v, maxLength)
-    local x = v.x
-    local y = v.y
-    local sqrMag = x * x + y * y
+function Vector2.SqrMagnitude(v)
+    return v.x * v.x + v.y * v.y
+end
 
-    if sqrMag > maxLength * maxLength then
-        local mag = maxLength / sqrt(sqrMag)
-        x = x * mag
-        y = y * mag
-        return Vector2(x, y)
-    end
+function Vector2.Reflect(dir, normal)
+    local dx = dir.x
+    local dy = dir.y
+    local nx = normal.x
+    local ny = normal.y
+    local s = -2 * (dx * nx + dy * ny)
 
-    return Vector2(x, y)
+    return Vector2(s * nx + dx, s * ny + dy)
 end
 
 function Vector2.Distance(a, b)
     return sqrt((a.x - b.x) ^ 2 + (a.y - b.y) ^ 2)
-end
-
-function Vector2.Dot(lhs, rhs)
-    return lhs.x * rhs.x + lhs.y * rhs.y
 end
 
 function Vector2.Lerp(a, b, t)
@@ -208,14 +172,6 @@ function Vector2.LerpUnclamped(a, b, t)
     return Vector2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t)
 end
 
-function Vector2.Max(a, b)
-    return Vector2(math.max(a.x, b.x), math.max(a.y, b.y))
-end
-
-function Vector2.Min(a, b)
-    return Vector2(math.min(a.x, b.x), math.min(a.y, b.y))
-end
-
 function Vector2.MoveTowards(current, target, maxDistanceDelta)
     local cx = current.x
     local cy = current.y
@@ -225,24 +181,25 @@ function Vector2.MoveTowards(current, target, maxDistanceDelta)
 
     if s > maxDistanceDelta * maxDistanceDelta and s ~= 0 then
         s = maxDistanceDelta / sqrt(s)
-        return setmetatable({x = cx + x * s, y = cy + y * s}, Vector2)
+        return Vector2(cx + x * s, cy + y * s)
     end
 
     return Vector2(target.x, target.y)
 end
 
-function Vector2.Reflect(dir, normal)
-    local dx = dir.x
-    local dy = dir.y
-    local nx = normal.x
-    local ny = normal.y
-    local s = -2 * (dx * nx + dy * ny)
+function Vector2.ClampMagnitude(v, maxLength)
+    local x = v.x
+    local y = v.y
+    local sqrMag = x * x + y * y
 
-    return Vector2(s * nx + dx, s * ny + dy)
-end
+    if sqrMag > maxLength * maxLength then
+        local mag = maxLength / sqrt(sqrMag)
+        x = x * mag
+        y = y * mag
+        return Vector2(x, y)
+    end
 
-function Vector2.Scale(a, b)
-    return Vector2(a.x * b.x, a.y * b.y)
+    return Vector2(x, y)
 end
 
 function Vector2.SmoothDamp(current, target, Velocity, smoothTime, maxSpeed, deltaTime)
@@ -288,12 +245,63 @@ function Vector2.SmoothDamp(current, target, Velocity, smoothTime, maxSpeed, del
     return Vector2(m, n), Velocity
 end
 
-Vector2.zero = Vector2(0, 0)
-Vector2.one = Vector2(1, 1)
+function Vector2.Max(a, b)
+    return Vector2(math.max(a.x, b.x), math.max(a.y, b.y))
+end
 
-Vector2.down = Vector2(0, -1)
-Vector2.left = Vector2(-1, 0)
-Vector2.right = Vector2(1, 0)
-Vector2.up = Vector2(0, 0)
+function Vector2.Min(a, b)
+    return Vector2(math.min(a.x, b.x), math.min(a.y, b.y))
+end
+
+function Vector2.Scale(a, b)
+    return Vector2(a.x * b.x, a.y * b.y)
+end
+
+Vector2.__tostring = function(self)
+    return string.format('(%f,%f)', self.x, self.y)
+end
+
+Vector2.__div = function(a, d)
+    if type(d) == 'number' then
+        return Vector2(a.x / d, a.y / d)
+    else
+        return Vector2(a / d.x, a / d.y)
+    end
+end
+
+Vector2.__mul = function(a, d)
+    if type(d) == 'number' then
+        return Vector2(a.x * d, a.y * d)
+    else
+        return Vector2(a * d.x, a * d.y)
+    end
+end
+
+Vector2.__add = function(a, b)
+    return Vector2(a.x + b.x, a.y + b.y)
+end
+
+Vector2.__sub = function(a, b)
+    return Vector2(a.x - b.x, a.y - b.y)
+end
+
+Vector2.__unm = function(v)
+    return Vector2(-v.x, -v.y)
+end
+
+Vector2.__eq = function(a, b)
+    return ((a.x - b.x) ^ 2 + (a.y - b.y) ^ 2) < 9.999999e-11
+end
+
+Vector2.magnitude = Vector2.Magnitude
+Vector2.normalized = Vector2.Normalize
+Vector2.sqrMagnitude = Vector2.SqrMagnitude
+
+Vector2.zero = function() return Vector2(0, 0) end
+Vector2.one = function() return Vector2(1, 1) end
+Vector2.down = function() return Vector2(0, -1) end
+Vector2.left = function() return Vector2(-1, 0) end
+Vector2.right = function() return Vector2(1, 0) end
+Vector2.up = function() return Vector2(0, 0) end
 
 return Vector2

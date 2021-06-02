@@ -1,8 +1,8 @@
-local oop = require("DotLua/OOP/oop")
+local oop = require('DotLua/OOP/oop')
 
-local abs = math.abs
+local math = math
 local floor = math.floor
-
+local abs = math.abs
 local Mathf = {}
 
 Mathf.Deg2Rad = math.rad(1)
@@ -16,22 +16,30 @@ Mathf.Abs = math.abs
 Mathf.Acos = math.acos
 Mathf.Asin = math.asin
 Mathf.Atan = math.atan
-Mathf.Atan2 = math.atan2
 Mathf.Ceil = math.ceil
 Mathf.Cos = math.cos
 Mathf.Exp = math.exp
 Mathf.Floor = math.floor
 Mathf.Log = math.log
-Mathf.Log10 = math.log10
 Mathf.Max = math.max
 Mathf.Min = math.min
-Mathf.Pow = math.pow
 Mathf.Sin = math.sin
 Mathf.Sqrt = math.sqrt
 Mathf.Tan = math.tan
 Mathf.Deg = math.deg
 Mathf.Rad = math.rad
 Mathf.Random = math.random
+
+if not math.pow then
+    Mathf.Pow = function(x, y)
+        return x ^ y
+    end
+else
+    Mathf.Pow = math.pow
+end
+
+Mathf.Log10 = math.log10
+Mathf.Atan2 = math.atan2
 
 function Mathf.Approximately(a, b)
     return abs(b - a) < math.max(1e-6 * math.max(abs(a), abs(b)), 1.121039e-44)
@@ -80,7 +88,7 @@ function Mathf.Gamma(value, absmax, gamma)
         return (not flag) and num or -num
     end
 
-    local num2 = math.pow(num / absmax, gamma) * absmax
+    local num2 = Mathf.Pow(num / absmax, gamma) * absmax
     return (not flag) and num2 or -num2
 end
 
@@ -172,6 +180,7 @@ end
 
 function Mathf.SmoothDamp(current, target, currentVelocity, smoothTime, maxSpeed, deltaTime)
     maxSpeed = maxSpeed or Mathf.Infinity
+    deltaTime = deltaTime or 0
     smoothTime = Mathf.Max(0.0001, smoothTime)
     local num = 2 / smoothTime
     local num2 = num * deltaTime
@@ -194,6 +203,7 @@ function Mathf.SmoothDamp(current, target, currentVelocity, smoothTime, maxSpeed
 end
 
 function Mathf.SmoothDampAngle(current, target, currentVelocity, smoothTime, maxSpeed, deltaTime)
+    deltaTime = deltaTime or 0
     maxSpeed = maxSpeed or Mathf.Infinity
     target = current + Mathf.DeltaAngle(current, target)
     return Mathf.SmoothDamp(current, target, currentVelocity, smoothTime, maxSpeed, deltaTime)
