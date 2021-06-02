@@ -24,37 +24,26 @@ function DetailReactiveTimeSystem:onDeactivate()
 end
 
 function DetailReactiveTimeSystem:onTimeUpdate(deltaTime)
-    local addedEntities = self.detailCollector:GetAddedEntities()
-    if addedEntities and #(addedEntities) > 0 then
-        for _, data in ipairs(addedEntities) do
-            self:onEntityAdded(data, deltaTime)
+    local addedDetails = self.detailCollector:GetAddedDetails()
+    if addedDetails and #(addedDetails) > 0 then
+        for _, data in ipairs(addedDetails) do
+            self:onAddedDetailUpdate(deltaTime, data)
         end
     end
 
-    local removedEntities = self.detailCollector:GetRemovedEntities()
-    if removedEntities and #(removedEntities) > 0 then
-        for _, data in ipairs(removedEntities) do
-            self:onEntityRemoved(data, deltaTime)
-        end
-    end
-
-    local modifiedEntities = self.detailCollector:GetModifiedEntities()
-    if modifiedEntities and #(modifiedEntities) > 0 then
-        for _, data in ipairs(modifiedEntities) do
-            self:onEnityModified(data, deltaTime)
+    local removedDetails = self.detailCollector:GetRemovedDetails()
+    if removedDetails and #(removedDetails) > 0 then
+        for _, data in ipairs(removedDetails) do
+            self:onRemovedDetailUpdate(deltaTime, data)
         end
     end
 end
 
-function DetailReactiveTimeSystem:onEntityAdded(detailData, deltaTime)
+function DetailReactiveTimeSystem:onAddedDetailUpdate(deltaTime, data)
     oop.error(LogTag, 'this is a abstract class')
 end
 
-function DetailReactiveTimeSystem:onEntityRemoved(detailData, deltaTime)
-    oop.error(LogTag, 'this is a abstract class')
-end
-
-function DetailReactiveTimeSystem:onEnityModified(detailData, deltaTime)
+function DetailReactiveTimeSystem:onRemovedDetailUpdate(deltaTime, data)
     oop.error(LogTag, 'this is a abstract class')
 end
 

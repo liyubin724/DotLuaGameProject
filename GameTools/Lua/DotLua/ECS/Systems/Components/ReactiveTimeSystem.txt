@@ -24,18 +24,29 @@ function ReactiveTimeSystem:onDeactivate()
 end
 
 function ReactiveTimeSystem:onTimeUpdate(deltaTime)
-    local entities = self.collector:GetCollectedEntities()
+    local entities = self.collector:GetCollectedAddedEntities()
 
     if entities and #entities > 0 then
         for _, entity in ipairs(entities) do
-            self:onEntityUpdate(entity, deltaTime)
+            self:onEntityAddedUpdate(deltaTime, entity)
+        end
+    end
+
+    entities = self.collector:GetCollectedRemovedEntities()
+    if entities and #entities > 0 then
+        for _, entity in ipairs(entities) do
+            self:onEntityRemovedUpdate(deltaTime, entity)
         end
     end
 
     self.collector:ClearCollectedEntities()
 end
 
-function ReactiveTimeSystem:onEntityUpdate(entity, deltaTime)
+function ReactiveTimeSystem:onEntityAddedUpdate(deltaTime, entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+function ReactiveTimeSystem:onEntityRemovedUpdate(deltaTime, entity)
     oop.error(LogTag, 'this is a abstract class')
 end
 

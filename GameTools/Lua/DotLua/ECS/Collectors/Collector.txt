@@ -8,11 +8,21 @@ local Collector =
     oop.class(
     'DotLua.ECS.Collectors.Collector',
     function(self, group, groupEvents)
-        self.collectedEntities = {}
-        self.group = group
-        self.groupEvents = groupEvents
-
         self.isEnable = false
+
+        self.group = group
+        self.groupEventEnableDic = {}
+        if not groupEvents then
+            for _, groupEvent in ipairs(groupEvents) do
+                self.groupEventEnableDic[groupEvent] = true
+            end
+        else
+            self.groupEventEnableDic[GroupEvent.EntityAdded] = true
+            self.groupEventEnableDic[GroupEvent.EntityRemoved] = false
+        end
+
+        self.collectedAddedEntities = {}
+        self.collectedRemovedEntities = {}
     end
 )
 
@@ -20,59 +30,46 @@ function Collector:IsEnable()
     return self.isEnable
 end
 
-function Collector:GetCollectedEntityCount()
-    return #self.collectedEntities
+function Collector:GetCollectedAddedEntityCount()
+    return #self.collectedAddedEntities
 end
 
-function Collector:GetCollectedEntities()
-    return self.collectedEntities
+function Collector:GetCollectedAddedEntities()
+    return self.collectedAddedEntities
+end
+
+function Collector:ClearCollectedAddedEntities()
+    tclear(self.collectedAddedEntities)
+end
+
+function Collector:GetCollectedRemovedEntityCount()
+    return #self.collectedRemovedEntities
+end
+
+function Collector:GetCollectedRemovedEntities()
+    return self.collectedRemovedEntities
+end
+
+function Collector:ClearCollectedRemovedEntities()
+    tclear(self.collectedRemovedEntities)
 end
 
 function Collector:ClearCollectedEntities()
-    tclear(self.collectedEntities)
+    tclear(self.collectedAddedEntities)
+    tclear(self.collectedRemovedEntities)
 end
 
 function Collector:Activate()
-    if self.groupEvents and #self.groupEvents > 0 and self.group then
-        local addedFunc = nil
-        local removedFunc = nil
-        local modifiedFunc = nil
-
-        for _, eventType in ipairs(self.groupEvents) do
-            if eventType == GroupEvent.EntityRemoved then
-                addedFunc = self.onGroupChanged
-            elseif eventType == GroupEvent.EntityAdded then
-                removedFunc = self.onGroupChanged
-            elseif eventType == GroupEvent.EntityModified then
-                modifiedFunc = self.onGroupChanged
-            end
-        end
-
+    if self.group and not self.isEnable then
         self.isEnable = true
-
-        self.group:BindEvent(self, addedFunc, removedFunc, modifiedFunc)
+        self.group:BindEvent(self, self.onGroupChanged)
     end
 end
 
 function Collector:Deactivate()
-    if self.groupEvents and #self.groupEvents > 0 and self.group then
-        local addedFunc = nil
-        local removedFunc = nil
-        local modifiedFunc = nil
-
-        for _, eventType in ipairs(self.groupEvents) do
-            if eventType == GroupEvent.EntityRemoved then
-                addedFunc = self.onGroupChanged
-            elseif eventType == GroupEvent.EntityAdded then
-                removedFunc = self.onGroupChanged
-            elseif eventType == GroupEvent.EntityModified then
-                modifiedFunc = self.onGroupChanged
-            end
-        end
-
+    if self.group and self.isEnable then
         self.isEnable = false
-
-        self.group:UnbindEvent(self, addedFunc, removedFunc, modifiedFunc)
+        self.group:UnbindEvent(self, self.onGroupChanged)
     end
 end
 
@@ -86,14 +83,24 @@ function Collector:Destroy()
     self.groupEvents = nil
 end
 
-function Collector:onGroupChanged(entity, _, _, _)
-    for _, e in ipairs(self.collectedEntities) do
-        if e == entity then
-            return
+function Collector:onGroupChanged(groupEvent, entity)
+    if self.groupEventEnableDic[groupEvent] then
+        local list
+        if groupEvent == GroupEvent.EntityAdded then
+            list = self.collectedAddedEntities
+        elseif groupEvent == GroupEvent.EntityRemoved then
+            list = self.collectedRemovedEntities
+        end
+        if not list then
+            for _, e in ipairs(list) do
+                if e == entity then
+                    return
+                end
+            end
+
+            tinsert(list, entity)
         end
     end
-
-    tinsert(self.collectedEntities, entity)
 end
 
 return Collector

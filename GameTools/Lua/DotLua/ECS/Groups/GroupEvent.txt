@@ -6,7 +6,6 @@ local GroupEvent =
     {
         EntityAdded = 1,
         EntityRemoved = 2,
-        EntityModified = 3
     }
 )
 

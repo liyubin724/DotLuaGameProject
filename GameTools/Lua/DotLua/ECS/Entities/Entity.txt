@@ -2,6 +2,7 @@ local oop = require('DotLua/OOP/oop')
 local Component = require('DotLua/ECS/Components/Component')
 local GUIDComponent = require('DotLua/ECS/Components/Basic/GUIDComponent')
 local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
+local EntityEvent = require('DotLua/ECS/Entities/EntityEvent')
 
 local tlength = table.length
 local tvalues = table.values
@@ -20,11 +21,6 @@ local Entity =
         self.classToComponentDic = {}
 
         self.onComponentChangedEvent = oop.event()
-
-        self.onComponentAddedEvent = oop.event()
-        self.onComponentRemovedEvent = oop.event()
-        self.onComponentReplacedEvent = oop.event()
-        self.onComponentModifiedEvent = oop.event()
 
         self.guid = nil
         self.catgory = nil
@@ -53,10 +49,29 @@ function Entity:GetCatgory()
     return self.catgory
 end
 
-function Entity:DoGet(context)
+function Entity:BindEvent(receiver, changedFunc)
+    if changedFunc then
+        self.onComponentChangedEvent:Add(receiver, changedFunc)
+    end
+end
+
+function Entity:UnbindEvent(receiver, changedFunc)
+    if changedFunc then
+        self.onComponentChangedEvent:Remove(receiver, changedFunc)
+    end
+end
+
+function Entity:UnbindAllEvent()
+    self.onComponentChangedEvent:Clear()
+end
+
+function Entity:DoGet(context, onChangedFunc)
     self.enable = true
 
     self.context = context
+    if not context and not onChangedFunc then
+        self.onComponentChangedEvent:Add(context, onChangedFunc)
+    end
 end
 
 function Entity:DoRelease()
@@ -64,10 +79,7 @@ function Entity:DoRelease()
     self.guid = nil
     self.catgory = nil
 
-    self.onComponentAddedEvent:Clear()
-    self.onComponentRemovedEvent:Clear()
-    self.onComponentReplacedEvent:Clear()
-    self.onComponentModifiedEvent:Clear()
+    self.onComponentChangedEvent:Clear()
 
     local values = tvalues(self.classToComponentDic)
     tclear(self.classToComponentDic)
@@ -75,49 +87,6 @@ function Entity:DoRelease()
         self.context:releaseComponent(values[i])
     end
     self.context = nil
-end
-
-function Entity:BindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifiedFunc)
-    if addedFunc then
-        self.onComponentAddedEvent:Add(receiver, addedFunc)
-    end
-
-    if removedFunc then
-        self.onComponentRemovedEvent:Add(receiver, removedFunc)
-    end
-
-    if replacedFunc then
-        self.onComponentReplacedEvent:Add(receiver, replacedFunc)
-    end
-
-    if modifiedFunc then
-        self.onComponentModifiedEvent:Add(receiver, modifiedFunc)
-    end
-end
-
-function Entity:UnbindEvent(receiver, addedFunc, removedFunc, replacedFunc, modifiedFunc)
-    if addedFunc then
-        self.onComponentAddedEvent:Remove(receiver, addedFunc)
-    end
-
-    if removedFunc then
-        self.onComponentRemovedEvent:Remove(receiver, removedFunc)
-    end
-
-    if replacedFunc then
-        self.onComponentReplacedEvent:Remove(receiver, replacedFunc)
-    end
-
-    if modifiedFunc then
-        self.onComponentModifiedEvent:Remove(receiver, modifiedFunc)
-    end
-end
-
-function Entity:UnbindAllEvent()
-    self.onComponentAddedEvent:Clear()
-    self.onComponentRemovedEvent:Clear()
-    self.onComponentReplacedEvent:Clear()
-    self.onComponentModifiedEvent:Clear()
 end
 
 function Entity:GetComponentCount()
@@ -194,7 +163,7 @@ function Entity:AddComponentByClass(componentClass, ...)
         return nil
     end
 
-    self.onComponentAddedEvent:Invoke(self, componentClass)
+    self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentAdded, componentClass)
 
     return component
 end
@@ -217,7 +186,8 @@ function Entity:RemoveComponentByClass(componentClass)
         oop.error(LogTag, 'the component is not found')
         return
     end
-    self.onComponentRemovedEvent:Invoke(self, componentClass)
+
+    self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentRemoved, componentClass)
     self.context:releaseComponent(component)
 end
 
@@ -250,7 +220,7 @@ function Entity:ReplaceComponentByClass(oldComponentClass, newComponentClass)
     elseif oldComponentClass and newComponentClass then
         local oldComponent = self:removeComponent(oldComponentClass)
         local newComponent = self:addComponent(newComponentClass)
-        self.onComponentReplacedEvent:Invoke(self, oldComponentClass, newComponentClass)
+        self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentReplaced, oldComponentClass, newComponentClass)
         self.context:releaseComponent(oldComponent)
         return newComponent
     elseif not oldComponentClass and newComponentClass then
@@ -287,7 +257,7 @@ function Entity:ModifyComponentByClass(componentClass, modifyFunc, modifyTag)
 
         modifyFunc(self, component, modifyTag)
 
-        self.onComponentModifiedEvent:Invoke(self, componentClass, modifyTag)
+        self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentModified, componentClass, modifyTag)
     end
 end
 
@@ -310,7 +280,7 @@ function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
         return
     end
 
-    self.onComponentModifiedEvent:Invoke(self, componentClass, modifyTag)
+    self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentModified, componentClass, modifyTag)
 end
 
 function Entity:Destroy()

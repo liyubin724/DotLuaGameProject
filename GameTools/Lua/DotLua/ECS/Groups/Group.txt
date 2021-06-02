@@ -1,7 +1,8 @@
 local oop = require('DotLua/OOP/oop')
+local GroupEvent = require 'GroupEvent'
 
-local tlength = table.length
-local tvalues = table.values
+local tinsert = table.insert
+local tremove = table.remove
 local tclear = table.clear
 
 local LogTag = 'Group'
@@ -9,14 +10,13 @@ local LogTag = 'Group'
 local Group =
     oop.class(
     'DotLua.ECS.Groups.Group',
-    function(self, matcher)
-        self.matcher = matcher
+    function(self)
+        self.matcher = nil
 
-        self.guidToEntityDic = {}
+        self.entities = {}
+        self.guidToIndexDic = {}
 
-        self.onEntityAddedEvent = oop.event()
-        self.onEntityRemovedEvent = oop.event()
-        self.onEntityModifiedEvent = oop.event()
+        self.onGroupChangedEvent = oop.event()
 
         self.refCount = 0
     end
@@ -27,11 +27,11 @@ function Group:GetMatcher()
 end
 
 function Group:GetEntityCount()
-    return tlength(self.guidToEntityDic)
+    return #(self.entities)
 end
 
 function Group:GetEntities()
-    return tvalues(self.guidToEntityDic)
+    return self.entities
 end
 
 function Group:RetainRef()
@@ -50,72 +50,60 @@ function Group:IsInUsing()
     return self.refCount > 0
 end
 
-function Group:BindEvent(receiver, addedFunc, removedFunc, modifiedFunc)
-    if addedFunc then
-        self.onEntityAddedEvent:Add(receiver, addedFunc)
-    end
+function Group:DoGet(context, matcher)
+    self.matcher = matcher
+end
 
-    if removedFunc then
-        self.onEntityRemovedEvent:Add(receiver, removedFunc)
-    end
+function Group:DoRelease()
+    self.onGroupChangedEvent:Clear()
 
-    if modifiedFunc then
-        self.onEntityModifiedEvent:Add(receiver, modifiedFunc)
+    self.matcher = nil
+    tclear(self.guidToIndexDic)
+    tclear(self.entities)
+
+    self.refCount = 0
+end
+
+function Group:BindEvent(receiver, changedFunc)
+    if changedFunc then
+        self.onGroupChangedEvent:Add(receiver, changedFunc)
     end
 end
 
-function Group:UnbindEvent(receiver, addedFunc, removedFunc, modifiedFunc)
-    if addedFunc then
-        self.onEntityAddedEvent:Remove(receiver, addedFunc)
-    end
-
-    if removedFunc then
-        self.onEntityRemovedEvent:Remove(receiver, removedFunc)
-    end
-
-    if modifiedFunc then
-        self.onEntityModifiedEvent:Remove(receiver, modifiedFunc)
+function Group:UnbindEvent(receiver, changedFunc)
+    if changedFunc then
+        self.onGroupChangedEvent:Add(receiver, changedFunc)
     end
 end
 
 function Group:UnbindAllEvent()
-    self.onEntityAddedEvent:Clear()
-    self.onEntityRemovedEvent:Clear()
-    self.onEntityModifiedEvent:Clear()
+    self.onGroupChangedEvent:Clear()
 end
 
-function Group:TryAddEntity(entity, eventType, param1, param2)
+function Group:TryAddEntity(entity, contextEvent, entityEvent, param1, param2)
     local guid = entity:GetGUID()
-    if not self.guidToEntityDic[guid] then
-        self.guidToEntityDic[guid] = entity
+    if not self.guidToIndexDic[guid] then
+        tinsert(self.entities, entity)
+        self.guidToIndexDic[guid] = #self.entities
 
-        self.onEntityAddedEvent:Invoke(entity, eventType, param1, param2)
+        self.onGroupChangedEvent:Invoke(GroupEvent.EntityAdded, entity, contextEvent, entityEvent, param1, param2)
+        return true
     end
+
+    return false
 end
 
-function Group:TryRemoveEntity(entity, eventType, param1, param2)
+function Group:TryRemoveEntity(entity, contextEvent, entityEvent, param1, param2)
     local guid = entity:GetGUID()
-    if self.guidToEntityDic[guid] then
-        self.guidToEntityDic[guid] = nil
+    if self.guidToIndexDic[guid] then
+        local index = self.guidToIndexDic[guid]
+        tremove(self.entities, index)
+        self.guidToIndexDic[guid] = nil
 
-        self.onEntityRemovedEvent:Invoke(entity, eventType, param1, param2)
+        self.onGroupChangedEvent:Invoke(GroupEvent.EntityRemoved, entity, contextEvent, entityEvent, param1, param2)
     end
-end
 
-function Group:ModifyEntity(entity, eventType, param1, param2)
-    local guid = entity:GetGUID()
-    if self.guidToEntityDic[guid] then
-        self.onEntityModifiedEvent:Invoke(entity, eventType, param1, param2)
-    end
-end
-
-function Group:Destroy()
-    self:UnbindAllEvent()
-
-    self.matcher = nil
-    tclear(self.guidToEntityDic)
-
-    self.refCount = 0
+    return false
 end
 
 return Group

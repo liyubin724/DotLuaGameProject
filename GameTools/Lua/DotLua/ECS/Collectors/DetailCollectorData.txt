@@ -1,12 +1,14 @@
 local oop = require('DotLua/OOP/oop')
-local ContextEvent = oop.using('DotLua/ECS/Contexts/ContextEvent')
+local EntityEvent = oop.using('DotLua/ECS/Entities/EntityEvent')
 
 local DetailCollectorData =
     oop.class(
     'DetailCollectorData',
     function(self)
+        self.groupEvent = nil
         self.entity = nil
-        self.eventType = nil
+        self.contextEvent = nil
+        self.entityEvent = nil
 
         self.addedComponentClass = nil
         self.removedComponentClass = nil
@@ -19,64 +21,64 @@ function DetailCollectorData:GetEntity()
     return self.entity
 end
 
-function DetailCollectorData:GetEventType()
-    return self.eventType
+function DetailCollectorData:GetGroupEvent()
+    return self.groupEvent
 end
 
-function DetailCollectorData:GetAddedData()
-    if self.eventType == ContextEvent.ComponentAdded then
-        return self.entity, self.addedComponentClass
+function DetailCollectorData:GetContextEvent()
+    return self.contextEvent
+end
+
+function DetailCollectorData:GetEntityEvent()
+    return self.entityEvent
+end
+
+function DetailCollectorData:GetEntityChangedData()
+    if self.entityEvent then
+        if self.entityEvent == EntityEvent.ComponentAdded then
+            return self.entityEvent, self.entity, self.addedComponentClass
+        elseif self.entityEvent == EntityEvent.ComponentRemoved then
+            return self.entityEvent, self.entity, self.removedComponentClass
+        elseif self.entityEvent == EntityEvent.ComponentReplaced then
+            return self.entityEvent, self.entity, self.removedComponentClass, self.addedComponentClass
+        elseif self.entityEvent == EntityEvent.ComponentModified then
+            return self.entityEvent, self.entity, self.modifiedComponentClass, self.modifiedTag
+        end
     end
 
-    return nil, nil
+    return nil
 end
 
-function DetailCollectorData:GetRemovedData()
-    if self.eventType == ContextEvent.ComponentRemoved then
-        return self.entity, self.removedComponentClass
-    end
-    return nil, nil
-end
-
-function DetailCollectorData:GetReplacedData()
-    if self.eventType == ContextEvent.ComponentReplaced then
-        return self.entity, self.removedComponentClass, self.addedComponentClass
-    end
-
-    return nil, nil, nil
-end
-
-function DetailCollectorData:GetModifiedData()
-    if self.eventType == ContextEvent.ComponentModified then
-        return self.entity, self.modifiedComponentClass, self.modifiedTag
-    end
-
-    return nil, nil, nil
-end
-
-function DetailCollectorData:DoGet(entity, eventType, param1, param2)
+function DetailCollectorData:DoGet(groupEvent, entity, contextEvent, entityEvent, param1, param2)
+    self.groupEvent = groupEvent
     self.entity = entity
-    self.eventType = eventType
-    if eventType == ContextEvent.ComponentAdded then
-        self.addedComponentClass = param1
-    elseif eventType == ContextEvent.ComponentRemoved then
-        self.removedComponentClass = param1
-    elseif eventType == ContextEvent.ComponentReplaced then
-        self.removedComponentClass = param1
-        self.addedComponentClass = param2
-    elseif eventType == ContextEvent.ComponentModified then
-        self.modifiedComponentClass = param1
-        self.modifiedTag = param2
+    self.contextEvent = contextEvent
+    self.entityEvent = entityEvent
+
+    if self.entityEvent then
+        if entityEvent == EntityEvent.ComponentAdded then
+            self.addedComponentClass = param1
+        elseif entityEvent == EntityEvent.ComponentRemoved then
+            self.removedComponentClass = param1
+        elseif entityEvent == EntityEvent.ComponentReplaced then
+            self.removedComponentClass = param1
+            self.addedComponentClass = param2
+        elseif entityEvent == EntityEvent.ComponentModified then
+            self.modifiedComponentClass = param1
+            self.modifiedTag = param2
+        end
     end
 end
 
 function DetailCollectorData:DoRelease()
+    self.groupEvent = nil
     self.entity = nil
-    self.entityEventType = nil
+    self.contextEvent = nil
+    self.entityEvent = nil
 
     self.addedComponentClass = nil
     self.removedComponentClass = nil
-    self.modifiedComponent = nil
+    self.modifiedComponentClass = nil
     self.modifiedTag = nil
 end
 
