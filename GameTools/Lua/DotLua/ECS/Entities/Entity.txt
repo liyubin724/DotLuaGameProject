@@ -189,7 +189,6 @@ function Entity:HasAnyComponentByName(names)
     return false
 end
 
-
 function Entity:GetComponentByClass(componentClass)
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
@@ -201,7 +200,7 @@ function Entity:GetComponentByClass(componentClass)
     return self.componentClassToInstanceDic[componentClass]
 end
 
-function Entity:AddComponentByClass(componentClass)
+function Entity:AddComponentByClass(componentClass, ...)
     if not self.enable then
         oop.error(LogTag, 'The enity has been disabled')
         return nil
@@ -219,7 +218,7 @@ function Entity:AddComponentByClass(componentClass)
         return nil
     end
 
-    local component = self:addComponent(componentClass)
+    local component = self:addComponent(componentClass, ...)
     if not component then
         self.onComponentAddedEvent:Invoke(self, componentClass)
     end
@@ -333,8 +332,8 @@ function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
     self.onComponentModifiedEvent:Invoke(self, componentClass, modifyTag)
 end
 
-function Entity:addComponent(componentClass)
-    local component = self.context:getComponent(componentClass)
+function Entity:addComponent(componentClass, ...)
+    local component = self.context:getComponent(componentClass, ...)
     if not component then
         oop.error(LogTag, 'the component is nil')
         return nil

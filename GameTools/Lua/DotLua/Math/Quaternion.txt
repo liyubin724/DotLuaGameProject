@@ -1,5 +1,6 @@
 local oop = require('DotLua/OOP/oop')
 local Mathf = require('DotLua/Math/Mathf')
+local Vector3 = require('DotLua/Math/Vector3')
 
 local math = math
 local sin = math.sin
@@ -8,15 +9,11 @@ local acos = math.acos
 local asin = math.asin
 local sqrt = math.sqrt
 local min = math.min
-local max = math.max
-local sign = math.sign
 local atan2 = math.atan2
 local clamp = Mathf.Clamp
 local abs = math.abs
 local setmetatable = setmetatable
 local getmetatable = getmetatable
-local rawget = rawget
-local rawset = rawset
 
 local rad2Deg = Mathf.Rad2Deg
 local halfDegToRad = 0.5 * Mathf.Deg2Rad
@@ -62,6 +59,14 @@ end
 
 function Quaternion:Clone()
     return Quaternion(self.x, self.y, self.z, self.w)
+end
+
+function Quaternion:CopyTo(v)
+    v:Set(self.x, self.y, self.z, self.w)
+end
+
+function Quaternion:CopyFrom(v)
+    self:Set(v.x, v.y, v.z, v.w)
 end
 
 function Quaternion.Dot(a, b)
@@ -174,7 +179,6 @@ end
 
 --设置当前四元数为 from 到 to的旋转, 注意from和to同 forward平行会同unity不一致
 function Quaternion:SetFromToRotation1(from, to)
-    local Vector3 = require('DotLua/Math/Vector3')
     local v0 = from:Normalize()
     local v1 = to:Normalize()
     local d = Vector3.Dot(v0, v1)
@@ -239,8 +243,6 @@ local function MatrixToQuaternion(rot, quat)
 end
 
 function Quaternion:SetFromToRotation(from, to)
-    local Vector3 = require('DotLua/Math/Vector3')
-
     from = from:Normalize()
     to = to:Normalize()
 
@@ -350,8 +352,6 @@ function Quaternion.Lerp(q1, q2, t)
 end
 
 function Quaternion.LookRotation(forward, up)
-    local Vector3 = require('DotLua/Math/Vector3')
-
     local mag = forward:Magnitude()
     if mag < 1e-6 then
         error('error input forward to Quaternion.LookRotation' .. tostring(forward))
@@ -365,7 +365,7 @@ function Quaternion.LookRotation(forward, up)
     up = Vector3.Cross(forward, right)
     right = Vector3.Cross(up, forward)
 
-    --[[	local quat = _new(0,0,0,1)
+    --[[	local quat = Quaternion(0,0,0,1)
 	local rot = 
 	{ 					
 		{right.x, up.x, forward.x},
@@ -484,16 +484,14 @@ local function Approximately(f0, f1)
 end
 
 function Quaternion:ToAngleAxis()
-    local Vector3 = require('DotLua/Math/Vector3')
-
     local angle = 2 * acos(self.w)
 
     if Approximately(angle, 0) then
-        return angle * 57.29578, Vector3.New(1, 0, 0)
+        return angle * 57.29578, Vector3(1, 0, 0)
     end
 
     local div = 1 / sqrt(1 - sqrt(self.w))
-    return angle * 57.29578, Vector3.New(self.x * div, self.y * div, self.z * div)
+    return angle * 57.29578, Vector3(self.x * div, self.y * div, self.z * div)
 end
 
 local pi = Mathf.PI
@@ -525,8 +523,6 @@ end
 --from http://www.geometrictools.com/Documentation/EulerAngles.pdf
 --Order of rotations: YXZ
 function Quaternion:ToEulerAngles()
-    local Vector3 = require('DotLua/Math/Vector3')
-
     local x = self.x
     local y = self.y
     local z = self.z
@@ -560,14 +556,10 @@ function Quaternion:ToEulerAngles()
 end
 
 function Quaternion:Forward()
-    local Vector3 = require('DotLua/Math/Vector3')
-
     return self:MulVec3(Vector3.forward)
 end
 
 function Quaternion.MulVec3(self, point)
-    local Vector3 = require('DotLua/Math/Vector3')
-
     local vec = Vector3()
 
     local num = self.x * 2
@@ -591,10 +583,8 @@ function Quaternion.MulVec3(self, point)
 end
 
 Quaternion.__mul = function(lhs, rhs)
-    local Vector3 = require('DotLua/Math/Vector3')
-
     if Quaternion == getmetatable(rhs) then
-        return Quaternion.New(
+        return Quaternion(
             (((lhs.w * rhs.x) + (lhs.x * rhs.w)) + (lhs.y * rhs.z)) - (lhs.z * rhs.y),
             (((lhs.w * rhs.y) + (lhs.y * rhs.w)) + (lhs.z * rhs.x)) - (lhs.x * rhs.z),
             (((lhs.w * rhs.z) + (lhs.z * rhs.w)) + (lhs.x * rhs.y)) - (lhs.y * rhs.x),

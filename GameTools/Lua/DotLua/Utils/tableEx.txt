@@ -186,7 +186,7 @@ function table.findallvalue(tbl,checkFunc)
     return result
 end
 
-function table.indexofvalue(tbl, value)
+function table.indexof(tbl, value)
     if type(tbl) ~= 'table' then
         return -1
     end
@@ -199,7 +199,7 @@ function table.indexofvalue(tbl, value)
     return -1
 end
 
-function table.keyofvalue(tbl, value)
+function table.keyof(tbl, value)
     if type(tbl) ~= 'table' then
         return nil
     end

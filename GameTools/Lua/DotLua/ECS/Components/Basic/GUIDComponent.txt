@@ -14,11 +14,11 @@ function GUIDComponent:GetGUID()
     return self.guid
 end
 
-function GUIDComponent:SetGUID(guid)
+function GUIDComponent:DoGet(guid)
     self.guid = guid
 end
 
-function GUIDComponent:Reset()
+function GUIDComponent:DoRelease()
     self.guid = nil
 end
 

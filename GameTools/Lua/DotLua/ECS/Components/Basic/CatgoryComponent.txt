@@ -14,11 +14,11 @@ function CatgoryComponent:GetCatgory()
     return self.catgory
 end
 
-function CatgoryComponent:SetCatgory(catgory)
+function CatgoryComponent:DoGet(catgory)
     self.catgory = catgory
 end
 
-function CatgoryComponent:Reset()
+function CatgoryComponent:DoRelease()
     self.catgory = nil
 end
 

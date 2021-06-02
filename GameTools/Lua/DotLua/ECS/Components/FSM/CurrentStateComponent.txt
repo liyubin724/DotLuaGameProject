@@ -1,0 +1,36 @@
+local oop = require('DotLua/OOP/oop')
+local Component = require('DotLua/ECS/Components/Component')
+
+local CurrentStateComponent =
+    oop.class(
+    'DotLua.ECS.Components.FSM.CurrentStateComponent',
+    function(self)
+        self.stateName = nil
+        self.userdata = nil
+    end,
+    Component
+)
+
+function CurrentStateComponent:GetStateName()
+    return self.stateName
+end
+
+function CurrentStateComponent:GetUserdata()
+    return self.userdata
+end
+
+function CurrentStateComponent:DoGet(name, stateName, userdata)
+    self:GetBaseClass().DoGet(self, name)
+
+    self.stateName = stateName
+    self.userdata = userdata
+end
+
+function CurrentStateComponent:DoRelease()
+    self:GetBaseClass().DoRelease(self)
+
+    self.stateName = nil
+    self.userdata = nil
+end
+
+return CurrentStateComponent

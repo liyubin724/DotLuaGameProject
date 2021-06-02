@@ -1,0 +1,17 @@
+local Vector3 = require('DotLua/Math/Vector3')
+
+function Vector3:ToUVector2()
+    return nil
+end
+
+function Vector3:ToUVector3()
+    return nil
+end
+
+function Vector3.FromUVector2(uv2)
+    return nil
+end
+
+function Vector3.FromUVector3(uv3)
+    return nil
+end
