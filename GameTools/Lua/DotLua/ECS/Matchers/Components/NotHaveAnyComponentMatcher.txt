@@ -36,7 +36,7 @@ function NotHaveAnyComponentMatcher:IsMatch(entity)
         return false
     end
 
-    return not entity:HasAnyComponentByClass(self.componentClasses)
+    return not entity:HasAnyComponentByClasses(self.componentClasses)
 end
 
 return NotHaveAnyComponentMatcher

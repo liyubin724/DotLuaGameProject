@@ -36,7 +36,7 @@ function HaveAllComponentMatcher:IsMatch(entity)
         return false
     end
 
-    return entity:HasAllComponentsByClass(self.componentClasses)
+    return entity:HasAllComponentByClasses(self.componentClasses)
 end
 
 return HaveAllComponentMatcher

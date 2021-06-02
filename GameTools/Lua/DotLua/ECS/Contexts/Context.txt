@@ -13,7 +13,7 @@ local LogTag = 'Context'
 local Context =
     oop.class(
     'DotLua.ECS.Contexts.Context',
-    function(self,entityClass)
+    function(self, entityClass)
         self.guidToEntityDic = {}
 
         self.componentClassPoolDic = {}
@@ -27,26 +27,12 @@ end
 function Context:DoDestroy()
 end
 
-function Context:HasEntity(guid)
+function Context:HasEntityByGUID(guid)
     return self.guidToEntityDic[guid] ~= nil
 end
 
-function Context:GetEntity(guid)
+function Context:GetEntityByGUID(guid)
     return self.guidToEntityDic[guid]
-end
-
-function Context:GetEntities(guidList)
-    local entities = {}
-    for _, guid in ipairs(guidList) do
-        local entity = self.guidToEntityDic[guid]
-        if not entity then
-            oop.error(LogTag, 'the entity of guid(' .. tostring(guid) .. ') is not found')
-            return nil
-        end
-
-        tinsert(entities, entity)
-    end
-    return entities
 end
 
 function Context:CreateEntity(guid, catgory, componentClasses)
@@ -57,7 +43,7 @@ function Context:CreateEntity(guid, catgory, componentClasses)
         end
     end
 
-    local entity = self.entityPool:GetItem(self)
+    local entity = self.entityPool:GetItemWithParams(self)
 
     local guidComponent = entity:addComponent(GUIDComponent)
     guidComponent:SetGUID(guid)
@@ -111,7 +97,7 @@ function Context:ReleaseGroup(group)
     --TODO:
 end
 
-function Context:getComponent(componentClass)
+function Context:getComponent(componentClass, ...)
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.iskindof(componentClass, Component) then
             oop.error(LogTag, 'the class is not a clas or is not a subclass of Component')
@@ -126,7 +112,7 @@ function Context:getComponent(componentClass)
         self.componentClassPoolDic[componentClass] = pool
     end
 
-    return pool:GetItem()
+    return pool:GetItemWithParams(...)
 end
 
 function Context:releaseComponent(component)

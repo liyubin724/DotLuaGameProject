@@ -6,7 +6,6 @@ local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
 local tlength = table.length
 local tvalues = table.values
 local tclear = table.clear
-local tfindanyvalue = table.findanyvalue
 
 local LogTag = 'Entity'
 
@@ -18,7 +17,9 @@ local Entity =
 
         self.context = nil
 
-        self.nameToComponnentDic = {}
+        self.classToComponentDic = {}
+
+        self.onComponentChangedEvent = oop.event()
 
         self.onComponentAddedEvent = oop.event()
         self.onComponentRemovedEvent = oop.event()
@@ -61,14 +62,15 @@ end
 function Entity:DoRelease()
     self.enable = false
     self.guid = nil
+    self.catgory = nil
 
     self.onComponentAddedEvent:Clear()
     self.onComponentRemovedEvent:Clear()
     self.onComponentReplacedEvent:Clear()
     self.onComponentModifiedEvent:Clear()
 
-    local values = tvalues(self.nameToComponnentDic)
-    tclear(self.nameToComponnentDic)
+    local values = tvalues(self.classToComponentDic)
+    tclear(self.classToComponentDic)
     for i = 1, #values, 1 do
         self.context:releaseComponent(values[i])
     end
@@ -119,37 +121,25 @@ function Entity:UnbindAllEvent()
 end
 
 function Entity:GetComponentCount()
-    return tlength(self.nameToComponnentDic)
+    return tlength(self.classToComponentDic)
 end
 
 function Entity:GetAllComponents()
-    return tvalues(self.nameToComponnentDic)
+    return tvalues(self.classToComponentDic)
 end
 
 function Entity:HasComponentByClass(componentClass)
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
-            oop.error(LogTag, 'Entity:HasComponent->the param is not a class')
+            oop.error(LogTag, 'the param is not a class')
             return false
         end
     end
 
-    return tfindanyvalue(
-        self.nameToComponnentDic,
-        function(v)
-            if v:GetBaseClass() == componentClass then
-                return true
-            end
-            return false
-        end
-    )
+    return self.classToComponentDic[componentClass] ~= nil
 end
 
-function Entity:HasComponentByName(name)
-    return self.nameToComponnentDic[name] ~= nil
-end
-
-function Entity:HasAllComponentsByClass(componentClasses)
+function Entity:HasAllComponentByClasses(componentClasses)
     for _, componentClass in ipairs(componentClasses) do
         if not self:HasComponentByClass(componentClass) then
             return false
@@ -159,29 +149,9 @@ function Entity:HasAllComponentsByClass(componentClasses)
     return true
 end
 
-function Entity:HasAllComponentsByName(names)
-    for _, name in ipairs(names) do
-        if not self:HasComponentByClass(name) then
-            return false
-        end
-    end
-
-    return true
-end
-
-function Entity:HasAnyComponentByClass(componentClasses)
+function Entity:HasAnyComponentByClasses(componentClasses)
     for _, componentClass in ipairs(componentClasses) do
         if self:HasComponentByClass(componentClass) then
-            return true
-        end
-    end
-
-    return false
-end
-
-function Entity:HasAnyComponentByName(names)
-    for _, name in ipairs(names) do
-        if self:HasComponentByName(name) then
             return true
         end
     end
@@ -197,7 +167,7 @@ function Entity:GetComponentByClass(componentClass)
         end
     end
 
-    return self.componentClassToInstanceDic[componentClass]
+    return self.classToComponentDic[componentClass]
 end
 
 function Entity:AddComponentByClass(componentClass, ...)
@@ -220,8 +190,12 @@ function Entity:AddComponentByClass(componentClass, ...)
 
     local component = self:addComponent(componentClass, ...)
     if not component then
-        self.onComponentAddedEvent:Invoke(self, componentClass)
+        oop.error(LogTag, 'The component is not found')
+        return nil
     end
+
+    self.onComponentAddedEvent:Invoke(self, componentClass)
+
     return component
 end
 
@@ -240,9 +214,11 @@ function Entity:RemoveComponentByClass(componentClass)
 
     local component = self:removeComponent(componentClass)
     if not component then
-        self.onComponentRemovedEvent:Invoke(self, componentClass)
-        self.context:releaseComponent(component)
+        oop.error(LogTag, 'the component is not found')
+        return
     end
+    self.onComponentRemovedEvent:Invoke(self, componentClass)
+    self.context:releaseComponent(component)
 end
 
 function Entity:ReplaceComponentByClass(oldComponentClass, newComponentClass)
@@ -270,6 +246,7 @@ function Entity:ReplaceComponentByClass(oldComponentClass, newComponentClass)
 
     if oldComponentClass and not newComponentClass then
         self:RemoveComponent(oldComponentClass)
+        return nil
     elseif oldComponentClass and newComponentClass then
         local oldComponent = self:removeComponent(oldComponentClass)
         local newComponent = self:addComponent(newComponentClass)
@@ -281,7 +258,7 @@ function Entity:ReplaceComponentByClass(oldComponentClass, newComponentClass)
     end
 end
 
-function Entity:ModifyComponentByClass(componentClass, modifyDelegate, modifyTag)
+function Entity:ModifyComponentByClass(componentClass, modifyFunc, modifyTag)
     if not self.enable then
         oop.error(LogTag, 'The enity has been disabled')
         return
@@ -294,20 +271,24 @@ function Entity:ModifyComponentByClass(componentClass, modifyDelegate, modifyTag
         end
     end
 
-    local component = self.componentClassToInstanceDic[componentClass]
+    local component = self.classToComponentDic[componentClass]
     if not component then
         oop.error(LogTag, 'the component is not found')
         return
     end
 
-    if not modifyDelegate then
-        modifyDelegate:ActionInvoke(self, component, modifyTag)
+    if not modifyFunc then
+        if oop.isDebug then
+            if type(modifyTag) ~= 'function' then
+                oop.error(LogTag, 'The modifyfunc is not a function')
+                return
+            end
+        end
+
+        modifyFunc(self, component, modifyTag)
+
         self.onComponentModifiedEvent:Invoke(self, componentClass, modifyTag)
     end
-end
-
-function Entity:Destroy()
-    self.context:DestroyEntity(self)
 end
 
 function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
@@ -323,7 +304,7 @@ function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
         end
     end
 
-    local component = self.componentClassToInstanceDic[componentClass]
+    local component = self.classToComponentDic[componentClass]
     if not component then
         oop.error(LogTag, 'the component is not found')
         return
@@ -332,26 +313,29 @@ function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
     self.onComponentModifiedEvent:Invoke(self, componentClass, modifyTag)
 end
 
+function Entity:Destroy()
+    self.context:DestroyEntity(self)
+end
+
 function Entity:addComponent(componentClass, ...)
     local component = self.context:getComponent(componentClass, ...)
     if not component then
-        oop.error(LogTag, 'the component is nil')
         return nil
     end
 
-    self.componentClassToInstanceDic[componentClass] = component
+    self.classToComponentDic[componentClass] = component
 
     return component
 end
 
 function Entity:removeComponent(componentClass)
-    local component = self.componentClassToInstanceDic[componentClass]
+    local component = self.classToComponentDic[componentClass]
     if not component then
-        oop.error(LogTag, 'The component is not found')
-        return
+        return nil
     end
 
-    self.componentClassToInstanceDic[componentClass] = nil
+    self.classToComponentDic[componentClass] = nil
+
     return component
 end
 
