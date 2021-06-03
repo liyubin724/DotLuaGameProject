@@ -24,7 +24,7 @@ function ReactiveTimeSystem:onDeactivate()
 end
 
 function ReactiveTimeSystem:onTimeUpdate(deltaTime)
-    local entities = self.collector:GetCollectedAddedEntities()
+    local entities = self.collector:GetCollecteAddedDatas()
 
     if entities and #entities > 0 then
         for _, entity in ipairs(entities) do
@@ -32,14 +32,14 @@ function ReactiveTimeSystem:onTimeUpdate(deltaTime)
         end
     end
 
-    entities = self.collector:GetCollectedRemovedEntities()
+    entities = self.collector:GetCollecteRemovedDatas()
     if entities and #entities > 0 then
         for _, entity in ipairs(entities) do
             self:onEntityRemovedUpdate(deltaTime, entity)
         end
     end
 
-    self.collector:ClearCollectedEntities()
+    self.collector:ClearCollecteDatas()
 end
 
 function ReactiveTimeSystem:onEntityAddedUpdate(deltaTime, entity)

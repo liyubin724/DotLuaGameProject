@@ -30,31 +30,31 @@ function Collector:IsEnable()
     return self.isEnable
 end
 
-function Collector:GetCollectedAddedEntityCount()
+function Collector:GetCollecteAddedDataCount()
     return #self.collectedAddedEntities
 end
 
-function Collector:GetCollectedAddedEntities()
+function Collector:GetCollecteAddedDatas()
     return self.collectedAddedEntities
 end
 
-function Collector:ClearCollectedAddedEntities()
+function Collector:ClearCollecteAddedDatas()
     tclear(self.collectedAddedEntities)
 end
 
-function Collector:GetCollectedRemovedEntityCount()
+function Collector:GetCollecteRemovedDataCount()
     return #self.collectedRemovedEntities
 end
 
-function Collector:GetCollectedRemovedEntities()
+function Collector:GetCollecteRemovedDatas()
     return self.collectedRemovedEntities
 end
 
-function Collector:ClearCollectedRemovedEntities()
+function Collector:ClearCollecteRemovedDatas()
     tclear(self.collectedRemovedEntities)
 end
 
-function Collector:ClearCollectedEntities()
+function Collector:ClearCollecteDatas()
     tclear(self.collectedAddedEntities)
     tclear(self.collectedRemovedEntities)
 end

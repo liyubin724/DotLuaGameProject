@@ -34,40 +34,41 @@ function DetailCollector:IsEnable()
     return self.isEnable
 end
 
-function DetailCollector:GetAddedDetailCount()
+function DetailCollector:GetCollecteAddedDataCount()
     return #(self.collectedAddedDetails)
 end
 
-function DetailCollector:GetRemovedDetailCount()
-    return #(self.collectedRemovedDetails)
-end
-
-function DetailCollector:GetAddedDetails()
+function DetailCollector:GetCollecteAddedDatas()
     return self.collectedAddedDetails
 end
 
-function DetailCollector:GetRemovedDetails()
-    return self.collectedRemovedDetails
-end
-
-function DetailCollector:ClearAddedDetails()
+function DetailCollector:ClearCollecteAddedDatas()
     for i = #(self.collectedAddedDetails), 1, -1 do
         self.detailDataPool:Release(self.collectedAddedDetails[i])
         tremove(self.collectedAddedDetails, i)
     end
 end
 
-function DetailCollector:ClearRemovedEntities()
+function DetailCollector:GetCollecteRemovedDataCount()
+    return #(self.collectedRemovedDetails)
+end
+
+
+function DetailCollector:GetCollecteRemovedDatas()
+    return self.collectedRemovedDetails
+end
+
+
+function DetailCollector:ClearCollecteRemovedDatas()
     for i = #(self.collectedRemovedDetails), 1, -1 do
         self.detailDataPool:Release(self.collectedRemovedDetails[i])
         tremove(self.collectedRemovedDetails, i)
     end
 end
 
-function DetailCollector:ClearAllEntities()
-    self:ClearAddedEntities()
-    self:ClearRemovedEntities()
-    self.ClearModifiedEntities()
+function DetailCollector:ClearCollecteDatas()
+    self:ClearCollecteAddedDatas()
+    self:ClearCollecteRemovedDatas()
 end
 
 function DetailCollector:Activate()

@@ -24,19 +24,21 @@ function DetailReactiveTimeSystem:onDeactivate()
 end
 
 function DetailReactiveTimeSystem:onTimeUpdate(deltaTime)
-    local addedDetails = self.detailCollector:GetAddedDetails()
+    local addedDetails = self.detailCollector:GetCollecteAddedDatas()
     if addedDetails and #(addedDetails) > 0 then
         for _, data in ipairs(addedDetails) do
             self:onAddedDetailUpdate(deltaTime, data)
         end
     end
 
-    local removedDetails = self.detailCollector:GetRemovedDetails()
+    local removedDetails = self.detailCollector:GetCollecteRemovedDatas()
     if removedDetails and #(removedDetails) > 0 then
         for _, data in ipairs(removedDetails) do
             self:onRemovedDetailUpdate(deltaTime, data)
         end
     end
+
+    self.detailCollector:ClearCollecteDatas()
 end
 
 function DetailReactiveTimeSystem:onAddedDetailUpdate(deltaTime, data)
