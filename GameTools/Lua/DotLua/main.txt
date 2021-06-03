@@ -1,5 +1,17 @@
-local main = function()
+package.path = '?.txt;' .. package.path
 
+require("DotLua/Math/Init")
+
+local Vector3 = require("DotLua/Math/Vector3")
+local Bezier = require("DotLua/Math/Bezier")
+
+local main = function()
+    local v0 = Vector3()
+    local v1 = Vector3(1,1,1)
+
+    local v = Bezier.Linear(v0,v1,0.5)
+
+    print(tostring(v))
 end
 
 main()

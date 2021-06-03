@@ -1,5 +1,5 @@
 local oop = require('DotLua/OOP/oop')
-local GroupEvent = require 'GroupEvent'
+local GroupEvent = require('DotLua/ECS/Groups/GroupEvent')
 
 local tinsert = table.insert
 local tremove = table.remove

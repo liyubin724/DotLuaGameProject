@@ -1,0 +1,25 @@
+local Mathf = require('DotLua/Math/Mathf')
+
+local Bezier = {}
+
+local clamp01 = Mathf.Clamp01
+
+function Bezier.Linear(v0, v1, t)
+    t = clamp01(t)
+
+    return (1 - t) * v0 + t * v1
+end
+
+function Bezier.Quadratic(v0, v1, v2, t)
+    t = clamp01(t)
+
+    return ((1 - t) ^ 2) * v0 + 2 * t * (1 - t) * v1 + (t ^ 2) * v2
+end
+
+function Bezier.Cubic(v0, v1, v2, v3, t)
+    t = clamp01(t)
+
+    return ((1 - t) ^ 3) * v0 + 3 * ((1 - t) ^ 2) * t * v1 + 3 * (1 - t) * (t ^ 2) * v2 + (t ^ 3) * v3
+end
+
+return Bezier

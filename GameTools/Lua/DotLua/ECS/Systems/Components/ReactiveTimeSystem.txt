@@ -1,14 +1,13 @@
 local oop = require('DotLua/OOP/oop')
 local TimeUpdateSystem = oop.using('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
-local Collector = oop.using('DotLua/ECS/Collectors/Collector')
 
 local LogTag = 'ReactiveTimeSystem'
 
 local ReactiveTimeSystem =
     oop.class(
     'DotLua.ECS.Systems.Components.ReactiveTimeSystem',
-    function(self, group, groupEvents, frequencyInTime)
-        self.collector = Collector(group, groupEvents)
+    function(self, context, frequencyInTime)
+        self.collector = self:GetTrigger(context)
 
         self:SetFrequency(frequencyInTime)
     end,
@@ -16,30 +15,49 @@ local ReactiveTimeSystem =
 )
 
 function ReactiveTimeSystem:onActivate()
-    self.collector:Activate()
+    if self.collector then
+        self.collector:Activate()
+    end
 end
 
 function ReactiveTimeSystem:onDeactivate()
-    self.collector:Deactivate()
+    if self.collector then
+        self.collector:Deactivate()
+    end
 end
 
 function ReactiveTimeSystem:onTimeUpdate(deltaTime)
-    local entities = self.collector:GetCollecteAddedDatas()
+    if not self.collector then
+        return
+    end
 
-    if entities and #entities > 0 then
-        for _, entity in ipairs(entities) do
-            self:onEntityAddedUpdate(deltaTime, entity)
+    local addedEntities = self.collector:GetCollecteAddedDatas()
+    if addedEntities and #addedEntities > 0 then
+        for _, entity in ipairs(addedEntities) do
+            if self:Filter(entity) then
+                self:onEntityAddedUpdate(deltaTime, entity)
+            end
         end
     end
 
-    entities = self.collector:GetCollecteRemovedDatas()
-    if entities and #entities > 0 then
-        for _, entity in ipairs(entities) do
-            self:onEntityRemovedUpdate(deltaTime, entity)
+    local removedEntities = self.collector:GetCollecteRemovedDatas()
+    if removedEntities and #removedEntities > 0 then
+        for _, entity in ipairs(removedEntities) do
+            if self:Filter(entity) then
+                self:onEntityRemovedUpdate(deltaTime, entity)
+            end
         end
     end
 
     self.collector:ClearCollecteDatas()
+end
+
+function ReactiveTimeSystem:GetTrigger(context)
+    return nil
+end
+
+function ReactiveTimeSystem:Filter(entity)
+    return true
 end
 
 function ReactiveTimeSystem:onEntityAddedUpdate(deltaTime, entity)

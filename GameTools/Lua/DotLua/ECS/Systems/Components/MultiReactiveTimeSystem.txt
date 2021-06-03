@@ -1,0 +1,77 @@
+local oop = require('DotLua/OOP/oop')
+local TimeUpdateSystem = oop.using('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
+
+local LogTag = 'MultiReactiveTimeSystem'
+
+local MultiReactiveTimeSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Components.MultiReactiveTimeSystem',
+    function(self, contexts, frequencyInTime)
+        self.collectors = self:GetTrigger(contexts)
+
+        self:SetFrequency(frequencyInTime)
+    end,
+    TimeUpdateSystem
+)
+
+function MultiReactiveTimeSystem:onActivate()
+    if self.collectors and #self.collectors > 0 then
+        for _, collector in ipairs(self.collectors) do
+            collector:Activate()
+        end
+    end
+end
+
+function MultiReactiveTimeSystem:onDeactivate()
+    if self.collectors and #self.collectors > 0 then
+        for _, collector in ipairs(self.collectors) do
+            collector:Deactivate()
+        end
+    end
+end
+
+function MultiReactiveTimeSystem:onTimeUpdate(deltaTime)
+    if not self.collectors or #self.collectors == 0 then
+        return
+    end
+
+    for _, collector in ipairs(self.collectors) do
+        local addedEntities = collector:GetCollecteAddedDatas()
+        if addedEntities and #addedEntities > 0 then
+            for _, entity in ipairs(addedEntities) do
+                if self:Filter(entity) then
+                    self:onEntityAddedUpdate(deltaTime, entity)
+                end
+            end
+        end
+
+        local removedEntities = collector:GetCollecteRemovedDatas()
+        if removedEntities and #removedEntities > 0 then
+            for _, entity in ipairs(removedEntities) do
+                if self:Filter(entity) then
+                    self:onEntityRemovedUpdate(deltaTime, entity)
+                end
+            end
+        end
+
+        collector:ClearCollecteDatas()
+    end
+end
+
+function MultiReactiveTimeSystem:GetTrigger(context)
+    return nil
+end
+
+function MultiReactiveTimeSystem:Filter(entity)
+    return true
+end
+
+function MultiReactiveTimeSystem:onEntityAddedUpdate(deltaTime, entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+function MultiReactiveTimeSystem:onEntityRemovedUpdate(deltaTime, entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return MultiReactiveTimeSystem
