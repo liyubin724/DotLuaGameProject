@@ -1,28 +1,22 @@
 local oop = require('DotLua/OOP/oop')
 local GroupEvent = oop.using('DotLua/ECS/Groups/GroupEvent')
+local ContextEvent = oop.using('DotLua/ECS/Contexts/ContextEvent')
 
 local tinsert = table.insert
 local tclear = table.clear
+local tcontainsvalue = table.containsvalue
+local tremovevalue = table.removevalue
 
 local Collector =
     oop.class(
     'DotLua.ECS.Collectors.Collector',
-    function(self, group, groupEvents)
+    function(self, group, groupEvent)
         self.isEnable = false
 
         self.group = group
-        self.groupEventEnableDic = {}
-        if not groupEvents then
-            for _, groupEvent in ipairs(groupEvents) do
-                self.groupEventEnableDic[groupEvent] = true
-            end
-        else
-            self.groupEventEnableDic[GroupEvent.EntityAdded] = true
-            self.groupEventEnableDic[GroupEvent.EntityRemoved] = false
-        end
+        self.groupEvent = groupEvent
 
-        self.collectedAddedEntities = {}
-        self.collectedRemovedEntities = {}
+        self.collectedEntities = {}
     end
 )
 
@@ -30,46 +24,55 @@ function Collector:IsEnable()
     return self.isEnable
 end
 
-function Collector:GetCollecteAddedDataCount()
-    return #self.collectedAddedEntities
+function Collector:GetCollectedEntityCount()
+    return #self.collectedEntities
 end
 
-function Collector:GetCollecteAddedDatas()
-    return self.collectedAddedEntities
+function Collector:GetCollectedEntities()
+    return self.collectedEntities
 end
 
-function Collector:ClearCollecteAddedDatas()
-    tclear(self.collectedAddedEntities)
-end
-
-function Collector:GetCollecteRemovedDataCount()
-    return #self.collectedRemovedEntities
-end
-
-function Collector:GetCollecteRemovedDatas()
-    return self.collectedRemovedEntities
-end
-
-function Collector:ClearCollecteRemovedDatas()
-    tclear(self.collectedRemovedEntities)
-end
-
-function Collector:ClearCollecteDatas()
-    tclear(self.collectedAddedEntities)
-    tclear(self.collectedRemovedEntities)
+function Collector:ClearCollectedEnities()
+    tclear(self.collectedEntities)
 end
 
 function Collector:Activate()
     if self.group and not self.isEnable then
         self.isEnable = true
-        self.group:BindEvent(self, self.onGroupChanged)
+        if self.groupEvent then
+            local addFunc
+            local removeFunc
+            if self.groupEvent == GroupEvent.Added then
+                addFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.Removed then
+                removeFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.AddOrRemove then
+                addFunc = self.onGroupChangedEvent
+                removeFunc = self.onGroupChangedEvent
+            end
+
+            self.group:BindEvent(self, addFunc, removeFunc)
+        end
     end
 end
 
 function Collector:Deactivate()
     if self.group and self.isEnable then
         self.isEnable = false
-        self.group:UnbindEvent(self, self.onGroupChanged)
+        if self.groupEvent then
+            local addFunc
+            local removeFunc
+            if self.groupEvent == GroupEvent.Added then
+                addFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.Removed then
+                removeFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.AddOrRemove then
+                addFunc = self.onGroupChangedEvent
+                removeFunc = self.onGroupChangedEvent
+            end
+
+            self.group:UnbindEvent(self, addFunc, removeFunc)
+        end
     end
 end
 
@@ -79,26 +82,17 @@ function Collector:Destroy()
     end
 
     tclear(self.collectedEntities)
+
     self.group = nil
-    self.groupEvents = nil
+    self.groupEvent = nil
 end
 
-function Collector:onGroupChanged(groupEvent, entity)
-    if self.groupEventEnableDic[groupEvent] then
-        local list
-        if groupEvent == GroupEvent.EntityAdded then
-            list = self.collectedAddedEntities
-        elseif groupEvent == GroupEvent.EntityRemoved then
-            list = self.collectedRemovedEntities
-        end
-        if not list then
-            for _, e in ipairs(list) do
-                if e == entity then
-                    return
-                end
-            end
-
-            tinsert(list, entity)
+function Collector:onGroupChangedEvent(entity,contextEvent)
+    if contextEvent == ContextEvent.EntityReleased then
+        tremovevalue(self.entities,entity)
+    else
+        if not tcontainsvalue(self.entities, entity) then
+            tinsert(self.entities, entity)
         end
     end
 end

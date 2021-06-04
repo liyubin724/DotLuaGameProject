@@ -2,7 +2,6 @@ local oop = require('DotLua/OOP/oop')
 local Component = require('DotLua/ECS/Components/Component')
 local GUIDComponent = require('DotLua/ECS/Components/Basic/GUIDComponent')
 local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
-local EntityEvent = require('DotLua/ECS/Entities/EntityEvent')
 
 local tlength = table.length
 local tvalues = table.values
@@ -20,7 +19,10 @@ local Entity =
 
         self.classToComponentDic = {}
 
-        self.onComponentChangedEvent = oop.event()
+        self.addComponentEvent = oop.event()
+        self.removeComponentEvent = oop.event()
+        self.replaceComponentEvent = oop.event()
+        self.modifyComponentEvent = oop.event()
 
         self.guid = nil
         self.catgory = nil
@@ -49,28 +51,50 @@ function Entity:GetCatgory()
     return self.catgory
 end
 
-function Entity:BindEvent(receiver, changedFunc)
-    if changedFunc then
-        self.onComponentChangedEvent:Add(receiver, changedFunc)
+function Entity:BindEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
+    if addFunc then
+        self.addComponentEvent:Add(receiver, addFunc)
+    end
+    if removeFunc then
+        self.removeComponentEvent:Add(receiver, removeFunc)
+    end
+    if replaceFunc then
+        self.replaceComponentEvent:Add(receiver, replaceFunc)
+    end
+    if modifyFunc then
+        self.modifyComponentEvent:Add(receiver, modifyFunc)
     end
 end
 
-function Entity:UnbindEvent(receiver, changedFunc)
-    if changedFunc then
-        self.onComponentChangedEvent:Remove(receiver, changedFunc)
+function Entity:UnbindEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
+    if addFunc then
+        self.addComponentEvent:Remove(receiver, addFunc)
+    end
+    if removeFunc then
+        self.removeComponentEvent:Remove(receiver, removeFunc)
+    end
+    if replaceFunc then
+        self.replaceComponentEvent:Remove(receiver, replaceFunc)
+    end
+    if modifyFunc then
+        self.modifyComponentEvent:Remove(receiver, modifyFunc)
     end
 end
 
 function Entity:UnbindAllEvent()
-    self.onComponentChangedEvent:Clear()
+    self.addComponentEvent:Clear()
+    self.removeComponentEvent:Clear()
+    self.replaceComponentEvent:Clear()
+    self.modifyComponentEvent:Clear()
 end
 
-function Entity:DoGet(context, onChangedFunc)
+function Entity:DoGet(context, ...)
     self.enable = true
-
     self.context = context
-    if not context and not onChangedFunc then
-        self.onComponentChangedEvent:Add(context, onChangedFunc)
+
+    local len = select('#', ...)
+    for i = 1, len, 1 do
+        self:AddComponentByClass(select(i, ...))
     end
 end
 
@@ -79,7 +103,7 @@ function Entity:DoRelease()
     self.guid = nil
     self.catgory = nil
 
-    self.onComponentChangedEvent:Clear()
+    self:UnbindAllEvent()
 
     local values = tvalues(self.classToComponentDic)
     tclear(self.classToComponentDic)
@@ -163,7 +187,7 @@ function Entity:AddComponentByClass(componentClass, ...)
         return nil
     end
 
-    self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentAdded, componentClass)
+    self.addComponentEvent:Invoke(self, componentClass)
 
     return component
 end
@@ -187,7 +211,7 @@ function Entity:RemoveComponentByClass(componentClass)
         return
     end
 
-    self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentRemoved, componentClass)
+    self.removeComponentEvent:Invoke(self, componentClass)
     self.context:releaseComponent(component)
 end
 
@@ -220,7 +244,7 @@ function Entity:ReplaceComponentByClass(oldComponentClass, newComponentClass)
     elseif oldComponentClass and newComponentClass then
         local oldComponent = self:removeComponent(oldComponentClass)
         local newComponent = self:addComponent(newComponentClass)
-        self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentReplaced, oldComponentClass, newComponentClass)
+        self.replaceComponentEvent:Invoke(self, oldComponentClass, newComponentClass)
         self.context:releaseComponent(oldComponent)
         return newComponent
     elseif not oldComponentClass and newComponentClass then
@@ -257,7 +281,7 @@ function Entity:ModifyComponentByClass(componentClass, modifyFunc, modifyTag)
 
         modifyFunc(self, component, modifyTag)
 
-        self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentModified, componentClass, modifyTag)
+        self.modifyComponentEvent:Invoke(self, componentClass, modifyTag)
     end
 end
 
@@ -280,7 +304,7 @@ function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
         return
     end
 
-    self.onComponentChangedEvent:Invoke(self, EntityEvent.ComponentModified, componentClass, modifyTag)
+    self.modifyComponentEvent:Invoke(self, componentClass, modifyTag)
 end
 
 function Entity:Destroy()

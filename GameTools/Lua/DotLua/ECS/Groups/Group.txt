@@ -1,9 +1,9 @@
 local oop = require('DotLua/OOP/oop')
-local GroupEvent = require('DotLua/ECS/Groups/GroupEvent')
 
 local tinsert = table.insert
 local tremove = table.remove
 local tclear = table.clear
+local tcopyto = table.copyto
 
 local LogTag = 'Group'
 
@@ -14,9 +14,10 @@ local Group =
         self.matcher = nil
 
         self.entities = {}
-        self.guidToIndexDic = {}
+        self.guidToEntityDic = {}
 
-        self.onGroupChangedEvent = oop.event()
+        self.addEntityEvent = oop.event()
+        self.removeEntityEvent = oop.event()
 
         self.refCount = 0
     end
@@ -30,8 +31,12 @@ function Group:GetEntityCount()
     return #(self.entities)
 end
 
-function Group:GetEntities()
-    return self.entities
+function Group:GetEntities(entities)
+    entities = entities or {}
+    if entities then
+        tcopyto(self.entities, entities)
+    end
+    return entities
 end
 
 function Group:RetainRef()
@@ -50,57 +55,84 @@ function Group:IsInUsing()
     return self.refCount > 0
 end
 
-function Group:DoGet(context, matcher)
-    self.matcher = matcher
-end
-
-function Group:DoRelease()
-    self.onGroupChangedEvent:Clear()
-
-    self.matcher = nil
-    tclear(self.guidToIndexDic)
-    tclear(self.entities)
-
-    self.refCount = 0
-end
-
-function Group:BindEvent(receiver, changedFunc)
-    if changedFunc then
-        self.onGroupChangedEvent:Add(receiver, changedFunc)
+function Group:BindEvent(receiver, addedFunc, removedFunc)
+    if addedFunc then
+        self.addEntityEvent:Add(receiver, addedFunc)
+    end
+    if removedFunc then
+        self.removeEntityEvent:Add(receiver, removedFunc)
     end
 end
 
-function Group:UnbindEvent(receiver, changedFunc)
-    if changedFunc then
-        self.onGroupChangedEvent:Add(receiver, changedFunc)
+function Group:UnbindEvent(receiver, addedFunc, removedFunc)
+    if addedFunc then
+        self.addEntityEvent:Remove(receiver, addedFunc)
+    end
+    if removedFunc then
+        self.removeEntityEvent:Remove(receiver, removedFunc)
     end
 end
 
 function Group:UnbindAllEvent()
-    self.onGroupChangedEvent:Clear()
+    self.addEntityEvent:Clear()
+    self.removeEntityEvent:Clear()
 end
 
-function Group:TryAddEntity(entity, contextEvent, entityEvent, param1, param2)
-    local guid = entity:GetGUID()
-    if not self.guidToIndexDic[guid] then
-        tinsert(self.entities, entity)
-        self.guidToIndexDic[guid] = #self.entities
+function Group:DoGet(matcher)
+    self.matcher = matcher
+end
 
-        self.onGroupChangedEvent:Invoke(GroupEvent.EntityAdded, entity, contextEvent, entityEvent, param1, param2)
+function Group:DoRelease()
+    self.matcher = nil
+
+    self:UnbindAllEvent()
+
+    tclear(self.entities)
+    tclear(self.guidToEntityDic)
+
+    self.refCount = 0
+end
+
+function Group:TryUpdateEntity(entity, contextEvent, param1, param2)
+    if self.matcher:IsMatch(entity) then
+        if self:addEntitySliently(entity) then
+            self.addEntityEvent:Invoke(entity, contextEvent, param1, param2)
+
+            return true
+        end
+    else
+        if self:removeEntitySliently(entity) then
+            self.removeEntityEvent:Invoke(entity, contextEvent, param1, param2)
+
+            return true
+        end
+    end
+
+    return false
+end
+
+function Group:addEntitySliently(entity)
+    local guid = entity:GetGUID()
+    if not self.guidToEntityDic[guid] then
+        tinsert(self.entities, entity)
+        self.guidToEntityDic[guid] = entity
         return true
     end
 
     return false
 end
 
-function Group:TryRemoveEntity(entity, contextEvent, entityEvent, param1, param2)
+function Group:removeEntitySliently(entity)
     local guid = entity:GetGUID()
-    if self.guidToIndexDic[guid] then
-        local index = self.guidToIndexDic[guid]
-        tremove(self.entities, index)
-        self.guidToIndexDic[guid] = nil
-
-        self.onGroupChangedEvent:Invoke(GroupEvent.EntityRemoved, entity, contextEvent, entityEvent, param1, param2)
+    if self.guidToEntityDic[guid] then
+        self.guidToEntityDic[guid] = nil
+        for i, e in ipairs(self.entities) do
+            if e == entity then
+                tremove(self.entities, i)
+                break
+            end
+        end
+        return true
     end
 
     return false

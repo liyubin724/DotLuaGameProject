@@ -6,16 +6,10 @@ local ContextEvent =
     {
         EntityCreated = 1,
         EntityReleased = 2,
-        EntityComponentChanged = 3,
-        GroupCreated = 7,
-        GroupChanged = 8,
-        GroupReleased = 9,
-
-
-        ComponentAdded = 3,
-        ComponentRemoved = 4,
-        ComponentReplaced = 5,
-        ComponentModified = 6,
+        EntityChangedForAddComponent = 3,
+        EntityChangedForRemoveComponent = 4,
+        EntityChangedForReplaceComponent = 5,
+        EntityChangedForModifyComponent = 6,
     }
 )
 

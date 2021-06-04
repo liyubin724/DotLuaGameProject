@@ -4,8 +4,9 @@ local GroupEvent =
     oop.enum(
     'DotLua.ECS.Groups.GroupEvent',
     {
-        EntityAdded = 1,
-        EntityRemoved = 2,
+        Added = 1,
+        Removed = 2,
+        AddOrRemove = 3,
     }
 )
 
