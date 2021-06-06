@@ -17,19 +17,20 @@ local FSMInitilizeSystem =
 function ReactiveTimeSystem:GetTrigger(context)
     local matcher = HaveComponentMatcher(FSMStateInitilizeComponent)
     local group = context:CreateGroup(matcher)
-    return Collector(group, {GroupEvent.EntityAdded})
+    return Collector(group, GroupEvent.Added)
 end
 
 function ReactiveTimeSystem:Filter(entity)
     return true
 end
 
-function FSMInitilizeSystem:onEntityAddedUpdate(deltaTime, entity)
+function FSMInitilizeSystem:onEntityUpdate(entity)
     local initilizeComponent = entity:GetComponentByClass(FSMStateInitilizeComponent)
     local initStateName = initilizeComponent:GetInitStateName()
 
     entity:RemoveComponentByClass(FSMStateInitilizeComponent)
-    entity:AddComponentByClass(FSMStateComponent, initStateName)
+    local stateComponent = entity:AddComponentByClass(FSMStateComponent)
+    stateComponent:SetNextStateName(initStateName)
 end
 
 return FSMInitilizeSystem

@@ -1,15 +1,13 @@
 local oop = require('DotLua/OOP/oop')
-local TimeUpdateSystem = oop.using('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
+local TimeUpdateSystem = require('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
 
 local LogTag = 'ReactiveTimeSystem'
 
 local ReactiveTimeSystem =
     oop.class(
     'DotLua.ECS.Systems.Components.ReactiveTimeSystem',
-    function(self, context, frequencyInTime)
+    function(self, frequencyInTime,context)
         self.collector = self:GetTrigger(context)
-
-        self:SetFrequency(frequencyInTime)
     end,
     TimeUpdateSystem
 )

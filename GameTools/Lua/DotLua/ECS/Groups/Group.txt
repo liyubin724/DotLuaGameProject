@@ -31,12 +31,8 @@ function Group:GetEntityCount()
     return #(self.entities)
 end
 
-function Group:GetEntities(entities)
-    entities = entities or {}
-    if entities then
-        tcopyto(self.entities, entities)
-    end
-    return entities
+function Group:GetEntities()
+    return self.entities
 end
 
 function Group:RetainRef()

@@ -1,27 +1,31 @@
 local oop = require('DotLua/ECS/OOP/oop')
 local FSMStatePlugin = require('DotLua/ECS/Systems/FSM/FSMStatePlugin')
-local ReactiveTimeSystem = require("DotLua/ECS/Systems/Components/ReactiveTimeSystem")
+local GroupTimeUpdateSystem = require('DotLua/ECS/Systems/Groups/GroupTimeUpdateSystem')
+local HaveComponentMatcher = require('DotLua/ECS/Mathcers/Components/HaveComponentMatcher')
+local FSMStateComponent = require('DotLua/ECS/Components/FSM/FSMStateComponent')
+local Collector = require('DotLua/ECS/Collectors/Collector')
+local GroupEvent = require 'DotLua.ECS.Groups.GroupEvent'
 
-local LogTag = "FSMMatchineSystem"
+local LogTag = 'FSMMatchineSystem'
 
 local FSMMatchineSystem =
     oop.class(
     'DotLua.ECS.Systems.FSM.FSMMatchineSystem',
-    function(self)
-        self.nameToStateDic = {}
+    function(self, frequencyInTime, context)
+        self.nameToStatePluginDic = {}
     end,
-    ReactiveTimeSystem
+    GroupTimeUpdateSystem
 )
 
 function FSMMatchineSystem:RegisterState(statePlugin)
-    if not statePlugin or oop.isclassof(statePlugin,FSMStatePlugin) then
-        oop.error(LogTag,"the state is nil or is not a instance of FSMStatePlugin")
+    if not statePlugin or oop.isclassof(statePlugin, FSMStatePlugin) then
+        oop.error(LogTag, 'the state is nil or is not a instance of FSMStatePlugin')
         return
     end
 
     local stateName = statePlugin:GetStateName()
     if self.nameToStateDic[stateName] ~= nil then
-        oop.error(LogTag,"the state has been register")
+        oop.error(LogTag, 'the state has been register')
         return
     end
 
@@ -33,8 +37,22 @@ function FSMMatchineSystem:UnregisterState(stateName)
     self.nameToStateDic[stateName] = nil
 end
 
-function FSMMatchineSystem:onEntityUpdate(entity, deltaTime)
+function FSMMatchineSystem:GetGroup()
+    local matcher = HaveComponentMatcher(FSMStateComponent)
+    return self.context:CreateGroup(matcher)
+end
+
+function FSMMatchineSystem:onEntityUpdate(entity)
+    local stateComponent = entity:GetComponentByClass(FSMStateComponent)
     
+    local currentStateName = stateComponent:GetCurrentStateName()
+    local nextStateName = stateComponent:GetNextStateName();
+
+
+end
+
+function FSMMatchineSystem:PerformTransitionTo(entity)
+
 end
 
 return FSMMatchineSystem

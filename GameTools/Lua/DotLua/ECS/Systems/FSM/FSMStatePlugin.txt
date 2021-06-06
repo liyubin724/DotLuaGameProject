@@ -23,11 +23,16 @@ function FSMStatePlugin:DoInitilize(matchine)
     self.matchine = matchine
 
     local func = self['onInitilize']
-    if func then
+    if func and type(func) == "function" then
         func(self)
     end
 end
 
+
+
+
+
+-------------------------------------------------
 function FSMStatePlugin:DoEnter(fromStateName, ...)
 end
 

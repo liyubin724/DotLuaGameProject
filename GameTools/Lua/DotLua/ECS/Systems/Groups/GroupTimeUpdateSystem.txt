@@ -1,0 +1,54 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local TimeUpdateSystem = require('DotLua/ECS/Systems/Update/TimeUpdateSystem')
+
+local LogTag = 'GroupTimeUpdateSystem'
+
+local GroupTimeUpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Groups.GroupTimeUpdateSystem',
+    function(self, frequencyInTime,context)
+        self.context = context
+        self.group = self:GetTrigger()
+    end,
+    TimeUpdateSystem
+)
+
+function GroupTimeUpdateSystem:onActivate()
+    if self.group then
+        self.group:Activate()
+    end
+end
+
+function GroupTimeUpdateSystem:onDeactivate()
+    if self.group then
+        self.group:Deactivate()
+    end
+end
+
+function GroupTimeUpdateSystem:onTimeUpdate(deltaTime)
+    if not self.group then
+        return
+    end
+
+    local entities = self.group:GetEntities()
+    for _, entity in ipairs(entities) do
+        if self:Filter(entity) then
+            self:onEntityUpdate(entity)
+        end
+    end
+end
+
+
+function GroupTimeUpdateSystem:GetGroup()
+    return nil
+end
+
+function GroupTimeUpdateSystem:Filter(entity)
+    return true
+end
+
+function GroupTimeUpdateSystem:onEntityUpdate(entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return GroupTimeUpdateSystem
