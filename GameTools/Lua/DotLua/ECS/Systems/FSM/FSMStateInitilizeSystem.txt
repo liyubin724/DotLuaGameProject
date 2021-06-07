@@ -6,25 +6,25 @@ local FSMStateComponent = require('DotLua/ECS/Components/FSM/FSMStateComponent')
 local Collector = require('DotLua/ECS/Collectors/Collector')
 local GroupEvent = require 'DotLua.ECS.Groups.GroupEvent'
 
-local FSMInitilizeSystem =
+local FSMStateInitilizeSystem =
     oop.class(
-    'DotLua.ECS.Systems.FSM.FSMInitilizeSystem',
+    'DotLua.ECS.Systems.FSM.FSMStateInitilizeSystem',
     function(self, context, frequencyInTime)
     end,
     ReactiveTimeSystem
 )
 
-function ReactiveTimeSystem:GetTrigger(context)
+function FSMStateInitilizeSystem:GetTrigger(context)
     local matcher = HaveComponentMatcher(FSMStateInitilizeComponent)
     local group = context:CreateGroup(matcher)
     return Collector(group, GroupEvent.Added)
 end
 
-function ReactiveTimeSystem:Filter(entity)
+function FSMStateInitilizeSystem:Filter(entity)
     return true
 end
 
-function FSMInitilizeSystem:onEntityUpdate(entity)
+function FSMStateInitilizeSystem:onEntityUpdate(entity)
     local initilizeComponent = entity:GetComponentByClass(FSMStateInitilizeComponent)
     local initStateName = initilizeComponent:GetInitStateName()
 
@@ -33,4 +33,4 @@ function FSMInitilizeSystem:onEntityUpdate(entity)
     stateComponent:SetNextStateName(initStateName)
 end
 
-return FSMInitilizeSystem
+return FSMStateInitilizeSystem

@@ -8,9 +8,6 @@ local FSMStatePlugin =
     'DotLua.ECS.Systems.FSM.FSMStatePlugin',
     function(self, stateName)
         self.stateName = stateName
-
-        self.nameToActionDic = {}
-
         self.matchine = nil
     end
 )
@@ -23,49 +20,18 @@ function FSMStatePlugin:DoInitilize(matchine)
     self.matchine = matchine
 
     local func = self['onInitilize']
-    if func and type(func) == "function" then
+    if func and type(func) == 'function' then
         func(self)
     end
 end
 
-
-
-
-
--------------------------------------------------
-function FSMStatePlugin:DoEnter(fromStateName, ...)
+function FSMStatePlugin:DoEnter(entity, fromStateName, ...)
 end
 
-function FSMStatePlugin:DoExecute(deltaTime, unscaleDeltaTime)
+function FSMStatePlugin:DoExecute(entity, ...)
 end
 
-function FSMStatePlugin:DoExit(toStateName, ...)
-end
-
-function FSMStatePlugin:DoChange(stateName, ...)
-    if self.stateName ~= stateName then
-        self.matchine:PerformTransitionTo(stateName, ...)
-    end
-end
-
-function FSMStatePlugin:RegisterAction(actionName, receiver, handleFunc)
-    if self.nameToActionDic[actionName] then
-        oop.error(LogTag, 'the action has been registered')
-        return
-    end
-
-    self.nameToActionDic[actionName] = Delegate(receiver, handleFunc)
-end
-
-function FSMStatePlugin:UnregisterAction(actionName)
-    self.nameToActionDic[actionName] = nil
-end
-
-function FSMStatePlugin:ExecuteAction(actionName, ...)
-    local delegete = self.nameToActionDic[actionName]
-    if delegete then
-        delegete:ActionInvoke(...)
-    end
+function FSMStatePlugin:DoExit(enitity, toStateName, ...)
 end
 
 return FSMStatePlugin

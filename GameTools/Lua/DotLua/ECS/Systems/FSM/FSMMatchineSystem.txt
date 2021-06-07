@@ -1,6 +1,8 @@
 local oop = require('DotLua/ECS/OOP/oop')
 local FSMStatePlugin = require('DotLua/ECS/Systems/FSM/FSMStatePlugin')
-local GroupTimeUpdateSystem = require('DotLua/ECS/Systems/Groups/GroupTimeUpdateSystem')
+local MacroSystem = require('DotLua/ECS/Systems/MacroSystem')
+
+
 local HaveComponentMatcher = require('DotLua/ECS/Mathcers/Components/HaveComponentMatcher')
 local FSMStateComponent = require('DotLua/ECS/Components/FSM/FSMStateComponent')
 local Collector = require('DotLua/ECS/Collectors/Collector')
@@ -11,11 +13,22 @@ local LogTag = 'FSMMatchineSystem'
 local FSMMatchineSystem =
     oop.class(
     'DotLua.ECS.Systems.FSM.FSMMatchineSystem',
-    function(self, frequencyInTime, context)
+    function(self)
         self.nameToStatePluginDic = {}
     end,
-    GroupTimeUpdateSystem
+    MacroSystem
 )
+
+function FSMMatchineSystem:onInitilize()
+end
+
+
+
+
+
+
+
+
 
 function FSMMatchineSystem:RegisterState(statePlugin)
     if not statePlugin or oop.isclassof(statePlugin, FSMStatePlugin) then

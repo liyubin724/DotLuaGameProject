@@ -2,28 +2,20 @@ local oop = require('DotLua/ECS/OOP/oop')
 local TimeUpdateSystem = require('DotLua/ECS/Systems/Update/TimeUpdateSystem')
 
 local LogTag = 'GroupTimeUpdateSystem'
+local tinsert = table.insert
+local tclear = table.clear
 
 local GroupTimeUpdateSystem =
     oop.class(
     'DotLua.ECS.Systems.Groups.GroupTimeUpdateSystem',
-    function(self, frequencyInTime,context)
+    function(self, frequencyInTime, context)
         self.context = context
-        self.group = self:GetTrigger()
+        self.group = self:GetGroup()
+
+        self.cachedEntities = {}
     end,
     TimeUpdateSystem
 )
-
-function GroupTimeUpdateSystem:onActivate()
-    if self.group then
-        self.group:Activate()
-    end
-end
-
-function GroupTimeUpdateSystem:onDeactivate()
-    if self.group then
-        self.group:Deactivate()
-    end
-end
 
 function GroupTimeUpdateSystem:onTimeUpdate(deltaTime)
     if not self.group then
@@ -31,13 +23,19 @@ function GroupTimeUpdateSystem:onTimeUpdate(deltaTime)
     end
 
     local entities = self.group:GetEntities()
-    for _, entity in ipairs(entities) do
-        if self:Filter(entity) then
+    if entities and #entities > 0 then
+        for _, entity in ipairs(entities) do
+            if self:Filter(entity) then
+                tinsert(self.cachedEntities, entity)
+            end
+        end
+
+        for _, entity in ipairs(self.cachedEntities) do
             self:onEntityUpdate(entity)
         end
+        tclear(self.cachedEntities)
     end
 end
-
 
 function GroupTimeUpdateSystem:GetGroup()
     return nil
