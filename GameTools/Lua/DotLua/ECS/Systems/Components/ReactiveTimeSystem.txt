@@ -3,11 +3,16 @@ local TimeUpdateSystem = require('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
 
 local LogTag = 'ReactiveTimeSystem'
 
+local tinsert = table.insert
+local tclear = table.clear
+
 local ReactiveTimeSystem =
     oop.class(
     'DotLua.ECS.Systems.Components.ReactiveTimeSystem',
-    function(self, frequencyInTime,context)
+function(self, frequencyInTime, context)
         self.collector = self:GetTrigger(context)
+
+        self.cachedEntities = {}
     end,
     TimeUpdateSystem
 )
@@ -33,12 +38,16 @@ function ReactiveTimeSystem:onTimeUpdate(deltaTime)
     if collectedEnities and #collectedEnities > 0 then
         for _, entity in ipairs(collectedEnities) do
             if self:Filter(entity) then
-                self:onEntityUpdate(entity)
+                tinsert(self.cachedEntities,entity)
             end
         end
-    end
+        self.collector:ClearCollectedEnities()
 
-    self.collector:ClearCollectedEnities()
+        for _, entity in ipairs(self.cachedEntities) do
+            self:onEntityUpdate(entity)
+        end
+        tclear(self.cachedEntities)
+    end
 end
 
 function ReactiveTimeSystem:GetTrigger(context)
