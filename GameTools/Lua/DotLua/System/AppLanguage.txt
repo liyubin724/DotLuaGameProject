@@ -1,0 +1,31 @@
+local oop = require('DotLua/OOP/oop')
+local AppPlatform = require 'DotLua.System.AppPlatform'
+
+local UESystemLanguage = CS.UnityEngine.SystemLanguage
+
+local AppLanguage =
+    oop.enum(
+    'DotLua.System.AppLanguage',
+    {
+        Chinese = 6,
+        English = 10,
+        Japanese = 22,
+        Korean = 23,
+        ChineseSimplified = 40,
+        ChineseTraditional = 41,
+        Unknown = 42
+    }
+)
+
+rawset(
+    AppPlatform,
+    'ToSystemLanguage',
+    function(language)
+        if not UESystemLanguage then
+            return UESystemLanguage(language)
+        end
+        return nil
+    end
+)
+
+return AppLanguage

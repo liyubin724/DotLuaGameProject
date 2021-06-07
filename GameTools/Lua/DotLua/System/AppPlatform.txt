@@ -1,0 +1,29 @@
+local oop = require('DotLua/OOP/oop')
+
+local UEPlatform = CS.UnityEngine.RuntimePlatform
+
+local AppPlatform =
+    oop.enum(
+    'DotLua.System.AppPlatform',
+    {
+        OSXEditor = 0,
+        OSXPlayer = 1,
+        WindowsPlayer = 2,
+        WindowsEditor = 7,
+        IPhonePlayer = 8,
+        Android = 11
+    }
+)
+
+rawset(
+    AppPlatform,
+    'ToPlatform',
+    function(platform)
+        if not UEPlatform then
+            return UEPlatform(platform)
+        end
+        return nil
+    end
+)
+
+return AppPlatform

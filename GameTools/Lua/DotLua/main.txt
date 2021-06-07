@@ -1,17 +1,17 @@
-package.path = '?.txt;' .. package.path
+--package.path = './?.txt;' .. package.path
+print("DDDDDDDDDDDD")
+local oop = require("DotLua/OOP/oop")
 
-require("DotLua/Math/Init")
+local app = {}
+app.value = 11
 
-local Vector3 = require("DotLua/Math/Vector3")
-local Bezier = require("DotLua/Math/Bezier")
+oop.asreadonly(app)
 
 local main = function()
-    local v0 = Vector3()
-    local v1 = Vector3(1,1,1)
+    rawset(app,"TestIndex",222)
 
-    local v = Bezier.Linear(v0,v1,0.5)
-
-    print(tostring(v))
+    print(tostring(app.TestIndex))
+    print("SSSSSSSSSSSSS")
 end
 
 main()
