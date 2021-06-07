@@ -1,0 +1,11 @@
+local UniqueIDCreator = {}
+
+UniqueIDCreator.id = 0
+
+function UniqueIDCreator.GetNextUID()
+    UniqueIDCreator.id = UniqueIDCreator.id + 1
+
+    return UniqueIDCreator.id
+end
+
+return UniqueIDCreator

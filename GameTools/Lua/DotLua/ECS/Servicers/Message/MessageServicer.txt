@@ -1,0 +1,50 @@
+local oop = require('DotLua/OOP/oop')
+
+local Servicer = require('DotLua/ECS/Servicers/Servicer')
+local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
+
+local MessageServicer =
+    oop.class(
+    'DotLua.ECS.Servicers.Message.MessageServicer',
+    function(self, name)
+        self.name = name
+
+        self.dispatcher = MsgDispatcher()
+    end,
+    Servicer
+)
+
+function MessageServicer:DoRegister()
+end
+
+function MessageServicer:DoUnregister()
+    if not self.dispatcher then
+        self.dispatcher:Clear()
+    end
+end
+
+function MessageServicer:RegistListener(name, receiver, func, userdata)
+    if not self.dispatcher then
+        self.dispatcher:RegistListener(name, receiver, func, userdata)
+    end
+end
+
+function MessageServicer:UnregistListener(name, receiver, func)
+    if not self.dispatcher then
+        self.dispatcher:UnregistListener(name, receiver, func)
+    end
+end
+
+function MessageServicer:UnregistAll(name)
+    if not self.dispatcher then
+        self.dispatcher:UnregistAll(name)
+    end
+end
+
+function MessageServicer:Trigger(name, ...)
+    if not self.dispatcher then
+        self.dispatcher:Trigger(name, ...)
+    end
+end
+
+return MessageServicer

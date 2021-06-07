@@ -4,7 +4,7 @@ local mround = math.round
 
 local TimerTaskCategory =
     oop.enum(
-    'TimerTaskCategory',
+    'DotLua.Timer.TimerTaskCategory',
     {
         None = 0,
         Interval = 1,
@@ -16,7 +16,7 @@ local TimerTaskCategory =
 ----internal----
 local TimerTask =
     oop.class(
-    'TimerTask',
+    'DotLua.Timer.TimerTask',
     function(self)
         self.index = -1
         self.wheelIndex = -1

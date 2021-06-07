@@ -1,6 +1,6 @@
-local GUID = {}
+local GUIDCreator = {}
 
-function GUID.Create()
+function GUIDCreator.Create()
     local seed={'e','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'}
     local tb={}
     for i=1,32 do
@@ -16,4 +16,4 @@ function GUID.Create()
     )
 end
 
-return GUID
+return GUIDCreator

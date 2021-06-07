@@ -17,7 +17,7 @@ local tisempty = table.isempty
 -- 通过Game.TimerMgr可以获得全局的定时器
 local HierarchicalTimer =
     oop.class(
-    'HierarchicalTimer',
+    'DotLua.Timer.HierarchicalTimer',
     function(self, name, ...)
         self.uniqueIndex = 0
 

@@ -2,7 +2,7 @@ local oop = require('DotLua/OOP/oop')
 
 local MsgListener =
     oop.class(
-    'MsgListener',
+    'DotLua.Message.MsgListener',
     function(self)
         self.name = nil
         self.receiver = nil
@@ -39,7 +39,7 @@ function MsgListener:GetUserdata()
     return self.userdata
 end
 
-function MsgListener:Set(name, receiver, func, userdata)
+function MsgListener:DoGet(name, receiver, func, userdata)
     self.name = name
     self.receiver = receiver
     self.func = func

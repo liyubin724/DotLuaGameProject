@@ -9,7 +9,7 @@ local tisempty = table.isempty
 -- 时间轮
 local TimerWheel =
     oop.class(
-    'TimerWheel',
+    'DotLua.Timer.TimerWheel',
     function(self, index, tickInMS, slotSize)
         self.index = index
         self.tickInMS = tickInMS
