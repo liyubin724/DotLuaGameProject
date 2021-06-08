@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "type": "lua",
             "request": "launch",
@@ -12,7 +11,7 @@
             "name": "LuaPanda",
             "description": "通用模式,通常调试项目请选择此模式 | launchVer:3.2.0",
             "cwd": "${workspaceFolder}",
-            "luaFileExtension": "",
+            "luaFileExtension": "txt,lua,lua.txt",
             "connectionPort": 8818,
             "stopOnEntry": true,
             "useCHook": true,
@@ -24,9 +23,9 @@
             "tag": "independent_file",
             "name": "LuaPanda-IndependentFile",
             "description": "独立文件调试模式,使用前请参考文档",
-            "luaPath": "D:/GreenTools/lua/lua5.3.5/lua.exe",
-            "packagePath": ["D:/WorkSpace/DotLuaGameProject/GameTools/Lua/?.txt"],
-            "luaFileExtension": ".txt",
+            "luaPath": "",
+            "packagePath": [],
+            "luaFileExtension": "txt",
             "connectionPort": 8820,
             "stopOnEntry": true,
             "useCHook": true

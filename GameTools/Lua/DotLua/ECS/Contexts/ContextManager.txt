@@ -10,8 +10,6 @@ local ContextManager =
     'DotLua.ECS.Contexts.ContextManager',
     function(self)
         self.contextDic = {}
-
-        self.guidToEntityDic = {}
     end
 )
 

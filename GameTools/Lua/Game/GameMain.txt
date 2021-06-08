@@ -17,13 +17,4 @@ end
 function GameMain.Teardown()
 end
 
-local Entity = require('DotLua/ECS/Entities/Entity')
-
-local entityClass = {a = "a",b = "b"}
-
-entityClass = entityClass and entityClass or Entity
-
-print(table.tostring(entityClass))
-
-
 GameMain.Startup()

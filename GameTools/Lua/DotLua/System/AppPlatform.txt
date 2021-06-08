@@ -1,9 +1,9 @@
 local oop = require('DotLua/OOP/oop')
 
-local UEPlatform = CS.UnityEngine.RuntimePlatform
+local LogTag = "AppPlatform"
 
 local AppPlatform =
-    oop.enum(
+oop.enum(
     'DotLua.System.AppPlatform',
     {
         OSXEditor = 0,
@@ -15,15 +15,38 @@ local AppPlatform =
     }
 )
 
-rawset(
-    AppPlatform,
-    'ToPlatform',
-    function(platform)
-        if not UEPlatform then
-            return UEPlatform(platform)
+if _G.CS then
+    rawset(
+        AppPlatform,
+        'ToPlatform',
+        function(platform)
+            return _G.CS.UnityEngine.RuntimePlatform(platform)
         end
-        return nil
-    end
-)
+    )
+
+    rawset(
+        AppPlatform,
+        'FromUEPlatform',
+        function(uePlatform)
+            local UEPlatform = _G.CS.UnityEngine.RuntimePlatform
+            if uePlatform == UEPlatform.OSXEditor then
+                return AppPlatform.Chinese
+            elseif uePlatform == UEPlatform.OSXPlayer then
+                return AppPlatform.English
+            elseif uePlatform == UEPlatform.WindowsPlayer then
+                return AppPlatform.Japanese
+            elseif uePlatform == UEPlatform.WindowsEditor then
+                return AppPlatform.Korean
+            elseif uePlatform == UEPlatform.IPhonePlayer then
+                return AppPlatform.ChineseSimplified
+            elseif uePlatform == UEPlatform.Android then
+                return AppPlatform.ChineseTraditional
+            else
+                oop.error(LogTag,"Unkown uePlatform")
+                return nil
+            end
+        end
+    )
+end
 
 return AppPlatform

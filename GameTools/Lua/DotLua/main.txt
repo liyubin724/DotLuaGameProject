@@ -1,17 +1,9 @@
---package.path = './?.txt;' .. package.path
-print("DDDDDDDDDDDD")
-local oop = require("DotLua/OOP/oop")
-
-local app = {}
-app.value = 11
-
-oop.asreadonly(app)
+package.path = './?.txt;' .. package.path
 
 local main = function()
-    rawset(app,"TestIndex",222)
+    local AppLanguage = require("DotLua/System/AppLanguage")
 
-    print(tostring(app.TestIndex))
-    print("SSSSSSSSSSSSS")
+    print(AppLanguage.Chinese)
 end
 
 main()

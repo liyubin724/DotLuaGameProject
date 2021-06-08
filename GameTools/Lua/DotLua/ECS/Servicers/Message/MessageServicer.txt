@@ -6,10 +6,10 @@ local MsgDispatcher = oop.using('DotLua/Message/MsgDispatcher')
 local MessageServicer =
     oop.class(
     'DotLua.ECS.Servicers.Message.MessageServicer',
-    function(self, name)
+    function(self, name,dispatcher)
         self.name = name
 
-        self.dispatcher = MsgDispatcher()
+        self.dispatcher = dispatcher or MsgDispatcher()
     end,
     Servicer
 )
