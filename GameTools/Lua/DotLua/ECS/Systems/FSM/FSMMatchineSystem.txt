@@ -2,9 +2,9 @@ local oop = require('DotLua/ECS/OOP/oop')
 local FSMStatePlugin = require('DotLua/ECS/Systems/FSM/FSMStatePlugin')
 local MacroSystem = require('DotLua/ECS/Systems/MacroSystem')
 
-local FSMStateComponent = require("DotLua/ECS/Components/FSM/FSMStateComponent")
+local FSMStateComponent = require('DotLua/ECS/Components/FSM/FSMStateComponent')
 
-local LogTag = "FSMMatchineSystem"
+local LogTag = 'FSMMatchineSystem'
 
 local FSMMatchineSystem =
     oop.class(
@@ -43,12 +43,11 @@ function FSMMatchineSystem:RegisterState(statePlugin)
     statePlugin:DoInitilize(self)
 end
 
-
 function FSMMatchineSystem:UnregisterState(stateName)
     self.nameToStateDic[stateName] = nil
 end
 
-function FSMMatchineSystem:PerformTransitionTo(entity, toStateName, ...)
+function FSMMatchineSystem:PerformTransitionTo(entity, toStateName)
     local stateComponent = entity:GetComponentByClass(FSMStateComponent)
     if not stateComponent then
         return
@@ -67,25 +66,26 @@ function FSMMatchineSystem:PerformTransitionTo(entity, toStateName, ...)
     if not currentStateName then
         local currentState = self:GetState(currentStateName)
         if not currentState then
-            oop.error(LogTag,"")
+            oop.error(LogTag, '')
             return
         end
 
-        currentState:DoExit(entity,toStateName)
+        currentState:DoExit(entity, toStateName)
     end
 
     if not toStateName then
-        oop.error(LogTag,"")
-        return
-    end
-    
-    local toState = self:GetState(toStateName)
-    if not toState then
-        oop.error(LogTag,"")
+        oop.error(LogTag, '')
         return
     end
 
-    
+    local toState = self:GetState(toStateName)
+    if not toState then
+        oop.error(LogTag, '')
+        return
+    end
+
+    stateComponent:SetStateName(toStateName)
+    toState:DoEnter(entity, currentStateName)
 end
 
 return FSMMatchineSystem
