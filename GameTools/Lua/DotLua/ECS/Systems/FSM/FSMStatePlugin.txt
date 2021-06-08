@@ -25,13 +25,13 @@ function FSMStatePlugin:DoInitilize(matchine)
     end
 end
 
-function FSMStatePlugin:DoEnter(entity, fromStateName, ...)
+function FSMStatePlugin:DoEnter(entity, fromStateName)
 end
 
-function FSMStatePlugin:DoExecute(entity, ...)
+function FSMStatePlugin:DoExecute(entity)
 end
 
-function FSMStatePlugin:DoExit(enitity, toStateName, ...)
+function FSMStatePlugin:DoExit(enitity, toStateName)
 end
 
 return FSMStatePlugin
