@@ -1,23 +1,22 @@
 local oop = require('DotLua/ECS/OOP/oop')
-local TimeUpdateSystem = require('DotLua/ECS/Systems/Update/TimeUpdateSystem')
+local UpdateSystem = require('DotLua/ECS/Systems/Update/UpdateSystem')
 
-local LogTag = 'GroupTimeUpdateSystem'
+local LogTag = 'GroupUpdateSystem'
 local tinsert = table.insert
 local tclear = table.clear
 
-local GroupTimeUpdateSystem =
+local GroupUpdateSystem =
     oop.class(
-    'DotLua.ECS.Systems.Groups.GroupTimeUpdateSystem',
-    function(self, frequencyInTime, context)
-        self.context = context
-        self.group = self:GetGroup()
+    'DotLua.ECS.Systems.Groups.GroupUpdateSystem',
+    function(self, context)
+        self.group = self:GetGroup(context)
 
         self.cachedEntities = {}
     end,
-    TimeUpdateSystem
+    UpdateSystem
 )
 
-function GroupTimeUpdateSystem:onTimeUpdate(deltaTime)
+function GroupUpdateSystem:onTimeUpdate(deltaTime)
     if not self.group then
         return
     end
@@ -37,16 +36,16 @@ function GroupTimeUpdateSystem:onTimeUpdate(deltaTime)
     end
 end
 
-function GroupTimeUpdateSystem:GetGroup()
+function GroupUpdateSystem:GetGroup(context)
     return nil
 end
 
-function GroupTimeUpdateSystem:Filter(entity)
+function GroupUpdateSystem:Filter(entity)
     return true
 end
 
-function GroupTimeUpdateSystem:onEntityUpdate(entity)
+function GroupUpdateSystem:onEntityUpdate(entity)
     oop.error(LogTag, 'this is a abstract class')
 end
 
-return GroupTimeUpdateSystem
+return GroupUpdateSystem

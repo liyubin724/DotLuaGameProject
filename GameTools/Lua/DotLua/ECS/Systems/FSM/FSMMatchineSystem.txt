@@ -2,13 +2,7 @@ local oop = require('DotLua/ECS/OOP/oop')
 local FSMStatePlugin = require('DotLua/ECS/Systems/FSM/FSMStatePlugin')
 local MacroSystem = require('DotLua/ECS/Systems/MacroSystem')
 
-
-local HaveComponentMatcher = require('DotLua/ECS/Mathcers/Components/HaveComponentMatcher')
-local FSMStateComponent = require('DotLua/ECS/Components/FSM/FSMStateComponent')
-local Collector = require('DotLua/ECS/Collectors/Collector')
-local GroupEvent = require 'DotLua.ECS.Groups.GroupEvent'
-
-local LogTag = 'FSMMatchineSystem'
+local LogTag = "FSMMatchineSystem"
 
 local FSMMatchineSystem =
     oop.class(
@@ -22,13 +16,14 @@ local FSMMatchineSystem =
 function FSMMatchineSystem:onInitilize()
 end
 
+function FSMMatchineSystem:AddSubSystem(subSystem)
+    subSystem:SetMatchine(self)
+    self:GetBaseClass().AddSubSystem(self, subSystem)
+end
 
-
-
-
-
-
-
+function FSMMatchineSystem:GetState(stateName)
+    return self.nameToStateDic[stateName]
+end
 
 function FSMMatchineSystem:RegisterState(statePlugin)
     if not statePlugin or oop.isclassof(statePlugin, FSMStatePlugin) then
@@ -46,26 +41,12 @@ function FSMMatchineSystem:RegisterState(statePlugin)
     statePlugin:DoInitilize(self)
 end
 
+
 function FSMMatchineSystem:UnregisterState(stateName)
     self.nameToStateDic[stateName] = nil
 end
 
-function FSMMatchineSystem:GetGroup()
-    local matcher = HaveComponentMatcher(FSMStateComponent)
-    return self.context:CreateGroup(matcher)
-end
-
-function FSMMatchineSystem:onEntityUpdate(entity)
-    local stateComponent = entity:GetComponentByClass(FSMStateComponent)
-    
-    local currentStateName = stateComponent:GetCurrentStateName()
-    local nextStateName = stateComponent:GetNextStateName();
-
-
-end
-
-function FSMMatchineSystem:PerformTransitionTo(entity)
-
+function FSMMatchineSystem:PerformTransitionTo(entity, toStateName, ...)
 end
 
 return FSMMatchineSystem

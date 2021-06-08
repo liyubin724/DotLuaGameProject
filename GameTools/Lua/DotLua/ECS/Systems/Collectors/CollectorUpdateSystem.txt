@@ -1,35 +1,34 @@
-local oop = require('DotLua/OOP/oop')
-local TimeUpdateSystem = require('Dotlua/ECS/Systems/Update/TimeUpdateSystem')
+local oop = require('DotLua/ECS/OOP/oop')
+local UpdateSystem = require('DotLua/ECS/Systems/Update/UpdateSystem')
 
-local LogTag = 'ReactiveTimeSystem'
-
+local LogTag = 'CollectorUpdateSystem'
 local tinsert = table.insert
 local tclear = table.clear
 
-local ReactiveTimeSystem =
+local CollectorUpdateSystem =
     oop.class(
-    'DotLua.ECS.Systems.Components.ReactiveTimeSystem',
-function(self, frequencyInTime, context)
-        self.collector = self:GetTrigger(context)
+    'DotLua.ECS.Systems.Groups.CollectorUpdateSystem',
+    function(self, context)
+        self.collector = self:GetCollector(context)
 
         self.cachedEntities = {}
     end,
-    TimeUpdateSystem
+    UpdateSystem
 )
 
-function ReactiveTimeSystem:onActivate()
+function CollectorUpdateSystem:onActivate()
     if self.collector then
         self.collector:Activate()
     end
 end
 
-function ReactiveTimeSystem:onDeactivate()
+function CollectorUpdateSystem:onDeactivate()
     if self.collector then
         self.collector:Deactivate()
     end
 end
 
-function ReactiveTimeSystem:onTimeUpdate(deltaTime)
+function CollectorUpdateSystem:onTimeUpdate(deltaTime)
     if not self.collector then
         return
     end
@@ -38,7 +37,7 @@ function ReactiveTimeSystem:onTimeUpdate(deltaTime)
     if collectedEnities and #collectedEnities > 0 then
         for _, entity in ipairs(collectedEnities) do
             if self:Filter(entity) then
-                tinsert(self.cachedEntities,entity)
+                tinsert(self.cachedEntities, entity)
             end
         end
         self.collector:ClearCollectedEnities()
@@ -50,16 +49,16 @@ function ReactiveTimeSystem:onTimeUpdate(deltaTime)
     end
 end
 
-function ReactiveTimeSystem:GetTrigger(context)
+function CollectorUpdateSystem:GetCollector(context)
     return nil
 end
 
-function ReactiveTimeSystem:Filter(entity)
+function CollectorUpdateSystem:Filter(entity)
     return true
 end
 
-function ReactiveTimeSystem:onEntityUpdate(entity)
+function CollectorUpdateSystem:onEntityUpdate(entity)
     oop.error(LogTag, 'this is a abstract class')
 end
 
-return ReactiveTimeSystem
+return CollectorUpdateSystem

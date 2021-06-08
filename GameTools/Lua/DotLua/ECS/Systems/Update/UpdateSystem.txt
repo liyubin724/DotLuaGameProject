@@ -1,34 +1,34 @@
 local oop = require('DotLua/OOP/oop')
 local System = oop.using('DotLua/ECS/Systems/System')
 
-local TimeUpdateSystem =
+local UpdateSystem =
     oop.class(
-    'DotLua.ECS.Systems.Update.TimeUpdateSystem',
-    function(self,frequencyInTime)
-        self.frequencyInTime = frequencyInTime or 0
+    'DotLua.ECS.Systems.Update.UpdateSystem',
+    function(self)
+        self.frequencyInTime = 0
         self.elapseDeltaTime = 0
     end,
     System
 )
 
-function TimeUpdateSystem:GetFrequency()
+function UpdateSystem:GetFrequency()
     return self.frequencyInTime
 end
 
-function TimeUpdateSystem:SetFrequency(frequency)
-    self.frequencyInTime = frequency
+function UpdateSystem:SetFrequency(frequency)
+    self.frequencyInTime = frequency or 0
     self.elapseDeltaTime = 0
 end
 
-function TimeUpdateSystem:onActivate()
+function UpdateSystem:onActivate()
     self.elapseDeltaTime = 0
 end
 
-function TimeUpdateSystem:onDeactivate()
+function UpdateSystem:onDeactivate()
     self.elapseDeltaTime = 0
 end
 
-function TimeUpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
+function UpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
     if self.isEnable then
         self.elapseDeltaTime = self.elapseDeltaTime + deltaTime
 
@@ -44,7 +44,7 @@ function TimeUpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
     end
 end
 
-function TimeUpdateSystem:onTimeUpdate(deltaTime)
+function UpdateSystem:onTimeUpdate(deltaTime)
 end
 
-return TimeUpdateSystem
+return UpdateSystem

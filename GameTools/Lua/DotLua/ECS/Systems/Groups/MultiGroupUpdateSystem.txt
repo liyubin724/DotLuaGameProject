@@ -1,0 +1,55 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local UpdateSystem = require('DotLua/ECS/Systems/Update/UpdateSystem')
+
+local LogTag = 'GroupUpdateSystem'
+local tinsert = table.insert
+local tclear = table.clear
+
+local GroupUpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Groups.GroupUpdateSystem',
+    function(self, contexts)
+        self.group = self:GetGroups(contexts)
+
+        self.cachedEntities = {}
+    end,
+    UpdateSystem
+)
+
+function GroupUpdateSystem:onTimeUpdate(deltaTime)
+    if not self.groups or #(self.groups) == 0 then
+        return
+    end
+
+    if self.groups and #(self.groups) > 0 then
+        for _, group in ipairs(self.groups) do
+            local entities = group:GetEntities()
+            if entities and #entities > 0 then
+                for _, entity in ipairs(entities) do
+                    if self:Filter(entity) then
+                        tinsert(self.cachedEntities, entity)
+                    end
+                end
+
+                for _, entity in ipairs(self.cachedEntities) do
+                    self:onEntityUpdate(entity)
+                end
+                tclear(self.cachedEntities)
+            end
+        end
+    end
+end
+
+function GroupUpdateSystem:GetGroups()
+    return nil
+end
+
+function GroupUpdateSystem:Filter(entity)
+    return true
+end
+
+function GroupUpdateSystem:onEntityUpdate(entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return GroupUpdateSystem
