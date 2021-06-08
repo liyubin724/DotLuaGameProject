@@ -18,7 +18,7 @@ local tisempty = table.isempty
 local HierarchicalTimer =
     oop.class(
     'DotLua.Timer.HierarchicalTimer',
-    function(self, name, ...)
+    function(self)
         self.uniqueIndex = 0
 
         self.taskPool = ObjectPool(TimerTask)
@@ -26,19 +26,11 @@ local HierarchicalTimer =
         self.isPaused = false
         self.wheels = {}
 
-        local length = select('#', ...)
-        if length > 0 then
-            for i = 1, length, 1 do
-                local wheel = select(i, ...)
-                tinsert(self.wheels, wheel)
-            end
-        else
-            tinsert(self.wheels, TimerWheel(1, 100, 10))
-            tinsert(self.wheels, TimerWheel(2, 100 * 10, 60))
-            tinsert(self.wheels, TimerWheel(3, 100 * 10 * 60, 60))
-            tinsert(self.wheels, TimerWheel(4, 100 * 10 * 60 * 60, 24))
-            tinsert(self.wheels, TimerWheel(5, 100 * 10 * 60 * 60 * 24, 30))
-        end
+        tinsert(self.wheels, TimerWheel(1, 100, 10))
+        tinsert(self.wheels, TimerWheel(2, 100 * 10, 60))
+        tinsert(self.wheels, TimerWheel(3, 100 * 10 * 60, 60))
+        tinsert(self.wheels, TimerWheel(4, 100 * 10 * 60 * 60, 24))
+        tinsert(self.wheels, TimerWheel(5, 100 * 10 * 60 * 60 * 24, 30))
 
         for _, wheel in ipairs(self.wheels) do
             wheel.completeDelegate = oop.delegate(self, self.OnWheelComplete)
