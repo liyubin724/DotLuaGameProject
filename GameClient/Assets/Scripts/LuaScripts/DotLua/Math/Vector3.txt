@@ -1,0 +1,198 @@
+local oop = require('DotLua/OOP/oop')
+
+local math = math
+local sqrt = math.sqrt
+local type = type
+
+local Vector3 =
+    oop.class(
+    'DotLua.Math.Vector3',
+    function(self, x, y, z)
+        self.x = x or 0
+        self.y = y or 0
+        self.z = z or 0
+    end
+)
+
+function Vector3:Get()
+    return self.x, self.y, self.z
+end
+
+function Vector3:GetX()
+    return self.x
+end
+
+function Vector3:GetY()
+    return self.y
+end
+
+function Vector3:GetZ()
+    return self.z
+end
+
+function Vector3:Set(newx, newy, newz)
+    self.x = newx or 0
+    self.y = newy or 0
+    self.z = newz or 0
+end
+
+function Vector3:Clone()
+    return Vector3(self.x, self.y, self.z)
+end
+
+function Vector3:CopyTo(v)
+    v:Set(self.x, self.y, self.z)
+end
+
+function Vector3:CopyFrom(v)
+    self:Set(v.x, v.y, v.z)
+end
+
+function Vector3:GetSqrMagnitude()
+    return self.x * self.x + self.y * self.y + self.z * self.z
+end
+
+function Vector3:GetMagnitude()
+    return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+end
+
+function Vector3:SetNormalize()
+    local num = sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+
+    if num > 1e-5 then
+        self.x = self.x / num
+        self.y = self.y / num
+        self.z = self.z / num
+    else
+        self.x = 0
+        self.y = 0
+        self.z = 0
+    end
+
+    return self
+end
+
+function Vector3:Mul(q)
+    if type(q) == 'number' then
+        self.x = self.x * q
+        self.y = self.y * q
+        self.z = self.z * q
+    else
+        self:MulQuat(q)
+    end
+
+    return self
+end
+
+function Vector3:Div(d)
+    self.x = self.x / d
+    self.y = self.y / d
+    self.z = self.z / d
+
+    return self
+end
+
+function Vector3:Add(vb)
+    self.x = self.x + vb.x
+    self.y = self.y + vb.y
+    self.z = self.z + vb.z
+
+    return self
+end
+
+function Vector3:Sub(vb)
+    self.x = self.x - vb.x
+    self.y = self.y - vb.y
+    self.z = self.z - vb.z
+
+    return self
+end
+
+function Vector3:MulQuat(quat)
+    local num = quat.x * 2
+    local num2 = quat.y * 2
+    local num3 = quat.z * 2
+    local num4 = quat.x * num
+    local num5 = quat.y * num2
+    local num6 = quat.z * num3
+    local num7 = quat.x * num2
+    local num8 = quat.x * num3
+    local num9 = quat.y * num3
+    local num10 = quat.w * num
+    local num11 = quat.w * num2
+    local num12 = quat.w * num3
+
+    local x = (((1 - (num5 + num6)) * self.x) + ((num7 - num12) * self.y)) + ((num8 + num11) * self.z)
+    local y = (((num7 + num12) * self.x) + ((1 - (num4 + num6)) * self.y)) + ((num9 - num10) * self.z)
+    local z = (((num8 - num11) * self.x) + ((num9 + num10) * self.y)) + ((1 - (num4 + num5)) * self.z)
+
+    self:Set(x, y, z)
+    return self
+end
+
+function Vector3:Equals(other)
+    return self.x == other.x and self.y == other.y and self.z == other.z
+end
+
+Vector3.__tostring = function(self)
+    return '[' .. (self.x or 0) .. ',' .. (self.y or 0) .. ',' .. (self.z or 0) .. ']'
+end
+
+Vector3.__div = function(va, d)
+    return Vector3(va.x / d, va.y / d, va.z / d)
+end
+
+Vector3.__mul = function(va, d)
+    if type(d) == 'number' then
+        return Vector3(va.x * d, va.y * d, va.z * d)
+    else
+        local vec = va:Clone()
+        vec:MulQuat(d)
+        return vec
+    end
+end
+
+Vector3.__add = function(va, vb)
+    return Vector3(va.x + vb.x, va.y + vb.y, va.z + vb.z)
+end
+
+Vector3.__sub = function(va, vb)
+    return Vector3(va.x - vb.x, va.y - vb.y, va.z - vb.z)
+end
+
+Vector3.__unm = function(va)
+    return Vector3(-va.x, -va.y, -va.z)
+end
+
+Vector3.__eq = function(a, b)
+    local v = a - b
+    local delta = v:SqrMagnitude()
+    return delta < 1e-10
+end
+
+Vector3.zero = function()
+    return Vector3(0, 0, 0)
+end
+Vector3.one = function()
+    return Vector3(1, 1, 1)
+end
+Vector3.up = function()
+    return Vector3(0, 1, 0)
+end
+Vector3.down = function()
+    return Vector3(0, -1, 0)
+end
+Vector3.right = function()
+    return Vector3(1, 0, 0)
+end
+Vector3.left = function()
+    return Vector3(-1, 0, 0)
+end
+Vector3.forward = function()
+    return Vector3(0, 0, 1)
+end
+Vector3.back = function()
+    return Vector3(0, 0, -1)
+end
+
+return Vector3

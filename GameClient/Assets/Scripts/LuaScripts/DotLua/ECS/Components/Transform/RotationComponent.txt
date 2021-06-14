@@ -1,0 +1,42 @@
+local oop = require('DotLua/OOP/oop')
+local Vector3 = require('DotLua/Math/Vector3')
+local Component = require('DotLua/ECS/Components/Component')
+
+local RotationComponent =
+    oop.class(
+    'DotLua.Components.RotationComponent',
+    function(self)
+        self.rotation = Vector3(0, 0, 0)
+    end,
+    Component
+)
+
+function RotationComponent:Get()
+    return self.rotation:Get()
+end
+
+function RotationComponent:GetRotation()
+    return self.rotation
+end
+
+function RotationComponent:SetRotation(v)
+    self.rotation:CopyFrom(v)
+end
+
+function RotationComponent:Set(x, y, z)
+    self.rotation:Set(x, y, z)
+end
+
+function RotationComponent:DoGet(name, x, y, z)
+    self:GetBaseClass().DoGet(name)
+
+    self.rotation:Set(x, y, z)
+end
+
+function RotationComponent:DoRelease()
+    self:GetBaseClass().DoRelease(self)
+
+    self.rotation:Set(0, 0, 0)
+end
+
+return RotationComponent

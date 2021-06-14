@@ -1,0 +1,64 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local UpdateSystem = require('DotLua/ECS/Systems/Update/UpdateSystem')
+
+local LogTag = 'CollectorUpdateSystem'
+local tinsert = table.insert
+local tclear = table.clear
+
+local CollectorUpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Groups.CollectorUpdateSystem',
+    function(self, context)
+        self.collector = self:GetCollector(context)
+
+        self.cachedEntities = {}
+    end,
+    UpdateSystem
+)
+
+function CollectorUpdateSystem:onActivate()
+    if self.collector then
+        self.collector:Activate()
+    end
+end
+
+function CollectorUpdateSystem:onDeactivate()
+    if self.collector then
+        self.collector:Deactivate()
+    end
+end
+
+function CollectorUpdateSystem:onTimeUpdate(deltaTime)
+    if not self.collector then
+        return
+    end
+
+    local collectedEnities = self.collector:GetCollectedEntities()
+    if collectedEnities and #collectedEnities > 0 then
+        for _, entity in ipairs(collectedEnities) do
+            if self:Filter(entity) then
+                tinsert(self.cachedEntities, entity)
+            end
+        end
+        self.collector:ClearCollectedEnities()
+
+        for _, entity in ipairs(self.cachedEntities) do
+            self:onEntityUpdate(entity)
+        end
+        tclear(self.cachedEntities)
+    end
+end
+
+function CollectorUpdateSystem:GetCollector(context)
+    return nil
+end
+
+function CollectorUpdateSystem:Filter(entity)
+    return true
+end
+
+function CollectorUpdateSystem:onEntityUpdate(entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return CollectorUpdateSystem

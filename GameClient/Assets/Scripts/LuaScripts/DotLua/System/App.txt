@@ -1,0 +1,57 @@
+local AppLanguage = require("DotLua/System/AppLanguage")
+local AppPlatform = require("DotLua/System/AppPlatform")
+local oop = require("DotLua/OOP/oop")
+
+local LogTag = "App"
+
+local App = {}
+App.isDebug = true
+App.language = AppLanguage.English
+App.platform = nil
+
+function App.GetIsDebug()
+    return App.isDebug
+end
+
+function App.SetIsDebug(isDebug)
+    App.isDebug = isDebug
+    oop.isDebug = isDebug
+end
+
+function App.GetLanguage()
+    return App.language
+end
+
+function App.SetLanguage(language)
+    App.language = language
+end
+
+function App.SetUELanguage(uelanguage)
+    App.language = AppLanguage.FromUESystemLanguage(uelanguage)
+
+    if not App.language then
+        App.language = AppLanguage.English
+    end
+end
+
+function App.GetUELanguage()
+    return AppLanguage.ToUESystemLanguage(App.language)
+end
+
+function App.GetPlatform()
+    return App.platform
+end
+
+function App.SetUEPlatform(ueplatform)
+    App.platform = AppPlatform.FromUEPlatform(ueplatform)
+
+    if not App.platform then
+        oop.error(LogTag,"Unkown Platform")
+    end
+end
+
+function App.GetUEPlatform()
+    return AppPlatform.ToUEPlatform(App.platform)
+end
+
+return App

@@ -1,0 +1,24 @@
+local oop = require('DotLua/OOP/oop')
+local Servicer = require('DotLua/ECS/Servicers/Servicer')
+
+local GUIDServicer =
+    oop.class(
+    'DotLua.ECS.Servicers.GUID.GUIDServicer',
+    function(self)
+        self.serialIndex = 1;
+    end,
+    Servicer
+)
+
+function GUIDServicer:GetNext(catgory)
+    local guid = 0
+    if catgory then
+        guid = catgory * 1000000000
+    end
+    guid = guid + self.serialIndex
+
+    self.serialIndex = self.serialIndex + 1
+    return guid
+end
+
+return GUIDServicer

@@ -1,0 +1,9 @@
+package.path = './?.txt;' .. package.path
+
+local main = function()
+    local AppLanguage = require("DotLua/System/AppLanguage")
+
+    print(AppLanguage.Chinese)
+end
+
+main()

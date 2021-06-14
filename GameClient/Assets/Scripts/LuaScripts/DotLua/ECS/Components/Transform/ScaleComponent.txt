@@ -1,0 +1,42 @@
+local oop = require('DotLua/OOP/oop')
+local Vector3 = require('DotLua/Math/Vector3')
+local Component = require('DotLua/ECS/Components/Component')
+
+local ScaleComponent =
+    oop.class(
+    'DotLua.Components.ScaleComponent',
+    function(self)
+        self.scale = Vector3(0, 0, 0)
+    end,
+    Component
+)
+
+function ScaleComponent:Get()
+    return self.scale:Get()
+end
+
+function ScaleComponent:GetScale()
+    return self.scale
+end
+
+function ScaleComponent:SetScale(v)
+    self.scale:CopyFrom(v)
+end
+
+function ScaleComponent:Set(x, y, z)
+    self.scale:Set(x, y, z)
+end
+
+function ScaleComponent:DoGet(name, x, y, z)
+    self:GetBaseClass().DoGet(name)
+
+    self.scale:Set(x, y, z)
+end
+
+function ScaleComponent:DoRelease()
+    self:GetBaseClass().DoRelease(self)
+
+    self.scale:Set(0, 0, 0)
+end
+
+return ScaleComponent

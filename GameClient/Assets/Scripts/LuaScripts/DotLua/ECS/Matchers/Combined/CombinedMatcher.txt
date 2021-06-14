@@ -1,0 +1,84 @@
+local oop = require('DotLua/OOP/oop')
+local Matcher = require('DotLua/ECS/Matchers/Matcher')
+local MatcherOperation = require('DotLua/ECS/Matchers/Combined/MatcherOperation')
+
+local tinsert = table.insert
+
+local LogTag = 'Matcher'
+
+local CombinedMatcher =
+    oop.class(
+    'DotLua.ECS.Matchers.Combined.CombinedMatcher',
+    function(self, name, operation)
+        self.subMatchers = {}
+        self.operation = operation or MatcherOperation.And
+    end,
+    Matcher
+)
+
+function CombinedMatcher:AddMatcher(matcher)
+    if oop.isDebug then
+        if oop.isclassof(matcher, Matcher) then
+            oop.error(LogTag, 'the matcher is not a subclass of Matcher')
+            return
+        end
+    end
+
+    if self.operation == MatcherOperation.Not and #(self.subMatchers) > 1 then
+        oop.error(LogTag, 'The count of the matchers should be 1')
+        return
+    end
+
+    if not matcher then
+        tinsert(self.subMatchers, matcher)
+    end
+end
+
+function CombinedMatcher:IsMatch(entity)
+    if self.operation == MatcherOperation.And then
+        return self:isMatchForAnd(entity)
+    elseif self.operation == MatcherOperation.Or then
+        return self:isMatchForOr(entity)
+    elseif self.operation == MatcherOperation.Not then
+        return self:isMatchForNot(entity)
+    end
+
+    return false
+end
+
+function CombinedMatcher:isMatchForAnd(entity)
+    if #(self.subMatchers) == 0 then
+        return false
+    end
+
+    for _, matcher in ipairs(self.subMatchers) do
+        if not matcher:IsMatch(entity) then
+            return false
+        end
+    end
+
+    return true
+end
+
+function CombinedMatcher:isMatchForOr(entity)
+    if #(self.subMatchers) == 0 then
+        return false
+    end
+
+    for _, matcher in ipairs(self.subMatchers) do
+        if not matcher:IsMatch(entity) then
+            return false
+        end
+    end
+
+    return true
+end
+
+function CombinedMatcher:isMatchForNot(entity)
+    if #(self.subMatchers) > 0 then
+        return not self.subMatchers[1]:IsMatch(entity)
+    end
+    return false
+end
+
+return CombinedMatcher

@@ -1,0 +1,50 @@
+local oop = require('DotLua/OOP/oop')
+local Component = require('DotLua/ECS/Components/Component')
+
+local tclear = table.clear
+local tinsert = table.insert
+local tremove = table.remove
+
+local ChildsComponent =
+    oop.class(
+    'DotLua.ECS.Components.Basic.ChildsComponent',
+    function(self)
+        self.childGUIDs = {}
+    end,
+    Component
+)
+
+function ChildsComponent:GetChildGUIDs()
+    return self.childGUIDs
+end
+
+function ChildsComponent:Add(guid)
+    if not self:HasChild(guid) then
+        tinsert(self.childGUIDs, guid)
+    end
+end
+
+function ChildsComponent:Remove(guid)
+    for i, v in ipairs(self.childGUIDs) do
+        if v == guid then
+            tremove(self.childGUIDs, i)
+            return
+        end
+    end
+end
+
+function ChildsComponent:Has(guid)
+    for _, v in ipairs(self.childGUIDs) do
+        if v == guid then
+            return true
+        end
+    end
+
+    return false
+end
+
+function ChildsComponent:DoRelease()
+    tclear(self.childGUIDs)
+end
+
+return ChildsComponent
