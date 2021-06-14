@@ -1,64 +1,19 @@
 ﻿using System.Collections.Generic;
 
-namespace DotEngine.Ini
+namespace DotEngine.Config.Ini
 {
     public class IniProperty : IDeepCopy<IniProperty>
     {
         private string key;
+        private string value = "";
+        private List<string> comments = null;
+        private List<string> optionalValues = null;
+
         public string Key
         {
             get
             {
                 return key;
-            }
-        }
-
-        private string value;
-        public bool BoolValue
-        {
-            get
-            {
-                if(bool.TryParse(value,out var result))
-                {
-                    return result;
-                }
-                return false;
-            }
-            set
-            {
-                this.value = value.ToString();
-            }
-        }
-
-        public int IntValue
-        {
-            get
-            {
-                if(int.TryParse(value,out var result))
-                {
-                    return result;
-                }
-                return 0;
-            }
-            set
-            {
-                this.value = value.ToString();
-            }
-        }
-
-        public float FloatValue
-        {
-            get
-            {
-                if(float.TryParse(value,out var result))
-                {
-                    return result;
-                }
-                return 0.0f;
-            }
-            set
-            {
-                this.value = value.ToString();
             }
         }
 
@@ -74,7 +29,55 @@ namespace DotEngine.Ini
             }
         }
 
-        private List<string> comments = null;
+        public bool BoolValue
+        {
+            get
+            {
+
+                if (bool.TryParse(value, out var result))
+                {
+                    return result;
+                }
+                return false;
+            }
+            set
+            {
+                this.value = value.ToString();
+            }
+        }
+
+        public int IntValue
+        {
+            get
+            {
+                if (int.TryParse(value, out var result))
+                {
+                    return result;
+                }
+                return 0;
+            }
+            set
+            {
+                this.value = value.ToString();
+            }
+        }
+
+        public float FloatValue
+        {
+            get
+            {
+                if (float.TryParse(value, out var result))
+                {
+                    return result;
+                }
+                return 0.0f;
+            }
+            set
+            {
+                this.value = value.ToString();
+            }
+        }
+
         public List<string> Comments
         {
             get
@@ -87,23 +90,18 @@ namespace DotEngine.Ini
             }
             set
             {
-                if (value == null)
-                {
-                    comments?.Clear();
-                }
-                else
+                comments?.Clear();
+                if (value != null)
                 {
                     if (comments == null)
                     {
                         comments = new List<string>();
                     }
-                    comments.Clear();
                     comments.AddRange(value);
                 }
             }
         }
 
-        private List<string> optionalValues = null;
         public List<string> OptionalValues
         {
             get
@@ -116,17 +114,13 @@ namespace DotEngine.Ini
             }
             set
             {
-                if (value == null)
-                {
-                    optionalValues?.Clear();
-                }
-                else
+                optionalValues?.Clear();
+                if (value != null)
                 {
                     if (optionalValues == null)
                     {
                         optionalValues = new List<string>();
                     }
-                    optionalValues.Clear();
                     optionalValues.AddRange(value);
                 }
             }

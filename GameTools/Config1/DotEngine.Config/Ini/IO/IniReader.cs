@@ -176,7 +176,7 @@ namespace DotEngine.Config.Ini
             }
 
             tempSectionName = sectionName;
-            IniSection section = iniData.AddSection(tempSectionName);
+            Section section = iniData.AddSection(tempSectionName);
             if (readerStyle.IsParseComments && tempComments.Count > 0)
             {
                 section.Comments = tempComments;
@@ -292,7 +292,7 @@ namespace DotEngine.Config.Ini
 
             string propertyKey = buffer.GetString(keyRange);
 
-            IniSection section = iniData.GetSection(tempSectionName, true);
+            Section section = iniData.GetSection(tempSectionName, true);
             if (section.ContainsProperty(propertyKey))
             {
                 if (readerStyle.ThrowExceptionsOnError)
@@ -304,7 +304,7 @@ namespace DotEngine.Config.Ini
 
             string propertyValue = buffer.GetString(valueRange);
 
-            IniProperty property = section.AddProperty(propertyKey, propertyValue);
+            Property property = section.AddProperty(propertyKey, propertyValue);
             if (readerStyle.IsParseComments && tempComments.Count > 0)
             {
                 property.Comments = tempComments;

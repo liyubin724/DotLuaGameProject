@@ -22,13 +22,13 @@ namespace DotEngine.Ini
             }
             set
             {
-                if (comments == null)
-                {
-                    comments = new List<string>();
-                }
-                comments.Clear();
+                comments?.Clear();
                 if (value != null)
                 {
+                    if (comments == null)
+                    {
+                        comments = new List<string>();
+                    }
                     comments.AddRange(value);
                 }
             }

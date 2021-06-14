@@ -4,41 +4,41 @@ using System.Linq;
 
 namespace DotEngine.Config.Ini
 {
-    public class IniData : IDeepCopy<IniData>, IEnumerable<IniSection>
+    public class IniData : IDeepCopy<IniData>, IEnumerable<Section>
     {
         public static readonly string GLOBAL_SECTION_NAME = "__global__";
 
-        private Dictionary<string, IniSection> sections = null;
+        private Dictionary<string, Section> sections = null;
 
         public string[] SectionNames => sections.Keys.ToArray();
         public int SectionCount => sections.Count;
 
         public IniData()
         {
-            sections = new Dictionary<string, IniSection>();
+            sections = new Dictionary<string, Section>();
         }
 
         public IniData(IniData data)
         {
-            sections = new Dictionary<string, IniSection>();
-            foreach(IniSection section in data)
+            sections = new Dictionary<string, Section>();
+            foreach(Section section in data)
             {
                 sections.Add(section.Name, section.DeepCopy());
             }
         }
 
         public bool ContainsSection(string sectionName) => sections.ContainsKey(sectionName);
-        public IniSection AddSection(string sectionName)
+        public Section AddSection(string sectionName)
         {
             if(!sections.TryGetValue(sectionName,out var section))
             {
-                section = new IniSection(sectionName);
+                section = new Section(sectionName);
                 sections.Add(sectionName, section);
             }
             return section;
         }
 
-        public IniSection RemoveSection(string sectionName)
+        public Section RemoveSection(string sectionName)
         {
             if (sections.TryGetValue(sectionName, out var section))
             {
@@ -47,11 +47,11 @@ namespace DotEngine.Config.Ini
             return section;
         }
 
-        public IniSection GetSection(string sectionName,bool isCreateIfNExist = false)
+        public Section GetSection(string sectionName,bool isCreateIfNExist = false)
         {
             if (!sections.TryGetValue(sectionName, out var section) && isCreateIfNExist)
             {
-                section = new IniSection(sectionName);
+                section = new Section(sectionName);
                 sections.Add(sectionName, section);
             }
             return section;
@@ -62,9 +62,9 @@ namespace DotEngine.Config.Ini
             sections.Clear();
         }
 
-        public IniProperty GetProperty(string sectionName,string propertyKey)
+        public Property GetProperty(string sectionName,string propertyKey)
         {
-            IniSection section = GetSection(sectionName, false);
+            Section section = GetSection(sectionName, false);
             if(section!=null)
             {
                 return section.GetProperty(propertyKey, false);
@@ -72,7 +72,7 @@ namespace DotEngine.Config.Ini
             return null;
         }
 
-        public IniProperty GetProperty(string propertyKey)
+        public Property GetProperty(string propertyKey)
         {
             foreach(var section in this)
             {
@@ -89,7 +89,7 @@ namespace DotEngine.Config.Ini
             return new IniData(this);
         }
 
-        public IEnumerator<IniSection> GetEnumerator()
+        public IEnumerator<Section> GetEnumerator()
         {
             foreach(var name in sections.Keys)
             {

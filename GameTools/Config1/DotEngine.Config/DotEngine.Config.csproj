@@ -4,8 +4,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FEC5EABB-8E53-4B05-9A92-8BD8AA98422E}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{1B841D28-7083-4B4A-9B01-32136323FA50}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotEngine.Config</RootNamespace>
     <AssemblyName>DotEngine.Config</AssemblyName>
@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -43,31 +46,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="NDB\NDBConst.cs" />
+    <Compile Include="NDB\NDBManager.cs" />
+    <Compile Include="Utility\AssemblyUtility.cs" />
+    <Compile Include="Utility\MarshalUtility.cs" />
+    <Compile Include="NDB\NDBData.cs" />
+    <Compile Include="IDeepCopy.cs" />
     <Compile Include="Ini\Exceptions\IniReaderException.cs" />
-    <Compile Include="Ini\IDeepCopy.cs" />
     <Compile Include="Ini\IO\IniReader.cs" />
     <Compile Include="Ini\IO\IniTextBuffer.cs" />
     <Compile Include="Ini\IO\IniWriter.cs" />
-    <Compile Include="Ini\Models\IniData.cs" />
-    <Compile Include="Ini\Models\IniProperty.cs" />
-    <Compile Include="Ini\Models\IniSection.cs" />
     <Compile Include="Ini\Styles\IniReaderStyle.cs" />
     <Compile Include="Ini\Styles\IniSchemeStyle.cs" />
+    <Compile Include="Ini\Models\IniData.cs" />
+    <Compile Include="Ini\Models\Property.cs" />
+    <Compile Include="Ini\Models\Section.cs" />
     <Compile Include="Ini\Styles\IniWriterStyle.cs" />
-    <Compile Include="NDB\IO\ByteReader.cs" />
-    <Compile Include="NDB\IO\ByteWriter.cs" />
-    <Compile Include="NDB\NDBConst.cs" />
-    <Compile Include="NDB\NDBData.cs" />
     <Compile Include="NDB\NDBField.cs" />
     <Compile Include="NDB\NDBHeader.cs" />
-    <Compile Include="NDB\NDBManager.cs" />
-    <Compile Include="Utility\MarshalUtility.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WDB\IO\WDBCVSReader.cs" />
+    <Compile Include="WDB\IO\WDBExcelReader.cs" />
+    <Compile Include="WDB\IO\WDBLuaWriter.cs" />
+    <Compile Include="WDB\IO\WDBNDBWriter.cs" />
+    <Compile Include="WDB\Fields\AddressField.cs" />
+    <Compile Include="WDB\Fields\BoolField.cs" />
+    <Compile Include="WDB\Fields\FloatField.cs" />
+    <Compile Include="WDB\Fields\IdField.cs" />
+    <Compile Include="WDB\Fields\IntField.cs" />
+    <Compile Include="WDB\Fields\LongField.cs" />
+    <Compile Include="WDB\Fields\LuaField.cs" />
+    <Compile Include="WDB\Fields\RefField.cs" />
+    <Compile Include="WDB\Fields\StringField.cs" />
+    <Compile Include="WDB\Fields\TextField.cs" />
+    <Compile Include="WDB\Validations\BoolValidation.cs" />
+    <Compile Include="WDB\Verifications\IVerify.cs" />
+    <Compile Include="WDB\WDBCell.cs" />
+    <Compile Include="WDB\WDBField.cs" />
+    <Compile Include="WDB\WDBRow.cs" />
+    <Compile Include="WDB\WDBSheet.cs" />
+    <Compile Include="WDB\WDBValidation.cs" />
+    <Compile Include="WDB\WDBUtility.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NDB\Exceptions\" />
-    <Folder Include="WDB\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

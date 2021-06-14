@@ -15,7 +15,7 @@ namespace DotEngine.Config.Ini
 
             TextWriter writer = new StringWriter(new StringBuilder());
 
-            IniSection globalSection = iniData.GetSection(IniData.GLOBAL_SECTION_NAME, false);
+            Section globalSection = iniData.GetSection(IniData.GLOBAL_SECTION_NAME, false);
             if (globalSection != null)
             {
                 WriteSection(globalSection, writer);
@@ -54,7 +54,7 @@ namespace DotEngine.Config.Ini
             writerStyle = null;
         }
 
-        private static void WriteSection(IniSection section, TextWriter writer)
+        private static void WriteSection(Section section, TextWriter writer)
         {
             if (section.Name != IniData.GLOBAL_SECTION_NAME)
             {
@@ -86,7 +86,7 @@ namespace DotEngine.Config.Ini
             }
         }
 
-        private static void WriteProperty(IniProperty property, TextWriter writer)
+        private static void WriteProperty(Property property, TextWriter writer)
         {
             if (writerStyle.IsNewLineBeforeProperty)
             {

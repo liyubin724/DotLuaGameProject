@@ -1,4 +1,7 @@
-﻿namespace DotEngine.Config.NDB
+﻿using System;
+using System.IO;
+
+namespace DotEngine.Config.NDB
 {
     public static class NDBConst
     {
