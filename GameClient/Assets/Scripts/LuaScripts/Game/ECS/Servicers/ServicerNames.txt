@@ -1,5 +1,0 @@
-local ServicerNames = {}
-
-ServicerNames.HTimerName = "HTimer"
-
-return ServicerNames

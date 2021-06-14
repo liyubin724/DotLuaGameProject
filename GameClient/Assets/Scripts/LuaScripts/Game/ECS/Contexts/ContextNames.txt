@@ -1,6 +1,0 @@
-local ContextNames = {}
-
-ContextNames.UIContextName = "uiContext"
-ContextNames.GameContextName = "gameContext"
-
-return ContextNames
