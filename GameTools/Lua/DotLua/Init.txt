@@ -1,3 +1,0 @@
-_G.oop = require('DotLua/OOP/oop')
-_G.App = require('DotLua/System/App')
-_G.AppTime = require('DotLua/System/AppTime')
