@@ -156,7 +156,7 @@ function table.all(tbl, checkFunc)
     return true
 end
 
-function table.findanyvalue(tbl,checkFunc)
+function table.findanyvalue(tbl, checkFunc)
     if type(tbl) ~= 'table' then
         return nil
     end
@@ -170,7 +170,7 @@ function table.findanyvalue(tbl,checkFunc)
     return nil
 end
 
-function table.findallvalue(tbl,checkFunc)
+function table.findallvalue(tbl, checkFunc)
     if type(tbl) ~= 'table' then
         return nil
     end
@@ -179,7 +179,7 @@ function table.findallvalue(tbl,checkFunc)
 
     for _, value in pairs(tbl) do
         if checkFunc(value) then
-            tinsert(result,value)
+            tinsert(result, value)
         end
     end
 
@@ -262,9 +262,9 @@ function table.tostring(tbl)
         return tostring(tbl)
     end
 
-    if _G.serpent then
-        return _G.serpent.dump(tbl)
-    else
-        return tostring(tbl)
+    if _G.Json then
+        return _G.Json.encode(tbl)
     end
+
+    return tostring(tbl)
 end

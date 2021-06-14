@@ -1,5 +1,7 @@
 local AppTime = {}
 AppTime.timeScale = 1
+AppTime.deltaTime = 0.0
+AppTime.unsclaeDeltaTime = 0.0
 
 function AppTime.GetTimeScale()
     return AppTime.timeScale
@@ -7,6 +9,22 @@ end
 
 function AppTime.SetTimeScale(timeScale)
     AppTime.timeScale = timeScale
+end
+
+function AppTime.GetDeltaTime()
+    return AppTime.deltaTime
+end
+
+function AppTime.SetDeltaTime(deltaTime)
+    AppTime.deltaTime = deltaTime
+end
+
+function AppTime.GetUnscaleDeltaTime()
+    return AppTime.unsclaeDeltaTime
+end
+
+function AppTime.SetUnscaleDeltaTime(unscaleDeltaTime)
+    AppTime.unscaleDeltaTime = unscaleDeltaTime
 end
 
 return AppTime

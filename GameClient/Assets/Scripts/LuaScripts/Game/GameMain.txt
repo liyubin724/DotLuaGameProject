@@ -1,14 +1,11 @@
-package.path = '?.txt;' .. package.path
-
-_G.serpent = require('DotLua/Depends/Serpent/serpent')
-require("DotLua/Utils/tableEx")
-
-local GameECSEnv = require('Game/ECS/GameECSEnv')
+require('DotLua/Init')
 
 GameMain = {}
 
+function GameMain.Initialize()
+end
+
 function GameMain.Startup()
-    _G.GameECS = GameECSEnv()
 end
 
 function GameMain.Update(deltaTime, unscaleDeltaTime)
@@ -16,5 +13,3 @@ end
 
 function GameMain.Teardown()
 end
-
-GameMain.Startup()
