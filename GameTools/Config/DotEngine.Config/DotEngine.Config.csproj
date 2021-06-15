@@ -86,9 +86,8 @@
     <Compile Include="WDB\Validations\LongValidation.cs" />
     <Compile Include="WDB\Validations\NotEmptyValidation.cs" />
     <Compile Include="WDB\Validations\StrMinMaxLenValidation.cs" />
-    <Compile Include="WDB\WDBCellValidation.cs" />
+    <Compile Include="WDB\WDBValueValidation.cs" />
     <Compile Include="WDB\WDBCell.cs" />
-    <Compile Include="WDB\WDBConfig.cs" />
     <Compile Include="WDB\WDBConst.cs" />
     <Compile Include="WDB\WDBField.cs" />
     <Compile Include="WDB\WDBLine.cs" />

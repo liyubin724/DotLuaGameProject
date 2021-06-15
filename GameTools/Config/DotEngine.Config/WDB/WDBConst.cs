@@ -4,10 +4,10 @@ namespace DotEngine.Config.WDB
 {
     public static class WDBConst
     {
-        public const string CONTEXT_ERRORS_NAME = "errors";
-        public const string CONTEXT_SHEET_NAME = "sheet";
-        public const string CONTEXT_FIELD_NAME = "field";
-        public const string CONTEXT_CELL_NAME = "cell";
+        public const string CONTEXT_ERRORS_NAME = "__errors__";
+        public const string CONTEXT_SHEET_NAME = "__sheet__";
+        public const string CONTEXT_FIELD_NAME = "__field__";
+        public const string CONTEXT_CELL_NAME = "__cell__";
 
         public const string VERIFY_SHEET_NAME_REGEX = @"^[A-Z][A-Za-z]{2,9}";
         public const string VERIFY_FIELD_NAME_REGEX = @"^[A-Z][A-Za-z0-9]{2,9}";
