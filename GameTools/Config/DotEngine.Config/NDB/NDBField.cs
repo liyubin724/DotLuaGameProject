@@ -3,6 +3,7 @@
     public enum NDBFieldType
     {
         Null = 0,
+
         Bool = 'b',
         Int = 'i',
         Long = 'l',
@@ -23,19 +24,23 @@
     {
         public static int GetFieldOffset(NDBFieldType fieldType)
         {
-            if(fieldType == NDBFieldType.Bool)
+            if (fieldType == NDBFieldType.Bool)
             {
                 return sizeof(bool);
-            }else if(fieldType == NDBFieldType.Int || fieldType == NDBFieldType.String || fieldType == NDBFieldType.Text)
+            }
+            else if (fieldType == NDBFieldType.Int || fieldType == NDBFieldType.String || fieldType == NDBFieldType.Text)
             {
                 return sizeof(int);
-            }else if(fieldType == NDBFieldType.Long)
+            }
+            else if (fieldType == NDBFieldType.Long)
             {
                 return sizeof(long);
-            }else if(fieldType == NDBFieldType.Float)
+            }
+            else if (fieldType == NDBFieldType.Float)
             {
                 return sizeof(float);
-            }else
+            }
+            else
             {
                 return 0;
             }

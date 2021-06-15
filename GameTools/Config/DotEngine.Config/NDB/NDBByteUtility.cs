@@ -1,10 +1,6 @@
 ﻿using DotEngine.Config.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.Config.NDB
 {
@@ -32,7 +28,8 @@ namespace DotEngine.Config.NDB
 
         public static void WriteField(Stream stream,NDBField field)
         {
-
+            stream.WriteByte((byte)field.Type);
+            ByteWriter.WriteString(stream, field.Name);
         }
     }
 }

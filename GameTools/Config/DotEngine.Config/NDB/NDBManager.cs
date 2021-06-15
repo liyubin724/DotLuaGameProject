@@ -21,18 +21,15 @@ namespace DotEngine.Config.NDB
         private Dictionary<string, NDBData> cachedDataDic = new Dictionary<string, NDBData>();
 
         private Func<string, byte[]> bytesLoaderFunc = null;
-        private Func<string, string> textPathGetterFunc = null;
 
         private NDBManager() 
         {
             bytesLoaderFunc = GetBytesFromFile;
-            textPathGetterFunc = GetTextFilePath;
         }
 
-        public void SetLoader(Func<string, byte[]> loader, Func<string,string> textPathGetter)
+        public void SetLoader(Func<string, byte[]> loader)
         {
             bytesLoaderFunc = loader;
-            textPathGetterFunc = textPathGetter;
         }
 
         public void SetLanguageData(string path)
@@ -60,16 +57,7 @@ namespace DotEngine.Config.NDB
             if(languageData!=null)
             {
                 data.SetText(languageData);
-            }else
-            {
-                string textFilePath = textPathGetterFunc(path);
-                NDBData textData = LoadDataInternal(textFilePath);
-                if(textData!=null)
-                {
-                    data.SetText(textData);
-                }
             }
-            
             return data;
         }
 
@@ -113,11 +101,6 @@ namespace DotEngine.Config.NDB
                 return null;
             }
             return fileBytes;
-        }
-
-        private string GetTextFilePath(string filePath)
-        {
-            return filePath.Replace(NDBConst.NDB_DATA_FILE_EXTERSION, $"{NDBConst.NDB_TEXT_APPEND_NAME}{NDBConst.NDB_TEXT_FILE_EXTERSION}");
         }
     }
 }

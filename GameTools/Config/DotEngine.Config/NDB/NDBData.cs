@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DotEngine.Config.IO;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace DotEngine.Config.NDB
 {
@@ -27,21 +27,9 @@ namespace DotEngine.Config.NDB
             Name = name;
         }
 
-        public void SetText(byte[] textBytes)
-        {
-            textData = new NDBData($"{Name}(text)");
-            textData.SetData(textBytes);
-        }
-
         public void SetText(NDBData text)
         {
             textData = text;
-        }
-
-        public void SetData(byte[] dataBytes, byte[] textBytes)
-        {
-            SetText(textBytes);
-            SetDataInternal(dataBytes);
         }
 
         public void SetData(byte[] dataBytes)
@@ -49,7 +37,7 @@ namespace DotEngine.Config.NDB
             SetDataInternal(dataBytes);
         }
 
-        private unsafe void SetDataInternal(byte[] dataBytes)
+        private void SetDataInternal(byte[] dataBytes)
         {
             datas = dataBytes;
 
@@ -59,56 +47,22 @@ namespace DotEngine.Config.NDB
                 throw new ArgumentNullException($"The databytes is empty. Name = {Name}");
             }
             header = MarshalUtility.ByteToStruct<NDBHeader>(dataBytes, 0, headerSize);
-            ReadFields();
-
-        }
-
-        private unsafe void ReadFields()
-        {
+            
             fields = new NDBField[header.fieldCount];
-            fieldNameToIndexDic.Clear();
-
-            fixed (byte* bytePtr = &datas[header.fieldOffset])
+            int fieldOffset = 0;
+            int byteOffset = 0;
+            for (int i = 0; i < header.fieldCount; ++i)
             {
-                int fieldOffset = 0;
-                int byteOffset = 0;
-                for (int i = 0; i < header.fieldCount; ++i)
-                {
-                    NDBField field = new NDBField();
-                    fields[i] = field;
-
-                    NDBFieldType fieldType = (NDBFieldType)(*(bytePtr + byteOffset));
-                    byteOffset += sizeof(byte);
-
-                    int fieldNameLen = *((int*)(bytePtr + byteOffset));
-                    byteOffset += sizeof(int);
-
-                    string fieldName = Encoding.UTF8.GetString(datas, header.fieldOffset + byteOffset, fieldNameLen);
-                    byteOffset += fieldNameLen;
-
-                    field.Type = fieldType;
-                    field.Name = fieldName;
-                    field.Offset = fieldOffset;
-
-                    fieldOffset += NDBFieldUtil.GetFieldOffset(fieldType);
-                }
+                fields[i] = NDBByteUtility.ReadField(dataBytes, header.fieldOffset + byteOffset, out int offset);
+                fieldOffset += NDBFieldUtil.GetFieldOffset(fields[i].Type);
+                byteOffset += offset;
             }
-        }
 
-        private unsafe void ReadLines()
-        {
-            dataIDToIndexDic.Clear();
-
-            int lineOffset = header.lineOffset;
-            int lineSize = header.lineSize;
-
-            fixed (byte* bytePtr = &datas[lineOffset])
+            for (int i = 0; i < header.lineCount; ++i)
             {
-                for (int i = 0; i < header.lineCount; ++i)
-                {
-                    int id = *((int*)(bytePtr + lineSize * i));
-                    dataIDToIndexDic.Add(id, i);
-                }
+                int id = ByteReader.ReadInt(dataBytes, header.lineOffset + header.lineSize * i,out int offset);
+
+                dataIDToIndexDic.Add(id, i);
             }
         }
 
@@ -170,53 +124,45 @@ namespace DotEngine.Config.NDB
             return default;
         }
 
-        private unsafe object GetDataByIndexInternal(int index, NDBField field)
+        private object GetDataByIndexInternal(int index, NDBField field)
         {
             int byteStartIndex = header.lineOffset + header.lineSize * index + field.Offset;
-            fixed (byte* bytePtr = &datas[byteStartIndex])
+            if (field.Type == NDBFieldType.Bool)
             {
-                if (field.Type == NDBFieldType.Bool)
+                return ByteReader.ReadBool(datas, byteStartIndex, out _);
+            }
+            else if (field.Type == NDBFieldType.Int)
+            {
+                return ByteReader.ReadInt(datas, byteStartIndex, out _);
+            }
+            else if (field.Type == NDBFieldType.Long)
+            {
+                return ByteReader.ReadLong(datas, byteStartIndex, out _);
+            }
+            else if (field.Type == NDBFieldType.Float)
+            {
+                return ByteReader.ReadFloat(datas, byteStartIndex, out _);
+            }
+            else if (field.Type == NDBFieldType.String)
+            {
+                int valueOffset = ByteReader.ReadInt(datas, byteStartIndex, out _);
+                return ByteReader.ReadString(datas, header.stringOffset + valueOffset, out _);
+            }
+            else if (field.Type == NDBFieldType.Text)
+            {
+                int textID = ByteReader.ReadInt(datas, byteStartIndex, out _);
+                if (textData != null)
                 {
-                    return *((bool*)bytePtr);
-                }
-                else if (field.Type == NDBFieldType.Int)
-                {
-                    return *((int*)bytePtr);
-                }
-                else if (field.Type == NDBFieldType.Long)
-                {
-                    return *((long*)bytePtr);
-                }
-                else if (field.Type == NDBFieldType.Float)
-                {
-                    return *((float*)bytePtr);
-                }
-                else if (field.Type == NDBFieldType.String)
-                {
-                    int valueOffset = *((int*)bytePtr);
-
-                    fixed (byte* strBytePtr = &datas[header.stringOffset])
-                    {
-                        int strLen = *((int*)(strBytePtr + valueOffset));
-                        return Encoding.UTF8.GetString(datas, header.stringOffset + valueOffset + sizeof(int), strLen);
-                    }
-                }
-                else if (field.Type == NDBFieldType.Text)
-                {
-                    int textID = *((int*)bytePtr);
-                    if (textData != null)
-                    {
-                        return textData.GetDataByID<string>(textID, 1);
-                    }
-                    else
-                    {
-                        return textID.ToString();
-                    }
+                    return textData.GetDataByID<string>(textID, 1);
                 }
                 else
                 {
-                    return null;
+                    return textID.ToString();
                 }
+            }
+            else
+            {
+                return null;
             }
         }
     }
