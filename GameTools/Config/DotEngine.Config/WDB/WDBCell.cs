@@ -2,19 +2,15 @@
 {
     public class WDBCell
     {
-        private int row;
-        private int col;
-        private string value;
+        public int Row { get; private set; }
+        public int Col { get; private set; }
+        public string Value { get; private set; }
 
-        public int Row => row;
-        public int Col => col;
-        public string Value => value;
-
-        public WDBCell(int row,int col,string value)
+        public WDBCell(int row, int col, string value)
         {
-            this.row = row;
-            this.col = col;
-            this.value = value;
+            Row = row;
+            Col = col;
+            Value = value;
         }
 
         public string GetValue(WDBField field)
@@ -29,7 +25,7 @@
 
         public override string ToString()
         {
-            return $"{{row = {row},col = {col},value = {(string.IsNullOrEmpty(value) ? "" : value)}}}";
+            return $"{{row = {Row},col = {Col},value = {(string.IsNullOrEmpty(Value) ? "" : Value)}}}";
         }
     }
 }

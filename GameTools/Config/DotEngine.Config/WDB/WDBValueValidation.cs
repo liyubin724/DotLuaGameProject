@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DotEngine.Config.WDB
 {
-    public abstract class WDBCellValidation : IContextObject
+    public abstract class WDBValueValidation : IContextObject
     {
         public string Rule { get; private set; }
         public string[] Values { get; private set; }

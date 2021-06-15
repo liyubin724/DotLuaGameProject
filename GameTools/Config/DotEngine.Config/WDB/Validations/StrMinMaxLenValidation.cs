@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    public class StrMinMaxLenValidation : WDBCellValidation
+    public class StrMinMaxLenValidation : WDBValueValidation
     {
         private int minLength = -1;
         private int maxLength = -1;

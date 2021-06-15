@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    public class BoolValidation : WDBCellValidation
+    public class BoolValidation : WDBValueValidation
     {
         protected override void DoVerify()
         {

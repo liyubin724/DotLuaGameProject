@@ -66,7 +66,7 @@ namespace DotEngine.Config.WDB
 
             var types = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                          from type in assembly.GetTypes()
-                         where type.IsSubclassOf(typeof(WDBCellValidation))
+                         where type.IsSubclassOf(typeof(WDBValueValidation))
                          select type).ToArray();
             foreach (var type in types)
             {
@@ -78,7 +78,7 @@ namespace DotEngine.Config.WDB
         //比如：maxlen解析后 name : maxlen 
         //            maxlen(1,2,ffff)匹配后:name:maxlen , params:1,2,ffff
         private const string VALIDATION_RULE_PATTERN = @"(^(?<name>[A-Za-z]{1,})$|^(?<name>[A-Za-z]{1,})[\s]*\((?<params>\S*)\))";
-        public static WDBCellValidation[] CreateValidation(string[] validationRules)
+        public static WDBValueValidation[] CreateValidation(string[] validationRules)
         {
             if (validationDic == null)
             {
@@ -88,7 +88,7 @@ namespace DotEngine.Config.WDB
             {
                 return null;
             }
-            WDBCellValidation[] validations = new WDBCellValidation[validationRules.Length];
+            WDBValueValidation[] validations = new WDBValueValidation[validationRules.Length];
             for (int i = 0; i < validations.Length; i++)
             {
                 string rule = validationRules[i];
@@ -104,7 +104,7 @@ namespace DotEngine.Config.WDB
                 }
                 if (!string.IsNullOrEmpty(ruleName) && validationDic.TryGetValue($"{ruleName.ToLower()}validation", out var type))
                 {
-                    WDBCellValidation validation = (WDBCellValidation)Activator.CreateInstance(type);
+                    WDBValueValidation validation = (WDBValueValidation)Activator.CreateInstance(type);
                     validation.SetRule(rule, ruleParams);
                     validations[i] = validation;
                 }

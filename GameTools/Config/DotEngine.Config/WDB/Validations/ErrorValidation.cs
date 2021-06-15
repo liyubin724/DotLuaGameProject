@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DotEngine.WDB
+namespace DotEngine.Config.WDB
 {
-    public class ErrorValidation : WDBCellValidation
+    public class ErrorValidation : WDBValueValidation
     {
         protected override void DoVerify()
         {

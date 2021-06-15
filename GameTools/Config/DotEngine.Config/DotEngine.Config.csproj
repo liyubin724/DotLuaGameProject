@@ -86,15 +86,15 @@
     <Compile Include="WDB\Validations\LongValidation.cs" />
     <Compile Include="WDB\Validations\NotEmptyValidation.cs" />
     <Compile Include="WDB\Validations\StrMinMaxLenValidation.cs" />
-    <Compile Include="WDB\Validations\WDBCellValidation.cs" />
-    <Compile Include="WDB\Verifications\IVerify.cs" />
+    <Compile Include="WDB\WDBCellValidation.cs" />
     <Compile Include="WDB\WDBCell.cs" />
     <Compile Include="WDB\WDBConfig.cs" />
     <Compile Include="WDB\WDBConst.cs" />
     <Compile Include="WDB\WDBField.cs" />
-    <Compile Include="WDB\WDBRow.cs" />
+    <Compile Include="WDB\WDBLine.cs" />
     <Compile Include="WDB\WDBSheet.cs" />
     <Compile Include="WDB\WDBUtility.cs" />
+    <Compile Include="WDB\WDBVerify.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="NDB\Exceptions\" />

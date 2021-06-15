@@ -1,6 +1,6 @@
-﻿namespace DotEngine.WDB
+﻿namespace DotEngine.Config.WDB
 {
-    public class LongValidation : WDBCellValidation
+    public class LongValidation : WDBValueValidation
     {
         protected override void DoVerify()
         {

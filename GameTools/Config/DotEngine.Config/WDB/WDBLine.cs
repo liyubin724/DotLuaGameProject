@@ -4,22 +4,22 @@ using System.Text;
 
 namespace DotEngine.Config.WDB
 {
-    public class WDBRow : IEnumerable<WDBCell>
+    public class WDBLine : IEnumerable<WDBCell>
     {
-        private int row;
+        public int Row { get; private set; }
+
         private List<WDBCell> cells = new List<WDBCell>();
 
-        public int Row => row;
         public int CellCount => cells.Count;
 
-        public WDBRow(int row)
+        public WDBLine(int row)
         {
-            this.row = row;
+            Row = row;
         }
 
         public void AddCell(int col, string value)
         {
-            WDBCell cell = new WDBCell(row, col, value);
+            WDBCell cell = new WDBCell(Row, col, value);
             cells.Add(cell);
         }
 
