@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.Config
+namespace DotEngine.Config.WDB.IO
 {
-    public class Class1
+    public interface IWDBWriter
     {
     }
 }
