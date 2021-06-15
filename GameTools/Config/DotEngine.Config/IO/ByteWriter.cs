@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace DotEngine.Config.NDB
+namespace DotEngine.Config.IO
 {
     public static class ByteWriter
     {

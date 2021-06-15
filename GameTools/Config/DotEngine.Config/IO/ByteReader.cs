@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DotEngine.Config.NDB
+namespace DotEngine.Config.IO
 {
     internal static unsafe class ByteReader
     {

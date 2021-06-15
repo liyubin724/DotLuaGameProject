@@ -55,8 +55,9 @@
     <Compile Include="Ini\Styles\IniReaderStyle.cs" />
     <Compile Include="Ini\Styles\IniSchemeStyle.cs" />
     <Compile Include="Ini\Styles\IniWriterStyle.cs" />
-    <Compile Include="NDB\IO\ByteReader.cs" />
-    <Compile Include="NDB\IO\ByteWriter.cs" />
+    <Compile Include="IO\ByteReader.cs" />
+    <Compile Include="IO\ByteWriter.cs" />
+    <Compile Include="NDB\NDBByteUtility.cs" />
     <Compile Include="NDB\NDBConst.cs" />
     <Compile Include="NDB\NDBData.cs" />
     <Compile Include="NDB\NDBField.cs" />
