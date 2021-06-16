@@ -74,30 +74,23 @@
     <Compile Include="WDB\Fields\RefField.cs" />
     <Compile Include="WDB\Fields\StringField.cs" />
     <Compile Include="WDB\Fields\TextField.cs" />
-    <Compile Include="WDB\IO\IWDBWriter.cs" />
-    <Compile Include="WDB\IO\WDBCVSReader.cs" />
-    <Compile Include="WDB\IO\WDBExcelReader.cs" />
-    <Compile Include="WDB\IO\WDBLuaWriter.cs" />
-    <Compile Include="WDB\IO\WDBNDBWriter.cs" />
-    <Compile Include="WDB\Validations\BoolValidation.cs" />
-    <Compile Include="WDB\Validations\ErrorValidation.cs" />
-    <Compile Include="WDB\Validations\FloatValidation.cs" />
-    <Compile Include="WDB\Validations\IntValidation.cs" />
-    <Compile Include="WDB\Validations\LongValidation.cs" />
-    <Compile Include="WDB\Validations\NotEmptyValidation.cs" />
-    <Compile Include="WDB\Validations\StrMinMaxLenValidation.cs" />
-    <Compile Include="WDB\WDBValueValidation.cs" />
+    <Compile Include="WDB\Verify\Values\BoolValidation.cs" />
+    <Compile Include="WDB\Verify\Values\ErrorValidation.cs" />
+    <Compile Include="WDB\Verify\Values\FloatValidation.cs" />
+    <Compile Include="WDB\Verify\Values\IntValidation.cs" />
+    <Compile Include="WDB\Verify\Values\LongValidation.cs" />
+    <Compile Include="WDB\Verify\Values\NotEmptyValidation.cs" />
+    <Compile Include="WDB\Verify\Values\StrMinMaxLenValidation.cs" />
+    <Compile Include="WDB\Verify\WDBValueValidation.cs" />
     <Compile Include="WDB\WDBCell.cs" />
-    <Compile Include="WDB\WDBConst.cs" />
+    <Compile Include="WDB\Verify\WDBVerifyConst.cs" />
     <Compile Include="WDB\WDBField.cs" />
     <Compile Include="WDB\WDBLine.cs" />
     <Compile Include="WDB\WDBSheet.cs" />
     <Compile Include="WDB\WDBUtility.cs" />
-    <Compile Include="WDB\WDBVerify.cs" />
+    <Compile Include="WDB\Verify\WDBVerify.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NDB\Exceptions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Context\DotEngine.Context\DotEngine.Context.csproj">
       <Project>{973ba58f-3fd4-4a7d-aeee-c9e0f135b12a}</Project>

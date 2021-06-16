@@ -23,18 +23,18 @@
         {
             if(minLength <0 || maxLength<0 || maxLength<minLength)
             {
-                errors.Add(GetErrorMsg(WDBConst.VALIDATION_FIELD_RULE_PARAM_ERR,Rule));
+                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_FIELD_RULE_PARAM_ERR,Rule));
             }
 
             string cellValue = cell.GetValue(field);
             int len = string.IsNullOrEmpty(cellValue) ? 0 : cellValue.Length;
             if(len<minLength)
             {
-                errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_STRING_TOO_SHORT_ERR));
+                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRING_TOO_SHORT_ERR));
             }
             if(len > maxLength)
             {
-                errors.Add(GetErrorMsg(WDBConst.VALIDATION_CELL_STRLen_TOO_LONG_ERR));
+                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRLen_TOO_LONG_ERR));
             }
         }
     }

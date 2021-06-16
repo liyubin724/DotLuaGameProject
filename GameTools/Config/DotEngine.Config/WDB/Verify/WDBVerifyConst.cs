@@ -2,11 +2,13 @@
 
 namespace DotEngine.Config.WDB
 {
-    public static class WDBConst
+    public static class WDBVerifyConst
     {
         public const string CONTEXT_ERRORS_NAME = "__errors__";
         public const string CONTEXT_SHEET_NAME = "__sheet__";
         public const string CONTEXT_FIELD_NAME = "__field__";
+        public const string CONTEXT_FIELD_VERIFY_NAME = "__fieldVerify__";
+        public const string CONTEXT_LINE_NAME = "__line__";
         public const string CONTEXT_CELL_NAME = "__cell__";
 
         public const string VERIFY_SHEET_NAME_REGEX = @"^[A-Z][A-Za-z]{2,9}";
