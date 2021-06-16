@@ -2,14 +2,12 @@
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
-namespace DotEditor.Config.WDB.IO
+namespace DotEditor.Config.WDB
 {
     public enum LogType
     {
@@ -23,11 +21,13 @@ namespace DotEditor.Config.WDB.IO
     {
         public static OnPrintLog logHandler;
 
+        private static ExcelStyle readerExcelStyle;
+
         public static WDBSheet[] ReadFromDirectory(string excelDir, ExcelStyle readerStyle)
         {
             if (string.IsNullOrEmpty(excelDir) || !Directory.Exists(excelDir))
             {
-                logHandler?.Invoke(LogType.Error, "");
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_DIRECTOR_NOT_EXIST, excelDir));
                 return null;
             }
 
@@ -40,8 +40,8 @@ namespace DotEditor.Config.WDB.IO
             {
                 foreach (var f in excelFields)
                 {
-                    WDBSheet[] sheets = ReadFromFile(f);
-                    if(sheets!=null && sheets.Length>0)
+                    WDBSheet[] sheets = ReadFromFile(f, readerStyle);
+                    if (sheets != null && sheets.Length > 0)
                     {
                         sheetList.AddRange(sheets);
                     }
@@ -50,14 +50,20 @@ namespace DotEditor.Config.WDB.IO
             return sheetList.ToArray();
         }
 
-        public static WDBSheet[] ReadFromFile(string excelPath)
+        public static WDBSheet[] ReadFromFile(string excelPath, ExcelStyle readerStyle)
         {
+            readerExcelStyle = readerStyle;
+            if (readerExcelStyle == null)
+            {
+                readerExcelStyle = ExcelStyle.DefaultStyle;
+            }
+
             if (!IsExcel(excelPath))
             {
-                logHandler?.Invoke(LogType.Error, "");
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_FILE_NOT_EXCEL, excelPath));
                 return null;
             }
-            
+
             List<WDBSheet> sheetList = new List<WDBSheet>();
 
             string ext = Path.GetExtension(excelPath).ToLower();
@@ -75,11 +81,11 @@ namespace DotEditor.Config.WDB.IO
 
                 if (workbook == null || workbook.NumberOfSheets == 0)
                 {
-                    logHandler?.Invoke(LogType.Error, excelPath);
+                    logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_WORKBOOK_EMPTY, excelPath));
                     return null;
                 }
 
-                logHandler(LogType.Info, excelPath);
+                logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_WORKBOOK, excelPath));
 
                 for (int i = 0; i < workbook.NumberOfSheets; i++)
                 {
@@ -88,12 +94,12 @@ namespace DotEditor.Config.WDB.IO
                     string sheetName = sheet.SheetName;
                     if (string.IsNullOrEmpty(sheetName))
                     {
-                        logHandler?.Invoke(LogType.Warning,"");
+                        logHandler?.Invoke(LogType.Warning, LogMessage.WARN_SHEET_NAME_EMPTY);
                         continue;
                     }
                     if (sheetName.StartsWith("#"))
                     {
-                        logHandler?.Invoke(LogType.Info, sheetName);
+                        logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_SHEET_IGNORE, sheetName));
                         continue;
                     }
 
@@ -101,32 +107,39 @@ namespace DotEditor.Config.WDB.IO
                     sheetList.Add(wdbSheet);
                 }
 
-                logHandler?.Invoke(LogType.Info, excelPath);
+                logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_END_READ_WORKBOOK, excelPath));
             }
+
+            readerExcelStyle = null;
+
             return sheetList.ToArray();
         }
 
         private static WDBSheet ReadFromSheet(ISheet sheet)
         {
-            logHandler?.Invoke(LogType.Info, sheet.SheetName);
+            logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_SHEET, sheet.SheetName));
 
-            IRow firstRow = sheet.GetRow(WorkbookConst.SHEET_ROW_START_INDEX);
+            IRow firstRow = sheet.GetRow(readerExcelStyle.RowStartIndex);
             if (firstRow == null)
             {
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_SHEET_ROW_START_EMTPY, readerExcelStyle.RowStartIndex));
                 return null;
             }
-            ICell firstCell = firstRow.GetCell(WorkbookConst.SHEET_COLUMN_START_INDEX);
+
+            ICell firstCell = firstRow.GetCell(readerExcelStyle.ColumnStartIndex);
             if (firstCell == null)
             {
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_SHEET_COLUMN_START_EMPTY, readerExcelStyle.ColumnStartIndex));
                 return null;
             }
             string flagContent = GetCellStringValue(firstCell);
-            if (string.IsNullOrEmpty(flagContent) || flagContent != WorkbookConst.SHEET_MARK_FLAG)
+            if (string.IsNullOrEmpty(flagContent) || flagContent != readerExcelStyle.MarkFlag)
             {
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_SHEET_MRAK_FLAG, readerExcelStyle.MarkFlag));
                 return null;
             }
 
-            int firstRowNum = WorkbookConst.SHEET_ROW_START_INDEX;
+            int firstRowNum = readerExcelStyle.RowStartIndex;
             int lastRowNum = sheet.LastRowNum;
 
             int firstColNum = sheet.GetRow(firstRowNum).FirstCellNum;
@@ -135,40 +148,39 @@ namespace DotEditor.Config.WDB.IO
             int rowCount = lastRowNum - firstRowNum + 1;
             int colCount = lastColNum - firstColNum + 1;
 
-            if (rowCount < WorkbookConst.SHEET_FIELD_ROW_COUNT)
+            if (rowCount < readerExcelStyle.FieldRowCount)
             {
-                logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_ROW_LESS, rowCount, WorkbookConst.SHEET_FIELD_ROW_COUNT);
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_SHEET_ROW_LESS, rowCount, readerExcelStyle.FieldRowCount));
                 return null;
             }
-            if (colCount < WorkbookConst.MIN_COLUMN_COUNT)
+            if (colCount < readerExcelStyle.ColumnMinCount)
             {
-                logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_COL_LESS, colCount, WorkbookConst.MIN_COLUMN_COUNT);
+                logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_SHEET_COL_LESS, colCount, readerExcelStyle.ColumnMinCount));
                 return null;
             }
-
-            ETDSheet sheetData = new ETDSheet(sheet.SheetName);
+            WDBSheet sheetData = new WDBSheet(sheet.SheetName);
             ReadFieldFromSheet(sheetData, sheet);
             ReadLineFromSheet(sheetData, sheet);
 
-            logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_END, sheet.SheetName);
+            logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_END_READ_SHEET, sheet.SheetName));
 
             return sheetData;
         }
 
-        private static void ReadFieldFromSheet(ETDSheet sheetData, ISheet sheet)
+        private static void ReadFieldFromSheet(WDBSheet sheetData, ISheet sheet)
         {
-            MethodInfo getFieldMI = typeof(FieldFactory).GetMethod("GetField", BindingFlags.Public | BindingFlags.Static);
+            logHandler?.Invoke(LogType.Info, LogMessage.INFO_START_READ_FIELD);
 
-            logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_FIELD_START);
+            MethodInfo createFieldMI = typeof(WDBUtility).GetMethod("CreateField", BindingFlags.Public | BindingFlags.Static);
 
-            int firstRowNum = sheet.FirstRowNum;
-            int lastRowNum = firstRowNum + WorkbookConst.SHEET_FIELD_ROW_COUNT - 1;
+            int firstRowNum = readerExcelStyle.RowStartIndex;
+            int lastRowNum = firstRowNum + readerExcelStyle.FieldRowCount - 1;
             int firstColNum = sheet.GetRow(firstRowNum).FirstCellNum;
             int lastColNum = sheet.GetRow(firstRowNum).LastCellNum;
 
             for (int c = firstColNum + 1; c < lastColNum; ++c)
             {
-                object[] datas = new object[WorkbookConst.SHEET_FIELD_ROW_COUNT + 1];
+                object[] datas = new object[readerExcelStyle.FieldRowCount + 1];
                 datas[0] = c;
                 for (int r = firstRowNum; r < lastRowNum; ++r)
                 {
@@ -181,37 +193,23 @@ namespace DotEditor.Config.WDB.IO
                     datas[r - firstRowNum + 1] = cellValue;
                 }
 
-                string nameContent = (string)datas[1];
-                if (string.IsNullOrEmpty(nameContent))
-                {
-                    logHandler.Log(LogType.Warning, LogMessage.LOG_SHEET_FIELD_NAME_NULL);
-                    continue;
-                }
-                if (nameContent.StartsWith("#") || nameContent.StartsWith("_"))
-                {
-                    logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_FIELD_IGNORE, nameContent);
-                    continue;
-                }
+                WDBField field = (WDBField)createFieldMI.Invoke(null, datas);
+                logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_CREATE_FIELD, field));
 
-                logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_FIELD_CREATE, c);
-
-                Field field = (Field)getFieldMI.Invoke(null, datas);
                 sheetData.AddField(field);
-
-                logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_FIELD_DETAIL, field.ToString());
             }
-            logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_FIELD_END);
+            logHandler?.Invoke(LogType.Info, LogMessage.INFO_END_READ_FIELD);
         }
 
-        private static void ReadLineFromSheet(ETDSheet sheetData, ISheet sheet)
+        private static void ReadLineFromSheet(WDBSheet sheetData, ISheet sheet)
         {
-            logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_LINE_START);
+            logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_LINE));
 
-            int firstRowNum = WorkbookConst.SHEET_FIELD_ROW_COUNT;
+            int firstRowNum = readerExcelStyle.RowStartIndex;
             int lastRowNum = sheet.LastRowNum;
 
-            int firstColNum = sheet.GetRow(WorkbookConst.SHEET_ROW_START_INDEX).FirstCellNum;
-            int lastColNum = sheet.GetRow(WorkbookConst.SHEET_ROW_START_INDEX).LastCellNum;
+            int firstColNum = sheet.GetRow(readerExcelStyle.RowStartIndex).FirstCellNum;
+            int lastColNum = sheet.GetRow(readerExcelStyle.RowStartIndex).LastCellNum;
 
             bool isStart = false;
             for (int r = firstRowNum; r < lastRowNum; ++r)
@@ -219,6 +217,7 @@ namespace DotEditor.Config.WDB.IO
                 IRow row = sheet.GetRow(r);
                 if (row == null)
                 {
+                    logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_LINE_EMPTY, r));
                     continue;
                 }
                 string cellValue = GetCellStringValue(row.GetCell(firstColNum));
@@ -231,32 +230,27 @@ namespace DotEditor.Config.WDB.IO
                 }
                 else
                 {
-                    if (!isStart && cellValue == WorkbookConst.SHEET_LINE_START_FLAG)
+                    if (!isStart && cellValue == readerExcelStyle.LineStartFlag)
                     {
                         isStart = true;
                     }
-                    else if (isStart && cellValue == WorkbookConst.SHEET_LINE_END_FLAG)
+                    else if (isStart && cellValue == readerExcelStyle.LineEndFlag)
                     {
                         isStart = false;
                         break;
                     }
                 }
 
-                logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_LINE_CREATE, r);
-
-                ETDLine line = new ETDLine(r);
+                WDBLine line = sheetData.AddLine(r);
                 for (int c = firstColNum + 1; c < lastColNum; c++)
                 {
-                    ETDField field = sheetData.GetFieldByCol(c);
-                    ICell valueCell = row.GetCell(field.Col);
-                    line.AddCell(field.Col, GetCellStringValue(valueCell));
+                    ICell valueCell = row.GetCell(c);
+                    line.AddCell(c, GetCellStringValue(valueCell));
                 }
-                sheetData.AddLine(line);
-
-                logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_LINE_DETAIL, line.ToString());
+                logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_CREATE_LINE, line));
             }
 
-            logHandler.Log(LogType.Info, LogMessage.LOG_SHEET_LINE_END);
+            logHandler?.Invoke(LogType.Info, LogMessage.INFO_END_READ_LINE);
         }
 
         private static bool IsExcel(string filePath)

@@ -2,7 +2,7 @@
 {
     public class IntValidation : WDBValueValidation
     {
-        protected override void DoVerify()
+        protected override bool DoVerify()
         {
             string cellValue = cell.GetValue(field);
             if (!string.IsNullOrEmpty(cellValue))
@@ -10,8 +10,10 @@
                 if (!int.TryParse(cellValue, out var value))
                 {
                     errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "int"));
+                    return false;
                 }
             }
+            return true;
         }
     }
 }

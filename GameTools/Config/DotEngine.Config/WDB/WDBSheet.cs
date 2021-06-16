@@ -18,6 +18,11 @@ namespace DotEngine.Config.WDB
             Name = n;
         }
 
+        public void AddField(WDBField field)
+        {
+            fields.Add(field);
+        }
+
         public WDBField AddField(int col, string name, string desc, string type, string platform, string defaultValue, string validationRule)
         {
             WDBField field = WDBUtility.CreateField(col, name, desc, type, platform, defaultValue, validationRule);

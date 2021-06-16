@@ -19,11 +19,12 @@
             }
         }
 
-        protected override void DoVerify()
+        protected override bool DoVerify()
         {
             if(minLength <0 || maxLength<0 || maxLength<minLength)
             {
                 errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_FIELD_RULE_PARAM_ERR,Rule));
+                return false;
             }
 
             string cellValue = cell.GetValue(field);
@@ -31,11 +32,14 @@
             if(len<minLength)
             {
                 errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRING_TOO_SHORT_ERR));
+                return false;
             }
             if(len > maxLength)
             {
                 errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRLen_TOO_LONG_ERR));
+                return false;
             }
+            return true;
         }
     }
 }

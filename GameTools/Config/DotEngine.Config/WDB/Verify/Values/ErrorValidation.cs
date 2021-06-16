@@ -4,9 +4,9 @@ namespace DotEngine.Config.WDB
 {
     public class ErrorValidation : WDBValueValidation
     {
-        protected override void DoVerify()
+        protected override bool DoVerify()
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }
