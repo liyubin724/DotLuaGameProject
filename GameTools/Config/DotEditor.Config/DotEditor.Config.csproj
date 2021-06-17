@@ -67,6 +67,7 @@
     <Compile Include="WDB\Verify\Validations\LongValidation.cs" />
     <Compile Include="WDB\Verify\Validations\NotEmptyValidation.cs" />
     <Compile Include="WDB\Verify\Validations\StrMinMaxLenValidation.cs" />
+    <Compile Include="WDB\Verify\Validations\UniqueValidation.cs" />
     <Compile Include="WDB\Verify\WDBVerify.cs" />
     <Compile Include="WDB\Verify\WDBVerifyConst.cs" />
   </ItemGroup>

@@ -28,5 +28,6 @@ namespace DotEditor.Config.WDB
         public const string VALIDATION_CELL_VAULE_EMPTY_ERR = "The value of the cell is empty";
         public const string VALIDATION_CELL_STRLEN_TOO_LONG_ERR = "The length of the value({0}) is too long.";
         public const string VALIDATION_CELL_STRLEN_TOO_SHORT_ERR = "The length of the value({0}) is too short.";
+        public const string VALIDATION_CELL_UNIQUE_REPEAT_ERR = "the content({0}) of the cell is repeated.";
     }
 }

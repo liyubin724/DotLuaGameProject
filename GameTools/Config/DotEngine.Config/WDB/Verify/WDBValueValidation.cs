@@ -1,5 +1,6 @@
 ﻿using DotEngine.Context.Attributes;
 using DotEngine.Context.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace DotEngine.Config.WDB
@@ -48,7 +49,23 @@ namespace DotEngine.Config.WDB
 
         protected string GetErrorMsg(string format, params object[] values)
         {
-            return string.Format(format, values) + string.Format("(row = {0},col = {1})", cell.Row, cell.Col);
+            return string.Format(format, values) + string.Format("(row = {0},col = {1})", cell.Row+1, cell.Col);
+        }
+
+        private string GetExcelColumnName(int columnNumber)
+        {
+            int dividend = columnNumber;
+            string columnName = string.Empty;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+
+            return columnName;
         }
     }
 }
