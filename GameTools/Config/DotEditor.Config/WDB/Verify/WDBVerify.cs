@@ -22,6 +22,7 @@ namespace DotEditor.Config.WDB
 
             List<string> outputErrors = new List<string>();
             context.Add(WDBContextIENames.CONTEXT_ERRORS_NAME, outputErrors);
+            context.Add(WDBContextIENames.CONTEXT_SHOW_AS_EXCEL, true);
 
             foreach (var sheet in sheets)
             {

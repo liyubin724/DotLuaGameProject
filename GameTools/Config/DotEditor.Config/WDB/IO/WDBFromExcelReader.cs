@@ -255,7 +255,7 @@ namespace DotEditor.Config.WDB
 
         private static bool IsExcel(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath) && !File.Exists(filePath))
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 return false;
             }

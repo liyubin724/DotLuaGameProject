@@ -13,6 +13,7 @@ namespace DotEngine.Config.WDB
         public const string CONTEXT_FIELD_VERIFY_NAME = "__fieldVerify__";
         public const string CONTEXT_LINE_NAME = "__line__";
         public const string CONTEXT_CELL_NAME = "__cell__";
+        public const string CONTEXT_SHOW_AS_EXCEL = "__isExcel__";
     }
 
     public abstract class WDBValueValidation : IContextObject
@@ -28,6 +29,8 @@ namespace DotEngine.Config.WDB
         protected WDBField field;
         [ContextIE(WDBContextIENames.CONTEXT_CELL_NAME)]
         protected WDBCell cell;
+        [ContextIE(WDBContextIENames.CONTEXT_SHOW_AS_EXCEL)]
+        protected bool showAsExcel = false;
 
         public virtual void SetRule(string rule, params string[] values)
         {
@@ -49,7 +52,14 @@ namespace DotEngine.Config.WDB
 
         protected string GetErrorMsg(string format, params object[] values)
         {
-            return string.Format(format, values) + string.Format("(row = {0},col = {1})", cell.Row+1, cell.Col);
+            if (showAsExcel)
+            {
+                return string.Format(format, values) + string.Format("(row = {0},col = {1})", cell.Row + 1, GetExcelColumnName(cell.Col + 1));
+            }
+            else
+            {
+                return string.Format(format, values) + string.Format("(row = {0},col = {1})", cell.Row, cell.Col);
+            }
         }
 
         private string GetExcelColumnName(int columnNumber)

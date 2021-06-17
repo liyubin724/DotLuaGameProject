@@ -17,7 +17,7 @@ namespace DotTool.Config
     {
         static void Main(string[] args)
         {
-            string excelPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
+            string excelPath = @"D:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
             WDBFromExcelReader.logHandler = PrintLog;
             WDBSheet[] sheets = WDBFromExcelReader.ReadFromFile(excelPath, null);
             if (!WDBVerify.VerifySheets(sheets, out var errors))
@@ -29,7 +29,7 @@ namespace DotTool.Config
             }
             WDBFromExcelReader.logHandler = null;
 
-            string templateTxtPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\template.txt";
+            string templateTxtPath = @"D:\WorkSpace\DotLuaGameProject\GameTools\Config\template.txt";
             string templateTxt = File.ReadAllText(templateTxtPath);
 
             StringContextContainer context = new StringContextContainer();
