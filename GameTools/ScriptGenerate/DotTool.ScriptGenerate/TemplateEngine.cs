@@ -63,31 +63,9 @@ namespace DotTool.ScriptGenerate
             }
         }
 
-        public static string Execute(StringContextContainer context, string template, string[] assemblies)
+        public static string Execute(StringContextContainer context, string templateContent, string[] assemblyNames)
         {
-            string code = ComposeCode(template);
-
-            System.IO.File.WriteAllText("D:/code.cs", code);
-
-            if (string.IsNullOrEmpty(code))
-            {
-                return null;
-            }
-            List<string> assemblyList = new List<string>(DefaultAssemblies);
-            if (assemblies != null && assemblies.Length > 0)
-            {
-                assemblyList.AddRange(assemblies);
-            }
-
-            Assembly assembly = CompileCode(assemblyList.Distinct().ToArray(), code);
-            if (assembly == null)
-            {
-                return null;
-            }
-            Type type = assembly.GetType("TemplateRunner");
-            MethodInfo mInfo = type.GetMethod("Run", BindingFlags.Static | BindingFlags.Public);
-            object result = mInfo.Invoke(null, new object[] { context });
-            return result?.ToString();
+            return Generate(context, templateContent, assemblyNames);
         }
 
         private static Assembly CompileCode(string[] assemblies, string code)

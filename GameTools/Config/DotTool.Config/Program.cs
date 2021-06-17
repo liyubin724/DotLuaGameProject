@@ -39,6 +39,11 @@ namespace DotTool.Config
                 TemplateEngine.GenerateFile("D:/lua.txt", context, templateTxt, new string[] { typeof(WDBSheet).Assembly.Location},EntryConfig.Default);
                 context.Remove("__sheet__");
             }    
+            
+            foreach(var sheet in sheets)
+            {
+                WDBToNDBWriter.WriteToNDBFile(@"D:\",sheet);
+            }
 
             Console.ReadKey();
         }

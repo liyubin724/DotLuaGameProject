@@ -13,7 +13,7 @@ namespace DotEngine.Config.NDB
             NDBField field = new NDBField();
             fixed (byte* bytePtr = &bytes[startIndex])
             {
-                field.Type = (NDBFieldType)(*(bytePtr + offset));
+                field.FieldType = (NDBFieldType)(*(bytePtr + offset));
                 offset += sizeof(byte);
 
                 int len = *((int*)(bytePtr+offset));
@@ -28,7 +28,7 @@ namespace DotEngine.Config.NDB
 
         public static void WriteField(Stream stream,NDBField field)
         {
-            stream.WriteByte((byte)field.Type);
+            stream.WriteByte((byte)field.FieldType);
             ByteWriter.WriteString(stream, field.Name);
         }
     }

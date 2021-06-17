@@ -5,6 +5,11 @@ namespace DotEngine.Config
 {
     public static class MarshalUtility
     {
+        public static int GetStructSize(Type structType)
+        {
+            return Marshal.SizeOf(structType);
+        }
+
         public static byte[] StructToByte(object structObject, int size)
         {
             IntPtr buffer = Marshal.AllocHGlobal(size);

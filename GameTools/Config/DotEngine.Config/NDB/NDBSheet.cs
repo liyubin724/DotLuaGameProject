@@ -9,7 +9,7 @@ namespace DotEngine.Config.NDB
     {
         public string Name { get; private set; }
 
-        private byte[] datas = null;
+        private byte[] dataBytes = null;
 
         private NDBHeader header = new NDBHeader();
         private NDBField[] fields = null;
@@ -39,7 +39,7 @@ namespace DotEngine.Config.NDB
 
         private void SetDataInternal(byte[] dataBytes)
         {
-            datas = dataBytes;
+            this.dataBytes = dataBytes;
 
             int headerSize = Marshal.SizeOf(typeof(NDBHeader));
             if (dataBytes == null || dataBytes.Length < headerSize)
@@ -54,7 +54,7 @@ namespace DotEngine.Config.NDB
             for (int i = 0; i < header.fieldCount; ++i)
             {
                 fields[i] = NDBByteUtility.ReadField(dataBytes, header.fieldOffset + byteOffset, out int offset);
-                fieldOffset += NDBFieldUtil.GetFieldOffset(fields[i].Type);
+                fieldOffset += NDBFieldUtil.GetFieldOffset(fields[i].FieldType);
                 byteOffset += offset;
             }
 
@@ -127,30 +127,30 @@ namespace DotEngine.Config.NDB
         private object GetDataByIndexInternal(int index, NDBField field)
         {
             int byteStartIndex = header.lineOffset + header.lineSize * index + field.Offset;
-            if (field.Type == NDBFieldType.Bool)
+            if (field.FieldType == NDBFieldType.Bool)
             {
-                return ByteReader.ReadBool(datas, byteStartIndex, out _);
+                return ByteReader.ReadBool(dataBytes, byteStartIndex, out _);
             }
-            else if (field.Type == NDBFieldType.Int)
+            else if (field.FieldType == NDBFieldType.Int)
             {
-                return ByteReader.ReadInt(datas, byteStartIndex, out _);
+                return ByteReader.ReadInt(dataBytes, byteStartIndex, out _);
             }
-            else if (field.Type == NDBFieldType.Long)
+            else if (field.FieldType == NDBFieldType.Long)
             {
-                return ByteReader.ReadLong(datas, byteStartIndex, out _);
+                return ByteReader.ReadLong(dataBytes, byteStartIndex, out _);
             }
-            else if (field.Type == NDBFieldType.Float)
+            else if (field.FieldType == NDBFieldType.Float)
             {
-                return ByteReader.ReadFloat(datas, byteStartIndex, out _);
+                return ByteReader.ReadFloat(dataBytes, byteStartIndex, out _);
             }
-            else if (field.Type == NDBFieldType.String)
+            else if (field.FieldType == NDBFieldType.String)
             {
-                int valueOffset = ByteReader.ReadInt(datas, byteStartIndex, out _);
-                return ByteReader.ReadString(datas, header.stringOffset + valueOffset, out _);
+                int valueOffset = ByteReader.ReadInt(dataBytes, byteStartIndex, out _);
+                return ByteReader.ReadString(dataBytes, header.stringOffset + valueOffset, out _);
             }
-            else if (field.Type == NDBFieldType.Text)
+            else if (field.FieldType == NDBFieldType.Text)
             {
-                int textID = ByteReader.ReadInt(datas, byteStartIndex, out _);
+                int textID = ByteReader.ReadInt(dataBytes, byteStartIndex, out _);
                 if (textSheet != null)
                 {
                     return textSheet.GetDataByID<string>(textID, 1);

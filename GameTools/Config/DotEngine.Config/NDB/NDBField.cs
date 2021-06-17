@@ -2,7 +2,7 @@
 {
     public enum NDBFieldType
     {
-        Null = 0,
+        None = 0,
 
         Bool = 'b',
         Int = 'i',
@@ -14,7 +14,7 @@
 
     public class NDBField
     {
-        public NDBFieldType Type { get; set; } = NDBFieldType.Null;
+        public NDBFieldType FieldType { get; set; } = NDBFieldType.None;
         public string Name { get; set; } = string.Empty;
 
         internal int Offset { get; set; } = 0;

@@ -22,13 +22,13 @@ namespace DotEngine.Config.WDB
         Int,
         Id,
         Ref,
+        Text,
 
         Long,
 
         Float,
 
         String,
-        Text,
         Address,
         Lua,
     }
