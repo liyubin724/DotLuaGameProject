@@ -10,9 +10,5 @@ namespace DotEditor.Config.WDB
 {
     public static class WDBToNDBWriter
     {
-        public static NDBSheet WriteToNDB(WDBSheet sheet)
-        {
-
-        }
     }
 }

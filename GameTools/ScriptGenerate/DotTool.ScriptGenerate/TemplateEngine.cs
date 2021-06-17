@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DotTool.ScriptGenerate
 {
@@ -15,7 +14,7 @@ namespace DotTool.ScriptGenerate
     {
         private static string[] DefaultAssemblies = new string[]
         {
-            typeof(StringContext).Assembly.Location,
+            typeof(StringContextContainer).Assembly.Location,
             typeof(StringBuilder).Assembly.Location,
         };
 
@@ -24,18 +23,18 @@ namespace DotTool.ScriptGenerate
 using System.Text;
 
 public static class TemplateRunner {
-    public static string Run(StringContext context){
+    public static string Run(StringContextContainer context){
         StringBuilder output = new StringBuilder();";
 
         private static string ScriptEnd =
 @"            return output.ToString();
     }
 }";
-        public static string Execute(StringContext context, string template, string[] assemblies)
+        public static string Execute(StringContextContainer context, string template, string[] assemblies)
         {
             string code = ComposeCode(template);
 
-            //System.IO.File.WriteAllText("D:/code.cs", code);
+            System.IO.File.WriteAllText("D:/code.cs", code);
 
             if (string.IsNullOrEmpty(code))
             {
@@ -82,15 +81,12 @@ public static class TemplateRunner {
             }
         }
 
-
-        public static string ComposeCode(string templateContent)
+        private static string ComposeCode(string templateContent)
         {
             StringBuilder code = new StringBuilder();
-
-            code.AppendLine(ScriptStart);
+            //code.AppendLine(ScriptStart);
 
             List<Chunk> chunks = ParseTemplate(templateContent);
-
             foreach(var chunk in chunks)
             {
                 switch(chunk.Type)
@@ -108,12 +104,12 @@ public static class TemplateRunner {
                         code.Insert(0, chunk.Text+"\r\n");
                         break;
                     case TokenType.Ignore:
-                        code.AppendLine($"/*{chunk.Text}*/");
+                        code.AppendLine($"/* {chunk.Text} */");
                         break;
                 }
             }
 
-            code.AppendLine(ScriptEnd);
+            //code.AppendLine(ScriptEnd);
 
             return code.ToString();
         }
@@ -122,17 +118,23 @@ public static class TemplateRunner {
         {
             if (string.IsNullOrEmpty(templateContent))
             {
-                throw new TemplateFormatException("");
+                throw new TemplateFormatException("The template is empty!");
             }
-            Regex regex = new Regex(GetRegexPattern(), RegexOptions.ExplicitCapture | RegexOptions.Singleline);
+            string pattern = GetRegexPattern();
+            Regex regex = new Regex(pattern, RegexOptions.ExplicitCapture | RegexOptions.Singleline);
             Match matches = regex.Match(templateContent);
             if(!matches.Success)
             {
-                throw new TemplateFormatException("");
+                throw new TemplateFormatException("The template can't not be matched!");
             }
             if(matches.Groups["error"].Length>0)
             {
-                throw new TemplateFormatException("");
+                string[] errors = matches.Groups["error"].Captures.Cast<Capture>().Select((p) =>
+                {
+                    return p.Value;
+                }).ToArray();
+                string errorContent = string.Join("\n", errors);
+                throw new TemplateFormatException($"Some error was caused in parsing template.\n{errorContent}");
             }
 
             List<Chunk> chunks = matches.Groups["text"].Captures
@@ -153,11 +155,6 @@ public static class TemplateRunner {
                 .OrderBy(p => p.Index)
                 .Select(m => new Chunk(m.Type, m.Value))
                 .ToList();
-
-            if(chunks.Count == 0)
-            {
-                throw new TemplateFormatException("");
-            }
 
             return chunks;
         }

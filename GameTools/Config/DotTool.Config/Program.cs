@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.IO;
+using DotTool.ScriptGenerate;
+using DotEngine.Context;
 
 namespace DotTool.Config
 {
@@ -25,6 +28,20 @@ namespace DotTool.Config
                 }
             }
             WDBFromExcelReader.logHandler = null;
+
+            string templateTxtPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\template.txt";
+            string templateTxt = File.ReadAllText(templateTxtPath);
+
+            StringContextContainer context = new StringContextContainer();
+            foreach(var sheet in sheets)
+            {
+                context.Add("__sheet__", sheet);
+                string luaContent = TemplateEngine.Execute(context, templateTxt, new string[] { typeof(WDBSheet).Assembly.Location});
+                File.WriteAllText("D:/lua.txt", luaContent);
+                
+                context.Remove("__sheet__");
+            }    
+
             Console.ReadKey();
         }
 

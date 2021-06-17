@@ -69,6 +69,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Context\DotEngine.Context\DotEngine.Context.csproj">
+      <Project>{973BA58F-3FD4-4A7D-AEEE-C9E0F135B12A}</Project>
+      <Name>DotEngine.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ScriptGenerate\DotTool.ScriptGenerate\DotTool.ScriptGenerate.csproj">
+      <Project>{f710f578-3d80-475e-bb1b-1cbb966c7c13}</Project>
+      <Name>DotTool.ScriptGenerate</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotEditor.Config\DotEditor.Config.csproj">
       <Project>{ea58beeb-9711-44a1-9991-827823184984}</Project>
       <Name>DotEditor.Config</Name>
