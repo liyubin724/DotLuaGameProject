@@ -3,6 +3,7 @@ using Microsoft.CSharp;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -18,18 +19,50 @@ namespace DotTool.ScriptGenerate
             typeof(StringBuilder).Assembly.Location,
         };
 
-        private static string ScriptStart =
-@"using DotEngine.Context;
-using System.Text;
+        public static string Generate(StringContextContainer context, string templateContent, string[] assemblyNames = null, EntryConfig config = null)
+        {
+            config = config ?? EntryConfig.Default;
+            if (string.IsNullOrEmpty(config.ClassName) || string.IsNullOrEmpty(config.MethodName))
+            {
+                return null;
+            }
 
-public static class TemplateRunner {
-    public static string Run(StringContextContainer context){
-        StringBuilder output = new StringBuilder();";
+            string code = ComposeCode(templateContent);
+            if (string.IsNullOrEmpty(code))
+            {
+                return null;
+            }
 
-        private static string ScriptEnd =
-@"            return output.ToString();
-    }
-}";
+            if (!string.IsNullOrEmpty(config.CodeOutputPath))
+            {
+                File.WriteAllText($"{config.CodeOutputPath}/{config.ClassName}.cs", code);
+            }
+
+            List<string> assemblyList = new List<string>(DefaultAssemblies);
+            if (assemblyNames != null && assemblyNames.Length > 0)
+            {
+                assemblyList.AddRange(assemblyNames);
+            }
+
+            Assembly assembly = CompileCode(assemblyList.Distinct().ToArray(), code);
+            if (assembly == null)
+            {
+                return null;
+            }
+            Type type = assembly.GetType(config.ClassName);
+            MethodInfo mInfo = type.GetMethod(config.MethodName, BindingFlags.Static | BindingFlags.Public);
+            object result = mInfo.Invoke(null, new object[] { context });
+            return result?.ToString();
+        }
+        public static void GenerateFile(string filePath, StringContextContainer context, string templateContent, string[] assemblyNames = null, EntryConfig config = null)
+        {
+            string result = Generate(context, templateContent, assemblyNames, config);
+            if (!string.IsNullOrEmpty(result))
+            {
+                File.WriteAllText(filePath, result);
+            }
+        }
+
         public static string Execute(StringContextContainer context, string template, string[] assemblies)
         {
             string code = ComposeCode(template);
@@ -57,7 +90,7 @@ public static class TemplateRunner {
             return result?.ToString();
         }
 
-        private static Assembly CompileCode(string[] assemblies,string code)
+        private static Assembly CompileCode(string[] assemblies, string code)
         {
             CodeDomProvider provider = new CSharpCodeProvider();
 
@@ -84,12 +117,11 @@ public static class TemplateRunner {
         private static string ComposeCode(string templateContent)
         {
             StringBuilder code = new StringBuilder();
-            //code.AppendLine(ScriptStart);
 
             List<Chunk> chunks = ParseTemplate(templateContent);
-            foreach(var chunk in chunks)
+            foreach (var chunk in chunks)
             {
-                switch(chunk.Type)
+                switch (chunk.Type)
                 {
                     case TokenType.Text:
                         code.AppendLine($"output.Append(\"{ chunk.Text}\");");
@@ -101,15 +133,13 @@ public static class TemplateRunner {
                         code.AppendLine($"output.Append(({ chunk.Text}).ToString());");
                         break;
                     case TokenType.Using:
-                        code.Insert(0, chunk.Text+"\r\n");
+                        code.Insert(0, chunk.Text + "\r\n");
                         break;
                     case TokenType.Ignore:
                         code.AppendLine($"/* {chunk.Text} */");
                         break;
                 }
             }
-
-            //code.AppendLine(ScriptEnd);
 
             return code.ToString();
         }
@@ -123,11 +153,11 @@ public static class TemplateRunner {
             string pattern = GetRegexPattern();
             Regex regex = new Regex(pattern, RegexOptions.ExplicitCapture | RegexOptions.Singleline);
             Match matches = regex.Match(templateContent);
-            if(!matches.Success)
+            if (!matches.Success)
             {
                 throw new TemplateFormatException("The template can't not be matched!");
             }
-            if(matches.Groups["error"].Length>0)
+            if (matches.Groups["error"].Length > 0)
             {
                 string[] errors = matches.Groups["error"].Captures.Cast<Capture>().Select((p) =>
                 {

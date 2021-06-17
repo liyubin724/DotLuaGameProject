@@ -4,6 +4,32 @@ using System.Text;
 using DotEngine.Config.WDB;
 
 public static class TemplateRunner {
+
+    public static string GetContent(WDBField field,WDBCell cell)
+    {
+        WDBFieldType fieldType = field.FieldType;
+        string content = cell.GetValue(field);
+        if(fieldType == WDBFieldType.String 
+            || fieldType == WDBFieldType.Text
+            || fieldType == WDBFieldType.Address)
+        {
+            return string.Format("[[{0}]]", content??"");
+        }else if(fieldType == WDBFieldType.Bool)
+        {
+            return string.IsNullOrEmpty(content)?"false":content.ToLower();
+        }else if(fieldType == WDBFieldType.Int || fieldType == WDBFieldType.Long || fieldType == WDBFieldType.Float)
+        {
+            return content??"0";
+        }else if(fieldType == WDBFieldType.Id || fieldType == WDBFieldType.Ref)
+        {
+            return content??"-1";
+        }else if(fieldType == WDBFieldType.Lua)
+        {
+            return string.Format("function()\n{0} \n        end",content??"");
+        }
+        return content;
+    }
+
     public static string Run(StringContextContainer context){
         StringBuilder output = new StringBuilder();
 
@@ -20,32 +46,10 @@ string fContent = fCell.Value;%>
     [<%=fContent%>] = {
 <%
     for(int j = 0;j<fieldCount;++j){
-    WDBField field = sheet.GetFieldAtIndex(j);
-    WDBCell cell = line.GetCellByIndex(j);
-    string content = cell.GetValue(field);
-    if(content == null)
-    {
-        content = "";
-    }
-
-    string format = "{0}";
-    WDBFieldType fieldType = field.FieldType;
-    if(fieldType == WDBFieldType.String 
-        || fieldType == WDBFieldType.Text
-        || fieldType == WDBFieldType.Address)
-    {
-        format = "[[{0}]]";
-    }else if(fieldType == WDBFieldType.Bool)
-    {
-        content = content.ToLower();
-    }else if(fieldType == WDBFieldType.Lua)
-    {
-        content = "function() \n         "+content+"\n        end";
-    }
-
-%>        <%=field.Name%> = <%=string.Format(format,content)%>,
-<%}%>
-    },<%}%>
+        WDBField field = sheet.GetFieldAtIndex(j);
+        WDBCell cell = line.GetCellByIndex(j);
+%>        <%=field.Name%> = <%=GetContent(field,cell)%>,
+<%}%>    },<%}%>
 }
 return <%=sheetName%>
 

@@ -36,9 +36,7 @@ namespace DotTool.Config
             foreach(var sheet in sheets)
             {
                 context.Add("__sheet__", sheet);
-                string luaContent = TemplateEngine.Execute(context, templateTxt, new string[] { typeof(WDBSheet).Assembly.Location});
-                File.WriteAllText("D:/lua.txt", luaContent);
-                
+                TemplateEngine.GenerateFile("D:/lua.txt", context, templateTxt, new string[] { typeof(WDBSheet).Assembly.Location},EntryConfig.Default);
                 context.Remove("__sheet__");
             }    
 
