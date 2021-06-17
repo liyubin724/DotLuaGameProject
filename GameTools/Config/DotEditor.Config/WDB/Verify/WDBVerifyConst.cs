@@ -26,7 +26,7 @@ namespace DotEditor.Config.WDB
         public const string VALIDATION_CELL_ARG_NULL_ERR = "The argument is null.";
         public const string VALIDATION_CELL_CONVERT_ERR = "The value({0}) of the cell can't convert to {1}";
         public const string VALIDATION_CELL_VAULE_EMPTY_ERR = "The value of the cell is empty";
-        public const string VALIDATION_CELL_STRLen_TOO_LONG_ERR = "The length of the value({0}) is too long.";
-        public const string VALIDATION_CELL_STRING_TOO_SHORT_ERR = "The length of the value({0}) is too short.";
+        public const string VALIDATION_CELL_STRLEN_TOO_LONG_ERR = "The length of the value({0}) is too long.";
+        public const string VALIDATION_CELL_STRLEN_TOO_SHORT_ERR = "The length of the value({0}) is too short.";
     }
 }

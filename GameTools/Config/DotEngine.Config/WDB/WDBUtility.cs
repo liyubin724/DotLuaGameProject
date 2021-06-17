@@ -91,7 +91,7 @@ namespace DotEngine.Config.WDB
             WDBValueValidation[] validations = new WDBValueValidation[validationRules.Length];
             for (int i = 0; i < validations.Length; i++)
             {
-                string rule = validationRules[i];
+                string rule = validationRules[i].Trim();
                 Match nameMatch = new Regex(VALIDATION_RULE_PATTERN).Match(rule);
                 Group nameGroup = nameMatch.Groups["name"];
                 Group paramsGroup = nameMatch.Groups["params"];

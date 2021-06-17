@@ -16,14 +16,14 @@ namespace DotEditor.Config.WDB
     {
         private static StringContextContainer context = new StringContextContainer();
         private static Dictionary<WDBField, WDBFieldVerify> fieldVerifyDic = new Dictionary<WDBField, WDBFieldVerify>();
-        public static bool VerifySheets(WDBSheet[] sheets,out string[] errors)
+        public static bool VerifySheets(WDBSheet[] sheets, out string[] errors)
         {
             errors = null;
 
             List<string> outputErrors = new List<string>();
             context.Add(WDBContextIENames.CONTEXT_ERRORS_NAME, outputErrors);
 
-            foreach(var sheet in sheets)
+            foreach (var sheet in sheets)
             {
                 context.Add(sheet.Name, sheet);
             }
@@ -33,7 +33,7 @@ namespace DotEditor.Config.WDB
                 VerifySheet(sheet);
             }
 
-            if(outputErrors.Count>0)
+            if (outputErrors.Count > 0)
             {
                 errors = outputErrors.ToArray();
             }
@@ -41,7 +41,7 @@ namespace DotEditor.Config.WDB
             context.Clear();
             fieldVerifyDic.Clear();
 
-            return outputErrors == null;
+            return errors == null;
         }
 
         private static bool VerifySheet(WDBSheet sheet)
@@ -69,7 +69,7 @@ namespace DotEditor.Config.WDB
                 return false;
             }
             bool result = true;
-            for (int i =0;i<sheet.FieldCount;++i)
+            for (int i = 0; i < sheet.FieldCount; ++i)
             {
                 WDBField field = sheet.GetFieldAtIndex(i);
                 WDBFieldVerify fieldVerify = new WDBFieldVerify()
@@ -79,54 +79,56 @@ namespace DotEditor.Config.WDB
                     ValueValidations = field.ValueValidations,
                 };
                 fieldVerifyDic.Add(field, fieldVerify);
-                if(!VerifyField(field))
+                if (!VerifyField(field))
                 {
                     result = false;
                 }
             }
-            if(!result)
+            if (!result)
             {
                 return false;
             }
 
             context.Add(WDBContextIENames.CONTEXT_SHEET_NAME, sheet);
-            for(int i =0;i<sheet.LineCount; ++i)
+            for (int i = 0; i < sheet.LineCount; ++i)
             {
                 WDBLine line = sheet.GetLineAtIndex(i);
-                if(line.CellCount != sheet.FieldCount)
+                if (line.CellCount != sheet.FieldCount)
                 {
                     result = false;
                     errors.Add(string.Format(WDBVerifyConst.VERIFY_SHEET_FIELD_ROW_ERR, sheet.FieldCount, line.Row));
                 }
             }
-            if(!result)
+            if (!result)
             {
                 return false;
             }
 
-            for(int i =0;i<sheet.FieldCount;++i)
+            for (int i = 0; i < sheet.FieldCount; ++i)
             {
                 WDBField field = sheet.GetFieldAtIndex(i);
                 WDBFieldVerify fieldVerify = fieldVerifyDic[field];
                 context.Add(WDBContextIENames.CONTEXT_FIELD_NAME, field);
                 context.Add(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME, fieldVerify);
 
-                for(int j = 0;j<sheet.LineCount;++j)
+                for (int j = 0; j < sheet.LineCount; ++j)
                 {
                     WDBLine line = sheet.GetLineAtIndex(j);
                     WDBCell cell = line.GetCellByIndex(i);
                     context.Add(WDBContextIENames.CONTEXT_LINE_NAME, line);
-                    if(cell.Col != field.Col)
+                    if (cell.Col != field.Col)
                     {
                         result = false;
                         errors.Add(string.Format(WDBVerifyConst.VERIFY_CELL_COL_NOTSAME_ERR, cell.Row, cell.Col));
-                    }else
+                    }
+                    else if (fieldVerify.ValueValidations != null && fieldVerify.ValueValidations.Length > 0)
                     {
                         context.Add(WDBContextIENames.CONTEXT_CELL_NAME, cell);
+
                         foreach (var cellValidation in fieldVerify.ValueValidations)
                         {
                             context.InjectTo(cellValidation);
-                            if(!cellValidation.Verify())
+                            if (!cellValidation.Verify())
                             {
                                 result = false;
                             }
@@ -163,7 +165,7 @@ namespace DotEditor.Config.WDB
                 return false;
             }
             bool result = true;
-            if(fieldVerify.ValueValidations!=null && fieldVerify.ValueValidations.Length>0)
+            if (fieldVerify.ValueValidations != null && fieldVerify.ValueValidations.Length > 0)
             {
                 foreach (var validation in fieldVerify.ValueValidations)
                 {

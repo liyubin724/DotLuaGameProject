@@ -205,7 +205,7 @@ namespace DotEditor.Config.WDB
         {
             logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_LINE));
 
-            int firstRowNum = readerExcelStyle.RowStartIndex;
+            int firstRowNum = readerExcelStyle.RowStartIndex + readerExcelStyle.FieldRowCount;
             int lastRowNum = sheet.LastRowNum;
 
             int firstColNum = sheet.GetRow(readerExcelStyle.RowStartIndex).FirstCellNum;

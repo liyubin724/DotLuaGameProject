@@ -11,11 +11,11 @@ namespace DotEditor.Config.WDB
         {
             base.SetRule(rule, values);
 
-            if(!int.TryParse(values[0],out minLength))
+            if (!int.TryParse(values[0], out minLength))
             {
                 minLength = -1;
             }
-            if(!int.TryParse(values[1],out maxLength))
+            if (!int.TryParse(values[1], out maxLength))
             {
                 maxLength = -1;
             }
@@ -23,22 +23,22 @@ namespace DotEditor.Config.WDB
 
         protected override bool DoVerify()
         {
-            if(minLength <0 || maxLength<0 || maxLength<minLength)
+            if (minLength < 0 || maxLength < 0 || maxLength < minLength)
             {
-                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_FIELD_RULE_PARAM_ERR,Rule));
+                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_FIELD_RULE_PARAM_ERR, Rule));
                 return false;
             }
 
             string cellValue = cell.GetValue(field);
             int len = string.IsNullOrEmpty(cellValue) ? 0 : cellValue.Length;
-            if(len<minLength)
+            if (len < minLength)
             {
-                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRING_TOO_SHORT_ERR));
+                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRLEN_TOO_SHORT_ERR, cellValue));
                 return false;
             }
-            if(len > maxLength)
+            if (len > maxLength)
             {
-                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRLen_TOO_LONG_ERR));
+                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_STRLEN_TOO_LONG_ERR, cellValue));
                 return false;
             }
             return true;
