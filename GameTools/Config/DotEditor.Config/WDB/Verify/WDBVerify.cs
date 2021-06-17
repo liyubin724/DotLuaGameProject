@@ -1,8 +1,9 @@
-﻿using DotEngine.Context;
+﻿using DotEngine.Config.WDB;
+using DotEngine.Context;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace DotEngine.Config.WDB
+namespace DotEditor.Config.WDB
 {
     public class WDBFieldVerify
     {
@@ -20,7 +21,7 @@ namespace DotEngine.Config.WDB
             errors = null;
 
             List<string> outputErrors = new List<string>();
-            context.Add(WDBVerifyConst.CONTEXT_ERRORS_NAME, outputErrors);
+            context.Add(WDBContextIENames.CONTEXT_ERRORS_NAME, outputErrors);
 
             foreach(var sheet in sheets)
             {
@@ -45,7 +46,7 @@ namespace DotEngine.Config.WDB
 
         private static bool VerifySheet(WDBSheet sheet)
         {
-            List<string> errors = (List<string>)context.Get(WDBVerifyConst.CONTEXT_ERRORS_NAME);
+            List<string> errors = (List<string>)context.Get(WDBContextIENames.CONTEXT_ERRORS_NAME);
             if (string.IsNullOrEmpty(sheet.Name))
             {
                 errors.Add(WDBVerifyConst.VERIFY_SHEET_NAME_EMPTY_ERR);
@@ -88,7 +89,7 @@ namespace DotEngine.Config.WDB
                 return false;
             }
 
-            context.Add(WDBVerifyConst.CONTEXT_SHEET_NAME, sheet);
+            context.Add(WDBContextIENames.CONTEXT_SHEET_NAME, sheet);
             for(int i =0;i<sheet.LineCount; ++i)
             {
                 WDBLine line = sheet.GetLineAtIndex(i);
@@ -107,21 +108,21 @@ namespace DotEngine.Config.WDB
             {
                 WDBField field = sheet.GetFieldAtIndex(i);
                 WDBFieldVerify fieldVerify = fieldVerifyDic[field];
-                context.Add(WDBVerifyConst.CONTEXT_FIELD_NAME, field);
-                context.Add(WDBVerifyConst.CONTEXT_FIELD_VERIFY_NAME, fieldVerify);
+                context.Add(WDBContextIENames.CONTEXT_FIELD_NAME, field);
+                context.Add(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME, fieldVerify);
 
                 for(int j = 0;j<sheet.LineCount;++j)
                 {
                     WDBLine line = sheet.GetLineAtIndex(j);
                     WDBCell cell = line.GetCellByIndex(i);
-                    context.Add(WDBVerifyConst.CONTEXT_LINE_NAME, line);
+                    context.Add(WDBContextIENames.CONTEXT_LINE_NAME, line);
                     if(cell.Col != field.Col)
                     {
                         result = false;
                         errors.Add(string.Format(WDBVerifyConst.VERIFY_CELL_COL_NOTSAME_ERR, cell.Row, cell.Col));
                     }else
                     {
-                        context.Add(WDBVerifyConst.CONTEXT_CELL_NAME, cell);
+                        context.Add(WDBContextIENames.CONTEXT_CELL_NAME, cell);
                         foreach (var cellValidation in fieldVerify.ValueValidations)
                         {
                             context.InjectTo(cellValidation);
@@ -130,12 +131,12 @@ namespace DotEngine.Config.WDB
                                 result = false;
                             }
                         }
-                        context.Remove(WDBVerifyConst.CONTEXT_CELL_NAME);
+                        context.Remove(WDBContextIENames.CONTEXT_CELL_NAME);
                     }
-                    context.Remove(WDBVerifyConst.CONTEXT_LINE_NAME);
+                    context.Remove(WDBContextIENames.CONTEXT_LINE_NAME);
                 }
-                context.Remove(WDBVerifyConst.CONTEXT_FIELD_NAME);
-                context.Remove(WDBVerifyConst.CONTEXT_FIELD_VERIFY_NAME);
+                context.Remove(WDBContextIENames.CONTEXT_FIELD_NAME);
+                context.Remove(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME);
             }
 
             return result;
@@ -145,7 +146,7 @@ namespace DotEngine.Config.WDB
         {
             WDBFieldVerify fieldVerify = fieldVerifyDic[field];
 
-            List<string> errors = (List<string>)context.Get(WDBVerifyConst.CONTEXT_ERRORS_NAME);
+            List<string> errors = (List<string>)context.Get(WDBContextIENames.CONTEXT_ERRORS_NAME);
             if (string.IsNullOrEmpty(field.Name))
             {
                 errors.Add(string.Format(WDBVerifyConst.VERIFY_FIELD_NAME_EMPTY_ERR, field.Col));

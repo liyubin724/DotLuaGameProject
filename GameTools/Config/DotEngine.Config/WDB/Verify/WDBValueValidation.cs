@@ -4,21 +4,31 @@ using System.Collections.Generic;
 
 namespace DotEngine.Config.WDB
 {
+    public static class WDBContextIENames
+    {
+        public const string CONTEXT_ERRORS_NAME = "__errors__";
+        public const string CONTEXT_SHEET_NAME = "__sheet__";
+        public const string CONTEXT_FIELD_NAME = "__field__";
+        public const string CONTEXT_FIELD_VERIFY_NAME = "__fieldVerify__";
+        public const string CONTEXT_LINE_NAME = "__line__";
+        public const string CONTEXT_CELL_NAME = "__cell__";
+    }
+
     public abstract class WDBValueValidation : IContextObject
     {
         public string Rule { get; private set; }
         public string[] Values { get; private set; }
 
-        [ContextIE(WDBVerifyConst.CONTEXT_ERRORS_NAME)]
+        [ContextIE(WDBContextIENames.CONTEXT_ERRORS_NAME)]
         protected List<string> errors;
-        [ContextIE(WDBVerifyConst.CONTEXT_SHEET_NAME)]
+        [ContextIE(WDBContextIENames.CONTEXT_SHEET_NAME)]
         protected WDBSheet sheet;
-        [ContextIE(WDBVerifyConst.CONTEXT_FIELD_NAME)]
+        [ContextIE(WDBContextIENames.CONTEXT_FIELD_NAME)]
         protected WDBField field;
-        [ContextIE(WDBVerifyConst.CONTEXT_CELL_NAME)]
+        [ContextIE(WDBContextIENames.CONTEXT_CELL_NAME)]
         protected WDBCell cell;
 
-        public virtual void SetRule(string rule,params string[] values)
+        public virtual void SetRule(string rule, params string[] values)
         {
             Rule = rule;
             Values = values;
@@ -26,9 +36,9 @@ namespace DotEngine.Config.WDB
 
         public bool Verify()
         {
-            if(field == null || cell == null)
+            if (field == null || cell == null)
             {
-                errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_ARG_NULL_ERR));
+                errors.Add(GetErrorMsg("The argument is null."));
                 return false;
             }
             return DoVerify();
@@ -36,9 +46,9 @@ namespace DotEngine.Config.WDB
 
         protected abstract bool DoVerify();
 
-        protected string GetErrorMsg(string format,params object[] values)
+        protected string GetErrorMsg(string format, params object[] values)
         {
-            return WDBVerifyConst.GetCellErrorMsg(cell.Row, cell.Col, format, values);
+            return string.Format(format, values) + string.Format("(row = {0},col = {1})", cell.Row, cell.Col);
         }
     }
 }

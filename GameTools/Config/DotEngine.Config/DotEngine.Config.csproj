@@ -74,21 +74,13 @@
     <Compile Include="WDB\Fields\RefField.cs" />
     <Compile Include="WDB\Fields\StringField.cs" />
     <Compile Include="WDB\Fields\TextField.cs" />
-    <Compile Include="WDB\Verify\Values\BoolValidation.cs" />
-    <Compile Include="WDB\Verify\Values\ErrorValidation.cs" />
-    <Compile Include="WDB\Verify\Values\FloatValidation.cs" />
-    <Compile Include="WDB\Verify\Values\IntValidation.cs" />
-    <Compile Include="WDB\Verify\Values\LongValidation.cs" />
-    <Compile Include="WDB\Verify\Values\NotEmptyValidation.cs" />
-    <Compile Include="WDB\Verify\Values\StrMinMaxLenValidation.cs" />
+    <Compile Include="WDB\Verify\ErrorValidation.cs" />
     <Compile Include="WDB\Verify\WDBValueValidation.cs" />
     <Compile Include="WDB\WDBCell.cs" />
-    <Compile Include="WDB\Verify\WDBVerifyConst.cs" />
     <Compile Include="WDB\WDBField.cs" />
     <Compile Include="WDB\WDBLine.cs" />
     <Compile Include="WDB\WDBSheet.cs" />
     <Compile Include="WDB\WDBUtility.cs" />
-    <Compile Include="WDB\Verify\WDBVerify.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

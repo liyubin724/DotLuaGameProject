@@ -23,7 +23,7 @@ namespace DotEditor.Config.WDB
 
         private static ExcelStyle readerExcelStyle;
 
-        public static WDBSheet[] ReadFromDirectory(string excelDir, ExcelStyle readerStyle)
+        public static WDBSheet[] ReadFromDirectory(string excelDir, ExcelStyle readerStyle = null)
         {
             if (string.IsNullOrEmpty(excelDir) || !Directory.Exists(excelDir))
             {
@@ -50,7 +50,7 @@ namespace DotEditor.Config.WDB
             return sheetList.ToArray();
         }
 
-        public static WDBSheet[] ReadFromFile(string excelPath, ExcelStyle readerStyle)
+        public static WDBSheet[] ReadFromFile(string excelPath, ExcelStyle readerStyle = null)
         {
             readerExcelStyle = readerStyle;
             if (readerExcelStyle == null)
@@ -174,7 +174,7 @@ namespace DotEditor.Config.WDB
             MethodInfo createFieldMI = typeof(WDBUtility).GetMethod("CreateField", BindingFlags.Public | BindingFlags.Static);
 
             int firstRowNum = readerExcelStyle.RowStartIndex;
-            int lastRowNum = firstRowNum + readerExcelStyle.FieldRowCount - 1;
+            int lastRowNum = firstRowNum + readerExcelStyle.FieldRowCount;
             int firstColNum = sheet.GetRow(firstRowNum).FirstCellNum;
             int lastColNum = sheet.GetRow(firstRowNum).LastCellNum;
 

@@ -100,7 +100,7 @@ namespace DotEngine.Config.WDB
                 string[] ruleParams = new string[0];
                 if (paramsGroup.Success && !string.IsNullOrEmpty(paramsGroup.Value))
                 {
-                    ruleParams = paramsGroup.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    ruleParams = (from v in paramsGroup.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) where !string.IsNullOrEmpty(v) select v.Trim()).ToArray();
                 }
                 if (!string.IsNullOrEmpty(ruleName) && validationDic.TryGetValue($"{ruleName.ToLower()}validation", out var type))
                 {

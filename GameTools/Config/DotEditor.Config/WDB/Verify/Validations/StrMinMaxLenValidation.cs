@@ -1,4 +1,6 @@
-﻿namespace DotEngine.Config.WDB
+﻿using DotEngine.Config.WDB;
+
+namespace DotEditor.Config.WDB
 {
     public class StrMinMaxLenValidation : WDBValueValidation
     {

@@ -1,18 +1,21 @@
-﻿namespace DotEngine.Config.WDB
+﻿using DotEngine.Config.WDB;
+
+namespace DotEditor.Config.WDB
 {
-    public class IntValidation : WDBValueValidation
+    public class FloatValidation : WDBValueValidation
     {
         protected override bool DoVerify()
         {
             string cellValue = cell.GetValue(field);
             if (!string.IsNullOrEmpty(cellValue))
             {
-                if (!int.TryParse(cellValue, out var value))
+                if (!float.TryParse(cellValue, out var value))
                 {
-                    errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "int"));
+                    errors.Add(GetErrorMsg(WDBVerifyConst.VALIDATION_CELL_CONVERT_ERR, cellValue, "float"));
                     return false;
                 }
             }
+
             return true;
         }
     }

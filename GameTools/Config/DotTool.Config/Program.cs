@@ -13,9 +13,16 @@ namespace DotTool.Config
     {
         static void Main(string[] args)
         {
-            string excelPath = @"D:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
+            string excelPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
             ExcelReader.logHandler = PrintLog;
             WDBSheet[] sheets = ExcelReader.ReadFromFile(excelPath, null);
+            if(!WDBVerify.VerifySheets(sheets,out var errors))
+            {
+                foreach(var error in errors)
+                {
+                    PrintLog(LogType.Error, error);
+                }
+            }
             ExcelReader.logHandler = null;
             Console.ReadKey();
         }

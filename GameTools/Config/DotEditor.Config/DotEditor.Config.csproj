@@ -60,6 +60,14 @@
     <Compile Include="WDB\IO\ExcelReader.cs" />
     <Compile Include="WDB\IO\ExcelStyle.cs" />
     <Compile Include="WDB\IO\LogMessage.cs" />
+    <Compile Include="WDB\Verify\Validations\BoolValidation.cs" />
+    <Compile Include="WDB\Verify\Validations\FloatValidation.cs" />
+    <Compile Include="WDB\Verify\Validations\IntValidation.cs" />
+    <Compile Include="WDB\Verify\Validations\LongValidation.cs" />
+    <Compile Include="WDB\Verify\Validations\NotEmptyValidation.cs" />
+    <Compile Include="WDB\Verify\Validations\StrMinMaxLenValidation.cs" />
+    <Compile Include="WDB\Verify\WDBVerify.cs" />
+    <Compile Include="WDB\Verify\WDBVerifyConst.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Context\DotEngine.Context\DotEngine.Context.csproj">
@@ -74,8 +82,6 @@
   <ItemGroup>
     <Folder Include="Ini\" />
     <Folder Include="IO\" />
-    <Folder Include="WDB\Styles\" />
-    <Folder Include="WDB\Verify\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

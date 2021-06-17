@@ -1,18 +1,11 @@
 ﻿using System.Text;
 
-namespace DotEngine.Config.WDB
+namespace DotEditor.Config.WDB
 {
     public static class WDBVerifyConst
     {
-        public const string CONTEXT_ERRORS_NAME = "__errors__";
-        public const string CONTEXT_SHEET_NAME = "__sheet__";
-        public const string CONTEXT_FIELD_NAME = "__field__";
-        public const string CONTEXT_FIELD_VERIFY_NAME = "__fieldVerify__";
-        public const string CONTEXT_LINE_NAME = "__line__";
-        public const string CONTEXT_CELL_NAME = "__cell__";
-
         public const string VERIFY_SHEET_NAME_REGEX = @"^[A-Z][A-Za-z]{2,9}";
-        public const string VERIFY_FIELD_NAME_REGEX = @"^[A-Z][A-Za-z0-9]{2,9}";
+        public const string VERIFY_FIELD_NAME_REGEX = @"^[A-Z][A-Za-z0-9]{1,9}";
 
         public const string VERIFY_SHEET_NAME_EMPTY_ERR = "the name of the sheet is empty";
         public const string VERIFY_SHEET_NAME_REGEX_ERR = "the name(name = {0}) of the sheet should match the regex";
@@ -35,23 +28,5 @@ namespace DotEngine.Config.WDB
         public const string VALIDATION_CELL_VAULE_EMPTY_ERR = "The value of the cell is empty";
         public const string VALIDATION_CELL_STRLen_TOO_LONG_ERR = "The length of the value({0}) is too long.";
         public const string VALIDATION_CELL_STRING_TOO_SHORT_ERR = "The length of the value({0}) is too short.";
-
-        private static StringBuilder tempMessageBuilder = new StringBuilder();
-        public static string GetCellErrorMsg(int row,int col, string msgFormat, params object[] values)
-        {
-            tempMessageBuilder.Clear();
-            if(!string.IsNullOrEmpty(msgFormat))
-            {
-                if(values == null || values.Length == 0)
-                {
-                    tempMessageBuilder.Append(msgFormat);
-                }else
-                {
-                    tempMessageBuilder.Append(string.Format(msgFormat, values));
-                }
-            }
-            tempMessageBuilder.AppendLine(string.Format(VALIDATION_CELL_COMMON_ERR, row, col));
-            return tempMessageBuilder.ToString();
-        }
     }
 }

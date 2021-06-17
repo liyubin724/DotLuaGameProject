@@ -64,7 +64,7 @@ namespace DotEngine.Config.WDB
         }
         public string ValidationRule { get; set; } = null;
 
-        internal WDBFieldType FieldType
+        public WDBFieldType FieldType
         {
             get
             {
@@ -79,7 +79,7 @@ namespace DotEngine.Config.WDB
             }
         }
 
-        internal WDBFieldPlatform FieldPlatform
+        public WDBFieldPlatform FieldPlatform
         {
             get
             {
@@ -98,14 +98,14 @@ namespace DotEngine.Config.WDB
             }
         }
 
-        internal WDBValueValidation[] ValueValidations
+        public WDBValueValidation[] ValueValidations
         {
             get
             {
                 List<string> rules = new List<string>();
                 if (!string.IsNullOrEmpty(ValidationRule))
                 {
-                    string[] splitRules = ValidationRule.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] splitRules = ValidationRule.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                     if (splitRules != null && splitRules.Length > 0)
                     {
                         rules.AddRange(splitRules);

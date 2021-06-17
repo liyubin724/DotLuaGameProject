@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DotEngine.Config.WDB
+﻿namespace DotEngine.Config.WDB
 {
     public class ErrorValidation : WDBValueValidation
     {
