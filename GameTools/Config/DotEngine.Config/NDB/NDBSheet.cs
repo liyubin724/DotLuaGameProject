@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace DotEngine.Config.NDB
 {
-    public class NDBData
+    public class NDBSheet
     {
         public string Name { get; private set; }
 
@@ -14,7 +14,7 @@ namespace DotEngine.Config.NDB
         private NDBHeader header = new NDBHeader();
         private NDBField[] fields = null;
 
-        private NDBData textData = null;
+        private NDBSheet textSheet = null;
 
         private Dictionary<int, int> dataIDToIndexDic = new Dictionary<int, int>();
         private Dictionary<string, int> fieldNameToIndexDic = new Dictionary<string, int>();
@@ -22,14 +22,14 @@ namespace DotEngine.Config.NDB
         public int FieldCount => header.fieldCount;
         public int LineCount => header.lineCount;
 
-        public NDBData(string name)
+        public NDBSheet(string name)
         {
             Name = name;
         }
 
-        public void SetText(NDBData text)
+        public void SetText(NDBSheet text)
         {
-            textData = text;
+            textSheet = text;
         }
 
         public void SetData(byte[] dataBytes)
@@ -151,9 +151,9 @@ namespace DotEngine.Config.NDB
             else if (field.Type == NDBFieldType.Text)
             {
                 int textID = ByteReader.ReadInt(datas, byteStartIndex, out _);
-                if (textData != null)
+                if (textSheet != null)
                 {
-                    return textData.GetDataByID<string>(textID, 1);
+                    return textSheet.GetDataByID<string>(textID, 1);
                 }
                 else
                 {

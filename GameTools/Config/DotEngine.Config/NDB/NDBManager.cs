@@ -17,8 +17,8 @@ namespace DotEngine.Config.NDB
             return mgr;
         }
 
-        private NDBData languageData = null;
-        private Dictionary<string, NDBData> cachedDataDic = new Dictionary<string, NDBData>();
+        private NDBSheet languageData = null;
+        private Dictionary<string, NDBSheet> cachedDataDic = new Dictionary<string, NDBSheet>();
 
         private Func<string, byte[]> bytesLoaderFunc = null;
 
@@ -41,7 +41,7 @@ namespace DotEngine.Config.NDB
             }
         }
 
-        public NDBData LoadData(string path)
+        public NDBSheet LoadData(string path)
         {
             if(cachedDataDic.TryGetValue(path, out var data))
             {
@@ -61,14 +61,14 @@ namespace DotEngine.Config.NDB
             return data;
         }
 
-        private NDBData LoadDataInternal(string path)
+        private NDBSheet LoadDataInternal(string path)
         {
             byte[] fileBytes = bytesLoaderFunc(path);
             if (fileBytes == null || fileBytes.Length == 0)
             {
                 return null;
             }
-            NDBData data = new NDBData(path);
+            NDBSheet data = new NDBSheet(path);
             data.SetData(fileBytes);
 
             return data;

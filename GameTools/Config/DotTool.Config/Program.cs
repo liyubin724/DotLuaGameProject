@@ -12,30 +12,11 @@ namespace DotTool.Config
 {
     class Program
     {
-        static void RegexMatch()
-        {
-            string VALIDATION_RULE_PATTERN = @"(^(?<name>[A-Za-z]{1,})$|^(?<name>[A-Za-z]{1,})[\s]*\((?<params>\S*)\))";
-            string rule = "StrMinMaxLen(2,10)"; 
-            Match nameMatch = new Regex(VALIDATION_RULE_PATTERN).Match(rule);
-            Group nameGroup = nameMatch.Groups["name"];
-            Group paramsGroup = nameMatch.Groups["params"];
-
-            string ruleName = nameGroup.Success ? nameGroup.Value.Trim() : null;
-            string[] ruleParams = new string[0];
-            if (paramsGroup.Success && !string.IsNullOrEmpty(paramsGroup.Value))
-            {
-                ruleParams = (from v in paramsGroup.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) where !string.IsNullOrEmpty(v) select v.Trim()).ToArray();
-            }
-
-            Console.WriteLine(string.IsNullOrEmpty(ruleName) ? "" : ruleName);
-            Console.WriteLine(string.Join(",",ruleParams));
-        }
-
         static void Main(string[] args)
         {
             string excelPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
-            ExcelReader.logHandler = PrintLog;
-            WDBSheet[] sheets = ExcelReader.ReadFromFile(excelPath, null);
+            WDBFromExcelReader.logHandler = PrintLog;
+            WDBSheet[] sheets = WDBFromExcelReader.ReadFromFile(excelPath, null);
             if (!WDBVerify.VerifySheets(sheets, out var errors))
             {
                 foreach (var error in errors)
@@ -43,7 +24,7 @@ namespace DotTool.Config
                     PrintLog(LogType.Error, error);
                 }
             }
-            ExcelReader.logHandler = null;
+            WDBFromExcelReader.logHandler = null;
             Console.ReadKey();
         }
 

@@ -58,7 +58,7 @@
     <Compile Include="IO\ByteWriter.cs" />
     <Compile Include="NDB\NDBByteUtility.cs" />
     <Compile Include="NDB\NDBConst.cs" />
-    <Compile Include="NDB\NDBData.cs" />
+    <Compile Include="NDB\NDBSheet.cs" />
     <Compile Include="NDB\NDBField.cs" />
     <Compile Include="NDB\NDBHeader.cs" />
     <Compile Include="NDB\NDBManager.cs" />

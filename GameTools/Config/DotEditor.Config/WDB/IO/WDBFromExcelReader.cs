@@ -17,13 +17,13 @@ namespace DotEditor.Config.WDB
     }
 
     public delegate void OnPrintLog(LogType logType, string msg);
-    public static class ExcelReader
+    public static class WDBFromExcelReader
     {
         public static OnPrintLog logHandler;
 
-        private static ExcelStyle readerExcelStyle;
+        private static WDBExcelStyle readerExcelStyle;
 
-        public static WDBSheet[] ReadFromDirectory(string excelDir, ExcelStyle readerStyle = null)
+        public static WDBSheet[] ReadFromDirectory(string excelDir, WDBExcelStyle readerStyle = null)
         {
             if (string.IsNullOrEmpty(excelDir) || !Directory.Exists(excelDir))
             {
@@ -50,12 +50,12 @@ namespace DotEditor.Config.WDB
             return sheetList.ToArray();
         }
 
-        public static WDBSheet[] ReadFromFile(string excelPath, ExcelStyle readerStyle = null)
+        public static WDBSheet[] ReadFromFile(string excelPath, WDBExcelStyle readerStyle = null)
         {
             readerExcelStyle = readerStyle;
             if (readerExcelStyle == null)
             {
-                readerExcelStyle = ExcelStyle.DefaultStyle;
+                readerExcelStyle = WDBExcelStyle.DefaultStyle;
             }
 
             if (!IsExcel(excelPath))

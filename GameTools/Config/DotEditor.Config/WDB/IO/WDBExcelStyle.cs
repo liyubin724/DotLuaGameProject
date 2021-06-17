@@ -1,6 +1,6 @@
 ﻿namespace DotEditor.Config.WDB
 {
-    public class ExcelStyle
+    public class WDBExcelStyle
     {
         public string MarkFlag { get; set; } = "#ETD#";
 
@@ -12,6 +12,6 @@
 
         public int ColumnMinCount { get; set; } = 2;
 
-        public static ExcelStyle DefaultStyle = new ExcelStyle();
+        public static WDBExcelStyle DefaultStyle = new WDBExcelStyle();
     }
 }
