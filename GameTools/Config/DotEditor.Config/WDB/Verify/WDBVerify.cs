@@ -8,7 +8,7 @@ namespace DotEditor.Config.WDB
     public class WDBFieldVerify
     {
         public WDBFieldType FieldType { get; set; } = WDBFieldType.None;
-        public WDBFieldPlatform FieldPlatform { get; set; } = WDBFieldPlatform.All;
+        public WDBFieldPlatform FieldPlatform { get; set; } = WDBFieldPlatform.Client | WDBFieldPlatform.Server;
         public WDBValueValidation[] ValueValidations { get; set; } = null;
     }
 
@@ -100,47 +100,46 @@ namespace DotEditor.Config.WDB
                     errors.Add(string.Format(WDBVerifyConst.VERIFY_SHEET_FIELD_ROW_ERR, sheet.FieldCount, line.Row));
                 }
             }
-            if (!result)
+            if (result)
             {
-                return false;
-            }
-
-            for (int i = 0; i < sheet.FieldCount; ++i)
-            {
-                WDBField field = sheet.GetFieldAtIndex(i);
-                WDBFieldVerify fieldVerify = fieldVerifyDic[field];
-                context.Add(WDBContextIENames.CONTEXT_FIELD_NAME, field);
-                context.Add(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME, fieldVerify);
-
-                for (int j = 0; j < sheet.LineCount; ++j)
+                for (int i = 0; i < sheet.FieldCount; ++i)
                 {
-                    WDBLine line = sheet.GetLineAtIndex(j);
-                    WDBCell cell = line.GetCellByIndex(i);
-                    context.Add(WDBContextIENames.CONTEXT_LINE_NAME, line);
-                    if (cell.Col != field.Col)
-                    {
-                        result = false;
-                        errors.Add(string.Format(WDBVerifyConst.VERIFY_CELL_COL_NOTSAME_ERR, cell.Row, cell.Col));
-                    }
-                    else if (fieldVerify.ValueValidations != null && fieldVerify.ValueValidations.Length > 0)
-                    {
-                        context.Add(WDBContextIENames.CONTEXT_CELL_NAME, cell);
+                    WDBField field = sheet.GetFieldAtIndex(i);
+                    WDBFieldVerify fieldVerify = fieldVerifyDic[field];
+                    context.Add(WDBContextIENames.CONTEXT_FIELD_NAME, field);
+                    context.Add(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME, fieldVerify);
 
-                        foreach (var cellValidation in fieldVerify.ValueValidations)
+                    for (int j = 0; j < sheet.LineCount; ++j)
+                    {
+                        WDBLine line = sheet.GetLineAtIndex(j);
+                        WDBCell cell = line.GetCellByIndex(i);
+                        context.Add(WDBContextIENames.CONTEXT_LINE_NAME, line);
+                        if (cell.Col != field.Col)
                         {
-                            context.InjectTo(cellValidation);
-                            if (!cellValidation.Verify())
-                            {
-                                result = false;
-                            }
+                            result = false;
+                            errors.Add(string.Format(WDBVerifyConst.VERIFY_CELL_COL_NOTSAME_ERR, cell.Row, cell.Col));
                         }
-                        context.Remove(WDBContextIENames.CONTEXT_CELL_NAME);
+                        else if (fieldVerify.ValueValidations != null && fieldVerify.ValueValidations.Length > 0)
+                        {
+                            context.Add(WDBContextIENames.CONTEXT_CELL_NAME, cell);
+
+                            foreach (var cellValidation in fieldVerify.ValueValidations)
+                            {
+                                context.InjectTo(cellValidation);
+                                if (!cellValidation.Verify())
+                                {
+                                    result = false;
+                                }
+                            }
+                            context.Remove(WDBContextIENames.CONTEXT_CELL_NAME);
+                        }
+                        context.Remove(WDBContextIENames.CONTEXT_LINE_NAME);
                     }
-                    context.Remove(WDBContextIENames.CONTEXT_LINE_NAME);
+                    context.Remove(WDBContextIENames.CONTEXT_FIELD_NAME);
+                    context.Remove(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME);
                 }
-                context.Remove(WDBContextIENames.CONTEXT_FIELD_NAME);
-                context.Remove(WDBContextIENames.CONTEXT_FIELD_VERIFY_NAME);
             }
+            context.Remove(WDBContextIENames.CONTEXT_SHEET_NAME);
 
             return result;
         }

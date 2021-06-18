@@ -1,4 +1,6 @@
-﻿namespace DotEditor.Config.WDB
+﻿using DotEngine.Config.WDB;
+
+namespace DotEditor.Config.WDB
 {
     public class WDBExcelStyle
     {
@@ -9,6 +11,8 @@
         public int FieldRowCount { get; set; } = 6;
         public string LineStartFlag { get; set; } = "start";
         public string LineEndFlag { get; set; } = "end";
+
+        public WDBFieldPlatform TargetPlatform { get; set; } = WDBFieldPlatform.Client | WDBFieldPlatform.Server;
 
         public int ColumnMinCount { get; set; } = 2;
 

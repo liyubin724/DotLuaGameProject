@@ -201,6 +201,10 @@ namespace DotEditor.Config.WDB
                 }
 
                 WDBField field = (WDBField)createFieldMI.Invoke(null, datas);
+                if((field.FieldPlatform & readerExcelStyle.TargetPlatform) != readerExcelStyle.TargetPlatform)
+                {
+                    continue;
+                }
                 logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_CREATE_FIELD, field));
 
                 sheetData.AddField(field);
@@ -251,6 +255,11 @@ namespace DotEditor.Config.WDB
                 WDBLine line = sheetData.AddLine(r);
                 for (int c = firstColNum + 1; c < lastColNum; c++)
                 {
+                    WDBField field = sheetData.GetFieldAtCol(c);
+                    if (field == null)
+                    {
+                        continue;
+                    }
                     ICell valueCell = row.GetCell(c);
                     line.AddCell(c, GetCellStringValue(valueCell));
                 }

@@ -7,9 +7,9 @@
         {
         }
 
-        protected override string GetInnerDefaultValue()
+        protected override string[] GetInnerValidationRule()
         {
-            return string.Empty;
+            return new string[] { "int" };
         }
     }
 }

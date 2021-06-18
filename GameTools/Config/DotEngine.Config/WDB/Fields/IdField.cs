@@ -9,7 +9,7 @@
 
         protected override string[] GetInnerValidationRule()
         {
-            return new string[] { "int", "NotEmpty"};
+            return new string[] { "int", "NotEmpty", "Unique" };
         }
     }
 }
