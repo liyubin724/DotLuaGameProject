@@ -2,6 +2,7 @@
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,51 +68,57 @@ namespace DotEditor.Config.WDB
             List<WDBSheet> sheetList = new List<WDBSheet>();
 
             string ext = Path.GetExtension(excelPath).ToLower();
-            using (FileStream fs = new FileStream(excelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            try
             {
-                IWorkbook workbook = null;
-                if (ext == ".xlsx")
+                using (FileStream fs = new FileStream(excelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    workbook = new XSSFWorkbook(fs);
-                }
-                else
-                {
-                    workbook = new HSSFWorkbook(fs);
-                }
-
-                if (workbook == null || workbook.NumberOfSheets == 0)
-                {
-                    logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_WORKBOOK_EMPTY, excelPath));
-                    return null;
-                }
-
-                logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_WORKBOOK, excelPath));
-
-                for (int i = 0; i < workbook.NumberOfSheets; i++)
-                {
-                    ISheet sheet = workbook.GetSheetAt(i);
-
-                    string sheetName = sheet.SheetName;
-                    if (string.IsNullOrEmpty(sheetName))
+                    IWorkbook workbook = null;
+                    if (ext == ".xlsx")
                     {
-                        logHandler?.Invoke(LogType.Warning, LogMessage.WARN_SHEET_NAME_EMPTY);
-                        continue;
+                        workbook = new XSSFWorkbook(fs);
                     }
-                    if (sheetName.StartsWith("#"))
+                    else
                     {
-                        logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_SHEET_IGNORE, sheetName));
-                        continue;
+                        workbook = new HSSFWorkbook(fs);
                     }
 
-                    WDBSheet wdbSheet = ReadFromSheet(sheet);
-                    sheetList.Add(wdbSheet);
-                }
+                    if (workbook == null || workbook.NumberOfSheets == 0)
+                    {
+                        logHandler?.Invoke(LogType.Error, string.Format(LogMessage.ERROR_WORKBOOK_EMPTY, excelPath));
+                        return null;
+                    }
 
-                logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_END_READ_WORKBOOK, excelPath));
+                    logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_WORKBOOK, excelPath));
+
+                    for (int i = 0; i < workbook.NumberOfSheets; i++)
+                    {
+                        ISheet sheet = workbook.GetSheetAt(i);
+
+                        string sheetName = sheet.SheetName;
+                        if (string.IsNullOrEmpty(sheetName))
+                        {
+                            logHandler?.Invoke(LogType.Warning, LogMessage.WARN_SHEET_NAME_EMPTY);
+                            continue;
+                        }
+                        if (sheetName.StartsWith("#"))
+                        {
+                            logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_SHEET_IGNORE, sheetName));
+                            continue;
+                        }
+
+                        WDBSheet wdbSheet = ReadFromSheet(sheet);
+                        sheetList.Add(wdbSheet);
+                    }
+
+                    logHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_END_READ_WORKBOOK, excelPath));
+                }
+            }
+            catch (Exception e)
+            {
+                logHandler?.Invoke(LogType.Error, e.Message);
             }
 
             readerExcelStyle = null;
-
             return sheetList.ToArray();
         }
 

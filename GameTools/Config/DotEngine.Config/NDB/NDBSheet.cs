@@ -41,42 +41,46 @@ namespace DotEngine.Config.NDB
         {
             this.dataBytes = dataBytes;
 
-            int headerSize = Marshal.SizeOf(typeof(NDBHeader));
+            int headerSize = MarshalUtility.GetStructSize(typeof(NDBHeader));
             if (dataBytes == null || dataBytes.Length < headerSize)
             {
                 throw new ArgumentNullException($"The databytes is empty. Name = {Name}");
             }
             header = MarshalUtility.ByteToStruct<NDBHeader>(dataBytes, 0, headerSize);
-            
+
             fields = new NDBField[header.fieldCount];
             int fieldOffset = 0;
             int byteOffset = 0;
             for (int i = 0; i < header.fieldCount; ++i)
             {
-                fields[i] = NDBByteUtility.ReadField(dataBytes, header.fieldOffset + byteOffset, out int offset);
-                fieldOffset += NDBFieldUtil.GetFieldOffset(fields[i].FieldType);
+                NDBField field = NDBByteUtility.ReadField(dataBytes, header.fieldOffset + byteOffset, out int offset);
+
+                fields[i] = field;
+                field.Offset = fieldOffset;
+                fieldOffset += NDBFieldUtil.GetFieldOffset(field.FieldType);
+                fieldNameToIndexDic.Add(field.Name, i);
+
                 byteOffset += offset;
             }
 
             for (int i = 0; i < header.lineCount; ++i)
             {
-                int id = ByteReader.ReadInt(dataBytes, header.lineOffset + header.lineSize * i,out int offset);
-
+                int id = ByteReader.ReadInt(dataBytes, header.lineOffset + header.lineSize * i, out int offset);
                 dataIDToIndexDic.Add(id, i);
             }
         }
 
         public T GetDataByID<T>(int id, string fieldName)
         {
-            if(dataIDToIndexDic.TryGetValue(id,out var dataIndex) 
-                && fieldNameToIndexDic.TryGetValue(fieldName,out var fieldIndex) 
-                && fieldIndex>=0&&fieldIndex<fields.Length)
+            if (dataIDToIndexDic.TryGetValue(id, out var dataIndex)
+                && fieldNameToIndexDic.TryGetValue(fieldName, out var fieldIndex)
+                && fieldIndex >= 0 && fieldIndex < fields.Length)
             {
                 object result = GetDataByIndexInternal(dataIndex, fields[fieldIndex]);
-                if(result!=null)
+                if (result != null)
                 {
                     return (T)result;
-                }    
+                }
             }
             return default;
         }
@@ -97,7 +101,7 @@ namespace DotEngine.Config.NDB
 
         public T GetDataByIndex<T>(int index, string fieldName)
         {
-            if (index>=0 && index <header.lineCount
+            if (index >= 0 && index < header.lineCount
                 && fieldNameToIndexDic.TryGetValue(fieldName, out var fieldIndex)
                 && fieldIndex >= 0 && fieldIndex < fields.Length)
             {
@@ -153,7 +157,7 @@ namespace DotEngine.Config.NDB
                 int textID = ByteReader.ReadInt(dataBytes, byteStartIndex, out _);
                 if (textSheet != null)
                 {
-                    return textSheet.GetDataByID<string>(textID, 1);
+                    return textSheet.GetDataByID<string>(textID, 0);
                 }
                 else
                 {

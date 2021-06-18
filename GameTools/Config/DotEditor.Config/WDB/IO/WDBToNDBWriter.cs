@@ -81,6 +81,10 @@ namespace DotEditor.Config.WDB
                         || field.FieldType == WDBFieldType.Lua)
                     {
                         string content = cellValue ?? "";
+                        if(field.FieldType == WDBFieldType.Lua)
+                        {
+                            content = GetLuaFuncContent(content);
+                        }
                         if (!strOffsetDic.TryGetValue(content, out var offset))
                         {
                             throw new Exception();
@@ -171,22 +175,31 @@ namespace DotEditor.Config.WDB
                         string cellValue = cell.GetValue(field);
 
                         string content = cellValue ?? "";
-                        if(strOffsetDic.ContainsKey(content))
+                        if (field.FieldType == WDBFieldType.Lua)
+                        {
+                            content = GetLuaFuncContent(content);
+                        }
+                        if (strOffsetDic.ContainsKey(content))
                         {
                             continue;
                         }
                         strOffsetDic.Add(content, (int)stream.Length);
-                        if(field.FieldType == WDBFieldType.Lua)
-                        {
-                            ByteWriter.WriteString(stream, $"function () \n {content} \n end");
-                        }else
-                        {
-                            ByteWriter.WriteString(stream, content);
-                        }
+                        ByteWriter.WriteString(stream, content);
                     }
                 }
             }
             return stream.ToArray();
+        }
+
+        private static string GetLuaFuncContent(string content)
+        {
+            if(content.StartsWith("function"))
+            {
+                return content;
+            }else
+            {
+                return $"function () \n {content} \n end";
+            }
         }
 
         private static int GetLineSize(NDBField[] fields)

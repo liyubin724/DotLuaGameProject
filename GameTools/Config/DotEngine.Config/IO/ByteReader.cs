@@ -31,12 +31,12 @@ namespace DotEngine.Config.IO
             }
         }
 
-        public static long ReadFloat(byte[] bytes, int startIndex, out int offset)
+        public static float ReadFloat(byte[] bytes, int startIndex, out int offset)
         {
             offset = sizeof(float);
             fixed (byte* bytePtr = &bytes[startIndex])
             {
-                return *((long*)bytePtr);
+                return *((float*)bytePtr);
             }
         }
 

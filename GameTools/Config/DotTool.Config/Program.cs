@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using DotTool.ScriptGenerate;
 using DotEngine.Context;
+using DotEngine.Config.NDB;
 
 namespace DotTool.Config
 {
@@ -17,7 +18,7 @@ namespace DotTool.Config
     {
         static void Main(string[] args)
         {
-            string excelPath = @"D:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
+            string excelPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\Test.xlsx";
             WDBFromExcelReader.logHandler = PrintLog;
             WDBSheet[] sheets = WDBFromExcelReader.ReadFromFile(excelPath, null);
             if (!WDBVerify.VerifySheets(sheets, out var errors))
@@ -29,7 +30,7 @@ namespace DotTool.Config
             }
             WDBFromExcelReader.logHandler = null;
 
-            string templateTxtPath = @"D:\WorkSpace\DotLuaGameProject\GameTools\Config\template.txt";
+            string templateTxtPath = @"E:\WorkSpace\DotLuaGameProject\GameTools\Config\template.txt";
             string templateTxt = File.ReadAllText(templateTxtPath);
 
             StringContextContainer context = new StringContextContainer();
@@ -43,6 +44,19 @@ namespace DotTool.Config
             foreach(var sheet in sheets)
             {
                 WDBToNDBWriter.WriteToNDBFile(@"D:\",sheet);
+            }
+            byte[] dataBytes = File.ReadAllBytes(@"D:\TestSheet1.ndb");
+            NDBSheet ndbSheet = new NDBSheet("TestSheet1");
+            ndbSheet.SetData(dataBytes);
+
+            for(int i =0;i<ndbSheet.LineCount;++i)
+            {
+                for(int j = 0;j<ndbSheet.FieldCount;++j)
+                {
+                    var v = ndbSheet.GetDataByIndex<object>(i, j);
+                    Console.Write("    " + v);
+                }
+                Console.WriteLine();
             }
 
             Console.ReadKey();
