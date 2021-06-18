@@ -33,10 +33,9 @@ namespace DotEngine.Config.WDB
         Lua,
     }
 
-    [Flags]
     public enum WDBFieldPlatform
     {
-        None = 0,
+        All = 0,
 
         Client = 1,
         Server = 2,
@@ -94,7 +93,7 @@ namespace DotEngine.Config.WDB
                 }
                 else
                 {
-                    return WDBFieldPlatform.Client | WDBFieldPlatform.Server;
+                    return WDBFieldPlatform.All;
                 }
             }
         }

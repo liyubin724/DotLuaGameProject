@@ -201,7 +201,8 @@ namespace DotEditor.Config.WDB
                 }
 
                 WDBField field = (WDBField)createFieldMI.Invoke(null, datas);
-                if((field.FieldPlatform & readerExcelStyle.TargetPlatform) != readerExcelStyle.TargetPlatform)
+                WDBFieldPlatform fieldPlatform = field.FieldPlatform;
+                if (fieldPlatform != WDBFieldPlatform.All && readerExcelStyle.TargetPlatform != WDBFieldPlatform.All && fieldPlatform != readerExcelStyle.TargetPlatform)
                 {
                     continue;
                 }

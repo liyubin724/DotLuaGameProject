@@ -12,7 +12,7 @@ namespace DotEditor.Config.WDB
         public string LineStartFlag { get; set; } = "start";
         public string LineEndFlag { get; set; } = "end";
 
-        public WDBFieldPlatform TargetPlatform { get; set; } = WDBFieldPlatform.Client | WDBFieldPlatform.Server;
+        public WDBFieldPlatform TargetPlatform { get; set; } = WDBFieldPlatform.All;
 
         public int ColumnMinCount { get; set; } = 2;
 

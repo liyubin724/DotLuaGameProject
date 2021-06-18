@@ -33,7 +33,8 @@ public static class TemplateRunner {
 
     public static string Run(StringContextContainer context){
         StringBuilder output = new StringBuilder();
-%>local oop = require("DotLua/OOP/oop")
+%>local ConfigLine = require("DotLua/Config/ConfigLine")
+local ConfigSheet = require("DotLua/Config/ConfigSheet")
 <%
         WDBSheet sheet = context.Get<WDBSheet>("__sheet__");
         string sheetName = sheet.Name;
@@ -59,7 +60,7 @@ local <%=tmpTableName%> = {
 %>    <%=field.Name%> = <%=GetContent(field,cell)%>,
 <%          }
 %>}
-oop.asreadonly(<%=tmpTableName%>)
+setmetatable(<%=tmpTableName%>,ConfigLine)
 <%
         }
 %>
@@ -72,15 +73,13 @@ local <%=sheetName%> = {
 <%
     }
 %>}
-<%=sheetName%>.__keys__ = {
-<%
+<%=sheetName%>.__keys__ = {<%
     foreach(var id in idList)
     {
-%>    <%=id%>,
-<%        
+%><%=id%>,<%        
     }
 %>}
-oop.asreadonly(<%=sheetName%>)
+setmetatable(<%=sheetName%>,ConfigSheet)
 
 return <%=sheetName%>
 <%

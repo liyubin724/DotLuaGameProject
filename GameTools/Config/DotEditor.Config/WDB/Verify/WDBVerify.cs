@@ -8,7 +8,7 @@ namespace DotEditor.Config.WDB
     public class WDBFieldVerify
     {
         public WDBFieldType FieldType { get; set; } = WDBFieldType.None;
-        public WDBFieldPlatform FieldPlatform { get; set; } = WDBFieldPlatform.Client | WDBFieldPlatform.Server;
+        public WDBFieldPlatform FieldPlatform { get; set; } = WDBFieldPlatform.All;
         public WDBValueValidation[] ValueValidations { get; set; } = null;
     }
 
