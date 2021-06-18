@@ -1,6 +1,7 @@
 <%
 using DotEngine.Context;
 using System.Text;
+using System.Collections.Generic;
 using DotEngine.Config.WDB;
 
 public static class TemplateRunner {
@@ -32,31 +33,58 @@ public static class TemplateRunner {
 
     public static string Run(StringContextContainer context){
         StringBuilder output = new StringBuilder();
-
+%>local oop = require("DotLua/OOP/oop")
+<%
         WDBSheet sheet = context.Get<WDBSheet>("__sheet__");
         string sheetName = sheet.Name;
         int fieldCount = sheet.FieldCount;
         int lineCount = sheet.LineCount;
-%>local oop = require("DotLua/OOP/oop")
-local <%=sheetName%> = {<%
 
-for(int i =0;i < lineCount; ++i){
-WDBLine line = sheet.GetLineAtIndex(i);
-WDBCell fCell = line.GetCellByIndex(0);
-string fContent = fCell.Value;%>
-    [<%=fContent%>] = {
+        Dictionary<string,string> idToValueDic = new Dictionary<string,string>();
+        List<string> idList = new List<string>();
+
+        for(int i =0;i < lineCount; ++i){
+            WDBLine line = sheet.GetLineAtIndex(i);
+            WDBCell fCell = line.GetCellByIndex(0);
+            string fContent = fCell.Value;
+            string tmpTableName = "t_"+fContent;
+
+            idToValueDic.Add(fContent,tmpTableName);
+            idList.Add(fContent);%>
+local <%=tmpTableName%> = {
 <%
-    for(int j = 0;j<fieldCount;++j){
-        WDBField field = sheet.GetFieldAtIndex(j);
-        WDBCell cell = line.GetCellByIndex(j);
-%>        <%=field.Name%> = <%=GetContent(field,cell)%>,
-<%}%>    },<%}%>
-}
+            for(int j = 0;j<fieldCount;++j){
+                WDBField field = sheet.GetFieldAtIndex(j);
+                WDBCell cell = line.GetCellByIndex(j);
+%>    <%=field.Name%> = <%=GetContent(field,cell)%>,
+<%          }
+%>}
+oop.asreadonly(<%=tmpTableName%>)
+<%
+        }
+%>
+
+local <%=sheetName%> = {
+<%
+    foreach(var kvp in idToValueDic)
+    {
+%>    [<%=kvp.Key%>] = <%=kvp.Value%>,
+<%
+    }
+%>}
+<%=sheetName%>.__keys__ = {
+<%
+    foreach(var id in idList)
+    {
+%>    <%=id%>,
+<%        
+    }
+%>}
 oop.asreadonly(<%=sheetName%>)
-return <%=sheetName%>
 
+return <%=sheetName%>
 <%
-return output.ToString();
+        return output.ToString();
     }
 }
 %>
