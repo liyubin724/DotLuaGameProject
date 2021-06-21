@@ -135,7 +135,13 @@ local <%=tmpTableName%> = {
 %>    <%=field.Name%> = <%=GetContent(field,cell)%>,
 <%          }
 %>}
+<%
+    if(fieldToDefaultValueDic.Count>0){
+%>
 <%=tmpTableName%>.__default__ = defalutValues
+<%
+    }
+%>
 setmetatable(<%=tmpTableName%>,ConfigLine)
 <%
         }
