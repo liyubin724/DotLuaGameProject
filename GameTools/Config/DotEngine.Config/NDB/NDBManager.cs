@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DotEngine.Config.NDB
 {
@@ -17,10 +18,11 @@ namespace DotEngine.Config.NDB
             return mgr;
         }
 
+        private Func<string, byte[]> bytesLoaderFunc = null;
+
+        private string languagePath = null;
         private NDBSheet languageData = null;
         private Dictionary<string, NDBSheet> cachedDataDic = new Dictionary<string, NDBSheet>();
-
-        private Func<string, byte[]> bytesLoaderFunc = null;
 
         private NDBManager() 
         {
@@ -32,13 +34,15 @@ namespace DotEngine.Config.NDB
             bytesLoaderFunc = loader;
         }
 
-        public void SetLanguageData(string path)
+        public NDBSheet LoadLanguageData(string path)
         {
+            languagePath = path;
             languageData = LoadDataInternal(path);
             foreach(var kvp in cachedDataDic)
             {
                 kvp.Value.SetText(languageData);
             }
+            return languageData;
         }
 
         public NDBSheet LoadData(string path)
@@ -51,8 +55,9 @@ namespace DotEngine.Config.NDB
             data = LoadDataInternal(path);
             if (data == null)
             {
-                throw new Exception();
+                throw new Exception("the data can't found");
             }
+            cachedDataDic.Add(path, data);
 
             if(languageData!=null)
             {
@@ -74,16 +79,23 @@ namespace DotEngine.Config.NDB
             return data;
         }
 
-        public void ReloadAllDatas()
+        public void UnloadData(string path)
         {
-            if(languageData!=null)
+            if(cachedDataDic.ContainsKey(path))
             {
-                SetLanguageData(languageData.Name);
+                cachedDataDic.Remove(path);
             }
+        }
 
-            var pathes = cachedDataDic.Keys;
+        public void ReloadAllData()
+        {
+            string[] dataPaths = cachedDataDic.Keys.ToArray();
             cachedDataDic.Clear();
-            foreach(var path in pathes)
+            if(string.IsNullOrEmpty(languagePath))
+            {
+                LoadLanguageData(languagePath);
+            }
+            foreach(var path in dataPaths)
             {
                 LoadData(path);
             }
