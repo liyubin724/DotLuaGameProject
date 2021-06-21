@@ -137,7 +137,7 @@ namespace DotEngine.Config.WDB
 
         public override string ToString()
         {
-            return $"{{col = {Col}, name = {Name},desc = {Desc},type = {Type},platform = {Platform},defaultvalue = {DefaultValue},validationRule = {ValidationRule}}}";
+            return $"(col = {Col}, name = {Name??"ERROR"},desc = {Desc??""},type = {Type??"none"},platform = {Platform??"all"},defaultvalue = {DefaultValue??""},validationRule = {ValidationRule??""})";
         }
     }
 }

@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>output\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +35,9 @@
   <ItemGroup>
     <Reference Include="Colorful.Console">
       <HintPath>libs\Colorful.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine">
+      <HintPath>libs\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>libs\ICSharpCode.SharpZipLib.dll</HintPath>

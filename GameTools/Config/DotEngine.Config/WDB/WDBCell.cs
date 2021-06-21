@@ -25,7 +25,7 @@
 
         public override string ToString()
         {
-            return $"{{row = {Row},col = {Col},value = {(string.IsNullOrEmpty(Value) ? "" : Value)}}}";
+            return $"(row = {Row},col = {Col},value = {(string.IsNullOrEmpty(Value) ? "" : Value)})";
         }
     }
 }

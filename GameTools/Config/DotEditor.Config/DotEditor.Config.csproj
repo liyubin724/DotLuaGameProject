@@ -58,11 +58,10 @@
   <ItemGroup>
     <Compile Include="NDB\NDBViewer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WDB\IO\Lua\LuaWriterStyle.cs" />
     <Compile Include="WDB\IO\WDBFromExcelReader.cs" />
     <Compile Include="WDB\IO\WDBExcelStyle.cs" />
     <Compile Include="WDB\IO\LogMessage.cs" />
-    <Compile Include="WDB\IO\Lua\WDBToLuaWriter.cs" />
+    <Compile Include="WDB\IO\WDBToLuaWriter.cs" />
     <Compile Include="WDB\IO\WDBToNDBWriter.cs" />
     <Compile Include="WDB\Verify\Validations\BoolValidation.cs" />
     <Compile Include="WDB\Verify\Validations\FloatValidation.cs" />

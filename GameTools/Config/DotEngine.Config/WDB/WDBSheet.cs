@@ -84,7 +84,8 @@ namespace DotEngine.Config.WDB
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"{{name = {Name},fieldcount = {FieldCount},rowcount = {LineCount},");
+            builder.AppendLine("{");
+            builder.AppendLine($"name = {Name},fieldcount = {FieldCount},rowcount = {LineCount},");
             builder.AppendLine("fields = {");
             foreach (var field in fields)
             {
