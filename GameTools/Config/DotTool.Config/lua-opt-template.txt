@@ -6,6 +6,55 @@ using DotEngine.Config.WDB;
 
 public static class TemplateRunner {
 
+    public static Dictionary<string,string> GetDefaultValue(WDBSheet sheet)
+    {
+        Dictionary<string,Dictionary<string,int>> defaultValueDic = new Dictionary<string,Dictionary<string,int>>();
+
+        for(int i =0;i<sheet.FieldCount;++i)
+        {
+            WDBField field = sheet.GetFieldAtIndex(i);
+            Dictionary<string,int> contentToCountDic = new Dictionary<string,int>();
+
+            defaultValueDic.Add(field.Name,contentToCountDic);
+
+            for(int j=0;j<sheet.LineCount;++j)
+            {
+                WDBLine line = sheet.GetLineAtIndex(j);
+                WDBCell cell = line.GetCellByIndex(i);
+
+                string content = GetContent(field,cell);
+                if(contentToCountDic.ContainsKey(content))
+                {
+                    contentToCountDic[content]+=1;
+                }else
+                {
+                    contentToCountDic[content] = 1;
+                }
+            }
+        }
+
+        Dictionary<string,string> fieldToContentDic = new Dictionary<string,string>();
+        foreach(var kvp in defaultValueDic)
+        {
+            Dictionary<string,int> contentToCountDic = kvp.Value;
+            string result = null;
+            int count = 0;
+            foreach(var ctc in contentToCountDic)
+            {
+                if(ctc.Value > count)
+                {
+                    count = ctc.Value;
+                    result = ctc.Key;
+                }
+            }
+            if(count>1)
+            {
+                fieldToContentDic.Add(kvp.Key,result);
+            }
+        }
+        return fieldToContentDic;
+    }
+
     public static string GetContent(WDBField field,WDBCell cell)
     {
         WDBFieldType fieldType = field.FieldType;
@@ -41,6 +90,22 @@ local ConfigSheet = require("DotLua/Config/ConfigSheet")
         int fieldCount = sheet.FieldCount;
         int lineCount = sheet.LineCount;
 
+        Dictionary<string,string> fieldToDefaultValueDic = GetDefaultValue(sheet);
+        if(fieldToDefaultValueDic.Count>0)
+        {
+%>
+local defalutValues = {
+<%
+        foreach(var kvp in fieldToDefaultValueDic)
+        {
+%>    <%=kvp.Key%> = <%=kvp.Value%>,
+<%
+        }
+%>
+}
+<%
+        }
+
         Dictionary<string,string> idToValueDic = new Dictionary<string,string>();
         List<string> idList = new List<string>();
 
@@ -57,9 +122,20 @@ local <%=tmpTableName%> = {
             for(int j = 0;j<fieldCount;++j){
                 WDBField field = sheet.GetFieldAtIndex(j);
                 WDBCell cell = line.GetCellByIndex(j);
+
+                string content = GetContent(field,cell);
+                if(fieldToDefaultValueDic.ContainsKey(field.Name))
+                {
+                    if(fieldToDefaultValueDic[field.Name] == content)
+                    {
+                        continue;
+                    }
+                }
+
 %>    <%=field.Name%> = <%=GetContent(field,cell)%>,
 <%          }
 %>}
+<%=tmpTableName%>.__default__ = defalutValues
 setmetatable(<%=tmpTableName%>,ConfigLine)
 <%
         }
