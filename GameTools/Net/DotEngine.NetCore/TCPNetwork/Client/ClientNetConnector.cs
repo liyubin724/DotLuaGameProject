@@ -118,17 +118,26 @@ namespace DotEngine.NetCore.TCPNetwork
 
         public void Reconnect()
         {
-
+            if(network!=null)
+            {
+                network.ReconnectAsync();
+            }
         }
 
         public void Disconnect()
         {
-
+            if (network != null)
+            {
+                network.DisconnectAsync();
+            }
         }
 
         public void Send(int msgID,byte[] dataBytes)
         {
-
+            if(IsConnected)
+            {
+                network.SendAsync(EncodeMessage(msgID, dataBytes));
+            }
         }
 
         public void DoUpdate(float deltaTime)
@@ -172,6 +181,9 @@ namespace DotEngine.NetCore.TCPNetwork
         {
         }
 
-        
+        public byte[] EncodeMessage(int msgID,byte[] dataBytes)
+        {
+            return new byte[0];
+        }
     }
 }
