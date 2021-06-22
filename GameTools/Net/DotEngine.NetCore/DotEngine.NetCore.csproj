@@ -71,9 +71,13 @@
     <Compile Include="Core\WssServer.cs" />
     <Compile Include="Core\WssSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TCPNetwork\ClientNetwork.cs" />
+    <Compile Include="TCPNetwork\Client\ClientNetwork.cs" />
+    <Compile Include="TCPNetwork\MessageHandlerAttribute.cs" />
+    <Compile Include="TCPNetwork\Client\ClientNetConnector.cs" />
     <Compile Include="TCPNetwork\ServerNetwork.cs" />
     <Compile Include="TCPNetwork\ServerSession.cs" />
+    <Compile Include="TCPNetwork\Stream\NetMessageBuffer.cs" />
+    <Compile Include="TCPNetwork\Stream\NetMessageStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
