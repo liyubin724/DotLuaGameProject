@@ -1,4 +1,6 @@
-﻿namespace DotEngine.NetCore.TCPNetwork
+﻿using System.Collections.Generic;
+
+namespace DotEngine.NetCore.TCPNetwork
 {
     public class NetMessageBuffer
     {
@@ -15,29 +17,83 @@
             return streams[activedStreamIndex];
         }
 
-        public void WriteBytes(byte[] bytes, int size)
+        public long Length
         {
-            GetStream().Write(bytes, 0, size);
+            get
+            {
+                return streams[activedStreamIndex].Length;
+            }
         }
 
-        public byte[] ReadMessage()
+        public void WriteBytes(byte[] bytes,int startIndex, int size)
+        {
+            GetStream().Write(bytes, startIndex, size);
+        }
+
+        public byte[] ReadMessage(int startOffset = 0)
         {
             NetMessageStream activedStream = GetStream();
-            long messageLen = activedStream.Length;
-            if (messageLen < sizeof(int))
+            long streamLen = activedStream.Length;
+            if(streamLen<=startOffset+sizeof(int))
             {
                 return null;
             }
-            if (activedStream.ReadInt(0, out int totalMessageLen) && totalMessageLen <= messageLen)
+            if(activedStream.ReadInt(startOffset,out int msgByteLen))
             {
-                byte[] bytes = new byte[totalMessageLen];
-                activedStream.Read(bytes, sizeof(int), totalMessageLen);
+                if(msgByteLen + startOffset <= streamLen)
+                {
+                    byte[] msgBytes = new byte[msgByteLen];
+                    activedStream.Read(msgBytes, startOffset + sizeof(int), msgByteLen);
+                    MoveStream(startOffset + sizeof(int) + msgByteLen);
 
-                MoveStream(sizeof(int) + totalMessageLen);
-
-                return bytes;
+                    return msgBytes;
+                }
             }
             return null;
+        }
+        
+        private List<byte[]> tempBytesList = new List<byte[]>();
+        public byte[][] ReadMessages()
+        {
+            NetMessageStream activedStream = GetStream();
+            long streamLen = activedStream.Length;
+            if (streamLen <= sizeof(int))
+            {
+                return null;
+            }
+            int offset = 0;
+            while(true)
+            {
+                if (activedStream.ReadInt(offset, out int msgByteLen))
+                {
+                    if (msgByteLen + offset <= streamLen)
+                    {
+                        offset += sizeof(int);
+
+                        byte[] msgBytes = new byte[msgByteLen];
+                        activedStream.Read(msgBytes, offset, msgByteLen);
+
+                        offset += msgByteLen;
+
+                        tempBytesList.Add(msgBytes);
+                    }else
+                    {
+                        break;
+                    }
+                }else
+                {
+                    break;
+                }
+            }
+
+            byte[][] result = null;
+            if(tempBytesList.Count>0)
+            {
+                result = tempBytesList.ToArray();
+                tempBytesList.Clear();
+                MoveStream(offset);
+            }
+            return result;
         }
 
         public void MoveStream(int startIndex)

@@ -17,7 +17,7 @@ namespace DotEngine.NetCore.TCPNetwork
 
         protected override TcpSession CreateSession()
         {
-            return new ServerSession(this);
+            return new ServerNetSession(this);
         }
 
         protected override void OnError(SocketError error)
