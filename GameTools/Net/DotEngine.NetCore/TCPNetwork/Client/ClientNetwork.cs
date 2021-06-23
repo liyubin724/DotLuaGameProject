@@ -42,7 +42,7 @@ namespace DotEngine.NetCore.TCPNetwork
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            networkHandler?.OnDataReceived(buffer, offset, size);
+            networkHandler.OnDataReceived(buffer, offset, size);
         }
 
         protected override void OnError(SocketError error)

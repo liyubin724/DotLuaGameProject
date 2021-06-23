@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.NetCore.TCPNetwork
 {
-    public enum ServerSessionState
-    {
-        Connected = 0,
-        Disconnected,
-        Error,
-    }
+
 
     public class ServerListener : IDisposable
     {
