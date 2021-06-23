@@ -43,6 +43,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>libs\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
@@ -57,12 +60,17 @@
     <Compile Include="Utilities\AssemblyUtility.cs" />
     <Compile Include="Utilities\BitUtility.cs" />
     <Compile Include="JSON\JsonUtility.cs" />
+    <Compile Include="Utilities\DontDestoryBehaviour.cs" />
+    <Compile Include="Utilities\DontDestroyUtility.cs" />
     <Compile Include="Utilities\MathUtil.cs" />
+    <Compile Include="Utilities\RectUtility.cs" />
     <Compile Include="Utilities\ReflectionUtility.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\StructUtility.cs" />
     <Compile Include="Utilities\SystemObjectUtility.cs" />
+    <Compile Include="Utilities\TransformUtility.cs" />
     <Compile Include="Utilities\TypeUtility.cs" />
+    <Compile Include="Utilities\UnityObjectUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />

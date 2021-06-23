@@ -18,18 +18,36 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <OutputPath>bin\Net-Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PLATFORM_NET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Net-Release\</OutputPath>
+    <DefineConstants>TRACE;PLATFORM_NET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Unity-Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Unity-Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PLATFORM_UNITY</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Unity-Release|AnyCPU'">
+    <OutputPath>bin\Unity-Release\</OutputPath>
+    <DefineConstants>TRACE;PLATFORM_UNITY</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -52,6 +70,7 @@
     <Compile Include="Appender\ALogAppender.cs" />
     <Compile Include="Appender\ConsoleAppender.cs" />
     <Compile Include="Appender\FileLogAppender.cs" />
+    <Compile Include="Appender\UnityConsoleAppender.cs" />
     <Compile Include="Formatter\DefaultLogFormatter.cs" />
     <Compile Include="Formatter\JsonLogFormatter.cs" />
     <Compile Include="ILogAppender.cs" />
