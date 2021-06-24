@@ -66,12 +66,10 @@ namespace DotEngine.NetCore.TCPNetwork
             {
                 if (activedStream.ReadInt(offset, out int msgByteLen))
                 {
+                    offset += sizeof(int);
                     if (msgByteLen + offset <= streamLen)
                     {
-                        offset += sizeof(int);
-
-                        byte[] msgBytes = new byte[msgByteLen];
-                        activedStream.Read(msgBytes, offset, msgByteLen);
+                        activedStream.ReadBytes(offset, msgByteLen, out var msgBytes);
 
                         offset += msgByteLen;
 

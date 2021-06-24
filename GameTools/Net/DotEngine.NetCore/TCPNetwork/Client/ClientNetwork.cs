@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 using TcpClient = NetCoreServer.TcpClient;
 
 namespace DotEngine.NetCore.TCPNetwork
@@ -14,6 +15,11 @@ namespace DotEngine.NetCore.TCPNetwork
         private IClientNetworkHandler networkHandler = null;
 
         public ClientNetwork(string address, int port, IClientNetworkHandler handler) : base(address, port)
+        {
+            networkHandler = handler;
+        }
+
+        public ClientNetwork(IPAddress ip, int port, IClientNetworkHandler handler) : base(ip, port)
         {
             networkHandler = handler;
         }

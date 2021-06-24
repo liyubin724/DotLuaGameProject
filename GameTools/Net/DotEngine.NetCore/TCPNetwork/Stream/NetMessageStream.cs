@@ -34,6 +34,20 @@ namespace DotEngine.NetCore.TCPNetwork
             return false;
         }
 
+        public bool ReadBytes(int startIndex,int size,out byte[] dataBytes)
+        {
+            dataBytes = null;
+            if (startIndex + size <= Length)
+            {
+                Seek(startIndex, SeekOrigin.Begin);
+                dataBytes = new byte[size];
+                Read(dataBytes, 0, size);
+
+                return true;
+            }
+            return false;
+        }
+
         public void Clear()
         {
             SetLength(0);

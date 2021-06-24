@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Reflection;
 
 namespace DotEngine.NetCore.TCPNetwork
@@ -29,6 +30,7 @@ namespace DotEngine.NetCore.TCPNetwork
         public ClientNetworkState CurrentState => curState;
 
         private Dictionary<int, ClientMessageHandler> messageHandlerDic = new Dictionary<int, ClientMessageHandler>();
+        public ClientMessageHandler FinallyMessageHandler { get; set; }
 
         private NetMessageBuffer messageBuffer = new NetMessageBuffer();
         private object messageBufferLocker = new object();
@@ -127,7 +129,7 @@ namespace DotEngine.NetCore.TCPNetwork
         #endregion
 
         #region Connect or Reconnect or Disconnect
-        public bool Connect(string ip, int port)
+        public bool Connect(IPAddress ip,int port)
         {
             if (network != null)
             {
@@ -135,6 +137,11 @@ namespace DotEngine.NetCore.TCPNetwork
             }
             network = new ClientNetwork(ip, port, this);
             return network.ConnectAsync();
+        }
+
+        public bool Connect(string ip, int port)
+        {
+            return Connect(IPAddress.Parse(ip), port);
         }
 
         public bool Reconnect()

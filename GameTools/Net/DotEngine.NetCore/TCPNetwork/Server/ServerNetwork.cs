@@ -1,11 +1,7 @@
 ﻿using NetCoreServer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.NetCore.TCPNetwork
 {
@@ -25,53 +21,110 @@ namespace DotEngine.NetCore.TCPNetwork
         public bool IsVerified => UserId > 0;
     }
 
+    internal class ServerMessageData
+    {
+        public Guid Id { get; set; }
+        public int MsgId { get; set; }
+        public byte[] MsgBytes { get; set; }
+    }
+
     public class ServerNetwork : TcpServer, IServerNetSessionHandler
     {
         public string Name { get; private set; }
 
+        private IMessageEncoder messageEncoder;
+        private IMessageDecoder messageDecoder;
+
         private object sessionDescLocker = new object();
         private Dictionary<Guid, ServerSessionDesc> sessionDescDic = new Dictionary<Guid, ServerSessionDesc>();
 
+        private object messageDatasLocker = new object();
+        private List<ServerMessageData> messageDatas = new List<ServerMessageData>();
 
-        public ServerNetwork(string name,IPAddress address, int port) : base(address, port)
+        public ServerNetwork(string name, IPAddress address, int port, IMessageEncoder encoder, IMessageDecoder decoder) : base(address, port)
         {
             Name = name;
+            messageEncoder = encoder;
+            messageDecoder = decoder;
         }
 
-        public void OnDataReceived(Guid id, byte[] buffer, long offset, long size)
+        internal ServerMessageData[] ExtractMessageDatas()
         {
+            lock(messageDatasLocker)
+            {
+                ServerMessageData[] datas = messageDatas.ToArray();
+                messageDatas.Clear();
 
+                return datas;
+            }
         }
 
         public void OnStateChanged(Guid id, ServerNetSessionState state)
         {
-
+            lock (sessionDescLocker)
+            {
+                if (state == ServerNetSessionState.Disconnected)
+                {
+                    if (sessionDescDic.ContainsKey(id))
+                    {
+                        sessionDescDic.Remove(Id);
+                    }
+                }
+            }
         }
 
         protected override TcpSession CreateSession()
         {
-            ServerNetSession session = new ServerNetSession(this,this);
+            ServerNetSession session = new ServerNetSession(this, this);
 
             ServerSessionDesc sessionDesc = new ServerSessionDesc();
             sessionDesc.Session = session;
-            sessionDescDic.Add(session.Id, sessionDesc);
+            lock (sessionDescLocker)
+            {
+                sessionDescDic.Add(session.Id, sessionDesc);
+            }
 
             return session;
         }
 
-        protected override void OnError(SocketError error)
+        public void OnMessageReceived(Guid id, byte[][] dataBytes)
         {
-
+            lock(messageDatasLocker)
+            {
+                foreach(var data in dataBytes)
+                {
+                    if(messageDecoder.DecodeMessage(data,out var msgId,out byte[] msgBytes))
+                    {
+                        messageDatas.Add(new ServerMessageData()
+                        {
+                            Id = id,
+                            MsgId = msgId,
+                            MsgBytes = msgBytes,
+                        });
+                    }
+                }
+            }
         }
 
-        public void DoUpdate(float deltaTime)
+        public bool Multicast(int msgId, byte[] msgBytes)
         {
-
+            byte[] dataBytes = messageEncoder.EncodeMessage(msgId, msgBytes);
+            return Multicast(dataBytes);
         }
 
-        public void OnMessageReceived(Guid id, byte[][] msgBytes)
+        public bool Send(Guid id,int msgId,byte[] msgBytes)
         {
-            
+            byte[] dataBytes = messageEncoder.EncodeMessage(msgId, msgBytes);
+
+            lock (sessionDescLocker)
+            {
+                if(sessionDescDic.TryGetValue(id,out var desc))
+                {
+                    return desc.Session.SendAsync(dataBytes);
+                }
+            }
+
+            return false;
         }
     }
 }
