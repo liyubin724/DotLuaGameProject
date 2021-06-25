@@ -12,12 +12,14 @@ namespace DotEngine.NetCore.TCPNetwork
             int startIndex = 0;
             msgBytes = null;
 
+            ++serial;
+
             int offset;
             msgID = ByteReader.ReadInt(dataBytes, startIndex, out offset);
             startIndex += offset;
 
             int tmpSerial = ByteReader.ReadInt(dataBytes, startIndex, out offset);
-            if (tmpSerial != ++serial)
+            if (tmpSerial != serial)
             {
                 return false;
             }

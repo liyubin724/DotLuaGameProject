@@ -8,7 +8,7 @@ namespace DotEngine.NetCore.TCPNetwork
         private int serial = 0;
         private MemoryStream stream = new MemoryStream();
 
-        public byte[] EncodeMessage(int msgID, byte[] dataBytes)
+        public byte[] EncodeMessage(int msgID, byte[] msgBytes)
         {
             stream.SetLength(0);
             
@@ -18,18 +18,18 @@ namespace DotEngine.NetCore.TCPNetwork
             byte[] serialBytes = BitConverter.GetBytes(serial);
 
             int len = msgIDBytes.Length + serialBytes.Length;
-            if (dataBytes != null)
+            if (msgBytes != null)
             {
-                len += dataBytes.Length;
+                len += msgBytes.Length;
             }
 
             byte[] lenBytes = BitConverter.GetBytes(len);
             stream.Write(lenBytes, 0, lenBytes.Length);
             stream.Write(msgIDBytes, 0, msgIDBytes.Length);
             stream.Write(serialBytes, 0, serialBytes.Length);
-            if (dataBytes != null)
+            if (msgBytes != null)
             {
-                stream.Write(dataBytes, 0, dataBytes.Length);
+                stream.Write(msgBytes, 0, msgBytes.Length);
             }
 
             return stream.ToArray();

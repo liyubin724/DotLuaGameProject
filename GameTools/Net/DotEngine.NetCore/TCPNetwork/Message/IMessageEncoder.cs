@@ -2,6 +2,6 @@
 {
     public interface IMessageEncoder
     {
-        byte[] EncodeMessage(int msgID, byte[] dataBytes);
+        byte[] EncodeMessage(int msgID, byte[] msgBytes);
     }
 }

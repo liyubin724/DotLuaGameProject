@@ -19,14 +19,16 @@ namespace DotEngine.NetCore.TCPNetwork
 
         private bool disposed = false;
 
-        public bool StartServer(string name, int port, IMessageEncoder encoder = null, IMessageDecoder decoder = null)
+        public bool StartServer(string name, int port, Func<IMessageEncoder> encoderCreator = null, Func<IMessageDecoder> decoderCreator = null)
         {
             if (!networkDic.ContainsKey(name))
             {
-                encoder = encoder ?? new DefaultMessageEncoder();
-                decoder = decoder ?? new DefaultMessageDecoder();
+                encoderCreator = encoderCreator ?? (() => new DefaultMessageEncoder());
+                decoderCreator = decoderCreator ?? (() => new DefaultMessageDecoder());
 
-                ServerNetwork network = new ServerNetwork(name, IPAddress.Parse("127.0.0.1"), port, encoder, decoder);
+                ServerNetwork network = new ServerNetwork(name, IPAddress.Parse("127.0.0.1"), port);
+                network.MessageEncoderCreateFunc = encoderCreator;
+                network.MessageDecoderCreateFunc = decoderCreator;
                 if (network.Start())
                 {
                     networkDic.Add(name, network);
@@ -192,13 +194,13 @@ namespace DotEngine.NetCore.TCPNetwork
 
         private void Dispose(bool disposing)
         {
-            if(disposed)
+            if (disposed)
             {
                 return;
             }
-            if(disposing)
+            if (disposing)
             {
-                foreach(var kvp in networkDic)
+                foreach (var kvp in networkDic)
                 {
                     kvp.Value.Dispose();
                 }

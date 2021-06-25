@@ -19,6 +19,8 @@ namespace DotEngine.NetCore.TCPNetwork
 
     public class ClientNetConnector : IDisposable, IClientNetworkHandler
     {
+        private static readonly string LOG_TAG = "ClientNetConnector";
+
         private IMessageEncoder messageEncoder = null;
         private IMessageDecoder messageDecoder = null;
 
@@ -67,7 +69,7 @@ namespace DotEngine.NetCore.TCPNetwork
             }
             else
             {
-
+                NetLogger.Error(LOG_TAG, $"The handler({msgID}) has been registed");
             }
         }
 

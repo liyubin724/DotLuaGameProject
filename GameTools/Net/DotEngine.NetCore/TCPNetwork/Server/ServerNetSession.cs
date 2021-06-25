@@ -7,44 +7,64 @@ namespace DotEngine.NetCore.TCPNetwork
     public interface IServerNetSessionHandler
     {
         void OnStateChanged(Guid id, ServerNetSessionState state);
-        void OnMessageReceived(Guid id, byte[][] msgBytes);
+        void OnMessageReceived(Guid id, int msgId, byte[] msgBytes);
     }
 
     public class ServerNetSession : TcpSession
     {
-        private IServerNetSessionHandler sessionHandler = null;
+        private static readonly string LOG_TAG = "ServerNetSession";
 
         private NetMessageBuffer messageBuffer = new NetMessageBuffer();
 
-        public ServerNetSession(TcpServer server, IServerNetSessionHandler handler) : base(server)
+        public IServerNetSessionHandler SessionHandler { get; set; }
+        public IMessageEncoder MessageEncoder { get; set; }
+        public IMessageDecoder MessageDecoder { get; set; }
+
+        public ServerNetSession(TcpServer server) : base(server)
         {
-            sessionHandler = handler;
+        }
+
+        internal bool SendMessage(int msgID,byte[] msgBytes)
+        {
+            byte[] dataBytes = MessageEncoder.EncodeMessage(msgID, msgBytes);
+            return SendAsync(dataBytes);
         }
 
         protected override void OnConnected()
         {
-            sessionHandler.OnStateChanged(Id, ServerNetSessionState.Connected);
+            SessionHandler.OnStateChanged(Id, ServerNetSessionState.Connected);
         }
 
         protected override void OnDisconnected()
         {
-            sessionHandler.OnStateChanged(Id, ServerNetSessionState.Disconnected);
+            SessionHandler.OnStateChanged(Id, ServerNetSessionState.Disconnected);
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
+            if(MessageDecoder == null)
+            {
+                NetLogger.Error(LOG_TAG, "The decoder is not null");
+                return;
+            }
             messageBuffer.WriteBytes(buffer, (int)offset, (int)size);
 
-            byte[][] msgBytes = messageBuffer.ReadMessages();
-            if(msgBytes!=null)
+            byte[][] dataBytesArr = messageBuffer.ReadMessages();
+            if (dataBytesArr != null)
             {
-                sessionHandler.OnMessageReceived(Id, msgBytes);
+                foreach(var dataBytes in dataBytesArr)
+                {
+                    if(MessageDecoder.DecodeMessage(dataBytes,out int msgId, out byte[] msgBytes))
+                    {
+                        SessionHandler.OnMessageReceived(Id, msgId, msgBytes);
+                    }
+                }
             }
         }
 
         protected override void OnError(SocketError error)
         {
-            sessionHandler.OnStateChanged(Id, ServerNetSessionState.Error);
+            SessionHandler.OnStateChanged(Id, ServerNetSessionState.Error);
         }
     }
 }

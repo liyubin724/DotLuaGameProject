@@ -1,6 +1,6 @@
 ﻿using NetCoreServer;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Net;
 
 namespace DotEngine.NetCore.TCPNetwork
@@ -14,10 +14,9 @@ namespace DotEngine.NetCore.TCPNetwork
 
     internal class ServerSessionDesc
     {
-        public TcpSession Session { get; set; }
-        public long UserId { get; set; } = -1;
+        public Guid Id { get; set; }
+        public long UserId{get;set;}
 
-        public Guid Id => Session.Id;
         public bool IsVerified => UserId > 0;
     }
 
@@ -32,99 +31,81 @@ namespace DotEngine.NetCore.TCPNetwork
     {
         public string Name { get; private set; }
 
-        private IMessageEncoder messageEncoder;
-        private IMessageDecoder messageDecoder;
+        private ConcurrentDictionary<Guid, ServerSessionDesc> sessionDescDic = new ConcurrentDictionary<Guid, ServerSessionDesc>();
+        private ConcurrentQueue<ServerMessageData> messageDataQueue = new ConcurrentQueue<ServerMessageData>();
 
-        private object sessionDescLocker = new object();
-        private Dictionary<Guid, ServerSessionDesc> sessionDescDic = new Dictionary<Guid, ServerSessionDesc>();
-
-        private object messageDatasLocker = new object();
-        private List<ServerMessageData> messageDatas = new List<ServerMessageData>();
-
-        public ServerNetwork(string name, IPAddress address, int port, IMessageEncoder encoder, IMessageDecoder decoder) : base(address, port)
+        internal Func<IMessageEncoder> MessageEncoderCreateFunc { get; set; }
+        internal Func<IMessageDecoder> MessageDecoderCreateFunc { get; set; }
+        
+        public ServerNetwork(string name, IPAddress address, int port) : base(address, port)
         {
             Name = name;
-            messageEncoder = encoder;
-            messageDecoder = decoder;
         }
 
         internal ServerMessageData[] ExtractMessageDatas()
         {
-            lock(messageDatasLocker)
+            if(messageDataQueue.Count>0)
             {
-                ServerMessageData[] datas = messageDatas.ToArray();
-                messageDatas.Clear();
-
+                ServerMessageData[] datas = new ServerMessageData[messageDataQueue.Count];
+                messageDataQueue.CopyTo(datas, 0);
                 return datas;
             }
+            return null;
         }
 
         public void OnStateChanged(Guid id, ServerNetSessionState state)
         {
-            lock (sessionDescLocker)
+            if (state == ServerNetSessionState.Disconnected)
             {
-                if (state == ServerNetSessionState.Disconnected)
-                {
-                    if (sessionDescDic.ContainsKey(id))
-                    {
-                        sessionDescDic.Remove(Id);
-                    }
-                }
+                sessionDescDic.TryRemove(id,out _);
             }
         }
 
         protected override TcpSession CreateSession()
         {
-            ServerNetSession session = new ServerNetSession(this, this);
+            ServerNetSession session = new ServerNetSession(this);
+            session.SessionHandler = this;
+            session.MessageEncoder = MessageEncoderCreateFunc();
+            session.MessageDecoder = MessageDecoderCreateFunc();
 
-            ServerSessionDesc sessionDesc = new ServerSessionDesc();
-            sessionDesc.Session = session;
-            lock (sessionDescLocker)
+            ServerSessionDesc sessionDesc = new ServerSessionDesc()
             {
-                sessionDescDic.Add(session.Id, sessionDesc);
-            }
-
+                Id = session.Id,
+            };
+            sessionDescDic.TryAdd(session.Id, sessionDesc);
             return session;
-        }
-
-        public void OnMessageReceived(Guid id, byte[][] dataBytes)
-        {
-            lock(messageDatasLocker)
-            {
-                foreach(var data in dataBytes)
-                {
-                    if(messageDecoder.DecodeMessage(data,out var msgId,out byte[] msgBytes))
-                    {
-                        messageDatas.Add(new ServerMessageData()
-                        {
-                            Id = id,
-                            MsgId = msgId,
-                            MsgBytes = msgBytes,
-                        });
-                    }
-                }
-            }
         }
 
         public bool Multicast(int msgId, byte[] msgBytes)
         {
-            byte[] dataBytes = messageEncoder.EncodeMessage(msgId, msgBytes);
-            return Multicast(dataBytes);
+            bool result = true;
+            foreach(var session in Sessions)
+            {
+                if(!((ServerNetSession)session.Value).SendMessage(msgId, msgBytes))
+                {
+                    result = false;
+                }
+            }
+            return result;
         }
 
         public bool Send(Guid id,int msgId,byte[] msgBytes)
         {
-            byte[] dataBytes = messageEncoder.EncodeMessage(msgId, msgBytes);
-
-            lock (sessionDescLocker)
+            if(Sessions.TryGetValue(id,out var session))
             {
-                if(sessionDescDic.TryGetValue(id,out var desc))
-                {
-                    return desc.Session.SendAsync(dataBytes);
-                }
+                return (session as ServerNetSession).SendMessage(msgId, msgBytes);
             }
-
             return false;
+        }
+
+        public void OnMessageReceived(Guid id, int msgId, byte[] msgBytes)
+        {
+            messageDataQueue.Enqueue(new ServerMessageData()
+            {
+                Id = id,
+                MsgId = msgId,
+                MsgBytes = msgBytes,
+            });
         }
     }
 }
