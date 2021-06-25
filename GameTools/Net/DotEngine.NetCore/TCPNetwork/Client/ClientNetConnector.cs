@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.NetCore.Pool;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
@@ -17,6 +18,12 @@ namespace DotEngine.NetCore.TCPNetwork
 
     public delegate void ClientMessageHandler(int msgID, byte[] msgBytes);
 
+    internal class ClientMessageData
+    {
+        public int MsgId { get; set; } = -1;
+        public byte[] MsgBytes { get; set; } = null;
+    }
+
     public class ClientNetConnector : IDisposable, IClientNetworkHandler
     {
         private static readonly string LOG_TAG = "ClientNetConnector";
@@ -25,6 +32,7 @@ namespace DotEngine.NetCore.TCPNetwork
         private IMessageDecoder messageDecoder = null;
 
         private ClientNetwork network = null;
+
         private object stateLocker = new object();
         private List<ClientNetworkState> cachedNetStates = new List<ClientNetworkState>();
         private ClientNetworkState curState = ClientNetworkState.Unreachable;
@@ -34,9 +42,10 @@ namespace DotEngine.NetCore.TCPNetwork
         private Dictionary<int, ClientMessageHandler> messageHandlerDic = new Dictionary<int, ClientMessageHandler>();
         public ClientMessageHandler FinallyMessageHandler { get; set; }
 
+        private ObjectPool<ClientMessageData> messageDataPool = null;
+        private object messageLocker = new object();
         private NetMessageBuffer messageBuffer = new NetMessageBuffer();
-        private object messageBufferLocker = new object();
-        private List<byte[]> cachedDataBytes = new List<byte[]>();
+        private List<ClientMessageData> messageDatas = new List<ClientMessageData>();
 
         public Action OnNetConnecting = null;
         public Action OnNetConnected = null;
@@ -58,6 +67,15 @@ namespace DotEngine.NetCore.TCPNetwork
         {
             messageEncoder = encoder ?? new DefaultMessageEncoder();
             messageDecoder = decoder ?? new DefaultMessageDecoder();
+
+            messageDataPool = new ObjectPool<ClientMessageData>(
+                () => new ClientMessageData(), 
+                null, 
+                (data) =>
+                {
+                    data.MsgId = -1;
+                    data.MsgBytes = null;
+                });
         }
 
         #region Message Handlers
@@ -131,13 +149,14 @@ namespace DotEngine.NetCore.TCPNetwork
         #endregion
 
         #region Connect or Reconnect or Disconnect
-        public bool Connect(IPAddress ip,int port)
+        public bool Connect(IPAddress ip, int port)
         {
             if (network != null)
             {
                 return false;
             }
-            network = new ClientNetwork(ip, port, this);
+            network = new ClientNetwork(ip, port);
+            network.NetworkHandler = this;
             return network.ConnectAsync();
         }
 
@@ -168,20 +187,44 @@ namespace DotEngine.NetCore.TCPNetwork
 
         public void Dispose()
         {
+            OnNetConnecting = null;
+            OnNetConnected = null;
+            OnNetDisconnecting = null;
+            OnNetDisconnected = null;
+            OnNetError = null;
+
+            if(network!=null)
+            {
+                network.Disconnect();
+                network = null;
+            }
+            ProcessReset();
         }
 
         public void OnDataReceived(byte[] buffer, long offset, long size)
         {
-            lock (messageBufferLocker)
+            lock (messageLocker)
             {
                 messageBuffer.WriteBytes(buffer, (int)offset, (int)size);
 
                 if (messageBuffer.Length > 0)
                 {
-                    byte[][] msgBytes = messageBuffer.ReadMessages();
-                    if (msgBytes != null && msgBytes.Length > 0)
+                    byte[][] dataBytesArr = messageBuffer.ReadMessages();
+                    if (dataBytesArr != null && dataBytesArr.Length > 0)
                     {
-                        cachedDataBytes.AddRange(msgBytes);
+                        foreach(var dataBytes in dataBytesArr)
+                        {
+                            if (messageDecoder.DecodeMessage(dataBytes, out int msgID, out byte[] msgBytes))
+                            {
+                                ClientMessageData data = messageDataPool.Get();
+                                data.MsgId = msgID;
+                                data.MsgBytes = msgBytes;
+                                messageDatas.Add(data);
+                            }else
+                            {
+                                NetLogger.Error(LOG_TAG, "error");
+                            }
+                        }
                     }
                 }
             }
@@ -197,7 +240,7 @@ namespace DotEngine.NetCore.TCPNetwork
 
         public void DoUpdate(float deltaTime)
         {
-            if (network == null)
+            if (network == null || !network.IsConnected)
             {
                 return;
             }
@@ -205,7 +248,7 @@ namespace DotEngine.NetCore.TCPNetwork
             ProcessMessage();
             ProcessState();
 
-            if(curState == ClientNetworkState.Disconnected)
+            if (curState == ClientNetworkState.Disconnected)
             {
                 ProcessReset();
             }
@@ -213,42 +256,33 @@ namespace DotEngine.NetCore.TCPNetwork
 
         private void ProcessMessage()
         {
-            if (!network.IsConnected)
+            lock (messageLocker)
             {
-                return;
-            }
-            lock (messageBufferLocker)
-            {
-                int count = cachedDataBytes.Count;
-                if (cachedDataBytes.Count > 0)
+                int count = messageDatas.Count;
+                if (count > 0)
                 {
                     if (MaxCountInOneTime > 0)
                     {
                         count = Math.Min(count, MaxCountInOneTime);
                     }
-                    for (int i = 0; i < count; ++i)
+                    for (int i = 0;i<count;++i)
                     {
-                        byte[] dataBytes = cachedDataBytes[0];
-                        cachedDataBytes.RemoveAt(0);
+                        ClientMessageData data = messageDatas[0];
+                        messageDatas.RemoveAt(0);
 
-                        if (messageDecoder.DecodeMessage(dataBytes, out int msgID, out byte[] msgBytes))
+                        if (messageHandlerDic.TryGetValue(data.MsgId, out var handler))
                         {
-                            if (messageHandlerDic.TryGetValue(msgID, out var handler))
-                            {
-                                handler.Invoke(msgID, msgBytes);
-                            }
-                            else
-                            {
-                                //Error
-                            }
+                            handler.Invoke(data.MsgId, data.MsgBytes);
                         }
                         else
                         {
-                            //Error
+                            NetLogger.Error(LOG_TAG, "Error");
                         }
+                        messageDataPool.Release(data);
                     }
                 }
             }
+
         }
 
         private void ProcessState()
@@ -298,15 +332,21 @@ namespace DotEngine.NetCore.TCPNetwork
 
         private void ProcessReset()
         {
-            lock(stateLocker)
+            lock (stateLocker)
             {
                 cachedNetStates.Clear();
             }
             curState = ClientNetworkState.Unreachable;
-            lock(messageBufferLocker)
+            lock (messageLocker)
             {
                 messageBuffer.ResetStream();
-                cachedDataBytes.Clear();
+                for(int i =0;i<messageDatas.Count;++i)
+                {
+                    ClientMessageData data = messageDatas[i];
+                    messageDatas.RemoveAt(0);
+
+                    messageDataPool.Release(data);
+                }
             }
         }
 

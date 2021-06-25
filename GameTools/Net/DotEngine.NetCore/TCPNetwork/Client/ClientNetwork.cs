@@ -12,48 +12,46 @@ namespace DotEngine.NetCore.TCPNetwork
 
     public class ClientNetwork : TcpClient
     {
-        private IClientNetworkHandler networkHandler = null;
+        internal IClientNetworkHandler NetworkHandler { get; set; }
 
-        public ClientNetwork(string address, int port, IClientNetworkHandler handler) : base(address, port)
+        public ClientNetwork(string address, int port) : base(address, port)
         {
-            networkHandler = handler;
         }
 
-        public ClientNetwork(IPAddress ip, int port, IClientNetworkHandler handler) : base(ip, port)
+        public ClientNetwork(IPAddress ip, int port) : base(ip, port)
         {
-            networkHandler = handler;
         }
 
         public override bool ConnectAsync()
         {
-            networkHandler.OnStateChanged(ClientNetworkState.Connecting);
+            NetworkHandler.OnStateChanged(ClientNetworkState.Connecting);
             return base.ConnectAsync();
         }
 
         public override bool DisconnectAsync()
         {
-            networkHandler.OnStateChanged(ClientNetworkState.Disconnecting);
+            NetworkHandler.OnStateChanged(ClientNetworkState.Disconnecting);
             return base.DisconnectAsync();
         }
 
         protected override void OnConnected()
         {
-            networkHandler.OnStateChanged(ClientNetworkState.Connected);
+            NetworkHandler.OnStateChanged(ClientNetworkState.Connected);
         }
 
         protected override void OnDisconnected()
         {
-            networkHandler.OnStateChanged(ClientNetworkState.Disconnected);
+            NetworkHandler.OnStateChanged(ClientNetworkState.Disconnected);
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            networkHandler.OnDataReceived(buffer, offset, size);
+            NetworkHandler.OnDataReceived(buffer, offset, size);
         }
 
         protected override void OnError(SocketError error)
         {
-            networkHandler.OnStateChanged(ClientNetworkState.Error);
+            NetworkHandler.OnStateChanged(ClientNetworkState.Error);
         }
     }
 }
