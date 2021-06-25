@@ -23,9 +23,6 @@ namespace DotEngine.NetCore.TCPNetwork
         {
             if (!networkDic.ContainsKey(name))
             {
-                encoderCreator = encoderCreator ?? (() => new DefaultMessageEncoder());
-                decoderCreator = decoderCreator ?? (() => new DefaultMessageDecoder());
-
                 ServerNetwork network = new ServerNetwork(name, IPAddress.Parse("127.0.0.1"), port);
                 network.MessageEncoderCreateFunc = encoderCreator;
                 network.MessageDecoderCreateFunc = decoderCreator;
@@ -111,7 +108,7 @@ namespace DotEngine.NetCore.TCPNetwork
         }
         #endregion
 
-        public void MulticastMsg(int msgId, byte[] msgBytes)
+        public void MulticastMessage(int msgId, byte[] msgBytes)
         {
             if (networkDic.Count == 0)
             {
@@ -121,7 +118,7 @@ namespace DotEngine.NetCore.TCPNetwork
             {
                 if (kvp.Value.IsStarted)
                 {
-                    kvp.Value.Multicast(msgId, msgBytes);
+                    kvp.Value.MulticastMessage(msgId, msgBytes);
                 }
                 else
                 {
@@ -130,7 +127,7 @@ namespace DotEngine.NetCore.TCPNetwork
             }
         }
 
-        public void MulticastMsg(string name, int msgId, byte[] msgBytes)
+        public void MulticastMessage(string name, int msgId, byte[] msgBytes)
         {
             if (networkDic.Count > 0)
             {
@@ -140,7 +137,7 @@ namespace DotEngine.NetCore.TCPNetwork
             {
                 if (network.IsStarted)
                 {
-                    network.Multicast(msgId, msgBytes);
+                    network.MulticastMessage(msgId, msgBytes);
                 }
                 else
                 {

@@ -34,8 +34,14 @@ namespace DotEngine.NetCore.TCPNetwork
         private ConcurrentDictionary<Guid, ServerSessionDesc> sessionDescDic = new ConcurrentDictionary<Guid, ServerSessionDesc>();
         private ConcurrentQueue<ServerMessageData> messageDataQueue = new ConcurrentQueue<ServerMessageData>();
 
-        internal Func<IMessageEncoder> MessageEncoderCreateFunc { get; set; }
-        internal Func<IMessageDecoder> MessageDecoderCreateFunc { get; set; }
+        internal Func<IMessageEncoder> MessageEncoderCreateFunc { get; set; } = () =>
+        {
+            return new DefaultMessageEncoder();
+        };
+        internal Func<IMessageDecoder> MessageDecoderCreateFunc { get; set; } = () =>
+        {
+            return new DefaultMessageDecoder();
+        };
         
         public ServerNetwork(string name, IPAddress address, int port) : base(address, port)
         {
@@ -47,7 +53,11 @@ namespace DotEngine.NetCore.TCPNetwork
             if(messageDataQueue.Count>0)
             {
                 ServerMessageData[] datas = new ServerMessageData[messageDataQueue.Count];
-                messageDataQueue.CopyTo(datas, 0);
+                for(int i =0;i<messageDataQueue.Count;++i)
+                {
+                    messageDataQueue.TryDequeue(out var data);
+                    datas[i] = data;
+                }
                 return datas;
             }
             return null;
@@ -76,7 +86,7 @@ namespace DotEngine.NetCore.TCPNetwork
             return session;
         }
 
-        public bool Multicast(int msgId, byte[] msgBytes)
+        public bool MulticastMessage(int msgId, byte[] msgBytes)
         {
             bool result = true;
             foreach(var session in Sessions)
@@ -89,7 +99,7 @@ namespace DotEngine.NetCore.TCPNetwork
             return result;
         }
 
-        public bool Send(Guid id,int msgId,byte[] msgBytes)
+        public bool SendMessage(Guid id,int msgId,byte[] msgBytes)
         {
             if(Sessions.TryGetValue(id,out var session))
             {

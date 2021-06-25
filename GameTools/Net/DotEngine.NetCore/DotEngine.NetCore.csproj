@@ -90,8 +90,6 @@
     <Compile Include="TCPNetwork\Stream\NetMessageBuffer.cs" />
     <Compile Include="TCPNetwork\Stream\NetMessageStream.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utility\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
