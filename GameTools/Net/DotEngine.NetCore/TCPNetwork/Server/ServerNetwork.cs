@@ -34,14 +34,8 @@ namespace DotEngine.NetCore.TCPNetwork
         private ConcurrentDictionary<Guid, ServerSessionDesc> sessionDescDic = new ConcurrentDictionary<Guid, ServerSessionDesc>();
         private ConcurrentQueue<ServerMessageData> messageDataQueue = new ConcurrentQueue<ServerMessageData>();
 
-        internal Func<IMessageEncoder> MessageEncoderCreateFunc { get; set; } = () =>
-        {
-            return new DefaultMessageEncoder();
-        };
-        internal Func<IMessageDecoder> MessageDecoderCreateFunc { get; set; } = () =>
-        {
-            return new DefaultMessageDecoder();
-        };
+        internal Func<IMessageEncoder> MessageEncoderCreateFunc { get; set; }
+        internal Func<IMessageDecoder> MessageDecoderCreateFunc { get; set; } 
         
         public ServerNetwork(string name, IPAddress address, int port) : base(address, port)
         {

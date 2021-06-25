@@ -24,8 +24,8 @@ namespace DotEngine.NetCore.TCPNetwork
             if (!networkDic.ContainsKey(name))
             {
                 ServerNetwork network = new ServerNetwork(name, IPAddress.Parse("127.0.0.1"), port);
-                network.MessageEncoderCreateFunc = encoderCreator;
-                network.MessageDecoderCreateFunc = decoderCreator;
+                network.MessageEncoderCreateFunc = encoderCreator ?? (()=>new DefaultMessageEncoder());
+                network.MessageDecoderCreateFunc = decoderCreator ?? (()=>new DefaultMessageDecoder());
                 if (network.Start())
                 {
                     networkDic.Add(name, network);
@@ -148,7 +148,7 @@ namespace DotEngine.NetCore.TCPNetwork
 
         public void DoUpdate(float deltaTime)
         {
-            if (networkDic.Count > 0)
+            if (networkDic.Count == 0)
             {
                 return;
             }

@@ -175,6 +175,15 @@ namespace DotEngine.NetCore.TCPNetwork
             lock (messageBufferLocker)
             {
                 messageBuffer.WriteBytes(buffer, (int)offset, (int)size);
+
+                if (messageBuffer.Length > 0)
+                {
+                    byte[][] msgBytes = messageBuffer.ReadMessages();
+                    if (msgBytes != null && msgBytes.Length > 0)
+                    {
+                        cachedDataBytes.AddRange(msgBytes);
+                    }
+                }
             }
         }
 
@@ -188,7 +197,7 @@ namespace DotEngine.NetCore.TCPNetwork
 
         public void DoUpdate(float deltaTime)
         {
-            if (network != null)
+            if (network == null)
             {
                 return;
             }
@@ -204,47 +213,39 @@ namespace DotEngine.NetCore.TCPNetwork
 
         private void ProcessMessage()
         {
-            if (network.IsConnected)
+            if (!network.IsConnected)
             {
-                lock (messageBufferLocker)
-                {
-                    if (messageBuffer.Length > 0)
-                    {
-                        byte[][] msgBytes = messageBuffer.ReadMessages();
-                        if (msgBytes != null && msgBytes.Length > 0)
-                        {
-                            cachedDataBytes.AddRange(msgBytes);
-                        }
-                    }
-                }
+                return;
             }
-
-            int count = cachedDataBytes.Count;
-            if (cachedDataBytes.Count > 0)
+            lock (messageBufferLocker)
             {
-                if (MaxCountInOneTime > 0)
+                int count = cachedDataBytes.Count;
+                if (cachedDataBytes.Count > 0)
                 {
-                    count = Math.Min(count, MaxCountInOneTime);
-                }
-                for (int i = 0; i < count; ++i)
-                {
-                    byte[] dataBytes = cachedDataBytes[0];
-                    cachedDataBytes.RemoveAt(0);
-
-                    if (messageDecoder.DecodeMessage(dataBytes, out int msgID, out byte[] msgBytes))
+                    if (MaxCountInOneTime > 0)
                     {
-                        if (messageHandlerDic.TryGetValue(msgID, out var handler))
+                        count = Math.Min(count, MaxCountInOneTime);
+                    }
+                    for (int i = 0; i < count; ++i)
+                    {
+                        byte[] dataBytes = cachedDataBytes[0];
+                        cachedDataBytes.RemoveAt(0);
+
+                        if (messageDecoder.DecodeMessage(dataBytes, out int msgID, out byte[] msgBytes))
                         {
-                            handler.Invoke(msgID, msgBytes);
+                            if (messageHandlerDic.TryGetValue(msgID, out var handler))
+                            {
+                                handler.Invoke(msgID, msgBytes);
+                            }
+                            else
+                            {
+                                //Error
+                            }
                         }
                         else
                         {
                             //Error
                         }
-                    }
-                    else
-                    {
-                        //Error
                     }
                 }
             }
