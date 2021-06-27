@@ -1,0 +1,89 @@
+<%
+using DotEngine.Context;
+using System.Text;
+using System.Collections.Generic;
+using DotEngine.Config.WDB;
+
+public static class TemplateRunner {
+
+    public static string GetContent(WDBField field,WDBCell cell)
+    {
+        WDBFieldType fieldType = field.FieldType;
+        string content = cell.GetValue(field);
+        if(fieldType == WDBFieldType.String 
+            || fieldType == WDBFieldType.Text
+            || fieldType == WDBFieldType.Address)
+        {
+            return string.Format("[[{0}]]", content??"");
+        }else if(fieldType == WDBFieldType.Bool)
+        {
+            return string.IsNullOrEmpty(content)?"false":content.ToLower();
+        }else if(fieldType == WDBFieldType.Int || fieldType == WDBFieldType.Long || fieldType == WDBFieldType.Float)
+        {
+            return content??"0";
+        }else if(fieldType == WDBFieldType.Id || fieldType == WDBFieldType.Ref)
+        {
+            return content??"-1";
+        }else if(fieldType == WDBFieldType.Lua)
+        {
+            return string.Format("function()\n{0} \n        end",content??"");
+        }
+        return content;
+    }
+
+    public static string Run(StringContextContainer context){
+        StringBuilder output = new StringBuilder();
+%>local ConfigLine = require("DotLua/Config/ConfigLine")
+local ConfigSheet = require("DotLua/Config/ConfigSheet")
+<%
+        WDBSheet sheet = context.Get<WDBSheet>("__sheet__");
+        string sheetName = sheet.Name;
+        int fieldCount = sheet.FieldCount;
+        int lineCount = sheet.LineCount;
+
+        Dictionary<string,string> idToValueDic = new Dictionary<string,string>();
+        List<string> idList = new List<string>();
+
+        for(int i =0;i < lineCount; ++i){
+            WDBLine line = sheet.GetLineAtIndex(i);
+            WDBCell fCell = line.GetCellByIndex(0);
+            string fContent = fCell.Value;
+            string tmpTableName = "t_"+fContent;
+
+            idToValueDic.Add(fContent,tmpTableName);
+            idList.Add(fContent);%>
+local <%=tmpTableName%> = {
+<%
+            for(int j = 0;j<fieldCount;++j){
+                WDBField field = sheet.GetFieldAtIndex(j);
+                WDBCell cell = line.GetCellByIndex(j);
+%>    <%=field.Name%> = <%=GetContent(field,cell)%>,
+<%          }
+%>}
+setmetatable(<%=tmpTableName%>,ConfigLine)
+<%
+        }
+%>
+
+local <%=sheetName%> = {
+<%
+    foreach(var kvp in idToValueDic)
+    {
+%>    [<%=kvp.Key%>] = <%=kvp.Value%>,
+<%
+    }
+%>}
+<%=sheetName%>.__keys__ = {<%
+    foreach(var id in idList)
+    {
+%><%=id%>,<%        
+    }
+%>}
+setmetatable(<%=sheetName%>,ConfigSheet)
+
+return <%=sheetName%>
+<%
+        return output.ToString();
+    }
+}
+%>

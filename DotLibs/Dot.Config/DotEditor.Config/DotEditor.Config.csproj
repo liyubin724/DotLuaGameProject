@@ -31,6 +31,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Colorful.Console">
+      <HintPath>libs\Colorful.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>libs\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>libs\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>libs\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>libs\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>libs\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,6 +79,20 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WDB\Styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Dot.Context\DotEngine.Context\DotEngine.Context.csproj">
+      <Project>{7e485365-c9e2-492e-8125-ee94b56cf6ad}</Project>
+      <Name>DotEngine.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dot.Tools\DotTool.ScriptGenerate\DotTool.ScriptGenerate.csproj">
+      <Project>{4cdb9146-b4c5-47ad-ad90-9bdedda1df80}</Project>
+      <Name>DotTool.ScriptGenerate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotEngine.Config\DotEngine.Config.csproj">
+      <Project>{1b8e7c62-bbc5-4193-aa97-7db1249b9cd4}</Project>
+      <Name>DotEngine.Config</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,0 +1,171 @@
+<%
+using DotEngine.Context;
+using System.Text;
+using System.Collections.Generic;
+using DotEngine.Config.WDB;
+
+public static class TemplateRunner {
+
+    public static Dictionary<string,string> GetDefaultValue(WDBSheet sheet)
+    {
+        Dictionary<string,Dictionary<string,int>> defaultValueDic = new Dictionary<string,Dictionary<string,int>>();
+
+        for(int i =0;i<sheet.FieldCount;++i)
+        {
+            WDBField field = sheet.GetFieldAtIndex(i);
+            Dictionary<string,int> contentToCountDic = new Dictionary<string,int>();
+
+            defaultValueDic.Add(field.Name,contentToCountDic);
+
+            for(int j=0;j<sheet.LineCount;++j)
+            {
+                WDBLine line = sheet.GetLineAtIndex(j);
+                WDBCell cell = line.GetCellByIndex(i);
+
+                string content = GetContent(field,cell);
+                if(contentToCountDic.ContainsKey(content))
+                {
+                    contentToCountDic[content]+=1;
+                }else
+                {
+                    contentToCountDic[content] = 1;
+                }
+            }
+        }
+
+        Dictionary<string,string> fieldToContentDic = new Dictionary<string,string>();
+        foreach(var kvp in defaultValueDic)
+        {
+            Dictionary<string,int> contentToCountDic = kvp.Value;
+            string result = null;
+            int count = 0;
+            foreach(var ctc in contentToCountDic)
+            {
+                if(ctc.Value > count)
+                {
+                    count = ctc.Value;
+                    result = ctc.Key;
+                }
+            }
+            if(count>1)
+            {
+                fieldToContentDic.Add(kvp.Key,result);
+            }
+        }
+        return fieldToContentDic;
+    }
+
+    public static string GetContent(WDBField field,WDBCell cell)
+    {
+        WDBFieldType fieldType = field.FieldType;
+        string content = cell.GetValue(field);
+        if(fieldType == WDBFieldType.String 
+            || fieldType == WDBFieldType.Text
+            || fieldType == WDBFieldType.Address)
+        {
+            return string.Format("[[{0}]]", content??"");
+        }else if(fieldType == WDBFieldType.Bool)
+        {
+            return string.IsNullOrEmpty(content)?"false":content.ToLower();
+        }else if(fieldType == WDBFieldType.Int || fieldType == WDBFieldType.Long || fieldType == WDBFieldType.Float)
+        {
+            return content??"0";
+        }else if(fieldType == WDBFieldType.Id || fieldType == WDBFieldType.Ref)
+        {
+            return content??"-1";
+        }else if(fieldType == WDBFieldType.Lua)
+        {
+            return string.Format("function()\n{0} \n        end",content??"");
+        }
+        return content;
+    }
+
+    public static string Run(StringContextContainer context){
+        StringBuilder output = new StringBuilder();
+%>local ConfigLine = require("DotLua/Config/ConfigLine")
+local ConfigSheet = require("DotLua/Config/ConfigSheet")
+<%
+        WDBSheet sheet = context.Get<WDBSheet>("__sheet__");
+        string sheetName = sheet.Name;
+        int fieldCount = sheet.FieldCount;
+        int lineCount = sheet.LineCount;
+
+        Dictionary<string,string> fieldToDefaultValueDic = GetDefaultValue(sheet);
+        if(fieldToDefaultValueDic.Count>0)
+        {
+%>
+local defalutValues = {
+<%
+        foreach(var kvp in fieldToDefaultValueDic)
+        {
+%>    <%=kvp.Key%> = <%=kvp.Value%>,
+<%
+        }
+%>
+}
+<%
+        }
+
+        Dictionary<string,string> idToValueDic = new Dictionary<string,string>();
+        List<string> idList = new List<string>();
+
+        for(int i =0;i < lineCount; ++i){
+            WDBLine line = sheet.GetLineAtIndex(i);
+            WDBCell fCell = line.GetCellByIndex(0);
+            string fContent = fCell.Value;
+            string tmpTableName = "t_"+fContent;
+
+            idToValueDic.Add(fContent,tmpTableName);
+            idList.Add(fContent);%>
+local <%=tmpTableName%> = {
+<%
+            for(int j = 0;j<fieldCount;++j){
+                WDBField field = sheet.GetFieldAtIndex(j);
+                WDBCell cell = line.GetCellByIndex(j);
+
+                string content = GetContent(field,cell);
+                if(fieldToDefaultValueDic.ContainsKey(field.Name))
+                {
+                    if(fieldToDefaultValueDic[field.Name] == content)
+                    {
+                        continue;
+                    }
+                }
+
+%>    <%=field.Name%> = <%=GetContent(field,cell)%>,
+<%          }
+%>}
+<%
+    if(fieldToDefaultValueDic.Count>0){
+%>
+<%=tmpTableName%>.__default__ = defalutValues
+<%
+    }
+%>
+setmetatable(<%=tmpTableName%>,ConfigLine)
+<%
+        }
+%>
+
+local <%=sheetName%> = {
+<%
+    foreach(var kvp in idToValueDic)
+    {
+%>    [<%=kvp.Key%>] = <%=kvp.Value%>,
+<%
+    }
+%>}
+<%=sheetName%>.__keys__ = {<%
+    foreach(var id in idList)
+    {
+%><%=id%>,<%        
+    }
+%>}
+setmetatable(<%=sheetName%>,ConfigSheet)
+
+return <%=sheetName%>
+<%
+        return output.ToString();
+    }
+}
+%>
