@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Appender\ALogAppender.cs" />
+    <Compile Include="Appender\ConsoleAppender.cs" />
     <Compile Include="Appender\FileLogAppender.cs" />
     <Compile Include="Formatter\DefaultLogFormatter.cs" />
     <Compile Include="ILogAppender.cs" />
