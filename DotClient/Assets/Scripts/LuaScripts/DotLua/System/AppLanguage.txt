@@ -1,0 +1,53 @@
+local oop = require('DotLua/OOP/oop')
+
+local LogTag = "AppLanguage"
+
+local AppLanguage =
+    oop.enum(
+    'DotLua.System.AppLanguage',
+    {
+        Chinese = 6,
+        English = 10,
+        Japanese = 22,
+        Korean = 23,
+        ChineseSimplified = 40,
+        ChineseTraditional = 41,
+        Unknown = 42
+    }
+)
+
+if _G.CS then
+    rawset(
+        AppLanguage,
+        'ToUESystemLanguage',
+        function(language)
+            return _G.CS.UnityEngine.SystemLanguage(language)
+        end
+    )
+
+    rawset(
+        AppLanguage,
+        'FromUESystemLanguage',
+        function(ueSystemLanguage)
+            local UESystemLanguage = _G.CS.UnityEngine.SystemLanguage
+            if ueSystemLanguage == UESystemLanguage.Chinese then
+                return AppLanguage.Chinese
+            elseif ueSystemLanguage == UESystemLanguage.English then
+                return AppLanguage.English
+            elseif ueSystemLanguage == UESystemLanguage.Japanese then
+                return AppLanguage.Japanese
+            elseif ueSystemLanguage == UESystemLanguage.Korean then
+                return AppLanguage.Korean
+            elseif ueSystemLanguage == UESystemLanguage.ChineseSimplified then
+                return AppLanguage.ChineseSimplified
+            elseif ueSystemLanguage == UESystemLanguage.ChineseTraditional then
+                return AppLanguage.ChineseTraditional
+            else
+                oop.error(LogTag,"Unkown ueSystemLanguage")
+                return nil
+            end
+        end
+    )
+end
+
+return AppLanguage

@@ -1,0 +1,13 @@
+Library
+Log/*.*
+Logs
+Temp
+obj
+bin
+.vs
+
+.idea
+*.sln
+*.csproj
+*.iml
+*.iml.meta

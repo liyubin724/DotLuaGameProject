@@ -1,0 +1,4 @@
+local ConfigConst = {}
+ConfigConst.SHEET_ALL_KEY_NAME = '__keys__'
+ConfigConst.LINE_DEFAULT_VALUE_NAME = '__default__'
+return ConfigConst

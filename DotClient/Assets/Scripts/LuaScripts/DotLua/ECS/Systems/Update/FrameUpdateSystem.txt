@@ -1,0 +1,54 @@
+local oop = require('DotLua/OOP/oop')
+local System = oop.using('DotLua/ECS/Systems/System')
+
+local FrameUpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Update.FrameUpdateSystem',
+    function(self,frequencyInFrame)
+        self.frequencyInFrame = math.floor(frequencyInFrame or 1)
+
+        self.elapseFrame = 0
+        self.elapseTime = 0
+    end,
+    System
+)
+
+function FrameUpdateSystem:GetFrequency()
+    return self.frequencyInFrame
+end
+
+function FrameUpdateSystem:SetFrequency(frequency)
+    self.frequencyInFrame = math.floor(frequency)
+
+    self.elapseFrame = 0
+    self.elapseTime = 0
+end
+
+function FrameUpdateSystem:onActivate()
+    self.elapseFrame = 0
+    self.elapseTime = 0
+end
+
+function FrameUpdateSystem:onDeactivate()
+    self.elapseFrame = 0
+    self.elapseTime = 0
+end
+
+function FrameUpdateSystem:DoFrameUpdate(deltaTime)
+    if self.isEnable then
+        self.elapseFrame = self.elapseFrame + 1
+        self.elapseTime = self.elapseTime + deltaTime
+
+        if self.elapseFrame >= self.frequencyInFrame then
+            self:onFrameUpdate(self.elapseTime)
+
+            self.elapseFrame = 0
+            self.elapseTime = 0
+        end
+    end
+end
+
+function FrameUpdateSystem:onFrameUpdate(deltaTime)
+end
+
+return FrameUpdateSystem

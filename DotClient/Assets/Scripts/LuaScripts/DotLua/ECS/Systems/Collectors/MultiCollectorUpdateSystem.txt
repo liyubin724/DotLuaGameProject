@@ -1,0 +1,71 @@
+local oop = require('DotLua/OOP/oop')
+local UpdateSystem = oop.using('Dotlua/ECS/Systems/Update/UpdateSystem')
+
+local LogTag = 'MultiCollectorUpdateSystem'
+
+local tinsert = table.insert
+local tclear = table.clear
+
+local MultiCollectorUpdateSystem =
+    oop.class(
+    'DotLua.ECS.Systems.Collectors.MultiCollectorUpdateSystem',
+    function(self, contexts)
+        self.collectors = self:GetCollectors(contexts)
+
+        self.cachedEntities = {}
+    end,
+    UpdateSystem
+)
+
+function MultiCollectorUpdateSystem:onActivate()
+    if self.collectors and #self.collectors > 0 then
+        for _, collector in ipairs(self.collectors) do
+            collector:Activate()
+        end
+    end
+end
+
+function MultiCollectorUpdateSystem:onDeactivate()
+    if self.collectors and #self.collectors > 0 then
+        for _, collector in ipairs(self.collectors) do
+            collector:Deactivate()
+        end
+    end
+end
+
+function MultiCollectorUpdateSystem:onTimeUpdate(deltaTime)
+    if not self.collectors or #self.collectors == 0 then
+        return
+    end
+
+    for _, collector in ipairs(self.collectors) do
+        local collectedEnities = collector:GetCollectedEntities()
+        if collectedEnities and #collectedEnities > 0 then
+            for _, entity in ipairs(collectedEnities) do
+                if self:Filter(entity) then
+                    tinsert(self.cachedEntities, entity)
+                end
+            end
+            collector:ClearCollectedEnities()
+
+            for _, entity in ipairs(self.cachedEntities) do
+                self:onEntityUpdate(entity)
+            end
+            tclear(self.cachedEntities)
+        end
+    end
+end
+
+function MultiCollectorUpdateSystem:GetCollectors(contexts)
+    return nil
+end
+
+function MultiCollectorUpdateSystem:Filter(entity)
+    return true
+end
+
+function MultiCollectorUpdateSystem:onEntityUpdate(entity)
+    oop.error(LogTag, 'this is a abstract class')
+end
+
+return MultiCollectorUpdateSystem

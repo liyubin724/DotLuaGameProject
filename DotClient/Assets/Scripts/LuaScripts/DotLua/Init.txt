@@ -1,0 +1,21 @@
+local Json = {}
+_G.Json = Json
+if _G.isRapidJson then
+    local jsonlib = require('rapidjson')
+    Json.lib = jsonlib
+    Json.encode = jsonlib.encode
+    Json.decode = jsonlib.decode
+else
+    local jsonlib = require('DotDepend/Json/json')
+    Json.lib = jsonlib
+    Json.encode = jsonlib.encode
+    Json.decode = jsonlib.decode
+end
+
+require('DotLua/Utils/mathEx')
+require('DotLua/Utils/stringEx')
+require('DotLua/Utils/tableEx')
+
+_G.oop = require('DotLua/OOP/oop')
+_G.App = require('DotLua/System/App')
+_G.AppTime = require('DotLua/System/AppTime')

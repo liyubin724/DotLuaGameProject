@@ -1,0 +1,10 @@
+local readonlyMeta = {}
+readonlyMeta.__newindex = function(t, k, v)
+    error('OOP:readonlyMeta->the table is readonly')
+end
+
+local asreadonly = function(target)
+    return setmetatable(target, readonlyMeta)
+end
+
+return asreadonly

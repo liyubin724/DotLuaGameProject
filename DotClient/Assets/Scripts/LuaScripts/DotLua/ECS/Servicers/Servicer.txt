@@ -1,0 +1,23 @@
+local oop = require('DotLua/OOP/oop')
+
+local Servicer =
+    oop.class(
+    'DotLua.ECS.Servicers.Servicer',
+    function(self,name)
+        self.name = name
+    end
+)
+
+function Servicer:GetName()
+    return self.name
+end
+
+function Servicer:DoRegister()
+
+end
+
+function Servicer:DoUnregister()
+
+end
+
+return Servicer

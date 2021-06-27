@@ -1,0 +1,69 @@
+local oop = require('DotLua/OOP/oop')
+local Context = require('DotLua/ECS/Contexts/Context')
+
+local tkeys = table.keys
+
+local LogTag = 'ContextMgr'
+
+local ContextManager =
+    oop.class(
+    'DotLua.ECS.Contexts.ContextManager',
+    function(self)
+        self.contextDic = {}
+    end
+)
+
+function ContextManager:HasContext(name)
+    return self.contextDic[name] ~= nil
+end
+
+function ContextManager:GetContext(name, createIfNot)
+    local context = self.contextDic[name]
+    if not context and not createIfNot then
+        return nil
+    end
+
+    if not context then
+        context = self:CreateContext(name)
+    end
+
+    return context
+end
+
+function ContextManager:CreateContext(name)
+    local context = self.contextDic[name]
+    if context then
+        oop.warning(LogTag, 'the context has been created')
+        return context
+    end
+    context = Context()
+    self.contextDic[name] = context
+
+    context:DoCreate()
+
+    return context
+end
+
+function ContextManager:DestroyContext(name)
+    local context = self.contextDic[name]
+    if not context then
+        oop.warning(LogTag, 'the context(' .. name .. ') is not found')
+        return nil
+    end
+
+    self.contextDic[name] = nil
+    context:DoDestroy()
+
+    return context
+end
+
+function ContextManager:Dispose()
+    local keys = tkeys(self.contextDic)
+    if keys and #keys > 0 then
+        for _, key in ipairs(keys) do
+            self:DestroyContext(key)
+        end
+    end
+end
+
+return ContextManager

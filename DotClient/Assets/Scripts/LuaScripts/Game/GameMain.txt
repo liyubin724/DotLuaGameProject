@@ -1,0 +1,15 @@
+require('DotLua/Init')
+
+GameMain = {}
+
+function GameMain.Initialize()
+end
+
+function GameMain.Startup()
+end
+
+function GameMain.Update(deltaTime, unscaleDeltaTime)
+end
+
+function GameMain.Teardown()
+end

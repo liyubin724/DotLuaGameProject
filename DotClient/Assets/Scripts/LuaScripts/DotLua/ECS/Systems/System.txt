@@ -1,0 +1,34 @@
+local oop = require('DotLua/OOP/oop')
+local SystemFuncNames = oop.using('DotLua/ECS/Systems/SystemFuncNames')
+
+local System =
+    oop.class(
+    'DotLua.ECS.Systems.System',
+    function(self)
+        self.isEnable = false
+    end
+)
+
+function System:IsEnable()
+    return self.isEnable
+end
+
+function System:DoActivate()
+    self.isEnable = true
+
+    local onActivateFunc = self[SystemFuncNames.ON_ACTIVATE_FUNC]
+    if onActivateFunc and type(onActivateFunc) == "function" then
+        onActivateFunc(self)
+    end
+end
+
+function System:DoDeactivate()
+    self.isEnable = false
+
+    local onDeactivateFunc = self[SystemFuncNames.ON_DEACTIVATE_FUNC]
+    if onDeactivateFunc and type(onDeactivateFunc) == "function" then
+        onDeactivateFunc(self)
+    end
+end
+
+return System

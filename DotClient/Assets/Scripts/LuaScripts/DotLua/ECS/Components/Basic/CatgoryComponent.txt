@@ -1,0 +1,25 @@
+local oop = require('DotLua/OOP/oop')
+local Component = require('DotLua/ECS/Components/Component')
+
+local CatgoryComponent =
+    oop.class(
+    'DotLua.ECS.Components.Basic.CatgoryComponent',
+    function(self)
+        self.catgory = nil
+    end,
+    Component
+)
+
+function CatgoryComponent:GetCatgory()
+    return self.catgory
+end
+
+function CatgoryComponent:DoGet(catgory)
+    self.catgory = catgory
+end
+
+function CatgoryComponent:DoRelease()
+    self.catgory = nil
+end
+
+return CatgoryComponent

@@ -1,0 +1,202 @@
+local oop = require('DotLua/OOP/oop')
+local ObjectPool = require('DotLua/Pool/ObjectPool')
+local Entity = require('DotLua/ECS/Entities/Entity')
+local Component = require('DotLua/ECS/Components/Component')
+local GUIDComponent = require('DotLua/ECS/Components/Basic/GUIDComponent')
+local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
+local ContextEvent = require('DotLua/ECS/Contexts/ContextEvent')
+local Group = require('DotLua/ECS/Groups/Group')
+
+local LogTag = 'Context'
+
+local Context =
+    oop.class(
+    'DotLua.ECS.Contexts.Context',
+    function(self, entityClass)
+        self.guidToEntityDic = {}
+
+        self.componentClassPoolDic = {}
+        self.entityPool = ObjectPool(entityClass and entityClass or Entity)
+
+        self.matcherToGroupDic = {}
+        self.groupPool = ObjectPool(Group)
+
+        self.createEntityEvent = oop.event()
+        self.releaseEntityEvent = oop.event()
+
+        self.createGroupEvent = oop.event()
+        self.releaseGroupEvent = oop.event()
+        self.changeGroupEvent = oop.event()
+    end
+)
+
+function Context:DoCreate()
+end
+
+function Context:DoDestroy()
+end
+
+function Context:HasEntityByGUID(guid)
+    return self.guidToEntityDic[guid] ~= nil
+end
+
+function Context:GetEntityByGUID(guid)
+    return self.guidToEntityDic[guid]
+end
+
+function Context:CreateEntity(guid, catgory, componentClasses)
+    if oop.isDebug then
+        if self:HasEntity(guid) then
+            oop.error(LogTag, 'the entity has been created')
+            return nil
+        end
+    end
+
+    local entity =
+        self.entityPool:GetItemWithParams(
+        self,
+        self.onEntityAddComponentEvent,
+        self.onEntityRemoveComponentEvent,
+        self.onEntityRemoveComponentEvent,
+        self.onEntityModifyComponentEvent
+    )
+    entity:BindEvent(
+        self,
+        self.onEntityAddComponentEvent,
+        self.onEntityRemoveComponentEvent,
+        self.onEntityRemoveComponentEvent,
+        self.onEntityModifyComponentEvent
+    )
+
+    local guidComponent = entity:addComponent(GUIDComponent)
+    guidComponent:SetGUID(guid)
+
+    local catgoryComponent = entity:addComponent(CatgoryComponent)
+    catgoryComponent:SetCatgory(catgory)
+
+    if componentClasses and #componentClasses > 0 then
+        for _, componentClass in ipairs(componentClasses) do
+            entity:AddComponentByClass(componentClass)
+        end
+    end
+
+    self.guidToEntityDic[guid] = entity
+    self:tryUpdateEntityInGroup(entity, ContextEvent.EntityCreated, nil, nil)
+
+    self.createEntityEvent:Invoke(entity)
+
+    return entity
+end
+
+function Context:DestroyEntity(entity)
+    self:DestroyEntityByGUID(entity:GetGUID())
+end
+
+function Context:DestroyEntityByGUID(guid)
+    local entity = self.guidToEntityDic[guid]
+    if not entity then
+        oop.error(LogTag, 'the entity is not found in context,guid = ' .. tostring(guid))
+        return
+    end
+
+    self.guidToEntityDic[guid] = nil
+    self:tryUpdateEntityInGroup(entity, ContextEvent.EntityReleased, nil, nil)
+    self.releaseEntityEvent:Invoke(entity)
+
+    self.entityPool:ReleaseItem(entity)
+end
+
+function Context:CreateGroup(matcher)
+    local group = self.matcherToGroupDic[matcher]
+    if not group then
+        group:RetainRef()
+
+        return group
+    end
+
+    group = self.groupPool:GetItemWithParams(matcher)
+    self.matcherToGroupDic[matcher] = group
+
+    for _, entity in pairs(self.guidToEntityDic) do
+        group:addEntitySliently(entity, ContextEvent.GroupCreated)
+    end
+
+    self.createGroupEvent:Invoke(group)
+end
+
+function Context:ReleaseGroup(group)
+    group.ReleaseRef()
+    if not group:IsInUsing() then
+        local matcher = group:GetMatcher()
+        self.matcherToGroupDic[matcher] = nil
+
+        self.releaseGroupEvent:Invoke(group)
+        self.groupPool:ReleaseItem(group)
+    end
+end
+
+function Context:getComponent(componentClass, ...)
+    if oop.isDebug then
+        if not oop.isclass(componentClass) or not oop.iskindof(componentClass, Component) then
+            oop.error(LogTag, 'the class is not a clas or is not a subclass of Component')
+            return nil
+        end
+    end
+
+    local pool = self.componentClassPoolDic[componentClass]
+    if not pool then
+        pool = ObjectPool(componentClass)
+
+        self.componentClassPoolDic[componentClass] = pool
+    end
+
+    return pool:GetItemWithParams(...)
+end
+
+function Context:releaseComponent(component)
+    if oop.isDebug then
+        if not oop.isinstanceof(component, Component) then
+            oop.error(LogTag, 'the component is not a instance of Component')
+            return
+        end
+    end
+
+    local componentClass = component:GetClass()
+    if componentClass then
+        local pool = self.componentClassPoolDic[componentClass]
+        if pool then
+            pool:ReleaseItem(component)
+        end
+    end
+end
+
+function Context:onEntityAddComponentEvent(entity, addedComponentClass)
+    self:tryUpdateEntityInGroup(entity, ContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
+end
+
+function Context:onEntityRemoveComponentEvent(entity, removedComponentClass)
+    self:tryUpdateEntityInGroup(entity, ContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
+end
+
+function Context:onEntityReplaceComponentEvent(entity, removedComponentClass, addedComponentClass)
+    self:tryUpdateEntityInGroup(
+        entity,
+        ContextEvent.EntityChangedForReplaceComponent,
+        removedComponentClass,
+        addedComponentClass
+    )
+end
+
+function Context:onEntityModifyComponentEvent(entity, modifiedComponentClass, modifyTag)
+    self:tryUpdateEntityInGroup(entity, ContextEvent.EntityChangedForModifyComponent, modifiedComponentClass, modifyTag)
+end
+
+function Context:tryUpdateEntityInGroup(entity, contextEvent, param1, param2)
+    for _, group in pairs(self.matcherToGroupDic) do
+        if group:TryUpdateEntity(entity, contextEvent, param1, param2) then
+            self.changeGroupEvent:Invoke(group)
+        end
+    end
+end
+
+return Context

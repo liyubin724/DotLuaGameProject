@@ -1,0 +1,19 @@
+local ConfigConst = require('DotLua/Config/ConfigConst')
+
+local rawget = rawget
+
+local ConfigSheet = {}
+
+ConfigSheet.__newindex = function(t, k, v)
+    error('the table is readonly')
+end
+
+function ConfigSheet:GetKeys()
+    return rawget(self, ConfigConst.SHEET_ALL_KEY_NAME)
+end
+
+function ConfigSheet:GetCount()
+    return #self:GetKeys()
+end
+
+return ConfigSheet

@@ -1,0 +1,34 @@
+local oop = require('DotLua/OOP/oop')
+local Matcher = require('DotLua/ECS/Matchers/Matcher')
+local Component = require('DotLua/ECS/Components/Component')
+
+local LogTag = 'Matcher'
+
+local HaveComponentMatcher =
+    oop.class(
+    'DotLua.ECS.Matchers.Components.HaveComponentMatcher',
+    function(self, componentClass)
+        if oop.isDebug then
+            if not self.componentClass then
+                oop.error(LogTag, 'the class is nil')
+                return
+            elseif oop.isclassof(componentClass, Component) then
+                oop.error(LogTag, 'the class is not a subclass of Component')
+                return
+            end
+        end
+
+        self.componentClass = componentClass
+    end,
+    Matcher
+)
+
+function HaveComponentMatcher:IsMatch(entity)
+    if not self.componentClass then
+        return false
+    end
+
+    return entity:HasComponentByClass(self.componentClass)
+end
+
+return HaveComponentMatcher

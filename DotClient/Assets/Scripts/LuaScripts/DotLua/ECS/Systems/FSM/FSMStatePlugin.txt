@@ -1,0 +1,37 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local Delegate = require('DotLua/OOP/Delegate')
+
+local LogTag = 'FSMStatePlugin'
+
+local FSMStatePlugin =
+    oop.class(
+    'DotLua.ECS.Systems.FSM.FSMStatePlugin',
+    function(self, stateName)
+        self.stateName = stateName
+        self.matchine = nil
+    end
+)
+
+function FSMStatePlugin:GetStateName()
+    return self.stateName
+end
+
+function FSMStatePlugin:DoInitilize(matchine)
+    self.matchine = matchine
+
+    local func = self['onInitilize']
+    if func and type(func) == 'function' then
+        func(self)
+    end
+end
+
+function FSMStatePlugin:DoEnter(entity, fromStateName)
+end
+
+function FSMStatePlugin:DoExecute(entity)
+end
+
+function FSMStatePlugin:DoExit(enitity, toStateName)
+end
+
+return FSMStatePlugin

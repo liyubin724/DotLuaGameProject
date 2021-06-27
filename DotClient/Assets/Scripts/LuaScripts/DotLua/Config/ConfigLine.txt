@@ -1,0 +1,28 @@
+local ConfigConst = require('DotLua/Config/ConfigConst')
+
+local rawget = rawget
+
+local ConfigLine = {}
+ConfigLine.__index = function(t, k)
+    local value = rawget(t, k)
+    if not value then
+        return value
+    else
+        local defaultLine = rawget(t, ConfigConst.LINE_DEFAULT_VALUE_NAME)
+        if defaultLine then
+            value = defaultLine[k]
+        end
+    end
+
+    if value and type(value) == "function" then
+        value = value()
+    end
+
+    return value
+end
+
+ConfigLine.__newindex = function(t, k, v)
+    error('the table is readonly')
+end
+
+return ConfigLine

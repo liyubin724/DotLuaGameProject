@@ -1,0 +1,98 @@
+local oop = require('DotLua/OOP/oop')
+local ContextEvent = require 'DotLua.ECS.Contexts.ContextEvent'
+local GroupEvent = oop.using('DotLua/ECS/Groups/GroupEvent')
+local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
+local DetailCollectorData = oop.using('DotLua/ECS/Collectors/DetailCollectorData')
+
+local tinsert = table.insert
+local tremove = table.remove
+
+local DetailCollector =
+    oop.class(
+    'DotLua.ECS.Collectors.DetailCollector',
+    function(self, group, groupEvent)
+        self.isEnable = false
+
+        self.group = group
+        self.groupEvent = groupEvent
+
+        self.collectedDetails = {}
+
+        self.detailDataPool = ObjectPool(DetailCollectorData)
+    end
+)
+
+function DetailCollector:IsEnable()
+    return self.isEnable
+end
+
+function DetailCollector:GetCollectedDetailCount()
+    return #self.collectedDetails
+end
+
+function DetailCollector:GetCollectedDetails()
+    return self.collectedDetails
+end
+
+function DetailCollector:ClearCollectedDetails()
+    for i = #(self.collectedDetails), 1, -1 do
+        self.detailDataPool:Release(self.collectedDetails[i])
+        tremove(self.collectedDetails, i)
+    end
+end
+
+function DetailCollector:Activate()
+    if self.group and not self.isEnable then
+        self.isEnable = true
+        if self.groupEvent then
+            local addFunc
+            local removeFunc
+            if self.groupEvent == GroupEvent.Added then
+                addFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.Removed then
+                removeFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.AddOrRemove then
+                addFunc = self.onGroupChangedEvent
+                removeFunc = self.onGroupChangedEvent
+            end
+
+            self.group:BindEvent(self, addFunc, removeFunc)
+        end
+    end
+end
+
+function DetailCollector:Deactivate()
+    if self.group and self.isEnable then
+        self.isEnable = false
+        if self.groupEvent then
+            local addFunc
+            local removeFunc
+            if self.groupEvent == GroupEvent.Added then
+                addFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.Removed then
+                removeFunc = self.onGroupChangedEvent
+            elseif self.groupEvent == GroupEvent.AddOrRemove then
+                addFunc = self.onGroupChangedEvent
+                removeFunc = self.onGroupChangedEvent
+            end
+
+            self.group:BindEvent(self, addFunc, removeFunc)
+        end
+    end
+end
+
+function DetailCollector:onGroupChangedEvent(entity, contextEvent, param1, param2)
+    if contextEvent == ContextEvent.EntityReleased then
+        for i = #(self.collectedDetails), 1, -1 do
+            if self.collectedDetails[i]:GetEntity() == entity then
+                tremove(self.collectedDetails, i)
+                return
+            end
+        end
+    else
+        local data = self.detailEntityDataPool:GetItemWithParams(entity, contextEvent, param1, param2)
+        tinsert(self.collectedDetails, data)
+    end
+end
+
+return DetailCollector

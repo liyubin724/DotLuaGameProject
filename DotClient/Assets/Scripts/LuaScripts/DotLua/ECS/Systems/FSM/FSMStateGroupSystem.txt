@@ -1,0 +1,17 @@
+local oop = require('DotLua/ECS/OOP/oop')
+local GroupUpdateSystem = require('DotLua/ECS/Systems/Groups/GroupUpdateSystem')
+
+local FSMStateGroupSystem =
+    oop.class(
+    'DotLua.ECS.Systems.FSM.FSMStateGroupSystem',
+    function(self, context)
+        self.matchine = nil
+    end,
+    GroupUpdateSystem
+)
+
+function FSMStateGroupSystem:SetMatchine(matchine)
+    self.matchine = matchine
+end
+
+return FSMStateGroupSystem
