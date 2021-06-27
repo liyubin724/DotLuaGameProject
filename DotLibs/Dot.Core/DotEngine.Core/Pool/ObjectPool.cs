@@ -3,60 +3,55 @@ using System.Collections.Generic;
 
 namespace DotEngine.Pool
 {
-    public class ObjectPool
+    public class ObjectPool<T>
     {
-        private Stack<object> m_Stack = new Stack<object>();
+        private readonly Stack<T> m_Stack = new Stack<T>();
 
-        private Func<object> m_OnNew;
-        private Action<object> m_OnGet;
-        private Action<object> m_OnRelease;
+        private readonly Func<T> m_CreateItemFunc;
+        private readonly Action<T> m_GetItemFunc;
+        private readonly Action<T> m_ReleaseItemFunc;
 
-        public ObjectPool(Func<object> createFunc,
-            Action<object> getAction,
-            Action<object> releaseAction, 
-            int preloadCount = 0)
+        public ObjectPool(Func<T> createFunc, Action<T> getAction = null, Action<T> releaseAction = null, int preload = 0)
         {
-            m_OnNew = createFunc;
-            m_OnGet = getAction;
-            m_OnRelease = releaseAction;
+            m_CreateItemFunc = createFunc;
+            m_GetItemFunc = getAction;
+            m_ReleaseItemFunc = releaseAction;
 
-            for (int i = 0; i < preloadCount; ++i)
+            for (int i = 0; i < preload; ++i)
             {
-                m_Stack.Push(m_OnNew());
+                m_Stack.Push(m_CreateItemFunc());
             }
         }
 
-        public object Get()
+        public T Get()
         {
-            object element;
+            T element;
             if (m_Stack.Count == 0)
             {
-                element = m_OnNew();
+                element = m_CreateItemFunc();
             }
             else
             {
                 element = m_Stack.Pop();
             }
 
-            m_OnGet?.Invoke(element);
+            m_GetItemFunc?.Invoke(element);
 
             return element;
         }
 
-        public void Release(object element)
+        public void Release(T element)
         {
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                Logger.Error("ObjectPool", "ObjectPool::Release->The element has been push into pool!");
+                Logger.Error("ObjectPool", "the element has been released");
                 return;
             }
 #endif
-            if (element != null)
-            {
-                m_OnRelease?.Invoke(element);
-                m_Stack.Push(element);
-            }
+
+            m_ReleaseItemFunc?.Invoke(element);
+            m_Stack.Push(element);
         }
 
         public void Clear()
@@ -65,6 +60,8 @@ namespace DotEngine.Pool
         }
     }
 
+
+    //-----以后统一使用ObjectPool，将会陆续替换
     public class GenericObjectPool<T>
     {
         private readonly Stack<T> m_Stack = new Stack<T>();

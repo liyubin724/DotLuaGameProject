@@ -2,7 +2,7 @@
 
 namespace DotEngine.Generic
 {
-    public partial class MathLib
+    public class Math
     {
         public static Vector2 GetPointProjectInLine(Vector2 linePoint1,Vector2 linePoint2,Vector2 point)
         {

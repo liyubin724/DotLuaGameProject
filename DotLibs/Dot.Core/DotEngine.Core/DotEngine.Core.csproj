@@ -58,11 +58,13 @@
     <Compile Include="EGizmos\BonesGizmos.cs" />
     <Compile Include="EGizmos\PointGizmos.cs" />
     <Compile Include="Generic\ListDictionary.cs" />
-    <Compile Include="Generic\MathLib-Curve.cs" />
-    <Compile Include="Generic\MathLib-Lerp.cs" />
-    <Compile Include="Generic\MathLib.cs" />
+    <Compile Include="Generic\MathBezier.cs" />
+    <Compile Include="Generic\MathCatmullRom.cs" />
+    <Compile Include="Generic\MathLerp.cs" />
+    <Compile Include="Generic\Math.cs" />
     <Compile Include="Generic\UniqueID.cs" />
     <Compile Include="Generic\UniqueIntID.cs" />
+    <Compile Include="IDeepCopy.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Pool\ListPool.cs" />
     <Compile Include="Pool\ObjectPool.cs" />
@@ -75,8 +77,8 @@
     <Compile Include="Utilities\ArrayUtility.cs" />
     <Compile Include="Utilities\AssemblyUtility.cs" />
     <Compile Include="Utilities\BitUtility.cs" />
-    <Compile Include="Utilities\DontDestoryBehaviour.cs" />
-    <Compile Include="Utilities\DontDestroyUtility.cs" />
+    <Compile Include="UUtilities\DontDestoryBehaviour.cs" />
+    <Compile Include="UUtilities\DontDestroyUtility.cs" />
     <Compile Include="Utilities\JsonUtility.cs" />
     <Compile Include="Utilities\MathUtil.cs" />
     <Compile Include="Utilities\RectUtility.cs" />
@@ -84,9 +86,9 @@
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\StructUtility.cs" />
     <Compile Include="Utilities\SystemObjectUtility.cs" />
-    <Compile Include="Utilities\TransformUtility.cs" />
+    <Compile Include="UUtilities\TransformUtility.cs" />
     <Compile Include="Utilities\TypeUtility.cs" />
-    <Compile Include="Utilities\UnityObjectUtility.cs" />
+    <Compile Include="UUtilities\UnityObjectUtility.cs" />
     <Compile Include="World\QT\AABB2D.cs" />
     <Compile Include="World\QT\IQuadObject.cs" />
     <Compile Include="World\QT\QuadNode.cs" />
@@ -95,6 +97,9 @@
     <Compile Include="World\QT\QuadTreeGizmosDrawer.cs" />
     <Compile Include="World\QT\QuadTreeUtil.cs" />
     <Compile Include="World\WorldEntity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
