@@ -10,7 +10,7 @@ namespace DotEngine.Lua
             byte[] scriptBytes = ReadBytes(filePath);
             if (scriptBytes == null || scriptBytes.Length == 0)
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, $"load luaScript failed.scriptPath = {scriptPath}");
+                LogUtil.Error(LuaUtility.LOG_TAG, $"load luaScript failed.scriptPath = {scriptPath}");
                 return null;
             }
 

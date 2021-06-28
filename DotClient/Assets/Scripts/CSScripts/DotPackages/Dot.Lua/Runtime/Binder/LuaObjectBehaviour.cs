@@ -43,7 +43,7 @@ namespace DotEngine.Lua.Binder
                 }
                 else
                 {
-                    LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                    LogUtil.Error(LuaUtility.LOG_TAG, "");
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace DotEngine.Lua.Binder
                 SystemObject value = GetValueFromParam(param);
                 if (value == null)
                 {
-                    LogUtil.Error(LuaUtility.LOGGER_NAME, $"LuaBinderBehaviour:RegistParamToTable->the value of the param({name}) is null");
+                    LogUtil.Error(LuaUtility.LOG_TAG, $"LuaBinderBehaviour:RegistParamToTable->the value of the param({name}) is null");
                 }
                 else
                 {
@@ -71,7 +71,7 @@ namespace DotEngine.Lua.Binder
                 SystemObject value = GetValueFromParam(param);
                 if (value == null)
                 {
-                    LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                    LogUtil.Error(LuaUtility.LOG_TAG, "");
                 }
                 else
                 {

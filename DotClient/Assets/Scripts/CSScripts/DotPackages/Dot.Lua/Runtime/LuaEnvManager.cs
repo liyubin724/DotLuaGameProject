@@ -72,7 +72,7 @@ namespace DotEngine.Lua
         {
             if (manager != null)
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return;
             }
             manager = this;
@@ -205,7 +205,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath) || !IsValid)
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath) || !IsValid)
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return null;
             }
 
@@ -234,7 +234,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath) || !IsValid)
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return null;
             }
 
@@ -245,7 +245,7 @@ namespace DotEngine.Lua
             }
             else
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return null;
             }
         }
@@ -254,7 +254,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return null;
             }
             return usingFunc(scriptPath);
@@ -264,7 +264,7 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
-                LogUtil.Error(LuaUtility.LOGGER_NAME, "");
+                LogUtil.Error(LuaUtility.LOG_TAG, "");
                 return null;
             }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using XLua;
 using SystemObject = System.Object;
@@ -7,24 +8,25 @@ namespace DotEngine.Lua.Binder
 {
     public class LuaBinderBehaviour : MonoBehaviour
     {
-        [SerializeField]
-        private LuaBinder binder = new LuaBinder();
+        public string scriptPath = null;
+        public List<LuaParam> paramValues = new List<LuaParam>();
 
-        public LuaTable Table { get; private set; }
+        private LuaEnv luaEnv;
         private bool isInited = false;
 
         public LuaEnv Env
         {
             get
             {
-                LuaEnvManager mgr = LuaEnvManager.GetInstance();
-                if (mgr != null && mgr.IsValid)
+                if (luaEnv == null)
                 {
-                    return mgr.Env;
+                    luaEnv = LuaEnvManager.GetInstance().Env;
                 }
-                return null;
+                return luaEnv;
             }
         }
+
+        public LuaTable Table { get; private set; }
 
         public bool IsValid()
         {
@@ -41,7 +43,8 @@ namespace DotEngine.Lua.Binder
             if (!isInited)
             {
                 isInited = true;
-                Table = binder.GetInstance();
+
+                Table = GetInstance();
 
                 OnInitFinished();
             }
@@ -83,15 +86,13 @@ namespace DotEngine.Lua.Binder
                 Table.Dispose();
             }
             Table = null;
+            luaEnv = null;
             isInited = false;
         }
 
         public void SetValue<T>(string name, T value)
         {
-            if (IsValid())
-            {
-                Table.Set(name, value);
-            }
+            Table.Set(name, value);
         }
 
         public void CallActionWith(string funcName,params LuaParam[] values)
@@ -192,6 +193,23 @@ namespace DotEngine.Lua.Binder
                 return func(Table, value1, value2);
             }
             return default(R);
+        }
+
+        public LuaTable GetInstance()
+        {
+            if (paramValues.Count == 0)
+            {
+                return LuaUtility.RequireAndInstance(luaEnv, scriptPath);
+            }
+            else
+            {
+                SystemObject[] values = new SystemObject[paramValues.Count];
+                for (int i = 0; i < paramValues.Count; ++i)
+                {
+                    values[i] = paramValues[i].GetValue();
+                }
+                return LuaUtility.RequireAndInstanceWith(luaEnv, scriptPath, values);
+            }
         }
     }
 }
