@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace DotEngine.Utilities
+namespace DotEngine.Core.Extensions
 {
-    public static class StringUtility
+    public static class StringExtension
     {
         /// <summary>
         /// 替换部分特殊字符为指定的字符串
@@ -43,7 +43,7 @@ namespace DotEngine.Utilities
         /// <returns></returns>
         public static string[] SplitToNotEmptyLines(this string value)
         {
-            return value.Split(new char[] { '\r','\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return value.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace DotEngine.Utilities
         /// <param name="value"></param>
         /// <param name="splitChar"></param>
         /// <returns></returns>
-        public static string[] SplitToArray(this string value,char splitChar)
+        public static string[] SplitToArray(this string value, char splitChar)
         {
             return value.Split(new char[] { splitChar }, StringSplitOptions.None);
         }

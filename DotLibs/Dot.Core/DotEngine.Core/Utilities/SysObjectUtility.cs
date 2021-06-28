@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace DotEngine.Utilities
 {
-    public static class SystemObjectUtility
+    public static class SysObjectUtility
     {
         /// <summary>
         /// 将源数据中的属性或字段的值拷贝给指定的目标数据

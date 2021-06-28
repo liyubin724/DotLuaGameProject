@@ -50,13 +50,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Crypto\AESCrypto.cs" />
     <Compile Include="Crypto\CryptoHelper.cs" />
     <Compile Include="Crypto\DESCrypto.cs" />
     <Compile Include="Crypto\MD5Crypto.cs" />
     <Compile Include="EGizmos\BonesGizmos.cs" />
     <Compile Include="EGizmos\PointGizmos.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="Extensions\TransformExtension.cs" />
+    <Compile Include="Extensions\TypeExtension.cs" />
+    <Compile Include="Extensions\UObjectExtension.cs" />
     <Compile Include="Generic\ListDictionary.cs" />
     <Compile Include="Generic\Bezier.cs" />
     <Compile Include="Generic\MathCatmullRom.cs" />
@@ -71,9 +74,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialize\BinarySerializeConvert.cs" />
     <Compile Include="Serialize\LuaSerializeWriter.cs" />
-    <Compile Include="Services\IServicer.cs" />
-    <Compile Include="Services\Service.cs" />
-    <Compile Include="Services\Servicer.cs" />
     <Compile Include="Utilities\ArrayUtility.cs" />
     <Compile Include="Utilities\AssemblyUtility.cs" />
     <Compile Include="Utilities\BitUtility.cs" />
@@ -83,12 +83,8 @@
     <Compile Include="Utilities\MathUtil.cs" />
     <Compile Include="Utilities\RectUtility.cs" />
     <Compile Include="Utilities\ReflectionUtility.cs" />
-    <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\StructUtility.cs" />
-    <Compile Include="Utilities\SystemObjectUtility.cs" />
-    <Compile Include="UUtilities\TransformUtility.cs" />
-    <Compile Include="Utilities\TypeUtility.cs" />
-    <Compile Include="UUtilities\UnityObjectUtility.cs" />
+    <Compile Include="Utilities\SysObjectUtility.cs" />
     <Compile Include="World\QT\AABB2D.cs" />
     <Compile Include="World\QT\IQuadObject.cs" />
     <Compile Include="World\QT\QuadNode.cs" />
@@ -98,8 +94,6 @@
     <Compile Include="World\QT\QuadTreeUtil.cs" />
     <Compile Include="World\WorldEntity.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

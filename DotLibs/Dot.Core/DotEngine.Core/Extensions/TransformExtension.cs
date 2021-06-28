@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using UnityEngine;
 
-namespace DotEngine.Utility
+namespace DotEngine.Core.Extensions
 {
-    public static class TransformUtility
+    public static class TransformExtension
     {
         public static Transform GetChildByName(this Transform tran, string name)
         {
@@ -24,13 +24,13 @@ namespace DotEngine.Utility
             return null;
         }
 
-        public static string GetPath(this Transform tran,Transform root = null)
+        public static string GetPath(this Transform tran, Transform root = null)
         {
             StringBuilder nameSB = new StringBuilder();
             Transform parent = tran;
             while (parent != root && parent != null)
             {
-                if(nameSB.Length>0)
+                if (nameSB.Length > 0)
                 {
                     nameSB.Insert(0, "/");
                 }

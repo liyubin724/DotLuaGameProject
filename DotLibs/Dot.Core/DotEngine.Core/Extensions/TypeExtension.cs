@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using SystemObject = System.Object;
 
-namespace DotEngine.Utilities
+namespace DotEngine.Core.Extensions
 {
-    public static class TypeUtility
+    public static class TypeExtension
     {
         /// <summary>
         /// 扩展方法，用于判断能否从当前类型转换到指定的类型
@@ -76,39 +78,40 @@ namespace DotEngine.Utilities
             else return type.ToString();
         }
 
-        public static Type GetElementTypeInArrayOrList(Type type)
+        public static Type GetElementTypeInArrayOrList(this Type type)
         {
-            if(IsArrayType(type))
+            if (IsArrayType(type))
             {
                 return type.GetElementType();
-            }else if(IsListType(type))
+            }
+            else if (IsListType(type))
             {
                 return type.GetGenericArguments()[0];
             }
             return null;
         }
 
-        public static bool IsStructOrClassType(Type type) => IsClassType(type) || IsStructType(type);
+        public static bool IsStructOrClassType(this Type type) => IsClassType(type) || IsStructType(type);
 
-        public static bool IsClassType(Type type)
+        public static bool IsClassType(this Type type)
         {
-            return type.IsClass && 
-                type != typeof(string) && 
+            return type.IsClass &&
+                type != typeof(string) &&
                 !IsDelegateType(type) &&
                 !IsArrayOrListType(type);
         }
 
-        public static bool IsStructType(Type type) => !type.IsEnum && type.IsValueType && !type.IsPrimitive;
+        public static bool IsStructType(this Type type) => !type.IsEnum && type.IsValueType && !type.IsPrimitive;
 
-        public static bool IsArrayOrListType(Type type) => IsListType(type) || IsArrayType(type);
+        public static bool IsArrayOrListType(this Type type) => IsListType(type) || IsArrayType(type);
 
-        public static bool IsListType(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
+        public static bool IsListType(this Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
 
-        public static bool IsArrayType(Type type) => type.IsArray;
+        public static bool IsArrayType(this Type type) => type.IsArray;
 
-        public static bool IsPrimitiveType(Type type) => (type.IsValueType && type.IsPrimitive) || type == typeof(string);
+        public static bool IsPrimitiveType(this Type type) => (type.IsValueType && type.IsPrimitive) || type == typeof(string);
 
-        public static bool IsEnumType(Type type) => type.IsEnum;
+        public static bool IsEnumType(this Type type) => type.IsEnum;
 
         public static bool IsDelegateType(this Type type) => typeof(Delegate).IsAssignableFrom(type);
 

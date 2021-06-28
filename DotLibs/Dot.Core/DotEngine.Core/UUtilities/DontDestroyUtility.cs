@@ -4,7 +4,7 @@ namespace DotEngine.Utilities
 {
     public static class DontDestroyUtility
     {
-        private const string RootName = "Singleton-Root";
+        private const string ROOT_OBJECT_NAME = "Singleton-Root";
         private static Transform rootTran = null;
 
         private static Transform RootTransform
@@ -13,10 +13,10 @@ namespace DotEngine.Utilities
             {
                 if(rootTran == null)
                 {
-                    GameObject rootGO = GameObject.Find(RootName);
+                    GameObject rootGO = GameObject.Find(ROOT_OBJECT_NAME);
                     if (rootGO == null)
                     {
-                        rootGO = new GameObject(RootName);
+                        rootGO = new GameObject(ROOT_OBJECT_NAME);
                     }
                     Object.DontDestroyOnLoad(rootGO);
                     rootTran = rootGO.transform;
