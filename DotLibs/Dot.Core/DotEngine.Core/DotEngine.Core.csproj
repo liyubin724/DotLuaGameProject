@@ -58,7 +58,7 @@
     <Compile Include="EGizmos\BonesGizmos.cs" />
     <Compile Include="EGizmos\PointGizmos.cs" />
     <Compile Include="Generic\ListDictionary.cs" />
-    <Compile Include="Generic\MathBezier.cs" />
+    <Compile Include="Generic\Bezier.cs" />
     <Compile Include="Generic\MathCatmullRom.cs" />
     <Compile Include="Generic\MathLerp.cs" />
     <Compile Include="Generic\Math.cs" />
