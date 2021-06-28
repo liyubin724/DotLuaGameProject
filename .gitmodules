@@ -7,3 +7,6 @@
 [submodule "GameDepands/IronSnappy"]
 	path = GameDepands/IronSnappy
 	url = https://github.com/aloneguid/IronSnappy.git
+[submodule "GameDepands/com.unity.properties.ui"]
+	path = GameDepands/com.unity.properties.ui
+	url = https://github.com/needle-mirror/com.unity.properties.ui
