@@ -73,7 +73,7 @@ namespace DotEngine.Lua
             }
         }
 
-        public static LuaTable RequireAndInstanceWith(LuaEnv luaEnv, string scriptPath, params SystemObject[] operateParams)
+        public static LuaTable RequireAndInstanceWith(LuaEnv luaEnv, string scriptPath, SystemObject[] operateParams)
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
