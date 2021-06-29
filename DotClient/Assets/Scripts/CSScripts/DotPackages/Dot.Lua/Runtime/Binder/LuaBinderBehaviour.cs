@@ -9,7 +9,7 @@ namespace DotEngine.Lua.Binder
     public class LuaBinderBehaviour : MonoBehaviour
     {
         public string scriptPath = null;
-        public List<LuaParam> paramValues = new List<LuaParam>();
+        public List<LuaParamValue> ctrParamValues = new List<LuaParamValue>();
 
         private LuaEnv luaEnv;
         private bool isInited = false;
@@ -18,7 +18,7 @@ namespace DotEngine.Lua.Binder
         {
             get
             {
-                if (luaEnv == null)
+                if(luaEnv == null)
                 {
                     luaEnv = LuaEnvManager.GetInstance().Env;
                 }
@@ -30,21 +30,36 @@ namespace DotEngine.Lua.Binder
 
         public bool IsValid()
         {
-            if (isInited && Env != null && Table != null)
+            if(isInited && Env.IsValid() && Table!=null)
             {
                 return true;
             }
-
             return false;
         }
 
-        public void InitBinder()
+        public void InitBehaviour()
         {
-            if (!isInited)
+            if(!isInited)
             {
                 isInited = true;
 
-                Table = GetInstance();
+                if(ctrParamValues.Count == 0)
+                {
+                    Table = LuaUtility.RequireAndInstance(Env, scriptPath);
+                }else
+                {
+                    SystemObject[] arr = new SystemObject[ctrParamValues.Count];
+                    for (int i = 0; i < ctrParamValues.Count; ++i)
+                    {
+                        LuaParamValue lpv = ctrParamValues[i];
+                        if (lpv != null)
+                        {
+                            arr[i] = lpv.GetValue();
+                        }
+                    }
+
+                    Table = LuaUtility.RequireAndInstanceWith(Env, scriptPath, arr);
+                }
 
                 OnInitFinished();
             }
@@ -52,13 +67,16 @@ namespace DotEngine.Lua.Binder
 
         protected virtual void OnInitFinished()
         {
-            SetValue("gameObject", gameObject);
-            SetValue("transform", transform);
+            if(IsValid())
+            {
+                SetValue("gameObject", gameObject);
+                SetValue("transform", transform);
+            }
         }
 
         protected virtual void Awake()
         {
-            InitBinder();
+            InitBehaviour();
             CallAction(LuaUtility.AWAKE_FUNCTION_NAME);
         }
 
@@ -90,33 +108,15 @@ namespace DotEngine.Lua.Binder
             isInited = false;
         }
 
-        public void SetValue<T>(string name, T value)
+        public void SetValue<V>(string name, V value)
         {
             Table.Set(name, value);
         }
 
-        public void CallActionWith(string funcName,params LuaParam[] values)
+        public void SetValue<K,V>(K key,V value)
         {
-            if (values == null || values.Length == 0)
-            {
-                CallAction(funcName);
-            }
-            else
-            {
-                SystemObject[] paramValues = new SystemObject[values.Length + 1];
-                paramValues[0] = Table;
-                for(int i =0;i<values.Length;++i)
-                {
-                    paramValues[i + 1] = values[i].GetValue();
-                }
-                LuaFunction func = Table.Get<LuaFunction>(funcName);
-                if (func != null)
-                {
-                    func.ActionParams(paramValues);
-                }
-                func?.Dispose();
-            }
-        }    
+            Table.Set(key, value);
+        }
 
         public void CallActionWith(string funcName, params SystemObject[] values)
         {
@@ -195,21 +195,5 @@ namespace DotEngine.Lua.Binder
             return default(R);
         }
 
-        public LuaTable GetInstance()
-        {
-            if (paramValues.Count == 0)
-            {
-                return LuaUtility.RequireAndInstance(luaEnv, scriptPath);
-            }
-            else
-            {
-                SystemObject[] values = new SystemObject[paramValues.Count];
-                for (int i = 0; i < paramValues.Count; ++i)
-                {
-                    values[i] = paramValues[i].GetValue();
-                }
-                return LuaUtility.RequireAndInstanceWith(luaEnv, scriptPath, values);
-            }
-        }
     }
 }

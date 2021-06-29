@@ -4,6 +4,7 @@ using DotEngine.Lua.Localization;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using XLua;
 using SystemObject = System.Object;
@@ -11,35 +12,89 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Lua
 {
-    public sealed class LuaEnvManager
+    public class LuaEnvManager
     {
-        private static readonly string LUA_OOP_PATH = "DotLua/OOP/oop";
+        private static string ROOT_NAME = "LuaEnv-Root";
+        private static LuaEnvManager manager = null;
 
-        private static readonly string LUA_INIT_PATH = "Game/GameInit";
-        private static readonly string LUA_GLOBAL_NAME = "Game";
-        private static readonly string LUA_GET_LANGUAGE_FUNC_NAME = "GetLanguage";
-
-        public LuaEnv Env { get; private set; } = null;
-
-        public bool IsValid
+        public static LuaEnvManager GetInstance()
         {
-            get
+            if(manager == null)
             {
-                return Env != null && Env.IsValid();
+                manager = new LuaEnvManager();
             }
+            return manager;
         }
 
+        private LuaUpdateBehaviour updateBehaviour;
+
+        public LuaEnv Env { get; private set; } = null;
         public LuaTable Global
         {
             get
             {
-                if(IsValid)
+                if (IsValid)
                 {
                     return Env.Global;
                 }
                 return null;
             }
         }
+        public bool IsValid => Env != null && Env.IsValid();
+
+
+
+        private LuaEnvManager()
+        {
+            
+        }
+
+        public void Startup()
+        {
+            Env = new LuaEnv();
+            Env.AddLoader(GetScriptBytes);
+
+#if DEBUG
+            Global.Set("isDebug", true);
+#endif
+
+            GameObject gObj = new GameObject(ROOT_NAME);
+            updateBehaviour = gObj.AddComponent<LuaUpdateBehaviour>();
+            UnityObject.DontDestroyOnLoad(gObj);
+
+
+        }
+
+        public void Shuntdown()
+        {
+
+        }
+
+        private ScriptLoader GetLoader()
+        {
+            return new FileScriptLoader();
+        }
+
+        private byte[] GetScriptBytes(ref string scriptPath)
+        {
+            scriptPath = $"{Application.dataPath}/Scripts/LuaScripts/{scriptPath}.txt";
+            if(File.Exists(scriptPath))
+            {
+                return File.ReadAllBytes(scriptPath);
+            }
+            return new byte[0];
+        }
+        //--------------------------------------------
+        private static readonly string LUA_OOP_PATH = "DotLua/OOP/oop";
+
+        private static readonly string LUA_INIT_PATH = "Game/GameInit";
+        private static readonly string LUA_GLOBAL_NAME = "Game";
+        private static readonly string LUA_GET_LANGUAGE_FUNC_NAME = "GetLanguage";
+
+
+
+
+
 
         public LuaTable GameTable { get; private set; } = null;
         private Action<float, float> updateAction = null;
@@ -50,7 +105,7 @@ namespace DotEngine.Lua
         private Func<string, LuaTable> instanceFunc = null;
         private LuaFunction instanceWithFunc = null;
 
-        private LuaEnvBehaviour envBehaviour = null;
+        private LuaUpdateBehaviour envBehaviour = null;
 
         private LuaLocalLanguage localLanguage = null;
         public LuaLocalLanguage Language
@@ -61,23 +116,7 @@ namespace DotEngine.Lua
             }
         }
 
-        private static LuaEnvManager manager = null;
 
-        public static LuaEnvManager GetInstance()
-        {
-            return manager;
-        }
-
-        public LuaEnvManager()
-        {
-            if (manager != null)
-            {
-                LogUtil.Error(LuaUtility.LOG_TAG, "");
-                return;
-            }
-            manager = this;
-            DoInit();
-        }
 
         private void DoInit()
         {
@@ -124,7 +163,7 @@ namespace DotEngine.Lua
 
         public void Startup()
         {
-            envBehaviour = DontDestroyUtility.CreateComponent<LuaEnvBehaviour>();
+            envBehaviour = DontDestroyUtility.CreateComponent<LuaUpdateBehaviour>();
         }
 
         public void Shuntdown()

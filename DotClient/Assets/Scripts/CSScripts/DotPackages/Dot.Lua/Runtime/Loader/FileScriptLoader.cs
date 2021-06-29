@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using UnityEngine;
 
 namespace DotEngine.Lua
 {
@@ -6,7 +7,7 @@ namespace DotEngine.Lua
     {
         protected override string GetFilePath(string scriptPath)
         {
-            return LuaUtility.GetScriptFilePathInProject(scriptPath);
+            return $"{Application.dataPath}/Scripts/LuaScripts/{scriptPath}.txt";
         }
 
         protected override byte[] ReadBytes(string filePath)

@@ -37,7 +37,15 @@ namespace DotEngine.Lua.Binder
                 case LuaParamType.String:
                     return strValue;
                 case LuaParamType.UObject:
-                    return uObject;
+                    if(uObject!=null && uObject.GetType().IsAssignableFrom(typeof(LuaBinderBehaviour)))
+                    {
+                        LuaBinderBehaviour beh = uObject as LuaBinderBehaviour;
+                        beh.InitBehaviour();
+                        return beh.Table;
+                    }else
+                    {
+                        return uObject;
+                    }
                 default:
                     return null;
             }

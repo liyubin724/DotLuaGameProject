@@ -3,7 +3,7 @@ using XLua;
 
 namespace DotEngine.Lua.Binder
 {
-    public class LuaRefBehaviour : LuaBehaviour
+    public class LuaRefBehaviour : LuaBinderBehaviour
     {
         public List<LuaParam> registParamList = new List<LuaParam>();
         public List<LuaParams> registerParamsList = new List<LuaParams>();
@@ -22,11 +22,10 @@ namespace DotEngine.Lua.Binder
                 LuaTable regTable = Env.NewTable();
                 Table.Set(p.name, regTable);
 
-                foreach (var v in p.values)
-                    for (int i = 0; i < p.values.Count; ++i)
-                    {
-                        RegisterParamToTable(regTable, i, p.values[i]);
-                    }
+                for (int i = 0; i < p.values.Count; ++i)
+                {
+                    RegisterParamToTable(regTable, i, p.values[i]);
+                }
             }
         }
 

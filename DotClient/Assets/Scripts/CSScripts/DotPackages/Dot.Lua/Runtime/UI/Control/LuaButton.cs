@@ -8,7 +8,7 @@ namespace DotEngine.Lua.UI
     [AddComponentMenu("DotEngine/UI/Lua Button", 100)]
     public class LuaButton : Button
     {
-        public LuaBinderBehaviour binderBehaviour = null;
+        public LuaBinderBehaviour luaBehaviour = null;
         public string clickedFuncName = string.Empty;
         public LuaParam[] paramValues = new LuaParam[0];
 
@@ -21,7 +21,7 @@ namespace DotEngine.Lua.UI
 
         private void OnClicked()
         {
-            if(binderBehaviour == null)
+            if(luaBehaviour == null)
             {
                 LogUtil.Error("UI", "LuaButton:OnClicked->the behaviour is null");
                 return;
@@ -33,10 +33,10 @@ namespace DotEngine.Lua.UI
             }
             if(paramValues == null || paramValues.Length == 0)
             {
-                binderBehaviour.CallAction(clickedFuncName);
+                luaBehaviour.CallAction(clickedFuncName);
             }else
             {
-                binderBehaviour.CallActionWith(clickedFuncName, paramValues);
+                luaBehaviour.CallActionWith(clickedFuncName, paramValues);
             }
         }
     }

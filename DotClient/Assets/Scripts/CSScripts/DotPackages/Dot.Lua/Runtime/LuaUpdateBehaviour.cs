@@ -2,7 +2,7 @@
 
 namespace DotEngine.Lua
 {
-    public class LuaEnvBehaviour : MonoBehaviour
+    public class LuaUpdateBehaviour : MonoBehaviour
     {
 
         private void Start()
