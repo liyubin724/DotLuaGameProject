@@ -8,8 +8,8 @@ namespace DotEngine.Lua.UI.Handler
     {
         public InputField inputField;
 
-        public EventHandlerData valueChangedHandlerData = new EventHandlerData();
-        public EventHandlerData endEditHandlerData = new EventHandlerData();
+        public LuaEventHandler changedEventHandler = new LuaEventHandler();
+        public LuaEventHandler sumitedEventHandler = new LuaEventHandler();
 
         private void Awake()
         {
@@ -26,12 +26,12 @@ namespace DotEngine.Lua.UI.Handler
 
         private void OnValueChanged(string text)
         {
-            valueChangedHandlerData.InvokeWithParam1<string>(text);
+            changedEventHandler.InvokeWithParam1(text);
         }
 
         private void OnEndEdit(string text)
         {
-            endEditHandlerData.InvokeWithParam1<string>(text);
+            sumitedEventHandler.InvokeWithParam1(text);
         }
     }
 }

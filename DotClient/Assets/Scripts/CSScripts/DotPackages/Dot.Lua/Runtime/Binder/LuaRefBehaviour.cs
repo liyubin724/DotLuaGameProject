@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using XLua;
 
-namespace DotEngine.Lua.Binder
+namespace DotEngine.Lua
 {
-    public class LuaRefBehaviour : LuaBinderBehaviour
+    public class LuaRefBehaviour : LuaBindBehaviour
     {
         public List<LuaParam> registParamList = new List<LuaParam>();
         public List<LuaParams> registerParamsList = new List<LuaParams>();

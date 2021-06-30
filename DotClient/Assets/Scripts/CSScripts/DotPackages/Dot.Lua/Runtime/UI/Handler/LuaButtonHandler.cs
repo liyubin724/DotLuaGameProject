@@ -7,8 +7,7 @@ namespace DotEngine.Lua.UI.Handler
     public class LuaButtonHandler : MonoBehaviour
     {
         public Button button = null;
-
-        public EventHandlerData clickHandlerData = new EventHandlerData();
+        public LuaEventHandler clickedEventHandler = new LuaEventHandler();
 
         private void Awake()
         {
@@ -24,7 +23,7 @@ namespace DotEngine.Lua.UI.Handler
 
         private void OnClick()
         {
-            clickHandlerData.Invoke();
+            clickedEventHandler.Invoke();
         }
     }
 }

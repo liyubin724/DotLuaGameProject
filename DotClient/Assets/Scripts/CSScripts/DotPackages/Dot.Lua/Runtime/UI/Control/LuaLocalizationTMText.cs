@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace DotEngine.Lua.UI
@@ -17,14 +12,26 @@ namespace DotEngine.Lua.UI
         {
             if (Application.isPlaying && !string.IsNullOrEmpty(localizationName))
             {
-                LuaEnvManager envMgr = LuaEnvManager.GetInstance();
-                if (envMgr != null)
-                {
-                    text = envMgr.Language.GetText(localizationName);
-                }
-            }
+                text = LuaEnvManager.GetInstance().GetLocalizationText(localizationName);
 
+                LuaEnvManager.GetInstance().OnLanguageChanged += OnLanguageChanged;
+            }
             base.Awake();
         }
+
+        protected override void OnDestroy()
+        {
+            if (Application.isPlaying && !string.IsNullOrEmpty(localizationName))
+            {
+                LuaEnvManager.GetInstance().OnLanguageChanged -= OnLanguageChanged;
+            }
+            base.OnDestroy();
+        }
+
+        private void OnLanguageChanged()
+        {
+            text = LuaEnvManager.GetInstance().GetLocalizationText(localizationName);
+        }
+
     }
 }

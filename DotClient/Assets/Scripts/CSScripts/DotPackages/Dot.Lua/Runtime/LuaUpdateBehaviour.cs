@@ -4,20 +4,19 @@ namespace DotEngine.Lua
 {
     public class LuaUpdateBehaviour : MonoBehaviour
     {
-
-        private void Start()
+        void Update()
         {
-            LuaEnvManager.GetInstance().DoStart();
+            LuaEnvManager.GetInstance().DoUpdate(Time.deltaTime,Time.unscaledDeltaTime);
         }
 
-        private void Update()
+        void LateUpdate()
         {
-            LuaEnvManager.GetInstance().DoUpdate();
+            LuaEnvManager.GetInstance().DoLateUpdate(Time.deltaTime, Time.unscaledDeltaTime);
         }
 
-        private void LateUpdate()
+        void FixedUpdate()
         {
-            LuaEnvManager.GetInstance().DoLateUpdate();
+            LuaEnvManager.GetInstance().DoFixedUpdate(Time.fixedDeltaTime, Time.fixedUnscaledDeltaTime);
         }
     }
 }

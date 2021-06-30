@@ -9,15 +9,27 @@ namespace DotEngine.Lua.UI
 
         protected override void Awake()
         {
-            if(Application.isPlaying && !string.IsNullOrEmpty(localizationName))
+            if (Application.isPlaying && !string.IsNullOrEmpty(localizationName))
             {
-                LuaEnvManager envMgr = LuaEnvManager.GetInstance();
-                if(envMgr!=null)
-                {
-                    text = envMgr.Language.GetText(localizationName);
-                }
+                text = LuaEnvManager.GetInstance().GetLocalizationText(localizationName);
+
+                LuaEnvManager.GetInstance().OnLanguageChanged += OnLanguageChanged;
             }
             base.Awake();
+        }
+
+        protected override void OnDestroy()
+        {
+            if (Application.isPlaying && !string.IsNullOrEmpty(localizationName))
+            {
+                LuaEnvManager.GetInstance().OnLanguageChanged -= OnLanguageChanged;
+            }
+            base.OnDestroy();
+        }
+
+        private void OnLanguageChanged()
+        {
+            text = LuaEnvManager.GetInstance().GetLocalizationText(localizationName);
         }
     }
 }

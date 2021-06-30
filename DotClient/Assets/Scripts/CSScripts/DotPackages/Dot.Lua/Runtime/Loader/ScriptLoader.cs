@@ -1,26 +1,19 @@
-﻿using DotEngine.Log;
+﻿using System.IO;
+using UnityEngine;
 
 namespace DotEngine.Lua
 {
-    public abstract class ScriptLoader
+    public static class ScriptLoader
     {
-        public byte[] LoadScript(ref string scriptPath)
+        public static byte[] LoadScriptFromProject(ref string scriptPath)
         {
-            string filePath = GetFilePath(scriptPath);
-            byte[] scriptBytes = ReadBytes(filePath);
-            if (scriptBytes == null || scriptBytes.Length == 0)
+            scriptPath = $"{Application.dataPath}/Scripts/LuaScripts/{scriptPath}.txt";
+            if (File.Exists(scriptPath))
             {
-                LogUtil.Error(LuaUtility.LOG_TAG, $"load luaScript failed.scriptPath = {scriptPath}");
-                return null;
+                return File.ReadAllBytes(scriptPath);
             }
-
-            scriptPath = filePath;
-
-            return scriptBytes;
+            return null;
         }
 
-        protected abstract string GetFilePath(string scriptPath);
-
-        protected abstract byte[] ReadBytes(string scriptPath);
     }
 }

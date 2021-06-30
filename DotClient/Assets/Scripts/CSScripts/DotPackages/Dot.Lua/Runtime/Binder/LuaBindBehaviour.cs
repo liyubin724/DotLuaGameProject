@@ -4,9 +4,9 @@ using UnityEngine;
 using XLua;
 using SystemObject = System.Object;
 
-namespace DotEngine.Lua.Binder
+namespace DotEngine.Lua
 {
-    public class LuaBinderBehaviour : MonoBehaviour
+    public class LuaBindBehaviour : MonoBehaviour
     {
         public string scriptPath = null;
         public List<LuaParamValue> ctrParamValues = new List<LuaParamValue>();
@@ -118,7 +118,30 @@ namespace DotEngine.Lua.Binder
             Table.Set(key, value);
         }
 
-        public void CallActionWith(string funcName, params SystemObject[] values)
+        public void CallActionWithParams(string funcName,params LuaParamValue[] values)
+        {
+            if (values == null || values.Length == 0)
+            {
+                CallAction(funcName);
+            }
+            else
+            {
+                SystemObject[] paramValues = new SystemObject[values.Length + 1];
+                paramValues[0] = Table;
+                for(int i =0;i<values.Length;++i)
+                {
+                    paramValues[i + 1] = values[i].GetValue();
+                }
+                LuaFunction func = Table.Get<LuaFunction>(funcName);
+                if (func != null)
+                {
+                    func.ActionParams(paramValues);
+                }
+                func?.Dispose();
+            }
+        }
+
+        public void CallActionWithObjects(string funcName, params SystemObject[] values)
         {
             if (values == null || values.Length == 0)
             {

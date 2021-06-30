@@ -4,7 +4,7 @@ using UnityEngine;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.Lua.Binder
+namespace DotEngine.Lua
 {
     public enum LuaParamType
     {
@@ -37,9 +37,9 @@ namespace DotEngine.Lua.Binder
                 case LuaParamType.String:
                     return strValue;
                 case LuaParamType.UObject:
-                    if(uObject!=null && uObject.GetType().IsAssignableFrom(typeof(LuaBinderBehaviour)))
+                    if(uObject!=null && uObject.GetType().IsAssignableFrom(typeof(LuaBindBehaviour)))
                     {
-                        LuaBinderBehaviour beh = uObject as LuaBinderBehaviour;
+                        LuaBindBehaviour beh = uObject as LuaBindBehaviour;
                         beh.InitBehaviour();
                         return beh.Table;
                     }else

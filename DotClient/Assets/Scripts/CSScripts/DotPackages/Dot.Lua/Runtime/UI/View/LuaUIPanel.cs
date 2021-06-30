@@ -1,5 +1,4 @@
-﻿using DotEngine.Lua.Binder;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace DotEngine.Lua.UI.View
