@@ -66,7 +66,7 @@ namespace DotEngine.Lua
 #endif
 
             Env.AddBuildin("rapidjson", XLua.LuaDLL.Lua.LoadRapidJson);
-            Global.Set("isUsingRapidjson", true);
+            Global.Set("isRapidJson", true);
 
             Env.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
 
@@ -190,6 +190,15 @@ namespace DotEngine.Lua
         public string GetLocalizationText(string locName)
         {
             return localization.GetText(locName);
+        }
+
+        public void Dispose()
+        {
+            if(IsRunning)
+            {
+                Shuntdown();
+            }
+            manager = null;
         }
     }
 }
