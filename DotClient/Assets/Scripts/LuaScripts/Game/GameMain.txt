@@ -2,14 +2,20 @@ require('DotLua/Init')
 
 GameMain = {}
 
-function GameMain.Initialize()
+function GameMain.DoStart()
 end
 
 function GameMain.Startup()
 end
 
-function GameMain.Update(deltaTime, unscaleDeltaTime)
+function GameMain.DoUpdate(deltaTime, unscaleDeltaTime)
 end
 
-function GameMain.Teardown()
+function GameMain.DoLateUpdate(deltaTime, unscaleDeltaTime)
+end
+
+function GameMain.DoFixedUpdate(deltaTime, unscaleDeltaTime)
+end
+
+function GameMain.DoDestroy()
 end
