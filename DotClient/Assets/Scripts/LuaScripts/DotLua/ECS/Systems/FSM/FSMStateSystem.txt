@@ -1,45 +1,30 @@
 local oop = require('DotLua/ECS/OOP/oop')
-local FSMStateGroupSystem = require('DotLua/ECS/Systems/FSM/FSMStateGroupSystem')
-local HaveComponentMatcher = require('DotLua/ECS/Matchers/Components/HaveComponentMatcher')
-
-local FSMStateComponent = require('DotLua/ECS/Components/FSM/FSMStateComponent')
-
-local LogTag = 'FSMStateSystem'
+local System = require('DotLua/ECS/Systems/System')
 
 local FSMStateSystem =
     oop.class(
     'DotLua.ECS.Systems.FSM.FSMStateSystem',
-    function(self, context)
+    function(self,stateName)
+        self.stateName = stateName
     end,
-    FSMStateGroupSystem
+    System
 )
 
-function FSMStateSystem:GetGroup(context)
-    local matcher = HaveComponentMatcher(FSMStateComponent)
-    return context.CreateGroup(matcher)
+function FSMStateSystem:GetStateName()
+    return self.stateName
 end
 
-function FSMStateSystem:Filter(entity)
-    return true
+function FSMStateSystem:GetNextStateName(entity)
+    return self.stateName
 end
 
-function FSMStateSystem:onEntityUpdate(entity)
-    local stateComponent = entity:GetComponentByClass(FSMStateComponent)
-    if not stateComponent:GetIsRunning() then
-        return
-    end
+function FSMStateSystem:DoEnter(entity,fromStateName)
+end
 
-    local stateName = stateComponent:GetStateName()
-    if not stateName then
-        return
-    end
+function FSMStateSystem:DoExit(entity,toStateName)
+end
 
-    local state = self.matchine:GetState(stateName)
-    if not state then
-        return
-    end
-
-    state:DoExecute(entity)
+function FSMStateSystem:DoExecute(entity)
 end
 
 return FSMStateSystem

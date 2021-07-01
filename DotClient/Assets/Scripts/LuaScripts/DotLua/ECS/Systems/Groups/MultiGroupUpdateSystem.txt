@@ -40,7 +40,7 @@ function GroupUpdateSystem:onTimeUpdate(deltaTime)
     end
 end
 
-function GroupUpdateSystem:GetGroups()
+function GroupUpdateSystem:GetGroups(contexts)
     return nil
 end
 
