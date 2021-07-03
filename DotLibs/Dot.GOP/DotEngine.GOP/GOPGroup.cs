@@ -277,7 +277,7 @@ namespace DotEngine.GOP
         {
             if(item == null)
             {
-                Logger.Error(GOPUtil.LOG_TAG, "GameObjectPool::ReleaseItem->Item is Null");
+                GOPLogger.Error(GOPUtil.LOG_TAG, "GameObjectPool::ReleaseItem->Item is Null");
                 return;
             }
 

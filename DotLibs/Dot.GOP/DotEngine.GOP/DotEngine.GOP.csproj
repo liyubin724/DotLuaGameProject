@@ -48,7 +48,7 @@
     <Compile Include="GOPCategory.cs" />
     <Compile Include="GOPGroup.cs" />
     <Compile Include="GOPUtil.cs" />
-    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Log\GOPLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

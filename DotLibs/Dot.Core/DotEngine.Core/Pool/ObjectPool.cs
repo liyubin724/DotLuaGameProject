@@ -45,7 +45,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                Logger.Error("ObjectPool", "the element has been released");
+                CoreLogger.Error("ObjectPool", "the element has been released");
                 return;
             }
 #endif
@@ -104,7 +104,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                Logger.Error("ObjectPool","GenericObjectPool::Release->The element has been push into pool!");
+                CoreLogger.Error("ObjectPool","GenericObjectPool::Release->The element has been push into pool!");
                 return;
             }
 #endif
@@ -167,7 +167,7 @@ namespace DotEngine.Pool
 #if DEBUG
                 if (m_Stack.Contains(element))
                 {
-                    Logger.Error("ObjectPool","ItemObjectPool::Release->The element has been push into pool!");
+                    CoreLogger.Error("ObjectPool","ItemObjectPool::Release->The element has been push into pool!");
                     return;
                 }
 #endif

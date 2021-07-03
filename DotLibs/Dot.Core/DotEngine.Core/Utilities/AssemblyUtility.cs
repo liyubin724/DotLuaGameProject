@@ -47,14 +47,14 @@ namespace DotEngine.Utilities
         {
             if (string.IsNullOrEmpty(genericTypeFullName) || paramTypeFullNames == null || paramTypeFullNames.Length == 0)
             {
-                Logger.Error(LOG_TAG, "Arg is Null");
+                CoreLogger.Error(LOG_TAG, "Arg is Null");
                 return null;
             }
 
             Type genericType = GetTypeByFullName(genericTypeFullName);
             if (genericType == null)
             {
-                Logger.Error(LOG_TAG, $"Type Not Found.Type = {genericTypeFullName}");
+                CoreLogger.Error(LOG_TAG, $"Type Not Found.Type = {genericTypeFullName}");
                 return null;
             }
 
@@ -64,13 +64,13 @@ namespace DotEngine.Utilities
                 string typeStr = paramTypeFullNames[i];
                 if (string.IsNullOrEmpty(typeStr))
                 {
-                    Logger.Error(LOG_TAG, "Param Type Is NUll");
+                    CoreLogger.Error(LOG_TAG, "Param Type Is NUll");
                     return null;
                 }
                 Type t = GetTypeByFullName(paramTypeFullNames[i]);
                 if (t == null)
                 {
-                    Logger.Error(LOG_TAG, $"Param Type Not Found.Type = {paramTypeFullNames[i]}");
+                    CoreLogger.Error(LOG_TAG, $"Param Type Not Found.Type = {paramTypeFullNames[i]}");
                     return null;
                 }
                 types[i] = t;

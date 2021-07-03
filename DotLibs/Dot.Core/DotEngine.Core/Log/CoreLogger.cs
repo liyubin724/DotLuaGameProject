@@ -1,9 +1,8 @@
-﻿
-using HandlerAction = System.Action<string, string>;
+﻿using HandlerAction = System.Action<string, string>;
 
-namespace DotEngine.NetCore
+namespace DotEngine
 {
-    public static class NetLogger
+    public static class CoreLogger
     {
         private static HandlerAction logHandler;
         private static HandlerAction warningHandler;
@@ -16,17 +15,17 @@ namespace DotEngine.NetCore
             errorHandler = error;
         }
 
-        public static void Log(string tag, string message)
+        public static void Log(string tag,string message)
         {
             logHandler?.Invoke(tag, message);
         }
 
-        public static void Warning(string tag, string message)
+        public static void Warning(string tag,string message)
         {
             warningHandler?.Invoke(tag, message);
         }
 
-        public static void Error(string tag, string message)
+        public static void Error(string tag,string message)
         {
             errorHandler?.Invoke(tag, message);
         }

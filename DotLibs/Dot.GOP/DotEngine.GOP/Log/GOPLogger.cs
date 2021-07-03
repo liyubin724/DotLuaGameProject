@@ -1,9 +1,8 @@
-﻿
-using HandlerAction = System.Action<string, string>;
+﻿using HandlerAction = System.Action<string, string>;
 
-namespace DotEngine.NetCore
+namespace DotEngine.GOP
 {
-    public static class NetLogger
+    public static class GOPLogger
     {
         private static HandlerAction logHandler;
         private static HandlerAction warningHandler;

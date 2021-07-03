@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-namespace DotEngine.Utilities
+namespace DotEngine.Core
 {
     public class DontDestoryBehaviour : MonoBehaviour
     {
         void Awake()
         {
-            DontDestroyUtility.AddTransform(transform);
+            PersistentUObjectHelper.AddGameObject(gameObject);
             Destroy(this);
         }
     }

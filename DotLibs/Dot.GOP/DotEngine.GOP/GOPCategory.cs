@@ -38,7 +38,7 @@ namespace DotEngine.GOP
                 return itemGroup;
             }else
             {
-                Logger.Warning(GOPUtil.LOG_TAG, "The pool is not found.name = " + name);
+                GOPLogger.Warning(GOPUtil.LOG_TAG, "The pool is not found.name = " + name);
             }
 
             return null;
@@ -54,7 +54,7 @@ namespace DotEngine.GOP
         {
             if(itemTemplate == null)
             {
-                Logger.Error(GOPUtil.LOG_TAG,"Template is Null");
+                GOPLogger.Error(GOPUtil.LOG_TAG,"Template is Null");
                 return null;
             }
 
@@ -65,7 +65,7 @@ namespace DotEngine.GOP
             }
             else
             {
-                Logger.Warning(GOPUtil.LOG_TAG,"The pool has been created.uniqueName = " + itemName);
+                GOPLogger.Warning(GOPUtil.LOG_TAG,"The pool has been created.uniqueName = " + itemName);
             }
 
             return itemGroup;
@@ -85,7 +85,7 @@ namespace DotEngine.GOP
             }
             else
             {
-                Logger.Warning(GOPUtil.LOG_TAG,"The pool is not found.name = " + name);
+                GOPLogger.Warning(GOPUtil.LOG_TAG,"The pool is not found.name = " + name);
             }
         }
 
