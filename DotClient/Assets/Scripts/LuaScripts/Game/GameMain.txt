@@ -1,11 +1,16 @@
 require('DotLua/Init')
 
+local Logger = require('DotLua/Debug/Logger')
+local CS = _G.CS
+
 GameMain = {}
-
 function GameMain.DoStart()
-end
+    local CSLogUtil = CS.DotEngine.Log.LogUtil
+    Logger.info = CSLogUtil.Info
+    Logger.warning = CSLogUtil.Warning
+    Logger.error = CSLogUtil.Error
 
-function GameMain.Startup()
+    Logger.info('GameMain', 'GameStartup')
 end
 
 function GameMain.DoUpdate(deltaTime, unscaleDeltaTime)

@@ -21,12 +21,12 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
-                Logger.Error(LOG_TAG, "the path of script is empty");
+                LuaLogger.Error(LOG_TAG, "the path of script is empty");
                 return false;
             }
             if (luaEnv == null || !luaEnv.IsValid())
             {
-                Logger.Error(LOG_TAG, "the env of lua is invalid");
+                LuaLogger.Error(LOG_TAG, "the env of lua is invalid");
                 return false;
             }
 
@@ -38,12 +38,12 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
-                Logger.Error(LOG_TAG, "the path of script is empty");
+                LuaLogger.Error(LOG_TAG, "the path of script is empty");
                 return null;
             }
             if (luaEnv == null || !luaEnv.IsValid())
             {
-                Logger.Error(LOG_TAG, "the env of lua is invalid");
+                LuaLogger.Error(LOG_TAG, "the env of lua is invalid");
                 return null;
             }
 
@@ -61,12 +61,12 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
-                Logger.Error(LOG_TAG, "the path of script is empty");
+                LuaLogger.Error(LOG_TAG, "the path of script is empty");
                 return null;
             }
             if (luaEnv == null || !luaEnv.IsValid())
             {
-                Logger.Error(LOG_TAG, "the env of lua is invalid");
+                LuaLogger.Error(LOG_TAG, "the env of lua is invalid");
                 return null;
             }
 
@@ -77,7 +77,7 @@ namespace DotEngine.Lua
             }
             else
             {
-                Logger.Error(LOG_TAG, "the value is null");
+                LuaLogger.Error(LOG_TAG, "the value is null");
                 return null;
             }
         }
@@ -86,12 +86,12 @@ namespace DotEngine.Lua
         {
             if (string.IsNullOrEmpty(scriptPath))
             {
-                Logger.Error(LOG_TAG, "the path of script is empty");
+                LuaLogger.Error(LOG_TAG, "the path of script is empty");
                 return null;
             }
             if (luaEnv == null || !luaEnv.IsValid())
             {
-                Logger.Error(LOG_TAG, "the env of lua is invalid");
+                LuaLogger.Error(LOG_TAG, "the env of lua is invalid");
                 return null;
             }
             SystemObject[] values = luaEnv.DoString($"return require('{scriptPath}')");
@@ -108,7 +108,7 @@ namespace DotEngine.Lua
                 }
             }
 
-            Logger.Error(LOG_TAG, "the value is null");
+            LuaLogger.Error(LOG_TAG, "the value is null");
             return null;
         }
 

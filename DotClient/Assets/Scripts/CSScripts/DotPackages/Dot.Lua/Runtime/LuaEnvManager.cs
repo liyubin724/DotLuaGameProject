@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.Core;
+using System;
 using UnityEngine;
 using XLua;
 using UnityObject = UnityEngine.Object;
@@ -21,8 +22,6 @@ namespace DotEngine.Lua
             }
             return manager;
         }
-
-        private LuaUpdateBehaviour updateBehaviour;
 
         public LuaEnv Env { get; private set; } = null;
         public LuaTable Global
@@ -70,9 +69,9 @@ namespace DotEngine.Lua
 
             Env.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
 
-            GameObject gObj = new GameObject(ROOT_NAME);
-            updateBehaviour = gObj.AddComponent<LuaUpdateBehaviour>();
-            UnityObject.DontDestroyOnLoad(gObj);
+            UpdateBehaviour.GetInstance().updateEvent += DoUpdate;
+            UpdateBehaviour.GetInstance().lateUpdateEvent += DoLateUpdate;
+            UpdateBehaviour.GetInstance().fixedUpdateEvent += DoFixedUpdate;
 
             gameMainTable = LuaUtility.RequireAndGet(Env, LUA_INIT_PATH);
 
@@ -92,15 +91,19 @@ namespace DotEngine.Lua
             }
             IsRunning = false;
 
-            updateBehaviour = null;
+            UpdateBehaviour.GetInstance().updateEvent -= DoUpdate;
+            UpdateBehaviour.GetInstance().lateUpdateEvent -= DoLateUpdate;
+            UpdateBehaviour.GetInstance().fixedUpdateEvent -= DoFixedUpdate;
+
             updateHandler = null;
             lateUpdateHandler = null;
             fixedUpdateHandler = null;
 
             if (IsValid)
             {
-                Action destroyAction = gameMainTable.Get<Action>(LuaUtility.DESTROY_FUNCTION_NAME);
-                destroyAction?.Invoke();
+                LuaFunction destroyFunc = gameMainTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
+                destroyFunc?.Action();
+                destroyFunc.Dispose();
 
                 gameMainTable.Dispose();
                 gameMainTable = null;
@@ -110,9 +113,6 @@ namespace DotEngine.Lua
                 Env.Dispose();
                 Env = null;
             }
-
-            UnityObject.Destroy(updateBehaviour.gameObject);
-            updateBehaviour = null;
         }
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
