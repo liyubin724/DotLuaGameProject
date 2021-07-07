@@ -1,0 +1,16 @@
+local oop = require('DotLua/OOP/oop')
+
+local SystemPlugin =
+    oop.class(
+    'DotLua.ECS.Systems.Plugins.SystemPlugin',
+    function(self)
+    end
+)
+
+function SystemPlugin:DoActivate()
+end
+
+function SystemPlugin:DoDeactivate()
+end
+
+return SystemPlugin

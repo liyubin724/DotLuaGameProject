@@ -1,0 +1,45 @@
+local oop = require("DotLua/OOP/oop")
+
+local EntityIdentify =
+    oop.class(
+    "DotLua.ECS.Entities.EntityIdentify",
+    function(self)
+        self.contextName = nil
+        self.guid = nil
+    end
+)
+
+EntityIdentify.__eq = function(v1, v2)
+    if not v1 or not v2 then
+        return false
+    end
+    if not oop.isinstanceof(v1, EntityIdentify) then
+        return false
+    end
+    if not oop.isinstanceof(v2, EntityIdentify) then
+        return false
+    end
+
+    return v1.contextName == v2.contextName and v1.guid == v2.guid
+end
+
+function EntityIdentify:GetIdentify()
+    return self.contextName, self.guid
+end
+
+function EntityIdentify:SetIdentify(contextName, guid)
+    self.contextName = contextName
+    self.guid = guid
+end
+
+function EntityIdentify:DoGet(contextName, guid)
+    self.contextName = contextName
+    self.guid = guid
+end
+
+function EntityIdentify:DoRelease()
+    self.contextName = nil
+    self.guid = nil
+end
+
+return EntityIdentify

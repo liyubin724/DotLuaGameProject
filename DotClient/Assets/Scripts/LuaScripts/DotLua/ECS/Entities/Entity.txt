@@ -1,7 +1,6 @@
 local oop = require('DotLua/OOP/oop')
 local Component = require('DotLua/ECS/Components/Component')
 local GUIDComponent = require('DotLua/ECS/Components/Basic/GUIDComponent')
-local CatgoryComponent = require('DotLua/ECS/Components/Basic/CatgoryComponent')
 
 local tlength = table.length
 local tvalues = table.values
@@ -25,7 +24,6 @@ local Entity =
         self.modifyComponentEvent = oop.event()
 
         self.guid = nil
-        self.catgory = nil
     end
 )
 
@@ -40,15 +38,6 @@ function Entity:GetGUID()
     end
 
     return self.guid
-end
-
-function Entity:GetCatgory()
-    if not self.catgory then
-        local catgoryComponent = self:GetComponentByClass(CatgoryComponent)
-        self.catgory = catgoryComponent:GetCatgory()
-    end
-
-    return self.catgory
 end
 
 function Entity:BindEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
