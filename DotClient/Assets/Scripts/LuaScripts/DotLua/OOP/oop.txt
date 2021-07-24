@@ -1,24 +1,28 @@
-require('DotLua/Utils/tableEx')
-require('DotLua/Utils/mathEx')
-
 local require = _G.require
 
-local Enum = require('DotLua/OOP/Enum')
-local Delegate = require('DotLua/OOP/Delegate')
-local Event = require('DotLua/OOP/Event')
+require("DotLua/Utils/tableEx")
+require("DotLua/Utils/mathEx")
+local Enum = require("DotLua/OOP/Enum")
+local Delegate = require("DotLua/OOP/Delegate")
+local Event = require("DotLua/OOP/Event")
 
 local oop = {}
-oop.ObjectType = require('DotLua/OOP/ObjectType')
-oop.Object = require('DotLua/OOP/Object')
+if _G.isDebug ~= nil then
+    oop.isDebug = _G.isDebug
+else
+    oop.isDebug = true
+end
 
-oop.isDebug = _G.isDebug or true
-
-oop.Logger = require('DotLua/Debug/Logger')
+oop.Logger = require("DotLua/Debug/Logger")
 oop.info = oop.Logger.Info
 oop.warning = oop.Logger.Warning
 oop.error = oop.Logger.Error
 
-oop.class = require('DotLua/OOP/class')
+oop.class = require("DotLua/OOP/class")
+oop.asreadonly = require("DotLua/OOP/asreadonly")
+
+oop._pathtoloadeddic = {}
+oop._nametoclassdic = {}
 
 oop.getclassname = function(target)
     if oop.isclassorinstance(target) then
@@ -29,54 +33,48 @@ oop.getclassname = function(target)
 end
 
 oop.getclassbyname = function(className)
-    if type(className) ~= 'string' then
-        oop.error('oop', 'the param of className should be a string')
+    if type(className) ~= "string" then
+        oop.error("oop", "the param of className should be a string")
         return nil
     end
 
-    local c = oop.classes[className]
-    if c then
-        return c
-    else
-        oop.error('oop', string.format('the class which named (%s) is not founded', className))
-        return nil
-    end
+    return oop._nametoclassdic[className]
 end
 
-oop.assembly = {}
-oop.classes = {}
-
 oop.load = function(path)
-    local c = oop.assembly[path]
-    if not c then
-        c = require(path)
+    local target = oop._pathtoloadeddic[path]
+    if target then
+        return target
+    end
 
-        if not c then
-            oop.assembly[path] = c
+    target = require(path)
 
-            local className = oop.getclassname(c)
-            if className then
-                if not oop.classes[className] then
-                    oop.classes[className] = c
-                else
-                    oop.error('oop', 'the name of the class is repeated.clssname = ' .. className)
-                end
+    if target then
+        oop._pathtoloadeddic[path] = target
+
+        local getclassname = target.GetClassName
+        if getclassname then
+            local classname = getclassname(target)
+            if classname then
+                oop._nametoclassdic[classname] = target
             end
         end
     end
 
-    return c
+    return target
 end
 
 oop.unload = function(path)
-    local c = oop.assembly[path]
-    if c then
-        oop.assembly[path] = nil
-        package.loaded[path] = nil
+    local target = oop._pathtoloadeddic[path]
+    if target then
+        oop._pathtoloadeddic[path] = nil
 
-        local className = oop.getclassname(c)
-        if className then
-            oop.classes[className] = nil
+        local getclassname = target.GetClassName
+        if getclassname then
+            local classname = getclassname(target)
+            if classname then
+                oop._nametoclassdic[classname] = nil
+            end
         end
     end
 end
@@ -84,27 +82,23 @@ end
 oop.using = oop.load
 
 oop.instance = function(path)
-    local c = oop.load(path)
-    if c then
-        return c()
+    local cls = oop.load(path)
+    if cls then
+        return cls()
     end
     return nil
 end
 
 oop.instancewith = function(path, ...)
-    local c = oop.load(path)
-    if c then
-        return c(...)
+    local cls = oop.load(path)
+    if cls then
+        return cls(...)
     end
     return nil
 end
 
-oop.enum = function(name, enumTable)
-    enumTable._className = name
-    enumTable._isInstance = false
-
-    setmetatable(enumTable, Enum)
-    return enumTable
+oop.enum = function(name, values)
+    return Enum(name, values)
 end
 
 oop.delegate = function(receiver, func)
@@ -206,7 +200,5 @@ oop.isdelegate = function(target)
     end
     return isDelegateFunc(target)
 end
-
-oop.asreadonly = require('DotLua/OOP/asreadonly')
 
 return oop

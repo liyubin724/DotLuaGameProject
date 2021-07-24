@@ -65,16 +65,16 @@ function Enum:IsValidValue(value)
     return self._v2n[value] ~= nil
 end
 
--- function Enum:ToString()
---     local str = string.format("%s:{", self:GetClassName())
---     local names = self:GetNames()
---     for i = 1, #names, 1 do
---         str = str .. string.format("%s = %s,", names[i], tostring(rawget(self, names[i])))
---     end
---     str = str .. "}"
+function Enum:ToString()
+    local str = string.format("%s:{", self:GetClassName())
+    local names = self:GetNames()
+    for i = 1, #names, 1 do
+        str = str .. string.format("%s = %s,", names[i], tostring(rawget(self, names[i])))
+    end
+    str = str .. "}"
 
---     return str
--- end
+    return str
+end
 
 Enum.__newindex = function(_, k, _)
     error("Enum::can't add new key in to the Enum.key = " .. k)

@@ -1,12 +1,15 @@
-local oop = require('DotLua/OOP/oop')
+local oop = require("DotLua/OOP/oop")
 
 local tremove = table.remove
 local tinsert = table.insert
 local tclear = table.clear
 
+local getFuncName = "DoGet"
+local releaseFuncName = "DoRelease"
+
 local ObjectPool =
     oop.class(
-    'DotLua.Pool.ObjectPool',
+    "DotLua.Pool.ObjectPool",
     function(self, itemClass)
         self.itemClass = itemClass
         self.items = {}
@@ -23,8 +26,9 @@ function ObjectPool:GetItem()
         item = self.itemClass()
     end
 
-    if item['DoGet'] ~= nil then
-        item:DoGet()
+    local getFunc = item[getFuncName]
+    if getFunc then
+        getFunc(item)
     end
 
     return item
@@ -40,8 +44,9 @@ function ObjectPool:GetItemWithParams(...)
         item = self.itemClass()
     end
 
-    if item['DoGet'] ~= nil then
-        item:DoGet(...)
+    local getFunc = item[getFuncName]
+    if getFunc then
+        getFunc(item, ...)
     end
 
     return item
@@ -49,18 +54,20 @@ end
 
 function ObjectPool:ReleaseItem(item)
     if item then
-        if item['DoRelease'] then
-            item:DoRelease()
+        local releaseFunc = item[releaseFuncName]
+        if releaseFunc then
+            releaseFunc(item)
         end
 
         tinsert(self.items, item)
     end
 end
 
-function ObjectPool:ReleaseItemWithParams(item,...)
+function ObjectPool:ReleaseItemWithParams(item, ...)
     if item then
-        if item['DoRelease'] then
-            item:DoRelease(...)
+        local releaseFunc = item[releaseFuncName]
+        if releaseFunc then
+            releaseFunc(item, ...)
         end
 
         tinsert(self.items, item)
