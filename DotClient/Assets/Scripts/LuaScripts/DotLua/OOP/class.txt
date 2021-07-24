@@ -8,6 +8,15 @@ instancemeta.__index = function(instance, key)
     return nil
 end
 
+instancemeta.__tostring = function(instance)
+    local tostringFunc = instance.ToString
+    if tostringFunc then
+        return tostringFunc(instance)
+    end
+
+    return ""
+end
+
 local clsmeta = {}
 clsmeta.__index = function(cls, key)
     local r = rawget(cls, key)
@@ -25,16 +34,12 @@ clsmeta.__call = function(cls, ...)
     local instance = {}
     instance._isInstance = true
     instance._cls = cls
-    
-    cls.__ctor(instance, ...)
-    
-    setmetatable(instance, instancemeta)
-    
-    return instance
-end
 
-clsmeta.__tostring = function(cls)
-    return cls._name
+    cls.__ctor(instance, ...)
+
+    setmetatable(instance, instancemeta)
+
+    return instance
 end
 
 local class = function(name, ctor, base)

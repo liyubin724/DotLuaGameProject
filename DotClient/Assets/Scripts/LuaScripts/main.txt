@@ -50,15 +50,24 @@ end
 local AnimalType = Enum("AnimalType",{"Dog","Cat","Fish"})
 
 local main = function()
-    local d = SDog("Dudu")
-    d:Sound()
-    print(d:GetName())
+    -- local d = SDog("Dudu")
+    -- d:Sound()
+    -- print(d:GetName())
 
-    print("iskindof = "..tostring(d:IsKindOf(Animal)))
+    -- print("iskindof = "..tostring(d:IsKindOf(Animal)))
 
-    d:Base():Sound()
+    -- d:Base():Sound()
 
-    print(table.tostring(AnimalType.Cat))
+    -- print(tostring(AnimalType))
+    -- local t = {a = 1,b = 2,c=3}
+    -- local m = {}
+    -- m.__tostring = function(tbl)
+    --     print("ssssss")
+    -- end
+
+    -- setmetatable(t, m)
+    -- print(t)
+    print(tostring(AnimalType))
 end
 
 main()

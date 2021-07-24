@@ -71,7 +71,7 @@ function Object:TryFuncInvoke(funcName, ...)
 end
 
 function Object:ToString()
-    return self._className
+    return self._name
 end
 
 return Object

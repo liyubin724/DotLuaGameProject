@@ -9,48 +9,41 @@ local tinsert = table.insert
 local sstartswith = string.startswith
 local trawgetkeys = table.rawgetkeys
 
-local Enum = class("Enum",function(self,name,values)
-    self._name = name
-    self._names = {}
-    self._values = {}
+local Enum =
+    class(
+    "DotLua.OOP.Enum",
+    function(self, name, values)
+        self._name = name
+        self._names = {}
+        self._values = {}
 
-    if values then
-        if tisarray(values) then
-            for i, v in ipairs(values) do
-                tinsert(self._names,v)
-                tinsert(self._values,i)
+        if values then
+            if tisarray(values) then
+                for i, v in ipairs(values) do
+                    tinsert(self._names, v)
+                    tinsert(self._values, i)
 
-                self[v] = i
-                self[i] = v
-            end
-        else
-            for k, v in pairs(values) do
-                tinsert(self._names,k)
-                tinsert(self._values,v)
+                    self[v] = i
+                    self[i] = v
+                end
+            else
+                for k, v in pairs(values) do
+                    tinsert(self._names, k)
+                    tinsert(self._values, v)
 
-                self[k] = v
-                self[v] = k
+                    self[k] = v
+                    self[v] = k
+                end
             end
         end
+
+        asreadonly(self._names)
+        asreadonly(self._values)
+        asreadonly(self)
     end
+)
 
-    asreadonly(self._names)
-    asreadonly(self._values)
-    asreadonly(self)
-end)
-
-Enum._name = "OOP.Enum"
 Enum._type = ObjectType.Enum
-Enum.__tostring = function(enum)
-    local str = string.format("%s:{", enum:GetClassName())
-    local names = enum:GetNames()
-    for i = 1, #names, 1 do
-        str = str + string.format("%s = %s", names[i], tostring(rawget(enum, names[i])))
-    end
-    str = str + "}"
-
-    return str
-end
 
 function Enum:GetNames()
     return self._names
@@ -72,13 +65,19 @@ function Enum:IsValidValue(value)
     return self._v2n[value] ~= nil
 end
 
-function Enum:ToString()
-    return tostring(self)
-end
+-- function Enum:ToString()
+--     local str = string.format("%s:{", self:GetClassName())
+--     local names = self:GetNames()
+--     for i = 1, #names, 1 do
+--         str = str .. string.format("%s = %s,", names[i], tostring(rawget(self, names[i])))
+--     end
+--     str = str .. "}"
+
+--     return str
+-- end
 
 Enum.__newindex = function(_, k, _)
     error("Enum::can't add new key in to the Enum.key = " .. k)
 end
-
 
 return Enum
