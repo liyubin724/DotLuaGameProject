@@ -1,10 +1,22 @@
-local readonlyMeta = {}
-readonlyMeta.__newindex = function(t, k, v)
-    error('OOP:readonlyMeta->the table is readonly')
-end
+local meta = {
+    __newindex = function(t, k, v)
+        error("OOP:readonlyMeta->the table is readonly")
+    end
+}
 
 local asreadonly = function(target)
-    return setmetatable(target, readonlyMeta)
+    local m = getmetatable(target)
+    if m then
+        if m.__newindex then
+            error("the target has a metatable,can't be readonly")
+        else
+            m.__newindex = function(t, k, v)
+                error("OOP:readonlyMeta->the table is readonly")
+            end
+        end
+    else
+        return setmetatable(target, meta)
+    end
 end
 
 return asreadonly

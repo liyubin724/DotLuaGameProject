@@ -1,0 +1,64 @@
+local class = require("DotLua/OOP/class")
+local Enum = require("DotLua/OOP/Enum")
+
+_G.Json = require("DotDepend/Json/json")
+
+local Animal =
+    class(
+    "Animal",
+    function(self, name)
+        self.name = name
+
+        print("Animal->ctor")
+    end
+)
+
+function Animal:GetName()
+    return self.name
+end
+
+function Animal:Sound()
+    print("Animal->Sound")
+end
+
+local Dog =
+    class(
+    "Dog",
+    function(self, name)
+        print("Dog->ctor")
+    end,
+    Animal
+)
+
+function Dog:Sound()
+    print("Dog->Sound")
+end
+
+local SDog =
+    class(
+    "SDog",
+    function(self, name)
+        print("SDog->ctor")
+    end,
+    Dog
+)
+
+function SDog:Sound()
+    print("SDog->Sound")
+end
+
+local AnimalType = Enum("AnimalType",{"Dog","Cat","Fish"})
+
+local main = function()
+    local d = SDog("Dudu")
+    d:Sound()
+    print(d:GetName())
+
+    print("iskindof = "..tostring(d:IsKindOf(Animal)))
+
+    d:Base():Sound()
+
+    print(table.tostring(AnimalType.Cat))
+end
+
+main()

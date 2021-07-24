@@ -17,7 +17,7 @@ function table.isempty(tbl)
 end
 
 function table.isarray(tbl)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return false
     end
     local i = 0
@@ -31,7 +31,7 @@ function table.isarray(tbl)
 end
 
 function table.length(tbl)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return 0
     end
 
@@ -43,7 +43,7 @@ function table.length(tbl)
 end
 
 function table.arrlength(tbl)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return 0
     end
     return #(tbl)
@@ -51,7 +51,7 @@ end
 
 function table.keys(tbl)
     local t = {}
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return t
     end
 
@@ -64,7 +64,7 @@ end
 
 function table.values(tbl)
     local t = {}
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return t
     end
 
@@ -76,7 +76,7 @@ function table.values(tbl)
 end
 
 function table.containskey(tbl, key)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return false
     end
 
@@ -84,7 +84,7 @@ function table.containskey(tbl, key)
 end
 
 function table.containsvalue(tbl, value)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return false
     end
 
@@ -97,7 +97,7 @@ function table.containsvalue(tbl, value)
 end
 
 function table.removevalue(tbl, value)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return false
     end
 
@@ -121,7 +121,7 @@ function table.removevalue(tbl, value)
 end
 
 function table.foreach(tbl, func)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return
     end
 
@@ -131,7 +131,7 @@ function table.foreach(tbl, func)
 end
 
 function table.any(tbl, checkFunc)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return false
     end
 
@@ -144,7 +144,7 @@ function table.any(tbl, checkFunc)
 end
 
 function table.all(tbl, checkFunc)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return false
     end
 
@@ -157,7 +157,7 @@ function table.all(tbl, checkFunc)
 end
 
 function table.findanyvalue(tbl, checkFunc)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return nil
     end
 
@@ -171,7 +171,7 @@ function table.findanyvalue(tbl, checkFunc)
 end
 
 function table.findallvalue(tbl, checkFunc)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return nil
     end
 
@@ -187,7 +187,7 @@ function table.findallvalue(tbl, checkFunc)
 end
 
 function table.indexof(tbl, value)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return -1
     end
 
@@ -200,7 +200,7 @@ function table.indexof(tbl, value)
 end
 
 function table.keyof(tbl, value)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return nil
     end
 
@@ -214,7 +214,7 @@ end
 
 function table.copy(tbl)
     local t = {}
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return t
     end
 
@@ -229,7 +229,7 @@ function table.copyto(sourceTbl, destinationTbl)
         return
     end
 
-    if type(sourceTbl) ~= 'table' or type(destinationTbl) ~= 'table' then
+    if type(sourceTbl) ~= "table" or type(destinationTbl) ~= "table" then
         return
     end
 
@@ -258,13 +258,10 @@ function table.rawgetkeys(tbl)
 end
 
 function table.tostring(tbl)
-    if type(tbl) ~= 'table' then
+    if type(tbl) ~= "table" then
         return tostring(tbl)
     end
 
-    if _G.Json then
-        return _G.Json.encode(tbl)
-    end
-
-    return tostring(tbl)
+    local inspect = require("DotDepend/inspect")
+    return inspect(tbl)
 end

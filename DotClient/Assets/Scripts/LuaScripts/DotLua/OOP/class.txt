@@ -1,46 +1,64 @@
-local Object = require('DotLua/OOP/Object')
+local Object = require("DotLua/OOP/Object")
 
-local call = function(c, ...)
-    local obj = setmetatable({}, c)
-    obj._isInstance = true
+local instancemeta = {}
+instancemeta.__index = function(instance, key)
+    if instance._cls then
+        return instance._cls[key]
+    end
+    return nil
+end
 
-    c._ctor(obj, ...)
+local clsmeta = {}
+clsmeta.__index = function(cls, key)
+    local r = rawget(cls, key)
+    if not r and key ~= "_base" then
+        local b = rawget(cls, "_base")
+        if b then
+            r = b[key]
+        end
+    end
 
-    return obj
+    return r
+end
+
+clsmeta.__call = function(cls, ...)
+    local instance = {}
+    instance._isInstance = true
+    instance._cls = cls
+    
+    cls.__ctor(instance, ...)
+    
+    setmetatable(instance, instancemeta)
+    
+    return instance
+end
+
+clsmeta.__tostring = function(cls)
+    return cls._name
 end
 
 local class = function(name, ctor, base)
-    if not base then
-        base = Object
-    end
+    local cls = {}
+    cls._name = name
+    cls._ctor = ctor
 
-    local c = {}
-    c._base = base
-    c._className = name
+    cls._base = base or Object
 
-    c.__index = c
+    cls.__index = cls
 
-    c._ctor = function(instance, ...)
+    cls.__ctor = function(instance, ...)
         if base then
-            base._ctor(instance, ...)
+            base.__ctor(instance, ...)
         end
 
-        ctor(instance, ...)
-    end
-    c.new = call
-
-    local meta = {}
-    meta.__index = function(instance, k)
-        if base then
-            return base[k]
+        if ctor then
+            ctor(instance, ...)
         end
-        return nil
     end
-    meta.__call = call
 
-    setmetatable(c, meta)
+    setmetatable(cls, clsmeta)
 
-    return c
+    return cls
 end
 
 return class

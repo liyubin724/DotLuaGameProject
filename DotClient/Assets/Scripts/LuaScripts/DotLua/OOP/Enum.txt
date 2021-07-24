@@ -1,94 +1,84 @@
-local ObjectType = require('DotLua/OOP/ObjectType')
-local class = require('DotLua/OOP/class')
+require("DotLua/Utils/tableEx")
+local ObjectType = require("DotLua/OOP/ObjectType")
+local Object = require("DotLua/OOP/Object")
+local class = require("DotLua/OOP/class")
+local asreadonly = require("DotLua/OOP/asreadonly")
 
+local tisarray = table.isarray
 local tinsert = table.insert
 local sstartswith = string.startswith
 local trawgetkeys = table.rawgetkeys
 
-local Enum =
-    class(
-    'Enum',
-    function(self)
-        self._isInstance = false
-    end
-)
-
-Enum.__newindex = function(e, k, v)
-    error("Enum::can't add new key in to the Enum.key = "..k)
-end
-
-Enum._type = ObjectType.Enum
-
-function Enum:GetNames()
-    if self._names then
-        return self._names
-    end
-
+local Enum = class("Enum",function(self,name,values)
+    self._name = name
     self._names = {}
+    self._values = {}
 
-    local keys = trawgetkeys(self)
-    for i = 1, #keys, 1 do
-        if not sstartswith(keys[i], '_') then
-            tinsert(self._names, keys[i])
+    if values then
+        if tisarray(values) then
+            for i, v in ipairs(values) do
+                tinsert(self._names,v)
+                tinsert(self._values,i)
+
+                self[v] = i
+                self[i] = v
+            end
+        else
+            for k, v in pairs(values) do
+                tinsert(self._names,k)
+                tinsert(self._values,v)
+
+                self[k] = v
+                self[v] = k
+            end
         end
     end
 
+    asreadonly(self._names)
+    asreadonly(self._values)
+    asreadonly(self)
+end)
+
+Enum._name = "OOP.Enum"
+Enum._type = ObjectType.Enum
+Enum.__tostring = function(enum)
+    local str = string.format("%s:{", enum:GetClassName())
+    local names = enum:GetNames()
+    for i = 1, #names, 1 do
+        str = str + string.format("%s = %s", names[i], tostring(rawget(enum, names[i])))
+    end
+    str = str + "}"
+
+    return str
+end
+
+function Enum:GetNames()
     return self._names
 end
 
 function Enum:GetValues()
-    if self._values then
-        return self._values
-    end
-
-    self._values = {}
-
-    local names = self:GetNames()
-    for i = 1, #names, 1 do
-        tinsert(self._values, rawget(self, names[i]))
-    end
-
     return self._values
 end
 
 function Enum:GetNameByValue(value)
-    for k, v in pairs(self) do
-        if v == value then
-            return k
-        end
-    end
-
-    return nil
+    return self._v2n[value]
 end
 
 function Enum:IsValidName(name)
-    for _, n in ipairs(self:GetNames()) do
-        if n == name then
-            return true
-        end
-    end
-
-    return false
+    return self._n2v[name] ~= nil
 end
 
 function Enum:IsValidValue(value)
-    for _, v in ipairs(self:GetValues()) do
-        if v == value then
-            return true
-        end
-    end
-    return false
+    return self._v2n[value] ~= nil
 end
 
 function Enum:ToString()
-    local str = string.format('%s:{', self:GetClassName())
-    local names = self:GetNames()
-    for i = 1, #names, 1 do
-        str = str + string.format('%s = %s', names[i], tostring(rawget(self, names[i])))
-    end
-    str = str + '}'
-
-    return str
+    return tostring(self)
 end
+
+Enum.__newindex = function(_, k, _)
+    error("Enum::can't add new key in to the Enum.key = " .. k)
+end
+
 
 return Enum
