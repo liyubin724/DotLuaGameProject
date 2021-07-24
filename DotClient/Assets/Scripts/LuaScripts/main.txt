@@ -1,5 +1,7 @@
-local class = require("DotLua/OOP/class")
-local Enum = require("DotLua/OOP/Enum")
+local oop = require("DotLua/OOP/oop")
+
+local class = oop.class
+local enum = oop.enum
 
 _G.Json = require("DotDepend/Json/json")
 
@@ -47,7 +49,8 @@ function SDog:Sound()
     print("SDog->Sound")
 end
 
-local AnimalType = Enum("AnimalType",{"Dog","Cat","Fish"})
+local AnimalType = enum("AnimalType",{"Dog","Cat","Fish"})
+local FishType = enum("FishType",{"Nino"})
 
 local main = function()
     -- local d = SDog("Dudu")
@@ -68,6 +71,7 @@ local main = function()
     -- setmetatable(t, m)
     -- print(t)
     print(tostring(AnimalType))
+    print(tostring(AnimalType == FishType))
 end
 
 main()

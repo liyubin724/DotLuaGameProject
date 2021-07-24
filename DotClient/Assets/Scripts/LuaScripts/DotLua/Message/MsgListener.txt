@@ -1,8 +1,8 @@
-local oop = require('DotLua/OOP/oop')
+local oop = require("DotLua/OOP/oop")
 
 local MsgListener =
     oop.class(
-    'DotLua.Message.MsgListener',
+    "DotLua.Message.MsgListener",
     function(self)
         self.name = nil
         self.receiver = nil
@@ -10,18 +10,6 @@ local MsgListener =
         self.userdata = nil
     end
 )
-
-MsgListener.__eq = function(listener1, listener2)
-    if listener1 == nil and listener2 == nil then
-        return true
-    end
-    if listener1 == nil or listener2 == nil then
-        return false
-    end
-
-    return listener1.name == listener2.name and listener1.receiver == listener2.receiver and
-        listener1.func == listener2.func
-end
 
 function MsgListener:GetName()
     return self.name
@@ -69,6 +57,10 @@ function MsgListener:OnRelease()
     self.receiver = nil
     self.func = nil
     self.userdata = nil
+end
+
+function MsgListener:EqualTo(other)
+    return self.name == other.name and self.receiver == other.receiver and self.func == other.func
 end
 
 return MsgListener

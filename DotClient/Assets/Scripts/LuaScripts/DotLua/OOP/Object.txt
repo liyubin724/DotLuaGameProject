@@ -74,4 +74,8 @@ function Object:ToString()
     return self._name
 end
 
+-- function Object:EqualTo(other)
+
+-- end
+
 return Object

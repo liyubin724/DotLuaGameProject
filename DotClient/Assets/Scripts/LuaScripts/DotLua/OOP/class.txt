@@ -17,6 +17,19 @@ instancemeta.__tostring = function(instance)
     return ""
 end
 
+instancemeta.__eq = function(target1, target2)
+    if not target2 then
+        return false
+    end
+
+    local equalFunc = target1.EqualTo
+    if equalFunc then
+        return equalFunc(target1, target2)
+    end
+
+    return rawequal(target1, target2)
+end
+
 local clsmeta = {}
 clsmeta.__index = function(cls, key)
     local r = rawget(cls, key)
