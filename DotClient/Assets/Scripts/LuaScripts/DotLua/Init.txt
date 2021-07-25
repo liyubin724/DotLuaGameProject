@@ -1,21 +1,19 @@
-local Json = {}
-_G.Json = Json
+require("DotLua/Utils/mathEx")
+require("DotLua/Utils/stringEx")
+require("DotLua/Utils/tableEx")
+_G.oop = require("DotLua/OOP/oop")
+_G.App = require("DotLua/System/App")
+_G.AppTime = require("DotLua/System/AppTime")
+_G.IDCreator = require("DotLua/Generic/IDCreator")
+_G.GUIDCreator = require("DotLua/Generic/GUIDCreator")
+
+_G.Json = {}
 if _G.isRapidJson then
-    local jsonlib = require('rapidjson')
-    Json.lib = jsonlib
-    Json.encode = jsonlib.encode
-    Json.decode = jsonlib.decode
+    local jsonlib = require("rapidjson")
+    _G.Json.encode = jsonlib.encode
+    _G.Json.decode = jsonlib.decode
 else
-    local jsonlib = require('DotDepend/Json/json')
-    Json.lib = jsonlib
-    Json.encode = jsonlib.encode
-    Json.decode = jsonlib.decode
+    local jsonlib = require("DotDepend/Json/json")
+    _G.Json.encode = jsonlib.encode
+    _G.Json.decode = jsonlib.decode
 end
-
-require('DotLua/Utils/mathEx')
-require('DotLua/Utils/stringEx')
-require('DotLua/Utils/tableEx')
-
-_G.oop = require('DotLua/OOP/oop')
-_G.App = require('DotLua/System/App')
-_G.AppTime = require('DotLua/System/AppTime')

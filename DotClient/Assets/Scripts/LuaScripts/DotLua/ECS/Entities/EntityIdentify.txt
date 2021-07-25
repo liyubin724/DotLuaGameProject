@@ -9,20 +9,6 @@ local EntityIdentify =
     end
 )
 
-EntityIdentify.__eq = function(v1, v2)
-    if not v1 or not v2 then
-        return false
-    end
-    if not oop.isinstanceof(v1, EntityIdentify) then
-        return false
-    end
-    if not oop.isinstanceof(v2, EntityIdentify) then
-        return false
-    end
-
-    return v1.contextName == v2.contextName and v1.guid == v2.guid
-end
-
 function EntityIdentify:GetIdentify()
     return self.contextName, self.guid
 end
@@ -40,6 +26,18 @@ end
 function EntityIdentify:DoRelease()
     self.contextName = nil
     self.guid = nil
+end
+
+function EntityIdentify:EqualTo(other)
+    if not oop.isinstanceof(other, EntityIdentify) then
+        return false
+    end
+
+    return self.contextName == other.contextName and self.guid == other.guid
+end
+
+function EntityIdentify:ToString()
+    return string.format("{context = %s,guid = %s}", self.contextName, self.guid)
 end
 
 return EntityIdentify

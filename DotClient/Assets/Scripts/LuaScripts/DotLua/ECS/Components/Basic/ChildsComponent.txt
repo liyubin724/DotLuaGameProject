@@ -1,5 +1,6 @@
-local oop = require('DotLua/OOP/oop')
-local Component = require('DotLua/ECS/Components/Component')
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+local EntityIdentifyPool = require("DotLua/ECS/Entities/EntityIdentifyPool")
 
 local tclear = table.clear
 local tinsert = table.insert
@@ -7,35 +8,49 @@ local tremove = table.remove
 
 local ChildsComponent =
     oop.class(
-    'DotLua.ECS.Components.Basic.ChildsComponent',
+    "DotLua.ECS.Components.Basic.ChildsComponent",
     function(self)
-        self.childGUIDs = {}
+        self.childEntityIdentifies = {}
     end,
     Component
 )
 
-function ChildsComponent:GetChildGUIDs()
-    return self.childGUIDs
+function ChildsComponent:GetCount()
+    return #(self.childEntityIdentifies)
 end
 
-function ChildsComponent:Add(guid)
-    if not self:HasChild(guid) then
-        tinsert(self.childGUIDs, guid)
+function ChildsComponent:GetChildIdentifyAt(index)
+    if index > 0 and index <= #(self.childEntityIdentifies) then
+        return self.childEntityIdentifies[index]:GetIdentify()
+    end
+
+    return nil, nil
+end
+
+function ChildsComponent:Add(contextName, guid)
+    if not self:HasChild(contextName, guid) then
+        local entityIdentify = EntityIdentifyPool.GetIdentify(contextName, guid)
+        tinsert(self.childEntityIdentifies, entityIdentify)
     end
 end
 
-function ChildsComponent:Remove(guid)
-    for i, v in ipairs(self.childGUIDs) do
-        if v == guid then
-            tremove(self.childGUIDs, i)
-            return
+function ChildsComponent:Remove(contextName, guid)
+    for i, v in ipairs(self.childEntityIdentifies) do
+        local vContextName, vGUID = v:GetIdentify()
+        if vContextName == contextName and vGUID == guid then
+            tremove(self.childEntityIdentifies, i)
+
+            EntityIdentifyPool.ReleaseIdentify(v)
+            return true
         end
     end
+    return false
 end
 
-function ChildsComponent:Has(guid)
-    for _, v in ipairs(self.childGUIDs) do
-        if v == guid then
+function ChildsComponent:Has(contextName, guid)
+    for _, v in ipairs(self.childEntityIdentifies) do
+        local vContextName, vGUID = v:GetIdentify()
+        if vContextName == contextName and vGUID == guid then
             return true
         end
     end
@@ -44,7 +59,12 @@ function ChildsComponent:Has(guid)
 end
 
 function ChildsComponent:DoRelease()
-    tclear(self.childGUIDs)
+    tclear(
+        self.childEntityIdentifies,
+        function(identify)
+            EntityIdentifyPool.ReleaseIdentify(identify)
+        end
+    )
 end
 
 return ChildsComponent

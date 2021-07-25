@@ -1,0 +1,71 @@
+local oop = require('DotLua/OOP/oop')
+local Component = require('DotLua/ECS/Components/Component')
+local EntityIdentifyPool = require("DotLua/ECS/Entities/EntityIdentifyPool")
+
+local tclear = table.clear
+local tinsert = table.insert
+local tremove = table.remove
+
+local DependsComponent =
+    oop.class(
+    'DotLua.ECS.Components.Basic.DependsComponent',
+    function(self)
+        self.dependEntityIdentifies = {}
+    end,
+    Component
+)
+
+function DependsComponent:GetCount()
+    return #(self.dependEntityIdentifies)
+end
+
+function DependsComponent:GetDependIdentifyAt(index)
+    if index > 0 and index <= #(self.dependEntityIdentifies) then
+        return self.dependEntityIdentifies[index]:GetIdentify()
+    end
+
+    return nil, nil
+end
+
+function DependsComponent:Add(contextName, guid)
+    if not self:HasChild(contextName, guid) then
+        local entityIdentify = EntityIdentifyPool.GetIdentify(contextName, guid)
+        tinsert(self.dependEntityIdentifies, entityIdentify)
+    end
+end
+
+function DependsComponent:Remove(contextName, guid)
+    for i, v in ipairs(self.dependEntityIdentifies) do
+        local vContextName, vGUID = v:GetIdentify()
+        if vContextName == contextName and vGUID == guid then
+            tremove(self.dependEntityIdentifies, i)
+
+            EntityIdentifyPool.ReleaseIdentify(v)
+            return true
+        end
+    end
+    return false
+end
+
+function DependsComponent:Has(contextName, guid)
+    for _, v in ipairs(self.dependEntityIdentifies) do
+        local vContextName, vGUID = v:GetIdentify()
+        if vContextName == contextName and vGUID == guid then
+            return true
+        end
+    end
+
+    return false
+end
+
+function DependsComponent:DoRelease()
+    tclear(
+        self.dependEntityIdentifies,
+        function(identify)
+            EntityIdentifyPool.ReleaseIdentify(identify)
+        end
+    )
+end
+
+
+return DependsComponent

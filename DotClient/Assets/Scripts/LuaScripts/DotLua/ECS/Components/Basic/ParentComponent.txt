@@ -1,33 +1,30 @@
 local oop = require("DotLua/OOP/oop")
+local EntityIdentify = require("DotLua/ECS/Entities/EntityIdentify")
 local Component = require("DotLua/ECS/Components/Component")
 
 local ParentComponent =
     oop.class(
     "DotLua.ECS.Components.ParentComponent",
     function(self)
-        self.parentContextName = nil
-        self.parentGUID = nil
+        self.entityIdentify = EntityIdentify()
     end,
     Component
 )
 
 function ParentComponent:GetParent()
-    return self.parentContextName, self.parentGUID
+    return self.entityIdentify:GetIdentify()
 end
 
 function ParentComponent:SetParent(contextName, guid)
-    self.parentContextName = contextName
-    self.parentGUID = guid
+    self.entityIdentify:SetIdentify(contextName, guid)
 end
 
 function ParentComponent:DoGet(contextName, guid)
-    self.parentContextName = contextName
-    self.parentGUID = guid
+    self.entityIdentify:SetIdentify(contextName, guid)
 end
 
 function ParentComponent:DoRelease()
-    self.parentContextName = nil
-    self.parentGUID = nil
+    self.entityIdentify:SetIdentify(nil, nil)
 end
 
 return ParentComponent

@@ -1,6 +1,6 @@
+local oop = require("DotLua/OOP/oop")
 local AppLanguage = require("DotLua/System/AppLanguage")
 local AppPlatform = require("DotLua/System/AppPlatform")
-local oop = require("DotLua/OOP/oop")
 
 local LogTag = "App"
 

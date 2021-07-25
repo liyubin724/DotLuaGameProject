@@ -238,9 +238,13 @@ function table.copyto(sourceTbl, destinationTbl)
     end
 end
 
-function table.clear(tbl)
+function table.clear(tbl, clrFunc)
     local keys = table.keys(tbl)
     for i = 1, #keys, 1 do
+        if clrFunc then
+            local item = tbl[keys[i]]
+            clrFunc(item)
+        end
         tbl[keys[i]] = nil
     end
 end

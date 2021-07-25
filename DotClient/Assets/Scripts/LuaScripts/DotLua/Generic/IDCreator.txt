@@ -1,0 +1,11 @@
+local IDCreator = {}
+
+IDCreator.id = 0
+
+function IDCreator.Get()
+    IDCreator.id = IDCreator.id + 1
+
+    return IDCreator.id
+end
+
+return IDCreator

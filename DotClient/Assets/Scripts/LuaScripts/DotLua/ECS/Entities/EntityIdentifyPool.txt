@@ -1,0 +1,14 @@
+local ObjectPool = require("DotLua/Pool/ObjectPool")
+local EntityIdentify = require("DotLua/ECS/Entities/EntityIdentify")
+
+local EntityIdentifyPool = ObjectPool(EntityIdentify)
+
+function EntityIdentifyPool.GetIdentify(contextName, guid)
+    return EntityIdentifyPool:GetItemWithParams(contextName, guid)
+end
+
+function EntityIdentifyPool.ReleaseIdentify(entityIdentify)
+    EntityIdentifyPool:ReleaseItem(entityIdentify)
+end
+
+return EntityIdentifyPool

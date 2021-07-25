@@ -1,0 +1,12 @@
+local oop = require('DotLua/OOP/oop')
+local Component = require('DotLua/ECS/Components/Component')
+
+local DestroyComponent =
+    oop.class(
+    'DotLua.ECS.Components.DestroyComponent',
+    function(self)
+    end,
+    Component
+)
+
+return DestroyComponent
