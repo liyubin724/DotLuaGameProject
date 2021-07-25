@@ -1,7 +1,7 @@
-local oop = require('DotLua/OOP/oop')
+local oop = require("DotLua/OOP/oop")
 
-local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
-local MsgListener = oop.using('DotLua/Message/MsgListener')
+local ObjectPool = oop.using("DotLua/Pool/ObjectPool")
+local MsgListener = oop.using("DotLua/Message/MsgListener")
 
 local tinsert = table.insert
 local tremove = table.remove
@@ -9,7 +9,7 @@ local tkeys = table.keys
 
 local MsgDispatcher =
     oop.class(
-    'DotLua.Message.MsgDispatcher',
+    "DotLua.Message.MsgDispatcher",
     function(self)
         self.listenerPool = ObjectPool(MsgListener)
 
@@ -35,8 +35,8 @@ function MsgDispatcher:UnregistListener(name, receiver, func)
             local listener = listenerList[i]
             if listener.GetReceiver() == receiver and listener.GetFunc() == func then
                 tremove(listenerList, i)
-
                 self.listenerPool:ReleaseItem(listener)
+                break
             end
         end
     end
