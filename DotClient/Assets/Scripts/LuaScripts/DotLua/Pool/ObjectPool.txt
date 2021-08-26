@@ -12,16 +12,16 @@ local ObjectPool =
     "DotLua.Pool.ObjectPool",
     function(self, itemClass)
         self.itemClass = itemClass
-        self.items = {}
+        self.unusedItems = {}
     end
 )
 
 function ObjectPool:GetItem()
     local item
 
-    if #(self.items) > 0 then
-        item = self.items[1]
-        tremove(self.items, 1)
+    if #(self.unusedItems) > 0 then
+        item = self.unusedItems[1]
+        tremove(self.unusedItems, 1)
     else
         item = self.itemClass()
     end
@@ -37,9 +37,9 @@ end
 function ObjectPool:GetItemWithParams(...)
     local item
 
-    if #(self.items) > 0 then
-        item = self.items[1]
-        tremove(self.items, 1)
+    if #(self.unusedItems) > 0 then
+        item = self.unusedItems[1]
+        tremove(self.unusedItems, 1)
     else
         item = self.itemClass()
     end
@@ -59,7 +59,7 @@ function ObjectPool:ReleaseItem(item)
             releaseFunc(item)
         end
 
-        tinsert(self.items, item)
+        tinsert(self.unusedItems, item)
     end
 end
 
@@ -70,12 +70,12 @@ function ObjectPool:ReleaseItemWithParams(item, ...)
             releaseFunc(item, ...)
         end
 
-        tinsert(self.items, item)
+        tinsert(self.unusedItems, item)
     end
 end
 
 function ObjectPool:Clear()
-    tclear(self.items)
+    tclear(self.unusedItems)
 end
 
 return ObjectPool
