@@ -12,16 +12,15 @@ local MsgDispatcher =
     "DotLua.Message.MsgDispatcher",
     function(self)
         self.listenerPool = ObjectPool(MsgListener)
-
-        self.listenerMapList = {}
+        self.listenerDic = {}
     end
 )
 
 function MsgDispatcher:RegistListener(name, receiver, func, userdata)
-    local listenerList = self.listenerMapList[name]
+    local listenerList = self.listenerDic[name]
     if not listenerList then
         listenerList = {}
-        self.listenerMapList[name] = listenerList
+        self.listenerDic[name] = listenerList
     end
 
     local listener = self.listenerPool:GetItemWithParams(name, receiver, func, userdata)
@@ -29,31 +28,35 @@ function MsgDispatcher:RegistListener(name, receiver, func, userdata)
 end
 
 function MsgDispatcher:UnregistListener(name, receiver, func)
-    local listenerList = self.listenerMapList[name]
+    local listenerList = self.listenerDic[name]
     if listenerList then
         for i = #listenerList, 1, -1 do
             local listener = listenerList[i]
-            if listener.GetReceiver() == receiver and listener.GetFunc() == func then
+            if listener:GetReceiver() == receiver and listener:GetFunc() == func then
                 tremove(listenerList, i)
                 self.listenerPool:ReleaseItem(listener)
                 break
             end
         end
+
+        if #(listenerList) == 0 then
+            self.listenerDic[name] = nil
+        end
     end
 end
 
 function MsgDispatcher:UnregistAll(name)
-    local listenerList = self.listenerMapList[name]
+    local listenerList = self.listenerDic[name]
     if listenerList then
         for i = #(listenerList), 1, -1 do
             self.listenerPool:ReleaseItem(listenerList[i])
         end
-        self.listenerMapList[name] = nil
+        self.listenerDic[name] = nil
     end
 end
 
 function MsgDispatcher:Trigger(name, ...)
-    local listenerList = self.listenerMapList[name]
+    local listenerList = self.listenerDic[name]
     if listenerList then
         for _, listener in ipairs(listenerList) do
             listener:Invoke(...)
@@ -62,7 +65,7 @@ function MsgDispatcher:Trigger(name, ...)
 end
 
 function MsgDispatcher:Clear()
-    local names = tkeys(self.listenerMapList)
+    local names = tkeys(self.listenerDic)
     for _, name in ipairs(names) do
         self:UnregistAll(name)
     end
