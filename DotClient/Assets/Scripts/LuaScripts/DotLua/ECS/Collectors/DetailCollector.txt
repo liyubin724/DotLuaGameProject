@@ -90,7 +90,7 @@ function DetailCollector:onGroupChangedEvent(entity, contextEvent, param1, param
             end
         end
     else
-        local data = self.detailEntityDataPool:GetItemWithParams(entity, contextEvent, param1, param2)
+        local data = self.detailEntityDataPool:GetItem(entity, contextEvent, param1, param2)
         tinsert(self.collectedDetails, data)
     end
 end

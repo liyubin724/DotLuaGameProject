@@ -4,13 +4,20 @@ local Component =
     oop.class(
     "DotLua.Components.Component",
     function(self)
+        self.enable = false
     end
 )
 
--- function Component:DoGet(...)
--- end
+function Component:IsEnable()
+    return self.enable
+end
 
--- function Component:DoRelease()
--- end
+function Component:DoGet(...)
+    self.enable = true
+end
+
+function Component:DoRelease(...)
+    self.enable = false
+end
 
 return Component

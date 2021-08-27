@@ -52,7 +52,7 @@ function Context:CreateEntity(guid, componentClasses)
     end
 
     local entity =
-        self.entityPool:GetItemWithParams(
+        self.entityPool:GetItem(
         self,
         self.onEntityAddComponentEvent,
         self.onEntityRemoveComponentEvent,
@@ -110,7 +110,7 @@ function Context:CreateGroup(matcher)
         return group
     end
 
-    group = self.groupPool:GetItemWithParams(matcher)
+    group = self.groupPool:GetItem(matcher)
     self.matcherToGroupDic[matcher] = group
 
     for _, entity in pairs(self.guidToEntityDic) do
@@ -146,7 +146,7 @@ function Context:getComponent(componentClass, ...)
         self.componentClassPoolDic[componentClass] = pool
     end
 
-    return pool:GetItemWithParams(...)
+    return pool:GetItem(...)
 end
 
 function Context:releaseComponent(component)
