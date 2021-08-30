@@ -1,0 +1,138 @@
+local oop = require('DotLua/OOP/oop')
+
+local tinsert = table.insert
+local tremove = table.remove
+local tclear = table.clear
+local tcopyto = table.copyto
+
+local LogTag = 'Group'
+
+local Group =
+    oop.class(
+    'DotLua.ECS.Core.Group',
+    function(self)
+        self.matcher = nil
+
+        self.entities = {}
+        self.guidToEntityDic = {}
+
+        self.entityAddedEvent = oop.event()
+        self.entityRemovedEvent = oop.event()
+
+        self.refCount = 0
+    end
+)
+
+function Group:GetMatcher()
+    return self.matcher
+end
+
+function Group:GetEntityCount()
+    return #(self.entities)
+end
+
+function Group:GetEntities()
+    return self.entities
+end
+
+function Group:RetainRef()
+    self.refCount = self.refCount + 1
+end
+
+function Group:ReleaseRef()
+    self.refCount = self.refCount - 1
+    if self.refCount < 0 then
+        oop.error(LogTag, 'the count of the ref is less 0')
+        self.refCount = 0
+    end
+end
+
+function Group:IsUsing()
+    return self.refCount > 0
+end
+
+function Group:BindEntityEvent(receiver, addedFunc, removedFunc)
+    if addedFunc then
+        self.entityAddedEvent:Add(receiver, addedFunc)
+    end
+
+    if removedFunc then
+        self.entityRemovedEvent:Add(receiver, removedFunc)
+    end
+end
+
+function Group:UnbindEntityEvent(receiver, addedFunc, removedFunc)
+    if addedFunc then
+        self.entityAddedEvent:Remove(receiver, addedFunc)
+    end
+    if removedFunc then
+        self.entityRemovedEvent:Remove(receiver, removedFunc)
+    end
+end
+
+function Group:UnbindEntityEvents()
+    self.entityAddedEvent:Clear()
+    self.entityRemovedEvent:Clear()
+end
+
+function Group:DoGet(matcher)
+    self.matcher = matcher
+end
+
+function Group:DoRelease()
+    self.matcher = nil
+
+    self:UnbindAllEvent()
+
+    tclear(self.entities)
+    tclear(self.guidToEntityDic)
+
+    self.refCount = 0
+end
+
+function Group:TryUpdateEntity(entity, contextEvent, param1, param2)
+    if self.matcher:IsMatch(entity) then
+        if self:addEntitySliently(entity) then
+            self.addEntityEvent:Invoke(entity, contextEvent, param1, param2)
+
+            return true
+        end
+    else
+        if self:removeEntitySliently(entity) then
+            self.removeEntityEvent:Invoke(entity, contextEvent, param1, param2)
+
+            return true
+        end
+    end
+
+    return false
+end
+
+function Group:addEntitySliently(entity)
+    local guid = entity:GetGUID()
+    if not self.guidToEntityDic[guid] then
+        tinsert(self.entities, entity)
+        self.guidToEntityDic[guid] = entity
+        return true
+    end
+
+    return false
+end
+
+function Group:removeEntitySliently(entity)
+    local guid = entity:GetGUID()
+    if self.guidToEntityDic[guid] then
+        self.guidToEntityDic[guid] = nil
+        for i, e in ipairs(self.entities) do
+            if e == entity then
+                tremove(self.entities, i)
+                break
+            end
+        end
+        return true
+    end
+
+    return false
+end
+
+return Group

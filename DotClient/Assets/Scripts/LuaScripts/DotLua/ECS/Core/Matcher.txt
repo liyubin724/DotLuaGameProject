@@ -1,0 +1,15 @@
+local oop = require('DotLua/OOP/oop')
+
+local Matcher =
+    oop.class(
+    'DotLua.ECS.Matchers.Matcher',
+    function(self)
+    end
+)
+
+function Matcher:IsMatch(entity)
+    oop.error('Matcher', 'This is abstract class')
+    return false
+end
+
+return Matcher

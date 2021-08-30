@@ -1,0 +1,21 @@
+local oop = require("DotLua/OOP/oop")
+local ObjectPool = require("DotLua/Pool/ObjectPool")
+local EntityIdentify = require("DotLua/ECS/Core/EntityIdentify")
+
+local EntityIdentifyPool =
+    oop.class(
+    "DotLua.ECS.Core.EntityIdentifyPool",
+    function(self)
+        self.identifyPool = ObjectPool(EntityIdentify)
+    end
+)
+
+function EntityIdentifyPool:GetIdentify(contextName, guid)
+    return self.identifyPool:GetItem(contextName, guid)
+end
+
+function EntityIdentifyPool:ReleaseIdentify(entityIdentify)
+    self.identifyPool:ReleaseItem(entityIdentify)
+end
+
+return EntityIdentifyPool

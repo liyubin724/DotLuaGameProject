@@ -1,0 +1,25 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+
+local ServerIDComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.Identifies.ServerIDComponent",
+    function(self)
+        self.serverID = nil
+    end,
+    Component
+)
+
+function ServerIDComponent:GetServerID()
+    return self.serverID
+end
+
+function ServerIDComponent:DoGet(serverID)
+    self.serverID = serverID
+end
+
+function ServerIDComponent:DoRelease()
+    self.serverID = nil
+end
+
+return ServerIDComponent

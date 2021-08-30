@@ -2,14 +2,17 @@ local oop = require("DotLua/OOP/oop")
 
 local Component =
     oop.class(
-    "DotLua.Components.Component",
+    "DotLua.ECS.Core.Component",
     function(self)
     end
 )
+
 -- function Component:DoGet(...)
+
 -- end
 
 -- function Component:DoRelease(...)
+
 -- end
 
 return Component

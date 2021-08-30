@@ -1,0 +1,141 @@
+local oop = require("DotLua/OOP/oop")
+local Context = require("DotLua/ECS/Core/Context")
+local ObjectPool = require("DotLua/Pool/ObjectPool")
+
+local LogTag = "Contexts"
+
+local Pool =
+    oop.class(
+    "DotLua.ECS.Core.Pool",
+    function(self)
+        self.targetPoolDic = {}
+    end
+)
+
+function Pool:Get(targetClass, ...)
+    if oop.isDebug then
+        if not oop.isclass(targetClass) then
+            oop.error(LogTag, "the class is not a class")
+            return nil
+        end
+    end
+
+    local pool = self.targetPoolDic[targetClass]
+    if not pool then
+        pool = ObjectPool(targetClass)
+        self.targetPoolDic[targetClass] = pool
+    end
+
+    return pool:GetItem(...)
+end
+
+function Pool:Release(target, ...)
+    if oop.isDebug then
+        if not oop.isinstance(target) then
+            oop.error(LogTag, "the target is not a instance")
+            return
+        end
+    end
+
+    local targetClass = target:GetClass()
+    if targetClass then
+        local pool = self.targetPoolDic[targetClass]
+        if pool then
+            pool:ReleaseItem(target, ...)
+        end
+    end
+end
+
+function Pool:Clear(targetClass)
+    if oop.isDebug then
+        if not oop.isclass(targetClass) then
+            oop.error(LogTag, "the class is not a class")
+            return nil
+        end
+    end
+
+    self.targetPoolDic[targetClass] = nil
+end
+
+function Pool:ClearAll()
+    self.targetPoolDic = {}
+end
+
+local Contexts =
+    oop.class(
+    "DotLua.ECS.Core.Contexts",
+    function(self)
+        self.componentPool = Pool()
+        self.entityPool = Pool()
+
+        self.onContextCreatedEvent = oop.event()
+        self.onContextReleasedEvent = oop.event()
+
+        self.contextDic = {}
+    end
+)
+
+function Contexts:BindContextEvent(receiver, createdFunc, releasedFunc)
+    if createdFunc then
+        self.onContextCreatedEvent:Add(receiver, createdFunc)
+    end
+
+    if releasedFunc then
+        self.onContextReleasedEvent:Add(receiver, releasedFunc)
+    end
+end
+
+function Contexts:UnbindContextEvent(receiver, createdFunc, releasedFunc)
+    if createdFunc then
+        self.onContextCreatedEvent:Remove(receiver, createdFunc)
+    end
+
+    if releasedFunc then
+        self.onContextReleasedEvent:Remove(receiver, releasedFunc)
+    end
+end
+
+function Contexts:HasContext(name)
+    return self.contextDic[name] ~= nil
+end
+
+function Contexts:GetContext(name, createIfNot)
+    local context = self.contextDic[name]
+    if not context and not createIfNot then
+        return nil
+    end
+
+    if not context then
+        context = self:CreateContext(name)
+    end
+
+    return context
+end
+
+function Contexts:CreateContext(name)
+    local context = self.contextDic[name]
+    if context then
+        oop.warning(LogTag, "the context has been created")
+        return context
+    end
+
+    context = Context(name, self.entityPool, self.componentPool)
+    self.contextDic[name] = context
+    self.onContextCreatedEvent:Invoke(context)
+
+    return context
+end
+
+function Contexts:DestroyContext(name)
+    local context = self.contextDic[name]
+    if not context then
+        oop.warning(LogTag, "the context(" .. name .. ") is not found")
+        return
+    end
+
+    self.contextDic[name] = nil
+
+    self.onContextReleasedEvent:Invoke(context)
+end
+
+return Contexts

@@ -1,0 +1,33 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+
+local ParentComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.Dependencies.ParentComponent",
+    function(self)
+        self.contextName = nil
+        self.guid = nil
+    end,
+    Component
+)
+
+function ParentComponent:GetParent()
+    return self.contextName, self.guid
+end
+
+function ParentComponent:SetParent(contextName, guid)
+    self.contextName = contextName
+    self.guid = guid
+end
+
+function ParentComponent:DoGet(contextName, guid)
+    self.contextName = contextName
+    self.guid = guid
+end
+
+function ParentComponent:DoRelease()
+    self.contextName = nil
+    self.guid = nil
+end
+
+return ParentComponent
