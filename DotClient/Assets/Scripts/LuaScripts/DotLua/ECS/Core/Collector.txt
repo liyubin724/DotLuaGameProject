@@ -1,6 +1,5 @@
-local oop = require('DotLua/OOP/oop')
-local GroupEvent = oop.using('DotLua/ECS/Groups/GroupEvent')
-local ContextEvent = oop.using('DotLua/ECS/Contexts/ContextEvent')
+local oop = require("DotLua/OOP/oop")
+local GroupEvent = oop.using("DotLua/ECS/Core/GroupEvent")
 
 local tinsert = table.insert
 local tclear = table.clear
@@ -9,7 +8,7 @@ local tremovevalue = table.removevalue
 
 local Collector =
     oop.class(
-    'DotLua.ECS.Collectors.Collector',
+    "DotLua.ECS.Collectors.Collector",
     function(self, group, groupEvent)
         self.isEnable = false
 
@@ -36,19 +35,19 @@ function Collector:ClearCollectedEnities()
     tclear(self.collectedEntities)
 end
 
-function Collector:Activate()
+function Collector:DoActivate()
     if self.group and not self.isEnable then
         self.isEnable = true
         if self.groupEvent then
             local addFunc
             local removeFunc
             if self.groupEvent == GroupEvent.Added then
-                addFunc = self.onGroupChangedEvent
+                addFunc = self.onEntityAddedEvent
             elseif self.groupEvent == GroupEvent.Removed then
-                removeFunc = self.onGroupChangedEvent
+                removeFunc = self.onEntityRemovedEvent
             elseif self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onGroupChangedEvent
-                removeFunc = self.onGroupChangedEvent
+                addFunc = self.onEntityAddedEvent
+                removeFunc = self.onEntityRemovedEvent
             end
 
             self.group:BindEvent(self, addFunc, removeFunc)
@@ -56,19 +55,19 @@ function Collector:Activate()
     end
 end
 
-function Collector:Deactivate()
+function Collector:DoDeactivate()
     if self.group and self.isEnable then
         self.isEnable = false
         if self.groupEvent then
             local addFunc
             local removeFunc
             if self.groupEvent == GroupEvent.Added then
-                addFunc = self.onGroupChangedEvent
+                addFunc = self.onEntityAddedEvent
             elseif self.groupEvent == GroupEvent.Removed then
-                removeFunc = self.onGroupChangedEvent
+                removeFunc = self.onEntityRemovedEvent
             elseif self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onGroupChangedEvent
-                removeFunc = self.onGroupChangedEvent
+                addFunc = self.onEntityAddedEvent
+                removeFunc = self.onEntityRemovedEvent
             end
 
             self.group:UnbindEvent(self, addFunc, removeFunc)
@@ -78,23 +77,24 @@ end
 
 function Collector:Destroy()
     if self.isEnable then
-        self:Deactivate()
+        self:DoDeactivate()
     end
 
     tclear(self.collectedEntities)
 
     self.group = nil
     self.groupEvent = nil
+    self.isEnable = false
 end
 
-function Collector:onGroupChangedEvent(entity,contextEvent)
-    if contextEvent == ContextEvent.EntityReleased then
-        tremovevalue(self.entities,entity)
-    else
-        if not tcontainsvalue(self.entities, entity) then
-            tinsert(self.entities, entity)
-        end
+function Collector:onEntityAddedEvent(entity)
+    if not tcontainsvalue(self.collectedEntities, entity) then
+        tinsert(self.collectedEntities, entity)
     end
+end
+
+function Collector:onEntityRemovedEvent(entity)
+    tremovevalue(self.collectedEntities, entity)
 end
 
 return Collector

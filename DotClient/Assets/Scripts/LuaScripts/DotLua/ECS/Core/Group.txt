@@ -1,15 +1,15 @@
-local oop = require('DotLua/OOP/oop')
+local oop = require("DotLua/OOP/oop")
 
 local tinsert = table.insert
 local tremove = table.remove
 local tclear = table.clear
 local tcopyto = table.copyto
 
-local LogTag = 'Group'
+local LogTag = "Group"
 
 local Group =
     oop.class(
-    'DotLua.ECS.Groups.Group',
+    "DotLua.ECS.Groups.Group",
     function(self)
         self.matcher = nil
 
@@ -63,7 +63,7 @@ function Group:ReleaseRef()
     self.refCount = self.refCount - 1
 
     if self.refCount < 0 then
-        oop.error(LogTag, 'the count of the ref is less 0')
+        oop.error(LogTag, "the count of the ref is less 0")
         self.refCount = 0
     end
 end
@@ -76,6 +76,7 @@ function Group:BindEvent(receiver, addedFunc, removedFunc)
     if addedFunc then
         self.entityAddedEvent:Add(receiver, addedFunc)
     end
+
     if removedFunc then
         self.entityRemovedEvent:Add(receiver, removedFunc)
     end
@@ -85,6 +86,7 @@ function Group:UnbindEvent(receiver, addedFunc, removedFunc)
     if addedFunc then
         self.entityAddedEvent:Remove(receiver, addedFunc)
     end
+
     if removedFunc then
         self.entityRemovedEvent:Remove(receiver, removedFunc)
     end
