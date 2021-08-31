@@ -10,77 +10,100 @@ local LogTag = "Entity"
 
 local Entity =
     oop.class(
-    "DotLua.ECS.Entities.Entity",
-    function(self, componentPoolDic)
-        self.guid = nil
+    "DotLua.ECS.Core.Entity",
+    function(self)
         self.enable = false
+        self.componentPool = nil
 
-        self.componentPoolDic = componentPoolDic
+        self.guid = nil
+        self.contextName = nil
 
-        self.classToComponentDic = {}
+        --the class of component to the instance
+        self.componentClassToInstanceDic = {}
 
-        self.addComponentEvent = oop.event()
-        self.removeComponentEvent = oop.event()
-        self.replaceComponentEvent = oop.event()
-        self.modifyComponentEvent = oop.event()
+        self.componentAddedEvent = oop.event()
+        self.componentRemovedEvent = oop.event()
+        self.componentReplacedEvent = oop.event()
+        self.componentModifiedEvent = oop.event()
     end
 )
 
+function Entity:GetContextName()
+    return self.contextName
+end
+
+function Entity:DoGet(contextName, componentPool)
+    self.enable = true
+    self.contextName = contextName
+    self.componentPool = componentPool
+end
+
+function Entity:DoRelease()
+    self.enable = false
+
+    for _, component in pairs(self.componentClassToInstanceDic) do
+        self:removeComponent(component)
+    end
+    tclear(self.componentClassToInstanceDic)
+
+    self.componentAddedEvent:Clear()
+    self.componentRemovedEvent:Clear()
+    self.componentReplacedEvent:Clear()
+    self.componentModifiedEvent:Clear()
+
+    self.guid = nil
+    self.contextName = nil
+    self.componentPool = nil
+end
+
 function Entity:GetGUID()
     if not self.guid then
-        local guidComponent = self:GetComponentByClass(GUIDComponent)
+        local guidComponent = self:GetComponent(GUIDComponent)
         self.guid = guidComponent:GetGUID()
     end
 
     return self.guid
 end
 
-function Entity:BindEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
+function Entity:BindComponentEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
     if addFunc then
-        self.addComponentEvent:Add(receiver, addFunc)
+        self.componentAddedEvent:Add(receiver, addFunc)
     end
     if removeFunc then
-        self.removeComponentEvent:Add(receiver, removeFunc)
+        self.componentRemovedEvent:Add(receiver, removeFunc)
     end
     if replaceFunc then
-        self.replaceComponentEvent:Add(receiver, replaceFunc)
+        self.componentReplacedEvent:Add(receiver, replaceFunc)
     end
     if modifyFunc then
-        self.modifyComponentEvent:Add(receiver, modifyFunc)
+        self.componentModifiedEvent:Add(receiver, modifyFunc)
     end
 end
 
-function Entity:UnbindEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
+function Entity:UnbindComponentEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
     if addFunc then
-        self.addComponentEvent:Remove(receiver, addFunc)
+        self.componentAddedEvent:Remove(receiver, addFunc)
     end
     if removeFunc then
-        self.removeComponentEvent:Remove(receiver, removeFunc)
+        self.componentRemovedEvent:Remove(receiver, removeFunc)
     end
     if replaceFunc then
-        self.replaceComponentEvent:Remove(receiver, replaceFunc)
+        self.componentReplacedEvent:Remove(receiver, replaceFunc)
     end
     if modifyFunc then
-        self.modifyComponentEvent:Remove(receiver, modifyFunc)
+        self.componentModifiedEvent:Remove(receiver, modifyFunc)
     end
-end
-
-function Entity:UnbindAllEvent()
-    self.addComponentEvent:Clear()
-    self.removeComponentEvent:Clear()
-    self.replaceComponentEvent:Clear()
-    self.modifyComponentEvent:Clear()
 end
 
 function Entity:GetComponentCount()
-    return tlength(self.classToComponentDic)
+    return tlength(self.componentClassToInstanceDic)
 end
 
 function Entity:GetAllComponents()
-    return tvalues(self.classToComponentDic)
+    return tvalues(self.componentClassToInstanceDic)
 end
 
-function Entity:HasComponentByClass(componentClass)
+function Entity:HasComponent(componentClass)
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
             oop.error(LogTag, "the param is not a class")
@@ -88,12 +111,19 @@ function Entity:HasComponentByClass(componentClass)
         end
     end
 
-    return self.classToComponentDic[componentClass] ~= nil
+    return self.componentClassToInstanceDic[componentClass] ~= nil
 end
 
-function Entity:HasAllComponentByClasses(componentClasses)
-    for _, componentClass in ipairs(componentClasses) do
-        if not self:HasComponentByClass(componentClass) then
+function Entity:HasAllComponent(componentClasses)
+    if oop.isDebug then
+        if componentClasses == nil or type(componentClasses) ~= "table" then
+            oop.error(LogTag, "the param is not a type of table")
+            return false
+        end
+    end
+
+    for _, componentClass in pairs(componentClasses) do
+        if not self:HasComponent(componentClass) then
             return false
         end
     end
@@ -101,9 +131,16 @@ function Entity:HasAllComponentByClasses(componentClasses)
     return true
 end
 
-function Entity:HasAnyComponentByClasses(componentClasses)
-    for _, componentClass in ipairs(componentClasses) do
-        if self:HasComponentByClass(componentClass) then
+function Entity:HasAnyComponent(componentClasses)
+    if oop.isDebug then
+        if componentClasses == nil or type(componentClasses) ~= "table" then
+            oop.error(LogTag, "the param is not a type of table")
+            return false
+        end
+    end
+
+    for _, componentClass in pairs(componentClasses) do
+        if self:HasComponent(componentClass) then
             return true
         end
     end
@@ -111,7 +148,7 @@ function Entity:HasAnyComponentByClasses(componentClasses)
     return false
 end
 
-function Entity:GetComponentByClass(componentClass)
+function Entity:GetComponent(componentClass)
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
             oop.error(LogTag, "the param is not a class of Component")
@@ -119,10 +156,10 @@ function Entity:GetComponentByClass(componentClass)
         end
     end
 
-    return self.classToComponentDic[componentClass]
+    return self.componentClassToInstanceDic[componentClass]
 end
 
-function Entity:AddComponentByClass(componentClass, ...)
+function Entity:AddComponent(componentClass, ...)
     if not self.enable then
         oop.error(LogTag, "The enity has been disabled")
         return nil
@@ -135,7 +172,7 @@ function Entity:AddComponentByClass(componentClass, ...)
         end
     end
 
-    if self:HasComponentByClass(componentClass) then
+    if self:HasComponent(componentClass) then
         oop.error(LogTag, string.format("The component of %s has beend added!", componentClass:GetClassName()))
         return nil
     end
@@ -146,177 +183,139 @@ function Entity:AddComponentByClass(componentClass, ...)
         return nil
     end
 
-    self.addComponentEvent:Invoke(self, componentClass)
+    self.componentAddedEvent:Invoke(self, componentClass)
 
     return component
 end
 
-function Entity:RemoveComponentByClass(componentClass)
+function Entity:RemoveComponent(componentClass)
     if not self.enable then
         oop.error(LogTag, "The enity has been disabled")
-        return
+        return false
     end
 
     if oop.isDebug then
         if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
             oop.error(LogTag, "the param is not a class of Component")
-            return nil
+            return false
         end
     end
 
-    local component = self:removeComponent(componentClass)
-    if not component then
+    if not self:removeComponent(componentClass) then
         oop.error(LogTag, "the component is not found")
-        return
+        return false
     end
 
-    self.removeComponentEvent:Invoke(self, componentClass)
-    self.context:releaseComponent(component)
+    self.componentRemovedEvent:Invoke(self, componentClass)
+
+    return true
 end
 
-function Entity:ReplaceComponentByClass(oldComponentClass, newComponentClass)
+function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
     if not self.enable then
         oop.error(LogTag, "The enity has been disabled")
-        return nil
+        return false
     end
 
     if not oldComponentClass and not newComponentClass then
         oop.error(LogTag, "the component is nil")
-        return nil
+        return false
     end
 
     if oop.isDebug then
         if oldComponentClass and (not oop.isclass(oldComponentClass) or not oop.isclassof(oldComponentClass, Component)) then
             oop.error(LogTag, "the param is not a class of Component")
-            return nil
+            return false
         end
 
         if newComponentClass and (not oop.isclass(newComponentClass) or not oop.isclassof(newComponentClass, Component)) then
             oop.error(LogTag, "the param is not a class of Component")
-            return nil
+            return false
         end
     end
 
     if oldComponentClass and not newComponentClass then
-        self:RemoveComponent(oldComponentClass)
-        return nil
+        return self:RemoveComponent(oldComponentClass)
     elseif oldComponentClass and newComponentClass then
         local oldComponent = self:removeComponent(oldComponentClass)
         local newComponent = self:addComponent(newComponentClass)
-        self.replaceComponentEvent:Invoke(self, oldComponentClass, newComponentClass)
-        self.context:releaseComponent(oldComponent)
-        return newComponent
+
+        if oldComponent then
+            self.componentPool:Release(oldComponent)
+        end
+        if not newComponent then
+            return false
+        end
+        self.componentReplacedEvent:Invoke(self, oldComponentClass, newComponentClass)
+        return true
     elseif not oldComponentClass and newComponentClass then
-        return self:AddComponentByClass(newComponentClass)
+        local component = self:AddComponent(newComponentClass)
+        return component ~= nil
     end
 end
 
-function Entity:ModifyComponentByClass(componentClass, modifyFunc, modifyTag)
+function Entity:ModifyComponent(componentClass, modifyFunc, modifyTag)
     if not self.enable then
         oop.error(LogTag, "The enity has been disabled")
-        return
+        return false
     end
 
     if oop.isDebug then
-        if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
-            oop.error(LogTag, "the param is not a class of Component")
-            return
+        if not modifyFunc or type(modifyFunc) ~= "function" then
+            oop.error(LogTag, "The modifyfunc is not a function")
+            return false
         end
     end
 
-    local component = self.classToComponentDic[componentClass]
+    local component = self:GetComponent(componentClass)
     if not component then
         oop.error(LogTag, "the component is not found")
-        return
+        return false
     end
+    modifyFunc(self, component, modifyTag)
+    self.componentModifiedEvent:Invoke(self, componentClass, modifyTag)
 
-    if not modifyFunc then
-        if oop.isDebug then
-            if type(modifyTag) ~= "function" then
-                oop.error(LogTag, "The modifyfunc is not a function")
-                return
-            end
-        end
-
-        modifyFunc(self, component, modifyTag)
-
-        self.modifyComponentEvent:Invoke(self, componentClass, modifyTag)
-    end
+    return true
 end
 
-function Entity:MarkComponentModifiedByClass(componentClass, modifyTag)
+function Entity:MarkComponentModified(componentClass, modifyTag)
     if not self.enable then
         oop.error(LogTag, "The enity has been disabled")
-        return
+        return false
     end
 
-    if oop.isDebug then
-        if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
-            oop.error(LogTag, "the param is not a class of Component")
-            return
-        end
-    end
-
-    local component = self.classToComponentDic[componentClass]
+    local component = self:GetComponent(componentClass)
     if not component then
         oop.error(LogTag, "the component is not found")
-        return
+        return false
     end
 
-    self.modifyComponentEvent:Invoke(self, componentClass, modifyTag)
-end
+    self.componentModifiedEvent:Invoke(self, componentClass, modifyTag)
 
-function Entity:Destroy()
-    self.context:DestroyEntity(self)
-end
-
-function Entity:DoGet(...)
-    self.enable = true
-
-    self:DoActivate(...)
-end
-
-function Entity:DoActivate(...)
-end
-
-function Entity:DoRelease()
-    self.enable = false
-    self.guid = nil
-    self.catgory = nil
-
-    self:UnbindAllEvent()
-
-    local values = tvalues(self.classToComponentDic)
-    tclear(self.classToComponentDic)
-    for i = 1, #values, 1 do
-        self.context:releaseComponent(values[i])
-    end
-    self.context = nil
-end
-
-function Entity:DoDeactivate()
+    return true
 end
 
 function Entity:addComponent(componentClass, ...)
-    local component = self.context:getComponent(componentClass, ...)
+    local component = self.componentPool:Get(componentClass, ...)
     if not component then
         return nil
     end
 
-    self.classToComponentDic[componentClass] = component
+    self.componentClassToInstanceDic[componentClass] = component
 
     return component
 end
 
 function Entity:removeComponent(componentClass)
-    local component = self.classToComponentDic[componentClass]
+    local component = self.componentClassToInstanceDic[componentClass]
     if not component then
-        return nil
+        return false
     end
 
-    self.classToComponentDic[componentClass] = nil
+    self.componentClassToInstanceDic[componentClass] = nil
+    self.componentPool:Release(component)
 
-    return component
+    return true
 end
 
 return Entity

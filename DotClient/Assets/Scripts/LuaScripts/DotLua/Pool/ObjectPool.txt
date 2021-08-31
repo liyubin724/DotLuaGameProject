@@ -16,25 +16,7 @@ local ObjectPool =
     end
 )
 
-function ObjectPool:GetItem()
-    local item
-
-    if #(self.unusedItems) > 0 then
-        item = self.unusedItems[1]
-        tremove(self.unusedItems, 1)
-    else
-        item = self.itemClass()
-    end
-
-    local getFunc = item[getFuncName]
-    if getFunc then
-        getFunc(item)
-    end
-
-    return item
-end
-
-function ObjectPool:GetItemWithParams(...)
+function ObjectPool:Get(...)
     local item
 
     if #(self.unusedItems) > 0 then
@@ -52,18 +34,7 @@ function ObjectPool:GetItemWithParams(...)
     return item
 end
 
-function ObjectPool:ReleaseItem(item)
-    if item then
-        local releaseFunc = item[releaseFuncName]
-        if releaseFunc then
-            releaseFunc(item)
-        end
-
-        tinsert(self.unusedItems, item)
-    end
-end
-
-function ObjectPool:ReleaseItemWithParams(item, ...)
+function ObjectPool:Release(item, ...)
     if item then
         local releaseFunc = item[releaseFuncName]
         if releaseFunc then

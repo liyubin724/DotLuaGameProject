@@ -1,0 +1,64 @@
+local oop = require("DotLua/OOP/oop")
+local ObjectPool = require("DotLua/Pool/ObjectPool")
+local Component = require("DotLua/ECS/Core/Component")
+
+local LogTag = "ComponentPool"
+
+local ComponentPool =
+    oop.class(
+    "DotLua.ECS.Core.ComponentPool",
+    function(self)
+        self.classToInstancePoolDic = {}
+    end
+)
+
+function ComponentPool:Get(componentClass, ...)
+    if oop.isDebug then
+        if not componentClass or not oop.isclassof(componentClass, Component) then
+            oop.error(LogTag, "the class is not a class of Component")
+            return nil
+        end
+    end
+
+    local pool = self.classToInstancePoolDic[componentClass]
+    if not pool then
+        pool = ObjectPool(componentClass)
+        self.classToInstancePoolDic[componentClass] = pool
+    end
+
+    return pool:Get(...)
+end
+
+function ComponentPool:Release(component, ...)
+    if oop.isDebug then
+        if not component or not oop.isinstanceof(component, Component) then
+            oop.error(LogTag, "the target is not a instance of Component")
+            return
+        end
+    end
+
+    local targetClass = component:GetClass()
+    if targetClass then
+        local pool = self.classToInstancePoolDic[targetClass]
+        if pool then
+            pool:Release(component, ...)
+        end
+    end
+end
+
+function ComponentPool:Clear(componentClass)
+    if oop.isDebug then
+        if not componentClass or not oop.isclassof(componentClass) then
+            oop.error(LogTag, "the class is not a class of Component")
+            return nil
+        end
+    end
+
+    self.classToInstancePoolDic[componentClass] = nil
+end
+
+function ComponentPool:ClearAll()
+    self.classToInstancePoolDic = {}
+end
+
+return ComponentPool

@@ -23,7 +23,7 @@ function MsgDispatcher:RegistListener(name, receiver, func, userdata)
         self.listenerDic[name] = listenerList
     end
 
-    local listener = self.listenerPool:GetItemWithParams(name, receiver, func, userdata)
+    local listener = self.listenerPool:GetItem(name, receiver, func, userdata)
     tinsert(listenerList, listener)
 end
 
