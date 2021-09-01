@@ -1,10 +1,10 @@
-local oop = require('DotLua/OOP/oop')
-local Vector3 = require('DotLua/Math/Vector3')
-local Component = require('DotLua/ECS/Components/Component')
+local oop = require("DotLua/OOP/oop")
+local Vector3 = require("DotLua/Math/Vector3")
+local Component = require("DotLua/ECS/Core/Component")
 
 local PositionComponent =
     oop.class(
-    'DotLua.Components.PositionComponent',
+    "DotLua.ECS.Components.PositionComponent",
     function(self)
         self.position = Vector3(0, 0, 0)
     end,
@@ -15,6 +15,10 @@ function PositionComponent:Get()
     return self.position:Get()
 end
 
+function PositionComponent:Set(x, y, z)
+    self.position:Set(x, y, z)
+end
+
 function PositionComponent:GetPosition()
     return self.position
 end
@@ -23,20 +27,12 @@ function PositionComponent:SetPosition(v)
     self.position:CopyFrom(v)
 end
 
-function PositionComponent:Set(x, y, z)
-    self.position:Set(x, y, z)
-end
-
-function PositionComponent:DoGet(name, x, y, z)
-    self:GetBaseClass().DoGet(name)
+function PositionComponent:DoGet(x, y, z)
+    x = x or 0
+    y = y or 0
+    z = z or 0
 
     self.position:Set(x, y, z)
-end
-
-function PositionComponent:DoRelease()
-    self:GetBaseClass().DoRelease(self)
-
-    self.position:Set(0, 0, 0)
 end
 
 return PositionComponent

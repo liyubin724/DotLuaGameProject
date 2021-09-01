@@ -6,7 +6,7 @@ local ScaleComponent =
     oop.class(
     'DotLua.Components.ScaleComponent',
     function(self)
-        self.scale = Vector3(0, 0, 0)
+        self.scale = Vector3(1.0, 1.0, 1.0)
     end,
     Component
 )
@@ -27,16 +27,12 @@ function ScaleComponent:Set(x, y, z)
     self.scale:Set(x, y, z)
 end
 
-function ScaleComponent:DoGet(name, x, y, z)
-    self:GetBaseClass().DoGet(name)
+function ScaleComponent:DoGet(x, y, z)
+    x = x or 1.0
+    y = y or 1.0
+    z = z or 1.0
 
     self.scale:Set(x, y, z)
-end
-
-function ScaleComponent:DoRelease()
-    self:GetBaseClass().DoRelease(self)
-
-    self.scale:Set(0, 0, 0)
 end
 
 return ScaleComponent

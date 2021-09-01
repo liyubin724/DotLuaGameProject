@@ -5,7 +5,7 @@ local CategoryIDComponent =
     oop.class(
     "DotLua.ECS.Components.Basic.Identifies.CategoryIDComponent",
     function(self)
-        self.categoryID = nil
+        self.categoryID = -1
     end,
     Component
 )
@@ -19,7 +19,7 @@ function CategoryIDComponent:DoGet(categoryID)
 end
 
 function CategoryIDComponent:DoRelease()
-    self.categoryID = nil
+    self.categoryID = -1
 end
 
 return CategoryIDComponent
