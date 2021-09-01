@@ -79,4 +79,8 @@ function Contexts:ReleaseContext(name)
     self.contextPool:Release(context)
 end
 
+function Contexts:Destroy()
+
+end
+
 return Contexts
