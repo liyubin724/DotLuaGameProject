@@ -15,12 +15,12 @@ local MacroSystem =
         self.updateSystems = {}
         self.lateUpdateSystems = {}
 
-        self:initSubsystem()
+        self:initSubsystems()
     end,
     System
 )
 
-function MacroSystem:initSubsystem()
+function MacroSystem:initSubsystems()
 end
 
 function MacroSystem:AddSubsystem(systemClass)

@@ -1,83 +1,92 @@
-local oop = require('DotLua/OOP/oop')
-local System = require('DotLua/ECS/Core/System')
+local oop = require("DotLua/OOP/oop")
+local System = require("DotLua/ECS/Core/System")
 
 local tinsert = table.insert
 local tremovevalue = table.removevalue
 local tforeach = table.foreach
 local tclear = table.clear
 
-local LogTag = 'SystemMgr'
+local LogTag = "SystemMgr"
 
 local Systems =
     oop.class(
-    'DotLua.ECS.Core.Systems',
+    "DotLua.ECS.Core.Systems",
     function(self)
         self.systems = {}
         self.systemClassToInstanceDic = {}
 
         self.updateSystems = {}
         self.lateUpdateSystems = {}
+        self.teardownSystems = {}
     end
 )
 
 function Systems:RegisterSystem(systemClass)
     if oop.isDebug then
         if not systemClass or not oop.iskindof(systemClass, System) then
-            oop.error(LogTag, 'the systemclass is nil or is not a class of System')
+            oop.error(LogTag, "the systemclass is nil or is not a class of System")
             return
         end
     end
 
     if self.systemClassToInstanceDic[systemClass] then
-        oop.error(LogTag, 'the system has been registered in to systems.systemclass = ' .. tostring(systemClass))
+        oop.error(LogTag, "the system has been registered in to systems.systemclass = " .. tostring(systemClass))
         return
     end
 
     local system = systemClass()
     if not system then
-        oop.error(LogTag, 'the system has been registered in to systems.systemclass = ' .. tostring(systemClass))
+        oop.error(LogTag, "the system has been registered in to systems.systemclass = " .. tostring(systemClass))
         return
     end
 
     tinsert(self.systems, system)
     self.systemClassToInstanceDic[systemClass] = system
 
-    if system['DoUpdate'] then
+    if system["DoUpdate"] then
         tinsert(self.updateSystems, system)
     end
 
-    if system['DoLateUpdate'] then
+    if system["DoLateUpdate"] then
         tinsert(self.lateUpdateSystems, system)
     end
 
-    system:DoActivate()
+    if system["DoTeardown"] then
+        tinsert(self.teardownSystems, system)
+    end
+
+    system:DoInitilize()
 end
 
 function Systems:UnregisterSystem(systemClass)
     if oop.isDebug then
         if not systemClass or not oop.isclassof(systemClass, System) then
-            oop.error(LogTag, 'the param is not a subclass of System')
+            oop.error(LogTag, "the param is not a subclass of System")
             return
         end
     end
 
     local system = self.systemClassToInstanceDic[systemClass]
     if not system then
-        oop.warning(LogTag, 'the system is not found')
+        oop.warning(LogTag, "the system is not found")
         return
     end
 
     self.systemClassToInstanceDic[systemClass] = nil
     tremovevalue(self.systems, system)
 
-    if system['DoUpdate'] then
+    if system["DoUpdate"] then
         tremovevalue(self.updateSystems, system)
     end
 
-    if system['DoLateUpdate'] then
+    if system["DoLateUpdate"] then
         tremovevalue(self.lateUpdateSystems, system)
     end
-    system:DoDeactivate()
+
+    if system["DoTeardown"] then
+        tremovevalue(self.teardownSystems, system)
+    end
+
     system:DoDestroy()
 end
 
@@ -101,11 +110,9 @@ end
 
 function Systems:DoTeardown()
     tforeach(
-        self.systems,
+        self.teardownSystems,
         function(_, system)
-            if system["DoTeardown"] then
-                system:DoTeardown()
-            end
+            system:DoTeardown()
         end
     )
 end
@@ -122,6 +129,7 @@ function Systems:Destroy()
     self.systemClassToInstanceDic = nil
     self.updateSystems = nil
     self.lateUpdateSystems = nil
+    self.teardownSystems = nil
 end
 
 return Systems

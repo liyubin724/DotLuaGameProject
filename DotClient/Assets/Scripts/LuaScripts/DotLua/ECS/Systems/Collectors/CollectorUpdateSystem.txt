@@ -7,7 +7,7 @@ local tclear = table.clear
 
 local CollectorUpdateSystem =
     oop.class(
-    'DotLua.ECS.Systems.Groups.CollectorUpdateSystem',
+    'DotLua.ECS.Systems.Collectors.CollectorUpdateSystem',
     function(self, context)
         self.collector = self:GetCollector(context)
 

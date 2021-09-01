@@ -1,16 +1,20 @@
-local oop = require('DotLua/OOP/oop')
-local System = oop.using('DotLua/ECS/Systems/System')
+local oop = require("DotLua/OOP/oop")
+local System = require("DotLua/ECS/Core/System")
 
 local MessageSystem =
     oop.class(
-    'DotLua.ECS.Systems.MessageSystem',
+    "DotLua.ECS.Systems.MessageSystem",
     function(self, dispatcher)
         self.dispatcher = dispatcher
     end,
     System
 )
 
-function MessageSystem:onActivate()
+function MessageSystem:SetDispatcher(dispatcher)
+    self.dispatcher = dispatcher
+end
+
+function MessageSystem:onInitilize()
     local eventNames = self:listEventNames()
     if eventNames and #(eventNames) > 0 and self.dispatcher then
         for _, name in ipairs(eventNames) do
@@ -19,23 +23,20 @@ function MessageSystem:onActivate()
     end
 end
 
-function MessageSystem:listEventNames()
-    return nil
-end
-
-function MessageSystem:handleEvent(eventName, ...)
-    if self.isEnable then
-        self:onEvent(eventName, ...)
-    end
-end
-
-function MessageSystem:onDeactivate()
+function MessageSystem:onDestroy()
     local eventNames = self:listEventNames()
     if eventNames and #(eventNames) > 0 and self.dispatcher then
         for _, name in ipairs(eventNames) do
             self.dispatcher:UnregistListener(name, self, self.handleEvent)
         end
     end
+end
+function MessageSystem:listEventNames()
+    return nil
+end
+
+function MessageSystem:handleEvent(eventName, ...)
+    self:onEvent(eventName, ...)
 end
 
 function MessageSystem:onEvent(eventName, ...)

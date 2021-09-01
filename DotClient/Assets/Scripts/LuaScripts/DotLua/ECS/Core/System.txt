@@ -1,22 +1,22 @@
-local oop = require('DotLua/OOP/oop')
+local oop = require("DotLua/OOP/oop")
 
 local System =
     oop.class(
-    'DotLua.ECS.Core.System',
+    "DotLua.ECS.Core.System",
     function(self)
     end
 )
 
 function System:DoInitilize()
     local onInitilizeFunc = self["onInitilize"]
-    if onInitilizeFunc and type(onInitilizeFunc) == 'function' then
+    if onInitilizeFunc and type(onInitilizeFunc) == "function" then
         onInitilizeFunc(self)
     end
 end
 
 function System:DoDestroy()
-    local onDestroyFunc = self['onDestroy']
-    if onDestroyFunc and type(onDestroyFunc) == 'function' then
+    local onDestroyFunc = self["onDestroy"]
+    if onDestroyFunc and type(onDestroyFunc) == "function" then
         onDestroyFunc(self)
     end
 end
