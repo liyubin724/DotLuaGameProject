@@ -1,24 +1,25 @@
-local oop = require('DotLua/OOP/oop')
-local ContextEvent = require 'DotLua.ECS.Contexts.ContextEvent'
-local GroupEvent = oop.using('DotLua/ECS/Groups/GroupEvent')
-local ObjectPool = oop.using('DotLua/Pool/ObjectPool')
-local DetailCollectorData = oop.using('DotLua/ECS/Collectors/DetailCollectorData')
+local oop = require("DotLua/OOP/oop")
+local ContextEvent = require "DotLua.ECS.Contexts.ContextEvent"
+local GroupEvent = oop.using("DotLua/ECS/Groups/GroupEvent")
+local ObjectPool = oop.using("DotLua/Pool/ObjectPool")
+local DetailCollectorData = oop.using("DotLua/ECS/Collectors/DetailCollectorData")
 
 local tinsert = table.insert
 local tremove = table.remove
 
+local detailDataPool = ObjectPool(DetailCollectorData)
+
 local DetailCollector =
     oop.class(
-    'DotLua.ECS.Collectors.DetailCollector',
+    "DotLua.ECS.Collectors.DetailCollector",
     function(self, group, groupEvent)
         self.isEnable = false
 
         self.group = group
         self.groupEvent = groupEvent
 
-        self.collectedDetails = {}
-
-        self.detailDataPool = ObjectPool(DetailCollectorData)
+        self.collectedAddedDetails = {}
+        self.collectedRemovedDetails = {}
     end
 )
 
@@ -27,33 +28,40 @@ function DetailCollector:IsEnable()
 end
 
 function DetailCollector:GetCollectedDetailCount()
-    return #self.collectedDetails
+    return #self.collectedAddedDetails + #self.collectedRemovedDetails
 end
 
-function DetailCollector:GetCollectedDetails()
-    return self.collectedDetails
+function DetailCollector:GetCollectedAddedDetails()
+    return self.collectedAddedDetails
+end
+
+function DetailCollector:GetCollectedRemovedDetails()
+    return self.collectedRemovedDetails
 end
 
 function DetailCollector:ClearCollectedDetails()
-    for i = #(self.collectedDetails), 1, -1 do
-        self.detailDataPool:Release(self.collectedDetails[i])
-        tremove(self.collectedDetails, i)
+    for i = #(self.collectedAddedDetails), 1, -1 do
+        local data = self.collectedAddedDetails[i]
+        tremove(self.collectedAddedDetails, i)
+        detailDataPool:Release(data)
+    end
+    for i = #(self.collectedRemovedDetails), 1, -1 do
+        local data = self.collectedRemovedDetails[i]
+        tremove(self.collectedRemovedDetails, i)
+        detailDataPool:Release(data)
     end
 end
 
-function DetailCollector:Activate()
+function DetailCollector:DoActivate()
     if self.group and not self.isEnable then
         self.isEnable = true
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added then
-                addFunc = self.onGroupChangedEvent
-            elseif self.groupEvent == GroupEvent.Removed then
-                removeFunc = self.onGroupChangedEvent
-            elseif self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onGroupChangedEvent
-                removeFunc = self.onGroupChangedEvent
+            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
+                addFunc = self.onEntityAddedEvent
+            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
+                removeFunc = self.onEntityRemovedEvent
             end
 
             self.group:BindEvent(self, addFunc, removeFunc)
@@ -61,19 +69,16 @@ function DetailCollector:Activate()
     end
 end
 
-function DetailCollector:Deactivate()
+function DetailCollector:DoDeactivate()
     if self.group and self.isEnable then
         self.isEnable = false
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added then
-                addFunc = self.onGroupChangedEvent
-            elseif self.groupEvent == GroupEvent.Removed then
-                removeFunc = self.onGroupChangedEvent
-            elseif self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onGroupChangedEvent
-                removeFunc = self.onGroupChangedEvent
+            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
+                addFunc = self.onEntityAddedEvent
+            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
+                removeFunc = self.onEntityRemovedEvent
             end
 
             self.group:BindEvent(self, addFunc, removeFunc)
@@ -81,18 +86,14 @@ function DetailCollector:Deactivate()
     end
 end
 
-function DetailCollector:onGroupChangedEvent(entity, contextEvent, param1, param2)
-    if contextEvent == ContextEvent.EntityReleased then
-        for i = #(self.collectedDetails), 1, -1 do
-            if self.collectedDetails[i]:GetEntity() == entity then
-                tremove(self.collectedDetails, i)
-                return
-            end
-        end
-    else
-        local data = self.detailEntityDataPool:GetItem(entity, contextEvent, param1, param2)
-        tinsert(self.collectedDetails, data)
-    end
+function DetailCollector:onEntityAddedEvent(entity, contextEvent, param1, param2)
+    local data = self.detailEntityDataPool:GetItem(entity, contextEvent, param1, param2)
+    tinsert(self.collectedAddedDetails, data)
+end
+
+function DetailCollector:onEntityRemovedEvent(entity, contextEvent, param1, param2)
+    local data = self.detailEntityDataPool:GetItem(entity, contextEvent, param1, param2)
+    tinsert(self.collectedRemovedDetails, data)
 end
 
 return DetailCollector

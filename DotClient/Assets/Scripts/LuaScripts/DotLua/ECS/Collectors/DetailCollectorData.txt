@@ -1,10 +1,11 @@
-local oop = require('DotLua/OOP/oop')
-local ContextEvent = oop.using('DotLua/ECS/Contexts/ContextEvent')
+local oop = require("DotLua/OOP/oop")
+local ContextEvent = oop.using("DotLua/ECS/Contexts/ContextEvent")
 
 local DetailCollectorData =
     oop.class(
-    'DetailCollectorData',
+    "DetailCollectorData",
     function(self)
+        self.guid = nil
         self.entity = nil
         self.contextEvent = nil
 
@@ -16,7 +17,7 @@ local DetailCollectorData =
 )
 
 function DetailCollectorData:GetEntity()
-    return self.entity
+    return self.guid, self.entity
 end
 
 function DetailCollectorData:GetContextEvent()
@@ -25,15 +26,17 @@ end
 
 function DetailCollectorData:GetEntityChangedData()
     if self.contextEvent == ContextEvent.EntityCreated then
-        return self.entity
+        return self.guid, self.entity
+    elseif self.contextEvent == ContextEvent.EntityReleased then
+        return self.guid, nil
     elseif self.contextEvent == ContextEvent.EntityChangedForAddComponent then
-        return self.entity, self.addedComponentClass
+        return self.guid, self.entity, self.addedComponentClass
     elseif self.contextEvent == ContextEvent.EntityChangedForRemoveComponent then
-        return self.contextEvent, self.entity, self.removedComponentClass
+        return self.guid, self.entity, self.removedComponentClass
     elseif self.contextEvent == ContextEvent.EntityChangedForReplaceComponent then
-        return self.contextEvent, self.entity, self.removedComponentClass, self.addedComponentClass
+        return self.guid, self.entity, self.removedComponentClass, self.addedComponentClass
     elseif self.contextEvent == ContextEvent.EntityChangedForModifyComponent then
-        return self.contextEvent, self.entity, self.modifiedComponentClass, self.modifiedTag
+        return self.guid, self.entity, self.modifiedComponentClass, self.modifiedTag
     end
 
     return nil
@@ -41,6 +44,7 @@ end
 
 function DetailCollectorData:DoGet(entity, contextEvent, param1, param2)
     self.entity = entity
+    self.guid = entity:GetGUID()
     self.contextEvent = contextEvent
 
     if self.contextEvent == ContextEvent.EntityChangedForAddComponent then
@@ -53,10 +57,13 @@ function DetailCollectorData:DoGet(entity, contextEvent, param1, param2)
     elseif self.contextEvent == ContextEvent.EntityChangedForModifyComponent then
         self.modifiedComponentClass = param1
         self.modifiedTag = param2
+    elseif self.contextEvent == ContextEvent.EntityReleased then
+        self.entity = nil
     end
 end
 
 function DetailCollectorData:DoRelease()
+    self.guid = nil
     self.entity = nil
     self.contextEvent = nil
 

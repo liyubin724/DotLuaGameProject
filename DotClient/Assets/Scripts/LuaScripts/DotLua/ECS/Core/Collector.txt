@@ -4,7 +4,6 @@ local GroupEvent = oop.using("DotLua/ECS/Core/GroupEvent")
 local tinsert = table.insert
 local tclear = table.clear
 local tcontainsvalue = table.containsvalue
-local tremovevalue = table.removevalue
 
 local Collector =
     oop.class(
@@ -15,7 +14,8 @@ local Collector =
         self.group = group
         self.groupEvent = groupEvent
 
-        self.collectedEntities = {}
+        self.collectedAddedEntities = {}
+        self.collectedRemovedEntities = {}
     end
 )
 
@@ -23,16 +23,21 @@ function Collector:IsEnable()
     return self.isEnable
 end
 
-function Collector:GetCollectedEntityCount()
-    return #self.collectedEntities
+function Collector:GetCollectedCount()
+    return #self.collectedAddedEntities + #self.collectedRemovedEntities
 end
 
-function Collector:GetCollectedEntities()
-    return self.collectedEntities
+function Collector:GetCollectedAddedEntities()
+    return self.collectedAddedEntities
 end
 
-function Collector:ClearCollectedEnities()
-    tclear(self.collectedEntities)
+function Collector:GetCollectedRemovedEntities()
+    return self.collectedRemovedEntities
+end
+
+function Collector:ClearCollectedEntities()
+    tclear(self.collectedAddedEntities)
+    tclear(self.collectedRemovedEntities)
 end
 
 function Collector:DoActivate()
@@ -41,12 +46,9 @@ function Collector:DoActivate()
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added then
+            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
                 addFunc = self.onEntityAddedEvent
-            elseif self.groupEvent == GroupEvent.Removed then
-                removeFunc = self.onEntityRemovedEvent
-            elseif self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onEntityAddedEvent
+            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
                 removeFunc = self.onEntityRemovedEvent
             end
 
@@ -61,12 +63,9 @@ function Collector:DoDeactivate()
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added then
+            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
                 addFunc = self.onEntityAddedEvent
-            elseif self.groupEvent == GroupEvent.Removed then
-                removeFunc = self.onEntityRemovedEvent
-            elseif self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onEntityAddedEvent
+            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
                 removeFunc = self.onEntityRemovedEvent
             end
 
@@ -80,7 +79,8 @@ function Collector:Destroy()
         self:DoDeactivate()
     end
 
-    tclear(self.collectedEntities)
+    tclear(self.collectedAddedEntities)
+    tclear(self.collectedRemovedEntities)
 
     self.group = nil
     self.groupEvent = nil
@@ -88,13 +88,16 @@ function Collector:Destroy()
 end
 
 function Collector:onEntityAddedEvent(entity)
-    if not tcontainsvalue(self.collectedEntities, entity) then
-        tinsert(self.collectedEntities, entity)
+    if not tcontainsvalue(self.collectedAddedEntities, entity) then
+        tinsert(self.collectedAddedEntities, entity)
     end
 end
 
 function Collector:onEntityRemovedEvent(entity)
-    tremovevalue(self.collectedEntities, entity)
+    local guid = entity:GetGUID()
+    if not tcontainsvalue(self.collectedEntityGUIDs, guid) then
+        tinsert(self.collectedRemovedEntities, guid)
+    end
 end
 
 return Collector

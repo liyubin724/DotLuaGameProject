@@ -93,14 +93,15 @@ function Group:UnbindEvent(receiver, addedFunc, removedFunc)
 end
 
 function Group:TryUpdateEntity(entity, contextEvent, param1, param2)
+    local guid = entity:GetGUID()
     if self.matcher:IsMatch(entity) then
         if self:addEntitySliently(entity) then
-            self.entityAddedEvent:Invoke(entity, contextEvent, param1, param2)
+            self.entityAddedEvent:Invoke(guid, contextEvent, param1, param2)
             return true
         end
     else
         if self:removeEntitySliently(entity) then
-            self.entityRemovedEvent:Invoke(entity, contextEvent, param1, param2)
+            self.entityRemovedEvent:Invoke(guid, contextEvent, param1, param2)
             return true
         end
     end
