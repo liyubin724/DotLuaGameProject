@@ -1,42 +1,37 @@
 local oop = require('DotLua/OOP/oop')
 local Matcher = require('DotLua/ECS/Matchers/Matcher')
-local Component = require('DotLua/ECS/Components/Component')
+local Component = require("DotLua/ECS/Core/Component")
 
-local tinsert = table.insert
-local tclear = table.clear
-
-local LogTag = 'Matcher'
+local LogTag = "HaveAllComponentMatcher"
 
 local HaveAnyComponentMatcher =
     oop.class(
     'DotLua.ECS.Matchers.Components.HaveAnyComponentMatcher',
-    function(self, name, ...)
-        self.componentClasses = {}
-
-        local length = select('#', ...)
-        if length > 0 then
-            for i = 1, length, 1 do
-                local componentClass = select(i, ...)
-                if oop.iskindof(componentClass, Component) then
-                    tinsert(self.componentClasses, componentClass)
-                else
-                    tclear(self.componentClasses)
-
-                    oop.error(LogTag, 'it is not a subclass of Component')
+    function(self, name, componentClasses)
+        if oop.isDebug then
+            if not componentClasses then
+                oop.error(LogTag, "the classes is nil")
+                return
+            end
+            for _, componentClass in ipairs(componentClasses) do
+                if not componentClass or oop.isclassof(componentClass, Component) then
+                    oop.error(LogTag, "the class is not a subclass of Component")
                     return
                 end
             end
         end
+
+        self.componentClasses = componentClasses
     end,
     Matcher
 )
 
 function HaveAnyComponentMatcher:IsMatch(entity)
-    if #self.componentClasses == 0 then
+    if not self.componentClasses or #self.componentClasses == 0 then
         return false
     end
 
-    return entity:HasAnyComponentByClasses(self.componentClasses)
+    return entity:HasAnyComponent(self.componentClasses)
 end
 
 return HaveAnyComponentMatcher

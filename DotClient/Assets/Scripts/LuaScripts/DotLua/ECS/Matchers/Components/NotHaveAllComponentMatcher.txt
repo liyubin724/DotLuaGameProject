@@ -1,13 +1,13 @@
-local oop = require('DotLua/OOP/oop')
-local Matcher = require('DotLua/ECS/Matchers/Matcher')
-local Component = require('DotLua/ECS/Components/Component')
+local oop = require("DotLua/OOP/oop")
+local Matcher = require("DotLua/ECS/Core/Matcher")
+local Component = require("DotLua/ECS/Core/Component")
 
-local LogTag = 'Matcher'
+local LogTag = "NotHaveAllComponentMatcher"
 
-local NotHaveAnyComponentMatcher =
+local NotHaveAllComponentMatcher =
     oop.class(
-    'DotLua.ECS.Matchers.Components.NotHaveAnyComponentMatcher',
-    function(self, name,componentClasses)
+    "DotLua.ECS.Matchers.Components.NotHaveAllComponentMatcher",
+    function(self, name, componentClasses)
         if oop.isDebug then
             if not componentClasses then
                 oop.error(LogTag, "the classes is nil")
@@ -25,12 +25,12 @@ local NotHaveAnyComponentMatcher =
     Matcher
 )
 
-function NotHaveAnyComponentMatcher:IsMatch(entity)
-    if #self.componentClasses == 0 then
+function NotHaveAllComponentMatcher:IsMatch(entity)
+    if not self.componentClasses or #self.componentClasses == 0 then
         return false
     end
 
-    return not entity:HasAnyComponent(self.componentClasses)
+    return not entity:HasAllComponent(self.componentClasses)
 end
 
-return NotHaveAnyComponentMatcher
+return NotHaveAllComponentMatcher

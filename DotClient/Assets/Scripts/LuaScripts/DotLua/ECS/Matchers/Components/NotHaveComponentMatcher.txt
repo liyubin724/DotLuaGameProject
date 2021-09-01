@@ -9,11 +9,8 @@ local NotHaveComponentMatcher =
     'DotLua.ECS.Matchers.Components.NotHaveComponentMatcher',
     function(self, name, componentClass)
         if oop.isDebug then
-            if not self.componentClass then
-                oop.error(LogTag, 'the class is nil')
-                return
-            elseif oop.isclassof(componentClass, Component) then
-                oop.error(LogTag, 'the class is not a subclass of Component')
+            if not self.componentClass or oop.isclassof(componentClass, Component) then
+                oop.error(LogTag, "the class is not a subclass of Component")
                 return
             end
         end
@@ -28,7 +25,7 @@ function NotHaveComponentMatcher:IsMatch(entity)
         return false
     end
 
-    return not entity:HasComponentByClass(self.componentClass)
+    return not entity:HasComponent(self.componentClass)
 end
 
 return NotHaveComponentMatcher

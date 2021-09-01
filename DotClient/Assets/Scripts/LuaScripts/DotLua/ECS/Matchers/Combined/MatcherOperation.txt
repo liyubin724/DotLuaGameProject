@@ -1,12 +1,12 @@
-local oop = require('DotLua/OOP/oop')
+local oop = require("DotLua/OOP/oop")
 
 local MatcherOperation =
     oop.enum(
-    'DotLua.ECS.Matchers.MatcherOperation',
+    "DotLua.ECS.Matchers.MatcherOperation",
     {
         And = 1,
         Or = 2,
-        Not = 3,
+        Not = 3
     }
 )
 

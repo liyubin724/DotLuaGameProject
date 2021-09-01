@@ -4,7 +4,7 @@ local MatcherOperation = require('DotLua/ECS/Matchers/Combined/MatcherOperation'
 
 local tinsert = table.insert
 
-local LogTag = 'Matcher'
+local LogTag = 'CombinedMatcher'
 
 local CombinedMatcher =
     oop.class(
@@ -18,7 +18,7 @@ local CombinedMatcher =
 
 function CombinedMatcher:AddMatcher(matcher)
     if oop.isDebug then
-        if oop.isclassof(matcher, Matcher) then
+        if not matcher or oop.isclassof(matcher, Matcher) then
             oop.error(LogTag, 'the matcher is not a subclass of Matcher')
             return
         end
@@ -29,9 +29,7 @@ function CombinedMatcher:AddMatcher(matcher)
         return
     end
 
-    if not matcher then
-        tinsert(self.subMatchers, matcher)
-    end
+    tinsert(self.subMatchers, matcher)
 end
 
 function CombinedMatcher:IsMatch(entity)
@@ -66,12 +64,12 @@ function CombinedMatcher:isMatchForOr(entity)
     end
 
     for _, matcher in ipairs(self.subMatchers) do
-        if not matcher:IsMatch(entity) then
-            return false
+        if matcher:IsMatch(entity) then
+            return true
         end
     end
 
-    return true
+    return false
 end
 
 function CombinedMatcher:isMatchForNot(entity)
