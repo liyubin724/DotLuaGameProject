@@ -1,4 +1,5 @@
 local oop = require("DotLua/OOP/oop")
+local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
 
 local tinsert = table.insert
 local tremove = table.remove
@@ -47,7 +48,7 @@ function Group:GetEntityCount()
     return #(self.entities)
 end
 
-function Group:GetEntities(entities)
+function Group:GetEntities()
     return self.entities
 end
 
@@ -93,16 +94,23 @@ function Group:UnbindEvent(receiver, addedFunc, removedFunc)
 end
 
 function Group:TryUpdateEntity(entity, contextEvent, param1, param2)
-    local guid = entity:GetGUID()
-    if self.matcher:IsMatch(entity) then
-        if self:addEntitySliently(entity) then
-            self.entityAddedEvent:Invoke(guid, contextEvent, param1, param2)
+    if contextEvent == ContextEvent.EntityReleased then
+        if self:removeEntitySliently(entity) then
+            self.entityRemovedEvent:Invoke(entity:GetGUID(), contextEvent, param1, param2)
             return true
         end
     else
-        if self:removeEntitySliently(entity) then
-            self.entityRemovedEvent:Invoke(guid, contextEvent, param1, param2)
-            return true
+        local guid = entity:GetGUID()
+        if self.matcher:IsMatch(entity) then
+            if self:addEntitySliently(entity) then
+                self.entityAddedEvent:Invoke(guid, contextEvent, param1, param2)
+                return true
+            end
+        else
+            if self:removeEntitySliently(entity) then
+                self.entityRemovedEvent:Invoke(guid, contextEvent, param1, param2)
+                return true
+            end
         end
     end
 
