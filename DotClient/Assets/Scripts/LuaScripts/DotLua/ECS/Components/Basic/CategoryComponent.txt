@@ -1,25 +1,25 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Core/Component")
 
-local CategoryIDComponent =
+local CategoryComponent =
     oop.class(
-    "DotLua.ECS.Components.Basic.Identifies.CategoryIDComponent",
+    "DotLua.ECS.Components.Basic.CategoryComponent",
     function(self)
         self.categoryID = -1
     end,
     Component
 )
 
-function CategoryIDComponent:GetCategoryID()
+function CategoryComponent:GetCategoryID()
     return self.categoryID
 end
 
-function CategoryIDComponent:DoGet(categoryID)
+function CategoryComponent:SetCategoryID(categoryID)
     self.categoryID = categoryID
 end
 
-function CategoryIDComponent:DoRelease()
+function CategoryComponent:DoRelease()
     self.categoryID = -1
 end
 
-return CategoryIDComponent
+return CategoryComponent

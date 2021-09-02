@@ -1,0 +1,29 @@
+local oop = require("DotLua/OOP/oop")
+local EntitySelector = require("DotLua/ECS/Core/EntitySelector")
+local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
+
+local EntityGUIDSelector =
+    oop.class(
+    "DotLua.ECS.Core.EntityGUIDSelector",
+    function(self, name)
+        self.guidToEntityDic = {}
+    end,
+    EntitySelector
+)
+
+function EntityGUIDSelector:GetResult(guid)
+    return self.guidToEntityDic[guid]
+end
+
+function EntityGUIDSelector:TryToUpdateEntity(entity, contextEvent, param1, param2)
+    local guid = entity:GetGUID()
+    if contextEvent == ContextEvent.EntityCreated then
+        if not self.guidToEntityDic[guid] then
+            self.guidToEntityDic[guid] = entity
+        end
+    elseif contextEvent == ContextEvent.EntityReleased then
+        self.guidToEntityDic[guid] = nil
+    end
+end
+
+return EntityGUIDSelector
