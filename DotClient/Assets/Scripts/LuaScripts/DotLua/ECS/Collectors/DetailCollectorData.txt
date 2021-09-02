@@ -6,7 +6,6 @@ local DetailCollectorData =
     "DetailCollectorData",
     function(self)
         self.guid = nil
-        self.entity = nil
         self.contextEvent = nil
 
         self.addedComponentClass = nil
@@ -16,8 +15,8 @@ local DetailCollectorData =
     end
 )
 
-function DetailCollectorData:GetEntity()
-    return self.guid, self.entity
+function DetailCollectorData:GetEntityGUID()
+    return self.guid
 end
 
 function DetailCollectorData:GetContextEvent()
@@ -26,25 +25,24 @@ end
 
 function DetailCollectorData:GetEntityChangedData()
     if self.contextEvent == ContextEvent.EntityCreated then
-        return self.guid, self.entity
+        return self.guid
     elseif self.contextEvent == ContextEvent.EntityReleased then
-        return self.guid, nil
+        return self.guid
     elseif self.contextEvent == ContextEvent.EntityChangedForAddComponent then
-        return self.guid, self.entity, self.addedComponentClass
+        return self.guid, self.addedComponentClass
     elseif self.contextEvent == ContextEvent.EntityChangedForRemoveComponent then
-        return self.guid, self.entity, self.removedComponentClass
+        return self.guid, self.removedComponentClass
     elseif self.contextEvent == ContextEvent.EntityChangedForReplaceComponent then
-        return self.guid, self.entity, self.removedComponentClass, self.addedComponentClass
+        return self.guid, self.removedComponentClass, self.addedComponentClass
     elseif self.contextEvent == ContextEvent.EntityChangedForModifyComponent then
-        return self.guid, self.entity, self.modifiedComponentClass, self.modifiedTag
+        return self.guid, self.modifiedComponentClass, self.modifiedTag
     end
 
     return nil
 end
 
-function DetailCollectorData:DoGet(entity, contextEvent, param1, param2)
-    self.entity = entity
-    self.guid = entity:GetGUID()
+function DetailCollectorData:DoGet(guid, contextEvent, param1, param2)
+    self.guid = guid
     self.contextEvent = contextEvent
 
     if self.contextEvent == ContextEvent.EntityChangedForAddComponent then
@@ -57,14 +55,11 @@ function DetailCollectorData:DoGet(entity, contextEvent, param1, param2)
     elseif self.contextEvent == ContextEvent.EntityChangedForModifyComponent then
         self.modifiedComponentClass = param1
         self.modifiedTag = param2
-    elseif self.contextEvent == ContextEvent.EntityReleased then
-        self.entity = nil
     end
 end
 
 function DetailCollectorData:DoRelease()
     self.guid = nil
-    self.entity = nil
     self.contextEvent = nil
 
     self.addedComponentClass = nil

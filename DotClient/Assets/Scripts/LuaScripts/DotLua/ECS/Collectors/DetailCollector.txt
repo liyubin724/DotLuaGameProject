@@ -1,11 +1,10 @@
 local oop = require("DotLua/OOP/oop")
-local ContextEvent = require "DotLua.ECS.Contexts.ContextEvent"
 local GroupEvent = oop.using("DotLua/ECS/Groups/GroupEvent")
 local ObjectPool = oop.using("DotLua/Pool/ObjectPool")
 local DetailCollectorData = oop.using("DotLua/ECS/Collectors/DetailCollectorData")
 
 local tinsert = table.insert
-local tremove = table.remove
+local tclear = table.clear
 
 local detailDataPool = ObjectPool(DetailCollectorData)
 
@@ -18,6 +17,8 @@ local DetailCollector =
         self.group = group
         self.groupEvent = groupEvent
 
+        self.collectedDetails = {}
+
         self.collectedAddedDetails = {}
         self.collectedRemovedDetails = {}
     end
@@ -28,7 +29,19 @@ function DetailCollector:IsEnable()
 end
 
 function DetailCollector:GetCollectedDetailCount()
-    return #self.collectedAddedDetails + #self.collectedRemovedDetails
+    return #self.collectedDetails
+end
+
+function DetailCollector:GetCollectedAddedDetailCount()
+    return #self.collectedAddedDetails
+end
+
+function DetailCollector:GetCollectedRemovedDetailCount()
+    return #self.collectedRemovedDetails
+end
+
+function DetailCollector:GetCollectedDetails()
+    return self.collectedDetails
 end
 
 function DetailCollector:GetCollectedAddedDetails()
@@ -40,16 +53,13 @@ function DetailCollector:GetCollectedRemovedDetails()
 end
 
 function DetailCollector:ClearCollectedDetails()
-    for i = #(self.collectedAddedDetails), 1, -1 do
-        local data = self.collectedAddedDetails[i]
-        tremove(self.collectedAddedDetails, i)
-        detailDataPool:Release(data)
+    for _, detail in ipairs(self.collectedDetails) do
+        detailDataPool:Release(detail)
     end
-    for i = #(self.collectedRemovedDetails), 1, -1 do
-        local data = self.collectedRemovedDetails[i]
-        tremove(self.collectedRemovedDetails, i)
-        detailDataPool:Release(data)
-    end
+
+    tclear(self.collectedDetails)
+    tclear(self.collectedAddedDetails)
+    tclear(self.collectedRemovedDetails)
 end
 
 function DetailCollector:DoActivate()
@@ -86,13 +96,31 @@ function DetailCollector:DoDeactivate()
     end
 end
 
-function DetailCollector:onEntityAddedEvent(entity, contextEvent, param1, param2)
-    local data = self.detailEntityDataPool:GetItem(entity, contextEvent, param1, param2)
+function DetailCollector:DoDestroy()
+    if self.isEnable then
+        self:DoDeactivate()
+    end
+
+    self.collectedDetails = nil
+    self.collectedAddedDetails = nil
+    self.collectedRemovedDetails = nil
+
+    self.group = nil
+    self.groupEvent = nil
+    self.isEnable = false
+end
+
+function DetailCollector:onEntityAddedEvent(guid, contextEvent, param1, param2)
+    local data = self.detailEntityDataPool:GetItem(guid, contextEvent, param1, param2)
+
+    tinsert(self.collectedDetails, data)
     tinsert(self.collectedAddedDetails, data)
 end
 
-function DetailCollector:onEntityRemovedEvent(entity, contextEvent, param1, param2)
-    local data = self.detailEntityDataPool:GetItem(entity, contextEvent, param1, param2)
+function DetailCollector:onEntityRemovedEvent(guid, contextEvent, param1, param2)
+    local data = self.detailEntityDataPool:GetItem(guid, contextEvent, param1, param2)
+
+    tinsert(self.collectedDetails, data)
     tinsert(self.collectedRemovedDetails, data)
 end
 

@@ -25,7 +25,7 @@ function Collector:IsEnable()
     return self.isEnable
 end
 
-function Collector:GetCollectedCount()
+function Collector:GetCollectedEntityCount()
     return #self.collectedEntityGUIDs
 end
 
@@ -37,15 +37,15 @@ function Collector:GetCollectedRemovedEntityCount()
     return #self.collectedRemovedEntities
 end
 
-function Collector:GetCollectedEntityGUIDs()
+function Collector:GetCollectedEntities()
     return self.collectedEntityGUIDs
 end
 
-function Collector:GetCollectedAddedEntityGUIDs()
+function Collector:GetCollectedAddedEntities()
     return self.collectedAddedEntityGUIDs
 end
 
-function Collector:GetCollectedRemovedEntityGUIDs()
+function Collector:GetCollectedRemovedEntities()
     return self.collectedRemovedEntityGUIDs
 end
 
@@ -89,7 +89,7 @@ function Collector:DoDeactivate()
     end
 end
 
-function Collector:Destroy()
+function Collector:DoDestroy()
     if self.isEnable then
         self:DoDeactivate()
     end
