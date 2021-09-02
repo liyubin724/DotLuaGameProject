@@ -1,5 +1,8 @@
 local ECSConst = {}
 
-
+ECSConst.UPDATE_HF_TIME = 0.05
+ECSConst.UPDATE_NF_TIME = 0.1
+ECSConst.UPDATE_LF_TIME = 1.0
+ECSConst.UPDATE_EVERY_TIME = 0.0
 
 return ECSConst

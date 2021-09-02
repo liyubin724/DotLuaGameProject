@@ -20,6 +20,7 @@ local Context =
         self.matcherToGroupDic = {}
 
         self.entityCreatedEvent = oop.event()
+        self.entityChangedEvent = oop.event()
         self.entityReleasedEvent = oop.event()
 
         self.groupCreatedEvent = oop.event()
@@ -59,9 +60,13 @@ function Context:DoRelease()
     self.componentPool = nil
 end
 
-function Context:BindEntityEvent(receiver, createdFunc, releasedFunc)
+function Context:BindEntityEvent(receiver, createdFunc, changedFunc, releasedFunc)
     if createdFunc then
         self.entityCreatedEvent:Add(receiver, createdFunc)
+    end
+
+    if changedFunc then
+        self.entityChangedEvent:Add(receiver, changedFunc)
     end
 
     if releasedFunc then
@@ -69,9 +74,13 @@ function Context:BindEntityEvent(receiver, createdFunc, releasedFunc)
     end
 end
 
-function Context:UnbindEntityEvent(receiver, createdFunc, releasedFunc)
+function Context:UnbindEntityEvent(receiver, createdFunc, changedFunc, releasedFunc)
     if createdFunc then
         self.entityCreatedEvent:Remove(receiver, createdFunc)
+    end
+
+    if changedFunc then
+        self.entityChangedEvent:Remove(receiver, changedFunc)
     end
 
     if releasedFunc then
@@ -130,7 +139,7 @@ function Context:CreateEntity(entityClass, ...)
 
     self.guidToEntityDic[guid] = entity
 
-    self.entityCreatedEvent:Invoke(entity)
+    self.entityCreatedEvent:Invoke(entity, ContextEvent.EntityCreated, nil, nil)
     self:tryToUpdateGroup(entity, ContextEvent.EntityCreated, nil, nil)
 
     return entity
@@ -145,7 +154,7 @@ function Context:ReleaseEntity(entity)
 
     self.guidToEntityDic[guid] = nil
 
-    self.entityReleasedEvent:Invoke(entity)
+    self.entityReleasedEvent:Invoke(entity, ContextEvent.EntityReleased, nil, nil)
     self:tryToUpdateGroup(entity, ContextEvent.EntityReleased, nil, nil)
 
     self.entityPool:Release(entity)
@@ -159,7 +168,7 @@ function Context:CreateGroup(matcher)
         return group
     end
 
-    group = self.groupPool:Get(Group,matcher)
+    group = self.groupPool:Get(matcher)
     self.matcherToGroupDic[matcher] = group
     group:RetainRef()
 
@@ -183,14 +192,22 @@ function Context:ReleaseGroup(group)
 end
 
 function Context:onEntityAddComponentEvent(entity, addedComponentClass)
+    self.entityChangedEvent:Invoke(entity, ContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
     self:tryToUpdateGroup(entity, ContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
 end
 
 function Context:onEntityRemoveComponentEvent(entity, removedComponentClass)
+    self.entityChangedEvent:Invoke(entity, ContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
     self:tryToUpdateGroup(entity, ContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
 end
 
 function Context:onEntityReplaceComponentEvent(entity, removedComponentClass, addedComponentClass)
+    self.entityChangedEvent:Invoke(
+        entity,
+        ContextEvent.EntityChangedForReplaceComponent,
+        removedComponentClass,
+        addedComponentClass
+    )
     self:tryToUpdateGroup(
         entity,
         ContextEvent.EntityChangedForReplaceComponent,
@@ -200,6 +217,12 @@ function Context:onEntityReplaceComponentEvent(entity, removedComponentClass, ad
 end
 
 function Context:onEntityModifyComponentEvent(entity, modifiedComponentClass, modifyTag)
+    self.entityChangedEvent:Invoke(
+        entity,
+        ContextEvent.EntityChangedForModifyComponent,
+        modifiedComponentClass,
+        modifyTag
+    )
     self:tryToUpdateGroup(entity, ContextEvent.EntityChangedForModifyComponent, modifiedComponentClass, modifyTag)
 end
 

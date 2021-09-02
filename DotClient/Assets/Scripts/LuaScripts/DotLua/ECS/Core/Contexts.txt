@@ -20,6 +20,8 @@ local Contexts =
         self.onContextReleasedEvent = oop.event()
 
         self.contextDic = {}
+
+        self.guidToEntityDic = {}
     end
 )
 
@@ -80,6 +82,18 @@ function Contexts:ReleaseContext(name)
 end
 
 function Contexts:Destroy()
+
+end
+
+function Contexts:onContextEntityCreatedEvent()
+
+end
+
+function Context:onContextEntityReleasedEvent()
+
+end
+
+function Context:onContextEntityChangedEvent()
 
 end
 
