@@ -7,7 +7,7 @@ local LogTag = "HaveComponentMatcher"
 local HaveComponentMatcher =
     oop.class(
     "DotLua.ECS.Matchers.Components.HaveComponentMatcher",
-    function(self, name, componentClass)
+    function(self, componentClass)
         if oop.isDebug then
             if not self.componentClass or oop.isclassof(componentClass, Component) then
                 oop.error(LogTag, "the class is not a subclass of Component")

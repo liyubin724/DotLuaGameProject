@@ -9,7 +9,7 @@ local LogTag = 'CombinedMatcher'
 local CombinedMatcher =
     oop.class(
     'DotLua.ECS.Matchers.Combined.CombinedMatcher',
-    function(self, name, operation)
+    function(self, operation)
         self.subMatchers = {}
         self.operation = operation or MatcherOperation.And
     end,

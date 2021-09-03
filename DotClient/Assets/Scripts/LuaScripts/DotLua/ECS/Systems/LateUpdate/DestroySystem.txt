@@ -12,7 +12,7 @@ local DestroySystem =
         self.contexts = contexts
         self.contextTogroupDic = {}
 
-        self.matcher = HaveComponentMatcher("DestroyEntity", DestroyComponent)
+        self.matcher = HaveComponentMatcher(DestroyComponent)
     end,
     LateUpdateSystem
 )
@@ -53,6 +53,5 @@ end
 function DestroySystem:onLateUpdate(deltaTime)
     
 end
-
 
 return DestroySystem

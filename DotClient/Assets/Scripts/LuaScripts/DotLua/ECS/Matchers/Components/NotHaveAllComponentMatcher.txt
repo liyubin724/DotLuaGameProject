@@ -7,7 +7,7 @@ local LogTag = "NotHaveAllComponentMatcher"
 local NotHaveAllComponentMatcher =
     oop.class(
     "DotLua.ECS.Matchers.Components.NotHaveAllComponentMatcher",
-    function(self, name, componentClasses)
+    function(self, componentClasses)
         if oop.isDebug then
             if not componentClasses then
                 oop.error(LogTag, "the classes is nil")

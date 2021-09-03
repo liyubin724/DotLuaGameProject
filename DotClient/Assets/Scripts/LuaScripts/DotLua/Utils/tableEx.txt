@@ -31,11 +31,8 @@ function table.intersect(tbl1, tbl2)
 end
 
 function table.isempty(tbl)
-    if tbl == nil or next(tbl) == nil then
-        return true
-    else
-        return false
-    end
+    assert(type(tbl) == "table",string.format("table.isempty:bad argument #1 type (table expected,got %s",type(tbl)))
+    return next(tbl) == nil
 end
 
 function table.isarray(tbl)
