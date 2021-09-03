@@ -3,7 +3,7 @@ local Component = require('DotLua/ECS/Components/Component')
 
 local DestroyComponent =
     oop.class(
-    'DotLua.ECS.Components.DestroyComponent',
+    'DotLua.ECS.Components.Basic.DestroyComponent',
     function(self)
     end,
     Component

@@ -1,4 +1,5 @@
 local oop = require("DotLua/OOP/oop")
+local Const = require("DotLua/ECS/Const")
 
 local System =
     oop.class(
@@ -8,14 +9,14 @@ local System =
 )
 
 function System:DoInitilize()
-    local onInitilizeFunc = self["onInitilize"]
+    local onInitilizeFunc = self[Const.ON_INITILIZE_FUNC_NAME]
     if onInitilizeFunc and type(onInitilizeFunc) == "function" then
         onInitilizeFunc(self)
     end
 end
 
 function System:DoDestroy()
-    local onDestroyFunc = self["onDestroy"]
+    local onDestroyFunc = self[Const.ON_DESTROY_FUNC_NAME]
     if onDestroyFunc and type(onDestroyFunc) == "function" then
         onDestroyFunc(self)
     end

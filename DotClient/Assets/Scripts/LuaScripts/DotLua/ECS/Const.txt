@@ -1,0 +1,35 @@
+local Const = {}
+-------Update Time Interval----
+Const.TIME_HF_UPDATE = 0.05
+Const.TIME_NF_UPDATE = 0.1
+Const.TIME_LF_UPDATE = 1.0
+Const.TIME_EVERY_UPDATE = 0.0
+
+----Entity Category-----
+Const.CATEGORY_DEFAULT_ID = 0
+
+----Name of Function----
+Const.DO_INITILIZE_FUNC_NAME = "DoInitlize"
+Const.DO_ACTIVATE_FUNC_NAME = "DoActivate"
+Const.DO_UPDATE_FUNC_NAME = "DoUpdate"
+Const.DO_LATEUPDATE_FUNC_NAME = "DoLateUpdate"
+Const.DO_DEACTIVATE_FUNC_NAME = "DoDeactivate"
+Const.DO_DESTROY_FUNC_NAME = "DoDestroy"
+
+Const.ON_INITILIZE_FUNC_NAME = "onInitlize"
+Const.ON_ACTIVATE_FUNC_NAME = "onActivate"
+Const.ON_UPDATE_FUNC_NAME = "onUpdate"
+Const.ON_UNSCALE_UPDATE_FUNC_NAME = "onUnscaleUpdate"
+Const.ON_LATEUPDATE_FUNC_NAME = "onLateUpdate"
+Const.ON_UNSCALE_LATEUPDATE_FUNC_NAME = "onUnscaleLateUpdate"
+Const.ON_DEACTIVATE_FUNC_NAME = "onDeactivate"
+Const.ON_DESTROY_FUNC_NAME = "onDestroy"
+
+---- name of pool----
+Const.DO_GET_FUNC_NAME = "DoGet"
+Const.DO_RELEASE_FUNC_NAME = "DoRelease"
+
+Const.ON_GET_FUNC_NAME = "onGet"
+Const.ON_RELEASE_FUNC_NAME = "onRelease"
+
+return Const

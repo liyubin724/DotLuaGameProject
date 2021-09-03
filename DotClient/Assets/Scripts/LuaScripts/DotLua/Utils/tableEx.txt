@@ -8,6 +8,28 @@ local tinsert = table.insert
 local tremove = table.remove
 local rawget = _G.rawget
 
+function table.intersect(tbl1, tbl2)
+    if not tbl1 or not tbl2 then
+        return tbl1 or tbl2
+    end
+
+    local result = {}
+    for _, v1 in pairs(tbl1) do
+        local isEqual = false
+        for _, v2 in pairs(tbl2) do
+            if v1 == v2 then
+                isEqual = true
+                break
+            end
+        end
+
+        if isEqual then
+            tinsert(result, v1)
+        end
+    end
+    return result
+end
+
 function table.isempty(tbl)
     if tbl == nil or next(tbl) == nil then
         return true
@@ -43,7 +65,7 @@ function table.length(tbl)
 end
 
 function table.arrlength(tbl)
-    if type(tbl) ~= "table" then
+    if not tbl or type(tbl) ~= "table" then
         return 0
     end
     return #(tbl)
