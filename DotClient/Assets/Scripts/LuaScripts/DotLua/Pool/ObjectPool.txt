@@ -4,9 +4,6 @@ local tremove = table.remove
 local tinsert = table.insert
 local tclear = table.clear
 
-local getFuncName = "DoGet"
-local releaseFuncName = "DoRelease"
-
 local ObjectPool =
     oop.class(
     "DotLua.Pool.ObjectPool",
@@ -26,9 +23,10 @@ function ObjectPool:Get(...)
         item = self.itemClass()
     end
 
-    local getFunc = item[getFuncName]
-    if getFunc then
-        getFunc(item, ...)
+    if item["DoGet"] then
+        item["DoGet"](item, ...)
+    elseif item["DoActivate"] then
+        item["DoActivate"](item, ...)
     end
 
     return item
@@ -36,9 +34,10 @@ end
 
 function ObjectPool:Release(item, ...)
     if item then
-        local releaseFunc = item[releaseFuncName]
-        if releaseFunc then
-            releaseFunc(item, ...)
+        if item["DoRelease"] then
+            item["DoRelease"](item, ...)
+        elseif item["DoDeactivate"] then
+            item["DoDeactivate"](item, ...)
         end
 
         tinsert(self.unusedItems, item)

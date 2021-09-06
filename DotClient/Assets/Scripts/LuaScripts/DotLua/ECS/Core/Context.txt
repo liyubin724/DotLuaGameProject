@@ -29,14 +29,14 @@ local Context =
     end
 )
 
-function Context:DoGet(name, groupPool, entityPool, componentPool)
+function Context:DoActivate(name, groupPool, entityPool, componentPool)
     self.name = name
     self.groupPool = groupPool
     self.entityPool = entityPool
     self.componentPool = componentPool
 end
 
-function Context:DoRelease()
+function Context:DoDeactivate()
     for _, group in pairs(self.matcherToGroupDic) do
         self:ReleaseGroup(group)
     end
@@ -53,6 +53,7 @@ function Context:DoRelease()
 
     self.entityCreatedEvent:Clear()
     self.entityReleasedEvent:Clear()
+    self.entityChangedEvent:Clear()
 
     self.name = nil
     self.groupPool = nil
@@ -180,7 +181,7 @@ function Context:CreateGroup(matcher)
 end
 
 function Context:ReleaseGroup(group)
-    group.ReleaseRef()
+    group:ReleaseRef()
 
     if not group:IsInUsing() then
         local matcher = group:GetMatcher()

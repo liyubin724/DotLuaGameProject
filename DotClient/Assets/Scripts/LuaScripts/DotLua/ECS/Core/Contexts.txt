@@ -12,34 +12,36 @@ local Contexts =
     "DotLua.ECS.Core.Contexts",
     function(self)
         self.contextPool = ObjectPool(Context)
+
         self.entityPool = ObjectPool(Entity)
         self.groupPool = ObjectPool(Group)
         self.componentPool = ComponentPool()
 
-        self.onContextCreatedEvent = oop.event()
-        self.onContextReleasedEvent = oop.event()
-
+        self.guidToEnitityDic = {}
         self.contextDic = {}
+
+        self.contextCreatedEvent = oop.event()
+        self.contextReleasedEvent = oop.event()
     end
 )
 
 function Contexts:BindContextEvent(receiver, createdFunc, releasedFunc)
     if createdFunc then
-        self.onContextCreatedEvent:Add(receiver, createdFunc)
+        self.contextCreatedEvent:Add(receiver, createdFunc)
     end
 
     if releasedFunc then
-        self.onContextReleasedEvent:Add(receiver, releasedFunc)
+        self.contextReleasedEvent:Add(receiver, releasedFunc)
     end
 end
 
 function Contexts:UnbindContextEvent(receiver, createdFunc, releasedFunc)
     if createdFunc then
-        self.onContextCreatedEvent:Remove(receiver, createdFunc)
+        self.contextCreatedEvent:Remove(receiver, createdFunc)
     end
 
     if releasedFunc then
-        self.onContextReleasedEvent:Remove(receiver, releasedFunc)
+        self.contextReleasedEvent:Remove(receiver, releasedFunc)
     end
 end
 
@@ -59,9 +61,11 @@ function Contexts:CreateContext(name)
     end
 
     context = self.contextPool:Get(name, self.groupPool, self.entityPool, self.componentPool)
+    context:BindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
+
     self.contextDic[name] = context
 
-    self.onContextCreatedEvent:Invoke(context)
+    self.contextCreatedEvent:Invoke(context)
 
     return context
 end
@@ -74,25 +78,29 @@ function Contexts:ReleaseContext(name)
     end
 
     self.contextDic[name] = nil
-    self.onContextReleasedEvent:Invoke(context)
+    context:UnbindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
+
+    self.contextReleasedEvent:Invoke(context)
 
     self.contextPool:Release(context)
 end
 
-function Contexts:Destroy()
-
+function Contexts:HasEntity(guid)
+    return self.guidToEntityDic[guid] ~= nil
 end
 
-function Contexts:onContextEntityCreatedEvent()
-
+function Contexts:GetEntity(guid)
+    return self.guidToEntityDic[guid]
 end
 
-function Context:onContextEntityReleasedEvent()
-
+function Contexts:onContextEntityCreatedEvent(entity)
+    local guid = entity:GetGUID()
+    self.guidToEntityDic[guid] = entity
 end
 
-function Context:onContextEntityChangedEvent()
-
+function Context:onContextEntityReleasedEvent(entity)
+    local guid = entity:GetGUID()
+    self.guidToEntityDic[guid] = nil
 end
 
 return Contexts

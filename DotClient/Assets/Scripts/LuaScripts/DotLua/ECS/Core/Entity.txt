@@ -13,10 +13,11 @@ local Entity =
     "DotLua.ECS.Core.Entity",
     function(self)
         self.enable = false
+
+        self.contextName = nil
         self.componentPool = nil
 
         self.guid = nil
-        self.contextName = nil
 
         --the class of component to the instance
         self.componentClassToInstanceDic = {}
@@ -32,13 +33,14 @@ function Entity:GetContextName()
     return self.contextName
 end
 
-function Entity:DoGet(contextName, componentPool)
+function Entity:DoActivate(contextName, componentPool)
     self.enable = true
+
     self.contextName = contextName
     self.componentPool = componentPool
 end
 
-function Entity:DoRelease()
+function Entity:DoDeactivate()
     self.enable = false
 
     for _, component in pairs(self.componentClassToInstanceDic) do
@@ -123,7 +125,7 @@ function Entity:HasAllComponent(componentClasses)
     end
 
     for _, componentClass in pairs(componentClasses) do
-        if not self:HasComponent(componentClass) then
+        if not self.componentClassToInstanceDic[componentClass] then
             return false
         end
     end
@@ -140,7 +142,7 @@ function Entity:HasAnyComponent(componentClasses)
     end
 
     for _, componentClass in pairs(componentClasses) do
-        if self:HasComponent(componentClass) then
+        if self.componentClassToInstanceDic[componentClass] then
             return true
         end
     end
@@ -172,7 +174,7 @@ function Entity:AddComponent(componentClass, ...)
         end
     end
 
-    if self:HasComponent(componentClass) then
+    if self.componentClassToInstanceDic[componentClass] then
         oop.error(LogTag, string.format("The component of %s has beend added!", componentClass:GetClassName()))
         return nil
     end
@@ -238,15 +240,17 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
         return self:RemoveComponent(oldComponentClass)
     elseif oldComponentClass and newComponentClass then
         local oldComponent = self:removeComponent(oldComponentClass)
-        local newComponent = self:addComponent(newComponentClass)
-
         if oldComponent then
             self.componentPool:Release(oldComponent)
         end
+
+        local newComponent = self:addComponent(newComponentClass)
         if not newComponent then
             return false
         end
+
         self.componentReplacedEvent:Invoke(self, oldComponentClass, newComponentClass)
+
         return true
     elseif not oldComponentClass and newComponentClass then
         local component = self:AddComponent(newComponentClass)
