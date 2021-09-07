@@ -1,4 +1,22 @@
-local ecs = {}
+local ObjectPool = require("DotLua/Pool/ObjectPool")
+local ComponentPool = require("DotLua/ECS/Core/ComponentPool")
+local Entity = require("DotLua/ECS/Core/Entity")
+local Group = require("DotLua/ECS/Core/Group")
+local Context = require("DotLua/ECS/Core/Context")
+local GUIDCreator = require("DotLua/Generic/GUIDCreator")
 
+ecs = ecs or {}
+
+ecs.componentPool = ComponentPool()
+ecs.entityPool = ObjectPool(Entity)
+ecs.groupPool = ObjectPool(Group)
+ecs.contextPool = ObjectPool(Context)
+ecs.guidCreator = GUIDCreator()
+
+ecs.DoUpdate = function(deltaTime, unscaleDeltaTime)
+end
+
+ecs.DoLateUpdate = function(deltaTime, unscaleDeltaTime)
+end
 
 return ecs

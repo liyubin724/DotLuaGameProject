@@ -44,7 +44,7 @@ function Entity:DoDeactivate()
     self.enable = false
 
     for _, component in pairs(self.componentClassToInstanceDic) do
-        self:removeComponent(component)
+        self.componentPool:Release(component)
     end
     tclear(self.componentClassToInstanceDic)
 

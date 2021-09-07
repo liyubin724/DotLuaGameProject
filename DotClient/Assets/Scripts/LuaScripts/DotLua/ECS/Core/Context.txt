@@ -12,6 +12,7 @@ local Context =
     "DotLua.ECS.Core.Context",
     function(self)
         self.name = nil
+
         self.groupPool = nil
         self.entityPool = nil
         self.componentPool = nil
@@ -29,8 +30,13 @@ local Context =
     end
 )
 
+function Context:GetName()
+    return self.name
+end
+
 function Context:DoActivate(name, groupPool, entityPool, componentPool)
     self.name = name
+
     self.groupPool = groupPool
     self.entityPool = entityPool
     self.componentPool = componentPool
@@ -125,8 +131,8 @@ function Context:GetEntity(guid)
     return self.guidToEntityDic[guid]
 end
 
-function Context:CreateEntity(entityClass, ...)
-    local entity = self.entityPool:Get(entityClass, self.name, self.componentPool, ...)
+function Context:CreateEntity(...)
+    local entity = self.entityPool:Get(self.name, self.componentPool, ...)
     entity:BindComponentEvent(
         self,
         self.onEntityAddComponentEvent,
