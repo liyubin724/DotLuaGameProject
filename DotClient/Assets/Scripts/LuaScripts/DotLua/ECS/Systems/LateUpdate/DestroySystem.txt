@@ -1,53 +1,23 @@
 local oop = require("DotLua/OOP/oop")
 local LateUpdateSystem = require("DotLua/ECS/Systems/LateUpdate/LateUpdateSystem")
-local HaveComponentMatcher = require("DotLua/ECS/Matchers/HaveComponentMatcher")
-local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
-
-local LogTag = "DestroySystem"
+local GroupEvent = require("DotLua/ECS/Core/GroupEvent")
+local Collector = require("DotLua/ECS/Core/Collector")
 
 local DestroySystem =
     oop.class(
-    "DotLua.ECS.System.LateUpdate.LateUpdateSystem",
-    function(self, frequencyInTime, contexts)
-        self.contexts = contexts
-        self.contextTogroupDic = {}
-
-        self.matcher = HaveComponentMatcher(DestroyComponent)
+    "DotLua.ECS.Systems.LateUpdate.LateUpdateSystem",
+    function(self, frequencyInTime, group)
+        self.collector = Collector(group,GroupEvent.Added)
     end,
     LateUpdateSystem
 )
 
 function DestroySystem:onInitlize()
-    if not self.contexts then
-        oop.error(LogTag, "")
-        return
-    end
-
-    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
+    self.collector:DoActivate()
 end
 
 function DestroySystem:onDestroy()
-    self.contexts:UnbindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
-
-    for context, group in pairs(self.contextTogroupDic) do
-        context:ReleaseGroup(group)
-    end
-
-    self.contexts = nil
-    self.contextTogroupDic = nil
-end
-
-function DestroySystem:onContextCreatedEvent(context)
-    local group = context:CreateGroup(self.matcher)
-    self.contextTogroupDic[context] = group
-end
-
-function DestroySystem:onContextReleasedEvent(context)
-    local group = self.contextTogroupDic[context]
-    if group then
-        context:ReleaseGroup(group)
-        self.contextTogroupDic[context] = nil
-    end
+    self.collector:DoDeactivate()
 end
 
 function DestroySystem:onLateUpdate(deltaTime)

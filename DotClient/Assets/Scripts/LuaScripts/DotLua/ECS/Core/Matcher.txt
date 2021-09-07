@@ -7,7 +7,7 @@ local Matcher =
     end
 )
 
-function Matcher:IsMatch(entity)
+function Matcher:IsMatch(entity,contextEvent,param1,param2)
     oop.error("Matcher", "This is abstract class")
     return false
 end

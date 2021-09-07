@@ -1,0 +1,49 @@
+local oop = require("DotLua/OOP/oop")
+local System = oop.using("DotLua/ECS/Systems/System")
+local Const = require("DotLua/ECS/Const")
+
+local LateUpdateSystem =
+    oop.class(
+    "DotLua.ECS.Systems.LateUpdateSystem",
+    function(self)
+        self.frequencyTime = Const.TIME_EVERY_UPDATE
+        self.elapseDeltaTime = 0
+    end,
+    System
+)
+
+function LateUpdateSystem:GetFrequency()
+    return self.frequencyTime
+end
+
+function LateUpdateSystem:SetFrequency(frequencyTime)
+    self.frequencyTime = frequencyTime or Const.TIME_EVERY_UPDATE
+    self.elapseDeltaTime = 0
+end
+
+function LateUpdateSystem:onInitilize()
+    self.elapseDeltaTime = 0
+end
+
+function LateUpdateSystem:onDestroy()
+    self.elapseDeltaTime = 0
+end
+
+function LateUpdateSystem:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    self.elapseDeltaTime = self.elapseDeltaTime + unscaleDeltaTime
+
+    if self.elapseDeltaTime >= self.frequencyTime then
+        if self.frequencyTime <= 0 then
+            self:onLateUpdate(self.elapseDeltaTime)
+            self.elapseDeltaTime = 0
+        else
+            self:onLateUpdate(self.frequencyTime)
+            self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyTime
+        end
+    end
+end
+
+function LateUpdateSystem:onLateUpdate(unscaleDeltaTime)
+end
+
+return LateUpdateSystem

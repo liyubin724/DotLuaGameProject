@@ -1,8 +1,10 @@
 local oop = require("DotLua/OOP/oop")
+local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
 local GroupEvent = oop.using("DotLua/ECS/Core/GroupEvent")
 
 local tinsert = table.insert
 local tclear = table.clear
+local tremovevalue = table.removevalue
 local tcontainsvalue = table.containsvalue
 
 local Collector =
@@ -14,10 +16,7 @@ local Collector =
         self.group = group
         self.groupEvent = groupEvent
 
-        self.collectedEntityGUIDs = {}
-
-        self.collectedAddedEntityGUIDs = {}
-        self.collectedRemovedEntityGUIDs = {}
+        self.collectedEntities = {}
     end
 )
 
@@ -26,33 +25,15 @@ function Collector:IsEnable()
 end
 
 function Collector:GetCollectedEntityCount()
-    return #self.collectedEntityGUIDs
-end
-
-function Collector:GetCollectedAddedEntityCount()
-    return #self.collectedAddedEntityGUIDs
-end
-
-function Collector:GetCollectedRemovedEntityCount()
-    return #self.collectedRemovedEntities
+    return #self.collectedEntities
 end
 
 function Collector:GetCollectedEntities()
-    return self.collectedEntityGUIDs
-end
-
-function Collector:GetCollectedAddedEntities()
-    return self.collectedAddedEntityGUIDs
-end
-
-function Collector:GetCollectedRemovedEntities()
-    return self.collectedRemovedEntityGUIDs
+    return self.collectedEntities
 end
 
 function Collector:ClearCollectedEntities()
-    tclear(self.collectedEntityGUIDs)
-    tclear(self.collectedAddedEntityGUIDs)
-    tclear(self.collectedRemovedEntityGUIDs)
+    tclear(self.collectedEntities)
 end
 
 function Collector:DoActivate()
@@ -94,32 +75,32 @@ function Collector:DoDestroy()
         self:DoDeactivate()
     end
 
-    self.collectedEntityGUIDs = nil
-    self.collectedAddedEntityGUIDs = nil
-    self.collectedRemovedEntityGUIDs = nil
+    self.collectedEntities = nil
 
     self.group = nil
     self.groupEvent = nil
     self.isEnable = false
 end
 
-function Collector:onEntityAddedEvent(guid)
-    if not tcontainsvalue(self.collectedEntityGUIDs, guid) then
-        tinsert(self.collectedEntityGUIDs, guid)
+function Collector:onEntityAddedEvent(entity, contextEvent)
+    if contextEvent == ContextEvent.EntityReleased then
+        tremovevalue(self.collectedEntities, entity)
+        return
+    end
 
-        if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
-            tinsert(self.collectedAddedEntityGUIDs, guid)
-        end
+    if not tcontainsvalue(self.collectedEntityGUIDs, entity) then
+        tinsert(self.collectedEntities, entity)
     end
 end
 
-function Collector:onEntityRemovedEvent(guid)
-    if not tcontainsvalue(self.collectedEntityGUIDs, guid) then
-        tinsert(self.collectedRemovedEntities, guid)
+function Collector:onEntityRemovedEvent(entity, contextEvent)
+    if contextEvent == ContextEvent.EntityReleased then
+        tremovevalue(self.collectedEntities, entity)
+        return
+    end
 
-        if self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
-            tinsert(self.collectedRemovedEntityGUIDs, guid)
-        end
+    if not tcontainsvalue(self.collectedEntityGUIDs, entity) then
+        tinsert(self.collectedEntities, entity)
     end
 end
 

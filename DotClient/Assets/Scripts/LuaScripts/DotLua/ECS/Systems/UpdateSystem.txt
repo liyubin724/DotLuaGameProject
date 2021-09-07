@@ -1,22 +1,23 @@
 local oop = require("DotLua/OOP/oop")
 local System = oop.using("DotLua/ECS/Systems/System")
+local Const = require("DotLua/ECS/Const")
 
 local UpdateSystem =
     oop.class(
-    "DotLua.ECS.Systems.Update.UpdateSystem",
+    "DotLua.ECS.Systems.UpdateSystem",
     function(self)
-        self.frequencyInTime = 0
+        self.frequencyTime = Const.TIME_EVERY_UPDATE
         self.elapseDeltaTime = 0
     end,
     System
 )
 
 function UpdateSystem:GetFrequency()
-    return self.frequencyInTime
+    return self.frequencyTime
 end
 
-function UpdateSystem:SetFrequency(frequency)
-    self.frequencyInTime = frequency or 0
+function UpdateSystem:SetFrequency(frequencyTime)
+    self.frequencyTime = frequencyTime or Const.TIME_EVERY_UPDATE
     self.elapseDeltaTime = 0
 end
 
@@ -31,18 +32,18 @@ end
 function UpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
     self.elapseDeltaTime = self.elapseDeltaTime + deltaTime
 
-    if self.elapseDeltaTime >= self.frequencyInTime then
-        if self.frequencyInTime <= 0 then
-            self:onTimeUpdate(self.elapseDeltaTime)
+    if self.elapseDeltaTime >= self.frequencyTime then
+        if self.frequencyTime <= 0 then
+            self:onUpdate(self.elapseDeltaTime)
             self.elapseDeltaTime = 0
         else
-            self:onTimeUpdate(self.frequencyInTime)
-            self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyInTime
+            self:onUpdate(self.frequencyTime)
+            self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyTime
         end
     end
 end
 
-function UpdateSystem:onTimeUpdate(deltaTime)
+function UpdateSystem:onUpdate(deltaTime)
 end
 
 return UpdateSystem

@@ -28,7 +28,4 @@ end
 -- function System:DoLateUpdate(deltaTime, unscaleDeltaTime)
 -- end
 
--- function System:DoTeardown()
--- end
-
 return System

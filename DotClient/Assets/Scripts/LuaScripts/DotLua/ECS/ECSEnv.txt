@@ -2,6 +2,10 @@ local oop = require("DotLua/OOP/oop")
 local Const = require("DotLua/ECS/Const")
 local Contexts = require("DotLua/ECS/Core/Contexts")
 local Systems = require("DotLua/ECS/Core/Systems")
+local DestroySystem = require("DotLua/ECS/Systems/LateUpdate/DestroySystem")
+local HaveComponentMatcher = require("DotLua/ECS/Matchers/Components/HaveComponentMatcher")
+local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
+local GroupEvent = require("DotLua/ECS/Core/GroupEvent")
 
 local ECSEnv =
     oop.class(
@@ -9,6 +13,8 @@ local ECSEnv =
     function(self)
         self.contexts = nil
         self.systems = nil
+
+        self.destroyMatcher = HaveComponentMatcher(DestroyComponent)
     end
 )
 
@@ -22,18 +28,21 @@ end
 
 function ECSEnv:DoInitlize()
     self.contexts = Contexts()
-    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
+    self.systems = Systems()
+
+    self.contexts:BindContextEvent(self, self.onContextCreated, self.onContextReleased)
 
     self:onContextsInitilized()
-
-    self.systems = Systems()
     self:onSystemsInitilized()
 end
 
 function ECSEnv:DoUpdate(deltaTime, unscaleDeltaTime)
+    self.systems:DoUpdate(deltaTime, unscaleDeltaTime)
 end
 
 function ECSEnv:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    self.systems:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    self.contexts:DoLateUpdate()
 end
 
 function ECSEnv:DoDestroy()
@@ -41,18 +50,30 @@ function ECSEnv:DoDestroy()
         self[Const.ON_DESTROY_FUNC_NAME](self)
     end
 
+    self.systems:DoDestroy()
+    self.systems = nil
+
     self.contexts:DoDestroy()
     self.contexts = nil
 end
 
-function ECSEnv:onContextsInitilized()
+function ECSEnv:onContextCreated(context)
+    local group = context:CreateGroup(self.destroyMatcher)
+    
+end
 
+function ECSEnv:onContextReleased(context)
+
+end
+
+function ECSEnv:onContextsInitilized()
 end
 
 function ECSEnv:onSystemsInitilized()
 end
 
 function ECSEnv:onContextCreatedEvent(context)
+    
 end
 
 function ECSEnv:onContextReleasedEvent(context)

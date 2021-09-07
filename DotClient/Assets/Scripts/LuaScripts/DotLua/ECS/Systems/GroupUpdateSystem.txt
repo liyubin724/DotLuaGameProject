@@ -1,0 +1,37 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local UpdateSystem = require("DotLua/ECS/Systems/Update/UpdateSystem")
+
+local LogTag = "GroupUpdateSystem"
+
+local GroupUpdateSystem =
+    oop.class(
+    "DotLua.ECS.Systems.GroupUpdateSystem",
+    function(self, group)
+        self.group = group
+    end,
+    UpdateSystem
+)
+
+function GroupUpdateSystem:onUpdate(deltaTime)
+    if not self.group then
+        return
+    end
+
+    local entities = self.group:GetEntities()
+    for i = 1, #entities do
+        local entity = entities[i]
+        if self:filterEntity(entity) then
+            self:onEntityUpdate(entity, deltaTime)
+        end
+    end
+end
+
+function GroupUpdateSystem:filterEntity(entity)
+    return false
+end
+
+function GroupUpdateSystem:onEntityUpdate(entity, deltaTime)
+    oop.error(LogTag, "this is a abstract class")
+end
+
+return GroupUpdateSystem
