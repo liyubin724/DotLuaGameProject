@@ -9,16 +9,23 @@ local System =
 )
 
 function System:DoInitilize()
-    local onInitilizeFunc = self[Const.ON_INITILIZE_FUNC_NAME]
-    if onInitilizeFunc and type(onInitilizeFunc) == "function" then
-        onInitilizeFunc(self)
+    local func = self[Const.ON_INITILIZE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
     end
 end
 
-function System:DoDestroy()
-    local onDestroyFunc = self[Const.ON_DESTROY_FUNC_NAME]
-    if onDestroyFunc and type(onDestroyFunc) == "function" then
-        onDestroyFunc(self)
+function System:DoActivate()
+    local func = self[Const.ON_ACTIVATE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
+end
+
+function System:DoDeactivate()
+    local func = self[Const.ON_DEACTIVATE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
     end
 end
 
@@ -27,5 +34,12 @@ end
 
 -- function System:DoLateUpdate(deltaTime, unscaleDeltaTime)
 -- end
+
+function System:DoDestroy()
+    local func = self[Const.ON_DESTROY_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
+end
 
 return System
