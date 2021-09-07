@@ -1,76 +1,61 @@
-local oop = require('DotLua/OOP/oop')
-
-local SystemManager = require('DotLua/ECS/Systems/SystemManager')
-local ServicerManager = require('DotLua/ECS/Servicers/ServicerManager')
-local ContextManager = require('DotLua/ECS/Contexts/ContextManager')
+local oop = require("DotLua/OOP/oop")
+local Const = require("DotLua/ECS/Const")
+local Contexts = require("DotLua/ECS/Core/Contexts")
+local Systems = require("DotLua/ECS/Core/Systems")
 
 local ECSEnv =
     oop.class(
-    'DotLua.ECS.ECSEnv',
+    "DotLua.ECS.ECSEnv",
     function(self)
-        self:initilize()
+        self.contexts = nil
+        self.systems = nil
     end
 )
 
-function ECSEnv:GetServicerMgr()
-    return self.servicerMgr
+function ECSEnv:GetContexts()
+    return self.contexts
 end
 
-function ECSEnv:GetSystemMgr()
-    return self.systemMgr
+function ECSEnv:GetSystems()
+    return self.systems
 end
 
-function ECSEnv:GetContextMgr()
-    return self.contextMgr
+function ECSEnv:DoInitlize()
+    self.contexts = Contexts()
+    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
+
+    self:onContextsInitilized()
+
+    self.systems = Systems()
+    self:onSystemsInitilized()
 end
 
-function ECSEnv:Startup()
-    if self.systemMgr then
-        self.systemMgr:Startup()
+function ECSEnv:DoUpdate(deltaTime, unscaleDeltaTime)
+end
+
+function ECSEnv:DoLateUpdate(deltaTime, unscaleDeltaTime)
+end
+
+function ECSEnv:DoDestroy()
+    if self[Const.ON_DESTROY_FUNC_NAME] then
+        self[Const.ON_DESTROY_FUNC_NAME](self)
     end
+
+    self.contexts:DoDestroy()
+    self.contexts = nil
 end
 
-function ECSEnv:Update(deltaTime, unscaleDeltaTime)
-    if self.systemMgr then
-        self.systemMgr:Update(deltaTime,unscaleDeltaTime)
-    end
+function ECSEnv:onContextsInitilized()
+
 end
 
-function ECSEnv:LateUpdate(deltaTime, unscaleDeltaTime)
-    if self.systemMgr then
-        self.systemMgr:LateUpdate(deltaTime,unscaleDeltaTime)
-    end
+function ECSEnv:onSystemsInitilized()
 end
 
-function ECSEnv:FrameUpdate(deltaTime)
-    if self.systemMgr then
-        self.systemMgr:FrameUpdate(deltaTime)
-    end
+function ECSEnv:onContextCreatedEvent(context)
 end
 
-function ECSEnv:Teardown()
-    if self.systemMgr then
-        self.systemMgr:Teardown()
-    end
-end
-
-function ECSEnv:initilize()
-    self.servicerMgr = ServicerManager()
-    self.systemMgr = SystemManager()
-    self.contextMgr = ContextManager()
-
-    self:initilizeServicers()
-    self.initilizeContexts()
-    self.initilizeSystems()
-end
-
-function ECSEnv:initilizeServicers()
-end
-
-function ECSEnv:initilizeContexts()
-end
-
-function ECSEnv:initilizeSystems()
+function ECSEnv:onContextReleasedEvent(context)
 end
 
 return ECSEnv

@@ -7,16 +7,42 @@ local GUIDCreator = require("DotLua/Generic/GUIDCreator")
 
 ecs = ecs or {}
 
-ecs.componentPool = ComponentPool()
-ecs.entityPool = ObjectPool(Entity)
-ecs.groupPool = ObjectPool(Group)
-ecs.contextPool = ObjectPool(Context)
-ecs.guidCreator = GUIDCreator()
+ecs.componentPool = nil
+ecs.entityPool = nil
+ecs.groupPool = nil
+ecs.contextPool = nil
+ecs.guidCreator = nil
+ecs.env = nil
 
-ecs.DoUpdate = function(deltaTime, unscaleDeltaTime)
+ecs.isRunning = false
+ecs.Initialize = function(envClass)
+    ecs.componentPool = ComponentPool()
+    ecs.entityPool = ObjectPool(Entity)
+    ecs.groupPool = ObjectPool(Group)
+    ecs.contextPool = ObjectPool(Context)
+    ecs.guidCreator = GUIDCreator()
+
+    ecs.env = envClass()
+
+    ecs.isRunning = true
 end
 
-ecs.DoLateUpdate = function(deltaTime, unscaleDeltaTime)
+ecs.Update = function(deltaTime, unscaleDeltaTime)
+    if ecs.isRunning and ecs.env then
+        ecs.env:DoUpdate(deltaTime, unscaleDeltaTime)
+    end
+end
+
+ecs.LateUpdate = function(deltaTime, unscaleDeltaTime)
+    if ecs.isRunning and ecs.env then
+        ecs.env:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    end
+end
+
+ecs.Destroy = function()
+    if ecs.isRunning and ecs.env then
+        ecs.env:DoDestroy()
+    end
 end
 
 return ecs

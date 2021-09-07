@@ -43,15 +43,15 @@ end
 function Entity:DoDeactivate()
     self.enable = false
 
-    for _, component in pairs(self.componentClassToInstanceDic) do
-        self.componentPool:Release(component)
-    end
-    tclear(self.componentClassToInstanceDic)
-
     self.componentAddedEvent:Clear()
     self.componentRemovedEvent:Clear()
     self.componentReplacedEvent:Clear()
     self.componentModifiedEvent:Clear()
+
+    for _, component in pairs(self.componentClassToInstanceDic) do
+        self.componentPool:Release(component)
+    end
+    tclear(self.componentClassToInstanceDic)
 
     self.guid = nil
     self.contextName = nil

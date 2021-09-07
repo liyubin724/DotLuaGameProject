@@ -24,11 +24,11 @@ local Group =
     end
 )
 
-function Group:DoGet(matcher)
+function Group:DoActivate(matcher)
     self.matcher = matcher
 end
 
-function Group:DoRelease()
+function Group:DoDeactivate()
     self.matcher = nil
 
     self.entityAddedEvent:Clear()

@@ -1,11 +1,17 @@
-local IDCreator = {}
+local oop = require("DotLua/OOP/oop")
 
-IDCreator.id = 0
+local IDCreator =
+    oop.class(
+    "DotLua.Generic.IDCreator",
+    function(self)
+        self.cachedID = 0
+    end
+)
 
-function IDCreator.Get()
-    IDCreator.id = IDCreator.id + 1
+function IDCreator:Get()
+    self.cachedID = self.cachedID + 1
 
-    return IDCreator.id
+    return self.cachedID
 end
 
 return IDCreator

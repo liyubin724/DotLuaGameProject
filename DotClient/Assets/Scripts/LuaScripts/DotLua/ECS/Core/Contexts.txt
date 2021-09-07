@@ -4,6 +4,10 @@ local ObjectPool = require("DotLua/Pool/ObjectPool")
 local ComponentPool = require("DotLua/ECS/Core/ComponentPool")
 local Entity = require("DotLua/ECS/Core/Entity")
 local Group = require("DotLua/ECS/Core/Group")
+local GUIDCreator = require("DotLua/Generic/GUIDCreator")
+
+local tinsert = table.insert
+local tremove = table.remove
 
 local LogTag = "Contexts"
 
@@ -11,6 +15,8 @@ local Contexts =
     oop.class(
     "DotLua.ECS.Core.Contexts",
     function(self)
+        self.guidCreator = GUIDCreator()
+
         self.contextPool = ObjectPool(Context)
 
         self.entityPool = ObjectPool(Entity)
@@ -22,8 +28,38 @@ local Contexts =
 
         self.contextCreatedEvent = oop.event()
         self.contextReleasedEvent = oop.event()
+
+        self.willReleasedEntities = {}
     end
 )
+
+function Contexts:DoLateUpdate(_, _)
+    for i = #(self.willReleasedEntities), 1, -1 do
+        local entity = self.willReleasedEntities[i]
+
+        tremove(self.willReleasedEntities, i)
+
+        self.entityPool:Release(entity)
+    end
+end
+
+function Contexts:DoDestroy()
+    self.contextCreatedEvent:Clear()
+    self.contextCreatedEvent = nil
+    self.contextReleasedEvent:Clear()
+    self.contextReleasedEvent = nil
+
+    self.contextDic = nil
+    self.guidToEntityDic = nil
+
+    self.willReleasedEntities = nil
+
+    self.componentPool = nil
+    self.groupPool = nil
+    self.entityPool = nil
+    self.contextPool = nil
+    self.guidCreator = nil
+end
 
 function Contexts:BindContextEvent(receiver, createdFunc, releasedFunc)
     if createdFunc then
@@ -60,7 +96,7 @@ function Contexts:CreateContext(name)
         return context
     end
 
-    context = self.contextPool:Get(name, self.groupPool, self.entityPool, self.componentPool)
+    context = self.contextPool:Get(name, self.guidCreator, self.groupPool, self.entityPool, self.componentPool)
     context:BindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
 
     self.contextDic[name] = context
@@ -98,9 +134,11 @@ function Contexts:onContextEntityCreatedEvent(entity)
     self.guidToEntityDic[guid] = entity
 end
 
-function Context:onContextEntityReleasedEvent(entity)
+function Contexts:onContextEntityReleasedEvent(entity)
     local guid = entity:GetGUID()
     self.guidToEntityDic[guid] = nil
+
+    tinsert(self.willReleasedEntities, entity)
 end
 
 return Contexts
