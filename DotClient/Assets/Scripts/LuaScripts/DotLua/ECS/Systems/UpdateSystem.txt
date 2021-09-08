@@ -6,20 +6,11 @@ local UpdateSystem =
     oop.class(
     "DotLua.ECS.Systems.UpdateSystem",
     function(self)
-        self.frequencyTime = Const.TIME_EVERY_UPDATE
+        self.frequencyTime = self:getFrequencyTime()
         self.elapseDeltaTime = 0
     end,
     System
 )
-
-function UpdateSystem:GetFrequency()
-    return self.frequencyTime
-end
-
-function UpdateSystem:SetFrequency(frequencyTime)
-    self.frequencyTime = frequencyTime or Const.TIME_EVERY_UPDATE
-    self.elapseDeltaTime = 0
-end
 
 function UpdateSystem:onInitilize()
     self.elapseDeltaTime = 0
@@ -41,6 +32,10 @@ function UpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)
             self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyTime
         end
     end
+end
+
+function UpdateSystem:getFrequencyTime()
+    return Const.TIME_EVERY_UPDATE
 end
 
 function UpdateSystem:onUpdate(deltaTime)

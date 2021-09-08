@@ -43,9 +43,9 @@ function Collector:DoActivate()
             local addFunc
             local removeFunc
             if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onEntityAddedEvent
+                addFunc = self.onEntityChangedEvent
             elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
-                removeFunc = self.onEntityRemovedEvent
+                removeFunc = self.onEntityChangedEvent
             end
 
             self.group:BindEvent(self, addFunc, removeFunc)
@@ -60,9 +60,9 @@ function Collector:DoDeactivate()
             local addFunc
             local removeFunc
             if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
-                addFunc = self.onEntityAddedEvent
+                addFunc = self.onEntityChangedEvent
             elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
-                removeFunc = self.onEntityRemovedEvent
+                removeFunc = self.onEntityChangedEvent
             end
 
             self.group:UnbindEvent(self, addFunc, removeFunc)
@@ -82,24 +82,13 @@ function Collector:DoDestroy()
     self.isEnable = false
 end
 
-function Collector:onEntityAddedEvent(entity, contextEvent)
+function Collector:onEntityChangedEvent(entity,contextEvent)
     if contextEvent == ContextEvent.EntityReleased then
         tremovevalue(self.collectedEntities, entity)
         return
     end
 
-    if not tcontainsvalue(self.collectedEntityGUIDs, entity) then
-        tinsert(self.collectedEntities, entity)
-    end
-end
-
-function Collector:onEntityRemovedEvent(entity, contextEvent)
-    if contextEvent == ContextEvent.EntityReleased then
-        tremovevalue(self.collectedEntities, entity)
-        return
-    end
-
-    if not tcontainsvalue(self.collectedEntityGUIDs, entity) then
+    if not tcontainsvalue(self.collectedEntities, entity) then
         tinsert(self.collectedEntities, entity)
     end
 end

@@ -1,15 +1,16 @@
 local oop = require("DotLua/OOP/oop")
-local LateUpdateSystem = require("DotLua/ECS/Systems/LateUpdate/LateUpdateSystem")
+local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/CollectorLateUpdateSystem")
 local GroupEvent = require("DotLua/ECS/Core/GroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
+local Const = require("DotLua/ECS/Const")
 
 local DestroySystem =
     oop.class(
-    "DotLua.ECS.Systems.LateUpdate.LateUpdateSystem",
-    function(self, frequencyInTime, group)
-        self.collector = Collector(group,GroupEvent.Added)
+    "DotLua.ECS.Systems.Basic.DestroySystem",
+    function(self, context)
+        self:SetFrequency(Const.TIME_VLF_UPDATE)
     end,
-    LateUpdateSystem
+    CollectorLateUpdateSystem
 )
 
 function DestroySystem:onInitlize()

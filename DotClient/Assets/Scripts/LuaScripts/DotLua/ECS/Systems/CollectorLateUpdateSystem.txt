@@ -3,28 +3,28 @@ local UpdateSystem = require("DotLua/ECS/Systems/Update/UpdateSystem")
 
 local LogTag = "CollectorUpdateSystem"
 
-local CollectorUpdateSystem =
+local CollectorLateUpdateSystem =
     oop.class(
     "DotLua.ECS.Systems.Collectors.CollectorUpdateSystem",
-    function(self, collector)
-        self.collector = collector
+    function(self)
+        self.collector = self:createCollector()
     end,
     UpdateSystem
 )
 
-function CollectorUpdateSystem:onActivate()
+function CollectorLateUpdateSystem:onActivate()
     if self.collector then
         self.collector:DoActivate()
     end
 end
 
-function CollectorUpdateSystem:onDeactivate()
+function CollectorLateUpdateSystem:onDeactivate()
     if self.collector then
         self.collector:DoDeactivate()
     end
 end
 
-function CollectorUpdateSystem:onUpdate(deltaTime)
+function CollectorLateUpdateSystem:onLateUpdate(deltaTime)
     if not self.collector then
         return
     end
@@ -33,19 +33,23 @@ function CollectorUpdateSystem:onUpdate(deltaTime)
     if collectedEnities and #collectedEnities > 0 then
         for _, entity in ipairs(collectedEnities) do
             if self:filterEntity(entity) then
-                self:onEntityUpdate(entity, deltaTime)
+                self:onEntityLateUpdate(entity, deltaTime)
             end
         end
         self.collector:ClearCollectedEntities()
     end
 end
 
-function CollectorUpdateSystem:filterEntity(entity)
+function CollectorLateUpdateSystem:createCollector()
+    return nil
+end
+
+function CollectorLateUpdateSystem:filterEntity(entity)
     return false
 end
 
-function CollectorUpdateSystem:onEntityUpdate(entity, deltaTime)
+function CollectorLateUpdateSystem:onEntityLateUpdate(entity, deltaTime)
     oop.error(LogTag, "this is a abstract class")
 end
 
-return CollectorUpdateSystem
+return CollectorLateUpdateSystem

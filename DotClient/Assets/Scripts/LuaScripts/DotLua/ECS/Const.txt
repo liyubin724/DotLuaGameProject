@@ -3,6 +3,7 @@ local Const = {}
 Const.TIME_HF_UPDATE = 0.05
 Const.TIME_NF_UPDATE = 0.1
 Const.TIME_LF_UPDATE = 1.0
+Const.TIME_VLF_UPDATE = 3.0
 Const.TIME_EVERY_UPDATE = 0.0
 
 ----Entity Category-----
