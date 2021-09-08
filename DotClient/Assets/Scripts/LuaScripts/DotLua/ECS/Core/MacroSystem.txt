@@ -3,6 +3,7 @@ local System = oop.using('DotLua/ECS/Core/System')
 
 local tinsert = table.insert
 local tforeach = table.foreach
+local Const = require("DotLua/ECS/Const")
 
 local LogTag = 'MacroSystem'
 
@@ -23,21 +24,20 @@ local MacroSystem =
 function MacroSystem:initSubsystems()
 end
 
-function MacroSystem:AddSubsystem(systemClass)
+function MacroSystem:AddSubsystem(subSystem)
     if oop.isDebug then
-        if not systemClass or not oop.isclassof(systemClass, System) then
-            oop.error(LogTag, 'The subSystem is not a class of System')
+        if not subSystem or not oop.isinstanceof(subSystem, System) then
+            oop.error(LogTag, 'The subSystem is not a instance of System')
             return
         end
     end
-    local subSystem = systemClass()
-    tinsert(self.subSystems, subSystem)
 
-    if subSystem['DoUpdate'] then
+    tinsert(self.subSystems, subSystem)
+    if subSystem[Const.DO_UPDATE_FUNC_NAME] then
         tinsert(self.updateSystems, subSystem)
     end
 
-    if subSystem['DoLateUpdate'] then
+    if subSystem[Const.DO_LATEUPDATE_FUNC_NAME] then
         tinsert(self.lateUpdateSystems, subSystem)
     end
 end
@@ -64,23 +64,34 @@ function MacroSystem:DoLateUpdate(deltaTime, unscaleDeltaTime)
     end
 end
 
-function MacroSystem:DoTeardown()
-    tforeach(
-        self.subSystems,
-        function(_, system)
-            if system['DoTeardown'] then
-                system:DoTeardown()
-            end
-        end
-    )
-end
-
 function MacroSystem:onInitilize()
     if #(self.subSystems) > 0 then
         tforeach(
             self.subSystems,
             function(_, system)
                 system:DoInitilize()
+            end
+        )
+    end
+end
+
+function MacroSystem:onActivate()
+    if #(self.subSystems) > 0 then
+        tforeach(
+            self.subSystems,
+            function(_, system)
+                system:DoActivate()
+            end
+        )
+    end
+end
+
+function MacroSystem:onDeactivate()
+    if #(self.subSystems) > 0 then
+        tforeach(
+            self.subSystems,
+            function(_, system)
+                system:DoDeactivate()
             end
         )
     end
