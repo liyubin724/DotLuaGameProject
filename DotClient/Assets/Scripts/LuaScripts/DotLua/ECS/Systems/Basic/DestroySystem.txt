@@ -3,6 +3,7 @@ local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/CollectorLateUpdat
 local GroupEvent = require("DotLua/ECS/Core/GroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
 local CommonMathcers = require("DotLua/ECS/CommonMathcers")
+local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local Const = require("DotLua/ECS/Const")
 
@@ -11,6 +12,7 @@ local DestroySystem =
     "DotLua.ECS.Systems.Basic.DestroySystem",
     function(self, context)
         self.context = context
+        self.priority = ESystemPriority.Highest
     end,
     CollectorLateUpdateSystem
 )

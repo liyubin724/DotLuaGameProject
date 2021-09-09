@@ -38,11 +38,11 @@ function Systems:RegisterSystem(name, systemClass, ...)
     self.nameToSystemDic[name] = system
 
     if system[Const.DO_UPDATE_FUNC_NAME] then
-        tinsert(self.updateSystems, system)
+        self:insertByPriority(self.updateSystems, system)
     end
 
     if system[Const.DO_LATEUPDATE_FUNC_NAME] then
-        tinsert(self.lateUpdateSystems, system)
+        self:insertByPriority(self.lateUpdateSystems, system)
     end
 
     system:DoActivate()
@@ -66,7 +66,7 @@ function Systems:UnregisterSystem(name, isAutoDestroy)
     end
 
     system:DoDeactivate()
-    if isAutoDestroy then
+    if isAutoDestroy == nil or isAutoDestroy then
         system:DoDestroy()
     end
 end
@@ -100,6 +100,19 @@ function Systems:DoDestroy()
     self.nameToSystemDic = nil
     self.updateSystems = nil
     self.lateUpdateSystems = nil
+end
+
+function Systems:insertByPriority(systems,system)
+    local priority = system:GetPriority()
+    for i, s in ipairs(systems) do
+        local p = s:GetPriority()
+        if priority < p then
+            tinsert(systems,i)
+            return
+        end
+    end
+
+    tinsert(systems, system)
 end
 
 return Systems

@@ -1,0 +1,15 @@
+local oop = require("DotLua/OOP/oop")
+
+local ESystemPriority =
+    oop.enum(
+    "DotLua.ECS.Core.ESystemPriority",
+    {
+        Lowest = 1,
+        Low = 2,
+        Default = 3,
+        High = 4,
+        Highest = 5
+    }
+)
+
+return ESystemPriority

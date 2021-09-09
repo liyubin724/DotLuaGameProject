@@ -6,12 +6,14 @@ local Const = require("DotLua/ECS/Const")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 local CategoryCollectionComponent = require("DotLua/ECS/Components/Basic/CategoryCollectionComponent")
 local LateUpdateSystem = require("DotLua/ECS/Systems/LateUpdateSystem")
+local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local CategoryCollectionSystem =
     oop.class(
     "DotLua.ECS.Systems.Basic.CategoryCollectionSystem",
     function(self, context)
         self.collector = Collector(context, CommonMathcers.HaveCategoryComponentMatcher, GroupEvent.Added)
+        self.priority = ESystemPriority.High
     end,
     LateUpdateSystem
 )

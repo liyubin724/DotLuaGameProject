@@ -1,12 +1,18 @@
 local oop = require("DotLua/OOP/oop")
 local Const = require("DotLua/ECS/Const")
+local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local System =
     oop.class(
     "DotLua.ECS.Core.System",
     function(self)
+        self.priority = ESystemPriority.Default
     end
 )
+
+function System:GetPriority()
+    return self.priority
+end
 
 function System:DoInitilize()
     local func = self[Const.ON_INITILIZE_FUNC_NAME]
