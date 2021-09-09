@@ -30,6 +30,8 @@ local Contexts =
         self.contextReleasedEvent = oop.event()
 
         self.willReleasedEntities = {}
+
+        self.nameToGlobalEntityDic = {}
     end
 )
 
@@ -119,6 +121,18 @@ function Contexts:ReleaseContext(name)
     self.contextReleasedEvent:Invoke(context)
 
     self.contextPool:Release(context)
+end
+
+function Contexts:GetGlobalEntity(name)
+    local entity = self.nameToGlobalEntityDic[name]
+    if not entity then
+        local guid = self.guidCreator:Get()
+        entity = self.entityPool:Get(guid, nil, self.componentPool)
+
+        self.nameToGlobalEntityDic[name] = entity
+    end
+
+    return entity
 end
 
 function Contexts:HasEntity(guid)

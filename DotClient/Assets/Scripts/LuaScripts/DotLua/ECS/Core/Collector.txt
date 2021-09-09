@@ -10,10 +10,11 @@ local tcontainsvalue = table.containsvalue
 local Collector =
     oop.class(
     "DotLua.ECS.Collectors.Collector",
-    function(self, group, groupEvent)
+    function(self, context, matcher, groupEvent)
         self.isEnable = false
 
-        self.group = group
+        self.context = context
+        self.group = context:CreateGroup(matcher)
         self.groupEvent = groupEvent
 
         self.collectedEntities = {}
@@ -77,12 +78,13 @@ function Collector:DoDestroy()
 
     self.collectedEntities = nil
 
+    self.context:ReleaseGroup(self.group)
     self.group = nil
     self.groupEvent = nil
     self.isEnable = false
 end
 
-function Collector:onEntityChangedEvent(entity,contextEvent)
+function Collector:onEntityChangedEvent(entity, contextEvent)
     if contextEvent == ContextEvent.EntityReleased then
         tremovevalue(self.collectedEntities, entity)
         return

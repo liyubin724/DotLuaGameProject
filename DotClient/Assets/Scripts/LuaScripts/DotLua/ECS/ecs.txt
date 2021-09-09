@@ -1,48 +1,51 @@
-local ObjectPool = require("DotLua/Pool/ObjectPool")
-local ComponentPool = require("DotLua/ECS/Core/ComponentPool")
-local Entity = require("DotLua/ECS/Core/Entity")
-local Group = require("DotLua/ECS/Core/Group")
-local Context = require("DotLua/ECS/Core/Context")
-local GUIDCreator = require("DotLua/Generic/GUIDCreator")
+local oop = require("DotLua/OOP/oop")
+local ECSEnv = require("DotLua/ECS/ECSEnv")
 
 ecs = ecs or {}
 
-ecs.componentPool = nil
-ecs.entityPool = nil
-ecs.groupPool = nil
-ecs.contextPool = nil
-ecs.guidCreator = nil
 ecs.env = nil
+ecs.GetEnv = function()
+    return ecs.env
+end
 
-ecs.isRunning = false
+ecs.GetContexts = function()
+    if ecs.env then
+        return ecs.env:GetContexts()
+    end
+
+    return nil
+end
+
+ecs.GetSystems = function()
+    if ecs.env then
+        return ecs.env:GetSystems()
+    end
+    return nil
+end
+
 ecs.Initialize = function(envClass)
-    ecs.componentPool = ComponentPool()
-    ecs.entityPool = ObjectPool(Entity)
-    ecs.groupPool = ObjectPool(Group)
-    ecs.contextPool = ObjectPool(Context)
-    ecs.guidCreator = GUIDCreator()
-
+    envClass = envClass or ECSEnv
     ecs.env = envClass()
-
-    ecs.isRunning = true
+    ecs.env:DoInitlize()
 end
 
 ecs.Update = function(deltaTime, unscaleDeltaTime)
-    if ecs.isRunning and ecs.env then
+    if ecs.env then
         ecs.env:DoUpdate(deltaTime, unscaleDeltaTime)
     end
 end
 
 ecs.LateUpdate = function(deltaTime, unscaleDeltaTime)
-    if ecs.isRunning and ecs.env then
+    if ecs.env then
         ecs.env:DoLateUpdate(deltaTime, unscaleDeltaTime)
     end
 end
 
 ecs.Destroy = function()
-    if ecs.isRunning and ecs.env then
+    if ecs.env then
         ecs.env:DoDestroy()
     end
+    ecs.env = nil
 end
 
-return ecs
+oop.asreadonly(ecs)

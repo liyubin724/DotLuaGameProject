@@ -6,11 +6,26 @@ local LogTag = "GroupUpdateSystem"
 local GroupUpdateSystem =
     oop.class(
     "DotLua.ECS.Systems.GroupUpdateSystem",
-    function(self, group)
-        self.group = group
+    function(self, context)
+        self.context = context
+        self.group = nil
     end,
     UpdateSystem
 )
+
+function GroupUpdateSystem:onInitlize()
+    self._base.onInitlize(self)
+
+    self.group = self:createGroup(self.context)
+end
+
+function GroupUpdateSystem:onDestroy()
+    if self.group then
+        self.context:ReleaseGroup(self.group)
+    end
+    self.group = nil
+    self.context = nil
+end
 
 function GroupUpdateSystem:onUpdate(deltaTime)
     if not self.group then
@@ -24,6 +39,10 @@ function GroupUpdateSystem:onUpdate(deltaTime)
             self:onEntityUpdate(entity, deltaTime)
         end
     end
+end
+
+function GroupUpdateSystem:createGroup(context)
+    return nil
 end
 
 function GroupUpdateSystem:filterEntity(entity)

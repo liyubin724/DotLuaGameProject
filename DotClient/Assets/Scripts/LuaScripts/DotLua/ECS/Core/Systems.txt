@@ -19,24 +19,22 @@ local Systems =
     end
 )
 
-function Systems:RegisterSystem(name, system)
+function Systems:RegisterSystem(name, systemClass, ...)
     if oop.isDebug then
-        if not system or not oop.isinstanceof(system, System) then
-            oop.error(LogTag, "the system is nil or is not a instance of System")
+        if not systemClass or not oop.iskindof(systemClass, System) then
+            oop.error(LogTag, "the system is nil or is not a class of System")
             return
         end
     end
 
-    if self.nameToSystemDic[name] then
-        oop.error(
-            LogTag,
-            "the system has been registered in to systems.name = %s,system = ",
-            name,
-            tostring(system)
-        )
-        return
+    local system = self.nameToSystemDic[name]
+    if system then
+        oop.error(LogTag, "the system has been registered in to systems.name = %s,system = ", name, tostring(system))
+        return nil
     end
 
+    system = systemClass(...)
+    system:DoInitlize()
     self.nameToSystemDic[name] = system
 
     if system[Const.DO_UPDATE_FUNC_NAME] then
@@ -50,7 +48,7 @@ function Systems:RegisterSystem(name, system)
     system:DoActivate()
 end
 
-function Systems:UnregisterSystem(name)
+function Systems:UnregisterSystem(name, isAutoDestroy)
     local system = self.nameToSystemDic[name]
     if not system then
         oop.warning(LogTag, "the system is not found")
@@ -68,6 +66,9 @@ function Systems:UnregisterSystem(name)
     end
 
     system:DoDeactivate()
+    if isAutoDestroy then
+        system:DoDestroy()
+    end
 end
 
 function Systems:DoUpdate(deltaTime, unscaleDeltaTime)

@@ -6,8 +6,8 @@ local LogTag = "CollectorUpdateSystem"
 local CollectorLateUpdateSystem =
     oop.class(
     "DotLua.ECS.Systems.Collectors.CollectorUpdateSystem",
-    function(self)
-        self.collector = self:createCollector()
+    function(self, context)
+        self.collector = self:createCollector(context)
     end,
     UpdateSystem
 )
@@ -22,6 +22,13 @@ function CollectorLateUpdateSystem:onDeactivate()
     if self.collector then
         self.collector:DoDeactivate()
     end
+end
+
+function CollectorLateUpdateSystem:onDestroy()
+    if self.collector then
+        self.collector:DoDestroy()
+    end
+    self.collector = nil
 end
 
 function CollectorLateUpdateSystem:onLateUpdate(deltaTime)
@@ -40,7 +47,7 @@ function CollectorLateUpdateSystem:onLateUpdate(deltaTime)
     end
 end
 
-function CollectorLateUpdateSystem:createCollector()
+function CollectorLateUpdateSystem:createCollector(context)
     return nil
 end
 

@@ -2,10 +2,9 @@ local oop = require("DotLua/OOP/oop")
 local Const = require("DotLua/ECS/Const")
 local Contexts = require("DotLua/ECS/Core/Contexts")
 local Systems = require("DotLua/ECS/Core/Systems")
-local DestroySystem = require("DotLua/ECS/Systems/LateUpdate/DestroySystem")
+local DestroySystem = require("DotLua/ECS/Systems/Basic/DestroySystem")
 local HaveComponentMatcher = require("DotLua/ECS/Matchers/Components/HaveComponentMatcher")
 local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
-local GroupEvent = require("DotLua/ECS/Core/GroupEvent")
 
 local ECSEnv =
     oop.class(
@@ -30,7 +29,12 @@ function ECSEnv:DoInitlize()
     self.contexts = Contexts()
     self.systems = Systems()
 
-    self.contexts:BindContextEvent(self, self.onContextCreated, self.onContextReleased)
+    local func = self[Const.ON_INITILIZE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
+
+    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
 
     self:onContextsInitilized()
     self:onSystemsInitilized()
@@ -57,26 +61,20 @@ function ECSEnv:DoDestroy()
     self.contexts = nil
 end
 
-function ECSEnv:onContextCreated(context)
-    local group = context:CreateGroup(self.destroyMatcher)
-    
+function ECSEnv:onContextCreatedEvent(context)
+    local systemName = string.format("%s-DestroySystem", context:GetName())
+    self.systems:RegisterSystem(systemName, DestroySystem, context)
 end
 
-function ECSEnv:onContextReleased(context)
-
+function ECSEnv:onContextReleasedEvent(context)
+    local systemName = string.format("%s-DestroySystem", context:GetName())
+    self.systems:UnregisterSystem(systemName, true)
 end
 
 function ECSEnv:onContextsInitilized()
 end
 
 function ECSEnv:onSystemsInitilized()
-end
-
-function ECSEnv:onContextCreatedEvent(context)
-    
-end
-
-function ECSEnv:onContextReleasedEvent(context)
 end
 
 return ECSEnv

@@ -6,20 +6,11 @@ local LateUpdateSystem =
     oop.class(
     "DotLua.ECS.Systems.LateUpdateSystem",
     function(self)
-        self.frequencyTime = Const.TIME_EVERY_UPDATE
+        self.frequencyTime = self:getFrequencyTime()
         self.elapseDeltaTime = 0
     end,
     System
 )
-
-function LateUpdateSystem:GetFrequency()
-    return self.frequencyTime
-end
-
-function LateUpdateSystem:SetFrequency(frequencyTime)
-    self.frequencyTime = frequencyTime or Const.TIME_EVERY_UPDATE
-    self.elapseDeltaTime = 0
-end
 
 function LateUpdateSystem:onInitilize()
     self.elapseDeltaTime = 0
@@ -41,6 +32,10 @@ function LateUpdateSystem:DoLateUpdate(deltaTime, unscaleDeltaTime)
             self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyTime
         end
     end
+end
+
+function LateUpdateSystem:getFrequencyTime()
+    return Const.TIME_EVERY_UPDATE
 end
 
 function LateUpdateSystem:onLateUpdate(unscaleDeltaTime)

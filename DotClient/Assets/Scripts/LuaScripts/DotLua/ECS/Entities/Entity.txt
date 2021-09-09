@@ -32,10 +32,10 @@ function Entity:GetContext()
 end
 
 function Entity:GetGUID()
-    if not self.guid then
-        local guidComponent = self:GetComponentByClass(GUIDComponent)
-        self.guid = guidComponent:GetGUID()
-    end
+    -- if not self.guid then
+    --     local guidComponent = self:GetComponentByClass(GUIDComponent)
+    --     self.guid = guidComponent:GetGUID()
+    -- end
 
     return self.guid
 end

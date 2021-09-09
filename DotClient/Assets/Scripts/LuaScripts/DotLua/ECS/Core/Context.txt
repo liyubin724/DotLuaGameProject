@@ -1,5 +1,4 @@
 local oop = require("DotLua/OOP/oop")
-local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
 local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
 
 local tclear = table.clear
@@ -153,7 +152,8 @@ function Context:GetEntity(guid)
 end
 
 function Context:CreateEntity(...)
-    local entity = self.entityPool:Get(self.name, self.componentPool, ...)
+    local guid = self.guidCreator:Get()
+    local entity = self.entityPool:Get(guid, self.name, self.componentPool, ...)
     entity:BindComponentEvent(
         self,
         self.onEntityAddComponentEvent,
@@ -161,9 +161,6 @@ function Context:CreateEntity(...)
         self.onEntityReplaceComponentEvent,
         self.onEntityModifyComponentEvent
     )
-
-    local guid = self.guidCreator:Get()
-    entity:addComponent(GUIDComponent, guid)
 
     self.guidToEntityDic[guid] = entity
 

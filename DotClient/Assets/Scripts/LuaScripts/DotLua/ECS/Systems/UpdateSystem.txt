@@ -17,7 +17,6 @@ function UpdateSystem:onInitilize()
 end
 
 function UpdateSystem:onDestroy()
-    self.elapseDeltaTime = 0
 end
 
 function UpdateSystem:DoUpdate(deltaTime, unscaleDeltaTime)

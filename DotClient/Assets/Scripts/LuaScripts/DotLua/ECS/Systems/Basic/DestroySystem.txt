@@ -2,27 +2,33 @@ local oop = require("DotLua/OOP/oop")
 local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/CollectorLateUpdateSystem")
 local GroupEvent = require("DotLua/ECS/Core/GroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
+local CommonMathcers = require("DotLua/ECS/CommonMathcers")
+
 local Const = require("DotLua/ECS/Const")
 
 local DestroySystem =
     oop.class(
     "DotLua.ECS.Systems.Basic.DestroySystem",
     function(self, context)
-        self:SetFrequency(Const.TIME_VLF_UPDATE)
+        self.context = context
     end,
     CollectorLateUpdateSystem
 )
 
-function DestroySystem:onInitlize()
-    self.collector:DoActivate()
+function DestroySystem:getFrequencyTime()
+    return Const.TIME_VLF_UPDATE
 end
 
-function DestroySystem:onDestroy()
-    self.collector:DoDeactivate()
+function DestroySystem:createCollector(context)
+    return Collector(context, CommonMathcers.HaveDestroyComponentMatcher, GroupEvent.Added)
 end
 
-function DestroySystem:onLateUpdate(deltaTime)
-    
+function DestroySystem:filterEntity(entity)
+    return true
+end
+
+function DestroySystem:onEntityLateUpdate(entity, deltaTime)
+    self.context:ReleaseEntity(entity)
 end
 
 return DestroySystem

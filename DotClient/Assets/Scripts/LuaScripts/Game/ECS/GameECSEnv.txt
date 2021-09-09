@@ -10,17 +10,13 @@ local GameECSEnv =
     ECSEnv
 )
 
+function GameECSEnv:onInitlize()
+end
+
 function GameECSEnv:onContextsInitilized()
 end
 
 function GameECSEnv:onSystemsInitilized()
-
-end
-
-function GameECSEnv:onContextCreatedEvent()
-end
-
-function GameECSEnv:onContextReleasedEvent()
 end
 
 return GameECSEnv
