@@ -46,7 +46,7 @@ function GroupUpdateSystem:createGroup(context)
 end
 
 function GroupUpdateSystem:filterEntity(entity)
-    return false
+    return true
 end
 
 function GroupUpdateSystem:onEntityUpdate(entity, deltaTime)

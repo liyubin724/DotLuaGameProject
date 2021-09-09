@@ -115,12 +115,11 @@ function Contexts:ReleaseContext(name)
         return
     end
 
-    self.contextDic[name] = nil
     context:UnbindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
-
     self.contextReleasedEvent:Invoke(context)
-
     self.contextPool:Release(context)
+
+    self.contextDic[name] = nil
 end
 
 function Contexts:GetGlobalEntity(name)

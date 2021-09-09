@@ -43,23 +43,22 @@ function Context:DoActivate(name, guidCreator, groupPool, entityPool, componentP
 end
 
 function Context:DoDeactivate()
+    for _, entity in pairs(self.guidToEntityDic) do
+        self:ReleaseEntity(entity)
+    end
     for _, group in pairs(self.matcherToGroupDic) do
         self:ReleaseGroup(group)
     end
-    tclear(self.matcherToGroupDic)
 
     self.groupCreatedEvent:Clear()
     self.groupReleasedEvent:Clear()
     self.groupChangedEvent:Clear()
-
-    for _, entity in pairs(self.guidToEntityDic) do
-        self:ReleaseEntity(entity)
-    end
-    tclear(self.guidToEntityDic)
+    tclear(self.matcherToGroupDic)
 
     self.entityCreatedEvent:Clear()
     self.entityReleasedEvent:Clear()
     self.entityChangedEvent:Clear()
+    tclear(self.guidToEntityDic)
 
     self.name = nil
     self.groupPool = nil
@@ -177,10 +176,10 @@ function Context:ReleaseEntity(entity)
         return
     end
 
-    self.guidToEntityDic[guid] = nil
+    entity:RemoveAllComponent()
 
+    self.guidToEntityDic[guid] = nil
     self.entityReleasedEvent:Invoke(entity, ContextEvent.EntityReleased, nil, nil)
-    self:tryToUpdateGroup(entity, ContextEvent.EntityReleased, nil, nil)
 end
 
 function Context:CreateGroup(matcher)

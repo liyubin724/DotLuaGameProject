@@ -23,10 +23,6 @@ function DestroySystem:createCollector(context)
     return Collector(context, CommonMathcers.HaveDestroyComponentMatcher, GroupEvent.Added)
 end
 
-function DestroySystem:filterEntity(entity)
-    return true
-end
-
 function DestroySystem:onEntityLateUpdate(entity, deltaTime)
     self.context:ReleaseEntity(entity)
 end

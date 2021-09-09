@@ -1,0 +1,42 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+
+local tinsert = table.insert
+local tremovevalue = table.removevalue
+local tclear = table.clear
+
+local CategoryCollectionComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.CategoryCollectionComponent",
+    function(self)
+        self.categoryToCollectionDic = {}
+    end,
+    Component
+)
+
+function CategoryCollectionComponent:GetEntities(categoryID)
+    return self.categoryToCollectionDic[categoryID]
+end
+
+function CategoryCollectionComponent:AddEntity(categoryID, guid)
+    local collection = self.categoryToCollectionDic[categoryID]
+    if not collection then
+        collection = {}
+        self.categoryToCollectionDic[categoryID] = collection
+    end
+
+    tinsert(collection, guid)
+end
+
+function CategoryCollectionComponent:RemoveEntity(categoryID, guid)
+    local collection = self.categoryToCollectionDic[categoryID]
+    if collection then
+        tremovevalue(collection, guid)
+    end
+end
+
+function CategoryCollectionComponent:DoRelease()
+    tclear(self.categoryToCollectionDic)
+end
+
+return CategoryCollectionComponent

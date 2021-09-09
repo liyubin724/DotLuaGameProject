@@ -5,6 +5,7 @@ local Systems = require("DotLua/ECS/Core/Systems")
 local DestroySystem = require("DotLua/ECS/Systems/Basic/DestroySystem")
 local HaveComponentMatcher = require("DotLua/ECS/Matchers/Components/HaveComponentMatcher")
 local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
+local CategoryCollectionSystem = require("DotLua/ECS/Components/Basic/CategoryCollectionSystem")
 
 local ECSEnv =
     oop.class(

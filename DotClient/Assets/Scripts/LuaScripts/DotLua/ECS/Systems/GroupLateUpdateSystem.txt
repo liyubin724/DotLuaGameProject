@@ -46,7 +46,7 @@ function GroupLateUpdateSystem:createGroup(context)
 end
 
 function GroupLateUpdateSystem:filterEntity(entity)
-    return false
+    return true
 end
 
 function GroupLateUpdateSystem:onEntityLateUpdate(entity, deltaTime)

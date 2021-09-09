@@ -98,15 +98,6 @@ function Group:TryUpdateEntity(entity, contextEvent, param1, param2)
         return
     end
 
-    if contextEvent == ContextEvent.EntityReleased then
-        if self:removeEntitySliently(entity) then
-            self.entityRemovedEvent:Invoke(entity, contextEvent, param1, param2)
-            return true
-        end
-
-        return false
-    end
-
     local isMatched = self.matcher:IsMatch(entity, contextEvent, param1, param2)
     if isMatched then
         if self:addEntitySliently(entity) then

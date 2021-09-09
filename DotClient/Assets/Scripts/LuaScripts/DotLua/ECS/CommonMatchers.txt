@@ -1,8 +1,10 @@
 local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
 local HaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/HaveComponentMatcher")
+local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 
 local CommonMathcer = {}
 
 CommonMathcer.HaveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
+CommonMathcer.HaveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 
 return CommonMathcer

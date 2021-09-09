@@ -33,4 +33,6 @@ Const.DO_RELEASE_FUNC_NAME = "DoRelease"
 Const.ON_GET_FUNC_NAME = "onGet"
 Const.ON_RELEASE_FUNC_NAME = "onRelease"
 
+Const.GLOBAL_ENTITY_COLLECTION_NAME = "collectionEntity"
+
 return Const

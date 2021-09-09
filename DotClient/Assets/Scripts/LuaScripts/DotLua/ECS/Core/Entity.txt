@@ -4,6 +4,7 @@ local Component = require("DotLua/ECS/Core/Component")
 local tlength = table.length
 local tvalues = table.values
 local tclear = table.clear
+local tkeys = table.keys
 
 local LogTag = "Entity"
 
@@ -206,6 +207,14 @@ function Entity:RemoveComponent(componentClass)
     self.componentRemovedEvent:Invoke(self, componentClass)
 
     return true
+end
+
+function Entity:RemoveAllComponent()
+    local allComponentClasses = tkeys(self.componentClassToInstanceDic)
+    for _, componentClass in ipairs(allComponentClasses) do
+        self:RemoveComponent(componentClass)
+    end
+    tclear(self.componentClassToInstanceDic)
 end
 
 function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
