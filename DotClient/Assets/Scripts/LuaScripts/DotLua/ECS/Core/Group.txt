@@ -1,5 +1,5 @@
 local oop = require("DotLua/OOP/oop")
-local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
+local EContextEvent = require("DotLua/ECS/Core/EContextEvent")
 
 local tinsert = table.insert
 local tremove = table.remove

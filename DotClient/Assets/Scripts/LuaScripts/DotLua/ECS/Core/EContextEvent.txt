@@ -1,8 +1,8 @@
 local oop = require('DotLua/OOP/oop')
 
-local ContextEvent =
+local EContextEvent =
     oop.enum(
-    'DotLua.ECS.Contexts.ContextEvent',
+    'DotLua.ECS.Contexts.EContextEvent',
     {
         EntityCreated = 1,
         EntityReleased = 2,
@@ -13,4 +13,4 @@ local ContextEvent =
     }
 )
 
-return ContextEvent
+return EContextEvent

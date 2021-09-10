@@ -1,5 +1,5 @@
 local oop = require("DotLua/OOP/oop")
-local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
+local EContextEvent = require("DotLua/ECS/Core/EContextEvent")
 local GUIDComponent = require("DotLua/ECS/Core/GUIDComponent")
 
 local tclear = table.clear
@@ -163,8 +163,8 @@ function Context:CreateEntity(...)
     )
     self.guidToEntityDic[guid] = entity
 
-    self.entityCreatedEvent:Invoke(entity, ContextEvent.EntityCreated, nil, nil)
-    self:tryToUpdateGroup(entity, ContextEvent.EntityCreated, nil, nil)
+    self.entityCreatedEvent:Invoke(entity, EContextEvent.EntityCreated, nil, nil)
+    self:tryToUpdateGroup(entity, EContextEvent.EntityCreated, nil, nil)
 
     entity:AddComponent(GUIDComponent, guid)
 
@@ -181,7 +181,7 @@ function Context:ReleaseEntity(entity)
     entity:RemoveAllComponent()
 
     self.guidToEntityDic[guid] = nil
-    self.entityReleasedEvent:Invoke(entity, ContextEvent.EntityReleased, nil, nil)
+    self.entityReleasedEvent:Invoke(entity, EContextEvent.EntityReleased, nil, nil)
 end
 
 function Context:CreateGroup(matcher)
@@ -197,7 +197,7 @@ function Context:CreateGroup(matcher)
     group:RetainRef()
 
     for _, entity in pairs(self.guidToEntityDic) do
-        group:addEntitySliently(entity, ContextEvent.GroupCreated)
+        group:addEntitySliently(entity, EContextEvent.GroupCreated)
     end
 
     self.groupCreatedEvent:Invoke(self, group)
@@ -216,35 +216,35 @@ function Context:ReleaseGroup(group)
 end
 
 function Context:onEntityAddComponentEvent(entity, addedComponentClass)
-    self:tryToUpdateGroup(entity, ContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
-    self.entityChangedEvent:Invoke(entity, ContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
+    self:tryToUpdateGroup(entity, EContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
+    self.entityChangedEvent:Invoke(entity, EContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
 end
 
 function Context:onEntityRemoveComponentEvent(entity, removedComponentClass)
-    self:tryToUpdateGroup(entity, ContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
-    self.entityChangedEvent:Invoke(entity, ContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
+    self:tryToUpdateGroup(entity, EContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
+    self.entityChangedEvent:Invoke(entity, EContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
 end
 
 function Context:onEntityReplaceComponentEvent(entity, removedComponentClass, addedComponentClass)
     self:tryToUpdateGroup(
         entity,
-        ContextEvent.EntityChangedForReplaceComponent,
+        EContextEvent.EntityChangedForReplaceComponent,
         removedComponentClass,
         addedComponentClass
     )
     self.entityChangedEvent:Invoke(
         entity,
-        ContextEvent.EntityChangedForReplaceComponent,
+        EContextEvent.EntityChangedForReplaceComponent,
         removedComponentClass,
         addedComponentClass
     )
 end
 
 function Context:onEntityModifyComponentEvent(entity, modifiedComponentClass, modifyTag)
-    self:tryToUpdateGroup(entity, ContextEvent.EntityChangedForModifyComponent, modifiedComponentClass, modifyTag)
+    self:tryToUpdateGroup(entity, EContextEvent.EntityChangedForModifyComponent, modifiedComponentClass, modifyTag)
     self.entityChangedEvent:Invoke(
         entity,
-        ContextEvent.EntityChangedForModifyComponent,
+        EContextEvent.EntityChangedForModifyComponent,
         modifiedComponentClass,
         modifyTag
     )
