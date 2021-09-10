@@ -1,45 +1,36 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Components/Component")
-
-local tclear = table.clear
-local tinsert = table.insert
-local tremovevalue = table.removevalue
-local tcontainsvalue = table.containsvalue
+local ListDictionary = require("DotLua/Generic/Collections/ListDictionary")
 
 local ChildsComponent =
     oop.class(
     "DotLua.ECS.Components.Basic.ChildsComponent",
     function(self)
-        self.childs = {}
+        self.childListDic = ListDictionary()
     end,
     Component
 )
 
 function ChildsComponent:GetChilds()
-    return self.childs
+    return self.childListDic:GetItems()
 end
 
-function ChildsComponent:Add(guid)
-    if not tcontainsvalue(self.childs, guid) then
-        tinsert(self.childs, guid)
+function ChildsComponent:AddEntity(guid)
+    if not self.childListDic:HasItem(guid) then
+        self.childListDic:AddItem(guid,guid)
     end
 end
 
-function ChildsComponent:Remove(guid)
-    if tcontainsvalue(self.childs, guid) then
-        tremovevalue(self.childs, guid)
-        return true
-    end
-
-    return false
+function ChildsComponent:RemoveEntity(guid)
+    self.childListDic:RemoveItem(guid)
 end
 
-function ChildsComponent:Has(guid)
-    return tcontainsvalue(self.childs, guid)
+function ChildsComponent:HasEntity(guid)
+    return self.childListDic:HasItem(guid)
 end
 
 function ChildsComponent:DoRelease()
-    tclear(self.childs)
+    self.childListDic:Clear()
 end
 
 return ChildsComponent

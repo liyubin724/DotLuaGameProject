@@ -1,0 +1,47 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+
+local tclear = table.clear
+local tinsert = table.insert
+local tremovevalue = table.removevalue
+
+local DependedCollectionComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.DependedCollectionComponent",
+    function(self)
+        self.guidToDependedEntityDic = {}
+    end,
+    Component
+)
+
+function DependedCollectionComponent:GetDependedEntities(guid)
+    return self.guidToDependedEntityDic[guid]
+end
+
+function DependedCollectionComponent:AddDependEntity(guid, depends)
+    for k, v in pairs(self.guidToDependedEntityDic) do
+        tremovevalue(v, guid)
+    end
+
+    for _, v in ipairs(depends) do
+        local dic = self.guidToDependedEntityDic[v]
+        if not dic then
+            dic = {}
+            self.guidToDependedEntityDic[v] = dic
+        end
+
+        tinsert(dic, guid)
+    end
+end
+
+function DependedCollectionComponent:Remove(guid)
+    for k, v in pairs(self.guidToDependedEntityDic) do
+        tremovevalue(v, guid)
+    end
+end
+
+function DependedCollectionComponent:DoRelease()
+    tclear(self.guidToDependedEntityDic)
+end
+
+return DependedCollectionComponent

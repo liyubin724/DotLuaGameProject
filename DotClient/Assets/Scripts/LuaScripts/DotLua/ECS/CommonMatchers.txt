@@ -4,10 +4,11 @@ local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent
 local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
 
 
-local CommonMathcer = {}
+local CommonMatchers = {}
 
-CommonMathcer.HaveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
-CommonMathcer.HaveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
-CommonMathcer.HaveGUIDComponentMatcher = HaveComponentMatcher(GUIDComponent)
+CommonMatchers.HaveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
+CommonMatchers.HaveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
+CommonMatchers.HaveGUIDComponentMatcher = HaveComponentMatcher(GUIDComponent)
+CommonMatchers.HaveChildsComponentMathcer = HaveComponentMatcher(ChildsComponent)
 
-return CommonMathcer
+return CommonMatchers

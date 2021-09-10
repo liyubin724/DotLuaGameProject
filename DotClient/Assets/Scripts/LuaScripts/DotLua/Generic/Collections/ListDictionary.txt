@@ -1,0 +1,86 @@
+local oop = require("DotLua/OOP/oop")
+
+local tinsert = table.insert
+local tremovevalue = table.removevalue
+local tclear = table.clear
+local tremove = table.remove
+
+local ListDictionary =
+    oop.class(
+    "DotLua.Generic.Collections.ListDictionary",
+    function(self)
+        self.keys = {}
+        self.items = {}
+        self.itemDic = {}
+    end
+)
+
+function ListDictionary:GetItems()
+    return self.items
+end
+
+function ListDictionary:GetKeys()
+    return self.keys
+end
+
+function ListDictionary:GetCount()
+    return #self.items
+end
+
+function ListDictionary:IsEmpty()
+    return #self.items == 0
+end
+
+function ListDictionary:HasItem(key)
+    return self.itemDic[key] ~= nil
+end
+
+function ListDictionary:GetItem(key)
+    return self.itemDic[key]
+end
+
+function ListDictionary:AddItem(key, item)
+    if not self.itemDic[key] then
+        tinsert(self.items, item)
+        tinsert(self.keys, key)
+
+        self.itemDic[key] = item
+    end
+end
+
+function ListDictionary:RemoveItem(key)
+    local item = self.itemDic[key]
+    if item then
+        self.itemDic[key] = nil
+
+        tremovevalue(self.items, item)
+        tremovevalue(self.keys, key)
+    end
+end
+
+function ListDictionary:GetItemAt(index)
+    if index > 0 and index <= #self.items then
+        local key = self.keys[index]
+        return self.itemDic[key]
+    end
+    return nil
+end
+
+function ListDictionary:RemoveItemAt(index)
+    if index > 0 and index <= #self.items then
+        local key = self.keys[index]
+
+        tremove(self.keys, index)
+        tremove(self.items, index)
+
+        self.itemDic[key] = nil
+    end
+end
+
+function ListDictionary:Clear()
+    tclear(self.items)
+    tclear(self.keys)
+    tclear(self.itemDic)
+end
+
+return ListDictionary

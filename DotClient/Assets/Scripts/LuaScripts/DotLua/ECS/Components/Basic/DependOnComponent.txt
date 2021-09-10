@@ -1,0 +1,36 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+local ListDictionary = require("DotLua/Generic/Collections/ListDictionary")
+
+local DependOnComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.DependOnComponent",
+    function(self)
+        self.dependListDic = ListDictionary()
+    end,
+    Component
+)
+
+function DependOnComponent:GetDepends()
+    return self.dependListDic:GetItems()
+end
+
+function DependOnComponent:AddEntity(guid)
+    if not self.dependListDic:HasItem(guid) then
+        self.dependListDic:AddItem(guid, guid)
+    end
+end
+
+function DependOnComponent:RemoveEntity(guid)
+    self.dependListDic:RemoveItem(guid)
+end
+
+function DependOnComponent:HasEntity(guid)
+    return self.dependListDic:HasItem(guid)
+end
+
+function DependOnComponent:DoRelease()
+    self.dependListDic:Clear()
+end
+
+return DependOnComponent

@@ -1,8 +1,7 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Core/Component")
+local ListDictionary = require("DotLua/Generic/Collections/ListDictionary")
 
-local tinsert = table.insert
-local tremovevalue = table.removevalue
 local tclear = table.clear
 
 local CategoryCollectionComponent =
@@ -14,24 +13,29 @@ local CategoryCollectionComponent =
     Component
 )
 
-function CategoryCollectionComponent:GetCollection(categoryID)
-    return self.categoryToCollectionDic[categoryID]
+function CategoryCollectionComponent:GetEntities(categoryID)
+    local listDic = self.categoryToCollectionDic[categoryID]
+    if listDic then
+        return listDic:GetItems()
+    end
+    return nil
 end
 
-function CategoryCollectionComponent:Add(categoryID, guid)
+function CategoryCollectionComponent:AddEntity(categoryID, guid)
     local collection = self.categoryToCollectionDic[categoryID]
     if not collection then
-        collection = {}
+        collection = ListDictionary()
         self.categoryToCollectionDic[categoryID] = collection
     end
-
-    tinsert(collection, guid)
+    if not collection:HasItem(guid) then
+        collection:AddItem(guid, guid)
+    end
 end
 
-function CategoryCollectionComponent:Remove(categoryID, guid)
+function CategoryCollectionComponent:RemoveEntity(categoryID, guid)
     local collection = self.categoryToCollectionDic[categoryID]
     if collection then
-        tremovevalue(collection, guid)
+        collection:RemoveItem(guid)
     end
 end
 

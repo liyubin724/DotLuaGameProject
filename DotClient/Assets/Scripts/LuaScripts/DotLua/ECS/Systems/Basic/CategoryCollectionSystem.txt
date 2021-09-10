@@ -1,5 +1,5 @@
 local oop = require("DotLua/ECS/OOP/oop")
-local CommonMathcers = require("DotLua/ECS/CommonMathcers")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
 local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
 local Const = require("DotLua/ECS/Const")
@@ -12,7 +12,7 @@ local CategoryCollectionSystem =
     oop.class(
     "DotLua.ECS.Systems.Basic.CategoryCollectionSystem",
     function(self, context)
-        self.collector = Collector(context, CommonMathcers.HaveCategoryComponentMatcher, EGroupEvent.AddedOrRemoved)
+        self.collector = Collector(context, CommonMatchers.HaveCategoryComponentMatcher, EGroupEvent.AddedOrRemoved)
         self.priority = ESystemPriority.High
     end,
     LateUpdateSystem
@@ -56,7 +56,7 @@ function CategoryCollectionSystem:onLateUpdate(deltaTime)
         local categoryComponent = entity:GetComponent(CategoryComponent)
         local categoryID = categoryComponent:GetCategoryID()
 
-        categoryCollectionComponent:Add(categoryID, guid)
+        categoryCollectionComponent:AddEntity(categoryID, guid)
     end
 
     for _, entity in ipairs(removedEntities) do
@@ -64,7 +64,7 @@ function CategoryCollectionSystem:onLateUpdate(deltaTime)
         local categoryComponent = entity:GetComponent(CategoryComponent)
         local categoryID = categoryComponent:GetCategoryID()
 
-        categoryCollectionComponent:Remove(categoryID, guid)
+        categoryCollectionComponent:RemoveEntity(categoryID, guid)
     end
 end
 
