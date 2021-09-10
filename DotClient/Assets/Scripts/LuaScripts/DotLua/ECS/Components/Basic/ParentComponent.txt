@@ -3,7 +3,7 @@ local Component = require("DotLua/ECS/Core/Component")
 
 local ParentComponent =
     oop.class(
-    "DotLua.ECS.Components.Basic.Dependencies.ParentComponent",
+    "DotLua.ECS.Components.Basic.ParentComponent",
     function(self)
         self.guid = nil
     end,

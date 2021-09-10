@@ -1,5 +1,5 @@
 local oop = require("DotLua/OOP/oop")
-local ECSEnv = require("DotLua/ECS/ECSEnv")
+local Env = require("DotLua/ECS/Env")
 
 ecs = ecs or {}
 
@@ -42,7 +42,7 @@ ecs.GetGlobalEntity = function(name)
 end
 
 ecs.Initialize = function(envClass)
-    envClass = envClass or ECSEnv
+    envClass = envClass or Env
     ecs.env = envClass()
     ecs.env:DoInitlize()
 end
