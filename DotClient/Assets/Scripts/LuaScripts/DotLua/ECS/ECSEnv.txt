@@ -3,9 +3,12 @@ local Const = require("DotLua/ECS/Const")
 local Contexts = require("DotLua/ECS/Core/Contexts")
 local Systems = require("DotLua/ECS/Core/Systems")
 local DestroySystem = require("DotLua/ECS/Systems/Basic/DestroySystem")
+local GUIDCollectionSystem = require("DotLua/ECS/Systems/Basic/GUIDCollectionSystem")
+local CategoryCollectionSystem = require("DotLua/ECS/Systems/Basic/CategoryCollectionSystem")
 local HaveComponentMatcher = require("DotLua/ECS/Matchers/Components/HaveComponentMatcher")
 local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
-local CategoryCollectionSystem = require("DotLua/ECS/Components/Basic/CategoryCollectionSystem")
+local CategoryCollectionComponent = require("DotLua/ECS/Components/Basic/CategoryCollectionComponent")
+local GUIDCollectionComponent = require("DotLua/ECS/Components/Basic/GUIDCollectionComponent")
 
 local ECSEnv =
     oop.class(
@@ -13,6 +16,7 @@ local ECSEnv =
     function(self)
         self.contexts = nil
         self.systems = nil
+        self.collectionEntity = nil
 
         self.destroyMatcher = HaveComponentMatcher(DestroyComponent)
     end
@@ -26,9 +30,17 @@ function ECSEnv:GetSystems()
     return self.systems
 end
 
+function ECSEnv:GetCollectionEntity()
+    return self.collectionEntity
+end
+
 function ECSEnv:DoInitlize()
     self.contexts = Contexts()
     self.systems = Systems()
+
+    self.collectionEntity = self.contexts:GetOrCreateGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
+    self.collectionEntity:AddComponent(CategoryCollectionComponent)
+    self.collectionEntity:AddComponent(GUIDCollectionComponent)
 
     local func = self[Const.ON_INITILIZE_FUNC_NAME]
     if func and type(func) == "function" then
@@ -63,13 +75,25 @@ function ECSEnv:DoDestroy()
 end
 
 function ECSEnv:onContextCreatedEvent(context)
-    local systemName = string.format("%s-DestroySystem", context:GetName())
-    self.systems:RegisterSystem(systemName, DestroySystem, context)
+    local destroySystemName = string.format("%s-DestroySystem", context:GetName())
+    self.systems:RegisterSystem(destroySystemName, DestroySystem, context)
+
+    local guidCollectionSystem = string.format("%s-GUIDCollecionSystem",context:GetName())
+    self.systems:RegisterSystem(guidCollectionSystem, GUIDCollectionSystem, context)
+
+    local categoryCollectionSystem = string.format("%s-CategoryCollecionSystem", context:GetName())
+    self.systems:RegisterSystem(categoryCollectionSystem, CategoryCollectionSystem, context)
 end
 
 function ECSEnv:onContextReleasedEvent(context)
-    local systemName = string.format("%s-DestroySystem", context:GetName())
-    self.systems:UnregisterSystem(systemName, true)
+    local destroySystemName = string.format("%s-DestroySystem", context:GetName())
+    self.systems:UnregisterSystem(destroySystemName, true)
+
+    local guidCollectionSystem = string.format("%s-GUIDCollecionSystem", context:GetName())
+    self.systems:UnregisterSystem(guidCollectionSystem, true)
+
+    local categoryCollectionSystem = string.format("%s-CategoryCollecionSystem", context:GetName())
+    self.systems:UnregisterSystem(categoryCollectionSystem, true)
 end
 
 function ECSEnv:onContextsInitilized()

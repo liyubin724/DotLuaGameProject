@@ -1,5 +1,5 @@
 local oop = require("DotLua/OOP/oop")
-local GroupEvent = oop.using("DotLua/ECS/Core/GroupEvent")
+local EGroupEvent = oop.using("DotLua/ECS/Core/EGroupEvent")
 
 local tinsert = table.insert
 local tclear = table.clear
@@ -50,9 +50,9 @@ function Collector:DoActivate()
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
+            if self.groupEvent == EGroupEvent.Added or self.groupEvent == EGroupEvent.AddedOrRemoved then
                 addFunc = self.onEntityAddedEvent
-            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
+            elseif self.groupEvent == EGroupEvent.Removed or self.groupEvent == EGroupEvent.AddedOrRemoved then
                 removeFunc = self.onEntityRemovedEvent
             end
 
@@ -67,9 +67,9 @@ function Collector:DoDeactivate()
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
+            if self.groupEvent == EGroupEvent.Added or self.groupEvent == EGroupEvent.AddedOrRemoved then
                 addFunc = self.onEntityAddedEvent
-            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
+            elseif self.groupEvent == EGroupEvent.Removed or self.groupEvent == EGroupEvent.AddedOrRemoved then
                 removeFunc = self.onEntityRemovedEvent
             end
 

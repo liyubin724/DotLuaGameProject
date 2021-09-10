@@ -14,11 +14,11 @@ local CategoryCollectionComponent =
     Component
 )
 
-function CategoryCollectionComponent:GetEntities(categoryID)
+function CategoryCollectionComponent:GetCollection(categoryID)
     return self.categoryToCollectionDic[categoryID]
 end
 
-function CategoryCollectionComponent:AddEntity(categoryID, guid)
+function CategoryCollectionComponent:Add(categoryID, guid)
     local collection = self.categoryToCollectionDic[categoryID]
     if not collection then
         collection = {}
@@ -28,7 +28,7 @@ function CategoryCollectionComponent:AddEntity(categoryID, guid)
     tinsert(collection, guid)
 end
 
-function CategoryCollectionComponent:RemoveEntity(categoryID, guid)
+function CategoryCollectionComponent:Remove(categoryID, guid)
     local collection = self.categoryToCollectionDic[categoryID]
     if collection then
         tremovevalue(collection, guid)

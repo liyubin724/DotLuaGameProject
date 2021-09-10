@@ -1,0 +1,36 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+
+local tclear = table.clear
+local tkeys = table.keys
+
+local GUIDCollectionComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.GUIDCollectionComponent",
+    function(self)
+        self.allGUIDDic = nil
+    end,
+    Component
+)
+
+function GUIDCollectionComponent:GetAllEntities()
+    return tkeys(self.allGUIDDic)
+end
+
+function GUIDCollectionComponent:AddEntity(guid)
+    if not self.allGUIDDic[guid] then
+        self.allGUIDDic[guid] = true
+    end
+end
+
+function GUIDCollectionComponent:RemoveEntity(guid)
+    if self.allGUIDDic[guid] then
+        self.allGUIDDic[guid] = nil
+    end
+end
+
+function GUIDCollectionComponent:DoRelease()
+    tclear(self.allGUIDDic)
+end
+
+return GUIDCollectionComponent

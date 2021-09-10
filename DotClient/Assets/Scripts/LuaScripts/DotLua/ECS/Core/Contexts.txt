@@ -122,7 +122,7 @@ function Contexts:ReleaseContext(name)
     self.contextDic[name] = nil
 end
 
-function Contexts:GetGlobalEntity(name)
+function Contexts:GetOrCreateGlobalEntity(name)
     local entity = self.nameToGlobalEntityDic[name]
     if not entity then
         local guid = self.guidCreator:Get()

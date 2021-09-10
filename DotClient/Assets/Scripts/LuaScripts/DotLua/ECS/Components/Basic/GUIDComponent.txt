@@ -3,7 +3,7 @@ local Component = require("DotLua/ECS/Core/Component")
 
 local GUIDComponent =
     oop.class(
-    "DotLua.ECS.Components.Basic.Identifies.GUIDComponent",
+    "DotLua.ECS.Components.Basic.GUIDComponent",
     function(self)
         self.guid = nil
     end,

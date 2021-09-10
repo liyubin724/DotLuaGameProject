@@ -1,0 +1,46 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+local EntityIdentifyPool = require("DotLua/ECS/Entities/EntityIdentifyPool")
+
+local tclear = table.clear
+local tinsert = table.insert
+local tremovevalue = table.removevalue
+local tcontainsvalue = table.containsvalue
+
+local RelationshipCollectionComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.RelationshipCollectionComponent",
+    function(self)
+        self.relationDic = {}
+    end,
+    Component
+)
+
+function RelationshipCollectionComponent:GetDepends()
+    return self.depends
+end
+
+function RelationshipCollectionComponent:Add(guid)
+    if not tcontainsvalue(self.depends, guid) then
+        tinsert(self.depends, guid)
+    end
+end
+
+function RelationshipCollectionComponent:Remove(guid)
+    if not tcontainsvalue(self.depends, guid) then
+        tremovevalue(self.depends, guid)
+        return true
+    end
+
+    return false
+end
+
+function RelationshipCollectionComponent:Has(guid)
+    return tcontainsvalue(self.depends, guid)
+end
+
+function RelationshipCollectionComponent:DoRelease()
+    tclear(self.depends)
+end
+
+return RelationshipCollectionComponent

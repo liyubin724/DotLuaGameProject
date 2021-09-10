@@ -5,6 +5,7 @@ local tinsert = table.insert
 local tremove = table.remove
 local tclear = table.clear
 local tcopyto = table.copyto
+local tremovevalue = table.remove
 
 local LogTag = "Group"
 
@@ -119,22 +120,15 @@ function Group:addEntitySliently(entity)
     if not self.guidToEntityDic[guid] then
         tinsert(self.entities, entity)
         self.guidToEntityDic[guid] = entity
-        return true
     end
-
-    return false
+    return true
 end
 
 function Group:removeEntitySliently(entity)
     local guid = entity:GetGUID()
     if self.guidToEntityDic[guid] then
         self.guidToEntityDic[guid] = nil
-        for i, e in ipairs(self.entities) do
-            if e == entity then
-                tremove(self.entities, i)
-                break
-            end
-        end
+        tremovevalue(self.entities,entity)
         return true
     end
 

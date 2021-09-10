@@ -4,11 +4,11 @@ local ESystemPriority =
     oop.enum(
     "DotLua.ECS.Core.ESystemPriority",
     {
-        Lowest = 1,
-        Low = 2,
+        Highest = 1,
+        High = 2,
         Default = 3,
-        High = 4,
-        Highest = 5
+        Low = 4,
+        Lowest = 5,
     }
 )
 

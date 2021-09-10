@@ -1,5 +1,5 @@
 local oop = require("DotLua/OOP/oop")
-local GroupEvent = oop.using("DotLua/ECS/Groups/GroupEvent")
+local EGroupEvent = oop.using("DotLua/ECS/Groups/EGroupEvent")
 local ObjectPool = oop.using("DotLua/Pool/ObjectPool")
 local DetailCollectorData = oop.using("DotLua/ECS/Collectors/DetailCollectorData")
 
@@ -68,9 +68,9 @@ function DetailCollector:DoActivate()
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
+            if self.groupEvent == EGroupEvent.Added or self.groupEvent == GroupEvent.AddedOrRemoved then
                 addFunc = self.onEntityAddedEvent
-            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
+            elseif self.groupEvent == EGroupEvent.Removed or self.groupEvent == GroupEvent.AddedOrRemoved then
                 removeFunc = self.onEntityRemovedEvent
             end
 
@@ -85,9 +85,9 @@ function DetailCollector:DoDeactivate()
         if self.groupEvent then
             local addFunc
             local removeFunc
-            if self.groupEvent == GroupEvent.Added or self.groupEvent == GroupEvent.AddOrRemove then
+            if self.groupEvent == EGroupEvent.Added or self.groupEvent == GroupEvent.AddedOrRemoved then
                 addFunc = self.onEntityAddedEvent
-            elseif self.groupEvent == GroupEvent.Removed or self.groupEvent == GroupEvent.AddOrRemove then
+            elseif self.groupEvent == EGroupEvent.Removed or self.groupEvent == GroupEvent.AddedOrRemoved then
                 removeFunc = self.onEntityRemovedEvent
             end
 

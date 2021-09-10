@@ -1,70 +1,45 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Components/Component")
-local EntityIdentifyPool = require("DotLua/ECS/Entities/EntityIdentifyPool")
 
 local tclear = table.clear
 local tinsert = table.insert
-local tremove = table.remove
+local tremovevalue = table.removevalue
+local tcontainsvalue = table.containsvalue
 
 local ChildsComponent =
     oop.class(
     "DotLua.ECS.Components.Basic.ChildsComponent",
     function(self)
-        self.childEntityIdentifies = {}
+        self.childs = {}
     end,
     Component
 )
 
-function ChildsComponent:GetCount()
-    return #(self.childEntityIdentifies)
+function ChildsComponent:GetChilds()
+    return self.childs
 end
 
-function ChildsComponent:GetChildIdentifyAt(index)
-    if index > 0 and index <= #(self.childEntityIdentifies) then
-        return self.childEntityIdentifies[index]:GetIdentify()
-    end
-
-    return nil, nil
-end
-
-function ChildsComponent:Add(contextName, guid)
-    if not self:HasChild(contextName, guid) then
-        local entityIdentify = EntityIdentifyPool.GetIdentify(contextName, guid)
-        tinsert(self.childEntityIdentifies, entityIdentify)
+function ChildsComponent:Add(guid)
+    if not tcontainsvalue(self.childs, guid) then
+        tinsert(self.childs, guid)
     end
 end
 
-function ChildsComponent:Remove(contextName, guid)
-    for i, v in ipairs(self.childEntityIdentifies) do
-        local vContextName, vGUID = v:GetIdentify()
-        if vContextName == contextName and vGUID == guid then
-            tremove(self.childEntityIdentifies, i)
-
-            EntityIdentifyPool.ReleaseIdentify(v)
-            return true
-        end
-    end
-    return false
-end
-
-function ChildsComponent:Has(contextName, guid)
-    for _, v in ipairs(self.childEntityIdentifies) do
-        local vContextName, vGUID = v:GetIdentify()
-        if vContextName == contextName and vGUID == guid then
-            return true
-        end
+function ChildsComponent:Remove(guid)
+    if tcontainsvalue(self.childs, guid) then
+        tremovevalue(self.childs, guid)
+        return true
     end
 
     return false
+end
+
+function ChildsComponent:Has(guid)
+    return tcontainsvalue(self.childs, guid)
 end
 
 function ChildsComponent:DoRelease()
-    tclear(
-        self.childEntityIdentifies,
-        function(identify)
-            EntityIdentifyPool.ReleaseIdentify(identify)
-        end
-    )
+    tclear(self.childs)
 end
 
 return ChildsComponent

@@ -23,6 +23,24 @@ ecs.GetSystems = function()
     return nil
 end
 
+ecs.GetCollectionEntity = function()
+    local contexts = ecs.GetContexts()
+    if contexts then
+        return contexts:GetCollectionEntity()
+    end
+
+    return nil
+end
+
+ecs.GetGlobalEntity = function(name)
+    local contexts = ecs.GetContexts()
+    if contexts then
+        return contexts:GetOrCreateGlobalEntity(name)
+    end
+
+    return nil
+end
+
 ecs.Initialize = function(envClass)
     envClass = envClass or ECSEnv
     ecs.env = envClass()

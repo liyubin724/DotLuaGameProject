@@ -5,28 +5,24 @@ local ParentComponent =
     oop.class(
     "DotLua.ECS.Components.Basic.Dependencies.ParentComponent",
     function(self)
-        self.contextName = nil
         self.guid = nil
     end,
     Component
 )
 
 function ParentComponent:GetParent()
-    return self.contextName, self.guid
+    return self.guid
 end
 
-function ParentComponent:SetParent(contextName, guid)
-    self.contextName = contextName
+function ParentComponent:SetParent(guid)
     self.guid = guid
 end
 
-function ParentComponent:DoGet(contextName, guid)
-    self.contextName = contextName
+function ParentComponent:DoGet(guid)
     self.guid = guid
 end
 
 function ParentComponent:DoRelease()
-    self.contextName = nil
     self.guid = nil
 end
 

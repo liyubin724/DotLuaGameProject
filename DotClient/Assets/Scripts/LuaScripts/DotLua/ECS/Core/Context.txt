@@ -1,5 +1,6 @@
 local oop = require("DotLua/OOP/oop")
 local ContextEvent = require("DotLua/ECS/Core/ContextEvent")
+local GUIDComponent = require("DotLua/ECS/Core/GUIDComponent")
 
 local tclear = table.clear
 
@@ -160,11 +161,12 @@ function Context:CreateEntity(...)
         self.onEntityReplaceComponentEvent,
         self.onEntityModifyComponentEvent
     )
-
     self.guidToEntityDic[guid] = entity
 
     self.entityCreatedEvent:Invoke(entity, ContextEvent.EntityCreated, nil, nil)
     self:tryToUpdateGroup(entity, ContextEvent.EntityCreated, nil, nil)
+
+    entity:AddComponent(GUIDComponent, guid)
 
     return entity
 end
