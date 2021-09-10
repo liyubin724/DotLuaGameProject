@@ -2,7 +2,7 @@ local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
 local HaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/HaveComponentMatcher")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
-
+local ChildsComponent = require("DotLua/ECS/Components/Basic/ChildsComponent")
 
 local CommonMatchers = {}
 
