@@ -52,7 +52,7 @@ function MsgListener:Invoke(...)
     end
 end
 
-function MsgListener:OnRelease()
+function MsgListener:DoRelease()
     self.name = nil
     self.receiver = nil
     self.func = nil
