@@ -36,15 +36,42 @@ function CollectorLateUpdateSystem:onLateUpdate(deltaTime)
         return
     end
 
-    local collectedEnities = self.collector:GetCollectedEntities()
-    if collectedEnities and #collectedEnities > 0 then
-        for _, entity in ipairs(collectedEnities) do
-            if self:filterEntity(entity) then
-                self:onEntityLateUpdate(entity, deltaTime)
+    local isEntityUpdate,isAddedEntityUpdate,isRemovedEntityUdpate = self:getUpdateState()
+
+    if isEntityUpdate then
+        local entities = self.collector:GetCollectedEntities()
+        if #entities > 0 then
+            for _, entity in ipairs(entities) do
+                if self:filterEntity(entity) then
+                    self:onEntityUpdate(entity, deltaTime)
+                end
             end
         end
-        self.collector:ClearCollectedEntities()
     end
+
+    if isAddedEntityUpdate then
+        local entities = self.collector:GetCollectedAddedEntities()
+        if #entities > 0 then
+            for _, entity in ipairs(entities) do
+                if self:filterEntity(entity) then
+                    self:onAddedEntityUpdate(entity, deltaTime)
+                end
+            end
+        end
+    end
+
+    if isRemovedEntityUdpate then
+        local entities = self.collector:GetCollectedRemovedEntities()
+        if #entities > 0 then
+            for _, entity in ipairs(entities) do
+                if self:filterEntity(entity) then
+                    self:onRemovedEntityUpdate(entity, deltaTime)
+                end
+            end
+        end
+    end
+
+    self.collector:ClearCollectedEntities()
 end
 
 function CollectorLateUpdateSystem:createCollector(context)
@@ -52,10 +79,22 @@ function CollectorLateUpdateSystem:createCollector(context)
 end
 
 function CollectorLateUpdateSystem:filterEntity(entity)
-    return false
+    return true
+end
+
+function CollectorLateUpdateSystem:getUpdateState()
+    return true, false, false
 end
 
 function CollectorLateUpdateSystem:onEntityLateUpdate(entity, deltaTime)
+    oop.error(LogTag, "this is a abstract class")
+end
+
+function CollectorLateUpdateSystem:onAddedEntityLateUpdate(entity, deltaTime)
+    oop.error(LogTag, "this is a abstract class")
+end
+
+function CollectorLateUpdateSystem:onRemovedEntityLateUpdate(entity, deltaTime)
     oop.error(LogTag, "this is a abstract class")
 end
 

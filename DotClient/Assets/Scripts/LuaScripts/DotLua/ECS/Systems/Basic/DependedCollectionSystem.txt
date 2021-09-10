@@ -5,7 +5,7 @@ local Collector = require("DotLua/ECS/Core/Collector")
 local Const = require("DotLua/ECS/Const")
 local DependOnComponent = require("DotLua/ECS/Components/Basic/DependOnComponent")
 local DependedCollectionComponent = require("DotLua/ECS/Components/Basic/DependedCollectionComponent")
-local LateUpdateSystem = require("DotLua/ECS/Systems/LateUpdateSystem")
+local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/CollectorLateUpdateSystem")
 local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local DependedCollectionSystem =
@@ -15,52 +15,28 @@ local DependedCollectionSystem =
         self.collector = Collector(context, CommonMatchers.HaveChildsComponentMathcer, EGroupEvent.AddedOrRemoved)
         self.priority = ESystemPriority.High
     end,
-    LateUpdateSystem
+    CollectorLateUpdateSystem
 )
 
-function DependedCollectionSystem:onActivate()
-    if self.collector then
-        self.collector:DoActivate()
-    end
+function DependedCollectionSystem:getUpdateState()
+    return false, true, true
 end
 
-function DependedCollectionSystem:onDeactivate()
-    if self.collector then
-        self.collector:DoDeactivate()
-    end
-end
-
-function DependedCollectionSystem:onDestroy()
-    if self.collector then
-        self.collector:DoDestroy()
-    end
-    self.collector = nil
-end
-
-function DependedCollectionSystem:onLateUpdate(deltaTime)
-    if not self.collector then
-        return
-    end
-
-    local addedEntities = self.collector:GetCollectedAddedEntities()
-    local removedEntities = self.collector:GetCollectedRemovedEntities()
-
-    if #addedEntities == 0 and #removedEntities == 0 then
-        return
-    end
-
+function DependedCollectionSystem:onAddedEntityLateUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local dependedCollectionComponent = collectionEntity:GetComponent(DependedCollectionComponent)
-    for _, entity in ipairs(addedEntities) do
-        local guid = entity:GetGUID()
-        local dependOnComponent = entity:GetComponent(DependOnComponent)
-        dependedCollectionComponent:AddEntity(guid, dependOnComponent:GetDepends())
-    end
 
-    for _, entity in ipairs(removedEntities) do
-        local guid = entity:GetGUID()
-        dependedCollectionComponent:RemoveEntity(guid)
-    end
+    local guid = entity:GetGUID()
+    local dependOnComponent = entity:GetComponent(DependOnComponent)
+    dependedCollectionComponent:AddEntity(guid, dependOnComponent:GetDepends())
+end
+
+function DependedCollectionSystem:onRemovedEntityLateUpdate(entity, deltaTime)
+    local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
+    local dependedCollectionComponent = collectionEntity:GetComponent(DependedCollectionComponent)
+
+    local guid = entity:GetGUID()
+    dependedCollectionComponent:RemoveEntity(guid)
 end
 
 return DependedCollectionSystem
