@@ -1,0 +1,25 @@
+local oop = require("DotLua/OOP/oop")
+local Servicer = require("DotLua/ECS/Core/Servicer")
+
+local MessageServicer =
+    oop.class(
+    "DotLua.ECS.Servicers.MessageServicer",
+    function(self, dispatcher)
+        self.dispatcher = dispatcher
+    end,
+    Servicer
+)
+
+function MessageServicer:RegistListener(name, receiver, func, userdata)
+    self.dispatcher:RegistListener(name, receiver, func, userdata)
+end
+
+function MessageServicer:UnregistListener(name, receiver, func)
+    self.dispatcher:UnregistListener(name, receiver, func)
+end
+
+function MessageServicer:Trigger(name, ...)
+    self.dispatcher:Trigger(name, ...)
+end
+
+return MessageServicer

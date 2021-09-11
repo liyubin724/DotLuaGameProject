@@ -2,10 +2,8 @@ require("DotLua/Utils/mathEx")
 require("DotLua/Utils/stringEx")
 require("DotLua/Utils/tableEx")
 _G.oop = require("DotLua/OOP/oop")
-_G.App = require("DotLua/System/App")
-_G.AppTime = require("DotLua/System/AppTime")
-_G.IDCreator = require("DotLua/Generic/IDCreator")
-_G.GUIDCreator = require("DotLua/Generic/GUIDCreator")
+_G.ecs = require("DotLua/ECS/ecs")
+_G.Logger = require("DotLua/Debug/Logger")
 
 _G.Json = {}
 if _G.isRapidJson then

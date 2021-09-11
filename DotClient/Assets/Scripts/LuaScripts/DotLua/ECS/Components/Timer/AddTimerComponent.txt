@@ -1,0 +1,73 @@
+local oop = require("DotLua/OOP/oop")
+
+local AddTimerComponent =
+    oop.class(
+    "DotLua.ECS.Components.Timer.AddTimerComponent",
+    function(self)
+        self.intervalInSec = 0.0
+        self.totalInSec = 0.0
+
+        self.intervalMsgName = nil
+        self.endMsgName = nil
+
+        self.userdata = nil
+    end
+)
+
+function AddTimerComponent:GetIntervalInSec()
+    return self.intervalInSec
+end
+
+function AddTimerComponent:GetTotalInSec()
+    return self.totalInSec
+end
+
+function AddTimerComponent:GetIntervalMsgName()
+    return self.intervalMsgName
+end
+
+function AddTimerComponent:GetEndMsgName()
+    return self.endMsgName
+end
+
+function AddTimerComponent:GetUserdata()
+    return self.userdata
+end
+
+function AddTimerComponent:SetTimer(intervalInSec, totalInSec, intervalMsgName, endMsgName, userdata)
+    self.intervalInSec = intervalInSec
+    self.totalInSec = totalInSec
+
+    self.intervalMsgName = intervalMsgName
+    self.endMsgName = endMsgName
+
+    self.userdata = userdata
+end
+
+function AddTimerComponent:SetIntervalTimer(intervalInSec, intervalMsgName, userdata)
+    self.intervalInSec = intervalInSec
+
+    self.intervalMsgName = intervalMsgName
+
+    self.userdata = userdata
+end
+
+function AddTimerComponent:SetEndTimer(totalInSec, endMsgName, userdata)
+    self.totalInSec = totalInSec
+
+    self.endMsgName = endMsgName
+
+    self.userdata = userdata
+end
+
+function AddTimerComponent:DoRelease()
+    self.intervalInSec = 0.0
+    self.totalInSec = 0.0
+
+    self.intervalMsgName = nil
+    self.endMsgName = nil
+
+    self.userdata = nil
+end
+
+return AddTimerComponent

@@ -1,0 +1,98 @@
+local oop = require("DotLua/OOP/oop")
+local Const = require("DotLua/ECS/Const")
+
+local tkeys = table.keys
+local tinsert = table.insert
+
+local LogTag = "Servicers"
+
+local Servicers =
+    oop.class(
+    "DotLua.ECS.Core.Servicers",
+    function(self)
+        self.servicerDic = {}
+
+        self.updateServicers = {}
+        self.lateUpdateServicers = {}
+    end
+)
+
+function Servicers:HasServicer(name)
+    return self.servicerDic[name] ~= nil
+end
+
+function Servicers:GetServicer(name)
+    return self.servicerDic[name]
+end
+
+function Servicers:RegisterServicer(name, servicerClass, ...)
+    if self.servicerDic[name] then
+        oop.error(LogTag, "the servicer has been added")
+        return
+    end
+
+    local servicer = servicerClass(...)
+    if servicer[Const.DO_INITILIZE_FUNC_NAME] then
+        servicer[Const.DO_INITILIZE_FUNC_NAME](servicer, ...)
+    end
+    self.servicerDic[name] = servicer
+
+    if servicer[Const.DO_UPDATE_FUNC_NAME] then
+        tinsert(self.updateServicers, servicer)
+    end
+
+    if servicer[Const.DO_LATEUPDATE_FUNC_NAME] then
+        tinsert(self.lateUpdateServicers, servicer)
+    end
+
+    if servicer[Const.DO_ACTIVATE_FUNC_NAME] then
+        servicer[Const.DO_ACTIVATE_FUNC_NAME](servicer)
+    end
+
+    return servicer
+end
+
+function Servicers:UnregisterServicer(name)
+    local servicer = self.servicerDic[name]
+    if not servicer then
+        oop.warning(LogTag, "the servicer is not found")
+        return nil
+    end
+
+    if servicer[Const.DO_DEACTIVATE_FUNC_NAME] then
+        servicer[Const.DO_DEACTIVATE_FUNC_NAME](servicer)
+    end
+    self.servicerDic[name] = nil
+
+    if servicer[Const.DO_DESTROY_FUNC_NAME] then
+        servicer[Const.DO_DESTROY_FUNC_NAME](servicer)
+    end
+    return servicer
+end
+
+function Servicers:DoUpdate(deltaTime, unscaleDeltaTime)
+    for _, servicer in ipairs(self.updateServicers) do
+        servicer:DoUpdate(deltaTime, unscaleDeltaTime)
+    end
+end
+
+function Servicers:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    for _, servicer in ipairs(self.lateUpdateServicers) do
+        servicer:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    end
+end
+
+function Servicers:DoDestroy()
+    local keys = tkeys(self.servicerDic)
+    if keys and #keys > 0 then
+        for _, key in ipairs(keys) do
+            self:UnregisterServicer(key)
+        end
+    end
+
+    self.servicerDic = nil
+    self.updateServicers = nil
+    self.lateUpdateServicers = nil
+end
+
+return Servicers

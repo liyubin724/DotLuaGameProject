@@ -1,0 +1,21 @@
+local oop = require('DotLua/OOP/oop')
+local ECSEnv = require('DotLua/ECS/Env')
+
+local GameEnv =
+    oop.class(
+    'Game.ECS.GameEnv',
+    function(self)
+    end,
+    ECSEnv
+)
+
+function GameEnv:onInitlize()
+end
+
+function GameEnv:onContextsInitilized()
+end
+
+function GameEnv:onSystemsInitilized()
+end
+
+return GameEnv

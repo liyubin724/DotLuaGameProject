@@ -10,10 +10,6 @@ local MessageSystem =
     System
 )
 
-function MessageSystem:SetDispatcher(dispatcher)
-    self.dispatcher = dispatcher
-end
-
 function MessageSystem:onInitilize()
     local eventNames = self:listEventNames()
     if eventNames and #(eventNames) > 0 and self.dispatcher then

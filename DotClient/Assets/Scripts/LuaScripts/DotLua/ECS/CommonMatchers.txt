@@ -3,6 +3,8 @@ local HaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/HaveCompone
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
 local ChildsComponent = require("DotLua/ECS/Components/Basic/ChildsComponent")
+local AddTimerComponent = require("DotLua/ECS/Components/Timer/AddTimerComponent")
+
 
 local CommonMatchers = {}
 
@@ -10,5 +12,6 @@ CommonMatchers.HaveDestroyComponentMatcher = HaveComponentMatcher(DestroyCompone
 CommonMatchers.HaveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 CommonMatchers.HaveGUIDComponentMatcher = HaveComponentMatcher(GUIDComponent)
 CommonMatchers.HaveChildsComponentMathcer = HaveComponentMatcher(ChildsComponent)
+CommonMatchers.HaveAddTimerComponentMathcer = HaveComponentMatcher(AddTimerComponent)
 
 return CommonMatchers

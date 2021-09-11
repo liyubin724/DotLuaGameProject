@@ -1,0 +1,26 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local GroupUpdateSystem = require("DotLua/ECS/Systems/GroupUpdateSystem")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local AddTimerComponent = require("DotLua/ECS/Components/Timer/AddTimerComponent")
+local RunningTimerComponent = require("DotLua/ECS/Components/Timer/RunningTimerComponent")
+
+local AddTimerSystem =
+    oop.class(
+    "DotLua.ECS.Systems.AddTimerSystem",
+    function(self, context)
+    end,
+    GroupUpdateSystem
+)
+
+function AddTimerSystem:createGroup(context)
+    return context:CreateGroup(CommonMatchers.HaveAddTimerComponentMathcer)
+end
+
+function AddTimerSystem:onEntityUpdate(entity, deltaTime)
+    local guid = entity:GetGUID()
+    local addTimerComponent = entity:GetComponent(AddTimerComponent)
+
+    local timerServicer = ecs.GetTimerServicer()
+end
+
+return AddTimerSystem

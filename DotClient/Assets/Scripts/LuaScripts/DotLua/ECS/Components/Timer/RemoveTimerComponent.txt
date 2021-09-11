@@ -1,0 +1,10 @@
+local oop = require("DotLua/OOP/oop")
+
+local TimerRemovedComponent =
+    oop.class(
+    "DotLua.ECS.Components.Timer.RemoveTimerComponent",
+    function(self)
+    end
+)
+
+return TimerRemovedComponent

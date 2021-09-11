@@ -33,6 +33,11 @@ Const.DO_RELEASE_FUNC_NAME = "DoRelease"
 Const.ON_GET_FUNC_NAME = "onGet"
 Const.ON_RELEASE_FUNC_NAME = "onRelease"
 
+---- name of entity----
 Const.GLOBAL_ENTITY_COLLECTION_NAME = "collectionEntity"
+
+----name of servicer----
+Const.SERVICER_TIMER_NAME = "TimerServicer"
+Const.SERVICER_MESSAGE_NAME = "MessageServicer"
 
 return Const

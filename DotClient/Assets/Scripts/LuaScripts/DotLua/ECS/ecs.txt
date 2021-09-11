@@ -8,6 +8,21 @@ ecs.GetEnv = function()
     return ecs.env
 end
 
+ecs.GetServicers = function()
+    if ecs.env then
+        return ecs.env:GetServicers()
+    end
+    return nil
+end
+
+ecs.GetServicer = function(name)
+    local servicers = ecs.GetServicers()
+    if servicers then
+        return servicers:GetServicer(name)
+    end
+    return nil
+end
+
 ecs.GetContexts = function()
     if ecs.env then
         return ecs.env:GetContexts()
@@ -23,19 +38,32 @@ ecs.GetSystems = function()
     return nil
 end
 
-ecs.GetCollectionEntity = function()
+ecs.GetGlobalEntity = function(name)
     local contexts = ecs.GetContexts()
     if contexts then
-        return contexts:GetCollectionEntity()
+        return contexts:GetGlobalEntity(name)
     end
 
     return nil
 end
 
-ecs.GetGlobalEntity = function(name)
-    local contexts = ecs.GetContexts()
-    if contexts then
-        return contexts:GetOrCreateGlobalEntity(name)
+ecs.GetCollectionEntity = function()
+    if ecs.env then
+        return ecs.env:GetCollectionEntity()
+    end
+    return nil
+end
+
+ecs.GetTimerServicer = function()
+    if ecs.env then
+        return ecs.env:GetTimerServicer()
+    end
+    return nil
+end
+
+ecs.GetMessageServicer = function()
+    if ecs.env then
+        return ecs.env:GetMessageServicer()
     end
 
     return nil

@@ -1,0 +1,28 @@
+local oop = require("DotLua/OOP/oop")
+
+local Servicer =
+    oop.class(
+    "DotLua.ECS.Core.Servicer",
+    function(self)
+    end
+)
+
+-- function Servicer:DoInitlize()
+-- end
+
+-- function Servicer:DoActivate()
+-- end
+
+-- function Servicer:DoUpdate(deltaTime,unscaleDeltaTime)
+-- end
+
+-- function Servicer:DoLateUpdate(deltaTime,unscaleDeltaTime)
+-- end
+
+-- function Servicer:DoDeactivate()
+-- end
+
+-- function Servicer:DoDestroy()
+-- end
+
+return Servicer

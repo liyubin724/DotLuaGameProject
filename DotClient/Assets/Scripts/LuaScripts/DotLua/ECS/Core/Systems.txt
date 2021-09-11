@@ -19,6 +19,10 @@ local Systems =
     end
 )
 
+function Systems:HasSystem(name)
+    return self.nameToSystemDic[name] ~= nil
+end
+
 function Systems:RegisterSystem(name, systemClass, ...)
     if oop.isDebug then
         if not systemClass or not oop.iskindof(systemClass, System) then

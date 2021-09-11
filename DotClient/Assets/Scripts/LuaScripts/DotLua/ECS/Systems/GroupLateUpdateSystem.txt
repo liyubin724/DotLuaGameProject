@@ -1,6 +1,9 @@
 local oop = require("DotLua/ECS/OOP/oop")
 local LateUpdateSystem = require("DotLua/ECS/Systems/Update/LateUpdateSystem")
 
+local tclear = table.clear
+local tcopyto = table.copyto
+
 local LogTag = "GroupLateUpdateSystem"
 
 local GroupLateUpdateSystem =
@@ -9,6 +12,8 @@ local GroupLateUpdateSystem =
     function(self, context)
         self.context = context
         self.group = nil
+
+        self.tempEntities = {}
     end,
     LateUpdateSystem
 )
@@ -32,13 +37,17 @@ function GroupLateUpdateSystem:onLateUpdate(deltaTime)
         return
     end
 
-    local entities = self.group:GetEntities()
-    for i = 1, #entities do
-        local entity = entities[i]
+    local groupEntities = self.group:GetEntities()
+    tcopyto(groupEntities,self.tempEntities)
+
+    for i = 1, #self.tempEntities do
+        local entity = self.tempEntities[i]
         if self:filterEntity(entity) then
             self:onEntityLateUpdate(entity, deltaTime)
         end
     end
+
+    tclear(self.tempEntities)
 end
 
 function GroupLateUpdateSystem:createGroup(context)
