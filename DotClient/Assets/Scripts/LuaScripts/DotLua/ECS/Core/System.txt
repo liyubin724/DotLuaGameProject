@@ -14,7 +14,7 @@ function System:GetPriority()
     return self.priority
 end
 
-function System:DoInitilize()
+function System:DoInitialize()
     local func = self[Const.ON_INITILIZE_FUNC_NAME]
     if func and type(func) == "function" then
         func(self)

@@ -18,7 +18,6 @@ local Contexts =
         self.guidCreator = GUIDCreator()
 
         self.contextPool = ObjectPool(Context)
-
         self.entityPool = ObjectPool(Entity)
         self.groupPool = ObjectPool(Group)
         self.componentPool = ComponentPool()
@@ -29,17 +28,16 @@ local Contexts =
         self.contextCreatedEvent = oop.event()
         self.contextReleasedEvent = oop.event()
 
-        self.willReleasedEntities = {}
-
         self.nameToGlobalEntityDic = {}
+
+        self.willDestroyEntities = {}
     end
 )
 
 function Contexts:DoLateUpdate(_, _)
-    for i = #(self.willReleasedEntities), 1, -1 do
-        local entity = self.willReleasedEntities[i]
-
-        tremove(self.willReleasedEntities, i)
+    for i = #(self.willDestroyEntities), 1, -1 do
+        local entity = self.willDestroyEntities[i]
+        tremove(self.willDestroyEntities, i)
 
         self.entityPool:Release(entity)
     end
@@ -54,7 +52,7 @@ function Contexts:DoDestroy()
     self.contextDic = nil
     self.guidToEntityDic = nil
 
-    self.willReleasedEntities = nil
+    self.willDestroyEntities = nil
 
     self.componentPool = nil
     self.groupPool = nil
@@ -111,15 +109,15 @@ end
 function Contexts:ReleaseContext(name)
     local context = self.contextDic[name]
     if not context then
-        oop.warning(LogTag, "the context(" .. name .. ") is not found")
+        oop.warning(LogTag, string.format("the context(%s) is not found", name))
         return
     end
+
+    self.contextDic[name] = nil
 
     context:UnbindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
     self.contextReleasedEvent:Invoke(context)
     self.contextPool:Release(context)
-
-    self.contextDic[name] = nil
 end
 
 function Contexts:GetGlobalEntity(name)
@@ -155,7 +153,7 @@ function Contexts:onContextEntityReleasedEvent(entity)
     local guid = entity:GetGUID()
     self.guidToEntityDic[guid] = nil
 
-    tinsert(self.willReleasedEntities, entity)
+    tinsert(self.willDestroyEntities, entity)
 end
 
 return Contexts

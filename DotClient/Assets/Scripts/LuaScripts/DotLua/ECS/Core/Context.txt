@@ -1,6 +1,5 @@
 local oop = require("DotLua/OOP/oop")
 local EContextEvent = require("DotLua/ECS/Core/EContextEvent")
-local GUIDComponent = require("DotLua/ECS/Core/GUIDComponent")
 
 local tclear = table.clear
 
@@ -163,10 +162,8 @@ function Context:CreateEntity(...)
     )
     self.guidToEntityDic[guid] = entity
 
-    self.entityCreatedEvent:Invoke(entity, EContextEvent.EntityCreated, nil, nil)
     self:tryToUpdateGroup(entity, EContextEvent.EntityCreated, nil, nil)
-
-    entity:AddComponent(GUIDComponent, guid)
+    self.entityCreatedEvent:Invoke(entity, EContextEvent.EntityCreated, nil, nil)
 
     return entity
 end
@@ -178,17 +175,24 @@ function Context:ReleaseEntity(entity)
         return
     end
 
-    entity:RemoveAllComponent()
+    entity:MarkAsRelease()
+    entity:UnbindComponentEvent(
+        self,
+        self.onEntityAddComponentEvent,
+        self.onEntityRemoveComponentEvent,
+        self.onEntityReplaceComponentEvent,
+        self.onEntityModifyComponentEvent
+    )
 
-    self.guidToEntityDic[guid] = nil
+    self:tryToUpdateGroup(entity, EContextEvent.EntityReleased, nil, nil)
     self.entityReleasedEvent:Invoke(entity, EContextEvent.EntityReleased, nil, nil)
+    self.guidToEntityDic[guid] = nil
 end
 
 function Context:CreateGroup(matcher)
     local group = self.matcherToGroupDic[matcher]
-    if not group then
+    if group then
         group:RetainRef()
-
         return group
     end
 

@@ -10,14 +10,14 @@ Const.TIME_EVERY_UPDATE = 0.0
 Const.CATEGORY_DEFAULT_ID = 0
 
 ----Name of Function----
-Const.DO_INITILIZE_FUNC_NAME = "DoInitlize"
+Const.DO_INITILIZE_FUNC_NAME = "DoInitialize"
 Const.DO_ACTIVATE_FUNC_NAME = "DoActivate"
 Const.DO_UPDATE_FUNC_NAME = "DoUpdate"
 Const.DO_LATEUPDATE_FUNC_NAME = "DoLateUpdate"
 Const.DO_DEACTIVATE_FUNC_NAME = "DoDeactivate"
 Const.DO_DESTROY_FUNC_NAME = "DoDestroy"
 
-Const.ON_INITILIZE_FUNC_NAME = "onInitlize"
+Const.ON_INITILIZE_FUNC_NAME = "onInitialize"
 Const.ON_ACTIVATE_FUNC_NAME = "onActivate"
 Const.ON_UPDATE_FUNC_NAME = "onUpdate"
 Const.ON_UNSCALE_UPDATE_FUNC_NAME = "onUnscaleUpdate"

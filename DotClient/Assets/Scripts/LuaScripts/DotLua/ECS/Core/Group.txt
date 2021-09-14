@@ -128,7 +128,7 @@ function Group:removeEntitySliently(entity)
     local guid = entity:GetGUID()
     if self.guidToEntityDic[guid] then
         self.guidToEntityDic[guid] = nil
-        tremovevalue(self.entities,entity)
+        tremovevalue(self.entities, entity)
         return true
     end
 
