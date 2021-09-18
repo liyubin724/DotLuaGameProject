@@ -21,6 +21,9 @@ function ObjectPool:Get(...)
         tremove(self.unusedItems, 1)
     else
         item = self.itemClass()
+        if item["DoInitialize"] then
+            item["DoInitialize"](item)
+        end
     end
 
     local func = item["DotGet"] or item["DoActivate"]

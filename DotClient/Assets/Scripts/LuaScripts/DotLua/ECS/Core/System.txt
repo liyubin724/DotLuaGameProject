@@ -41,6 +41,9 @@ end
 -- function System:DoLateUpdate(deltaTime, unscaleDeltaTime)
 -- end
 
+-- function System:DoFrameUpdate(deltaTime)
+-- end
+
 function System:DoDestroy()
     local func = self[Const.ON_DESTROY_FUNC_NAME]
     if func and type(func) == "function" then

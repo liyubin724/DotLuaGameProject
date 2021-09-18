@@ -1,0 +1,52 @@
+local oop = require("DotLua/OOP/oop")
+
+local TimerComponent =
+    oop.class(
+    "DotLua.ECS.Components.Timer.TimerComponent",
+    function(self)
+        self.isRunning = false
+
+        self.timerIndex = -1
+        self.intervalMsgName = nil
+        self.endMessage = nil
+        self.userdata = nil
+    end
+)
+
+function TimerComponent:GetIsRunning()
+    return self.isRunning
+end
+
+function TimerComponent:GetTimerIndex()
+    return self.timerIndex
+end
+
+function TimerComponent:GetIntervalMsgName()
+    return self.intervalMsgName
+end
+
+function TimerComponent:GetEndMsgName()
+    return self.endMsgName
+end
+
+function TimerComponent:GetUserdata()
+    return self.userdata
+end
+
+function TimerComponent:DoGet(timerIndex, intervalMsgName, endMsgName, userdata)
+    self.timerIndex = timerIndex
+    self.intervalMsgName = intervalMsgName
+    self.endMsgName = endMsgName
+    self.userdata = userdata
+end
+
+function TimerComponent:DoRelease()
+    self.isRunning = false
+
+    self.timerIndex = -1
+    self.intervalMsgName = nil
+    self.endMsgName = nil
+    self.userdata = nil
+end
+
+return TimerComponent

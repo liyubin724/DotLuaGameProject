@@ -36,36 +36,37 @@ function CollectorUpdateSystem:onUpdate(deltaTime)
         return
     end
 
-    local isEntityUpdate,isAddedEntityUpdate,isRemovedEntityUdpate = self:getUpdateState()
-
-    if isEntityUpdate then
+    local onEntityUpdate = self["onEntityUpdate"]
+    if onEntityUpdate then
         local entities = self.collector:GetCollectedEntities()
         if #entities > 0 then
             for _, entity in ipairs(entities) do
                 if self:filterEntity(entity) then
-                    self:onEntityUpdate(entity, deltaTime)
+                    onEntityUpdate(self, entity, deltaTime)
                 end
             end
         end
     end
 
-    if isAddedEntityUpdate then
+    local onAddedEntityUpdate = self["onAddedEntityUpdate"]
+    if onAddedEntityUpdate then
         local entities = self.collector:GetCollectedAddedEntities()
         if #entities > 0 then
             for _, entity in ipairs(entities) do
                 if self:filterEntity(entity) then
-                    self:onAddedEntityUpdate(entity, deltaTime)
+                    onAddedEntityUpdate(self, entity, deltaTime)
                 end
             end
         end
     end
 
-    if isRemovedEntityUdpate then
+    local onRemovedEntityUpdate = self["onRemovedEntityUpdate"]
+    if onRemovedEntityUpdate then
         local entities = self.collector:GetCollectedRemovedEntities()
         if #entities > 0 then
             for _, entity in ipairs(entities) do
                 if self:filterEntity(entity) then
-                    self:onRemovedEntityUpdate(entity, deltaTime)
+                    onRemovedEntityUpdate(self, entity, deltaTime)
                 end
             end
         end
@@ -75,6 +76,7 @@ function CollectorUpdateSystem:onUpdate(deltaTime)
 end
 
 function CollectorUpdateSystem:createCollector(context)
+    oop.error(LogTag, "this is a abstract class")
     return nil
 end
 
@@ -82,20 +84,16 @@ function CollectorUpdateSystem:filterEntity(entity)
     return false
 end
 
-function CollectorUpdateSystem:getUpdateState()
-    return true, false, false
-end
+-- function CollectorUpdateSystem:onEntityUpdate(entity, deltaTime)
+--     oop.error(LogTag, "this is a abstract class")
+-- end
 
-function CollectorUpdateSystem:onEntityUpdate(entity, deltaTime)
-    oop.error(LogTag, "this is a abstract class")
-end
+-- function CollectorUpdateSystem:onAddedEntityUpdate(entity, deltaTime)
+--     oop.error(LogTag, "this is a abstract class")
+-- end
 
-function CollectorUpdateSystem:onAddedEntityUpdate(entity, deltaTime)
-    oop.error(LogTag, "this is a abstract class")
-end
-
-function CollectorUpdateSystem:onRemovedEntityUpdate(entity, deltaTime)
-    oop.error(LogTag, "this is a abstract class")
-end
+-- function CollectorUpdateSystem:onRemovedEntityUpdate(entity, deltaTime)
+--     oop.error(LogTag, "this is a abstract class")
+-- end
 
 return CollectorUpdateSystem

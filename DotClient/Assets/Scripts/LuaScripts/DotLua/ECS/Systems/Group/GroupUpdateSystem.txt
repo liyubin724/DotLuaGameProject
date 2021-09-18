@@ -8,7 +8,7 @@ local LogTag = "GroupUpdateSystem"
 
 local GroupUpdateSystem =
     oop.class(
-    "DotLua.ECS.Systems.GroupUpdateSystem",
+    "DotLua.ECS.Systems.Group.GroupUpdateSystem",
     function(self, context)
         self.context = context
         self.group = nil
@@ -51,6 +51,7 @@ function GroupUpdateSystem:onUpdate(deltaTime)
 end
 
 function GroupUpdateSystem:createGroup(context)
+    oop.error(LogTag, "this is a abstract class")
     return nil
 end
 

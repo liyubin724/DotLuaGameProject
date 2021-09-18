@@ -13,7 +13,6 @@ local Entity =
     "DotLua.ECS.Core.Entity",
     function(self)
         self.enable = false
-        self.isWaitingForRelease = false
 
         self.contextName = nil
         self.componentPool = nil
@@ -31,7 +30,7 @@ local Entity =
 )
 
 function Entity:IsEnable()
-    return self.enable and not self.isWaitingForRelease
+    return self.enable
 end
 
 function Entity:GetGUID()
@@ -48,7 +47,6 @@ end
 
 function Entity:DoActivate(guid, contextName, componentPool)
     self.enable = true
-    self.isWaitingForRelease = false
     self.guid = guid
 
     self.contextName = contextName
@@ -57,7 +55,6 @@ end
 
 function Entity:DoDeactivate()
     self.enable = false
-    self.isWaitingForRelease = false
 
     self.componentAddedEvent:Clear()
     self.componentRemovedEvent:Clear()
@@ -95,6 +92,11 @@ function Entity:BindComponentEvent(receiver, addFunc, removeFunc, replaceFunc, m
 end
 
 function Entity:UnbindComponentEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)
+    if self:IsEnable() then
+        oop.error(LogTag, "The enity has been disabled")
+        return
+    end
+
     if addFunc then
         self.componentAddedEvent:Remove(receiver, addFunc)
     end

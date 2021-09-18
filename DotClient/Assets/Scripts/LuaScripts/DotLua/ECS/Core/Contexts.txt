@@ -6,8 +6,7 @@ local Entity = require("DotLua/ECS/Core/Entity")
 local Group = require("DotLua/ECS/Core/Group")
 local GUIDCreator = require("DotLua/Generic/GUIDCreator")
 
-local tinsert = table.insert
-local tremove = table.remove
+local tkeys = table.keys
 
 local LogTag = "Contexts"
 
@@ -29,36 +28,28 @@ local Contexts =
         self.contextReleasedEvent = oop.event()
 
         self.nameToGlobalEntityDic = {}
-
-        self.willDestroyEntities = {}
     end
 )
 
-function Contexts:DoLateUpdate(_, _)
-    for i = #(self.willDestroyEntities), 1, -1 do
-        local entity = self.willDestroyEntities[i]
-        tremove(self.willDestroyEntities, i)
-
-        self.entityPool:Release(entity)
-    end
-end
-
 function Contexts:DoDestroy()
     self.contextCreatedEvent:Clear()
-    self.contextCreatedEvent = nil
     self.contextReleasedEvent:Clear()
+    self.contextCreatedEvent = nil
     self.contextReleasedEvent = nil
 
+    for _, context in pairs(self.contextDic) do
+        self.contextPool:Release(context)
+    end
     self.contextDic = nil
     self.guidToEntityDic = nil
-
-    self.willDestroyEntities = nil
 
     self.componentPool = nil
     self.groupPool = nil
     self.entityPool = nil
     self.contextPool = nil
     self.guidCreator = nil
+
+    self.nameToGlobalEntityDic = nil
 end
 
 function Contexts:BindContextEvent(receiver, createdFunc, releasedFunc)
@@ -79,6 +70,10 @@ function Contexts:UnbindContextEvent(receiver, createdFunc, releasedFunc)
     if releasedFunc then
         self.contextReleasedEvent:Remove(receiver, releasedFunc)
     end
+end
+
+function Contexts:GetContextNames()
+    return tkeys(self.contextDic)
 end
 
 function Contexts:HasContext(name)
@@ -152,8 +147,6 @@ end
 function Contexts:onContextEntityReleasedEvent(entity)
     local guid = entity:GetGUID()
     self.guidToEntityDic[guid] = nil
-
-    tinsert(self.willDestroyEntities, entity)
 end
 
 return Contexts

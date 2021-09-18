@@ -5,21 +5,20 @@ local Collector = require("DotLua/ECS/Core/Collector")
 local Const = require("DotLua/ECS/Const")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 local CategoryCollectionComponent = require("DotLua/ECS/Components/Basic/CategoryCollectionComponent")
-local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/CollectorLateUpdateSystem")
+local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/Collector/CollectorLateUpdateSystem")
 local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local CategoryCollectionSystem =
     oop.class(
     "DotLua.ECS.Systems.Basic.CategoryCollectionSystem",
     function(self, context)
-        self.collector = Collector(context, CommonMatchers.HaveCategoryComponentMatcher, EGroupEvent.AddedOrRemoved)
         self.priority = ESystemPriority.High
     end,
     CollectorLateUpdateSystem
 )
 
-function CategoryCollectionSystem:getUpdateState()
-    return false, true, true
+function CollectorLateUpdateSystem:createCollector(context)
+    return Collector(context, CommonMatchers.HaveCategoryComponentMatcher, EGroupEvent.AddedOrRemoved)
 end
 
 function CategoryCollectionSystem:onAddedEntityLateUpdate(entity, deltaTime)

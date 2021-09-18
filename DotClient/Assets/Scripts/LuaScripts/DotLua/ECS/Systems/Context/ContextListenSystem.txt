@@ -1,0 +1,53 @@
+local oop = require("DotLua/OOP/oop")
+local System = require("DotLua/ECS/Core/System")
+local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
+
+local ContextListenSystem =
+    oop.class(
+    "DotLua.ECS.Systems.Basic.DestroySystem",
+    function(self, contexts, systems, systemClasses)
+        self.priority = ESystemPriority.Highest
+
+        self.contexts = contexts
+        self.systems = systems
+        self.systemClasses = systemClasses or {}
+    end,
+    System
+)
+
+function ContextListenSystem:onActivate()
+    self:GetBaseClass().onActivate(self)
+    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
+
+    local contextNames = self.contexts:GetContextNames()
+    for _, contextName in ipairs(contextNames) do
+        local context = self.contexts:GetContext(contextName)
+        self:onContextCreatedEvent(context)
+    end
+end
+
+function ContextListenSystem:onDeactivate()
+    self:GetBaseClass().onDeactivate(self)
+    self.contexts:UnbindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
+    local contextNames = self.contexts:GetContextNames()
+    for _, contextName in ipairs(contextNames) do
+        local context = self.contexts:GetContext(contextName)
+        self:onContextReleasedEvent(context)
+    end
+end
+
+function ContextListenSystem:onContextCreatedEvent(context)
+    for _, systemClass in ipairs(self.systemClasses) do
+        local systemName = string.format("%s-%s", context:GetName(), systemClass:GetName())
+        self.systems:RegisterSystem(systemName, systemClass, context)
+    end
+end
+
+function ContextListenSystem:onContextReleasedEvent(context)
+    for _, systemClass in ipairs(self.systemclasses) do
+        local systemName = string.format("%s-%s", context:GetName(), systemClass:GetName())
+        self.systems:UnregisterSystem(systemName)
+    end
+end
+
+return ContextListenSystem

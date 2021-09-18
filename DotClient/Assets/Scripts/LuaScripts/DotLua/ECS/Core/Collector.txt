@@ -1,5 +1,6 @@
 local oop = require("DotLua/OOP/oop")
 local EGroupEvent = oop.using("DotLua/ECS/Core/EGroupEvent")
+local EContextEvent = require("DotLua/ECS/Core/EContextEvent")
 
 local tinsert = table.insert
 local tclear = table.clear
@@ -105,7 +106,16 @@ function Collector:onEntityAddedEvent(entity)
     end
 end
 
-function Collector:onEntityRemovedEvent(entity)
+function Collector:onEntityRemovedEvent(entity,contextEvent)
+    if contextEvent == EContextEvent.EntityReleased then
+        if tcontainsvalue(self.collectedEntities,entity) then
+            tremovevalue(self.collectedEntities)
+            tremovevalue(self.collectedAddedEntities,entity)
+            tremovevalue(self.collectedRemovedEntities,entity)
+        end
+        return
+    end
+
     if not tcontainsvalue(self.collectedEntities, entity) then
         tinsert(self.collectedEntities, entity)
     end
