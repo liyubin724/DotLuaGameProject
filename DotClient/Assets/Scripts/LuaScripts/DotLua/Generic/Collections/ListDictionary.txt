@@ -60,8 +60,7 @@ end
 
 function ListDictionary:GetItemAt(index)
     if index > 0 and index <= #self.items then
-        local key = self.keys[index]
-        return self.itemDic[key]
+        return self.items[index]
     end
     return nil
 end

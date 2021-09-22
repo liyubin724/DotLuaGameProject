@@ -162,8 +162,6 @@ function Context:CreateEntity(...)
         self.onEntityModifyComponentEvent
     )
     self.guidToEntityDic[guid] = entity
-
-    self:tryToUpdateGroup(entity, EContextEvent.EntityCreated, nil, nil)
     self.entityCreatedEvent:Invoke(entity, EContextEvent.EntityCreated, nil, nil)
 
     return entity

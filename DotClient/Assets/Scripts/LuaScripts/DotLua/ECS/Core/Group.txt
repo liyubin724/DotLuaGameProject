@@ -98,9 +98,6 @@ function Group:TryUpdateEntity(entity, contextEvent, param1, param2)
     if not self.matcher then
         return
     end
-    if contextEvent == EContextEvent.EntityReleased then
-        return self.removeEntitySliently(entity)
-    end
 
     local isMatched = self.matcher:IsMatch(entity, contextEvent, param1, param2)
     if isMatched then

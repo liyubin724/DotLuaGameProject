@@ -1,10 +1,7 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Core/Component")
 
-local tlength = table.length
-local tvalues = table.values
 local tclear = table.clear
-local tkeys = table.keys
 
 local LogTag = "Entity"
 
@@ -13,14 +10,15 @@ local Entity =
     "DotLua.ECS.Core.Entity",
     function(self)
         self.enable = false
+        self.refCount = 0
+        self.isWaitingForRelease = false
 
+        self.guid = nil
         self.contextName = nil
         self.componentPool = nil
 
-        self.guid = nil
-
         --the class of component to the instance
-        self.componentClassToInstanceDic = {}
+        self.componentDic = {}
 
         self.componentAddedEvent = oop.event()
         self.componentRemovedEvent = oop.event()
@@ -29,8 +27,20 @@ local Entity =
     end
 )
 
-function Entity:IsEnable()
-    return self.enable
+function Entity:GetIsEnable()
+    return self.enable and not self.isWaitingForRelease
+end
+
+function Entity:GetIsInUsing()
+    return self.refCount > 0
+end
+
+function Entity:RetainRef()
+    self.refCount = self.refCount + 1
+end
+
+function Entity:ReleaseRef()
+    self.refCount = self.refCount - 1
 end
 
 function Entity:GetGUID()
@@ -41,8 +51,13 @@ function Entity:GetContextName()
     return self.contextName
 end
 
-function Entity:MarkAsRelease()
+function Entity:MarkAsWaitingForRelease()
     self.isWaitingForRelease = true
+
+    self.componentAddedEvent:Clear()
+    self.componentRemovedEvent:Clear()
+    self.componentReplacedEvent:Clear()
+    self.componentModifiedEvent:Clear()
 end
 
 function Entity:DoActivate(guid, contextName, componentPool)
@@ -55,16 +70,17 @@ end
 
 function Entity:DoDeactivate()
     self.enable = false
+    self.isWaitingForRelease = false
 
     self.componentAddedEvent:Clear()
     self.componentRemovedEvent:Clear()
     self.componentReplacedEvent:Clear()
     self.componentModifiedEvent:Clear()
 
-    for _, component in pairs(self.componentClassToInstanceDic) do
+    for _, component in pairs(self.componentDic) do
         self.componentPool:Release(component)
     end
-    tclear(self.componentClassToInstanceDic)
+    tclear(self.componentDic)
 
     self.guid = nil
     self.contextName = nil
@@ -111,52 +127,42 @@ function Entity:UnbindComponentEvent(receiver, addFunc, removeFunc, replaceFunc,
     end
 end
 
-function Entity:GetComponentCount()
-    return tlength(self.componentClassToInstanceDic)
-end
-
-function Entity:GetAllComponents()
-    return tvalues(self.componentClassToInstanceDic)
-end
-
 function Entity:HasComponent(componentClass)
     if oop.isDebug then
-        if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
+        if not oop.isclassof(componentClass, Component) then
             oop.error(LogTag, "the param is not a class")
             return false
         end
     end
 
-    return self.componentClassToInstanceDic[componentClass] ~= nil
+    return self.componentDic[componentClass] ~= nil
 end
 
-function Entity:HasAllComponent(componentClasses)
-    if oop.isDebug then
-        if componentClasses == nil or type(componentClasses) ~= "table" then
-            oop.error(LogTag, "the param is not a type of table")
+function Entity:HasAllComponent(...)
+    local componentClasses = {...}
+    if #componentClasses == 0 then
+        return false
+    end
+
+    local hasComponent = false
+    for _, componentClass in pairs(componentClasses) do
+        hasComponent = true
+        if not self.componentDic[componentClass] then
             return false
         end
+    end
+
+    return hasComponent
+end
+
+function Entity:HasAnyComponent(...)
+    local componentClasses = {...}
+    if #componentClasses == 0 then
+        return false
     end
 
     for _, componentClass in pairs(componentClasses) do
-        if not self.componentClassToInstanceDic[componentClass] then
-            return false
-        end
-    end
-
-    return true
-end
-
-function Entity:HasAnyComponent(componentClasses)
-    if oop.isDebug then
-        if componentClasses == nil or type(componentClasses) ~= "table" then
-            oop.error(LogTag, "the param is not a type of table")
-            return false
-        end
-    end
-
-    for _, componentClass in pairs(componentClasses) do
-        if self.componentClassToInstanceDic[componentClass] then
+        if self.componentDic[componentClass] then
             return true
         end
     end
@@ -166,29 +172,29 @@ end
 
 function Entity:GetComponent(componentClass)
     if oop.isDebug then
-        if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
+        if not oop.isclassof(componentClass, Component) then
             oop.error(LogTag, "the param is not a class of Component")
             return nil
         end
     end
 
-    return self.componentClassToInstanceDic[componentClass]
+    return self.componentDic[componentClass]
 end
 
 function Entity:AddComponent(componentClass, ...)
-    if not self:IsEnable() then
+    if not self:GetIsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return nil
     end
 
     if oop.isDebug then
-        if not oop.isclass(componentClass) or not oop.isclassof(componentClass, Component) then
+        if not oop.isclassof(componentClass, Component) then
             oop.error(LogTag, "the param is not a class of Component")
             return nil
         end
     end
 
-    local component = self.componentClassToInstanceDic[componentClass]
+    local component = self.componentListDic:GetItem(componentClass)
     if component then
         oop.warning(LogTag, string.format("The component of %s has beend added!", componentClass:GetClassName()))
         return component
@@ -205,8 +211,14 @@ function Entity:AddComponent(componentClass, ...)
     return component
 end
 
+function Entity:AddComponents(...)
+    for _, componentClass in ipairs({...}) do
+        self:AddComponent(componentClass)
+    end
+end
+
 function Entity:RemoveComponent(componentClass)
-    if not self:IsEnable() then
+    if not self:GetIsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -228,16 +240,8 @@ function Entity:RemoveComponent(componentClass)
     return true
 end
 
-function Entity:RemoveAllComponent()
-    local allComponentClasses = tkeys(self.componentClassToInstanceDic)
-    for _, componentClass in ipairs(allComponentClasses) do
-        self:RemoveComponent(componentClass)
-    end
-    tclear(self.componentClassToInstanceDic)
-end
-
 function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
-    if not self:IsEnable() then
+    if not self:GetIsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -282,7 +286,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
 end
 
 function Entity:ModifyComponent(componentClass, modifyFunc, modifyTag)
-    if not self:IsEnable() then
+    if not self:GetIsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -307,7 +311,7 @@ function Entity:ModifyComponent(componentClass, modifyFunc, modifyTag)
 end
 
 function Entity:MarkComponentModified(componentClass, modifyTag)
-    if not self:IsEnable() then
+    if not self:GetIsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -328,18 +332,17 @@ function Entity:addComponent(componentClass, ...)
         return nil
     end
 
-    self.componentClassToInstanceDic[componentClass] = component
-
+    self.componentDic[componentClass] = component
     return component
 end
 
 function Entity:removeComponent(componentClass)
-    local component = self.componentClassToInstanceDic[componentClass]
+    local component = self.componentDic[componentClass]
     if not component then
         return false
     end
 
-    self.componentClassToInstanceDic[componentClass] = nil
+    self.componentDic[componentClass] = nil
     self.componentPool:Release(component)
 
     return true
