@@ -1,22 +1,22 @@
 local oop = require("DotLua/OOP/oop")
-local GroupLateUpdateSystem = require("DotLua/ECS/Systems/Group/GroupLateUpdateSystem")
+local GroupUpdateSystem = require("DotLua/ECS/Systems/GroupUpdateSystem")
 local CommonMathcers = require("DotLua/ECS/CommonMathcers")
-local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
 
 local DestroySystem =
     oop.class(
     "DotLua.ECS.Systems.Basic.DestroySystem",
     function(self, context)
-        self.priority = ESystemPriority.Highest
+        self.priority = SystemPriorityConst.DestroySystemPriority
     end,
-    GroupLateUpdateSystem
+    GroupUpdateSystem
 )
 
 function DestroySystem:createGroup(context)
     return context:createGroup(CommonMathcers.HaveDestroyComponentMatcher)
 end
 
-function DestroySystem:onEntityLateUpdate(entity, deltaTime)
+function DestroySystem:onEntityUpdate(entity, deltaTime)
     self.context:ReleaseEntity(entity)
 end
 

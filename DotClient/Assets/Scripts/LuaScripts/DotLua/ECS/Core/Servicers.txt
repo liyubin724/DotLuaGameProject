@@ -13,7 +13,6 @@ local Servicers =
         self.servicerDic = {}
 
         self.updateServicers = {}
-        self.lateUpdateServicers = {}
     end
 )
 
@@ -39,10 +38,6 @@ function Servicers:RegisterServicer(name, servicerClass, ...)
 
     if servicer[Const.DO_UPDATE_FUNC_NAME] then
         tinsert(self.updateServicers, servicer)
-    end
-
-    if servicer[Const.DO_LATEUPDATE_FUNC_NAME] then
-        tinsert(self.lateUpdateServicers, servicer)
     end
 
     if servicer[Const.DO_ACTIVATE_FUNC_NAME] then
@@ -76,12 +71,6 @@ function Servicers:DoUpdate(deltaTime, unscaleDeltaTime)
     end
 end
 
-function Servicers:DoLateUpdate(deltaTime, unscaleDeltaTime)
-    for _, servicer in ipairs(self.lateUpdateServicers) do
-        servicer:DoLateUpdate(deltaTime, unscaleDeltaTime)
-    end
-end
-
 function Servicers:DoDestroy()
     local keys = tkeys(self.servicerDic)
     if keys and #keys > 0 then
@@ -92,7 +81,6 @@ function Servicers:DoDestroy()
 
     self.servicerDic = nil
     self.updateServicers = nil
-    self.lateUpdateServicers = nil
 end
 
 return Servicers

@@ -2,8 +2,9 @@ local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local SystemPriorityConst = {}
 
-SystemPriorityConst.Default = ESystemPriority.Default
-
-SystemPriorityConst.DestroySystemPriority = ESystemPriority.Lowest + 100000
+SystemPriorityConst.BasicContextListenPriority = ESystemPriority.Lowest + 10000
+SystemPriorityConst.CategoryCollectionPriority = 1
+SystemPriorityConst.DependedCollectionSystemPriority = 1
+SystemPriorityConst.DestroySystemPriority = 100
 
 return SystemPriorityConst

@@ -1,29 +1,28 @@
 local oop = require("DotLua/ECS/OOP/oop")
-local LateUpdateSystem = require("DotLua/ECS/Systems/Update/LateUpdateSystem")
+local UpdateSystem = require("DotLua/ECS/Systems/UpdateSystem")
 
 local tclear = table.clear
 local tcopyto = table.copyto
 
-local LogTag = "GroupLateUpdateSystem"
+local LogTag = "GroupUpdateSystem"
 
-local GroupLateUpdateSystem =
+local GroupUpdateSystem =
     oop.class(
-    "DotLua.ECS.Systems.Group.GroupLateUpdateSystem",
+    "DotLua.ECS.Systems.GroupUpdateSystem",
     function(self, context)
         self.context = context
         self.group = nil
 
         self.tempEntities = {}
     end,
-    LateUpdateSystem
+    UpdateSystem
 )
 
-function GroupLateUpdateSystem:onInitlize()
-    self:GetBaseClass().onInitlize(self)
+function GroupUpdateSystem:onInitlize()
     self.group = self:createGroup(self.context)
 end
 
-function GroupLateUpdateSystem:onDestroy()
+function GroupUpdateSystem:onDestroy()
     if self.group then
         self.context:ReleaseGroup(self.group)
     end
@@ -31,7 +30,7 @@ function GroupLateUpdateSystem:onDestroy()
     self.context = nil
 end
 
-function GroupLateUpdateSystem:onLateUpdate(deltaTime)
+function GroupUpdateSystem:onUpdate(deltaTime)
     if not self.group then
         return
     end
@@ -42,24 +41,24 @@ function GroupLateUpdateSystem:onLateUpdate(deltaTime)
     for i = 1, #self.tempEntities do
         local entity = self.tempEntities[i]
         if self:filterEntity(entity) then
-            self:onEntityLateUpdate(entity, deltaTime)
+            self:onEntityUpdate(entity, deltaTime)
         end
     end
 
     tclear(self.tempEntities)
 end
 
-function GroupLateUpdateSystem:createGroup(context)
+function GroupUpdateSystem:createGroup(context)
     oop.error(LogTag, "this is a abstract class")
     return nil
 end
 
-function GroupLateUpdateSystem:filterEntity(entity)
+function GroupUpdateSystem:filterEntity(entity)
     return true
 end
 
-function GroupLateUpdateSystem:onEntityLateUpdate(entity, deltaTime)
+function GroupUpdateSystem:onEntityUpdate(entity, deltaTime)
     oop.error(LogTag, "this is a abstract class")
 end
 
-return GroupLateUpdateSystem
+return GroupUpdateSystem

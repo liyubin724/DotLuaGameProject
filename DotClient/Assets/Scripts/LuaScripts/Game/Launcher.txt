@@ -24,10 +24,6 @@ function Launcher.Update(deltaTime, unscaleDeltaTime)
     ecs.Update(deltaTime, unscaleDeltaTime)
 end
 
-function Launcher.LateUpdate(deltaTime, unscaleDeltaTime)
-    ecs.LateUpdate(deltaTime, unscaleDeltaTime)
-end
-
 function Launcher.Destroy()
     ecs.Destroy()
 end

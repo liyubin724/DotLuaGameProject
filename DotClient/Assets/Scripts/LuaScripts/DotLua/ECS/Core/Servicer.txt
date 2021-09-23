@@ -16,9 +16,6 @@ local Servicer =
 -- function Servicer:DoUpdate(deltaTime,unscaleDeltaTime)
 -- end
 
--- function Servicer:DoLateUpdate(deltaTime,unscaleDeltaTime)
--- end
-
 -- function Servicer:DoDeactivate()
 -- end
 

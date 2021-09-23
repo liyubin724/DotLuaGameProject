@@ -81,12 +81,6 @@ ecs.Update = function(deltaTime, unscaleDeltaTime)
     end
 end
 
-ecs.LateUpdate = function(deltaTime, unscaleDeltaTime)
-    if ecs.env then
-        ecs.env:DoLateUpdate(deltaTime, unscaleDeltaTime)
-    end
-end
-
 ecs.Destroy = function()
     if ecs.env then
         ecs.env:DoDestroy()

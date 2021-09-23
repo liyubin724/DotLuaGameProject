@@ -4,7 +4,7 @@ local Const = require("DotLua/ECS/Const")
 
 local UpdateSystem =
     oop.class(
-    "DotLua.ECS.Systems.Update.UpdateSystem",
+    "DotLua.ECS.Systems.UpdateSystem",
     function(self)
         self.frequencyTime = Const.TIME_EVERY_UPDATE
 

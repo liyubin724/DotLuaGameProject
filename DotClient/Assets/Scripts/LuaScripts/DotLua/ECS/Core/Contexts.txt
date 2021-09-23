@@ -30,6 +30,12 @@ local Contexts =
     end
 )
 
+function Contexts:DoUpdate()
+    for _, context in pairs(self.contextDic) do
+        context:tryToReleaseEntity()
+    end
+end
+
 function Contexts:DoDestroy()
     self.contextCreatedEvent:Clear()
     self.contextReleasedEvent:Clear()

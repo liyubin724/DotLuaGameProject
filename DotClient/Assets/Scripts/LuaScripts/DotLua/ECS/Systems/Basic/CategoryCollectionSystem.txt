@@ -5,23 +5,23 @@ local Collector = require("DotLua/ECS/Core/Collector")
 local Const = require("DotLua/ECS/Const")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 local CategoryCollectionComponent = require("DotLua/ECS/Components/Basic/CategoryCollectionComponent")
-local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/Collector/CollectorLateUpdateSystem")
-local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
 
 local CategoryCollectionSystem =
     oop.class(
     "DotLua.ECS.Systems.Basic.CategoryCollectionSystem",
     function(self, context)
-        self.priority = ESystemPriority.High
+        self.priority = SystemPriorityConst.CategoryCollectionPriority
     end,
-    CollectorLateUpdateSystem
+    CollectorUpdateSystem
 )
 
-function CollectorLateUpdateSystem:createCollector(context)
+function CategoryCollectionSystem:createCollector(context)
     return Collector(context, CommonMatchers.HaveCategoryComponentMatcher, EGroupEvent.AddedOrRemoved)
 end
 
-function CategoryCollectionSystem:onAddedEntityLateUpdate(entity, deltaTime)
+function CategoryCollectionSystem:onAddedEntityUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local categoryCollectionComponent = collectionEntity:GetComponent(CategoryCollectionComponent)
 
@@ -32,7 +32,7 @@ function CategoryCollectionSystem:onAddedEntityLateUpdate(entity, deltaTime)
     categoryCollectionComponent:AddEntity(categoryID, guid)
 end
 
-function CategoryCollectionSystem:onRemovedEntityLateUpdate(entity, deltaTime)
+function CategoryCollectionSystem:onRemovedEntityUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local categoryCollectionComponent = collectionEntity:GetComponent(CategoryCollectionComponent)
 

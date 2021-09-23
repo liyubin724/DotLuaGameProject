@@ -1,52 +1,58 @@
 local oop = require("DotLua/OOP/oop")
 local MacroSystem = require("DotLua/ECS/Core/MacroSystem")
-local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local ContextListenSystem =
     oop.class(
-    "DotLua.ECS.Systems.Context.ContextListenSystem",
-    function(self, contexts, systems, ...)
-        self.priority = ESystemPriority.Highest
-
+    "DotLua.ECS.Systems.ContextListenSystem",
+    function(self, contexts)
         self.contexts = contexts
-        self.systems = systems
-        self.systemClasses = {...}
+        self.systemClasses = self:getSystemClasses()
     end,
     MacroSystem
 )
 
-function ContextListenSystem:onActivate()
-    self:GetBaseClass().onActivate(self)
+function ContextListenSystem:getSystemClasses()
+    return {}
+end
 
+function ContextListenSystem:onActivate()
     self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
     local contextNames = self.contexts:GetContextNames()
     for _, contextName in ipairs(contextNames) do
         local context = self.contexts:GetContext(contextName)
         self:onContextCreatedEvent(context)
     end
+    self:GetBaseClass().onActivate(self)
 end
 
 function ContextListenSystem:onDeactivate()
-    self:GetBaseClass().onDeactivate(self)
     self.contexts:UnbindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
     local contextNames = self.contexts:GetContextNames()
     for _, contextName in ipairs(contextNames) do
         local context = self.contexts:GetContext(contextName)
         self:onContextReleasedEvent(context)
     end
+    self:GetBaseClass().onDeactivate(self)
+end
+
+function ContextListenSystem:onDestroy()
+    self.contexts = nil
+    self.systemClasses = nil
+
+    self:GetBaseClass().onDestroy(self)
 end
 
 function ContextListenSystem:onContextCreatedEvent(context)
     for _, systemClass in ipairs(self.systemClasses) do
         local systemName = string.format("%s-%s", context:GetName(), systemClass:GetName())
-        self.systems:RegisterSystem(systemName, systemClass, context)
+        self:AddSubsystem(systemName, systemClass, context)
     end
 end
 
 function ContextListenSystem:onContextReleasedEvent(context)
     for _, systemClass in ipairs(self.systemclasses) do
         local systemName = string.format("%s-%s", context:GetName(), systemClass:GetName())
-        self.systems:UnregisterSystem(systemName)
+        self:RemoveSubsystem(systemName)
     end
 end
 

@@ -29,11 +29,7 @@ function TimerServicer:RemoveTimer(timerIndex)
 end
 
 function TimerServicer:DoUpdate(deltaTime, unscaleDeltaTime)
-    self.timer:DoUpdate(deltaTime, unscaleDeltaTime)
-end
-
-function TimerServicer:DoLateUpdate(deltaTime, unscaleDeltaTime)
-    self.timer:DoLateUpdate(deltaTime, unscaleDeltaTime)
+    self.hTimer:DoUpdate(deltaTime, unscaleDeltaTime)
 end
 
 function TimerServicer:DoDestroy()

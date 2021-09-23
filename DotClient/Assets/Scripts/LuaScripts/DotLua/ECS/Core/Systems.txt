@@ -15,17 +15,12 @@ local Systems =
         self.nameToSystemDic = {}
 
         self.updateSystems = {}
-        self.lateUpdateSystems = {}
     end
 )
 
-function Systems:HasSystem(name)
-    return self.nameToSystemDic[name] ~= nil
-end
-
 function Systems:RegisterSystem(name, systemClass, ...)
     if oop.isDebug then
-        if not systemClass or not oop.iskindof(systemClass, System) then
+        if not oop.iskindof(systemClass, System) then
             oop.error(LogTag, "the system is nil or is not a class of System")
             return
         end
@@ -42,14 +37,12 @@ function Systems:RegisterSystem(name, systemClass, ...)
     self.nameToSystemDic[name] = system
 
     if system[Const.DO_UPDATE_FUNC_NAME] then
-        self:insertByPriority(self.updateSystems, system)
-    end
-
-    if system[Const.DO_LATEUPDATE_FUNC_NAME] then
-        self:insertByPriority(self.lateUpdateSystems, system)
+        self:insertSystem(self.updateSystems, system)
     end
 
     system:DoActivate()
+
+    return system
 end
 
 function Systems:UnregisterSystem(name, isAutoDestroy)
@@ -63,10 +56,6 @@ function Systems:UnregisterSystem(name, isAutoDestroy)
 
     if system[Const.DO_UPDATE_FUNC_NAME] then
         tremovevalue(self.updateSystems, system)
-    end
-
-    if system[Const.DO_LATEUPDATE_FUNC_NAME] then
-        tremovevalue(self.lateUpdateSystems, system)
     end
 
     system:DoDeactivate()
@@ -84,15 +73,6 @@ function Systems:DoUpdate(deltaTime, unscaleDeltaTime)
     )
 end
 
-function Systems:DoLateUpdate(deltaTime, unscaleDeltaTime)
-    tforeach(
-        self.lateUpdateSystems,
-        function(_, system)
-            system:DoLateUpdate(deltaTime, unscaleDeltaTime)
-        end
-    )
-end
-
 function Systems:DoDestroy()
     tforeach(
         self.nameToSystemDic,
@@ -101,21 +81,19 @@ function Systems:DoDestroy()
         end
     )
 
-    self.nameToSystemDic = nil
     self.updateSystems = nil
-    self.lateUpdateSystems = nil
+    self.nameToSystemDic = nil
 end
 
-function Systems:insertByPriority(systems,system)
+function Systems:insertSystem(systems, system)
     local priority = system:GetPriority()
-    for i, s in ipairs(systems) do
-        local p = s:GetPriority()
-        if priority < p then
-            tinsert(systems,i)
+    for i = 1, #systems do
+        local sp = systems[i]:GetPriority()
+        if priority < sp then
+            tinsert(systems, system)
             return
         end
     end
-
     tinsert(systems, system)
 end
 

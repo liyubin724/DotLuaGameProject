@@ -6,25 +6,16 @@ local System =
     oop.class(
     "DotLua.ECS.Core.System",
     function(self)
-        self.name = tostring(self)
         self.priority = ESystemPriority.Default
     end
 )
 
-function System:GetName()
-    return self.name
-end
-
-function System:SetName(name)
-    self.name = name
+function System:IsEnable()
+    return self.enable
 end
 
 function System:GetPriority()
     return self.priority
-end
-
-function System:SetPriority(priority)
-    self.priority = priority
 end
 
 function System:DoInitialize()
@@ -35,6 +26,8 @@ function System:DoInitialize()
 end
 
 function System:DoActivate()
+    self.enable = true
+
     local func = self[Const.ON_ACTIVATE_FUNC_NAME]
     if func and type(func) == "function" then
         func(self)
@@ -42,6 +35,8 @@ function System:DoActivate()
 end
 
 function System:DoDeactivate()
+    self.enable = false
+
     local func = self[Const.ON_DEACTIVATE_FUNC_NAME]
     if func and type(func) == "function" then
         func(self)
@@ -51,13 +46,13 @@ end
 -- function System:DoUpdate(deltaTime, unscaleDeltaTime)
 -- end
 
--- function System:DoLateUpdate(deltaTime, unscaleDeltaTime)
--- end
-
 -- function System:DoFrameUpdate()
 -- end
 
 function System:DoDestroy()
+    if self.enable then
+        self:DoDeactivate()
+    end
     local func = self[Const.ON_DESTROY_FUNC_NAME]
     if func and type(func) == "function" then
         func(self)

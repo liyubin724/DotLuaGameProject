@@ -1,0 +1,21 @@
+local oop = require("DotLua/OOP/oop")
+local ContextListenSystem = require("DotLua/ECS/Systems/ContextListenSystem")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local DestroySystem = require("DotLua/ECS/Systems/Basic/DestroySystem")
+local CategoryCollectionSystem = require("DotLua/ECS/Systems/Basic/CategoryCollectionSystem")
+local DependedCollectionSystem = require("DotLua/ECS/Systems/Basic/DependedCollectionSystem")
+
+local BasicContextListenSystem =
+    oop.class(
+    "DotLua.ECS.Systems.Basic.BasicContextListenSystem",
+    function(self, contexts)
+        self.priority = SystemPriorityConst.BasicContextListenPriority
+    end,
+    ContextListenSystem
+)
+
+function ContextListenSystem:getSystemClasses()
+    return {CategoryCollectionSystem, DependedCollectionSystem, DestroySystem}
+end
+
+return BasicContextListenSystem

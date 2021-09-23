@@ -5,7 +5,7 @@ local Collector = require("DotLua/ECS/Core/Collector")
 local Const = require("DotLua/ECS/Const")
 local DependOnComponent = require("DotLua/ECS/Components/Basic/DependOnComponent")
 local DependedCollectionComponent = require("DotLua/ECS/Components/Basic/DependedCollectionComponent")
-local CollectorLateUpdateSystem = require("DotLua/ECS/Systems/CollectorLateUpdateSystem")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
 local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local DependedCollectionSystem =
@@ -15,14 +15,14 @@ local DependedCollectionSystem =
         self.collector = Collector(context, CommonMatchers.HaveChildsComponentMathcer, EGroupEvent.AddedOrRemoved)
         self.priority = ESystemPriority.High
     end,
-    CollectorLateUpdateSystem
+    CollectorUpdateSystem
 )
 
 function DependedCollectionSystem:getUpdateState()
     return false, true, true
 end
 
-function DependedCollectionSystem:onAddedEntityLateUpdate(entity, deltaTime)
+function DependedCollectionSystem:onAddedEntityUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local dependedCollectionComponent = collectionEntity:GetComponent(DependedCollectionComponent)
 
@@ -31,7 +31,7 @@ function DependedCollectionSystem:onAddedEntityLateUpdate(entity, deltaTime)
     dependedCollectionComponent:AddEntity(guid, dependOnComponent:GetDepends())
 end
 
-function DependedCollectionSystem:onRemovedEntityLateUpdate(entity, deltaTime)
+function DependedCollectionSystem:onRemovedEntityUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local dependedCollectionComponent = collectionEntity:GetComponent(DependedCollectionComponent)
 

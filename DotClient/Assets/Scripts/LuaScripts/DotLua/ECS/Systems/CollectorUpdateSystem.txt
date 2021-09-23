@@ -1,72 +1,72 @@
 local oop = require("DotLua/ECS/OOP/oop")
-local LateUpdateSystem = require("DotLua/ECS/Systems/LateUpdate/LateUpdateSystem")
+local UpdateSystem = require("DotLua/ECS/Systems/Update/UpdateSystem")
 
 local LogTag = "CollectorUpdateSystem"
 
-local CollectorLateUpdateSystem =
+local CollectorUpdateSystem =
     oop.class(
-    "DotLua.ECS.Systems.Collectors.CollectorUpdateSystem",
+    "DotLua.ECS.Systems.CollectorUpdateSystem",
     function(self, context)
         self.collector = self:createCollector(context)
     end,
-    LateUpdateSystem
+    UpdateSystem
 )
 
-function CollectorLateUpdateSystem:onActivate()
+function CollectorUpdateSystem:onActivate()
     if self.collector then
         self.collector:DoActivate()
     end
 end
 
-function CollectorLateUpdateSystem:onDeactivate()
+function CollectorUpdateSystem:onDeactivate()
     if self.collector then
         self.collector:DoDeactivate()
     end
 end
 
-function CollectorLateUpdateSystem:onDestroy()
+function CollectorUpdateSystem:onDestroy()
     if self.collector then
         self.collector:DoDestroy()
     end
     self.collector = nil
 end
 
-function CollectorLateUpdateSystem:onLateUpdate(deltaTime)
+function CollectorUpdateSystem:onUpdate(deltaTime)
     if not self.collector then
         return
     end
 
-    local onEntityLateUpdate = self["onEntityLateUpdate"]
-    if onEntityLateUpdate then
+    local onEntityUpdate = self["onEntityUpdate"]
+    if onEntityUpdate then
         local entities = self.collector:GetCollectedEntities()
         if #entities > 0 then
             for _, entity in ipairs(entities) do
                 if self:filterEntity(entity) then
-                    onEntityLateUpdate(self, entity, deltaTime)
+                    onEntityUpdate(self, entity, deltaTime)
                 end
             end
         end
     end
 
-    local onAddedEntityLateUpdate = self["onAddedEntityLateUpdate"]
-    if onAddedEntityLateUpdate then
+    local onAddedEntityUpdate = self["onAddedEntityUpdate"]
+    if onAddedEntityUpdate then
         local entities = self.collector:GetCollectedAddedEntities()
         if #entities > 0 then
             for _, entity in ipairs(entities) do
                 if self:filterEntity(entity) then
-                    onAddedEntityLateUpdate(self, entity, deltaTime)
+                    onAddedEntityUpdate(self, entity, deltaTime)
                 end
             end
         end
     end
 
-    local onRemovedEntityLateUpdate = self["onRemovedEntityLateUpdate"]
-    if onRemovedEntityLateUpdate then
+    local onRemovedEntityUpdate = self["onRemovedEntityUpdate"]
+    if onRemovedEntityUpdate then
         local entities = self.collector:GetCollectedRemovedEntities()
         if #entities > 0 then
             for _, entity in ipairs(entities) do
                 if self:filterEntity(entity) then
-                    onRemovedEntityLateUpdate(self, entity, deltaTime)
+                    onRemovedEntityUpdate(self, entity, deltaTime)
                 end
             end
         end
@@ -75,25 +75,25 @@ function CollectorLateUpdateSystem:onLateUpdate(deltaTime)
     self.collector:ClearCollectedEntities()
 end
 
-function CollectorLateUpdateSystem:createCollector(context)
+function CollectorUpdateSystem:createCollector(context)
     oop.error(LogTag, "this is a abstract class")
     return nil
 end
 
-function CollectorLateUpdateSystem:filterEntity(entity)
-    return true
+function CollectorUpdateSystem:filterEntity(entity)
+    return false
 end
 
--- function CollectorLateUpdateSystem:onEntityLateUpdate(entity, deltaTime)
+-- function CollectorUpdateSystem:onEntityUpdate(entity, deltaTime)
 --     oop.error(LogTag, "this is a abstract class")
 -- end
 
--- function CollectorLateUpdateSystem:onAddedEntityLateUpdate(entity, deltaTime)
+-- function CollectorUpdateSystem:onAddedEntityUpdate(entity, deltaTime)
 --     oop.error(LogTag, "this is a abstract class")
 -- end
 
--- function CollectorLateUpdateSystem:onRemovedEntityLateUpdate(entity, deltaTime)
+-- function CollectorUpdateSystem:onRemovedEntityUpdate(entity, deltaTime)
 --     oop.error(LogTag, "this is a abstract class")
 -- end
 
-return CollectorLateUpdateSystem
+return CollectorUpdateSystem
