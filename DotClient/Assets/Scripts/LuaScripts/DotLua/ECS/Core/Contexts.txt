@@ -16,7 +16,6 @@ local Contexts =
     function(self)
         self.guidCreator = GUIDCreator()
 
-        self.contextPool = ObjectPool(Context)
         self.entityPool = ObjectPool(Entity)
         self.groupPool = ObjectPool(Group)
         self.componentPool = ComponentPool()
@@ -37,9 +36,6 @@ function Contexts:DoDestroy()
     self.contextCreatedEvent = nil
     self.contextReleasedEvent = nil
 
-    for _, context in pairs(self.contextDic) do
-        self.contextPool:Release(context)
-    end
     self.contextDic = nil
     self.guidToEntityDic = nil
 
@@ -81,17 +77,12 @@ function Contexts:HasContext(name)
 end
 
 function Contexts:GetContext(name)
-    return self.contextDic[name]
-end
-
-function Contexts:CreateContext(name)
     local context = self.contextDic[name]
     if context then
-        oop.warning(LogTag, "the context has been created")
         return context
     end
 
-    context = self.contextPool:Get(name, self.guidCreator, self.groupPool, self.entityPool, self.componentPool)
+    context = Context(name, self.guidCreator, self.groupPool, self.entityPool, self.componentPool)
     context:BindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
 
     self.contextDic[name] = context
@@ -99,20 +90,6 @@ function Contexts:CreateContext(name)
     self.contextCreatedEvent:Invoke(context)
 
     return context
-end
-
-function Contexts:ReleaseContext(name)
-    local context = self.contextDic[name]
-    if not context then
-        oop.warning(LogTag, string.format("the context(%s) is not found", name))
-        return
-    end
-
-    self.contextDic[name] = nil
-
-    context:UnbindEntityEvent(self, self.onContextEntityCreatedEvent, nil, self.onContextEntityReleasedEvent)
-    self.contextReleasedEvent:Invoke(context)
-    self.contextPool:Release(context)
 end
 
 function Contexts:GetGlobalEntity(name)

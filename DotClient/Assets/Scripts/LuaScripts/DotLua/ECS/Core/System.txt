@@ -6,12 +6,25 @@ local System =
     oop.class(
     "DotLua.ECS.Core.System",
     function(self)
+        self.name = tostring(self)
         self.priority = ESystemPriority.Default
     end
 )
 
+function System:GetName()
+    return self.name
+end
+
+function System:SetName(name)
+    self.name = name
+end
+
 function System:GetPriority()
     return self.priority
+end
+
+function System:SetPriority(priority)
+    self.priority = priority
 end
 
 function System:DoInitialize()
@@ -41,7 +54,7 @@ end
 -- function System:DoLateUpdate(deltaTime, unscaleDeltaTime)
 -- end
 
--- function System:DoFrameUpdate(deltaTime)
+-- function System:DoFrameUpdate()
 -- end
 
 function System:DoDestroy()

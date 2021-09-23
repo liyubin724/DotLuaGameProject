@@ -40,6 +40,10 @@ function Collector:GetCollectedRemovedEntities()
 end
 
 function Collector:ClearCollectedEntities()
+    for _, entity in ipairs(self.collectedEntities) do
+        entity:ReleaseRef()
+    end
+
     tclear(self.collectedEntities)
     tclear(self.collectedAddedEntities)
     tclear(self.collectedRemovedEntities)
@@ -84,7 +88,12 @@ function Collector:DoDestroy()
         self:DoDeactivate()
     end
 
+    for _, entity in ipairs(self.collectedEntities) do
+        entity:ReleaseRef()
+    end
     self.collectedEntities = nil
+    self.collectedAddedEntities = nil
+    self.collectedRemovedEntities = nil
 
     self.context:ReleaseGroup(self.group)
     self.group = nil
@@ -95,6 +104,8 @@ end
 function Collector:onEntityAddedEvent(entity)
     if not tcontainsvalue(self.collectedEntities, entity) then
         tinsert(self.collectedEntities, entity)
+
+        entity:RetainRef()
     end
 
     if not tcontainsvalue(self.collectedAddedEntities, entity) then
@@ -106,18 +117,11 @@ function Collector:onEntityAddedEvent(entity)
     end
 end
 
-function Collector:onEntityRemovedEvent(entity,contextEvent)
-    if contextEvent == EContextEvent.EntityReleased then
-        if tcontainsvalue(self.collectedEntities,entity) then
-            tremovevalue(self.collectedEntities)
-            tremovevalue(self.collectedAddedEntities,entity)
-            tremovevalue(self.collectedRemovedEntities,entity)
-        end
-        return
-    end
-
+function Collector:onEntityRemovedEvent(entity)
     if not tcontainsvalue(self.collectedEntities, entity) then
         tinsert(self.collectedEntities, entity)
+
+        entity:RetainRef()
     end
 
     if tcontainsvalue(self.collectedAddedEntities, entity) then

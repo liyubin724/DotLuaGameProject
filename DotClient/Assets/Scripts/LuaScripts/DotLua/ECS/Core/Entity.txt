@@ -1,6 +1,8 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Core/Component")
 
+local tremovevalue = table.removevalue
+local tinsert = table.insert
 local tclear = table.clear
 
 local LogTag = "Entity"
@@ -11,6 +13,9 @@ local Entity =
     function(self)
         self.enable = false
         self.refCount = 0
+        if oop.isDebug then
+            self.debugRefMessage = {}
+        end
         self.isWaitingForRelease = false
 
         self.guid = nil
@@ -27,20 +32,26 @@ local Entity =
     end
 )
 
-function Entity:GetIsEnable()
+function Entity:IsEnable()
     return self.enable and not self.isWaitingForRelease
 end
 
-function Entity:GetIsInUsing()
+function Entity:IsInUsing()
     return self.refCount > 0
 end
 
-function Entity:RetainRef()
+function Entity:RetainRef(refMessage)
     self.refCount = self.refCount + 1
+    if oop.isDebug and refMessage then
+        tinsert(self.debugRefMessage, refMessage)
+    end
 end
 
-function Entity:ReleaseRef()
+function Entity:ReleaseRef(refMessage)
     self.refCount = self.refCount - 1
+    if oop.isDebug and refMessage then
+        tremovevalue(self.debugRefMessage, refMessage)
+    end
 end
 
 function Entity:GetGUID()
@@ -182,7 +193,7 @@ function Entity:GetComponent(componentClass)
 end
 
 function Entity:AddComponent(componentClass, ...)
-    if not self:GetIsEnable() then
+    if not self:IsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return nil
     end
@@ -218,7 +229,7 @@ function Entity:AddComponents(...)
 end
 
 function Entity:RemoveComponent(componentClass)
-    if not self:GetIsEnable() then
+    if not self:IsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -241,7 +252,7 @@ function Entity:RemoveComponent(componentClass)
 end
 
 function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
-    if not self:GetIsEnable() then
+    if not self:IsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -286,7 +297,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
 end
 
 function Entity:ModifyComponent(componentClass, modifyFunc, modifyTag)
-    if not self:GetIsEnable() then
+    if not self:IsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end
@@ -311,7 +322,7 @@ function Entity:ModifyComponent(componentClass, modifyFunc, modifyTag)
 end
 
 function Entity:MarkComponentModified(componentClass, modifyTag)
-    if not self:GetIsEnable() then
+    if not self:IsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
     end

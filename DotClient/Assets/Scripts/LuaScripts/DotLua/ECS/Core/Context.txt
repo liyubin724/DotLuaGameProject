@@ -1,4 +1,5 @@
 local oop = require("DotLua/OOP/oop")
+local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
 local EContextEvent = require("DotLua/ECS/Core/EContextEvent")
 
 local tclear = table.clear
@@ -8,16 +9,18 @@ local LogTag = "Context"
 local Context =
     oop.class(
     "DotLua.ECS.Core.Context",
-    function(self)
-        self.name = nil
+    function(self,name,guidCreator,groupPool,entityPool,componentPool)
+        self.name = name
 
-        self.guidCreator = nil
-        self.groupPool = nil
-        self.entityPool = nil
-        self.componentPool = nil
+        self.guidCreator = guidCreator
+        self.groupPool = groupPool
+        self.entityPool = entityPool
+        self.componentPool = componentPool
 
         self.guidToEntityDic = {}
         self.matcherToGroupDic = {}
+
+        self.willReleasedEntityDic = {}
 
         self.entityCreatedEvent = oop.event()
         self.entityChangedEvent = oop.event()
@@ -33,16 +36,7 @@ function Context:GetName()
     return self.name
 end
 
-function Context:DoActivate(name, guidCreator, groupPool, entityPool, componentPool)
-    self.name = name
-
-    self.guidCreator = guidCreator
-    self.groupPool = groupPool
-    self.entityPool = entityPool
-    self.componentPool = componentPool
-end
-
-function Context:DoDeactivate()
+function Context:DoDestroy()
     self.groupCreatedEvent:Clear()
     self.groupReleasedEvent:Clear()
     self.groupChangedEvent:Clear()
@@ -54,37 +48,17 @@ function Context:DoDeactivate()
     for _, entity in pairs(self.guidToEntityDic) do
         self:ReleaseEntity(entity)
     end
-    tclear(self.guidToEntityDic)
+    self.guidToEntityDic = nil
 
     for _, group in pairs(self.matcherToGroupDic) do
         self:ReleaseGroup(group)
     end
-    tclear(self.matcherToGroupDic)
-
-    self.name = nil
-    self.groupPool = nil
-    self.entityPool = nil
-    self.componentPool = nil
-end
-
-function Context:DoDestroy()
-    self.groupChangedEvent = nil
-    self.groupReleasedEvent = nil
-    self.groupCreatedEvent = nil
-
-    self.entityCreatedEvent = nil
-    self.entityChangedEvent = nil
-    self.entityReleasedEvent = nil
-
-    self.guidToEntityDic = nil
     self.matcherToGroupDic = nil
 
-    self.guidCreator = nil
+    self.name = nil
     self.groupPool = nil
     self.entityPool = nil
     self.componentPool = nil
-
-    self.name = nil
 end
 
 function Context:BindEntityEvent(receiver, createdFunc, changedFunc, releasedFunc)
@@ -154,6 +128,7 @@ end
 function Context:CreateEntity(...)
     local guid = self.guidCreator:Get()
     local entity = self.entityPool:Get(guid, self.name, self.componentPool, ...)
+    entity:AddComponent(GUIDComponent, guid)
     entity:BindComponentEvent(
         self,
         self.onEntityAddComponentEvent,
@@ -162,8 +137,9 @@ function Context:CreateEntity(...)
         self.onEntityModifyComponentEvent
     )
     self.guidToEntityDic[guid] = entity
-    self.entityCreatedEvent:Invoke(entity, EContextEvent.EntityCreated, nil, nil)
 
+    self:tryToUpdateGroup(entity, EContextEvent.EntityCreated)
+    self.entityCreatedEvent:Invoke(self, guid, EContextEvent.EntityCreated, nil, nil)
     return entity
 end
 
@@ -182,10 +158,24 @@ function Context:ReleaseEntity(entity)
         self.onEntityModifyComponentEvent
     )
 
-    self:tryToUpdateGroup(entity, EContextEvent.EntityReleased, nil, nil)
-    self.entityReleasedEvent:Invoke(entity, EContextEvent.EntityReleased, nil, nil)
+    self:tryToUpdateGroup(entity, EContextEvent.EntityReleased)
+    self.entityReleasedEvent:Invoke(self, guid, EContextEvent.EntityReleased, nil, nil)
+
+    entity:MarkAsWaitingForRelease()
+    self.willReleasedEntityDic[guid] = entity
+
     self.guidToEntityDic[guid] = nil
-    self.entityPool:Release(entity)
+end
+
+function Context:tryToReleaseEntity()
+    local keys = tkeys(self.willReleasedEntityDic)
+    for _, guid in ipairs(keys) do
+        local entity = self.willReleasedEntityDic[guid]
+        if not entity:IsInUsing() then
+            self.entityPool:Release(entity)
+            self.willReleasedEntityDic[guid] = nil
+        end
+    end
 end
 
 function Context:CreateGroup(matcher)
@@ -200,7 +190,7 @@ function Context:CreateGroup(matcher)
     group:RetainRef()
 
     for _, entity in pairs(self.guidToEntityDic) do
-        group:addEntitySliently(entity, EContextEvent.GroupCreated)
+        group:TryUpdateEntity(entity, EContextEvent.GroupCreated)
     end
 
     self.groupCreatedEvent:Invoke(self, group)
@@ -220,12 +210,24 @@ end
 
 function Context:onEntityAddComponentEvent(entity, addedComponentClass)
     self:tryToUpdateGroup(entity, EContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
-    self.entityChangedEvent:Invoke(entity, EContextEvent.EntityChangedForAddComponent, addedComponentClass, nil)
+    self.entityChangedEvent:Invoke(
+        self,
+        entity:GetGUID(),
+        EContextEvent.EntityChangedForAddComponent,
+        addedComponentClass,
+        nil
+    )
 end
 
 function Context:onEntityRemoveComponentEvent(entity, removedComponentClass)
     self:tryToUpdateGroup(entity, EContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
-    self.entityChangedEvent:Invoke(entity, EContextEvent.EntityChangedForRemoveComponent, removedComponentClass, nil)
+    self.entityChangedEvent:Invoke(
+        self,
+        entity:GetGUID(),
+        EContextEvent.EntityChangedForRemoveComponent,
+        removedComponentClass,
+        nil
+    )
 end
 
 function Context:onEntityReplaceComponentEvent(entity, removedComponentClass, addedComponentClass)
@@ -236,7 +238,8 @@ function Context:onEntityReplaceComponentEvent(entity, removedComponentClass, ad
         addedComponentClass
     )
     self.entityChangedEvent:Invoke(
-        entity,
+        self,
+        entity:GetGUID(),
         EContextEvent.EntityChangedForReplaceComponent,
         removedComponentClass,
         addedComponentClass
@@ -246,7 +249,8 @@ end
 function Context:onEntityModifyComponentEvent(entity, modifiedComponentClass, modifyTag)
     self:tryToUpdateGroup(entity, EContextEvent.EntityChangedForModifyComponent, modifiedComponentClass, modifyTag)
     self.entityChangedEvent:Invoke(
-        entity,
+        self,
+        entity:GetGUID(),
         EContextEvent.EntityChangedForModifyComponent,
         modifiedComponentClass,
         modifyTag

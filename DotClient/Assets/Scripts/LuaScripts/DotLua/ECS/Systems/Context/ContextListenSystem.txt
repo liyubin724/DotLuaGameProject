@@ -1,24 +1,24 @@
 local oop = require("DotLua/OOP/oop")
-local System = require("DotLua/ECS/Core/System")
+local MacroSystem = require("DotLua/ECS/Core/MacroSystem")
 local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
 
 local ContextListenSystem =
     oop.class(
-    "DotLua.ECS.Systems.Basic.DestroySystem",
-    function(self, contexts, systems, systemClasses)
+    "DotLua.ECS.Systems.Context.ContextListenSystem",
+    function(self, contexts, systems, ...)
         self.priority = ESystemPriority.Highest
 
         self.contexts = contexts
         self.systems = systems
-        self.systemClasses = systemClasses or {}
+        self.systemClasses = {...}
     end,
-    System
+    MacroSystem
 )
 
 function ContextListenSystem:onActivate()
     self:GetBaseClass().onActivate(self)
-    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
 
+    self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
     local contextNames = self.contexts:GetContextNames()
     for _, contextName in ipairs(contextNames) do
         local context = self.contexts:GetContext(contextName)
