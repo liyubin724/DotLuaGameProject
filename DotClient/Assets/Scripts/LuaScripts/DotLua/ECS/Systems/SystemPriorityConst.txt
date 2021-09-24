@@ -7,4 +7,7 @@ SystemPriorityConst.CategoryCollectionPriority = 1
 SystemPriorityConst.DependedCollectionSystemPriority = 1
 SystemPriorityConst.DestroySystemPriority = 100
 
+SystemPriorityConst.TimerContextListenPriority = ESystemPriority.Default
+SystemPriorityConst.TimerDestroyPriority = 1
+
 return SystemPriorityConst

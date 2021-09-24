@@ -4,48 +4,71 @@ local TimerComponent =
     oop.class(
     "DotLua.ECS.Components.Timer.TimerComponent",
     function(self)
-        self.isRunning = false
-
-        self.timerIndex = -1
-        self.intervalMsgName = nil
-        self.endMessage = nil
+        self.intervalInSec = 0
+        self.totalInSec = 0
+        self.intervalComponentClass = nil
+        self.endComponentClass = nil
         self.userdata = nil
     end
 )
 
-function TimerComponent:GetIsRunning()
-    return self.isRunning
+function TimerComponent:GetIntervalInSec()
+    return self.intervalInSec
 end
 
-function TimerComponent:GetTimerIndex()
-    return self.timerIndex
+function TimerComponent:GetTotalInSec()
+    return self.totalInSec
 end
 
-function TimerComponent:GetIntervalMsgName()
-    return self.intervalMsgName
+function TimerComponent:GetIntervalComponentClass()
+    return self.intervalComponentClass
 end
 
-function TimerComponent:GetEndMsgName()
-    return self.endMsgName
+function TimerComponent:GetEndComponentClass()
+    return self.endComponentClass
 end
 
 function TimerComponent:GetUserdata()
     return self.userdata
 end
 
-function TimerComponent:DoGet(timerIndex, intervalMsgName, endMsgName, userdata)
-    self.timerIndex = timerIndex
-    self.intervalMsgName = intervalMsgName
-    self.endMsgName = endMsgName
+function TimerComponent:SetTimer(intervalInSec, totalInSec, intervalComponentClass, endComponentClass, userdata)
+    self.intervalInSec = intervalInSec
+    self.totalInSec = totalInSec
+    self.intervalComponentClass = intervalComponentClass
+    self.endComponentClass = endComponentClass
+    self.userdata = userdata
+end
+
+function TimerComponent:SetIntervalTimer(intervalInSec, intervalComponentClass, userdata)
+    self.intervalInSec = intervalInSec
+    self.totalInSec = 0
+    self.intervalComponentClass = intervalComponentClass
+    self.endComponentClass = nil
+    self.userdata = userdata
+end
+
+function TimerComponent:SetEndTimer(totalInSec, endComponentClass, userdata)
+    self.intervalInSec = 0
+    self.totalInSec = totalInSec
+    self.intervalComponentClass = nil
+    self.endComponentClass = endComponentClass
+    self.userdata = userdata
+end
+
+function TimerComponent:DoGet(intervalInSec, totalInSec, intervalComponentClass, endComponentClass, userdata)
+    self.intervalInSec = intervalInSec
+    self.totalInSec = totalInSec
+    self.intervalComponentClass = intervalComponentClass
+    self.endComponentClass = endComponentClass
     self.userdata = userdata
 end
 
 function TimerComponent:DoRelease()
-    self.isRunning = false
-
-    self.timerIndex = -1
-    self.intervalMsgName = nil
-    self.endMsgName = nil
+    self.intervalInSec = 0
+    self.totalInSec = 0
+    self.intervalComponentClass = nil
+    self.endComponentClass = nil
     self.userdata = nil
 end
 

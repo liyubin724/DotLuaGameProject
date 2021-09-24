@@ -1,16 +1,45 @@
-local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
 local HaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/HaveComponentMatcher")
+local CombinedMatcher = require("DotLua/ECS/Matchers/Combined/CombinedMatcher")
+local MatcherOperation = require("DotLua/ECS/Matchers/Combined/MatcherOperation")
+
+local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
 local ChildsComponent = require("DotLua/ECS/Components/Basic/ChildsComponent")
---local AddTimerComponent = require("DotLua/ECS/Components/Timer/AddTimerComponent")
+local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
+local TimerFinishedComponent = require("DotLua/ECS/Components/Timer/TimerFinishedComponent")
 
 
-local CommonMatchers = {}
+local haveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
+local haveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 
-CommonMatchers.HaveGUIDComponentMatcher = HaveComponentMatcher(GUIDComponent)
+local haveTimerComponentMatcher = HaveComponentMatcher(TimerComponent)
+local haveTimerFinishedComponentMatcher = HaveComponentMatcher(TimerFinishedComponent)
+local timerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
+timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
+timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
+local timerFinishedMathcer = CombinedMatcher(MatcherOperation.And)
+timerFinishedMathcer:AddMatcher(haveTimerComponentMatcher)
+timerFinishedMathcer:AddMatcher(haveTimerComponentMatcher)
+
+
+
+
+
+local CommonMatchers = {
+    HaveDestroyComponentMatcher = haveDestroyComponentMatcher,
+    HaveCategoryComponentMatcher = haveCategoryComponentMatcher,
+
+    TimerDestroyMatcher = timerDestroyMatcher,
+}
+
 CommonMatchers.HaveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
 CommonMatchers.HaveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 CommonMatchers.HaveChildsComponentMathcer = HaveComponentMatcher(ChildsComponent)
+
+CommonMatchers.HaveTimerComponentMatcher = HaveComponentMatcher(TimerComponent)
+
+CommonMatchers.TimerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
+CommonMatchers.TimerDestroyMatcher:AddMatcher(CommonMatchers.HaveDestroyComponentMatcher)
 
 return CommonMatchers

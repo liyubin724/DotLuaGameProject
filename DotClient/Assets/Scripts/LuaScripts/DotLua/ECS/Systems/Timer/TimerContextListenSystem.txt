@@ -1,0 +1,19 @@
+local oop = require("DotLua/OOP/oop")
+local ContextListenSystem = require("DotLua/ECS/Systems/ContextListenSystem")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local TimerDestroySystem = require("DotLua/ECS/Systems/Timer/TimerDestroySystem")
+
+local TimerContextListenSystem =
+    oop.class(
+    "DotLua.ECS.Systems.Timer.TimerContextListenSystem",
+    function(self, contexts)
+        self.priority = SystemPriorityConst.TimerContextListenPriority
+    end,
+    ContextListenSystem
+)
+
+function TimerContextListenSystem:getSystemClasses()
+    return {TimerDestroySystem}
+end
+
+return TimerContextListenSystem

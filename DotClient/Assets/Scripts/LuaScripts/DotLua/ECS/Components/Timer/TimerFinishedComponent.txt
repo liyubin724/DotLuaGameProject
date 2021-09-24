@@ -1,0 +1,10 @@
+local oop = require("DotLua/OOP/oop")
+
+local TimerFinishedComponent =
+    oop.class(
+    "DotLua.ECS.Components.Timer.TimerFinishedComponent",
+    function(self)
+    end
+)
+
+return TimerFinishedComponent

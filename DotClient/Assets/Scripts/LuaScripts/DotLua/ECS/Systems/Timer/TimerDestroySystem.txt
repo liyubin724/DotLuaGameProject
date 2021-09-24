@@ -1,0 +1,20 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
+local CommonMathcers = require("DotLua/ECS/CommonMathcers")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+
+local LogTag = "TimerDestroySystem"
+
+local TimerDestroySystem =
+    oop.class(
+    "DotLua.ECS.Systems.TimerDestroySystem",
+    function(self, context)
+    end,
+    CollectorUpdateSystem
+)
+
+function TimerDestroySystem:createCollector(context)
+    
+end
+
+return TimerDestroySystem

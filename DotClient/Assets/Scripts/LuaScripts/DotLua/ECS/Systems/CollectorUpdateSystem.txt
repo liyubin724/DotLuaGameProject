@@ -1,5 +1,5 @@
 local oop = require("DotLua/ECS/OOP/oop")
-local UpdateSystem = require("DotLua/ECS/Systems/Update/UpdateSystem")
+local UpdateSystem = require("DotLua/ECS/Systems/UpdateSystem")
 
 local LogTag = "CollectorUpdateSystem"
 
