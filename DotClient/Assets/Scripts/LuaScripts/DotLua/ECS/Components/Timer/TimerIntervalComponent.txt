@@ -1,0 +1,10 @@
+local oop = require("DotLua/OOP/oop")
+
+local TimerIntervalComponent =
+    oop.class(
+    "DotLua.ECS.Components.Timer.TimerIntervalComponent",
+    function(self)
+    end
+)
+
+return TimerIntervalComponent

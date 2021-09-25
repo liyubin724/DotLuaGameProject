@@ -4,42 +4,49 @@ local MatcherOperation = require("DotLua/ECS/Matchers/Combined/MatcherOperation"
 
 local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
-local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
-local ChildsComponent = require("DotLua/ECS/Components/Basic/ChildsComponent")
-local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
-local TimerFinishedComponent = require("DotLua/ECS/Components/Timer/TimerFinishedComponent")
 
+local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
+local TimerEndComponent = require("DotLua/ECS/Components/Timer/TimerEndComponent")
+local TimerIntervalComponent = require("DotLua/ECS/Components/Timer/TimerIntervalComponent")
+local TimerStartComponent = require("DotLua/ECS/Components/Timer/TimerStartComponent")
+local TimerStopComponent = require("DotLua/ECS/Components/Timer/TimerStopComponent")
 
 local haveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
 local haveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 
 local haveTimerComponentMatcher = HaveComponentMatcher(TimerComponent)
-local haveTimerFinishedComponentMatcher = HaveComponentMatcher(TimerFinishedComponent)
+local haveTimerStartComponentMatcher = HaveComponentMatcher(TimerStartComponent)
+local haveTimerStopComponentMatcher = HaveComponentMatcher(TimerStopComponent)
+local haveTimerIntervalComponentMatcher = HaveComponentMatcher(TimerIntervalComponent)
+local haveTimerEndComponentMatcher = HaveComponentMatcher(TimerEndComponent)
+
+local timerStartMatcher = CombinedMatcher(MatcherOperation.And)
+timerStartMatcher:AddMatcher(haveTimerComponentMatcher)
+timerStartMatcher:AddMatcher(haveTimerStartComponentMatcher)
+
+local timerStopMatcher = CombinedMatcher(MatcherOperation.And)
+timerStopMatcher:AddMatcher(haveTimerComponentMatcher)
+timerStopMatcher:AddMatcher(haveTimerStopComponentMatcher)
+
+local timerIntervalMatcher = CombinedMatcher(MatcherOperation.And)
+timerIntervalMatcher:AddMatcher(haveTimerComponentMatcher)
+timerIntervalMatcher:AddMatcher(haveTimerIntervalComponentMatcher)
+
+local timerEndMatcher = CombinedMatcher(MatcherOperation.And)
+timerEndMatcher:AddMatcher(haveTimerComponentMatcher)
+timerEndMatcher:AddMatcher(haveTimerEndComponentMatcher)
+
 local timerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
-timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
 timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
-local timerFinishedMathcer = CombinedMatcher(MatcherOperation.And)
-timerFinishedMathcer:AddMatcher(haveTimerComponentMatcher)
-timerFinishedMathcer:AddMatcher(haveTimerComponentMatcher)
-
-
-
-
+timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
 
 local CommonMatchers = {
     HaveDestroyComponentMatcher = haveDestroyComponentMatcher,
     HaveCategoryComponentMatcher = haveCategoryComponentMatcher,
-
-    TimerDestroyMatcher = timerDestroyMatcher,
+    TimerStartMatcher = timerStartMatcher,
+    TimerStopMatcher = timerStopMatcher,
+    TimerIntervalMatcher = timerIntervalMatcher,
+    TimerEndMatcher = timerEndMatcher,
+    TimerDestroyMatcher = timerDestroyMatcher
 }
-
-CommonMatchers.HaveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
-CommonMatchers.HaveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
-CommonMatchers.HaveChildsComponentMathcer = HaveComponentMatcher(ChildsComponent)
-
-CommonMatchers.HaveTimerComponentMatcher = HaveComponentMatcher(TimerComponent)
-
-CommonMatchers.TimerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
-CommonMatchers.TimerDestroyMatcher:AddMatcher(CommonMatchers.HaveDestroyComponentMatcher)
-
 return CommonMatchers

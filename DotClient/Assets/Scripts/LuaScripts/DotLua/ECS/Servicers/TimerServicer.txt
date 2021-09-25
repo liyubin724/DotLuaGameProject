@@ -1,6 +1,9 @@
 local oop = require("DotLua/OOP/oop")
 local Servicer = require("DotLua/ECS/Core/Servicer")
 local HierarchicalTimer = require("DotLua/Timer/HierarchicalTimer")
+local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
+local TimerEndComponent = require("DotLua/ECS/Components/Timer/TimerEndComponent")
+local TimerIntervalComponent = require("DotLua/ECS/Components/Timer/TimerIntervalComponent")
 
 local TimerServicer =
     oop.class(
@@ -12,16 +15,16 @@ local TimerServicer =
     Servicer
 )
 
-function TimerServicer:AddTimer(intervalInSec, totalInSec, intervalMsgName, endMsgName, userdata)
-    return self.hTimer:AddTimer(intervalInSec, totalInSec, self, self.onIntervalEvent, self.onEndEvent, userdata)
-end
-
-function TimerServicer:AddIntervalTimer(intervalInSec, intervalMsgName, endMsgName, userdata)
-    return self.hTimer:AddIntervalTimer(intervalInSec, self, self.onIntervalEvent, self.onEndEvent, userdata)
-end
-
-function TimerServicer:AddEndTimer(totalInSec, endMsgName, userdata)
-    return self.hTimer:AddEndTimer(totalInSec, self, self.onEndEvent, userdata)
+function TimerServicer:AddTimer(entity)
+    local timerComponent = entity:GetComponent(TimerComponent)
+    return self.hTimer:AddTimer(
+        timerComponent:GetIntervalInSec(),
+        timerComponent:GetTotalInSec(),
+        self,
+        self.onIntervalEvent,
+        self.onEndEvent,
+        entity
+    )
 end
 
 function TimerServicer:RemoveTimer(timerIndex)
@@ -36,9 +39,11 @@ function TimerServicer:DoDestroy()
 end
 
 function TimerServicer:onIntervalEvent(entity)
+    entity:AddComponent(TimerIntervalComponent)
 end
 
 function TimerServicer:onEndEvent(entity)
+    entity:AddComponent(TimerEndComponent)
 end
 
 return TimerServicer

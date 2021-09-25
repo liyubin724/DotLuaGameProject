@@ -81,7 +81,7 @@ function CollectorUpdateSystem:createCollector(context)
 end
 
 function CollectorUpdateSystem:filterEntity(entity)
-    return false
+    return true
 end
 
 -- function CollectorUpdateSystem:onEntityUpdate(entity, deltaTime)

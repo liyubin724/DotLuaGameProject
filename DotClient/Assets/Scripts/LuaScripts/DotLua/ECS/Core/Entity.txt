@@ -251,7 +251,7 @@ function Entity:RemoveComponent(componentClass)
     return true
 end
 
-function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
+function Entity:ReplaceComponent(oldComponentClass, newComponentClass, ...)
     if not self:IsEnable() then
         oop.error(LogTag, "The enity has been disabled")
         return false
@@ -282,7 +282,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
             self.componentPool:Release(oldComponent)
         end
 
-        local newComponent = self:addComponent(newComponentClass)
+        local newComponent = self:addComponent(newComponentClass, ...)
         if not newComponent then
             return false
         end
@@ -291,7 +291,7 @@ function Entity:ReplaceComponent(oldComponentClass, newComponentClass)
 
         return true
     elseif not oldComponentClass and newComponentClass then
-        local component = self:AddComponent(newComponentClass)
+        local component = self:AddComponent(newComponentClass, ...)
         return component ~= nil
     end
 end
