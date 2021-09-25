@@ -9,7 +9,7 @@ local TimerIntervalMatcher = require("DotLua/ECS/Components/Timer/TimerIntervalM
 
 local TimerIntervalSystem =
     oop.class(
-    "DotLua.ECS.Systems.TimerIntervalSystem",
+    "DotLua.ECS.Systems.Timer.TimerIntervalSystem",
     function(self, context)
         self.priority = SystemPriorityConst.TimerIntervalPriority
     end,

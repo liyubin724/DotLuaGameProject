@@ -1,0 +1,30 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+
+local ActorRootComponent =
+    oop.class(
+    "DotLua.ECS.Components.ActorRootComponent",
+    function(self)
+        self.name = "Actor Root"
+        self.rootGameObject = nil
+    end,
+    Component
+)
+
+function ActorRootComponent:GetRoot()
+    return self.rootGameObject
+end
+
+function ActorRootComponent:SetRoot(rootGameObject)
+    self.rootGameObject = rootGameObject
+end
+
+function ActorRootComponent:DoGet(rootGameObject)
+    self.rootGameObject = rootGameObject
+end
+
+function ActorRootComponent:DoRelease()
+    self.rootGameObject = nil
+end
+
+return ActorRootComponent

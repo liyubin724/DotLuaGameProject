@@ -9,7 +9,7 @@ local TimerRunningComponent = require("DotLua/ECS/Components/Timer/TimerRunningC
 
 local TimerStopSystem =
     oop.class(
-    "DotLua.ECS.Systems.TimerStopSystem",
+    "DotLua.ECS.Systems.Timer.TimerStopSystem",
     function(self, context)
         self.priority = SystemPriorityConst.TimerStopPriority
     end,

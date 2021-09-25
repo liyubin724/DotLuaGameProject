@@ -1,0 +1,27 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
+local Collector = require("DotLua/ECS/Core/Collector")
+local ActorRootComponent = require("DotLua/ECS/Components/Viewer/Actor/ActorRootComponent")
+
+local ActorRootSystem =
+    oop.class(
+    "DotLua.ECS.Systems.Viewer.Actor.ActorRootSystem",
+    function(self, context)
+        self.priority = SystemPriorityConst.TimerDestroyPriority
+    end,
+    CollectorUpdateSystem
+)
+
+function ActorRootSystem:createCollector(context)
+    return Collector(context, CommonMatchers.HaveActorRootComponentMatcher, EGroupEvent.Added)
+end
+
+function ActorRootSystem:onAddedEntityUpdate(entity, deltaTime)
+    local actorRootComponent = entity:GetComponent(ActorRootComponent)
+
+end
+
+return ActorRootSystem

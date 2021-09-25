@@ -11,6 +11,8 @@ local TimerIntervalComponent = require("DotLua/ECS/Components/Timer/TimerInterva
 local TimerStartComponent = require("DotLua/ECS/Components/Timer/TimerStartComponent")
 local TimerStopComponent = require("DotLua/ECS/Components/Timer/TimerStopComponent")
 
+local ActorRootComponent = require("DotLua/ECS/Components/Viewer/Actor/ActorRootComponent")
+
 local haveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
 local haveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 
@@ -40,6 +42,8 @@ local timerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
 timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
 timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
 
+local haveActorRootComponentMatcher = HaveComponentMatcher(ActorRootComponent)
+
 local CommonMatchers = {
     HaveDestroyComponentMatcher = haveDestroyComponentMatcher,
     HaveCategoryComponentMatcher = haveCategoryComponentMatcher,
@@ -47,6 +51,7 @@ local CommonMatchers = {
     TimerStopMatcher = timerStopMatcher,
     TimerIntervalMatcher = timerIntervalMatcher,
     TimerEndMatcher = timerEndMatcher,
-    TimerDestroyMatcher = timerDestroyMatcher
+    TimerDestroyMatcher = timerDestroyMatcher,
+    HaveActorRootComponentMatcher = haveActorRootComponentMatcher
 }
 return CommonMatchers
