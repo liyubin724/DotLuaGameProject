@@ -1,17 +1,21 @@
 ﻿namespace DotEngine.AI.FSM.Editor
 {
+    public class FSMBlackboardOperation
+    {
+        public string name;
+    }
+
+    public class FSMRemoveBlackboard : FSMBlackboardOperation
+    {
+    }
+
     public enum EntityOriginType
     {
         Global = 0,
         Self,
-        SelfRelated,
-    }
-
-    public enum EntityRelatedType
-    {
-        Parent = 0,
-        Child,
-        Depends,
+        SelfParent,
+        SelfChild,
+        SelfDepend,
     }
 
     public enum EntityFilterType
@@ -19,12 +23,9 @@
         Category = 0,
     }
 
-    public class FSMBlackboardData
+    public class FSMAddBlackboard : FSMBlackboardOperation
     {
-        public string bbName;
-
         public EntityOriginType originType = EntityOriginType.Self;
-        public EntityRelatedType relatedType = EntityRelatedType.Parent;
         public EntityFilterType filterType = EntityFilterType.Category;
         public string filterValue;
 

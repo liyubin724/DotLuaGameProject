@@ -6,7 +6,9 @@ namespace DotEngine.AI.FSM.Editor
     {
         public string name;
 
-        public List<FSMBlackboardData> bbDatas = new List<FSMBlackboardData>();
-        public List<FSMStateData> stateDatas = new List<FSMStateData>();
+        public string defaultStateName;
+        public List<FSMBlackboardOperation> bbOperations = new List<FSMBlackboardOperation>();
+        public List<FSMStateData> states = new List<FSMStateData>();
+        public List<FSMTransition> transitions = new List<FSMTransition>();
     }
 }

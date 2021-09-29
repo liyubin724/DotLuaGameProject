@@ -1,0 +1,25 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+
+local BlackboardComponent =
+    oop.class(
+    "DotLua.Components.Basic.BlackboardComponent",
+    function(self)
+        self.dataCollection = {}
+    end,
+    Component
+)
+
+function BlackboardComponent:HasValue(key)
+    return self.dataCollection[key] ~= nil
+end
+
+function BlackboardComponent:SetValue(key,value)
+    self.dataCollection[key] = value
+end
+
+function BlackboardComponent:GetValue(key)
+    return self.dataCollection[key]
+end
+
+return BlackboardComponent

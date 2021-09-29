@@ -1,0 +1,18 @@
+local oop = require("DotLua/OOP/oop")
+
+local FSMStatePlugin =
+    oop.class(
+    "DotLua.ECS.Systems.FSM.FSMStatePlugin",
+    function(self)
+    end
+)
+
+function FSMStatePlugin:DoEnter(fromStateName, entity)
+end
+
+function FSMStatePlugin:DoUpdate(currentStateName, entity, deltaTime)
+end
+function FSMStatePlugin:DoExit(toStateName, entity)
+end
+
+return FSMStatePlugin

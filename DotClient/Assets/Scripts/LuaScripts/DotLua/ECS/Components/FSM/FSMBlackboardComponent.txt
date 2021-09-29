@@ -1,0 +1,12 @@
+local oop = require("DotLua/OOP/oop")
+local BlackboardComponent = require("DotLua/ECS/Components/Basic/BlackboardComponent")
+
+local FSMBlackboardComponent =
+    oop.class(
+    "DotLua.Components.FSM.FSMComponent",
+    function(self)
+    end,
+    BlackboardComponent
+)
+
+return FSMBlackboardComponent
