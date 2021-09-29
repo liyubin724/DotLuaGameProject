@@ -1,6 +1,8 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Components/Component")
 
+local tclear = table.clear
+
 local BlackboardComponent =
     oop.class(
     "DotLua.Components.Basic.BlackboardComponent",
@@ -20,6 +22,10 @@ end
 
 function BlackboardComponent:GetValue(key)
     return self.dataCollection[key]
+end
+
+function BlackboardComponent:DoRelease()
+    tclear(self.dataCollection)
 end
 
 return BlackboardComponent

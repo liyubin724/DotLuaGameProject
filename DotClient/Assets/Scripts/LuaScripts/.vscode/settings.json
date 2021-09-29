@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "*.txt": "lua",
+        "*.lua": "lua"
+    },
+    "files.exclude": {
+        "**/*.meta": true
+    },
+    "Lua.hint.enable": true,
+    "Lua.hint.setType": true,
+    "Lua.hover.enumsLimit": 8,
+    "Lua.workspace.maxPreload": 2000,
+    "Lua.workspace.preloadFileSize": 1000,
+    "LuaCoderAssist.format.quotemark": "double"
+}

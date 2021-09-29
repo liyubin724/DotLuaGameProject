@@ -1,4 +1,5 @@
 local HaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/HaveComponentMatcher")
+local NotHaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/NotHaveComponentMatcher")
 local CombinedMatcher = require("DotLua/ECS/Matchers/Combined/CombinedMatcher")
 local MatcherOperation = require("DotLua/ECS/Matchers/Combined/MatcherOperation")
 
@@ -42,7 +43,28 @@ local timerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
 timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
 timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
 
-local haveActorRootComponentMatcher = HaveComponentMatcher(ActorRootComponent)
+---FSM
+local FSMComponent = require("DotLua/ECS/Basic/FSM/FSMComponent")
+local FSMStateComponent = require("DotLua/ECS/Basic/FSM/FSMStateComponent")
+local FSMTransitionToComponent = require("DotLua/ECS/Basic/FSM/FSMTransitionToComponent")
+
+local haveFSMComponent = HaveComponentMatcher(FSMComponent)
+local haveFSMStateComponent = HaveComponentMatcher(FSMStateComponent)
+local haveFSMTransitionToComponent = HaveComponentMatcher(FSMTransitionToComponent)
+local notHaveFSMStateComponent = NotHaveComponentMatcher(FSMStateComponent)
+
+local fsmStartupMatcher = CombinedMatcher(MatcherOperation.And)
+fsmStartupMatcher:AddMatcher(haveFSMComponent)
+fsmStartupMatcher:AddMatcher(notHaveFSMStateComponent)
+
+local fsmUpdateMatcher = CombinedMatcher(MatcherOperation.And)
+fsmUpdateMatcher:AddMatcher(haveFSMComponent)
+fsmUpdateMatcher:AddMatcher(haveFSMStateComponent)
+
+local fsmTransitionToMatcher = CombinedMatcher(MatcherOperation.And)
+fsmTransitionToMatcher:AddMatcher(haveFSMComponent)
+fsmTransitionToMatcher:AddMatcher(haveFSMStateComponent)
+fsmTransitionToMatcher:AddMatcher(haveFSMTransitionToComponent)
 
 local CommonMatchers = {
     HaveDestroyComponentMatcher = haveDestroyComponentMatcher,
@@ -52,6 +74,9 @@ local CommonMatchers = {
     TimerIntervalMatcher = timerIntervalMatcher,
     TimerEndMatcher = timerEndMatcher,
     TimerDestroyMatcher = timerDestroyMatcher,
-    HaveActorRootComponentMatcher = haveActorRootComponentMatcher
+    FSMStartupMatcher = fsmStartupMatcher,
+    FSMUpdateMatcher = fsmUpdateMatcher,
+    FSMTransitionToMathcer = fsmTransitionToMatcher,
+
 }
 return CommonMatchers

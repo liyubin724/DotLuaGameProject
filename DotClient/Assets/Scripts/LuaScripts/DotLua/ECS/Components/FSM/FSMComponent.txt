@@ -5,9 +5,23 @@ local FSMComponent =
     oop.class(
     "DotLua.Components.FSM.FSMComponent",
     function(self)
-        
+        self.scriptPath = nil
     end,
     Component
 )
+
+---获取对应的FSM配置脚本的路径
+---@return string
+function FSMComponent:GetScriptPath()
+    return self.scriptPath
+end
+
+function FSMComponent:DoGet(scriptPath)
+    self.scriptPath = scriptPath
+end
+
+function FSMComponent:DoRelease()
+    self.scriptPath = nil
+end
 
 return FSMComponent

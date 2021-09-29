@@ -1,0 +1,59 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local GroupUpdateSystem = require("DotLua/ECS/Systems/GroupUpdateSystem")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local FSMComponent = require("DotLua/ECS/Components/FSM/FSMComponent")
+local FSMTransitionToComponent = require("DotLua/ECS/Components/FSM/FSMTransitionToComponent")
+
+local FSMStateComponent = require("DotLua/ECS/Components/FSM/FSMStateComponent")
+
+local LogTag = "FSMTransitionToSystem"
+
+local FSMTransitionToSystem =
+    oop.class(
+    "DotLua.ECS.Systems.FSM.FSMTransitionToSystem",
+    function(self, context, contexts, dispatcher)
+        self.contexts = contexts
+        self.dispatcher = dispatcher
+        self.priority = SystemPriorityConst.FSMTransitionToPriority
+    end,
+    GroupUpdateSystem
+)
+
+function FSMTransitionToSystem:createGroup(context)
+    return context:CreateGroup(CommonMatchers.FSMTransitionToMathcer)
+end
+
+function FSMTransitionToSystem:onEntityUpdate(entity, deltaTime)
+    local fsmComponent = entity:GetComponent(FSMComponent)
+    local fsmScriptPath = fsmComponent:GetScriptPath()
+    local fsmData = require(fsmScriptPath)
+    if not fsmData then
+        oop.error(LogTag, '')
+        return
+    end
+
+    local fsmStateComponent = entity:GetComponent(FSMStateComponent)
+    local currentStateName = fsmStateComponent:GetCurrentState()
+    local currentState = currentStateName and fsmData.getState(currentStateName) or nil
+    
+    if currentState and currentState.DoExit then
+        currentState.DoExit(entity)
+    end
+    
+    local fsmTransitionToComponent = entity:GetComponent(FSMTransitionToComponent)
+    local nextStateName = fsmTransitionToComponent:GetNextStateName()
+    local nextState = nextStateName and fsmData.getState(nextStateName) or nil
+
+    fsmStateComponent:SetCurrentStateName(nextStateName)
+
+    if nextState then
+        if nextState.DoEnter then
+            nextState.DoEnter(entity)
+        end
+    else
+        entity:AddComponent(FSMShuntdownComponent)
+    end
+end
+
+return FSMTransitionToSystem

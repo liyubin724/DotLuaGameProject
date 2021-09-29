@@ -1,4 +1,4 @@
-local ESystemPriority = require("DotLua/ECS/Core/ESystemPriority")
+local ESystemPriority = require('DotLua/ECS/Core/ESystemPriority')
 
 local SystemPriorityConst = {}
 
@@ -13,5 +13,10 @@ SystemPriorityConst.TimerStopPriority = SystemPriorityConst.TimerDefaultPriority
 SystemPriorityConst.TimerIntervalPriority = SystemPriorityConst.TimerDefaultPriority + 3
 SystemPriorityConst.TimerEndPriority = SystemPriorityConst.TimerDefaultPriority + 4
 SystemPriorityConst.TimerDestroyPriority = SystemPriorityConst.TimerDefaultPriority + 5
+
+SystemPriorityConst.FSMDefaultPriority = ESystemPriority.Default
+SystemPriorityConst.FSMStartupPriority = SystemPriorityConst.FSMDefaultPriority + 1
+SystemPriorityConst.FSMUpdatePriority = SystemPriorityConst.FSMDefaultPriority + 2
+SystemPriorityConst.FSMTransitionToPriority = SystemPriorityConst.FSMDefaultPriority+3
 
 return SystemPriorityConst

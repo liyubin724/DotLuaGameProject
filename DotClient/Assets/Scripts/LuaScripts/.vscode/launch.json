@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "launch",
+            "type": "lua",
+            "request": "launch",
+            "stopOnEntry": false,
+            "program": "${workspaceFolder}/main.txt",
+            "cwd": "${workspaceFolder}",
+            "path": "${workspaceFolder}/?.txt",
+            "cpath": "${workspaceFolder}/?.dll",
+            "arg": [],
+            "consoleCoding": "utf8"
+        },
+        {
+            "type": "lua",
+            "request": "launch",
+            "tag": "normal",
+            "name": "LuaPanda",
+            "description": "通用模式,通常调试项目请选择此模式 | launchVer:3.2.0",
+            "cwd": "${workspaceFolder}",
+            "luaFileExtension": "*.txt",
+            "connectionPort": 8818,
+            "stopOnEntry": true,
+            "useCHook": true,
+            "autoPathMode": true,
+            "updateTips": true
+        },
+        {
+            "type": "lua",
+            "request": "launch",
+            "tag": "independent_file",
+            "name": "LuaPanda-IndependentFile",
+            "description": "独立文件调试模式,使用前请参考文档",
+            "luaPath": "D:/GreenTools/lua/lua5.3.5/lua.exe",
+            "packagePath": [],
+            "luaFileExtension": ".txt",
+            "connectionPort": 8820,
+            "stopOnEntry": true,
+            "useCHook": true
+        }
+    ]
+}

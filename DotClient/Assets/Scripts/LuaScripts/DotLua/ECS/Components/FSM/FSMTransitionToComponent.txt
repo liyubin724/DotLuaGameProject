@@ -1,0 +1,25 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+
+local FSMTransitionToComponent =
+    oop.class(
+    "DotLua.Components.FSM.FSMTransitionToComponent",
+    function(self)
+        self.nextStateName = nil
+    end,
+    Component
+)
+
+function FSMTransitionToComponent:GetNextStateName()
+    return self.nextStateName
+end
+
+function FSMTransitionToComponent:DoGet(nextStateName)
+    self.nextStateName = nextStateName
+end
+
+function FSMTransitionToComponent:DoRelease()
+    self.nextStateName = nil
+end
+
+return FSMTransitionToComponent

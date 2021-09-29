@@ -5,35 +5,28 @@ local FSMStateComponent =
     oop.class(
     'DotLua.Components.FSM.FSMStateComponent',
     function(self)
-        self.stateName = nil
-        self.isRunning = true
+        self.currStateName = nil
+        self.prevStateName = nil
     end,
     Component
 )
 
-function FSMStateComponent:GetIsRuning()
-    return self.isRunning
+function FSMStateComponent:GetCurrentStateName()
+    return self.currStateName
 end
 
-function FSMStateComponent:SetIsRunning(isRunning)
-    self.isRunning = isRunning
+function FSMStateComponent:SetCurrentStateName(stateName)
+    self.prevStateName = self.currStateName
+    self.currStateName = stateName
 end
 
-function FSMStateComponent:GetStateName()
-    return self.stateName
-end
-
-function FSMStateComponent:SetStateName(stateName)
-    self.stateName = stateName
-end
-
-function FSMStateComponent:DoGet()
-    self.isRuning = true
+function FSMStateComponent:GetPreviousStateName()
+    return self.prevStateName
 end
 
 function FSMStateComponent:DoRelease()
-    self.stateName = nil
-    self.isRunning = false
+    self.prevStateName = nil
+    self.prevStateName = nil
 end
 
 return FSMStateComponent
