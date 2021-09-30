@@ -7,8 +7,8 @@
     <ProjectGuid>{57CB167D-DF80-455C-AF16-668A64ECEF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotEngine.GOP</RootNamespace>
-    <AssemblyName>DotEngine.GOP</AssemblyName>
+    <RootNamespace>DotEngine.UPool</RootNamespace>
+    <AssemblyName>DotEngine.UPool</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -44,11 +44,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GOPContainer.cs" />
-    <Compile Include="GOPCategory.cs" />
-    <Compile Include="GOPGroup.cs" />
-    <Compile Include="GOPUtil.cs" />
-    <Compile Include="Log\GOPLogger.cs" />
+    <Compile Include="GameObjectPool.cs" />
+    <Compile Include="GameObjectCategory.cs" />
+    <Compile Include="GameObjectGroup.cs" />
+    <Compile Include="PoolUtill.cs" />
+    <Compile Include="PoolLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

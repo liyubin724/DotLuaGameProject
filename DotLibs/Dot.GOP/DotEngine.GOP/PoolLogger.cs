@@ -1,8 +1,8 @@
 ﻿using HandlerAction = System.Action<string, string>;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
-    public static class GOPLogger
+    public static class PoolLogger
     {
         private static HandlerAction logHandler;
         private static HandlerAction warningHandler;

@@ -1,0 +1,35 @@
+local UEGameObject = CS.UnityEngine.GameObject
+
+local ueRootGameObject = UEGameObject("DE-Root")
+local ueRootTransform = ueRootGameObject.transform
+UEGameObject.DontDestroyOnLoad(ueRootGameObject)
+
+local DERootGameObject = {}
+
+function DERootGameObject.AddGameObject(ueGameObject)
+    local ueTransform = ueGameObject.transform
+    ueTransform:SetParent(ueRootTransform, false)
+end
+
+function DERootGameObject.AddTransform(ueTransform,isWorldPositionStays)
+    isWorldPositionStays = isWorldPositionStays or false
+    ueTransform:SetParent(ueRootTransform,isWorldPositionStays)
+end
+
+function DERootGameObject.CreateGameObject(gameObjectName)
+
+end
+
+function DERootGameObject.CreateTransform(transformName)
+    local ueGameObject = UEGameObject(transformName)
+    local ueTransform = ueGameObject.transform
+    ueTransform:SetParent(ueRootTransform, false)
+end
+
+function DERootGameObject.Destroy()
+    UEGameObject.Destroy(ueRootGameObject)
+    ueRootGameObject = nil
+    ueRootTransform = nil
+end
+
+return DERootGameObject

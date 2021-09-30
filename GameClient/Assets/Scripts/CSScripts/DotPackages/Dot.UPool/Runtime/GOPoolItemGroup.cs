@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
     public delegate void PoolPreloadComplete(string groupName, string assetPath);
 

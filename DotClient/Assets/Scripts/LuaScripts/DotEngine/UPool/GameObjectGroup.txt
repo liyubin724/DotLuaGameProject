@@ -1,0 +1,37 @@
+local oop = require("DotLua/OOP/oop")
+local EUPoolTemplateType = require("UEngine/UPool/EUPoolTemplateType")
+local PoolUtility = require("UEngine/UPool/PoolUtility")
+
+local GameObjectGroup =
+    oop.class(
+    "UEngine.UPool.GameObjectGroup",
+    function(self, categoryName, ueParentTransform, assetPath, templateType, ueTemplateGameObject)
+        self.categoryName = categoryName
+        if PoolUtility.IsInDebug then
+            
+        else
+            self.ueGroupTransform = ueParentTransform
+        end
+
+        self.assetPath = nil
+        self.templateType = EUPoolTemplateType.RuntimeInstance
+        self.ueTemplateGameObject = nil
+
+        self.preloadTotalAmount = 0
+        self.preloadOnceAmount = 0
+        self.onPreloadCompleteEvent = oop.event()
+
+        self.isCullEnable = true
+        self.cullOnceAmount = 0
+        self.cullDelayTime = 60
+
+        self.prevCullTime = 0
+
+        self.limitMaxAmount = 999999
+        self.limitMinAmount = 0
+
+        self.unusedItems = {}
+    end
+)
+
+return GameObjectGroup

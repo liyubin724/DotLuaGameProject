@@ -51,9 +51,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Log", "Dot.Log\Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEditor.Log", "Dot.Log\DotEditor.Log\DotEditor.Log.csproj", "{631B40EF-0176-4D45-99CE-584D95C24DDB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GOP", "GOP", "{91DFCF9F-0200-484F-86F9-D16C243B040B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UObjectPool", "UObjectPool", "{91DFCF9F-0200-484F-86F9-D16C243B040B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.GOP", "Dot.GOP\DotEngine.GOP\DotEngine.GOP.csproj", "{57CB167D-DF80-455C-AF16-668A64ECEF9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.UPool", "Dot.GOP\DotEngine.GOP\DotEngine.UPool.csproj", "{57CB167D-DF80-455C-AF16-668A64ECEF9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

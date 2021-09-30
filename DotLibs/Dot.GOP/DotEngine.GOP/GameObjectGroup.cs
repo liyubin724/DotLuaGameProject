@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
     public delegate void PreloadComplete(string groupName, string assetPath);
 
@@ -12,7 +12,7 @@ namespace DotEngine.GOP
     /// </summary>
     public enum TemplateType
     {
-        Prefab,//使用Prefab做为缓存池模型
+        Prefab = 0,//使用Prefab做为缓存池模型
         PrefabInstance,//使用Prefab实例化后的对象做为模板
         RuntimeInstance,//运行时创建的对象做模板
     }
@@ -20,12 +20,15 @@ namespace DotEngine.GOP
     /// <summary>
     /// 以GameObject为对象的缓存池
     /// </summary>
-    public class GOPGroup
+    public class GameObjectGroup
     {
         public string categoryName;
         private Transform groupTransform;
-        public string assetPath;
 
+        /// <summary>
+        /// 资源标识，一般使用资源的路径或者指定一个唯一的名称
+        /// </summary>
+        public string assetPath;
         public TemplateType templateType;
         /// <summary>
         /// 缓存池中使用的GameObject的模板
@@ -60,16 +63,14 @@ namespace DotEngine.GOP
         /// </summary>
         private Queue<GameObject> unusedItemQueue = new Queue<GameObject>();
 
-#if DEBUG
         /// <summary>
         /// 从缓存池中获取的正在使用的对象
         /// 为了上层方便对GameObject管理，采用弱引用的方式存储，
         /// 可以保证即使是上层删除了GameObject也不会对整体造成影响
         /// </summary>
         private List<WeakReference<GameObject>> usedItemList = new List<WeakReference<GameObject>>();
-#endif
 
-        internal GOPGroup(
+        internal GameObjectGroup(
             string categoryName,
             Transform parentTransform, 
             string assetPath, 
@@ -77,14 +78,17 @@ namespace DotEngine.GOP
             GameObject templateGObj)
         {
             this.categoryName = categoryName;
-#if DEBUG
-            GameObject gObj = new GameObject(assetPath);
-            groupTransform = gObj.transform;
+            if(PoolUtill.IsInDebug)
+            {
+                GameObject gObj = new GameObject(assetPath);
+                groupTransform = gObj.transform;
 
-            groupTransform.SetParent(parentTransform, false);
-#else
-            groupTransform = parentTransform;
-#endif
+                groupTransform.SetParent(parentTransform, false);
+            }else
+            {
+                groupTransform = parentTransform;
+            }
+
             this.assetPath = assetPath;
             this.templateType = templateType;
             template = templateGObj;
@@ -163,15 +167,16 @@ namespace DotEngine.GOP
 
         private void Cull()
         {
-#if DEBUG
-            for (int i = usedItemList.Count - 1; i >= 0; --i)
+            if(PoolUtill.IsInDebug)
             {
-                if (usedItemList[i].TryGetTarget(out GameObject gObj) && gObj.IsNull())
+                for (int i = usedItemList.Count - 1; i >= 0; --i)
                 {
-                    usedItemList.RemoveAt(i);
+                    if (usedItemList[i].TryGetTarget(out GameObject gObj) && gObj.IsNull())
+                    {
+                        usedItemList.RemoveAt(i);
+                    }
                 }
             }
-#endif
 
             if (unusedItemQueue.Count <= limitMinAmount)
             {
@@ -218,9 +223,12 @@ namespace DotEngine.GOP
             if (item != null)
             {
                 item.SetActive(isAutoSetActive);
-#if DEBUG
-                usedItemList.Add(new WeakReference<GameObject>(item));
-#endif
+                //item.BroadcastMessage("DoGet", SendMessageOptions.DontRequireReceiver);
+
+                if(PoolUtill.IsInDebug)
+                {
+                    usedItemList.Add(new WeakReference<GameObject>(item));
+                }
             }
 
             return item;
@@ -262,7 +270,7 @@ namespace DotEngine.GOP
             }
             else
             {
-                item = (GameObject)GOPUtil.InstantiateAsset(assetPath, template);
+                item = (GameObject)PoolUtill.InstantiateAsset(assetPath, template);
             }
             return item;
         }
@@ -277,7 +285,7 @@ namespace DotEngine.GOP
         {
             if(item == null)
             {
-                GOPLogger.Error(GOPUtil.LOG_TAG, "GameObjectPool::ReleaseItem->Item is Null");
+                PoolLogger.Error(PoolUtill.LOG_TAG, "GameObjectPool::ReleaseItem->Item is Null");
                 return;
             }
 
@@ -291,40 +299,40 @@ namespace DotEngine.GOP
             item.SetActive(false);
             unusedItemQueue.Enqueue(item);
 
-#if DEBUG
-            //从使用列表中删除要回收的对象
-            for (int i = usedItemList.Count - 1; i >= 0; i--)
+            if(PoolUtill.IsInDebug)
             {
-                if(usedItemList[i].TryGetTarget(out GameObject target) && !target.IsNull())
+                //从使用列表中删除要回收的对象
+                for (int i = usedItemList.Count - 1; i >= 0; i--)
                 {
-                    if (target != item)
+                    if(usedItemList[i].TryGetTarget(out GameObject target) && !target.IsNull())
                     {
-                        continue;
+                        if (target != item)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            usedItemList.RemoveAt(i);
+                            break;
+                        }
                     }
                     else
                     {
                         usedItemList.RemoveAt(i);
-                        break;
                     }
                 }
-                else
-                {
-                    usedItemList.RemoveAt(i);
-                }
             }
-#endif
         }
 #endregion
 
         /// <summary>
         /// 销毁缓存池
         /// </summary>
-        internal void Destroy()
+        internal void DoDestroy()
         {
             preloadCompleteCallback = null;
-#if DEBUG
             usedItemList.Clear();
-#endif
+
             for (int i = unusedItemQueue.Count - 1; i >= 0; i--)
             {
                 UnityObject.Destroy(unusedItemQueue.Dequeue());
@@ -339,10 +347,10 @@ namespace DotEngine.GOP
 
             assetPath = null;
             categoryName = null;
-
-#if DEBUG
-            GameObject.Destroy(groupTransform.gameObject);
-#endif
+            if(PoolUtill.IsInDebug)
+            {
+                UnityObject.Destroy(groupTransform.gameObject);
+            }
         }
 
     }

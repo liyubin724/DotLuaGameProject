@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
     public class GOPool 
     {

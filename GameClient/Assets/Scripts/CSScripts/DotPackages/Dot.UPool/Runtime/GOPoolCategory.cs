@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
     /// <summary>
     /// 主要用于分组，可以根据使用场景进行添加和删除分组，不同的分组中可以有相同GameObject的缓存池
     /// </summary>
-    public class GOPCategory
+    public class GOPoolCategory
     {
         public string Name { get; private set; }
 
         private Transform categoryTransform = null;
-        private Dictionary<string, GOPGroup> itemGroupDic = new Dictionary<string, GOPGroup>();
+        private Dictionary<string, GOPoolItemGroup> itemGroupDic = new Dictionary<string, GOPoolItemGroup>();
 
-        internal GOPCategory(string name, Transform parentTran)
+        internal GOPoolCategory(string name, Transform parentTran)
         {
             Name = name;
-#if DEBUG
+#if UNITY_EDITOR
             categoryTransform = new GameObject(Name).transform;
             categoryTransform.SetParent(parentTran, false);
 #else
@@ -31,14 +31,14 @@ namespace DotEngine.GOP
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public GOPGroup GetGroup(string name)
+        public GOPoolItemGroup GetGroup(string name)
         {
-            if(itemGroupDic.TryGetValue(name,out GOPGroup itemGroup))
+            if(itemGroupDic.TryGetValue(name,out GOPoolItemGroup itemGroup))
             {
                 return itemGroup;
             }else
             {
-                GOPLogger.Warning(GOPUtil.LOG_TAG, "The pool is not found.name = " + name);
+                GOPoolUtil.LogWarning("The pool is not found.name = " + name);
             }
 
             return null;
@@ -50,22 +50,22 @@ namespace DotEngine.GOP
         /// <param name="itemName">资源唯一标签，一般使用资源路径</param>
         /// <param name="itemTemplate">模板GameObject</param>
         /// <returns></returns>
-        public GOPGroup CreateGroup(string itemName, TemplateType itemType, GameObject itemTemplate)
+        public GOPoolItemGroup CreateGroup(string itemName, ItemTemplateType itemType, GameObject itemTemplate)
         {
             if(itemTemplate == null)
             {
-                GOPLogger.Error(GOPUtil.LOG_TAG,"Template is Null");
+                GOPoolUtil.LogError("Template is Null");
                 return null;
             }
 
-            if (!itemGroupDic.TryGetValue(itemName, out GOPGroup itemGroup))
+            if (!itemGroupDic.TryGetValue(itemName, out GOPoolItemGroup itemGroup))
             {
-                itemGroup = new GOPGroup(Name, categoryTransform, itemName, itemType, itemTemplate);
+                itemGroup = new GOPoolItemGroup(Name, categoryTransform, itemName, itemType, itemTemplate);
                 itemGroupDic.Add(itemName, itemGroup);
             }
             else
             {
-                GOPLogger.Warning(GOPUtil.LOG_TAG,"The pool has been created.uniqueName = " + itemName);
+                GOPoolUtil.LogWarning("The pool has been created.uniqueName = " + itemName);
             }
 
             return itemGroup;
@@ -77,15 +77,15 @@ namespace DotEngine.GOP
         /// <param name="name">资源唯一标签，一般使用资源路径</param>
         public void DeleteGroup(string name)
         {
-            GOPGroup itemGroup = GetGroup(name);
+            GOPoolItemGroup itemGroup = GetGroup(name);
             if (itemGroup != null)
             {
                 itemGroupDic.Remove(name);
-                itemGroup.Destroy();
+                itemGroup.Dispose();
             }
             else
             {
-                GOPLogger.Warning(GOPUtil.LOG_TAG,"The pool is not found.name = " + name);
+                GOPoolUtil.LogWarning("The pool is not found.name = " + name);
             }
         }
 
@@ -97,15 +97,15 @@ namespace DotEngine.GOP
             }
         }
 
-        internal void Destroy()
+        internal void Dispose()
         {
             foreach (var kvp in itemGroupDic)
             {
-                kvp.Value.Destroy();
+                kvp.Value.Dispose();
             }
             itemGroupDic.Clear();
 
-#if DEBUG
+#if UNITY_EDITOR
             Object.Destroy(categoryTransform.gameObject);
 #endif
         }

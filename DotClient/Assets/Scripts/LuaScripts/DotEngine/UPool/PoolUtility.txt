@@ -1,0 +1,5 @@
+local PoolUtility = {}
+
+PoolUtility.IsInDebug = true
+
+return PoolUtility

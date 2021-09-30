@@ -2,14 +2,15 @@
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
-    public static class GOPUtil
+    public static class PoolUtill
     {
         internal static readonly string LOG_TAG = "GOPool";
         private static readonly string ROOT_NAME = "GOP-Root";
 
         public static Func<string, UnityObject, UnityObject> InstantiateAsset { get; set; }
+        public static bool IsInDebug { get; set; } = true;
 
         private static Transform rootTransform = null;
         public static Transform Root

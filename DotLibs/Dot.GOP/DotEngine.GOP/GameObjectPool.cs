@@ -1,26 +1,28 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace DotEngine.GOP
+namespace DotEngine.UPool
 {
-    public class GOPContainer 
+    public class GameObjectPool
     {
-        public const string NAME = "GOPool";
+        public const string NAME = "GameObjectPool";
 
         private Transform containerTransform = null;
-        private Dictionary<string, GOPCategory> categoryDic = new Dictionary<string, GOPCategory>();
+        private Dictionary<string, GameObjectCategory> categoryDic = new Dictionary<string, GameObjectCategory>();
 
-        public GOPContainer()
+        public GameObjectPool()
         {
-            Transform root = GOPUtil.Root;
-#if DEBUG
-            GameObject go = new GameObject(NAME);
-            containerTransform = go.transform;
-
-            containerTransform.SetParent(root, false);
-#else
-            containerTransform = root;
-#endif
+            Transform root = PoolUtill.Root;
+            if (PoolUtill.IsInDebug)
+            {
+                GameObject go = new GameObject(NAME);
+                containerTransform = go.transform;
+                containerTransform.SetParent(root, false);
+            }
+            else
+            {
+                containerTransform = root;
+            }
         }
 
         /// <summary>
@@ -28,7 +30,7 @@ namespace DotEngine.GOP
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool HasCategory(string name)=> categoryDic.ContainsKey(name);
+        public bool HasCategory(string name) => categoryDic.ContainsKey(name);
 
         /// <summary>
         ///获取指定的分组，如果不存在可以指定isCreateIfNot为true进行创建
@@ -36,9 +38,9 @@ namespace DotEngine.GOP
         /// <param name="name"></param>
         /// <param name="autoCreateIfNot"></param>
         /// <returns></returns>
-        public GOPCategory GetCategory(string name)
+        public GameObjectCategory GetCategory(string name)
         {
-            if (categoryDic.TryGetValue(name, out GOPCategory category))
+            if (categoryDic.TryGetValue(name, out GameObjectCategory category))
             {
                 return category;
             }
@@ -50,11 +52,11 @@ namespace DotEngine.GOP
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public GOPCategory CreateCategory(string name)
+        public GameObjectCategory CreateCategory(string name)
         {
-            if (!categoryDic.TryGetValue(name, out GOPCategory category))
+            if (!categoryDic.TryGetValue(name, out GameObjectCategory category))
             {
-                category = new GOPCategory(name, containerTransform);
+                category = new GameObjectCategory(name, containerTransform);
                 categoryDic.Add(name, category);
             }
             return category;
@@ -66,14 +68,14 @@ namespace DotEngine.GOP
         /// <param name="name"></param>
         public void DeleteGroup(string name)
         {
-            if (categoryDic.TryGetValue(name, out GOPCategory group))
+            if (categoryDic.TryGetValue(name, out GameObjectCategory group))
             {
                 categoryDic.Remove(name);
-                group.Destroy();
+                group.DoDestroy();
             }
         }
 
-        public void DoUpdate(float deltaTime,float unscaleDeltaTime)
+        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
             foreach (var kvp in categoryDic)
             {
@@ -81,17 +83,15 @@ namespace DotEngine.GOP
             }
         }
 
-        public void Destroy()
+        public void DoDestroy()
         {
             foreach (var kvp in categoryDic)
             {
-                kvp.Value.Destroy();
+                kvp.Value.DoDestroy();
             }
             categoryDic.Clear();
 
-#if DEBUG
-            GameObject.Destroy(containerTransform.gameObject);
-#endif
+            Object.Destroy(containerTransform.gameObject);
         }
     }
 }

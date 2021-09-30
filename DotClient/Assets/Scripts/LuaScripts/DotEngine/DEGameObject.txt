@@ -1,0 +1,13 @@
+local UEGameObject = CS.UnityEngine.GameObject
+
+local DEGameObject = {}
+
+function DEGameObject.Create(name)
+    return UEGameObject(name)
+end
+
+function DEGameObject.DontDestroyOnLoad(ueObject)
+    UEGameObject.DontDestroyOnLoad(ueObject)
+end
+
+return DEGameObject
