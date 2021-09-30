@@ -2,45 +2,37 @@ local FSMBlackboardComponent = require("")
 local XXXComponnet = require("")
 
 local defaultStateName = nil
+local isAutoStartup = true
 
-local bbUpdater_1 = function(contexts,entity)
-
+local bbUpdater_1 = function(contexts, entity)
 end
 
-local bbUpdater_2 = function(contexts,entity)
-
+local bbUpdater_2 = function(contexts, entity)
 end
 
-local bbUpdater_3 = function(contexts,entity)
-
+local bbUpdater_3 = function(contexts, entity)
 end
 
-local bbUpdater_4 = function(contexts,entity)
-
+local bbUpdater_4 = function(contexts, entity)
 end
 
 local state_1 = {
     name = "",
     scriptPath = "",
     DoEnter = function()
-
     end,
     DoUpdate = function()
-
     end,
     DoExit = function()
-
-    end,
+    end
 }
 
 local states = {XXX = state_1}
 
 local transition_1 = function()
-
 end
 
 local transition_2 = function()
-
 end
 
 local XXX_To_YYY_Transition = {
@@ -52,17 +44,16 @@ local XXX_To_YYY_Transition = {
 }
 
 return {
-    getDefaultState = function()
-
+    getDefaultStateName = function()
     end,
-    updateGlobalBlackboard = function(contexts,entity)
-
+    getIsAutoStartup = function()
+        return isAutoStartup and defaultStateName
+    end,
+    updateGlobalBlackboard = function(contexts, entity)
     end,
     getState = function(stateName)
         return states[stateName]
     end,
-    getNextStateName = function(stateName,entity)
-
+    getNextStateName = function(stateName, entity)
     end
-
 }

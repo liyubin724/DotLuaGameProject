@@ -1,0 +1,52 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
+local Collector = require("DotLua/ECS/Core/Collector")
+local FSMBlackboardComponent = require("DotLua/ECS/Components/FSM/FSMBlockboardComponent")
+local FSMComponent = require("DotLua/ECS/Basic/FSM/FSMComponent")
+local FSMStateComponent = require("DotLua/ECS/Basic/FSM/FSMStateComponent")
+
+local LogTag = "FSMShuntdownSystem"
+
+local FSMShuntdownSystem =
+    oop.class(
+    "DotLua.ECS.Systems.FSM.FSMShuntdownSystem",
+    function(self, context)
+        self.priority = SystemPriorityConst.FSMShuntdownPriority
+    end,
+    CollectorUpdateSystem
+)
+
+function FSMShuntdownSystem:createCollector(context)
+    return Collector(context, CommonMatchers.fsmShuntdownMatcher, EGroupEvent.Added)
+end
+
+function FSMShuntdownSystem:onAddedEntityUpdate(entity, deltaTime)
+    local fsmComponent = entity:GetComponent(FSMComponent)
+    local fsmData = fsmComponent:GetData()
+    if not fsmData then
+        oop.error(LogTag, "")
+        return
+    end
+
+    local fsmStateComponent = entity:GetComponent(FSMStateComponent)
+    if fsmStateComponent then
+        local currentStateName = fsmStateComponent:GetCurrentStateName()
+        local currentState = currentStateName and fsmData.getState(currentStateName) or nil
+        if currentState and currentState.DoExit then
+            currentState.DoExit(entity)
+        end
+
+        entity:RemoveComponent(FSMStateComponent)
+    end
+
+    entity:RemoveComponent(FSMBlackboardComponent)
+    entity:RemoveComponent(FSMComponent)
+
+    entity:AddComponent(DestroyComponent)
+end
+
+return FSMShuntdownSystem

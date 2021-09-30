@@ -1,58 +1,67 @@
 local oop = require("DotLua/ECS/OOP/oop")
-local GroupUpdateSystem = require("DotLua/ECS/Systems/GroupUpdateSystem")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
 local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
+local Collector = require("DotLua/ECS/Core/Collector")
 local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
 local FSMComponent = require("DotLua/ECS/Components/FSM/FSMComponent")
 local FSMTransitionToComponent = require("DotLua/ECS/Components/FSM/FSMTransitionToComponent")
-
 local FSMStateComponent = require("DotLua/ECS/Components/FSM/FSMStateComponent")
+local FSMShuntdownComponent = require("DotLua/ECS/Components/FSM/FSMShuntdownComponent")
 
 local LogTag = "FSMTransitionToSystem"
 
 local FSMTransitionToSystem =
     oop.class(
     "DotLua.ECS.Systems.FSM.FSMTransitionToSystem",
-    function(self, context, contexts, dispatcher)
-        self.contexts = contexts
-        self.dispatcher = dispatcher
+    function(self, context)
         self.priority = SystemPriorityConst.FSMTransitionToPriority
     end,
-    GroupUpdateSystem
+    CollectorUpdateSystem
 )
 
-function FSMTransitionToSystem:createGroup(context)
-    return context:CreateGroup(CommonMatchers.FSMTransitionToMathcer)
+function FSMTransitionToSystem:createCollector(context)
+    return Collector(context, CommonMatchers.FSMTransitionToMathcer, EGroupEvent.Added)
 end
 
-function FSMTransitionToSystem:onEntityUpdate(entity, deltaTime)
+function FSMTransitionToSystem:onAddedEntityUpdate(entity, deltaTime)
     local fsmComponent = entity:GetComponent(FSMComponent)
-    local fsmScriptPath = fsmComponent:GetScriptPath()
-    local fsmData = require(fsmScriptPath)
+    local fsmData = fsmComponent:GetData()
     if not fsmData then
-        oop.error(LogTag, '')
+        oop.error(LogTag, "")
         return
     end
 
     local fsmStateComponent = entity:GetComponent(FSMStateComponent)
     local currentStateName = fsmStateComponent:GetCurrentState()
+    local fsmTransitionToComponent = entity:GetComponent(FSMTransitionToComponent)
+    local nextStateName = fsmTransitionToComponent:GetNextStateName()
+
+    entity:RemoveComponent(FSMTransitionToComponent)
+
+    if currentStateName == nextStateName then
+        return
+    end
+
     local currentState = currentStateName and fsmData.getState(currentStateName) or nil
-    
     if currentState and currentState.DoExit then
         currentState.DoExit(entity)
     end
-    
-    local fsmTransitionToComponent = entity:GetComponent(FSMTransitionToComponent)
-    local nextStateName = fsmTransitionToComponent:GetNextStateName()
-    local nextState = nextStateName and fsmData.getState(nextStateName) or nil
+
+    if not nextStateName then
+        entity:AddComponent(FSMShuntdownComponent)
+        return
+    end
 
     fsmStateComponent:SetCurrentStateName(nextStateName)
+    local nextState = nextStateName and fsmData.getState(nextStateName) or nil
+    if not nextState then
+        oop.error(LogTag, "")
+        return
+    end
 
-    if nextState then
-        if nextState.DoEnter then
-            nextState.DoEnter(entity)
-        end
-    else
-        entity:AddComponent(FSMShuntdownComponent)
+    if nextState.DoEnter then
+        nextState.DoEnter(entity)
     end
 end
 

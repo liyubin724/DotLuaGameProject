@@ -1,0 +1,24 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local MacroSystem = require("DotLua/ECS/Core/MacroSystem")
+local FSMInitSystem = require("DotLua/ECS/Systems/FSM/FSMInitSystem")
+local FSMStartupSystem = require("DotLua/ECS/Systems/FSM/FSMStartupSystem")
+local FSMUpdateSystem = require("DotLua/ECS/Systems/FSM/FSMUpdateSystem")
+local FSMTransitionToSystem = require("DotLua/ECS/Systems/FSM/FSMTransitionToSystem")
+local FSMShuntdownSystem = require("DotLua/ECS/Systems/FSM/FSMShuntdownSystem")
+
+local FSMMacroSystem =
+    oop.class(
+    "DotLua.ECS.Systems.FSM.FSMMacroSystem",
+    function(self, context)
+        self.context = context
+
+        self:AddSubsystem(nil, FSMInitSystem, context)
+        self:AddSubsystem(nil, FSMStartupSystem, context)
+        self:AddSubsystem(nil, FSMUpdateSystem, context)
+        self:AddSubsystem(nil, FSMTransitionToSystem, context)
+        self:AddSubsystem(nil, FSMShuntdownSystem, context)
+    end,
+    MacroSystem
+)
+
+return FSMMacroSystem

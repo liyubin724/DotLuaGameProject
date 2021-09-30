@@ -6,16 +6,15 @@ local MatcherOperation = require("DotLua/ECS/Matchers/Combined/MatcherOperation"
 local DestroyComponent = require("DotLua/ECS/Components/Basic/DestroyComponent")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
 
+local haveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
+local haveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
+
+----Timer
 local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
 local TimerEndComponent = require("DotLua/ECS/Components/Timer/TimerEndComponent")
 local TimerIntervalComponent = require("DotLua/ECS/Components/Timer/TimerIntervalComponent")
 local TimerStartComponent = require("DotLua/ECS/Components/Timer/TimerStartComponent")
 local TimerStopComponent = require("DotLua/ECS/Components/Timer/TimerStopComponent")
-
-local ActorRootComponent = require("DotLua/ECS/Components/Viewer/Actor/ActorRootComponent")
-
-local haveDestroyComponentMatcher = HaveComponentMatcher(DestroyComponent)
-local haveCategoryComponentMatcher = HaveComponentMatcher(CategoryComponent)
 
 local haveTimerComponentMatcher = HaveComponentMatcher(TimerComponent)
 local haveTimerStartComponentMatcher = HaveComponentMatcher(TimerStartComponent)
@@ -44,27 +43,45 @@ timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
 timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
 
 ---FSM
-local FSMComponent = require("DotLua/ECS/Basic/FSM/FSMComponent")
-local FSMStateComponent = require("DotLua/ECS/Basic/FSM/FSMStateComponent")
-local FSMTransitionToComponent = require("DotLua/ECS/Basic/FSM/FSMTransitionToComponent")
+local FSMBlackboardComponent = require("DotLua/ECS/Components/FSM/FSMBlockboardComponent")
+local FSMComponent = require("DotLua/ECS/Components/FSM/FSMComponent")
+local FSMStateComponent = require("DotLua/ECS/Components/FSM/FSMStateComponent")
+local FSMStartupComponent = require("DotLua/ECS/Components/FSM/FSMStartupComponent")
+local FSMTransitionToComponent = require("DotLua/ECS/Components/FSM/FSMTransitionToComponent")
+local FSMShuntdownComponent = require("Dotlua/ECS/Components/FSM/FSMShuntdownComponent")
 
+local haveFSMBlackboardComponent = HaveComponentMatcher(FSMBlackboardComponent)
+local notHaveFSMBlackboardComponent = NotHaveComponentMatcher(FSMBlackboardComponent)
 local haveFSMComponent = HaveComponentMatcher(FSMComponent)
 local haveFSMStateComponent = HaveComponentMatcher(FSMStateComponent)
+local haveFSMStartupComponent = HaveComponentMatcher(FSMStartupComponent)
 local haveFSMTransitionToComponent = HaveComponentMatcher(FSMTransitionToComponent)
-local notHaveFSMStateComponent = NotHaveComponentMatcher(FSMStateComponent)
+local haveFSMShuntdownComponent = HaveComponentMatcher(FSMShuntdownComponent)
+local notHaveFSMShuntdownComponent = NotHaveComponentMatcher(FSMShuntdownComponent)
+
+local fsmInitMatcher = CombinedMatcher(MatcherOperation.And)
+fsmInitMatcher:AddMatcher(haveFSMComponent)
+fsmInitMatcher:AddMatcher(notHaveFSMBlackboardComponent)
 
 local fsmStartupMatcher = CombinedMatcher(MatcherOperation.And)
 fsmStartupMatcher:AddMatcher(haveFSMComponent)
-fsmStartupMatcher:AddMatcher(notHaveFSMStateComponent)
+fsmStartupMatcher:AddMatcher(haveFSMBlackboardComponent)
+fsmStartupMatcher:AddMatcher(haveFSMStartupComponent)
 
 local fsmUpdateMatcher = CombinedMatcher(MatcherOperation.And)
 fsmUpdateMatcher:AddMatcher(haveFSMComponent)
+fsmUpdateMatcher:AddMatcher(haveFSMBlackboardComponent)
 fsmUpdateMatcher:AddMatcher(haveFSMStateComponent)
+fsmUpdateMatcher:AddMatcher(notHaveFSMShuntdownComponent)
 
 local fsmTransitionToMatcher = CombinedMatcher(MatcherOperation.And)
 fsmTransitionToMatcher:AddMatcher(haveFSMComponent)
 fsmTransitionToMatcher:AddMatcher(haveFSMStateComponent)
 fsmTransitionToMatcher:AddMatcher(haveFSMTransitionToComponent)
+
+local fsmShuntdownMatcher = CombinedMatcher(MatcherOperation.And)
+fsmShuntdownMatcher:AddMatcher(haveFSMComponent)
+fsmShuntdownMatcher:AddMatcher(haveFSMShuntdownComponent)
 
 local CommonMatchers = {
     HaveDestroyComponentMatcher = haveDestroyComponentMatcher,
@@ -74,9 +91,10 @@ local CommonMatchers = {
     TimerIntervalMatcher = timerIntervalMatcher,
     TimerEndMatcher = timerEndMatcher,
     TimerDestroyMatcher = timerDestroyMatcher,
+    FSMInitMatcher = fsmInitMatcher,
     FSMStartupMatcher = fsmStartupMatcher,
     FSMUpdateMatcher = fsmUpdateMatcher,
     FSMTransitionToMathcer = fsmTransitionToMatcher,
-
+    FSMShuntdownMatcher = fsmShuntdownMatcher
 }
 return CommonMatchers

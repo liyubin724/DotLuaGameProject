@@ -1,0 +1,25 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Components/Component")
+
+local FSMStartupComponent =
+    oop.class(
+    "DotLua.Components.FSM.FSMStartupComponent",
+    function(self)
+        self.startupStateName = nil
+    end,
+    Component
+)
+
+function FSMStartupComponent:GetStateName()
+    return self.startupStateName
+end
+
+function FSMStartupComponent:DoGet(startupStateName)
+    self.startupStateName = startupStateName
+end
+
+function FSMStartupComponent:DoRelease()
+    self.startupStateName = nil
+end
+
+return FSMStartupComponent

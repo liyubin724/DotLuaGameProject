@@ -13,16 +13,10 @@ local MacroSystem =
     "DotLua.ECS.Core.MacroSystem",
     function(self)
         self.subSystemDic = {}
-
         self.updateSystems = {}
-
-        self:initSubsystems()
     end,
     System
 )
-
-function MacroSystem:initSubsystems()
-end
 
 function MacroSystem:AddSubsystem(name, subSystemClass, ...)
     if oop.isDebug then
@@ -31,6 +25,8 @@ function MacroSystem:AddSubsystem(name, subSystemClass, ...)
             return
         end
     end
+
+    name = name or tostring(subSystemClass)
 
     if self.subSystemDic[name] then
         oop.error(LogTag, "The subsystem has been added")

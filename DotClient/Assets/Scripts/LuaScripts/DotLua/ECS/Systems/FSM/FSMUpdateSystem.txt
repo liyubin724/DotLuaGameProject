@@ -4,7 +4,6 @@ local CommonMatchers = require("DotLua/ECS/CommonMatchers")
 local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
 local FSMComponent = require("DotLua/ECS/Components/FSM/FSMComponent")
 local FSMTransitionToComponent = require("DotLua/ECS/Components/FSM/FSMTransitionToComponent")
-
 local FSMStateComponent = require("DotLua/ECS/Components/FSM/FSMStateComponent")
 
 local LogTag = "FSMUpdateSystem"
@@ -12,9 +11,7 @@ local LogTag = "FSMUpdateSystem"
 local FSMUpdateSystem =
     oop.class(
     "DotLua.ECS.Systems.FSM.FSMUpdateSystem",
-    function(self, context, contexts, dispatcher)
-        self.contexts = contexts
-        self.dispatcher = dispatcher
+    function(self, context)
         self.priority = SystemPriorityConst.FSMUpdatePriority
     end,
     GroupUpdateSystem
@@ -34,32 +31,29 @@ end
 
 function FSMUpdateSystem:onEntityUpdate(entity, deltaTime)
     local fsmComponent = entity:GetComponent(FSMComponent)
-    local fsmStateComponent = entity:GetComponent(FSMStateComponent)
-
-    local fsmScriptPath = fsmComponent:GetScriptPath()
-    local fsmData = require(fsmScriptPath)
+    local fsmData = fsmComponent:GetData()
     if not fsmData then
         oop.error(LogTag, "")
         return
     end
 
+    local fsmStateComponent = entity:GetComponent(FSMStateComponent)
     local currentStateName = fsmStateComponent:GetCurrentState()
-    local stateData = fsmScriptPath.getState(currentStateName)
-    local statePluginScriptPath = stateData.scriptPath
-    local statePlugin = require(statePluginScriptPath)
-    if not statePlugin then
+
+    if fsmData.updateGlobalBlackboard then
+        fsmData.updateGlobalBlackboard(entity)
+    end
+
+    local currentState = fsmData.getState(currentStateName)
+    if not currentState then
         oop.error(LogTag, "")
         return
     end
 
-    if fsmData.updateGlobalBlackboard then
-        fsmData.updateGlobalBlackboard(self.contexts, entity)
-    end
-
-    statePlugin:DoUpdate(entity)
+    currentState.DoUpdate(entity)
 
     local nextStateName = fsmData.getNextStateName(currentStateName, entity)
-    if nextStateName and #nextStateName > 0 then
+    if nextStateName ~= currentState then
         entity:AddComponent(FSMTransitionToComponent, nextStateName)
     end
 end

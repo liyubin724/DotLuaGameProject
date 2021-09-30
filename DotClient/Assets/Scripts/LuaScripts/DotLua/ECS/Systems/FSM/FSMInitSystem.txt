@@ -1,0 +1,43 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
+local Collector = require("DotLua/ECS/Core/Collector")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local FSMComponent = require("DotLua/ECS/Components/FSM/FSMComponent")
+local FSMBlackboardComponent = require("DotLua/ECS/Components/FSM/FSMBlackboardComponent")
+local FSMStartupComponent = require("DotLua/ECS/Components/FSM/FSMStartupComponent")
+
+local LogTag = "FSMInitSystem"
+
+local FSMInitSystem =
+    oop.class(
+    "DotLua.ECS.Systems.FSM.FSMInitSystem",
+    function(self, context)
+        self.priority = SystemPriorityConst.FSMInitPriority
+    end,
+    CollectorUpdateSystem
+)
+
+function FSMInitSystem:createCollector(context)
+    return Collector(context, CommonMatchers.FSMInitMatcher, EGroupEvent.Added)
+end
+
+function FSMInitSystem:onAddedEntityUpdate(entity, deltaTime)
+    local fsmComponent = entity:GetComponent(FSMComponent)
+    local fsmData = fsmComponent:GetData()
+    if not fsmData then
+        oop.error(LogTag, "")
+        return
+    end
+
+    entity:AddComponent(FSMBlackboardComponent)
+
+    local isAutoStartup = fsmData.getIsAutoStartup()
+    if isAutoStartup then
+        local defaultStateName = fsmData.getDefaultStateName()
+        entity:AddComponent(FSMStartupComponent, defaultStateName)
+    end
+end
+
+return FSMInitSystem

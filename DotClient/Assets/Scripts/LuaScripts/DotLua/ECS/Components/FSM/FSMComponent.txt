@@ -16,6 +16,14 @@ function FSMComponent:GetScriptPath()
     return self.scriptPath
 end
 
+function FSMComponent:GetData()
+    if self.scriptPath and #(self.scriptPath) > 0 then
+        return require(self.scriptPath)
+    end
+
+    return nil
+end
+
 function FSMComponent:DoGet(scriptPath)
     self.scriptPath = scriptPath
 end

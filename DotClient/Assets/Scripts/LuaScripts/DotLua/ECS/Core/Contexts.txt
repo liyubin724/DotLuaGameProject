@@ -83,8 +83,13 @@ function Contexts:HasContext(name)
 end
 
 function Contexts:GetContext(name)
+        return self.contextDic[name]
+end
+
+function Contexts:CreateContext(name)
     local context = self.contextDic[name]
     if context then
+        oop.error(LogTag, 'The context named \'%s" has been created', name)
         return context
     end
 

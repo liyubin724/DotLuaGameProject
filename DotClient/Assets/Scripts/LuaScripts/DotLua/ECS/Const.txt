@@ -9,6 +9,10 @@ Const.TIME_EVERY_UPDATE = 0.0
 ----Entity Category-----
 Const.CATEGORY_DEFAULT_ID = 0
 
+----Name of Context
+Const.CONTEXT_TIMER = "TimerContext"
+Const.CONTEXT_FSM = "FSMContext"
+
 ----Name of Function----
 Const.DO_INITILIZE_FUNC_NAME = "DoInitialize"
 Const.DO_ACTIVATE_FUNC_NAME = "DoActivate"
