@@ -1,0 +1,26 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local MacroSystem = require("DotLua/ECS/Core/MacroSystem")
+local TimerAutoStartSystem = require("DotLua/ECS/Systems/Timer/TimerAutoStartSystem")
+local TimerStartSystem = require("DotLua/ECS/Systems/Timer/TimerStartSystem")
+local TimerIntervalSystem = require("DotLua/ECS/Systems/Timer/TimerIntervalSystem")
+local TimerEndSystem = require("DotLua/ECS/Systems/Timer/TimerEndSystem")
+local TimerStopSystem = require("DotLua/ECS/Systems/Timer/TimerStopSystem")
+local TimerDestroySystem = require("DotLua/ECS/Systems/Timer/TimerDestroySystem")
+
+local TimerMacroSystem =
+    oop.class(
+    "DotLua.ECS.Systems.FSM.TimerMacroSystem",
+    function(self, context)
+        self.context = context
+
+        self:AddSubsystem(nil, TimerAutoStartSystem, context)
+        self:AddSubsystem(nil, TimerStartSystem, context)
+        self:AddSubsystem(nil, TimerIntervalSystem, context)
+        self:AddSubsystem(nil, TimerEndSystem, context)
+        self:AddSubsystem(nil, TimerDestroySystem, context)
+        self:AddSubsystem(nil, TimerStopSystem, context)
+    end,
+    MacroSystem
+)
+
+return TimerMacroSystem

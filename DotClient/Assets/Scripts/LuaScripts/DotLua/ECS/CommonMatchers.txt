@@ -22,13 +22,12 @@ local haveTimerStopComponentMatcher = HaveComponentMatcher(TimerStopComponent)
 local haveTimerIntervalComponentMatcher = HaveComponentMatcher(TimerIntervalComponent)
 local haveTimerEndComponentMatcher = HaveComponentMatcher(TimerEndComponent)
 
+local timerAutoStartMatcher = CombinedMatcher(MatcherOperation.And)
+timerAutoStartMatcher:AddMatcher(haveTimerComponentMatcher)
+
 local timerStartMatcher = CombinedMatcher(MatcherOperation.And)
 timerStartMatcher:AddMatcher(haveTimerComponentMatcher)
 timerStartMatcher:AddMatcher(haveTimerStartComponentMatcher)
-
-local timerStopMatcher = CombinedMatcher(MatcherOperation.And)
-timerStopMatcher:AddMatcher(haveTimerComponentMatcher)
-timerStopMatcher:AddMatcher(haveTimerStopComponentMatcher)
 
 local timerIntervalMatcher = CombinedMatcher(MatcherOperation.And)
 timerIntervalMatcher:AddMatcher(haveTimerComponentMatcher)
@@ -37,6 +36,10 @@ timerIntervalMatcher:AddMatcher(haveTimerIntervalComponentMatcher)
 local timerEndMatcher = CombinedMatcher(MatcherOperation.And)
 timerEndMatcher:AddMatcher(haveTimerComponentMatcher)
 timerEndMatcher:AddMatcher(haveTimerEndComponentMatcher)
+
+local timerStopMatcher = CombinedMatcher(MatcherOperation.And)
+timerStopMatcher:AddMatcher(haveTimerComponentMatcher)
+timerStopMatcher:AddMatcher(haveTimerStopComponentMatcher)
 
 local timerDestroyMatcher = CombinedMatcher(MatcherOperation.And)
 timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
@@ -86,6 +89,7 @@ fsmShuntdownMatcher:AddMatcher(haveFSMShuntdownComponent)
 local CommonMatchers = {
     HaveDestroyComponentMatcher = haveDestroyComponentMatcher,
     HaveCategoryComponentMatcher = haveCategoryComponentMatcher,
+    TimerAutoStartMatcher = timerAutoStartMatcher,
     TimerStartMatcher = timerStartMatcher,
     TimerStopMatcher = timerStopMatcher,
     TimerIntervalMatcher = timerIntervalMatcher,

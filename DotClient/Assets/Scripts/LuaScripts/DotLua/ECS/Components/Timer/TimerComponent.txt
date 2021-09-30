@@ -9,6 +9,9 @@ local TimerComponent =
         self.intervalComponentClass = nil
         self.endComponentClass = nil
         self.userdata = nil
+
+        self.timerIndex = -1
+        self.isAutoStart = false
     end
 )
 
@@ -32,12 +35,39 @@ function TimerComponent:GetUserdata()
     return self.userdata
 end
 
-function TimerComponent:SetTimer(intervalInSec, totalInSec, intervalComponentClass, endComponentClass, userdata)
+function TimerComponent:GetIsAutoStart()
+    return self.isAutoStart
+end
+
+function TimerComponent:SetIsAutoStart(isAutoStart)
+    self.isAutoStart = isAutoStart
+end
+
+function TimerComponent:GetTimerIndex()
+    return self.timerIndex
+end
+
+function TimerComponent:SetTimerIndex(timerIndex)
+    self.timerIndex = timerIndex
+end
+
+function TimerComponent:IsRunning()
+    return self.timerIndex > 0
+end
+
+function TimerComponent:SetTimer(
+    intervalInSec,
+    totalInSec,
+    intervalComponentClass,
+    endComponentClass,
+    userdata,
+    isAutoStart)
     self.intervalInSec = intervalInSec
     self.totalInSec = totalInSec
     self.intervalComponentClass = intervalComponentClass
     self.endComponentClass = endComponentClass
     self.userdata = userdata
+    self.isAutoStart = isAutoStart
 end
 
 function TimerComponent:SetIntervalTimer(intervalInSec, intervalComponentClass, userdata)
@@ -70,6 +100,9 @@ function TimerComponent:DoRelease()
     self.intervalComponentClass = nil
     self.endComponentClass = nil
     self.userdata = nil
+
+    self.isAutoStart = false
+    self.timerIndex = -1
 end
 
 return TimerComponent

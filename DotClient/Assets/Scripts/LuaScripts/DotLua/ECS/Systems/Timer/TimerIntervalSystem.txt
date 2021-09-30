@@ -5,7 +5,7 @@ local CommonMatchers = require("DotLua/ECS/CommonMatchers")
 local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
 local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
-local TimerIntervalMatcher = require("DotLua/ECS/Components/Timer/TimerIntervalMatcher")
+local TimerIntervalComponent = require("DotLua/ECS/Components/Timer/TimerIntervalComponent")
 
 local TimerIntervalSystem =
     oop.class(
@@ -24,9 +24,11 @@ function TimerIntervalSystem:onAddedEntityUpdate(entity, deltaTime)
     local timerComponent = entity:GetComponent(TimerComponent)
     local intervalComponentClass = timerComponent:GetIntervalComponentClass()
     if intervalComponentClass then
-        entity:AddComponent(intervalComponentClass)
+        local userdata = timerComponent:GetUserdata()
+        entity:AddComponent(intervalComponentClass, userdata)
     end
-    entity:RemoveComponent(TimerIntervalMatcher)
+
+    entity:RemoveComponent(TimerIntervalComponent)
 end
 
 return TimerIntervalSystem

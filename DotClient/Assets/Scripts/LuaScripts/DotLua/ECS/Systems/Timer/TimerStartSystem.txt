@@ -5,7 +5,7 @@ local CommonMatchers = require("DotLua/ECS/CommonMatchers")
 local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
 local TimerStartComponent = require("DotLua/ECS/Components/Timer/TimerStartComponent")
-local TimerRunningComponent = require("DotLua/ECS/Components/Timer/TimerRunningComponent")
+local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
 
 local TimerStartSystem =
     oop.class(
@@ -21,9 +21,14 @@ function TimerStartSystem:createCollector(context)
 end
 
 function TimerStartSystem:onAddedEntityUpdate(entity, deltaTime)
+    local timerComponent = entity:GetComponent(TimerComponent)
     local timerServicer = ecs.GetTimerServicer()
-    local timerIndex = timerServicer:AddTimer(entity)
-    entity:ReplaceComponent(TimerStartComponent, TimerRunningComponent, timerIndex)
+    if timerComponent:IsRunning() then
+        timerServicer:RemoveTimer(entity)
+    end
+
+    timerServicer:AddTimer(entity)
+    entity:RemoveComponent(TimerStartComponent)
 end
 
 return TimerStartSystem

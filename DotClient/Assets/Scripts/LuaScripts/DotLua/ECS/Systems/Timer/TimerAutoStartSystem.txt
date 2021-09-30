@@ -1,0 +1,36 @@
+local oop = require("DotLua/ECS/OOP/oop")
+local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
+local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
+local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
+local Collector = require("DotLua/ECS/Core/Collector")
+local TimerComponent = require("DotLua/ECS/Components/Timer/TimerComponent")
+
+local TimerAutoStartSystem =
+    oop.class(
+    "DotLua.ECS.Systems.Timer.TimerAutoStartSystem",
+    function(self, context)
+        self.priority = SystemPriorityConst.TimerAutoStartPriority
+    end,
+    CollectorUpdateSystem
+)
+
+function TimerAutoStartSystem:createCollector(context)
+    return Collector(context, CommonMatchers.TimerAutoStartMatcher, EGroupEvent.Added)
+end
+
+function TimerAutoStartSystem:filterEntity(entity)
+    local timerComponent = entity:GetComponent(TimerComponent)
+    return not timerComponent:IsRunning() and timerComponent:GetIsAutoStart()
+end
+
+function TimerAutoStartSystem:onAddedEntityUpdate(entity, deltaTime)
+    local timerComponent = entity:GetComponent(TimerComponent)
+    timerComponent:SetIsAutoStart(false)
+
+    local timerServicer = ecs.GetTimerServicer()
+    local timerIndex = timerServicer:AddTimer(entity)
+    timerComponent:SetTimerIndex(timerIndex)
+end
+
+return TimerAutoStartSystem

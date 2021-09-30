@@ -8,11 +8,12 @@ SystemPriorityConst.DependedCollectionSystemPriority = 1
 SystemPriorityConst.DestroySystemPriority = 100
 
 SystemPriorityConst.TimerDefaultPriority = ESystemPriority.Default
-SystemPriorityConst.TimerStartPriority = SystemPriorityConst.TimerDefaultPriority + 1
-SystemPriorityConst.TimerStopPriority = SystemPriorityConst.TimerDefaultPriority + 2
-SystemPriorityConst.TimerIntervalPriority = SystemPriorityConst.TimerDefaultPriority + 3
-SystemPriorityConst.TimerEndPriority = SystemPriorityConst.TimerDefaultPriority + 4
-SystemPriorityConst.TimerDestroyPriority = SystemPriorityConst.TimerDefaultPriority + 5
+SystemPriorityConst.TimerAutoStartPriority = SystemPriorityConst.TimerDefaultPriority + 1
+SystemPriorityConst.TimerStartPriority = SystemPriorityConst.TimerDefaultPriority + 2
+SystemPriorityConst.TimerStopPriority = SystemPriorityConst.TimerDefaultPriority + 3
+SystemPriorityConst.TimerIntervalPriority = SystemPriorityConst.TimerDefaultPriority + 4
+SystemPriorityConst.TimerEndPriority = SystemPriorityConst.TimerDefaultPriority + 5
+SystemPriorityConst.TimerDestroyPriority = SystemPriorityConst.TimerDefaultPriority + 6
 
 SystemPriorityConst.FSMDefaultPriority = ESystemPriority.Default
 SystemPriorityConst.FSMInitPriority = SystemPriorityConst.FSMDefaultPriority + 1

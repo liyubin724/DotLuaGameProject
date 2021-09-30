@@ -17,7 +17,8 @@ local TimerServicer =
 
 function TimerServicer:AddTimer(entity)
     local timerComponent = entity:GetComponent(TimerComponent)
-    return self.hTimer:AddTimer(
+    local timerIndex =
+        self.hTimer:AddTimer(
         timerComponent:GetIntervalInSec(),
         timerComponent:GetTotalInSec(),
         self,
@@ -25,9 +26,14 @@ function TimerServicer:AddTimer(entity)
         self.onEndEvent,
         entity
     )
+    timerComponent:SetTimerIndex(timerIndex)
+    return timerIndex
 end
 
-function TimerServicer:RemoveTimer(timerIndex)
+function TimerServicer:RemoveTimer(entity)
+    local timerComponent = entity:GetComponent(TimerComponent)
+    local timerIndex = timerComponent:GetTimerIndex()
+
     self.hTimer:RemoveTimer(timerIndex)
 end
 
