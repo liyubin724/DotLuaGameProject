@@ -1,8 +1,7 @@
 using DotEngine.Core;
-using DotEngine.GOP;
+using DotEngine.UPool;
 using DotEngine.Log;
 using DotEngine.Lua;
-using DotEngine.NetCore;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,8 +26,7 @@ namespace Game
 
             LogUtil.AddAppender(new UnityConsoleAppender());
             LuaLogger.SetHandler(LogUtil.Info, LogUtil.Warning, LogUtil.Error);
-            NetLogger.SetHandler(LogUtil.Info, LogUtil.Warning, LogUtil.Error);
-            GOPLogger.SetHandler(LogUtil.Info, LogUtil.Warning, LogUtil.Error);
+            //GOPLogger.SetHandler(LogUtil.Info, LogUtil.Warning, LogUtil.Error);
 
             
             LuaEnvManager.GetInstance().Startup();

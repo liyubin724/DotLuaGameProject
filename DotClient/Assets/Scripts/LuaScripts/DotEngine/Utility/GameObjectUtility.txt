@@ -1,5 +1,0 @@
-local UEGameObject = CS.UnityEngine.GameObject
-
-local GameObjectUtility = {}
-
-return GameObjectUtility
