@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DotEngine.Lua
 {
-    public static class ScriptLoader
+    public static class LuaScriptLoader
     {
         public static byte[] LoadScriptFromProject(ref string scriptPath)
         {

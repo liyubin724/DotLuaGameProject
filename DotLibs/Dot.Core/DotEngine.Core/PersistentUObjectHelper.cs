@@ -26,9 +26,9 @@ namespace DotEngine.Core
             }
         }
 
-        public static void AddGameObject(GameObject gObj, bool worldPositionStays = false)
+        public static void AddGameObject(GameObject gObj)
         {
-            gObj.transform.SetParent(RootTransform, worldPositionStays);
+            gObj.transform.SetParent(RootTransform, false);
         }
 
         public static GameObject CreateGameObject(string name)
@@ -37,6 +37,19 @@ namespace DotEngine.Core
             gObject.transform.SetParent(RootTransform, false);
 
             return gObject;
+        }
+
+        public static void AddTransform(Transform transform, bool worldPositionStays = false)
+        {
+            transform.SetParent(RootTransform, worldPositionStays);
+        }
+
+        public static Transform CreateTransform(string transformName)
+        {
+            GameObject gObject = new GameObject(transformName);
+            Transform transform = gObject.transform;
+            transform.SetParent(RootTransform, false);
+            return transform;
         }
 
         public static T CreateComponent<T>(string name = null) where T : MonoBehaviour

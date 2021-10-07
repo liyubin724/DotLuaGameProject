@@ -12,12 +12,12 @@ namespace Game
     {
         public static void Startup()
         {
-            LuaEnvManager.GetInstance().Startup();
+            //LuaEnvManager.GetInstance().Startup();
         }
 
         public static void Shuntdown()
         {
-            LuaEnvManager.GetInstance().Dispose();
+            //LuaEnvManager.GetInstance().Dispose();
         }
 
         void Awake()
@@ -29,7 +29,7 @@ namespace Game
             //GOPLogger.SetHandler(LogUtil.Info, LogUtil.Warning, LogUtil.Error);
 
             
-            LuaEnvManager.GetInstance().Startup();
+            --LuaBridger.GetInstance().Startup();
 
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeStateChanged;

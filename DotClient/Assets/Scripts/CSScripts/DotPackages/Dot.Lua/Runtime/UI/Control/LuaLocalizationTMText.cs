@@ -12,9 +12,9 @@ namespace DotEngine.Lua.UI
         {
             if (Application.isPlaying && !string.IsNullOrEmpty(localizationName))
             {
-                text = LuaEnvManager.GetInstance().GetLocalizationText(localizationName);
+                text = LuaBridger.GetInstance().GetLocalizationText(localizationName);
 
-                LuaEnvManager.GetInstance().OnLanguageChanged += OnLanguageChanged;
+                LuaBridger.GetInstance().OnLanguageChanged += OnLanguageChanged;
             }
             base.Awake();
         }
@@ -23,14 +23,14 @@ namespace DotEngine.Lua.UI
         {
             if (Application.isPlaying && !string.IsNullOrEmpty(localizationName))
             {
-                LuaEnvManager.GetInstance().OnLanguageChanged -= OnLanguageChanged;
+                LuaBridger.GetInstance().OnLanguageChanged -= OnLanguageChanged;
             }
             base.OnDestroy();
         }
 
         private void OnLanguageChanged()
         {
-            text = LuaEnvManager.GetInstance().GetLocalizationText(localizationName);
+            text = LuaBridger.GetInstance().GetLocalizationText(localizationName);
         }
 
     }

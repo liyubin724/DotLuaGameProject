@@ -20,7 +20,7 @@ namespace DotEngine.Lua
             {
                 if(luaEnv == null)
                 {
-                    luaEnv = LuaEnvManager.GetInstance().Env;
+                    luaEnv = LuaBridger.GetInstance().Env;
                 }
                 return luaEnv;
             }

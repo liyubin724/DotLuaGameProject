@@ -25,13 +25,16 @@ namespace DotEngine.Core
 
         protected virtual void Awake()
         {
-            if (instance != null && instance != this)
-            {
-                Destroy(gameObject);
-            }
-            else if (instance == null)
+            if(instance == null)
             {
                 instance = (T)this;
+            }else if(instance!=null)
+            {
+                if(instance != this)
+                {
+                    Debug.LogError("The instance has been created!!");
+                    Destroy(gameObject);
+                }
             }
         }
 

@@ -1,29 +1,17 @@
 ﻿using DotEngine.Core;
+using DotEngine.Core.Update;
 using System;
 using UnityEngine;
 using XLua;
-using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Lua
 {
-    public class LuaEnvManager
+    public class LuaBridger : IDisposable, IUpdate,ILateUpdate,IFixedUpdate
     {
-        private static string ROOT_NAME = "LuaEnv-Root";
-
-        private static LuaEnvManager manager = null;
-
-        private static readonly string LUA_INIT_PATH = "Game/GameMain";
-
-        public static LuaEnvManager GetInstance()
-        {
-            if (manager == null)
-            {
-                manager = new LuaEnvManager();
-            }
-            return manager;
-        }
-
+        private string initScriptPath;
         public LuaEnv Env { get; private set; } = null;
+        public bool IsValid => Env != null && Env.IsValid();
+
         public LuaTable Global
         {
             get
@@ -35,18 +23,20 @@ namespace DotEngine.Lua
                 return null;
             }
         }
-        public bool IsValid => Env != null && Env.IsValid();
 
-        private LuaTable gameMainTable;
+        private LuaTable gameTable;
         private Action<float, float> updateHandler;
         private Action<float, float> lateUpdateHandler;
         private Action<float, float> fixedUpdateHandler;
 
         public bool IsRunning { get; private set; } = false;
 
-        private LuaEnvManager()
-        {
+        private LuaLocalization localization = new LuaLocalization();
+        public event Action OnLanguageChanged = null;
 
+        public LuaBridger(string initScriptPath)
+        {
+            this.initScriptPath = initScriptPath;
         }
 
         public void Startup()
@@ -58,7 +48,7 @@ namespace DotEngine.Lua
             IsRunning = true;
 
             Env = new LuaEnv();
-            Env.AddLoader(ScriptLoader.LoadScriptFromProject);
+            Env.AddLoader(LuaScriptLoader.LoadScriptFromProject);
 
 #if DEBUG
             Global.Set("isDebug", true);
@@ -69,18 +59,17 @@ namespace DotEngine.Lua
 
             Env.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
 
-            UpdateBehaviour.GetInstance().updateEvent += DoUpdate;
-            UpdateBehaviour.GetInstance().lateUpdateEvent += DoLateUpdate;
-            UpdateBehaviour.GetInstance().fixedUpdateEvent += DoFixedUpdate;
+            UpdateManager.GetInstance().AddUpdater(this);
+            UpdateManager.GetInstance().AddLateUpdater(this);
+            UpdateManager.GetInstance().AddFixedUpdater(this);
 
-            gameMainTable = LuaUtility.RequireAndGet(Env, LUA_INIT_PATH);
+            gameTable = LuaUtility.RequireAndGet(Env, initScriptPath);
+            updateHandler = gameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
+            lateUpdateHandler = gameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
+            fixedUpdateHandler = gameTable.Get<Action<float, float>>(LuaUtility.FIXEDUPDATE_FUNCTION_NAME);
 
-            Action startAction = gameMainTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
+            Action startAction = gameTable.Get<Action>(LuaUtility.START_FUNCTION_NAME);
             startAction?.Invoke();
-
-            updateHandler = gameMainTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
-            lateUpdateHandler = gameMainTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
-            fixedUpdateHandler = gameMainTable.Get<Action<float, float>>(LuaUtility.FIXEDUPDATE_FUNCTION_NAME);
         }
 
         public void Shuntdown()
@@ -91,9 +80,9 @@ namespace DotEngine.Lua
             }
             IsRunning = false;
 
-            UpdateBehaviour.GetInstance().updateEvent -= DoUpdate;
-            UpdateBehaviour.GetInstance().lateUpdateEvent -= DoLateUpdate;
-            UpdateBehaviour.GetInstance().fixedUpdateEvent -= DoFixedUpdate;
+            UpdateManager.GetInstance().RemoveUpdater(this);
+            UpdateManager.GetInstance().RemoveLateUpdater(this);
+            UpdateManager.GetInstance().RemoveFixedUpdater(this);
 
             updateHandler = null;
             lateUpdateHandler = null;
@@ -101,14 +90,16 @@ namespace DotEngine.Lua
 
             if (IsValid)
             {
-                LuaFunction destroyFunc = gameMainTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
+                LuaFunction destroyFunc = gameTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
                 destroyFunc?.Action();
-                destroyFunc.Dispose();
+                destroyFunc?.Dispose();
 
-                gameMainTable.Dispose();
-                gameMainTable = null;
+                gameTable.Dispose();
+                gameTable = null;
 
                 FullGC();
+
+                localization?.Dispose();
 
                 Env.Dispose();
                 Env = null;
@@ -140,7 +131,7 @@ namespace DotEngine.Lua
             }
         }
 
-        public void FullGC()
+        public void DeepGC()
         {
             if (IsValid)
             {
@@ -149,7 +140,16 @@ namespace DotEngine.Lua
                 GC.Collect();
                 Resources.UnloadUnusedAssets();
                 GC.Collect();
+                GC.Collect();
 
+                Env.FullGc();
+            }
+        }
+
+        public void FullGC()
+        {
+            if (IsValid)
+            {
                 Env.FullGc();
             }
         }
@@ -179,8 +179,7 @@ namespace DotEngine.Lua
             return 0.0f;
         }
 
-        private LuaLocalization localization = new LuaLocalization();
-        public event Action OnLanguageChanged = null;
+        
         public void SetLocalization(LuaTable languageTable)
         {
             localization.ChangeLanguage(languageTable);
@@ -194,11 +193,7 @@ namespace DotEngine.Lua
 
         public void Dispose()
         {
-            if(IsRunning)
-            {
-                Shuntdown();
-            }
-            manager = null;
+            throw new NotImplementedException();
         }
     }
 }
