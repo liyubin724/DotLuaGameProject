@@ -87,6 +87,6 @@ ecs.Destroy = function()
     ecs.env = nil
 end
 
-oop.asreadonly(ecs)
+--oop.asreadonly(ecs)
 
 return ecs

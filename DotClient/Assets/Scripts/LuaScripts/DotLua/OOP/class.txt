@@ -43,6 +43,10 @@ clsmeta.__index = function(cls, key)
     return r
 end
 
+clsmeta.__tostring = function(cls)
+    return cls._name
+end
+
 clsmeta.__call = function(cls, ...)
     local instance = {}
     instance._isInstance = true

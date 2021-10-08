@@ -1,10 +1,12 @@
 local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
 
 local TimerStartComponent =
     oop.class(
     "DotLua.ECS.Components.Timer.TimerStartComponent",
     function(self)
-    end
+    end,
+    Component
 )
 
 return TimerStartComponent

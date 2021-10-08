@@ -1,0 +1,11 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+
+local FSMShuntdownComponent =
+    oop.class(
+    "DotLua.Components.FSM.FSMShuntdownComponent",
+    function(self)
+    end,
+    Component
+)
+return FSMShuntdownComponent

@@ -1,4 +1,5 @@
 local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
 
 local TimerComponent =
     oop.class(
@@ -12,7 +13,8 @@ local TimerComponent =
 
         self.timerIndex = -1
         self.isAutoStart = false
-    end
+    end,
+    Component
 )
 
 function TimerComponent:GetIntervalInSec()

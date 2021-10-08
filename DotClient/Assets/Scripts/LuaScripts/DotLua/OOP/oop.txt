@@ -125,6 +125,10 @@ oop.isclassof = function(targetClass, baseClass)
         return false
     end
 
+    if type(targetClass) ~= "table" or type(baseClass) ~= "table" then
+        return false
+    end
+
     if not baseClass.IsClass or not baseClass:IsClass() then
         return false
     end

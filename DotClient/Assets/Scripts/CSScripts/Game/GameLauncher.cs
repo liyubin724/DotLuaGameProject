@@ -1,4 +1,5 @@
-﻿using DotEngine.Lua;
+﻿using DotEngine.Core.Update;
+using DotEngine.Lua;
 
 namespace Game
 {
@@ -9,6 +10,8 @@ namespace Game
 
         public static void Startup()
         {
+            UpdateManager.GetInstance();
+
             LuaManager luaMgr = LuaManager.GetInstance();
             luaMgr.CreateBridger(DEFAULT_LUA_NAME, DEFAULT_LUA_LAUNCHER_SCRIPT_PATH, true);
         }
@@ -17,6 +20,9 @@ namespace Game
         {
             LuaManager luaMgr = LuaManager.GetInstance();
             luaMgr.DisposeBridger(DEFAULT_LUA_NAME);
+
+            LuaManager.DestroyInstance();
+            UpdateManager.DestroyInstance();
         }
     }
 }

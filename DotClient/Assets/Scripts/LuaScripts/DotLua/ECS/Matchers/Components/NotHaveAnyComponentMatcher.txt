@@ -2,19 +2,19 @@ local oop = require('DotLua/OOP/oop')
 local Matcher = require('DotLua/ECS/Core/Matcher')
 local Component = require('DotLua/ECS/Core/Component')
 
-local LogTag = 'Matcher'
+local LogTag = 'NotHaveAnyComponentMatcher'
 
 local NotHaveAnyComponentMatcher =
     oop.class(
     'DotLua.ECS.Matchers.Components.NotHaveAnyComponentMatcher',
     function(self, componentClasses)
         if oop.isDebug then
-            if not componentClasses then
+            if not componentClasses or type(componentClasses) ~= "table" then
                 oop.error(LogTag, "the classes is nil")
                 return
             end
             for _, componentClass in ipairs(componentClasses) do
-                if not componentClass or oop.isclassof(componentClass, Component) then
+                if not oop.isclassof(componentClass, Component) then
                     oop.error(LogTag, "the class is not a subclass of Component")
                     return
                 end

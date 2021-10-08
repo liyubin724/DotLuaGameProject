@@ -9,8 +9,12 @@ local HaveComponentMatcher =
     "DotLua.ECS.Matchers.Components.HaveComponentMatcher",
     function(self, componentClass)
         if oop.isDebug then
-            if not self.componentClass or oop.isclassof(componentClass, Component) then
-                oop.error(LogTag, "the class is not a subclass of Component")
+            if not oop.isclassof(componentClass, Component) then
+                oop.error(
+                    LogTag,
+                    "the class is not a subclass of Component,componentClass = %s",
+                    tostring(componentClass)
+                )
                 return
             end
         end
