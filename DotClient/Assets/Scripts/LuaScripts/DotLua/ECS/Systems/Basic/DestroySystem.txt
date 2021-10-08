@@ -1,6 +1,6 @@
 local oop = require("DotLua/OOP/oop")
 local GroupUpdateSystem = require("DotLua/ECS/Systems/GroupUpdateSystem")
-local CommonMathcers = require("DotLua/ECS/CommonMathcers")
+local CommonMatchers = require("DotLua/ECS/CommonMatchers")
 local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
 
 local DestroySystem =
@@ -13,7 +13,7 @@ local DestroySystem =
 )
 
 function DestroySystem:createGroup(context)
-    return context:createGroup(CommonMathcers.HaveDestroyComponentMatcher)
+    return context:createGroup(CommonMatchers.HaveDestroyComponentMatcher)
 end
 
 function DestroySystem:onEntityUpdate(entity, deltaTime)

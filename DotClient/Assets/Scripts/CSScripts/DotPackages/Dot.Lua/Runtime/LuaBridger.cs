@@ -1,35 +1,21 @@
 ﻿using DotEngine.Core;
-using DotEngine.Core.Update;
 using System;
 using UnityEngine;
 using XLua;
 
 namespace DotEngine.Lua
 {
-    public class LuaBridger : IDisposable, IUpdate,ILateUpdate,IFixedUpdate
+    public class LuaBridger : ADispose
     {
         private string initScriptPath;
         public LuaEnv Env { get; private set; } = null;
         public bool IsValid => Env != null && Env.IsValid();
-
-        public LuaTable Global
-        {
-            get
-            {
-                if (IsValid)
-                {
-                    return Env.Global;
-                }
-                return null;
-            }
-        }
+        public LuaTable Global => IsValid ? Env.Global : null;
 
         private LuaTable gameTable;
         private Action<float, float> updateHandler;
         private Action<float, float> lateUpdateHandler;
         private Action<float, float> fixedUpdateHandler;
-
-        public bool IsRunning { get; private set; } = false;
 
         private LuaLocalization localization = new LuaLocalization();
         public event Action OnLanguageChanged = null;
@@ -39,29 +25,21 @@ namespace DotEngine.Lua
             this.initScriptPath = initScriptPath;
         }
 
-        public void Startup()
+        public void DoStart()
         {
-            if (IsRunning)
+            if (IsValid)
             {
+                Debug.LogError("The bridge has been startup");
                 return;
             }
-            IsRunning = true;
-
             Env = new LuaEnv();
             Env.AddLoader(LuaScriptLoader.LoadScriptFromProject);
-
 #if DEBUG
             Global.Set("isDebug", true);
 #endif
-
             Env.AddBuildin("rapidjson", XLua.LuaDLL.Lua.LoadRapidJson);
             Global.Set("isRapidJson", true);
-
             Env.AddBuildin("pb", XLua.LuaDLL.Lua.LoadLuaProfobuf);
-
-            UpdateManager.GetInstance().AddUpdater(this);
-            UpdateManager.GetInstance().AddLateUpdater(this);
-            UpdateManager.GetInstance().AddFixedUpdater(this);
 
             gameTable = LuaUtility.RequireAndGet(Env, initScriptPath);
             updateHandler = gameTable.Get<Action<float, float>>(LuaUtility.UPDATE_FUNCTION_NAME);
@@ -72,39 +50,22 @@ namespace DotEngine.Lua
             startAction?.Invoke();
         }
 
-        public void Shuntdown()
+        public void DoDestroy()
         {
-            if (!IsRunning)
+            if (!IsValid)
             {
+                Debug.LogError("The bridge has been disposed");
                 return;
             }
-            IsRunning = false;
 
-            UpdateManager.GetInstance().RemoveUpdater(this);
-            UpdateManager.GetInstance().RemoveLateUpdater(this);
-            UpdateManager.GetInstance().RemoveFixedUpdater(this);
+            LuaFunction destroyFunc = gameTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
+            destroyFunc?.Action();
+            destroyFunc?.Dispose();
 
-            updateHandler = null;
-            lateUpdateHandler = null;
-            fixedUpdateHandler = null;
-
-            if (IsValid)
-            {
-                LuaFunction destroyFunc = gameTable.Get<LuaFunction>(LuaUtility.DESTROY_FUNCTION_NAME);
-                destroyFunc?.Action();
-                destroyFunc?.Dispose();
-
-                gameTable.Dispose();
-                gameTable = null;
-
-                FullGC();
-
-                localization?.Dispose();
-
-                Env.Dispose();
-                Env = null;
-            }
+            Dispose();
         }
+
+        #region Update
 
         public void DoUpdate(float deltaTime, float unscaleDeltaTime)
         {
@@ -130,7 +91,9 @@ namespace DotEngine.Lua
                 fixedUpdateHandler?.Invoke(deltaTime, unscaleDeltaTime);
             }
         }
+        #endregion
 
+        #region GC
         public void DeepGC()
         {
             if (IsValid)
@@ -169,6 +132,7 @@ namespace DotEngine.Lua
                 Env.RestartGc();
             }
         }
+        #endregion
 
         public float GetUsedMemory()
         {
@@ -179,7 +143,7 @@ namespace DotEngine.Lua
             return 0.0f;
         }
 
-        
+        #region Localization
         public void SetLocalization(LuaTable languageTable)
         {
             localization.ChangeLanguage(languageTable);
@@ -190,10 +154,32 @@ namespace DotEngine.Lua
         {
             return localization.GetText(locName);
         }
+        #endregion
 
-        public void Dispose()
+        #region Dispose
+        protected override void DisposeManagedResource()
         {
-            throw new NotImplementedException();
+            updateHandler = null;
+            lateUpdateHandler = null;
+            fixedUpdateHandler = null;
         }
+
+        protected override void DisposeUnmanagedResource()
+        {
+            if (!IsValid)
+            {
+                return;
+            }
+
+            localization?.Dispose();
+            gameTable?.Dispose();
+            Env.Dispose();
+
+            OnLanguageChanged = null;
+            localization = null;
+            gameTable = null;
+            Env = null;
+        }
+        #endregion
     }
 }

@@ -8,7 +8,7 @@ local CS = _G.CS
 local ecs = _G.ecs
 
 Launcher = {}
-function Launcher.Start()
+function Launcher.DoStart()
     local CSLogUtil = CS.DotEngine.Log.LogUtil
     Logger.info = CSLogUtil.Info
     Logger.warning = CSLogUtil.Warning

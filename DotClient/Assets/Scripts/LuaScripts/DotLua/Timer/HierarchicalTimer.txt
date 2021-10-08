@@ -1,13 +1,10 @@
-local oop = require('DotLua/OOP/oop')
-local CycleTime = require('DotLua/CycleTime')
+local oop = require("DotLua/OOP/oop")
+local TimerWheel = require("DotLua/Timer/TimerWheel")
+local TimerTask = require("DotLua/Timer/TimerTask")
 
-local TimerWheel = require('DotLua/Timer/TimerWheel')
-local TimerTask = require('DotLua/Timer/TimerTask')
-
-local ObjectPool = require('DotLua/Pool/ObjectPool')
+local ObjectPool = require("DotLua/Pool/ObjectPool")
 
 local tinsert = table.insert
-local select = select
 local mround = math.round
 local mfloor = math.floor
 local tisempty = table.isempty
@@ -17,7 +14,7 @@ local tisempty = table.isempty
 -- 通过Game.TimerMgr可以获得全局的定时器
 local HierarchicalTimer =
     oop.class(
-    'DotLua.Timer.HierarchicalTimer',
+    "DotLua.Timer.HierarchicalTimer",
     function(self)
         self.uniqueIndex = 0
 
@@ -94,13 +91,13 @@ end
 -- @return bool 返回是否成功删除定时器
 function HierarchicalTimer:RemoveTimer(timerIndex)
     if not timerIndex then
-        oop.error('Timer', 'the timerIndex is nil')
+        oop.error("Timer", "the timerIndex is nil")
         return
     end
 
     local task = self.tasks[timerIndex]
     if not task then
-        oop.warning('Timer', 'the index is error or the timer has been finished')
+        oop.warning("Timer", "the index is error or the timer has been finished")
         return
     end
     self.tasks[timerIndex] = nil
@@ -115,9 +112,7 @@ end
 -- 驱动多层时间轮进行轮转
 -- @param deltaTime 流逝的时间
 -- @return void
-function HierarchicalTimer:DoUpdate()
-    local deltaTime = CycleTime.GetDeltaTime()
-
+function HierarchicalTimer:DoUpdate(deltaTime, unscaleDeltaTime)
     if self.isPaused then
         return
     end
@@ -152,7 +147,7 @@ end
 function HierarchicalTimer:OnWheelComplete(level)
     local nextLevel = level + 1
     if nextLevel > #(self.wheels) then
-        oop.error('Timer', 'Timer error')
+        oop.error("Timer", "Timer error")
         return
     end
 
@@ -198,17 +193,17 @@ function HierarchicalTimer:AddTask(task)
         task:SetWheelIndex(wheelIndex)
         task:SetWheelSoltIndex(soltIndex)
     else
-        oop.error('Timer', '')
+        oop.error("Timer", "")
     end
 end
 
 function HierarchicalTimer:ToString()
     local str =
-        string.format('HierarchicalTimer:{uniqueIndex = %d, isPaused = %s,wheels={', self.uniqueIndex, self.isPaused)
+        string.format("HierarchicalTimer:{uniqueIndex = %d, isPaused = %s,wheels={", self.uniqueIndex, self.isPaused)
     for i = 1, #(self.wheels), 1 do
         str = str .. self.wheels[i]:ToString()
     end
-    str = str .. '}'
+    str = str .. "}"
     return str
 end
 

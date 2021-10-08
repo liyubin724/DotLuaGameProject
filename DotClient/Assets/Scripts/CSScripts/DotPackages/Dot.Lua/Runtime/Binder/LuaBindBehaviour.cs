@@ -8,6 +8,7 @@ namespace DotEngine.Lua
 {
     public class LuaBindBehaviour : MonoBehaviour
     {
+        public string bridgerName = null;
         public string scriptPath = null;
         public List<LuaParamValue> ctrParamValues = new List<LuaParamValue>();
 
@@ -20,7 +21,8 @@ namespace DotEngine.Lua
             {
                 if(luaEnv == null)
                 {
-                    luaEnv = LuaBridger.GetInstance().Env;
+                    LuaBridger bridger= LuaManager.GetInstance().GetBridger(bridgerName);
+                    luaEnv = bridger.Env;
                 }
                 return luaEnv;
             }

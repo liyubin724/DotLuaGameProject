@@ -1,8 +1,7 @@
 local oop = require("DotLua/OOP/oop")
 local Env = require("DotLua/ECS/Env")
 
-ecs = ecs or {}
-
+local ecs ={}
 ecs.env = nil
 ecs.GetEnv = function()
     return ecs.env
@@ -89,3 +88,5 @@ ecs.Destroy = function()
 end
 
 oop.asreadonly(ecs)
+
+return ecs

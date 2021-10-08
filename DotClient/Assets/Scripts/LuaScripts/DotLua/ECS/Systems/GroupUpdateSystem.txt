@@ -1,4 +1,4 @@
-local oop = require("DotLua/ECS/OOP/oop")
+local oop = require("DotLua/OOP/oop")
 local UpdateSystem = require("DotLua/ECS/Systems/UpdateSystem")
 
 local tclear = table.clear

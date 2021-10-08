@@ -1,4 +1,4 @@
-local oop = require("DotLua/ECS/OOP/oop")
+local oop = require("DotLua/OOP/oop")
 local GroupUpdateSystem = require("DotLua/ECS/Systems/GroupUpdateSystem")
 local CommonMatchers = require("DotLua/ECS/CommonMatchers")
 local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")

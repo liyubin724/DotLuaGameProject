@@ -1,6 +1,6 @@
 local oop = require("DotLua/OOP/oop")
 local Vector3 = require("DotLua/Math/Vector3")
-local Component = require("DotLua/ECS/Components/Component")
+local Component = require("DotLua/ECS/Core/Component")
 
 local RotationComponent =
     oop.class(

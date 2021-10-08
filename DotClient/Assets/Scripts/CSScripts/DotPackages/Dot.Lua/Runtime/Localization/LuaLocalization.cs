@@ -1,13 +1,13 @@
-﻿using System;
+﻿using DotEngine.Core;
 using System.Collections.Generic;
 using XLua;
 
 namespace DotEngine.Lua
 {
-    public class LuaLocalization : IDisposable
+    public class LuaLocalization : ADispose
     {
-        private Dictionary<string, string> cachedTextDic = new Dictionary<string, string>();
         private LuaTable languageTable = null;
+        private Dictionary<string, string> cachedTextDic = new Dictionary<string, string>();
 
         public LuaLocalization()
         {
@@ -42,14 +42,19 @@ namespace DotEngine.Lua
             return text;
         }
 
-        public void Dispose()
+        protected override void DisposeManagedResource()
+        {
+            cachedTextDic.Clear();
+            cachedTextDic = null;
+        }
+
+        protected override void DisposeUnmanagedResource()
         {
             if (languageTable != null)
             {
                 languageTable.Dispose();
                 languageTable = null;
             }
-            cachedTextDic.Clear();
         }
     }
 }

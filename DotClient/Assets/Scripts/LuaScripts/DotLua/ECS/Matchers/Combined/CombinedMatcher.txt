@@ -1,5 +1,5 @@
 local oop = require('DotLua/OOP/oop')
-local Matcher = require('DotLua/ECS/Matchers/Matcher')
+local Matcher = require('DotLua/ECS/Core/Matcher')
 local MatcherOperation = require('DotLua/ECS/Matchers/Combined/MatcherOperation')
 
 local tinsert = table.insert

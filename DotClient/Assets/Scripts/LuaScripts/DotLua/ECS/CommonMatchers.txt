@@ -1,5 +1,5 @@
-local HaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/HaveComponentMatcher")
-local NotHaveComponentMatcher = require("DotLua/ECS/Mathcers/Components/NotHaveComponentMatcher")
+local HaveComponentMatcher = require("DotLua/ECS/Matchers/Components/HaveComponentMatcher")
+local NotHaveComponentMatcher = require("DotLua/ECS/Matchers/Components/NotHaveComponentMatcher")
 local CombinedMatcher = require("DotLua/ECS/Matchers/Combined/CombinedMatcher")
 local MatcherOperation = require("DotLua/ECS/Matchers/Combined/MatcherOperation")
 
@@ -46,7 +46,7 @@ timerDestroyMatcher:AddMatcher(haveTimerComponentMatcher)
 timerDestroyMatcher:AddMatcher(haveDestroyComponentMatcher)
 
 ---FSM
-local FSMBlackboardComponent = require("DotLua/ECS/Components/FSM/FSMBlockboardComponent")
+local FSMBlackboardComponent = require("DotLua/ECS/Components/FSM/FSMBlackboardComponent")
 local FSMComponent = require("DotLua/ECS/Components/FSM/FSMComponent")
 local FSMStateComponent = require("DotLua/ECS/Components/FSM/FSMStateComponent")
 local FSMStartupComponent = require("DotLua/ECS/Components/FSM/FSMStartupComponent")

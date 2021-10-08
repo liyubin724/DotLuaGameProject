@@ -1,6 +1,6 @@
 local oop = require("DotLua/OOP/oop")
-local Matcher = require("DotLua/ECS/Matchers/Matcher")
-local Component = require("DotLua/ECS/Components/Component")
+local Matcher = require("DotLua/ECS/Core/Matcher")
+local Component = require("DotLua/ECS/Core/Component")
 
 local LogTag = "HaveComponentMatcher"
 
