@@ -14,7 +14,7 @@ local BasicContextListenSystem =
     ContextListenSystem
 )
 
-function ContextListenSystem:getSystemClasses()
+function BasicContextListenSystem:getSystemClasses()
     return {CategoryCollectionSystem, DependedCollectionSystem, DestroySystem}
 end
 

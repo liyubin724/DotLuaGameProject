@@ -44,7 +44,7 @@ clsmeta.__index = function(cls, key)
 end
 
 clsmeta.__tostring = function(cls)
-    return cls._name
+    return string.format("<class:%s>",cls._name)
 end
 
 clsmeta.__call = function(cls, ...)
@@ -52,9 +52,9 @@ clsmeta.__call = function(cls, ...)
     instance._isInstance = true
     instance._cls = cls
 
-    cls.__ctor(instance, ...)
-
     setmetatable(instance, instancemeta)
+
+    cls.__ctor(instance, ...)
 
     return instance
 end

@@ -205,7 +205,7 @@ function Entity:AddComponent(componentClass, ...)
         end
     end
 
-    local component = self.componentListDic:GetItem(componentClass)
+    local component = self.componentDic[componentClass]
     if component then
         oop.warning(LogTag, string.format("The component of %s has beend added!", componentClass:GetClassName()))
         return component

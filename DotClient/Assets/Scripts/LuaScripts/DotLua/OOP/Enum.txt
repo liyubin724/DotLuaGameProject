@@ -1,13 +1,10 @@
 require("DotLua/Utils/tableEx")
 local ObjectType = require("DotLua/OOP/ObjectType")
-local Object = require("DotLua/OOP/Object")
 local class = require("DotLua/OOP/class")
 local asreadonly = require("DotLua/OOP/asreadonly")
 
 local tisarray = table.isarray
 local tinsert = table.insert
-local sstartswith = string.startswith
-local trawgetkeys = table.rawgetkeys
 
 local Enum =
     class(
@@ -39,7 +36,6 @@ local Enum =
 
         asreadonly(self._names)
         asreadonly(self._values)
-        asreadonly(self)
     end
 )
 
@@ -66,13 +62,14 @@ function Enum:IsValidValue(value)
 end
 
 function Enum:ToString()
-    local str = string.format("%s:{", self:GetClassName())
+    local str = string.format("<enum:%s>:{", self:GetClassName())
     local names = self:GetNames()
-    for i = 1, #names, 1 do
-        str = str .. string.format("%s = %s,", names[i], tostring(rawget(self, names[i])))
+    if names then
+        for i = 1, #names, 1 do
+            str = str .. string.format("%s = %s,", names[i], tostring(rawget(self, names[i])))
+        end
     end
     str = str .. "}"
-
     return str
 end
 

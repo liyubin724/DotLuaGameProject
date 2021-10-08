@@ -7,13 +7,7 @@ local meta = {
 local asreadonly = function(target)
     local m = getmetatable(target)
     if m then
-        if m.__newindex then
-            error("the target has a metatable,can't be readonly")
-        else
-            m.__newindex = function(t, k, v)
-                error("OOP:readonlyMeta->the table is readonly")
-            end
-        end
+        error("the target has a metatable,can't be readonly")
     else
         return setmetatable(target, meta)
     end
