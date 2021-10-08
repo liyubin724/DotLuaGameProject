@@ -1,0 +1,53 @@
+local select = select
+local strformat = string.format
+local isDebug = _G.isDebug
+
+local logger = {}
+
+if isDebug or isDebug == nil then
+    logger.info = function(tag, message)
+        print(strformat('%s [INFO] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+    end
+    logger.warning = function(tag, message)
+        print(strformat('%s [WARNING] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+    end
+end
+
+logger.error = function(tag, message)
+    print(strformat('%s [ERROR] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+end
+
+local getMessage = function(message, ...)
+    local mess = message
+    if select("#",...) > 0 then
+        mess = strformat(mess, ...)
+    end
+
+    return mess
+end
+
+function logger.SetFunc(infoFunc, warningFunc, errorFunc)
+    logger.info = infoFunc
+    logger.warning = warningFunc
+    logger.error = errorFunc
+end
+
+function logger.Info(tag, message, ...)
+    if logger.info then
+        logger.info(tag, getMessage(message, ...))
+    end
+end
+
+function logger.Warning(tag, message, ...)
+    if logger.warning then
+        logger.warning(tag, getMessage(message, ...))
+    end
+end
+
+function logger.Error(tag, message, ...)
+    if logger.error then
+        logger.error(tag, getMessage(message, ...))
+    end
+end
+
+return logger

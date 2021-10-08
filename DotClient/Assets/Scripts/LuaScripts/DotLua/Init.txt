@@ -4,7 +4,7 @@ require("DotLua/Utils/tableEx")
 
 _G.oop = require("DotLua/OOP/oop")
 _G.ecs = require("DotLua/ECS/ecs")
-_G.Logger = require("DotLua/Debug/Logger")
+_G.logger = require("DotLua/Debug/logger")
 
 _G.Json = {}
 if _G.isRapidJson then

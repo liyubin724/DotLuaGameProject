@@ -5,6 +5,7 @@ require("DotLua/Utils/mathEx")
 local Enum = require("DotLua/OOP/Enum")
 local Delegate = require("DotLua/OOP/Delegate")
 local Event = require("DotLua/OOP/Event")
+local logger = require("DotLua/Debug/logger")
 
 local oop = {}
 if _G.isDebug ~= nil then
@@ -13,10 +14,9 @@ else
     oop.isDebug = true
 end
 
-oop.Logger = require("DotLua/Debug/Logger")
-oop.info = oop.Logger.Info
-oop.warning = oop.Logger.Warning
-oop.error = oop.Logger.Error
+oop.info = logger.Info
+oop.warning = logger.Warning
+oop.error = logger.Error
 
 oop.class = require("DotLua/OOP/class")
 oop.asreadonly = require("DotLua/OOP/asreadonly")
