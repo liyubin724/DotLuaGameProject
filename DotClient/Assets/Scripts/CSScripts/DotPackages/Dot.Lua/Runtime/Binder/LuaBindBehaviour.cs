@@ -21,8 +21,12 @@ namespace DotEngine.Lua
             {
                 if(luaEnv == null)
                 {
-                    LuaBridger bridger= LuaManager.GetInstance().GetBridger(bridgerName);
-                    luaEnv = bridger.Env;
+                    LuaManager mgr = LuaManager.GetInstance();
+                    if(mgr !=null)
+                    {
+                        LuaBridger bridger = mgr.GetBridger(bridgerName);
+                        luaEnv = bridger.Env;
+                    }
                 }
                 return luaEnv;
             }

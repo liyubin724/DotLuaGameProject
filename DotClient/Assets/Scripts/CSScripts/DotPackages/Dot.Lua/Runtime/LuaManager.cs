@@ -1,14 +1,32 @@
-﻿using DotEngine.Core;
-using DotEngine.Core.Update;
+﻿using DotEngine.Core.Update;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace DotEngine.Lua
 {
-    public class LuaManager : Singleton<LuaManager>, IUpdate, IFixedUpdate, ILateUpdate
+    public class LuaManager : IUpdate, IFixedUpdate, ILateUpdate
     {
         private string defaultBridgeName = "Default";
         private Dictionary<string, LuaBridger> bridgerDic = new Dictionary<string, LuaBridger>();
+
+        private static LuaManager manager = null;
+        public static LuaManager GetInstance() => manager;
+        public static void InitMgr()
+        {
+            manager = new LuaManager();
+            manager.OnInit();
+        }
+
+        public static void DisposeMgr()
+        {
+            if (manager != null)
+            {
+                manager.DoDestroy();
+            }
+            manager = null;
+        }
+
+        private LuaManager() { }
 
         public bool HasBridger(string name)
         {
@@ -77,15 +95,14 @@ namespace DotEngine.Lua
             }
         }
 
-        protected override void OnInit()
+        private void OnInit()
         {
-            base.OnInit();
             UpdateManager.GetInstance().AddUpdater(this);
             UpdateManager.GetInstance().AddLateUpdater(this);
             UpdateManager.GetInstance().AddFixedUpdater(this);
         }
 
-        protected override void OnDestroy()
+        private void DoDestroy()
         {
             UpdateManager.GetInstance().RemoveUpdater(this);
             UpdateManager.GetInstance().RemoveLateUpdater(this);
@@ -100,8 +117,6 @@ namespace DotEngine.Lua
                 kvp.Value.Dispose();
             }
             bridgerDic = null;
-
-            base.OnDestroy();
         }
 
     }
