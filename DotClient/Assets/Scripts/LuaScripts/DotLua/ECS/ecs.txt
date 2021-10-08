@@ -71,7 +71,7 @@ end
 ecs.Initialize = function(envClass)
     envClass = envClass or Env
     ecs.env = envClass()
-    ecs.env:DoInitlize()
+    ecs.env:DoInitialize()
 end
 
 ecs.Update = function(deltaTime, unscaleDeltaTime)

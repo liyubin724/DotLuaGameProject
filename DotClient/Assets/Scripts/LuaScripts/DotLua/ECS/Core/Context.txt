@@ -179,6 +179,11 @@ function Context:tryToReleaseEntity()
 end
 
 function Context:CreateGroup(matcher)
+    if not matcher then
+        oop.error(LogTag,"the matcher is nil")
+        return nil
+    end
+
     local group = self.matcherToGroupDic[matcher]
     if group then
         group:RetainRef()

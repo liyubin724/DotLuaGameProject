@@ -10,6 +10,10 @@ local System =
     end
 )
 
+function System:GetName()
+    return self:GetClassName()
+end
+
 function System:IsEnable()
     return self.enable
 end

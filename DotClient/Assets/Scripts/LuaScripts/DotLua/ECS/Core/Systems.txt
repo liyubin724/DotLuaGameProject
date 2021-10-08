@@ -33,7 +33,7 @@ function Systems:RegisterSystem(name, systemClass, ...)
     end
 
     system = systemClass(...)
-    system:DoInitlize()
+    system:DoInitialize()
     self.nameToSystemDic[name] = system
 
     if system[Const.DO_UPDATE_FUNC_NAME] then

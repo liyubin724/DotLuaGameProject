@@ -7,7 +7,7 @@ local Servicer =
     end
 )
 
--- function Servicer:DoInitlize()
+-- function Servicer:DoInitialize()
 -- end
 
 -- function Servicer:DoActivate()

@@ -34,7 +34,7 @@ function MacroSystem:AddSubsystem(name, subSystemClass, ...)
     end
 
     local subSystem = subSystemClass(...)
-    subSystem:DoInitlize()
+    subSystem:DoInitialize()
 
     self.subSystemDic[name] = subSystem
     if subSystem[Const.DO_UPDATE_FUNC_NAME] then
