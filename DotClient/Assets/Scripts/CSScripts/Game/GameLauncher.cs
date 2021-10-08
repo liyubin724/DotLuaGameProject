@@ -1,4 +1,5 @@
 ﻿using DotEngine.Core.Update;
+using DotEngine.Log;
 using DotEngine.Lua;
 
 namespace Game
@@ -11,6 +12,7 @@ namespace Game
         public static void Startup()
         {
             UpdateManager.GetInstance();
+            LogUtil.AddAppender(new UnityConsoleAppender());
 
             LuaManager luaMgr = LuaManager.GetInstance();
             luaMgr.CreateBridger(DEFAULT_LUA_NAME, DEFAULT_LUA_LAUNCHER_SCRIPT_PATH, true);

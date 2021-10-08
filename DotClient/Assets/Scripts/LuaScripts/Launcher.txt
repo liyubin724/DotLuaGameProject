@@ -15,15 +15,15 @@ function Launcher.DoStart()
     Logger.error = CSLogUtil.Error
 
     oop.isDebug = _G.isDebug or false
-    ecs.Initialize(GameEnv)
+    --ecs.Initialize(GameEnv)
 
     oop.info("Launcher", "Game Start")
 end
 
 function Launcher.Update(deltaTime, unscaleDeltaTime)
-    ecs.Update(deltaTime, unscaleDeltaTime)
+    --ecs.Update(deltaTime, unscaleDeltaTime)
 end
 
 function Launcher.Destroy()
-    ecs.Destroy()
+    --ecs.Destroy()
 end

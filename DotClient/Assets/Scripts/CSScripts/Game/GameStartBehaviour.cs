@@ -13,6 +13,7 @@ namespace Game
         private void Awake()
         {
             PersistentUObjectHelper.AddGameObject(gameObject);
+
             GameLauncher.Startup();
         }
 

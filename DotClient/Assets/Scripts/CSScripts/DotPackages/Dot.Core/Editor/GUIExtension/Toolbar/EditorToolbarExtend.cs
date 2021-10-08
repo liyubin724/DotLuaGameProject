@@ -67,7 +67,7 @@ namespace DotEditor.GUIExtension.Toolbar
         }
     }
 
-    [InitializeOnLoad]
+    //[InitializeOnLoad]
     public static class EditorToolbarExtend
     {
         private static readonly Type containterType = typeof(IMGUIContainer);
