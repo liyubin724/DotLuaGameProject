@@ -12,6 +12,7 @@ local MacroSystem =
     oop.class(
     "DotLua.ECS.Core.MacroSystem",
     function(self)
+        self.subSystems = {}
         self.subSystemDic = {}
         self.updateSystems = {}
     end,
@@ -26,17 +27,20 @@ function MacroSystem:AddSubsystem(name, subSystemClass, ...)
         end
     end
 
-    name = name or tostring(subSystemClass)
+    name = name or oop.getclassname(subSystemClass)
 
-    if self.subSystemDic[name] then
-        oop.error(LogTag, "The subsystem has been added")
-        return
+    local subSystem = self.subSystemDic[name]
+    if subSystem then
+        oop.warning(LogTag, "The subsystem has been added.name = %s", name)
+        return subSystem
     end
 
-    local subSystem = subSystemClass(...)
+    subSystem = subSystemClass(...)
     subSystem:DoInitialize()
 
     self.subSystemDic[name] = subSystem
+    self:insertSystem(self.subSystems, subSystem)
+
     if subSystem[Const.DO_UPDATE_FUNC_NAME] then
         self:insertSystem(self.updateSystems, subSystem)
     end
@@ -53,7 +57,7 @@ function MacroSystem:RemoveSubsystem(name)
     end
     local subSystem = self.subSystemDic[name]
     self.subSystemDic[name] = nil
-
+    tremovevalue(self.subSystems,subSystem)
     if subSystem[Const.DO_UPDATE_FUNC_NAME] then
         tremovevalue(self.updateSystems, subSystem)
     end
@@ -107,12 +111,13 @@ end
 
 function MacroSystem:onDestroy()
     tforeach(
-        self.subSystemDic,
+        self.subSystems,
         function(_, system)
             system:DoDestroy()
         end
     )
     self.subSystems = nil
+    self.subSystemDic = nil
     self.updateSystems = nil
 end
 

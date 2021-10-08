@@ -7,10 +7,18 @@ local tclear = table.clear
 local tremovevalue = table.removevalue
 local tcontainsvalue = table.containsvalue
 
+local LogTag = "Collector"
+
 local Collector =
     oop.class(
     "DotLua.ECS.Collectors.Collector",
     function(self, context, matcher, groupEvent)
+        if oop.isDebug then
+            if not context or not matcher then
+                oop.error(LogTag,"the context or the matcher is nil")
+            end
+        end
+
         self.isEnable = false
 
         self.context = context

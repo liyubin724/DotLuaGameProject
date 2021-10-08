@@ -4,15 +4,12 @@ local isDebug = _G.isDebug
 
 local logger = {}
 
-if isDebug or isDebug == nil then
-    logger.info = function(tag, message)
-        print(strformat('%s [INFO] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
-    end
-    logger.warning = function(tag, message)
-        print(strformat('%s [WARNING] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
-    end
+logger.info = function(tag, message)
+    print(strformat('%s [INFO] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
 end
-
+logger.warning = function(tag, message)
+    print(strformat('%s [WARNING] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+end
 logger.error = function(tag, message)
     print(strformat('%s [ERROR] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
 end
@@ -24,12 +21,6 @@ local getMessage = function(message, ...)
     end
 
     return mess
-end
-
-function logger.SetFunc(infoFunc, warningFunc, errorFunc)
-    logger.info = infoFunc
-    logger.warning = warningFunc
-    logger.error = errorFunc
 end
 
 function logger.Info(tag, message, ...)

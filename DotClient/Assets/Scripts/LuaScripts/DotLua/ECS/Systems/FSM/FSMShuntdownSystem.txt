@@ -21,7 +21,7 @@ local FSMShuntdownSystem =
 )
 
 function FSMShuntdownSystem:createCollector(context)
-    return Collector(context, CommonMatchers.fsmShuntdownMatcher, EGroupEvent.Added)
+    return Collector(context, CommonMatchers.FSMShuntdownMatcher, EGroupEvent.Added)
 end
 
 function FSMShuntdownSystem:onAddedEntityUpdate(entity, deltaTime)

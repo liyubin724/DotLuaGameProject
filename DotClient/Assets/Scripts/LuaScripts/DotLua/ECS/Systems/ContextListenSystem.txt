@@ -16,13 +16,14 @@ function ContextListenSystem:getSystemClasses()
 end
 
 function ContextListenSystem:onActivate()
+    ContextListenSystem.baseclass().onActivate(self)
+
     self.contexts:BindContextEvent(self, self.onContextCreatedEvent, self.onContextReleasedEvent)
     local contextNames = self.contexts:GetContextNames()
     for _, contextName in ipairs(contextNames) do
         local context = self.contexts:GetContext(contextName)
         self:onContextCreatedEvent(context)
     end
-    self:GetBaseClass().onActivate(self)
 end
 
 function ContextListenSystem:onDeactivate()
@@ -32,14 +33,15 @@ function ContextListenSystem:onDeactivate()
         local context = self.contexts:GetContext(contextName)
         self:onContextReleasedEvent(context)
     end
-    self:GetBaseClass().onDeactivate(self)
+
+    ContextListenSystem.baseclass().onDeactivate(self)
 end
 
 function ContextListenSystem:onDestroy()
     self.contexts = nil
     self.systemClasses = nil
 
-    self:GetBaseClass().onDestroy(self)
+    ContextListenSystem.baseclass().onDestroy(self)
 end
 
 function ContextListenSystem:onContextCreatedEvent(context)

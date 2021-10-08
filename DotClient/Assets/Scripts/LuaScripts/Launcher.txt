@@ -2,26 +2,23 @@ require("DotLua/Init")
 
 local GameEnv = require("Game/ECS/GameEnv")
 
-local oop = _G.oop
 local logger = _G.logger
-local CS = _G.CS
+if not _G.isDebug then
+    logger.info = nil
+    logger.warning = nil
+end
+
 local ecs = _G.ecs
 
 Launcher = {}
 function Launcher.DoStart()
-    local CSLogUtil = CS.DotEngine.Log.LogUtil
-    logger.info = CSLogUtil.Info
-    logger.warning = CSLogUtil.Warning
-    logger.error = CSLogUtil.Error
+    ecs.Initialize(GameEnv)
 
-    oop.isDebug = _G.isDebug or false
-    --ecs.Initialize(GameEnv)
-
-    oop.info("Launcher", "Game Start")
+    logger.Info("Launcher", "Game Start")
 end
 
 function Launcher.DoUpdate(deltaTime, unscaleDeltaTime)
-    --ecs.Update(deltaTime, unscaleDeltaTime)
+    ecs.Update(deltaTime, unscaleDeltaTime)
 end
 
 function Launcher.DoDestroy()
