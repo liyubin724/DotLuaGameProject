@@ -11,10 +11,14 @@ namespace DotEngine.Lua
 
         private static LuaManager manager = null;
         public static LuaManager GetInstance() => manager;
-        public static void InitMgr()
+        public static LuaManager InitMgr()
         {
-            manager = new LuaManager();
-            manager.OnInit();
+            if(manager == null)
+            {
+                manager = new LuaManager();
+                manager.OnInit();
+            }
+            return manager;
         }
 
         public static void DisposeMgr()

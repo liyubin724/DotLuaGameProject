@@ -1,15 +1,36 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Core.Update
 {
-    public class UpdateManager : Singleton<UpdateManager>
+    public class UpdateManager
     {
         private UpdateBehaviour updateBehaviour;
 
         private List<IUpdate> updaters = new List<IUpdate>();
         private List<ILateUpdate> lateUpdaters = new List<ILateUpdate>();
         private List<IFixedUpdate> fixedUpdaters = new List<IFixedUpdate>();
+
+        private static UpdateManager manager = null;
+        public static UpdateManager GetInstance() => manager;
+        public static UpdateManager InitMgr()
+        {
+            if(manager == null)
+            {
+                manager = new UpdateManager();
+                manager.OnInit();
+            }
+            return manager;
+        }
+        public static void DisposeMgr()
+        {
+            if(manager!=null)
+            {
+                manager.DoDestroy();
+            }
+            manager = null;
+        }
 
         public void AddUpdater(IUpdate updater)
         {
@@ -62,21 +83,18 @@ namespace DotEngine.Core.Update
             fixedUpdaters.Remove(fixedUpdater);
         }
 
-        protected override void OnInit()
+        private void OnInit()
         {
-            base.OnInit();
             updateBehaviour = PersistentUObjectHelper.CreateComponent<UpdateBehaviour>();
         }
 
-        protected override void OnDestroy()
+        private void DoDestroy()
         {
             if(updateBehaviour)
             {
-                GameObject.Destroy(updateBehaviour.gameObject);
-                updateBehaviour = null;
+                UnityObject.Destroy(updateBehaviour.gameObject);
             }
-
-            base.OnDestroy();
+            updateBehaviour = null;
         }
 
         internal void DoUpdate(float deltaTime,float unscaleDeltaTime)
