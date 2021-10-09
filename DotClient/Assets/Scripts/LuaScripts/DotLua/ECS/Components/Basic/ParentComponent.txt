@@ -1,29 +1,40 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Core/Component")
+local EntityIdentityPool = require("DotLua/ECS/Core/EntityIdentityPool")
 
 local ParentComponent =
     oop.class(
     "DotLua.ECS.Components.Basic.ParentComponent",
     function(self)
-        self.guid = nil
+        self.identity = nil
     end,
     Component
 )
 
 function ParentComponent:GetParent()
-    return self.guid
+    if self.identity then
+        return self.identity:GetIdentity()
+    end
+    return nil, nil
 end
 
-function ParentComponent:SetParent(guid)
-    self.guid = guid
+function ParentComponent:SetParent(contextName, guid)
+    if self.identity then
+        self.identity:SetIdentity(contextName, guid)
+    else
+        self.identity = EntityIdentityPool.Get(contextName, guid)
+    end
 end
 
-function ParentComponent:DoGet(guid)
-    self.guid = guid
+function ParentComponent:DoGet(contextName, guid)
+    self:SetParent(contextName, guid)
 end
 
 function ParentComponent:DoRelease()
-    self.guid = nil
+    if self.identity then
+        EntityIdentityPool.Release(self.identity)
+    end
+    self.identity = nil
 end
 
 return ParentComponent

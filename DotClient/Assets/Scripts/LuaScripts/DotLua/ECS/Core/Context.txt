@@ -1,5 +1,4 @@
 local oop = require("DotLua/OOP/oop")
-local GUIDComponent = require("DotLua/ECS/Components/Basic/GUIDComponent")
 local EContextEvent = require("DotLua/ECS/Core/EContextEvent")
 
 local tkeys = table.keys
@@ -9,7 +8,7 @@ local LogTag = "Context"
 local Context =
     oop.class(
     "DotLua.ECS.Core.Context",
-    function(self,name,guidCreator,groupPool,entityPool,componentPool)
+    function(self, name, guidCreator, groupPool, entityPool, componentPool)
         self.name = name
 
         self.guidCreator = guidCreator
@@ -127,8 +126,7 @@ end
 
 function Context:CreateEntity(...)
     local guid = self.guidCreator:Get()
-    local entity = self.entityPool:Get(guid, self.name, self.componentPool, ...)
-    entity:AddComponent(GUIDComponent, guid)
+    local entity = self.entityPool:Get(self.name, guid, self.componentPool, ...)
     entity:BindComponentEvent(
         self,
         self.onEntityAddComponentEvent,
@@ -180,7 +178,7 @@ end
 
 function Context:CreateGroup(matcher)
     if not matcher then
-        oop.error(LogTag,"the matcher is nil")
+        oop.error(LogTag, "the matcher is nil")
         return nil
     end
 

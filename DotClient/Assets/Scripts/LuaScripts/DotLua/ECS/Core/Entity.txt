@@ -54,12 +54,16 @@ function Entity:ReleaseRef(refMessage)
     end
 end
 
+function Entity:GetContextName()
+    return self.contextName
+end
+
 function Entity:GetGUID()
     return self.guid
 end
 
-function Entity:GetContextName()
-    return self.contextName
+function Entity:GetIdentity()
+    return self.contextName, self.guid
 end
 
 function Entity:MarkAsWaitingForRelease()
@@ -71,11 +75,10 @@ function Entity:MarkAsWaitingForRelease()
     self.componentModifiedEvent:Clear()
 end
 
-function Entity:DoActivate(guid, contextName, componentPool)
+function Entity:DoActivate(contextName, guid, componentPool)
     self.enable = true
-    self.guid = guid
-
     self.contextName = contextName
+    self.guid = guid
     self.componentPool = componentPool
 end
 
@@ -92,10 +95,9 @@ function Entity:DoDeactivate()
         self.componentPool:Release(component)
     end
     tclear(self.componentDic)
-
+    self.componentPool = nil
     self.guid = nil
     self.contextName = nil
-    self.componentPool = nil
 end
 
 function Entity:BindComponentEvent(receiver, addFunc, removeFunc, replaceFunc, modifyFunc)

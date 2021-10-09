@@ -1,36 +1,55 @@
 local oop = require("DotLua/OOP/oop")
 local Component = require("DotLua/ECS/Core/Component")
-local ListDictionary = require("DotLua/Generic/Collections/ListDictionary")
+local EntityIdentityPool = require("DotLua/ECS/Core/EntityIdentityPool")
+
+local tkeys = table.keys
 
 local ChildsComponent =
     oop.class(
     "DotLua.ECS.Components.Basic.ChildsComponent",
     function(self)
-        self.childListDic = ListDictionary()
+        self.childIdentityDic = {}
     end,
     Component
 )
 
-function ChildsComponent:GetChilds()
-    return self.childListDic:GetItems()
+function ChildsComponent:HasChild(guid)
+    return self.childIdentityDic[guid] ~= nil
 end
 
-function ChildsComponent:AddEntity(guid)
-    if not self.childListDic:HasItem(guid) then
-        self.childListDic:AddItem(guid,guid)
+function ChildsComponent:GetChildGUIDs()
+    return tkeys(self.childIdentityDic)
+end
+
+function ChildsComponent:GetChild(guid)
+    local identity = self.childIdentityDic[guid]
+    if identity then
+        return identity:GetIdentity()
+    end
+
+    return nil, nil
+end
+
+function ChildsComponent:AddChild(contextName, guid)
+    if not self.childIdentityDic[guid] then
+        local identity = EntityIdentityPool.Get(contextName, guid)
+        self.childIdentityDic[guid] = identity
     end
 end
 
-function ChildsComponent:RemoveEntity(guid)
-    self.childListDic:RemoveItem(guid)
-end
-
-function ChildsComponent:HasEntity(guid)
-    return self.childListDic:HasItem(guid)
+function ChildsComponent:RemoveChild(guid)
+    local identity = self.childIdentityDic[guid]
+    if identity then
+        self.childIdentityDic[guid] = nil
+        EntityIdentityPool.Release(identity)
+    end
 end
 
 function ChildsComponent:DoRelease()
-    self.childListDic:Clear()
+    for _, identity in pairs(self.childIdentityDic) do
+        EntityIdentityPool.Release(identity)
+    end
+    self.childIdentityDic = nil
 end
 
 return ChildsComponent

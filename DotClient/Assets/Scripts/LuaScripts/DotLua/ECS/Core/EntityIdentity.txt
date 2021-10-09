@@ -1,0 +1,31 @@
+local oop = require("DotLua/OOP/oop")
+
+local EntityIdentity =
+    oop.class(
+    "DotLua.ECS.Core.EntityIdentity",
+    function(self)
+        self.contextName = nil
+        self.guid = nil
+    end
+)
+
+function EntityIdentity:GetIdentity()
+    return self.contextName, self.guid
+end
+
+function EntityIdentity:SetIdentity(contextName, guid)
+    self.contextName = contextName
+    self.guid = guid
+end
+
+function EntityIdentity:DoGet(contextName, guid)
+    self.contextName = contextName
+    self.guid = guid
+end
+
+function EntityIdentity:DoRelease()
+    self.contextName = nil
+    self.guid = nil
+end
+
+return EntityIdentity

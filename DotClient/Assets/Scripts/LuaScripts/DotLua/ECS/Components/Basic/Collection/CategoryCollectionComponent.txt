@@ -1,0 +1,62 @@
+local oop = require("DotLua/OOP/oop")
+local Component = require("DotLua/ECS/Core/Component")
+local EntityIdentityPool = require("DotLua/ECS/Core/EntityIdentityPool")
+
+local tvalues = table.values
+local tkeys = table.keys
+
+local CategoryCollectionComponent =
+    oop.class(
+    "DotLua.ECS.Components.Basic.Collection.CategoryCollectionComponent",
+    function(self)
+        self.categoryToCollectionDic = {}
+    end,
+    Component
+)
+
+function CategoryCollectionComponent:GetEntityIdentities(categoryID)
+    local categoryCollection = self.categoryToCollectionDic[categoryID]
+    if categoryCollection then
+        return tvalues(categoryCollection)
+    end
+
+    return {}
+end
+
+function CategoryCollectionComponent:AddEntity(categoryID, contextName, guid)
+    local categoryCollection = self.categoryToCollectionDic[categoryID]
+    if not categoryCollection then
+        categoryCollection = {}
+        self.categoryToCollectionDic[categoryID] = categoryCollection
+    end
+    local identity = categoryCollection[guid]
+    if not identity then
+        identity = EntityIdentityPool.Get(contextName, guid)
+        categoryCollection[guid] = identity
+    end
+end
+
+function CategoryCollectionComponent:RemoveEntity(categoryID, contextName, guid)
+    local categoryCollection = self.categoryToCollectionDic[categoryID]
+    if categoryCollection then
+        local identity = categoryCollection[guid]
+        if identity then
+            categoryCollection[guid] = nil
+
+            EntityIdentityPool.Release(identity)
+        end
+    end
+end
+
+function CategoryCollectionComponent:DoRelease()
+    local categoryIDs = tkeys(self.categoryToCollectionDic)
+    for _, categoryID in ipairs(categoryIDs) do
+        local categoryCollection = self.categoryToCollectionDic[categoryID]
+        for _, identity in pairs(categoryCollection) do
+            EntityIdentityPool.Release(identity)
+        end
+        self.categoryToCollectionDic[categoryID] = nil
+    end
+end
+
+return CategoryCollectionComponent

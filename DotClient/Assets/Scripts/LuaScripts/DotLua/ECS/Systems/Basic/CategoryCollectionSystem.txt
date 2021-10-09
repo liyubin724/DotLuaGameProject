@@ -4,7 +4,7 @@ local EGroupEvent = require("DotLua/ECS/Core/EGroupEvent")
 local Collector = require("DotLua/ECS/Core/Collector")
 local Const = require("DotLua/ECS/Const")
 local CategoryComponent = require("DotLua/ECS/Components/Basic/CategoryComponent")
-local CategoryCollectionComponent = require("DotLua/ECS/Components/Basic/CategoryCollectionComponent")
+local CategoryCollectionComponent = require("DotLua/ECS/Components/Basic/Collection/CategoryCollectionComponent")
 local CollectorUpdateSystem = require("DotLua/ECS/Systems/CollectorUpdateSystem")
 local SystemPriorityConst = require("DotLua/ECS/Systems/SystemPriorityConst")
 
@@ -25,22 +25,22 @@ function CategoryCollectionSystem:onAddedEntityUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local categoryCollectionComponent = collectionEntity:GetComponent(CategoryCollectionComponent)
 
-    local guid = entity:GetGUID()
     local categoryComponent = entity:GetComponent(CategoryComponent)
     local categoryID = categoryComponent:GetCategoryID()
-
-    categoryCollectionComponent:AddEntity(categoryID, guid)
+    
+    local contextName, guid = entity:GetIdentity()
+    categoryCollectionComponent:AddEntity(categoryID, contextName, guid)
 end
 
 function CategoryCollectionSystem:onRemovedEntityUpdate(entity, deltaTime)
     local collectionEntity = ecs.GetGlobalEntity(Const.GLOBAL_ENTITY_COLLECTION_NAME)
     local categoryCollectionComponent = collectionEntity:GetComponent(CategoryCollectionComponent)
 
-    local guid = entity:GetGUID()
     local categoryComponent = entity:GetComponent(CategoryComponent)
     local categoryID = categoryComponent:GetCategoryID()
 
-    categoryCollectionComponent:RemoveEntity(categoryID, guid)
+    local contextName, guid = entity:GetIdentity()
+    categoryCollectionComponent:RemoveEntity(categoryID, contextName, guid)
 end
 
 return CategoryCollectionSystem
