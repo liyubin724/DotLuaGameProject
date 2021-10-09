@@ -19,13 +19,16 @@ namespace DotEngine.Lua
         {
             get
             {
-                if(luaEnv == null)
+                if (luaEnv == null)
                 {
                     LuaManager mgr = LuaManager.GetInstance();
-                    if(mgr !=null)
+                    if (mgr != null)
                     {
                         LuaBridger bridger = mgr.GetBridger(bridgerName);
-                        luaEnv = bridger.Env;
+                        if (bridger != null)
+                        {
+                            luaEnv = bridger.Env;
+                        }
                     }
                 }
                 return luaEnv;
@@ -36,7 +39,7 @@ namespace DotEngine.Lua
 
         public bool IsValid()
         {
-            if(isInited && Env.IsValid() && Table!=null)
+            if (isInited && Env.IsValid() && Table != null)
             {
                 return true;
             }
@@ -45,14 +48,15 @@ namespace DotEngine.Lua
 
         public void InitBehaviour()
         {
-            if(!isInited)
+            if (!isInited)
             {
                 isInited = true;
 
-                if(ctrParamValues.Count == 0)
+                if (ctrParamValues.Count == 0)
                 {
                     Table = LuaUtility.RequireAndInstance(Env, scriptPath);
-                }else
+                }
+                else
                 {
                     SystemObject[] arr = new SystemObject[ctrParamValues.Count];
                     for (int i = 0; i < ctrParamValues.Count; ++i)
@@ -73,7 +77,7 @@ namespace DotEngine.Lua
 
         protected virtual void OnInitFinished()
         {
-            if(IsValid())
+            if (IsValid())
             {
                 SetValue("gameObject", gameObject);
                 SetValue("transform", transform);
@@ -119,12 +123,12 @@ namespace DotEngine.Lua
             Table.Set(name, value);
         }
 
-        public void SetValue<K,V>(K key,V value)
+        public void SetValue<K, V>(K key, V value)
         {
             Table.Set(key, value);
         }
 
-        public void CallActionWithParams(string funcName,params LuaParamValue[] values)
+        public void CallActionWithParams(string funcName, params LuaParamValue[] values)
         {
             if (values == null || values.Length == 0)
             {
@@ -134,7 +138,7 @@ namespace DotEngine.Lua
             {
                 SystemObject[] paramValues = new SystemObject[values.Length + 1];
                 paramValues[0] = Table;
-                for(int i =0;i<values.Length;++i)
+                for (int i = 0; i < values.Length; ++i)
                 {
                     paramValues[i + 1] = values[i].GetValue();
                 }

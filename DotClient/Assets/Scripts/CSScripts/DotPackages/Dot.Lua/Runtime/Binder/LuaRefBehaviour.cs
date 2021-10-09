@@ -26,6 +26,7 @@ namespace DotEngine.Lua
                 {
                     RegisterParamToTable(regTable, i, p.values[i]);
                 }
+                regTable.Dispose();
             }
         }
 
@@ -35,8 +36,7 @@ namespace DotEngine.Lua
             {
                 return;
             }
-
-            SetValue(name, paramValue.GetValue());
+            table.Set(name, paramValue.GetValue());
         }
 
         private void RegisterParamToTable(LuaTable table, int index, LuaParamValue paramValue)
@@ -45,8 +45,7 @@ namespace DotEngine.Lua
             {
                 return;
             }
-
-            SetValue(index, paramValue.GetValue());
+            table.Set(index, paramValue.GetValue());
         }
     }
 }
