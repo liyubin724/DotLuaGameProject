@@ -9,7 +9,7 @@ namespace DotEngine.Log
         public ConsoleAppender() : base(NAME)
         { }
 
-        protected override void OutputLogMessage(LogLevel level, string message)
+        protected override void LogMessage(LogLevel level, string message)
         {
             Console.WriteLine(message);
         }

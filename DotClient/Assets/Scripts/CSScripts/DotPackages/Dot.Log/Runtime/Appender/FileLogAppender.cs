@@ -27,7 +27,7 @@ namespace DotEngine.Log
             outputDir = logFileDir;
         }
 
-        public override void DoStart()
+        public override void DoInitialize()
         {
             if (string.IsNullOrEmpty(outputDir))
             {
@@ -97,7 +97,7 @@ namespace DotEngine.Log
             }
         }
 
-        public override void DoEnd()
+        public override void DoDestroy()
         {
             tokenSource.Cancel();
             lock (locker)
@@ -111,7 +111,7 @@ namespace DotEngine.Log
             cachedLogs.Clear();
         }
 
-        protected override void OutputLogMessage(LogLevel level, string message)
+        protected override void LogMessage(LogLevel level, string message)
         {
             if (fileWriter == null)
             {

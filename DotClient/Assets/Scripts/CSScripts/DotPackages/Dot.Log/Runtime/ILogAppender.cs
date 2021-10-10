@@ -7,8 +7,8 @@ namespace DotEngine.Log
         string Name { get; }
         LogLevel ValidLevel { get; set; }
 
-        void DoStart();
-        void OnLogReceived(LogLevel level, DateTime dateTime, string tag, string message, string stacktrace);
-        void DoEnd();
+        void DoInitialize();
+        void OnLogReceived(string tag, LogLevel level, DateTime dateTime, string message, string stacktrace);
+        void DoDestroy();
     }
 }

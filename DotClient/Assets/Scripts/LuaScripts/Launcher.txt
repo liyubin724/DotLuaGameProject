@@ -22,5 +22,5 @@ function Launcher.DoUpdate(deltaTime, unscaleDeltaTime)
 end
 
 function Launcher.DoDestroy()
-    --ecs.Destroy()
+    ecs.Destroy()
 end

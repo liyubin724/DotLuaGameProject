@@ -18,22 +18,22 @@ namespace DotEngine.Log
             Formatter = formatter;
         }
 
-        public virtual void DoStart()
+        public virtual void DoInitialize()
         {
         }
 
-        public void OnLogReceived(LogLevel level, DateTime dateTime, string tag, string message, string stacktrace)
+        public void OnLogReceived(string tag, LogLevel level, DateTime dateTime, string message, string stacktrace)
         {
             if ((ValidLevel & level) > 0)
             {
-                string logMessage = Formatter.FormatMessage(level, dateTime, tag, message, stacktrace);
-                OutputLogMessage(level, logMessage);
+                string logMessage = Formatter.FormatMessage(tag, level, dateTime, message, stacktrace);
+                LogMessage(level, logMessage);
             }
         }
 
-        protected abstract void OutputLogMessage(LogLevel level, string message);
+        protected abstract void LogMessage(LogLevel level, string message);
 
-        public virtual void DoEnd()
+        public virtual void DoDestroy()
         {
         }
     }

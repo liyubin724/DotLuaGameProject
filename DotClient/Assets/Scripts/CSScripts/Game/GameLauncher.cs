@@ -11,8 +11,10 @@ namespace Game
 
         public static void Startup()
         {
-            UpdateManager.InitMgr();
+            LogUtil.Init();
             LogUtil.AddAppender(new UnityConsoleAppender());
+
+            UpdateManager.InitMgr();
 
             LuaManager luaMgr = LuaManager.InitMgr();
             luaMgr.CreateBridger(DEFAULT_LUA_NAME, DEFAULT_LUA_LAUNCHER_SCRIPT_PATH, true);
@@ -22,9 +24,11 @@ namespace Game
         {
             LuaManager luaMgr = LuaManager.GetInstance();
             luaMgr.DisposeBridger(DEFAULT_LUA_NAME);
-
             LuaManager.DisposeMgr();
+
             UpdateManager.DisposeMgr();
+
+            LogUtil.Dispose();
         }
     }
 }

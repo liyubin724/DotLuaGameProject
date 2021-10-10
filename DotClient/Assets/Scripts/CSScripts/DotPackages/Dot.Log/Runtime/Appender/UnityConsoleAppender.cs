@@ -13,7 +13,7 @@ namespace DotEngine.Log
         {
         }
 
-        protected override void OutputLogMessage(LogLevel level, string message)
+        protected override void LogMessage(LogLevel level, string message)
         {
             if(level>= LogLevel.Error)
             {
