@@ -35,7 +35,7 @@ namespace DotEngine.Log
         private Dictionary<string, ILogger> loggerDic = new Dictionary<string, ILogger>();
         private Dictionary<string, ILogAppender> appenderDic = new Dictionary<string, ILogAppender>();
 
-        public LogLevel ValidLogLevel { get; set; } = LogLevel.All;
+        public LogLevel ValidLogLevel { get; set; } = LogLevelConst.All;
         public LogLevel StacktraceLogLevel { get; set; } = LogLevelConst.Serious;
 
         private LogManager()

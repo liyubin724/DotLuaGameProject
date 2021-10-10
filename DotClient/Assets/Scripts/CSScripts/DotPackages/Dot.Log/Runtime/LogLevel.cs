@@ -10,8 +10,6 @@ namespace DotEngine.Log
         Info = 1 << 1,
         Warning = 1 << 2,
         Error = 1 << 3,
-
-        All = Debug + Warning + Error,
     }
 
     public static class LogLevelConst

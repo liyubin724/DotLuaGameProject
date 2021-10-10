@@ -6,7 +6,7 @@ namespace DotEngine.Log
     {
         public string FormatMessage(string tag, LogLevel level, DateTime dateTime, string message, string stacktrace)
         {
-            return $"{DateTime.Now.ToString("MM-dd HH:mm:ss-fff")} {level.ToString().ToUpper()} {tag} {message} {stacktrace}";
+            return $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss-fff")} {level.ToString().ToUpper()} {tag} {message} {stacktrace}";
         }
     }
 }

@@ -12,6 +12,19 @@ local ecs = _G.ecs
 
 Launcher = {}
 function Launcher.DoStart()
+    local CSLogUtil = CS.DotEngine.Log.LogUtil
+    if _G.isDebug then
+        logger.debug = CSLogUtil.Debug
+        logger.info = CSLogUtil.Info
+        logger.warning = CSLogUtil.Warning
+        logger.error = CSLogUtil.Error
+    else
+        logger.debug = nil
+        logger.info = nil
+        logger.warning = nil
+        logger.error = CSLogUtil.Error
+    end
+
     ecs.Initialize(GameEnv)
 
     logger.Info("Launcher", "Game Start")

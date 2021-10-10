@@ -1,43 +1,41 @@
 local select = select
 local strformat = string.format
-local isDebug = _G.isDebug
 
 local logger = {}
 
-logger.info = function(tag, message)
-    print(strformat('%s [INFO] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
-end
-logger.warning = function(tag, message)
-    print(strformat('%s [WARNING] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
-end
-logger.error = function(tag, message)
-    print(strformat('%s [ERROR] %s : %s', os.date("%Y-%m-%d %H:%M:%S",os.time()), tag, message))
+local defaultPrint = function(tag, message)
+    print(strformat("%s [INFO] %s : %s", os.date("%Y-%m-%d %H:%M:%S", os.time()), tag, message))
 end
 
 local getMessage = function(message, ...)
     local mess = message
-    if select("#",...) > 0 then
+    if select("#", ...) > 0 then
         mess = strformat(mess, ...)
     end
 
     return mess
 end
 
+logger.debug = defaultPrint
+logger.info = defaultPrint
+logger.warning = defaultPrint
+logger.error = defaultPrint
+
 function logger.Info(tag, message, ...)
     if logger.info then
-        logger.info(tag, getMessage(message, ...))
+        logger.info(strformat("Lua-%s",tag), getMessage(message, ...))
     end
 end
 
 function logger.Warning(tag, message, ...)
     if logger.warning then
-        logger.warning(tag, getMessage(message, ...))
+        logger.warning(strformat("Lua-%s",tag), getMessage(message, ...))
     end
 end
 
 function logger.Error(tag, message, ...)
     if logger.error then
-        logger.error(tag, getMessage(message, ...))
+        logger.error(strformat("Lua-%s",tag), getMessage(message, ...))
     end
 end
 

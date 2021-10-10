@@ -109,7 +109,6 @@ public static class ExampleConfig
             return new List<Type>
             {
                 typeof(Action<float,float>),
-                typeof(LogUtil),
             };
         }
     }
