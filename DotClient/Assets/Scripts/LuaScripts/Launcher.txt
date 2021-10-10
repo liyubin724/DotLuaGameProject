@@ -27,6 +27,13 @@ function Launcher.DoStart()
 
     ecs.Initialize(GameEnv)
 
+    local poolMgr = CS.DotEngine.UPool.PoolManager.GetInstance()
+    local globalCategory = poolMgr:GetCategory("Global Category")
+    local rootGObjectGroup = globalCategory:GetGroup("Global Root Group")
+    local gObject = rootGObjectGroup:GetItem(true)
+    gObject.name = "Test Root"
+    gObject.transform:SetParent(nil)
+
     logger.Info("Launcher", "Game Start")
 end
 
