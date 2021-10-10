@@ -1,6 +1,7 @@
 ﻿using DotEngine.Core.Update;
 using DotEngine.Log;
 using DotEngine.Lua;
+using DotEngine.UPool;
 
 namespace Game
 {
@@ -16,6 +17,8 @@ namespace Game
 
             UpdateManager.InitMgr();
 
+            PoolManager.InitMgr();
+
             LuaManager luaMgr = LuaManager.InitMgr();
             luaMgr.CreateBridger(DEFAULT_LUA_NAME, DEFAULT_LUA_LAUNCHER_SCRIPT_PATH, true);
         }
@@ -25,6 +28,8 @@ namespace Game
             LuaManager luaMgr = LuaManager.GetInstance();
             luaMgr.DisposeBridger(DEFAULT_LUA_NAME);
             LuaManager.DisposeMgr();
+
+            PoolManager.DisposeMgr();
 
             UpdateManager.DisposeMgr();
 

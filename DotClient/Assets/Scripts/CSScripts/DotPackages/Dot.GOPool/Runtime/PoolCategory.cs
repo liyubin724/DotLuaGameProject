@@ -6,17 +6,17 @@ namespace DotEngine.UPool
     /// <summary>
     /// 主要用于分组，可以根据使用场景进行添加和删除分组，不同的分组中可以有相同GameObject的缓存池
     /// </summary>
-    public class GameObjectCategory
+    public class PoolCategory
     {
         public string Name { get; private set; }
 
         private Transform categoryTransform = null;
-        private Dictionary<string, GameObjectGroup> itemGroupDic = new Dictionary<string, GameObjectGroup>();
+        private Dictionary<string, PoolGroup> itemGroupDic = new Dictionary<string, PoolGroup>();
 
-        internal GameObjectCategory(string name, Transform parentTran)
+        internal PoolCategory(string name, Transform parentTran)
         {
             Name = name;
-            if (PoolUtill.IsInDebug)
+            if (PoolUtill.IsDebug)
             {
                 categoryTransform = new GameObject(Name).transform;
                 categoryTransform.SetParent(parentTran, false);
@@ -34,9 +34,9 @@ namespace DotEngine.UPool
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public GameObjectGroup GetGroup(string name)
+        public PoolGroup GetGroup(string name)
         {
-            if (itemGroupDic.TryGetValue(name, out GameObjectGroup itemGroup))
+            if (itemGroupDic.TryGetValue(name, out PoolGroup itemGroup))
             {
                 return itemGroup;
             }
@@ -50,7 +50,7 @@ namespace DotEngine.UPool
         /// <param name="itemName">资源唯一标签，一般使用资源路径</param>
         /// <param name="itemTemplate">模板GameObject</param>
         /// <returns></returns>
-        public GameObjectGroup CreateGroup(string itemName, TemplateType itemType, GameObject itemTemplate)
+        public PoolGroup CreateGroup(string itemName, TemplateType itemType, GameObject itemTemplate)
         {
             if (itemTemplate == null)
             {
@@ -58,9 +58,9 @@ namespace DotEngine.UPool
                 return null;
             }
 
-            if (!itemGroupDic.TryGetValue(itemName, out GameObjectGroup itemGroup))
+            if (!itemGroupDic.TryGetValue(itemName, out PoolGroup itemGroup))
             {
-                itemGroup = new GameObjectGroup(Name, categoryTransform, itemName, itemType, itemTemplate);
+                itemGroup = new PoolGroup(Name, categoryTransform, itemName, itemType, itemTemplate);
                 itemGroupDic.Add(itemName, itemGroup);
                 return itemGroup;
             }
@@ -75,7 +75,7 @@ namespace DotEngine.UPool
         /// <param name="name">资源唯一标签，一般使用资源路径</param>
         public void DeleteGroup(string name)
         {
-            GameObjectGroup itemGroup = GetGroup(name);
+            PoolGroup itemGroup = GetGroup(name);
             if (itemGroup != null)
             {
                 itemGroupDic.Remove(name);
@@ -102,7 +102,7 @@ namespace DotEngine.UPool
                 kvp.Value.DoDestroy();
             }
             itemGroupDic.Clear();
-            if(PoolUtill.IsInDebug)
+            if(PoolUtill.IsDebug)
             {
                 Object.Destroy(categoryTransform.gameObject);
             }

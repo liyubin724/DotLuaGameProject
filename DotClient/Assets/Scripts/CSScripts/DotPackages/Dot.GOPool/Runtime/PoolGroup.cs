@@ -20,7 +20,7 @@ namespace DotEngine.UPool
     /// <summary>
     /// 以GameObject为对象的缓存池
     /// </summary>
-    public class GameObjectGroup
+    public class PoolGroup
     {
         public string categoryName;
         private Transform groupTransform;
@@ -70,7 +70,7 @@ namespace DotEngine.UPool
         /// </summary>
         private List<WeakReference<GameObject>> usedItemList = new List<WeakReference<GameObject>>();
 
-        internal GameObjectGroup(
+        internal PoolGroup(
             string categoryName,
             Transform parentTransform, 
             string assetPath, 
@@ -78,7 +78,7 @@ namespace DotEngine.UPool
             GameObject templateGObj)
         {
             this.categoryName = categoryName;
-            if(PoolUtill.IsInDebug)
+            if(PoolUtill.IsDebug)
             {
                 GameObject gObj = new GameObject(assetPath);
                 groupTransform = gObj.transform;
@@ -142,7 +142,7 @@ namespace DotEngine.UPool
             }
             for (int i = 0; i < amount; ++i)
             {
-                GameObject instance = CreateNewItem();
+                GameObject instance = CreateItem();
                 instance.transform.SetParent(groupTransform, false);
                 instance.SetActive(false);
 
@@ -167,7 +167,7 @@ namespace DotEngine.UPool
 
         private void Cull()
         {
-            if(PoolUtill.IsInDebug)
+            if(PoolUtill.IsDebug)
             {
                 for (int i = usedItemList.Count - 1; i >= 0; --i)
                 {
@@ -189,7 +189,7 @@ namespace DotEngine.UPool
             }
             for (int i = 0; i < amount; ++i)
             {
-                UnityObject.Destroy(unusedItemQueue.Dequeue());
+                DestroyItem(unusedItemQueue.Dequeue());
             }
         }
 #endregion
@@ -217,7 +217,7 @@ namespace DotEngine.UPool
             }
             else
             {
-                item = CreateNewItem();
+                item = CreateItem();
             }
 
             if (item != null)
@@ -225,7 +225,7 @@ namespace DotEngine.UPool
                 item.SetActive(isAutoSetActive);
                 //item.BroadcastMessage("DoGet", SendMessageOptions.DontRequireReceiver);
 
-                if(PoolUtill.IsInDebug)
+                if(PoolUtill.IsDebug)
                 {
                     usedItemList.Add(new WeakReference<GameObject>(item));
                 }
@@ -261,7 +261,7 @@ namespace DotEngine.UPool
             return component;
         }
 
-        private GameObject CreateNewItem()
+        private GameObject CreateItem()
         {
             GameObject item = null;
             if(templateType == TemplateType.RuntimeInstance)
@@ -270,9 +270,14 @@ namespace DotEngine.UPool
             }
             else
             {
-                item = (GameObject)PoolUtill.InstantiateAsset(assetPath, template);
+                item = (GameObject)PoolUtill.InstantiateProvider(assetPath, template);
             }
             return item;
+        }
+
+        private void DestroyItem(GameObject item)
+        {
+            PoolUtill.DestroyProvider(assetPath, item);
         }
 #endregion
 
@@ -291,7 +296,7 @@ namespace DotEngine.UPool
 
             if(unusedItemQueue.Count > limitMaxAmount)
             {
-                UnityObject.Destroy(item);
+                DestroyItem(item);
                 return;
             }
 
@@ -299,7 +304,7 @@ namespace DotEngine.UPool
             item.SetActive(false);
             unusedItemQueue.Enqueue(item);
 
-            if(PoolUtill.IsInDebug)
+            if(PoolUtill.IsDebug)
             {
                 //从使用列表中删除要回收的对象
                 for (int i = usedItemList.Count - 1; i >= 0; i--)
@@ -335,19 +340,19 @@ namespace DotEngine.UPool
 
             for (int i = unusedItemQueue.Count - 1; i >= 0; i--)
             {
-                UnityObject.Destroy(unusedItemQueue.Dequeue());
+                DestroyItem(unusedItemQueue.Dequeue());
             }
             unusedItemQueue.Clear();
 
             if(templateType == TemplateType.PrefabInstance || templateType == TemplateType.RuntimeInstance)
             {
-                UnityObject.Destroy(template);
+                DestroyItem(template);
             }
             template = null;
 
             assetPath = null;
             categoryName = null;
-            if(PoolUtill.IsInDebug)
+            if(PoolUtill.IsDebug)
             {
                 UnityObject.Destroy(groupTransform.gameObject);
             }

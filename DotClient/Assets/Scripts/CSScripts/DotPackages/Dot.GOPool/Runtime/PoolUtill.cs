@@ -1,30 +1,31 @@
 ﻿using System;
-using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.UPool
 {
     public static class PoolUtill
     {
-        internal static readonly string LOG_TAG = "GOPool";
-        private static readonly string ROOT_NAME = "GOP-Root";
+        internal static readonly string LOG_TAG = "PoolMgr";
+        public static bool IsDebug { get; set; } = true;
 
-        public static Func<string, UnityObject, UnityObject> InstantiateAsset { get; set; }
-        public static bool IsInDebug { get; set; } = true;
-
-        private static Transform rootTransform = null;
-        public static Transform Root
+        internal static Func<string, UnityObject, UnityObject> InstantiateProvider { get; set; } = (assetPath, uObj) =>
         {
-            get
-            {
-                if (rootTransform == null)
-                {
-                    GameObject gObj = new GameObject(ROOT_NAME);
-                    rootTransform = gObj.transform;
+            return UnityObject.Instantiate(uObj);
+        };
+        internal static Action<string, UnityObject> DestroyProvider { get; set; } = (assetPath, uObj) =>
+         {
+             UnityObject.Destroy(uObj);
+         };
 
-                    UnityObject.DontDestroyOnLoad(gObj);
-                }
-                return rootTransform;
+        public static void SetAssetProvider(Func<string, UnityObject, UnityObject> instantiateProvider, Action<string, UnityObject> destroyProvider)
+        {
+            if (instantiateProvider != null)
+            {
+                InstantiateProvider = instantiateProvider;
+            }
+            if (destroyProvider != null)
+            {
+                DestroyProvider = destroyProvider;
             }
         }
 
