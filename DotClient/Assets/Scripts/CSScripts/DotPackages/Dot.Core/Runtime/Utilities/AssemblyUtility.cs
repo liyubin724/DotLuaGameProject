@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 namespace DotEngine.Utilities
 {
@@ -47,14 +48,14 @@ namespace DotEngine.Utilities
         {
             if (string.IsNullOrEmpty(genericTypeFullName) || paramTypeFullNames == null || paramTypeFullNames.Length == 0)
             {
-                CoreLogger.Error(LOG_TAG, "Arg is Null");
+                Debug.LogError(string.Format("%s Arg is Null", LOG_TAG));
                 return null;
             }
 
             Type genericType = GetTypeByFullName(genericTypeFullName);
             if (genericType == null)
             {
-                CoreLogger.Error(LOG_TAG, $"Type Not Found.Type = {genericTypeFullName}");
+                Debug.LogError($"Type Not Found.Type = {genericTypeFullName}");
                 return null;
             }
 
@@ -64,13 +65,13 @@ namespace DotEngine.Utilities
                 string typeStr = paramTypeFullNames[i];
                 if (string.IsNullOrEmpty(typeStr))
                 {
-                    CoreLogger.Error(LOG_TAG, "Param Type Is NUll");
+                    Debug.LogError("Param Type Is NUll");
                     return null;
                 }
                 Type t = GetTypeByFullName(paramTypeFullNames[i]);
                 if (t == null)
                 {
-                    CoreLogger.Error(LOG_TAG, $"Param Type Not Found.Type = {paramTypeFullNames[i]}");
+                    Debug.LogError($"Param Type Not Found.Type = {paramTypeFullNames[i]}");
                     return null;
                 }
                 types[i] = t;

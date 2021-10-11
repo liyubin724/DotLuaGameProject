@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DotEngine.Pool
 {
@@ -45,7 +46,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                CoreLogger.Error("ObjectPool", "the element has been released");
+                Debug.LogError("ObjectPool::Release->The element has been released");
                 return;
             }
 #endif
@@ -104,7 +105,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                CoreLogger.Error("ObjectPool","GenericObjectPool::Release->The element has been push into pool!");
+                Debug.LogError("ObjectPool::Release->The element has been push into pool!");
                 return;
             }
 #endif
@@ -167,7 +168,7 @@ namespace DotEngine.Pool
 #if DEBUG
                 if (m_Stack.Contains(element))
                 {
-                    CoreLogger.Error("ObjectPool","ItemObjectPool::Release->The element has been push into pool!");
+                    Debug.LogError("ObjectPool::Release->The element has been push into pool!");
                     return;
                 }
 #endif
