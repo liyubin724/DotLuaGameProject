@@ -1,0 +1,43 @@
+local oop = require("DotLua/OOP/oop")
+local EntityController = require("DotLua/Framework/Entity/EntityController")
+local EntityControllerNames = require("DotLua/Framework/Entity/EntityControllerNames")
+local Vector3 = require("DotLua/Math/Vector3")
+
+local EntityLocalPositionController =
+    oop.class(
+    "EntityLocalPositionController",
+    function(self)
+        self.localPosition = Vector3()
+    end,
+    EntityController
+)
+
+function EntityLocalPositionController:GetLocalPosition()
+    return self.localPosition
+end
+
+function EntityLocalPositionController:GetLocalPositionXYZ()
+    return self.localPosition:GetX(), self.localPosition:GetY(), self.localPosition:GetZ()
+end
+
+function EntityLocalPositionController:SetLocalPosition(position)
+    self.localPosition:Set(position.x, position.y, position.z)
+    self:updatePosition()
+end
+
+function EntityLocalPositionController:SetLocalPositionXYZ(x, y, z)
+    self.localPosition:Set(x, y, z)
+    self:updateLocalPosition()
+end
+
+function EntityLocalPositionController:updateLocalPosition()
+    local rootContoller = self:getController(EntityControllerNames.ROOT)
+    if rootContoller then
+        local rootTransform = rootContoller:GetRootTransform()
+        if rootTransform then
+            rootTransform.localPosition = self.localPosition:ToUEVector3()
+        end
+    end
+end
+
+return EntityLocalPositionController

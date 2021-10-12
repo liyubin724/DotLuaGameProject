@@ -1,17 +1,19 @@
-local Vector3 = require('DotLua/Math/Vector3')
+local Vector3 = require("DotLua/Math/Vector3")
 
-function Vector3:ToUVector2()
+local UEVector3 = CS.UnityEngine.Vector3
+
+function Vector3:ToUEVector2()
     return nil
 end
 
-function Vector3:ToUVector3()
+function Vector3:ToUEVector3()
+    return UEVector3(self.x, self.y, self.z)
+end
+
+function Vector3.FromUEVector2(uv2)
     return nil
 end
 
-function Vector3.FromUVector2(uv2)
-    return nil
-end
-
-function Vector3.FromUVector3(uv3)
+function Vector3.FromUEVector3(uv3)
     return nil
 end

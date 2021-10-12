@@ -22,12 +22,24 @@ function Vector3:GetX()
     return self.x
 end
 
+function Vector3:SetX(x)
+    self.x = x
+end
+
 function Vector3:GetY()
     return self.y
 end
 
+function Vector3:SetY(y)
+    self.y = y
+end
+
 function Vector3:GetZ()
     return self.z
+end
+
+function Vector3:SetZ(z)
+    self.z = z
 end
 
 function Vector3:Set(newx, newy, newz)

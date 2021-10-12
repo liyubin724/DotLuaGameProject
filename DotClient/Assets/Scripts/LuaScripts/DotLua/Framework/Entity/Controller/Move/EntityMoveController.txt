@@ -1,0 +1,12 @@
+local oop = require("DotLua/OOP/oop")
+local EntityController = require("DotLua/Framework/Entity/EntityController")
+
+local EntityMoveController =
+    oop.class(
+    "DotLua.Framework.Entity.Controller.Move.EntityMoveController",
+    function(self)
+    end,
+    EntityController
+)
+
+return EntityMoveController

@@ -1,0 +1,39 @@
+local oop = require("DotLua/OOP/oop")
+
+local EntityController =
+    oop.class(
+    "EntityController",
+    function(self)
+        self.enable = false
+
+        self.entityObject = nil
+    end
+)
+
+function EntityController:IsEnable()
+    return self.enable
+end
+
+function EntityController:SetEnable(isEnable)
+    self.enable = isEnable
+end
+
+function EntityController:DoActivate()
+end
+
+
+function EntityController:DoDeactivate()
+end
+
+---protected----
+---@param name any
+---@return any
+function EntityController:getController(name)
+    if not self.entityObject then
+        return nil
+    end
+
+    return self.entityObject:GetController(name)
+end
+
+return EntityController

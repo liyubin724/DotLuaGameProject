@@ -1,0 +1,9 @@
+local MsgDispatcher = require("DotLua/Message/MsgDispatcher")
+local GUIDCreator = require("DotLua/Generic/GUIDCreator")
+
+local framework = {}
+
+framework.dispatcher = MsgDispatcher()
+framework.guidCreator = GUIDCreator()
+
+return framework
