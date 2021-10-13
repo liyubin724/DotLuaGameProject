@@ -1,5 +1,6 @@
 local oop = require("DotLua/OOP/oop")
 local EntityController = require("DotLua/Framework/Entity/EntityController")
+local MsgDispatcher = require("DotLua/Message/MsgDispatcher")
 
 local tremovevalue = table.removevalue
 
@@ -11,6 +12,8 @@ local ActorObject =
     function(self)
         self.guid = nil
         self.category = nil
+
+        self.dispatcher = MsgDispatcher()
 
         self.controllerDic = {}
         self.updateControllers = {}
@@ -24,6 +27,10 @@ end
 
 function ActorObject:GetIdentity()
     return self.guid, self.category
+end
+
+function ActorObject:GetDispatcher()
+    return self.dispatcher
 end
 
 function ActorObject:DoActivate()
@@ -77,6 +84,12 @@ function ActorObject:DoUpdate(deltaTime, unscaleDeltaTime)
             local controller = self.updateControllers[i]
             controller:DoUpdate(deltaTime, unscaleDeltaTime)
         end
+    end
+end
+
+function ActorObject:SendMessage(name, ...)
+    if self.dispatcher then
+        self.dispatcher:Trigger(name, ...)
     end
 end
 

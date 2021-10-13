@@ -1,5 +1,5 @@
 local oop = require("DotLua/OOP/oop")
-local FConst = require("DotLua/Framework/FConst")
+local ActorControllerNames = require("DotLua/Framework/Controllers/ActorControllerNames")
 local Vector3 = require("DotLua/Math/Vector3")
 local ActorController = require("DotLua/Framework/ActorController")
 
@@ -31,7 +31,7 @@ function DirectionController:SetDirectionXYZ(x, y, z)
 end
 
 function DirectionController:updateDirection()
-    local rootContoller = self:getController(FConst.CONTROLLER_ROOT)
+    local rootContoller = self:getController(ActorControllerNames.CONTROLLER_ROOT)
     if rootContoller then
         local rootTransform = rootContoller:GetRootTransform()
         if rootTransform then

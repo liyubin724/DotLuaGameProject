@@ -1,0 +1,13 @@
+local ActorControllerNames = {}
+
+---the name of the controller(view)---
+ActorControllerNames.ROOT_CONTROLLER_NAME = "RootController"
+ActorControllerNames.SKELETON_CONTROLLER_NAME = "SkeletonController"
+ActorControllerNames.AVATAR_CONTROLLER_NAME = "AvatarController"
+
+---the name of the controller(logic)---
+ActorControllerNames.POSITION_CONTROLLER_NAME = "PositionController"
+ActorControllerNames.LOCALPOSITION_CONTROLLER_NAME = "LocalPositionController"
+ActorControllerNames.DIRECTION_CONTROLLER_NAME = "DirectionController"
+
+return ActorControllerNames

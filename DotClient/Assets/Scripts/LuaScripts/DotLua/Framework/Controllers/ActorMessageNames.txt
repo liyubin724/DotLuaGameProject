@@ -1,0 +1,6 @@
+local ActorMessageNames = {}
+
+ActorMessageNames.SKELETON_CHANGED_EVENT = "SkeletonChanged"
+ActorMessageNames.AVATAR_CHANGED_EVENT = "AvatarChanged"
+
+return ActorMessageNames

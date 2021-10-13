@@ -1,0 +1,25 @@
+local oop = require("DotLua/OOP/oop")
+local ActorMessageNames = require("DotLua/Framework/Controllers/ActorMessageNames")
+local MessageController = require("DotLua/Framework/Controllers/MessageController")
+local AssetLoader = require("DotLua/Asset/AssetLoader")
+
+local SkeletonController =
+    oop.class(
+    "SkeletonController",
+    function(self)
+        self.skeletonAssetPath = nil
+        self.skeletonGameObject = nil
+        self.assetLoadingIndex = nil
+    end,
+    MessageController
+)
+
+function SkeletonController:listEventNames()
+    return {ActorMessageNames.SKELETON_CHANGED_EVENT}
+end
+
+function SkeletonController:onSkeletonChanged(skeletonAssetPath)
+    
+end
+
+return SkeletonController

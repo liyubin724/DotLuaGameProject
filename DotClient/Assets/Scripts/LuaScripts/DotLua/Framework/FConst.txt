@@ -26,12 +26,4 @@ FConst.DO_RELEASE_FUNC_NAME = "DoRelease"
 FConst.ON_GET_FUNC_NAME = "onGet"
 FConst.ON_RELEASE_FUNC_NAME = "onRelease"
 
----- the name of controller(view)----
-FConst.CONTROLLER_ROOT = "RootController"
-
----- the name of controller(logic)----
-FConst.CONTROLLER_POSITION = "PositionController"
-FConst.CONTROLLER_LOCALPOSITION = "LocalPositionController"
-FConst.CONTROLLER_DIRECTION = "DirectionController"
-
 return FConst

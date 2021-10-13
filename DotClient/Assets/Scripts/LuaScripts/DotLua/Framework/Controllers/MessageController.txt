@@ -1,6 +1,10 @@
 local oop = require("DotLua/OOP/oop")
 local ActorController = require("DotLua/Framework/ActorController")
 
+local strformat = string.format
+
+local LogTag = "MessageController"
+
 local MessageController =
     oop.class(
     "MessageController",
@@ -8,5 +12,43 @@ local MessageController =
     end,
     ActorController
 )
+
+function MessageController:onActivate()
+    local eventNames = self:listEventNames()
+    if eventNames and #eventNames > 0 and self.dispatcher then
+        for _, name in ipairs(eventNames) do
+            self:getDispatcher():RegisterListener(name, self, self.handleEvent)
+        end
+    end
+end
+
+function MessageController:onDeactivate()
+    local eventNames = self:listEventNames()
+    if eventNames and #eventNames > 0 and self.dispatcher then
+        for _, name in ipairs(eventNames) do
+            self:getDispatcher():UnregisterListener(name, self, self.handleEvent)
+        end
+    end
+end
+
+function MessageController:listEventNames()
+    return nil
+end
+
+function MessageController:handleEvent(eventName, ...)
+    local funcName = strformat("on%s", eventName)
+    if self[funcName] then
+        self[funcName](self, ...)
+    elseif self["onEvent"] then
+        self["onEvent"](self, eventName, ...)
+    else
+        oop.warning(LogTag, "The handler is not found for event(%s)", eventName)
+    end
+end
+
+function MessageController:getDispatcher()
+    local actor = self:GetActor()
+    return actor:GetDispatcher()
+end
 
 return MessageController

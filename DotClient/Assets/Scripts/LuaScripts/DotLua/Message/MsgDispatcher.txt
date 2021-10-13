@@ -16,7 +16,7 @@ local MsgDispatcher =
     end
 )
 
-function MsgDispatcher:RegistListener(name, receiver, func, userdata)
+function MsgDispatcher:RegisterListener(name, receiver, func, userdata)
     local listenerList = self.listenerDic[name]
     if not listenerList then
         listenerList = {}
@@ -27,7 +27,7 @@ function MsgDispatcher:RegistListener(name, receiver, func, userdata)
     tinsert(listenerList, listener)
 end
 
-function MsgDispatcher:UnregistListener(name, receiver, func)
+function MsgDispatcher:UnregisterListener(name, receiver, func)
     local listenerList = self.listenerDic[name]
     if listenerList then
         for i = #listenerList, 1, -1 do
@@ -45,7 +45,7 @@ function MsgDispatcher:UnregistListener(name, receiver, func)
     end
 end
 
-function MsgDispatcher:UnregistAll(name)
+function MsgDispatcher:UnregisterAll(name)
     local listenerList = self.listenerDic[name]
     if listenerList then
         for i = #(listenerList), 1, -1 do

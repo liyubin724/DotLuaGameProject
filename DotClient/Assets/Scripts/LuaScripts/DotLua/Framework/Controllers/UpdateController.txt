@@ -25,9 +25,7 @@ function UpdateController:SetInterval(interval)
     self.elapseUnscaleDeltaTime = 0
 end
 
-function UpdateController:DoActivate()
-    ActorController.DoActivate(self)
-
+function UpdateController:onActivate()
     self.elapseDeltaTime = 0
     self.elapseUnscaleDeltaTime = 0
 end

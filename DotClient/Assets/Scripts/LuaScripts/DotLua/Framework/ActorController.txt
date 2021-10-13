@@ -1,4 +1,5 @@
 local oop = require("DotLua/OOP/oop")
+local FConst = require("DotLua/Framework/FConst")
 
 local ActorController =
     oop.class(
@@ -24,12 +25,28 @@ function ActorController:SetPriority(priority)
     self.priority = priority
 end
 
+function ActorController:GetActor()
+    return self.actor
+end
+
 function ActorController:SetActor(actor)
     self.actor = actor
 end
 
+function ActorController:DoInitialize()
+    local func = self[FConst.ON_INITILIZE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
+end
+
 function ActorController:DoActivate()
     self.enable = true
+
+    local func = self[FConst.ON_ACTIVATE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
 end
 
 function ActorController:DoDeactivate()
@@ -37,7 +54,23 @@ function ActorController:DoDeactivate()
 
     self.actor = nil
     self.priority = 0
+
+    local func = self[FConst.ON_DEACTIVATE_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
 end
+
+function ActorController:DoDestroy()
+    if self.enable then
+        self:DoDeactivate()
+    end
+    local func = self[FConst.ON_DESTROY_FUNC_NAME]
+    if func and type(func) == "function" then
+        func(self)
+    end
+end
+
 
 ---protected----
 function ActorController:getController(name)

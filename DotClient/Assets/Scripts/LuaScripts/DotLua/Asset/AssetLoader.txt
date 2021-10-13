@@ -1,0 +1,15 @@
+local AssetLoader = {}
+
+function AssetLoader.LoadAsset()
+end
+
+function AssetLoader.LoadAssetAsync()
+end
+
+function AssetLoader.UnloadAsset(loadingIndex)
+end
+
+function AssetLoader.ClearUnusedAsset()
+end
+
+return AssetLoader
