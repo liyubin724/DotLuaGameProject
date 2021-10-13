@@ -6,6 +6,12 @@ end
 function AssetLoader.LoadAssetAsync()
 end
 
+function AssetLoader.LoadAllAssets()
+end
+
+function AssetLoader.LoadAllAssetsAsync()
+end
+
 function AssetLoader.UnloadAsset(loadingIndex)
 end
 
