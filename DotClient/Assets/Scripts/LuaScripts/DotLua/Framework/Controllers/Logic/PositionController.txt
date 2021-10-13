@@ -1,37 +1,37 @@
 local oop = require("DotLua/OOP/oop")
-local EntityController = require("DotLua/Framework/Entity/EntityController")
-local EntityControllerNames = require("DotLua/Framework/Entity/EntityControllerNames")
+local ActorController = require("DotLua/Framework/ActorController")
+local FConst = require("DotLua/Framework/FConst")
 local Vector3 = require("DotLua/Math/Vector3")
 
-local EntityPositionController =
+local PositionController =
     oop.class(
-    "EntityPositionController",
+    "PositionController",
     function(self)
         self.position = Vector3()
     end,
-    EntityController
+    ActorController
 )
 
-function EntityPositionController:GetPosition()
+function PositionController:GetPosition()
     return self.position
 end
 
-function EntityPositionController:GetPositionXYZ()
+function PositionController:GetPositionXYZ()
     return self.position:GetX(), self.position:GetY(), self.position:GetZ()
 end
 
-function EntityPositionController:SetPosition(position)
+function PositionController:SetPosition(position)
     self.position:Set(position.x, position.y, position.z)
     self:updatePosition()
 end
 
-function EntityPositionController:SetPositionXYZ(x, y, z)
+function PositionController:SetPositionXYZ(x, y, z)
     self.position:Set(x, y, z)
     self:updatePosition()
 end
 
-function EntityPositionController:updatePosition()
-    local rootContoller = self:getController(EntityControllerNames.ROOT)
+function PositionController:updatePosition()
+    local rootContoller = self:getController(FConst.CONTROLLER_ROOT)
     if rootContoller then
         local rootTransform = rootContoller:GetRootTransform()
         if rootTransform then
@@ -40,4 +40,4 @@ function EntityPositionController:updatePosition()
     end
 end
 
-return EntityPositionController
+return PositionController

@@ -1,0 +1,37 @@
+local FConst = {}
+
+FConst.UPDATE_INTERVAL_EVERY = 0
+FConst.UPDATA_INTERVAL_HIGH = 0.05
+FConst.UPDATE_INTERVAL_NORMAL = 0.1
+FConst.UPDATE_INTERVAL_LOW = 1
+
+----Name of Function----
+FConst.DO_INITILIZE_FUNC_NAME = "DoInitialize"
+FConst.DO_ACTIVATE_FUNC_NAME = "DoActivate"
+FConst.DO_UPDATE_FUNC_NAME = "DoUpdate"
+FConst.DO_DEACTIVATE_FUNC_NAME = "DoDeactivate"
+FConst.DO_DESTROY_FUNC_NAME = "DoDestroy"
+
+FConst.ON_INITILIZE_FUNC_NAME = "onInitialize"
+FConst.ON_ACTIVATE_FUNC_NAME = "onActivate"
+FConst.ON_UPDATE_FUNC_NAME = "onUpdate"
+FConst.ON_UNSCALE_UPDATE_FUNC_NAME = "onUnscaleUpdate"
+FConst.ON_DEACTIVATE_FUNC_NAME = "onDeactivate"
+FConst.ON_DESTROY_FUNC_NAME = "onDestroy"
+
+---- name of pool----
+FConst.DO_GET_FUNC_NAME = "DoGet"
+FConst.DO_RELEASE_FUNC_NAME = "DoRelease"
+
+FConst.ON_GET_FUNC_NAME = "onGet"
+FConst.ON_RELEASE_FUNC_NAME = "onRelease"
+
+---- the name of controller(view)----
+FConst.CONTROLLER_ROOT = "RootController"
+
+---- the name of controller(logic)----
+FConst.CONTROLLER_POSITION = "PositionController"
+FConst.CONTROLLER_LOCALPOSITION = "LocalPositionController"
+FConst.CONTROLLER_DIRECTION = "DirectionController"
+
+return FConst

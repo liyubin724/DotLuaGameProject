@@ -1,0 +1,69 @@
+local oop = require("DotLua/OOP/oop")
+local FConst = require("DotLua/Framework/FConst")
+local ActorController = require("DotLua/Framework/ActorController")
+
+local UpdateController =
+    oop.class(
+    "UpdateController",
+    function(self)
+        self.interval = FConst.UPDATE_INTERVAL_EVERY
+
+        self.elapseDeltaTime = 0
+        self.elapseUnscaleDeltaTime = 0
+    end,
+    ActorController
+)
+
+function UpdateController:GetInterval()
+    return self.interval
+end
+
+function UpdateController:SetInterval(interval)
+    self.interval = interval
+
+    self.elapseDeltaTime = 0
+    self.elapseUnscaleDeltaTime = 0
+end
+
+function UpdateController:DoActivate()
+    ActorController.DoActivate(self)
+
+    self.elapseDeltaTime = 0
+    self.elapseUnscaleDeltaTime = 0
+end
+
+function UpdateController:DoUpdate(deltaTime, unscaleDeltaTime)
+    local onUpdateFunc = self[FConst.ON_UPDATE_FUNC_NAME]
+    if onUpdateFunc then
+        self.elapseDeltaTime = self.elapseDeltaTime + deltaTime
+
+        if self.elapseDeltaTime >= self.frequencyTime then
+            onUpdateFunc(self, deltaTime)
+            if self.frequencyTime <= 0 then
+                self.elapseDeltaTime = 0
+            else
+                self.elapseDeltaTime = self.elapseDeltaTime - self.frequencyTime
+            end
+        end
+    end
+
+    local onUnscaleUpdate = self[FConst.ON_UNSCALE_UPDATE_FUNC_NAME]
+    if onUnscaleUpdate then
+        self.elapseUnscaleDeltaTime = self.elapseUnscaleDeltaTime + unscaleDeltaTime
+        if self.elapseDeltaTime >= self.frequencyTime then
+            onUnscaleUpdate(self, unscaleDeltaTime)
+            if self.frequencyTime <= 0 then
+                self.elapseUnscaleDeltaTime = 0
+            else
+                self.elapseUnscaleDeltaTime = self.elapseUnscaleDeltaTime - self.frequencyTime
+            end
+        end
+    end
+end
+
+-- function UpdateController:onUpdate(deltaTime)
+-- end
+-- function UpdateController:onUnscaleUpdate(unscaleDeltaTime)
+-- end
+
+return UpdateController

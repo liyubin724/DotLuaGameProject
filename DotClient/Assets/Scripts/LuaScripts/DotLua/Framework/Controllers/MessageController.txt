@@ -1,0 +1,12 @@
+local oop = require("DotLua/OOP/oop")
+local ActorController = require("DotLua/Framework/ActorController")
+
+local MessageController =
+    oop.class(
+    "MessageController",
+    function(self)
+    end,
+    ActorController
+)
+
+return MessageController

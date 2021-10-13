@@ -1,5 +1,0 @@
-local EntityControllerNames = {}
-
-EntityControllerNames.ROOT = "Root"
-
-return EntityControllerNames

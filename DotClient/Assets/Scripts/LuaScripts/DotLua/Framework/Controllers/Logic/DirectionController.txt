@@ -1,0 +1,43 @@
+local oop = require("DotLua/OOP/oop")
+local FConst = require("DotLua/Framework/FConst")
+local Vector3 = require("DotLua/Math/Vector3")
+local ActorController = require("DotLua/Framework/ActorController")
+
+local DirectionController =
+    oop.class(
+    "DirectionController",
+    function(self)
+        self.direction = Vector3()
+    end,
+    ActorController
+)
+
+function DirectionController:GetDirection()
+    return self.direction
+end
+
+function DirectionController:GetDirectionXYZ()
+    return self.direction:GetX(), self.direction:GetY(), self.direction:GetZ()
+end
+
+function DirectionController:SetDirection(direction)
+    self.direction:Set(direction.x, direction.y, direction.z)
+    self:updateDirection()
+end
+
+function DirectionController:SetDirectionXYZ(x, y, z)
+    self.direction:Set(x, y, z)
+    self:updateDirection()
+end
+
+function DirectionController:updateDirection()
+    local rootContoller = self:getController(FConst.CONTROLLER_ROOT)
+    if rootContoller then
+        local rootTransform = rootContoller:GetRootTransform()
+        if rootTransform then
+            rootTransform.forward = self.direction:ToUEVector3()
+        end
+    end
+end
+
+return DirectionController
