@@ -3,11 +3,13 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public abstract class AAssetAsyncOperation : AOperation
+    public abstract class AAsyncOperation
     {
         protected AsyncOperation operation = null;
+        protected bool isRunning = false;
+        protected string assetPath = null;
 
-        public override bool IsFinished
+        public bool IsFinished
         {
             get
             {
@@ -19,7 +21,7 @@ namespace DotEngine.Assets.Operations
             }
         }
 
-        public override float GetProgress()
+        public float GetProgress()
         {
             if(operation!=null)
             {
@@ -29,7 +31,7 @@ namespace DotEngine.Assets.Operations
             return 0;
         }
 
-        public override UnityObject GetResult()
+        public UnityObject GetResult()
         {
             if(!IsFinished)
             {
@@ -39,9 +41,14 @@ namespace DotEngine.Assets.Operations
             return GetResultInOperation();
         }
 
-        public override void DoStart(string path)
+        public void DoInitilize(string path)
         {
-            operation = CreateOperation(path);
+            assetPath = path;
+        }
+
+        public void DoStart()
+        {
+            operation = CreateOperation(assetPath);
             operation.completed += OnComplete;
         }
 
@@ -51,10 +58,12 @@ namespace DotEngine.Assets.Operations
             FinishOperation();
         }
 
-        public override void DoEnd()
+        public void DoEnd()
         {
             DisposeOperation();
             operation = null;
+            assetPath = null;
+            isRunning = false;
         }
 
         protected abstract AsyncOperation CreateOperation(string path);

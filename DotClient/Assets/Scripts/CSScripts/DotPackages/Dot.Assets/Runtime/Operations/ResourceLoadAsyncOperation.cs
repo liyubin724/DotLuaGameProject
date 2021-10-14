@@ -3,12 +3,11 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public class BundleCreateAsyncOperation : AAssetAsyncOperation
+    public class ResourceLoadAsyncOperation : AAsyncOperation
     {
-
         protected override AsyncOperation CreateOperation(string path)
         {
-            return AssetBundle.LoadFromFileAsync(path);
+            return Resources.LoadAsync(path);
         }
 
         protected override void DisposeOperation()
@@ -21,8 +20,8 @@ namespace DotEngine.Assets.Operations
 
         protected override UnityObject GetResultInOperation()
         {
-            AssetBundleCreateRequest request = (AssetBundleCreateRequest)operation;
-            return request.assetBundle;
+            ResourceRequest request = (ResourceRequest)operation;
+            return request.asset;
         }
     }
 }

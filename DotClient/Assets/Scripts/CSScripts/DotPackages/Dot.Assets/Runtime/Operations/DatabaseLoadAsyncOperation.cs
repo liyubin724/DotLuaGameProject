@@ -4,7 +4,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public class DatabaseLoadAsyncOperation : AAssetAsyncOperation
+    public class DatabaseLoadAsyncOperation : AAsyncOperation
     {
         private string assetPath = null;
 
