@@ -12,6 +12,8 @@ namespace DotEngine.Assets
     public delegate void AsyncLoadAssetComplete(string address, UnityObject uObj, SystemObject userdata);
     public delegate void AsyncLoadAssetProgress(string address, float progress, SystemObject userdata);
 
+    public delegate void LoadAssetStart()
+
     public enum AsyncPriority
     {
         VeryLow = 100,
@@ -25,8 +27,8 @@ namespace DotEngine.Assets
     {
         None = 0,
         Initializing,
+        Initialized,
         Running,
-        Disposing,
     }
 
     public abstract class ALoader
@@ -34,12 +36,37 @@ namespace DotEngine.Assets
         public int MaxAsycOperationCount { get; set; } = 10;
         public int MaxInstanceOperationCount { get; set; } = 5;
 
-        public void DoInitialize(Action initCallback,params SystemObject[] objects)
+        protected AssetDetailConfig assetDetailConfig = null;
+        protected Action initCallback = null;
+        protected LoaderState State { get; set; } = LoaderState.None;
+        public virtual void DoInitialize(AssetDetailConfig detailConfig, Action completedCallback,params SystemObject[] objects)
         {
-
+            assetDetailConfig = detailConfig;
+            initCallback = completedCallback;
+            State = LoaderState.Initializing;
         }
 
-        public UnityObject[] LoadAssets(string[] assetAddresses)
+        protected abstract void DoInitializeUpdate();
+
+        public void DoUpdate(float deltaTime,float unscaleDeltaTime)
+        {
+            if(State == LoaderState.None)
+            {
+                return;
+            }else if(State == LoaderState.Initializing)
+            {
+                DoInitializeUpdate();
+            }else if(State == LoaderState.Initialized)
+            {
+                State = LoaderState.Running;
+                initCallback?.Invoke();
+            }else if(State == LoaderState.Running)
+            {
+
+            }
+        }
+
+        public UnityObject[] LoadByAddresses(string[] assetAddresses)
         {
             UnityObject[] objects = new UnityObject[assetAddresses.Length];
             for (int i = 0; i < assetAddresses.Length; i++)
@@ -50,10 +77,16 @@ namespace DotEngine.Assets
             return objects;
         }
 
-
-        public UnityObject[] InstanceAssets(string[] assetAddresses)
+        public UnityObject[] LoadByLabel(string label)
         {
-            UnityObject[] objects = LoadAssets(assetAddresses);
+            string[] addresses = assetDetailConfig.GetAddressesByLabel(label);
+            return LoadByAddresses(addresses);
+        }
+
+
+        public UnityObject[] InstanceByAddresses(string[] assetAddresses)
+        {
+            UnityObject[] objects = LoadByAddresses(assetAddresses);
             for (int i = 0; i < assetAddresses.Length; i++)
             {
                 UnityObject uObject = objects[i];
@@ -63,6 +96,12 @@ namespace DotEngine.Assets
                 }
             }
             return objects;
+        }
+
+        public UnityObject[] InstanceByLabel(string label)
+        {
+            string[] addresses = assetDetailConfig.GetAddressesByLabel(label);
+            return InstanceByAddresses(addresses);
         }
 
         protected abstract UnityObject LoadAsset(string assetAddress);

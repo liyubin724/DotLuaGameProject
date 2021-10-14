@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
@@ -6,6 +7,9 @@ namespace DotEngine.Assets.Operations
     public abstract class AAsyncOperation : AOperation
     {
         protected AsyncOperation operation = null;
+
+        public event Action OnCompleteCallback = null;
+
         public override bool IsFinished
         {
             get
@@ -52,6 +56,8 @@ namespace DotEngine.Assets.Operations
         private void OnComplete(AsyncOperation ao)
         {
             operation.completed -= OnComplete;
+
+            OnCompleteCallback?.Invoke();
         }
 
         public override void DoEnd()
