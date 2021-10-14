@@ -4,38 +4,33 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public class DatabaseLoadAsyncOperation : AAsyncOperation
+    public class DatabaseLoadAsyncOperation : AOperation
     {
-        private string assetPath = null;
-
         public override bool IsFinished
         {
             get
             {
-                if(string.IsNullOrEmpty(assetPath))
+                if(isRunning && !string.IsNullOrEmpty(assetPath))
                 {
-                    return false;
+                    return true;
                 }
-                return true;
+                return false;
             }
         }
 
-        protected override AsyncOperation CreateOperation(string path)
+        public override float Progress
         {
-            assetPath = path;
-            return null;
+            get
+            {
+                if (isRunning && !string.IsNullOrEmpty(assetPath))
+                {
+                    return 1.0f;
+                }
+                return 0.0f;
+            }
         }
 
-        protected override void DisposeOperation()
-        {
-        }
-
-        protected override void FinishOperation()
-        {
-            assetPath = null;
-        }
-
-        protected override UnityObject GetResultInOperation()
+        public override UnityObject GetAsset()
         {
             return AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
         }

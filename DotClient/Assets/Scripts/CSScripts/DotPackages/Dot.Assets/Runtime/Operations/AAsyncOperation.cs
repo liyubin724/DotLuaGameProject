@@ -3,17 +3,14 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public abstract class AAsyncOperation
+    public abstract class AAsyncOperation : AOperation
     {
         protected AsyncOperation operation = null;
-        protected bool isRunning = false;
-        protected string assetPath = null;
-
-        public bool IsFinished
+        public override bool IsFinished
         {
             get
             {
-                if(operation!=null)
+                if(isRunning && operation!=null)
                 {
                     return operation.isDone;
                 }
@@ -21,33 +18,33 @@ namespace DotEngine.Assets.Operations
             }
         }
 
-        public float GetProgress()
+        public override float Progress
         {
-            if(operation!=null)
+            get
             {
-                return operation.progress;
+                if(isRunning && operation !=null)
+                {
+                    return operation.progress;
+                }
+                return 0.0f;
             }
-
-            return 0;
         }
 
-        public UnityObject GetResult()
+        public override UnityObject GetAsset()
         {
             if(!IsFinished)
             {
                 Debug.LogError("The asyncOperation has finished.");
                 return null;
             }
-            return GetResultInOperation();
+            return GetFromOperation();
         }
 
-        public void DoInitilize(string path)
-        {
-            assetPath = path;
-        }
 
-        public void DoStart()
+        public override void DoStart()
         {
+            base.DoStart();
+
             operation = CreateOperation(assetPath);
             operation.completed += OnComplete;
         }
@@ -55,20 +52,18 @@ namespace DotEngine.Assets.Operations
         private void OnComplete(AsyncOperation ao)
         {
             operation.completed -= OnComplete;
-            FinishOperation();
         }
 
-        public void DoEnd()
+        public override void DoEnd()
         {
-            DisposeOperation();
+            DestroyOperation();
+
             operation = null;
-            assetPath = null;
-            isRunning = false;
+            base.DoEnd();
         }
 
         protected abstract AsyncOperation CreateOperation(string path);
-        protected abstract UnityObject GetResultInOperation();
-        protected abstract void FinishOperation();
-        protected abstract void DisposeOperation();
+        protected abstract void DestroyOperation();
+        protected abstract UnityObject GetFromOperation();
     }
 }

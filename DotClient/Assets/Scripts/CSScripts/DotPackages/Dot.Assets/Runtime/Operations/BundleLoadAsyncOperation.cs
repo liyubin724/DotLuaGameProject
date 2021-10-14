@@ -8,28 +8,24 @@ namespace DotEngine.Assets.Operations
         private AssetBundle assetBundle = null;
         public void SetBundle(AssetBundle bundle)
         {
-            assetBundle = bundle;   
+            assetBundle = bundle;
         }
 
         protected override AsyncOperation CreateOperation(string path)
         {
-            if(assetBundle == null)
+            if (assetBundle != null)
             {
-                return null;
+                return assetBundle.LoadAssetAsync(path);
             }
-            return assetBundle.LoadAssetAsync(path);
+            return null;
         }
 
-        protected override void DisposeOperation()
+        protected override void DestroyOperation()
         {
             assetBundle = null;
         }
 
-        protected override void FinishOperation()
-        {
-        }
-
-        protected override UnityObject GetResultInOperation()
+        protected override UnityObject GetFromOperation()
         {
             AssetBundleRequest request = (AssetBundleRequest)operation;
             return request.asset;

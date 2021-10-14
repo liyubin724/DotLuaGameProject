@@ -10,15 +10,11 @@ namespace DotEngine.Assets.Operations
             return Resources.LoadAsync(path);
         }
 
-        protected override void DisposeOperation()
+        protected override void DestroyOperation()
         {
         }
 
-        protected override void FinishOperation()
-        {
-        }
-
-        protected override UnityObject GetResultInOperation()
+        protected override UnityObject GetFromOperation()
         {
             ResourceRequest request = (ResourceRequest)operation;
             return request.asset;
