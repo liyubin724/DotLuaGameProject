@@ -10,6 +10,11 @@ namespace DotEngine.Assets.Loaders
 {
     public class ResourceLoader : ALoader
     {
+        protected override void DoInitializeUpdate()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override UnityObject InstanceAsset(string assetPath, UnityObject uObject)
         {
             throw new NotImplementedException();
