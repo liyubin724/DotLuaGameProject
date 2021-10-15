@@ -5,9 +5,9 @@ namespace DotEngine.Pool
     public static class ListPool<T>
     {
         private static readonly GenericObjectPool<List<T>> sm_ListPool = new GenericObjectPool<List<T>>(
-            ()=>new List<T>(),
+            () => new List<T>(),
             null,
-            (list)=>list.Clear()
+            (list) => list.Clear()
             );
 
         public static List<T> Get()

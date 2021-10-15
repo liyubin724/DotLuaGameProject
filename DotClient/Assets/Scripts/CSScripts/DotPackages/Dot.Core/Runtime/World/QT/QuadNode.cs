@@ -14,7 +14,7 @@ namespace DotEngine.World.QT
         RT = 4,//右上
     }
 
-    public class QuadNode : IObjectPoolItem
+    public class QuadNode : IPoolItem
     {
         /// <summary>
         /// 当前结点深度值

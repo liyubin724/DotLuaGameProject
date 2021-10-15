@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SystemObject = System.Object;
 
 namespace DotEngine.Pool
 {
-    public class ObjectPool
+    public class GenericObjectPool<T> where T:class
     {
-        private readonly Stack<SystemObject> m_Stack = new Stack<SystemObject>();
+        private readonly Stack<T> m_Stack = new Stack<T>();
 
-        private readonly Func<SystemObject> m_CreateItemFunc;
-        private readonly Action<SystemObject> m_GetItemFunc;
-        private readonly Action<SystemObject> m_ReleaseItemFunc;
+        private Func<T> m_CreateItemFunc;
+        private readonly Action<T> m_GetItemFunc;
+        private readonly Action<T> m_ReleaseItemFunc;
 
-        public ObjectPool(Func<SystemObject> createFunc, Action<SystemObject> getAction = null, Action<SystemObject> releaseAction = null, int preload = 0)
+        public GenericObjectPool(Func<T> createFunc, Action<T> getAction = null, Action<T> releaseAction = null, int preload = 0)
         {
             m_CreateItemFunc = createFunc;
             m_GetItemFunc = getAction;
@@ -25,9 +24,9 @@ namespace DotEngine.Pool
             }
         }
 
-        public SystemObject Get()
+        public T Get()
         {
-            SystemObject element;
+            T element;
             if (m_Stack.Count == 0)
             {
                 element = m_CreateItemFunc();
@@ -42,12 +41,12 @@ namespace DotEngine.Pool
             return element;
         }
 
-        public void Release(SystemObject element)
+        public void Release(T element)
         {
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                Debug.LogError("ObjectPool::Release->The element has been released");
+                Debug.LogError("ObjectPool::Release->The element has been push into pool!");
                 return;
             }
 #endif
