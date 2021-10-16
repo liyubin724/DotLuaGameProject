@@ -37,6 +37,12 @@ namespace DotEngine.Assets
         protected AssetDetailConfig assetDetailConfig = null;
         protected Action initCallback = null;
         protected LoaderState State { get; set; } = LoaderState.None;
+
+        public ALoader(AssetDetailConfig detailConfig)
+        {
+            assetDetailConfig = detailConfig;
+        }
+
         public virtual void DoInitialize(AssetDetailConfig detailConfig, Action completedCallback,params SystemObject[] objects)
         {
             assetDetailConfig = detailConfig;

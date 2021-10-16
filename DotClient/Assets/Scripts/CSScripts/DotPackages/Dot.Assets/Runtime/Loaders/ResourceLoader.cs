@@ -8,21 +8,21 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Loaders
 {
-    public class ResourceLoader : ALoader
+    public class ResourceLoader
     {
-        protected override void DoInitializeUpdate()
-        {
-            throw new NotImplementedException();
-        }
+        //protected override void DoInitializeUpdate()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        protected override UnityObject InstanceAsset(string assetPath, UnityObject uObject)
-        {
-            throw new NotImplementedException();
-        }
+        //protected override UnityObject InstanceAsset(string assetPath, UnityObject uObject)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        protected override UnityObject LoadAsset(string assetPath)
-        {
-            throw new NotImplementedException();
-        }
+        //protected override UnityObject LoadAsset(string assetPath)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -1,20 +1,16 @@
-﻿using DotEngine.Assets.Operations;
-using DotEngine.Core;
-using System;
+﻿using DotEngine.Pool;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DotEngine.Assets.Loaders
 {
-    public class BundleNode
+    public class BundleNode : IPoolItem
     {
         private string path;
         private bool isBundleLoaded = false;
         private AssetBundle bundle;
         private List<BundleNode> depends = new List<BundleNode>();
+        private bool isNeverDestroy = false;
 
         public string Path
         {
@@ -45,17 +41,17 @@ namespace DotEngine.Assets.Loaders
         {
             get
             {
-                if(string.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path))
                 {
                     return false;
                 }
-                if(!isBundleLoaded)
+                if (!isBundleLoaded)
                 {
                     return false;
                 }
                 foreach (var d in depends)
                 {
-                    if(!d.IsDone)
+                    if (!d.IsDone)
                     {
                         return false;
                     }
@@ -68,10 +64,52 @@ namespace DotEngine.Assets.Loaders
         public void RetainRef() => ++refCount;
         public void ReleaseRef() => --refCount;
 
+        public bool IsNeverDestroy
+        {
+            get
+            {
+                return IsNeverDestroy;
+            }
+            set
+            {
+                isNeverDestroy = value;
+            }
+        }
+
+        public bool CanDestroy()
+        {
+            if(refCount>0 || isNeverDestroy)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public void AddDepend(BundleNode node)
         {
             node.RetainRef();
             depends.Add(node);
+        }
+
+        public void OnGet()
+        {
+        }
+
+        public void OnRelease()
+        {
+            foreach (var d in depends)
+            {
+                d.ReleaseRef();
+            }
+
+            path = null;
+            isBundleLoaded = false;
+            if (bundle != null)
+            {
+                bundle.Unload(true);
+            }
+            bundle = null;
+            depends.Clear();
         }
     }
 }
