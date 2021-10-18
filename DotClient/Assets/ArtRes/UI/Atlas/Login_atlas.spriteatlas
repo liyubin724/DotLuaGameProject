@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Login_atlas
+  m_Name: login_atlas
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -28,10 +28,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c77fb1f65cc3fa34bae887d20920bf4b, type: 3}
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 88ea8a60804e77d44a7a5fab6c682e3a, type: 3}
@@ -205,5 +209,6 @@ SpriteAtlas:
   - create_lx_xz
   - create_jx_bg
   - create_wz_lb
-  m_Tag: Login_atlas
+  m_RenderDataMap: {}
+  m_Tag: login_atlas
   m_IsVariant: 0

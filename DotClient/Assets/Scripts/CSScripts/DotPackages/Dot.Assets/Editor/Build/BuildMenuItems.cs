@@ -1,17 +1,12 @@
-﻿using DotEditor.Asset.AssetAddress;
-using DotEditor.Utilities;
+﻿using DotEditor.Utilities;
 using DotEngine.Assets;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Assets
+namespace DotEditor.Asset.Build
 {
-    public static class AssetMenuItems
+    public static class BuildMenuItems
     {
         [MenuItem("Game/Asset/Create Address Group", priority = 0)]
         [MenuItem("Assets/Create/Asset/Create Address Group", priority = 0)]
@@ -24,6 +19,8 @@ namespace DotEditor.Assets
                 filePath = AssetDatabase.GenerateUniqueAssetPath(filePath);
                 var config = ScriptableObject.CreateInstance<AssetBuildGroup>();
                 config.RootFolder = dirPath;
+                EditorUtility.SetDirty(config);
+
                 AssetDatabase.CreateAsset(config, filePath);
                 AssetDatabase.ImportAsset(filePath);
             }
@@ -35,7 +32,7 @@ namespace DotEditor.Assets
 
         [MenuItem("Game/Asset/Build Asset Detail Config", priority = 1)]
         [MenuItem("Assets/Create/Asset/Build Asset Detail Config", priority = 1)]
-        public static void BuildAssetAddressConfig()
+        public static void BuildAssetDetailConfig()
         {
             AssetBuildGroup[] groups = AssetDatabaseUtility.FindInstances<AssetBuildGroup>();
             if (groups != null && groups.Length > 0)

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Asset.AssetAddress
+namespace DotEditor.Asset.Build
 {
     [CustomEditor(typeof(AssetBuildGroup))]
-    public class AssetAddressGroupEditor :  DrawerEditor
+    public class AssetBuildGroupEditor :  DrawerEditor
     {
         private EGUIListView<string> listViewer = null;
 
@@ -28,18 +28,15 @@ namespace DotEditor.Asset.AssetAddress
 
                 if (GUILayout.Button("Execute", GUILayout.Height(40)))
                 {
-                    //AssetAddressUtil.UpdateConfigByGroup(target as AssetBuildGroup);
-                    //EditorUtility.DisplayDialog("Finished", "Finished", "OK");
+                    BuildMenuItems.BuildAssetDetailConfig();
+                    EditorUtility.DisplayDialog("Finished", "Finished", "OK");
                 }
 
                 if (GUILayout.Button("Filter", GUILayout.Height(40)))
                 {
                     List<string> files = new List<string>();
                     AssetBuildGroup group = target as AssetBuildGroup;
-                    //foreach (var filter in group.filters)
-                    //{
-                    //    files.AddRange(filter.Filter());
-                    //}
+                    files.AddRange(group.GetAssetPaths());
 
                     listViewer = new EGUIListView<string>();
                     listViewer.Header = "Asset List";

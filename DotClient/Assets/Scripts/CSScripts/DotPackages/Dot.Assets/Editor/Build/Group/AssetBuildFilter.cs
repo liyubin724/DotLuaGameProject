@@ -2,7 +2,7 @@
 using DotEngine.NativeDrawer.Decorator;
 using System;
 
-namespace DotEditor.Asset.AssetAddress
+namespace DotEditor.Asset.Build
 {
     [Serializable]
     public class AssetBuildFilter

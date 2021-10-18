@@ -1,20 +1,48 @@
 ﻿using DotEngine.Assets;
 using DotEngine.Core.Extensions;
+using DotEngine.Crypto;
 using DotEngine.NativeDrawer.Decorator;
 using DotEngine.NativeDrawer.Property;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using Space = DotEngine.NativeDrawer.Decorator.SpaceAttribute;
 
-namespace DotEditor.Asset.AssetAddress
+namespace DotEditor.Asset.Build
 {
+    public enum AssetAddressMode
+    {
+        FullPath = 0,
+        FileName,
+        FileNameWithoutExtension,
+    }
+
+    [Serializable]
+    public class AssetAddressOperation
+    {
+        [Help("资源地址生成方式\nFullPath:使用资源的完整路径作为地址\nFileName:使用带后缀的文件名做为地址\nFileNameWithoutExtension:使用不带后缀的文件名作为地址")]
+        [EnumButton]
+        public AssetAddressMode AddressMode = AssetAddressMode.FullPath;
+        [Help("资源标签，加载时可以使用标签对所有的资源进行加载")]
+        public string[] Labels = new string[0];
+    }
 
     public enum AssetPackMode
     {
         Together,
         Separate,
+    }
+
+    [Serializable]
+    public class AssetBundleOperation
+    {
+        public bool IsUseMD5 = false;
+
+        [Help("AB打包方式.\nTogether:将筛选出来的所有的资源打到一个包内\nSeparate:将筛选出来的资源每个都单独打包")]
+        [EnumButton]
+        public AssetPackMode PackMode = AssetPackMode.Separate;
     }
 
     public class AssetBuildGroup : ScriptableObject
@@ -32,15 +60,13 @@ namespace DotEditor.Asset.AssetAddress
 
         [Space]
         [Help("是否为主资源，只有标记为主资源的才能在脚本中通过地址进行加载")]
-        public bool isMain = false;
+        public bool IsMainAssets = false;
         [Help("地址设置")]
         public AssetAddressOperation AddressOperation = new AssetAddressOperation();
+        [Help("Bundle设置")]
+        public AssetBundleOperation BundleOperation = new AssetBundleOperation();
 
-        [Help("AB打包方式.\nTogether:将筛选出来的所有的资源打到一个包内\nSeparate:将筛选出来的资源每个都单独打包")]
-        [EnumButton]
-        public AssetPackMode packMode = AssetPackMode.Together;
-
-        public string[] GetAssets()
+        public string[] GetAssetPaths()
         {
             if(string.IsNullOrEmpty(RootFolder) || filters.Count == 0)
             {
@@ -57,17 +83,22 @@ namespace DotEditor.Asset.AssetAddress
         
         public AssetDetail[] GetAssetDetails()
         {
+            if(!IsMainAssets)
+            {
+                return new AssetDetail[0];
+            }
+
             List<AssetDetail> details = new List<AssetDetail>();
-            string[] assetPaths = GetAssets();
+            string[] assetPaths = GetAssetPaths();
             foreach (var assetPath in assetPaths)
             {
                 AssetDetail detail = new AssetDetail()
                 {
-                    Address = AddressOperation.GetAddress(assetPath),
+                    Address = GetAddressName(assetPath),
                     Path = assetPath,
                     Bundle = GetBundleName(assetPath),
                     IsScene = IsScene(assetPath),
-                    Labels = AddressOperation.GetLabels(),
+                    Labels = AddressOperation.Labels,
                 };
                 details.Add(detail);
             }
@@ -75,19 +106,38 @@ namespace DotEditor.Asset.AssetAddress
             return details.ToArray();
         }
 
+        private string GetAddressName(string assetPath)
+        {
+            if (AddressOperation.AddressMode == AssetAddressMode.FullPath)
+                return assetPath;
+            else if (AddressOperation.AddressMode == AssetAddressMode.FileName)
+                return Path.GetFileName(assetPath);
+            else if (AddressOperation.AddressMode == AssetAddressMode.FileNameWithoutExtension)
+                return Path.GetFileNameWithoutExtension(assetPath);
+            else
+                return assetPath;
+        }
+
         private string GetBundleName(string assetPath)
         {
-            string bundleName = string.Empty;
-            if (packMode == AssetPackMode.Separate)
+            string bundleName = assetPath;
+            if (BundleOperation.PackMode == AssetPackMode.Separate)
             {
                 bundleName = assetPath.ReplaceSpecialCharacter("_");
             }
-            else if (packMode == AssetPackMode.Together)
+            else if (BundleOperation.PackMode == AssetPackMode.Together)
             {
                 string rootFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
                 bundleName = rootFolder.ReplaceSpecialCharacter("_");
             }
-            return bundleName.ToLower();
+
+            bundleName = bundleName.ToLower();
+            if(BundleOperation.IsUseMD5)
+            {
+                bundleName = MD5Crypto.Md5(bundleName).ToLower();
+            }
+
+            return bundleName;
         }
 
         private bool IsScene(string assetPath)

@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ab36a6719991c04886ec6804d38e09c, type: 3}
-  m_Name: uiatlas_group
+  m_Name: ui_atlas_asset_group
   m_EditorClassIdentifier: 
-  groupName: Atlas Group
-  isEnable: 1
-  isMain: 0
-  isPreload: 0
-  isNeverDestroy: 0
-  operation:
-    packMode: 1
+  Enable: 1
+  GroupName: UI Atlas Asset Group
+  RootFolder: Assets/ArtRes/UI/Atlas
+  filters:
+  - IncludeSubfolder: 1
+    FileRegex: ^\w*.spriteatlas$
+  isMain: 1
+  AddressOperation:
     addressMode: 0
     labels: []
-  filters:
-  - assetFolder: Assets/ArtRes/UI/Atlas
-    isIncludeSubfolder: 1
-    fileRegex: ^\w*.spriteatlas$
+  packMode: 1
