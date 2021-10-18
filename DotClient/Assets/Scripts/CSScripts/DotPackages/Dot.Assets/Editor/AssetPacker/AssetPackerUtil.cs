@@ -1,5 +1,5 @@
 ﻿
-using DotEditor.Asset.AssetAddress;
+using DotEditor.Asset.Build;
 using DotEditor.Utilities;
 using DotEngine.Crypto;
 using DotEngine.Utilities;

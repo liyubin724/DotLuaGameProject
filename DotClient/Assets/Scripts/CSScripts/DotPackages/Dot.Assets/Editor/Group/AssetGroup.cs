@@ -10,7 +10,7 @@ using System.Linq;
 using UnityEngine;
 using Space = DotEngine.NativeDrawer.Decorator.SpaceAttribute;
 
-namespace DotEditor.Asset.Build
+namespace DotEditor.Asset.Group
 {
     public enum AssetAddressMode
     {
@@ -45,7 +45,7 @@ namespace DotEditor.Asset.Build
         public AssetPackMode PackMode = AssetPackMode.Separate;
     }
 
-    public class AssetBuildGroup : ScriptableObject
+    public class AssetGroup : ScriptableObject
     {
         [Help("此配置是否生效")]
         public bool Enable = true;
@@ -56,7 +56,7 @@ namespace DotEditor.Asset.Build
         [OpenFolderPath]
         public string RootFolder = "Assets";
         [Help("根据指定的配置进行资源的筛选")]
-        public List<AssetBuildFilter> filters = new List<AssetBuildFilter>();
+        public List<AssetFilter> filters = new List<AssetFilter>();
 
         [Space]
         [Help("是否为主资源，只有标记为主资源的才能在脚本中通过地址进行加载")]

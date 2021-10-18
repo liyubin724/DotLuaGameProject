@@ -18,8 +18,10 @@ MonoBehaviour:
   filters:
   - IncludeSubfolder: 1
     FileRegex: ^\w*.spriteatlas$
-  isMain: 1
+  IsMainAssets: 1
   AddressOperation:
-    addressMode: 0
-    labels: []
-  packMode: 1
+    AddressMode: 0
+    Labels: []
+  BundleOperation:
+    IsUseMD5: 1
+    PackMode: 1

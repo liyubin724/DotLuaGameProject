@@ -2,10 +2,10 @@
 using DotEngine.NativeDrawer.Decorator;
 using System;
 
-namespace DotEditor.Asset.Build
+namespace DotEditor.Asset.Group
 {
     [Serializable]
-    public class AssetBuildFilter
+    public class AssetFilter
     {
         [Help("是否包含子目录")]
         public bool IncludeSubfolder = true;

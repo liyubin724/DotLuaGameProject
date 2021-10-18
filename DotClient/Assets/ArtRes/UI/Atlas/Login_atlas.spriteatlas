@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: login_atlas
+  m_Name: Login_atlas
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -210,5 +210,5 @@ SpriteAtlas:
   - create_jx_bg
   - create_wz_lb
   m_RenderDataMap: {}
-  m_Tag: login_atlas
+  m_Tag: Login_atlas
   m_IsVariant: 0

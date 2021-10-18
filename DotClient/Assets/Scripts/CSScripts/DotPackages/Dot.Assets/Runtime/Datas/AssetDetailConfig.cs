@@ -28,6 +28,22 @@ namespace DotEngine.Assets
             return true;
         }
 
+        public static AssetDetailConfig ReadFromText(string text)
+        {
+            if(string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
+            return JsonConvert.DeserializeObject<AssetDetailConfig>(text);
+        }
+
+        public static string WriteToText(AssetDetailConfig config)
+        {
+            return JsonConvert.SerializeObject(config);
+        }
+
+        public int Version = 1;
         public AssetDetail[] Details = new AssetDetail[0];
 
         private Dictionary<string, AssetDetail> addressToDetailDic = null;

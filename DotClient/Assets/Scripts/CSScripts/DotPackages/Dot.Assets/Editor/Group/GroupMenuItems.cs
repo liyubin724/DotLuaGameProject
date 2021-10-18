@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Asset.Build
+namespace DotEditor.Asset.Group
 {
-    public static class BuildMenuItems
+    public static class GroupMenuItems
     {
         [MenuItem("Game/Asset/Create Address Group", priority = 0)]
         [MenuItem("Assets/Create/Asset/Create Address Group", priority = 0)]
@@ -17,7 +17,7 @@ namespace DotEditor.Asset.Build
             {
                 string filePath = $"{dirPath}/asset_group.asset";
                 filePath = AssetDatabase.GenerateUniqueAssetPath(filePath);
-                var config = ScriptableObject.CreateInstance<AssetBuildGroup>();
+                var config = ScriptableObject.CreateInstance<AssetGroup>();
                 config.RootFolder = dirPath;
                 EditorUtility.SetDirty(config);
 
@@ -34,7 +34,7 @@ namespace DotEditor.Asset.Build
         [MenuItem("Assets/Create/Asset/Build Asset Detail Config", priority = 1)]
         public static void BuildAssetDetailConfig()
         {
-            AssetBuildGroup[] groups = AssetDatabaseUtility.FindInstances<AssetBuildGroup>();
+            AssetGroup[] groups = AssetDatabaseUtility.FindInstances<AssetGroup>();
             if (groups != null && groups.Length > 0)
             {
                 AssetDetailConfig config = new AssetDetailConfig();

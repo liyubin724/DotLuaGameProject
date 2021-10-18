@@ -4,11 +4,10 @@ using DotEditor.NativeDrawer;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
-namespace DotEditor.Asset.Build
+namespace DotEditor.Asset.Group
 {
-    [CustomEditor(typeof(AssetBuildGroup))]
-    public class AssetBuildGroupEditor :  DrawerEditor
+    [CustomEditor(typeof(AssetGroup))]
+    public class AssetGroupEditor :  DrawerEditor
     {
         private EGUIListView<string> listViewer = null;
 
@@ -28,14 +27,14 @@ namespace DotEditor.Asset.Build
 
                 if (GUILayout.Button("Execute", GUILayout.Height(40)))
                 {
-                    BuildMenuItems.BuildAssetDetailConfig();
+                    GroupMenuItems.BuildAssetDetailConfig();
                     EditorUtility.DisplayDialog("Finished", "Finished", "OK");
                 }
 
                 if (GUILayout.Button("Filter", GUILayout.Height(40)))
                 {
                     List<string> files = new List<string>();
-                    AssetBuildGroup group = target as AssetBuildGroup;
+                    AssetGroup group = target as AssetGroup;
                     files.AddRange(group.GetAssetPaths());
 
                     listViewer = new EGUIListView<string>();
