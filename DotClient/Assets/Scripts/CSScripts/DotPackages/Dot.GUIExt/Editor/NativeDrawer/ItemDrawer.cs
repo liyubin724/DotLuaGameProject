@@ -1,6 +1,6 @@
 ﻿using DotEditor.GUIExt.IMGUI;
+using DotEngine.Core.Extensions;
 using DotEngine.GUIExt.NativeDrawer;
-using DotEngine.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,7 +60,7 @@ namespace DotEditor.GUIExt.NativeDrawer
                         return Value.GetType();
                     }else
                     {
-                        return Field != null ? TypeUtility.GetElementTypeInArrayOrList(Field.FieldType) : TypeUtility.GetElementTypeInArrayOrList(Target.GetType());
+                        return Field != null ? Field.FieldType.GetElementTypeInArrayOrList() : Target.GetType().GetElementTypeInArrayOrList();
                     }
                 }
                 else
@@ -196,11 +196,11 @@ namespace DotEditor.GUIExt.NativeDrawer
                 else
                 {
                     InstanceDrawer instanceDrawer = null;
-                    if (TypeUtility.IsArrayOrListType(ValueType))
+                    if (ValueType.IsArrayOrListType())
                     {
                         instanceDrawer = new ArrayDrawer(Value);
                     }
-                    else if (TypeUtility.IsStructOrClassType(ValueType))
+                    else if (ValueType.IsStructOrClassType())
                     {
                         instanceDrawer = new ObjectDrawer(Value);
                     }

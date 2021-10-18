@@ -1,7 +1,7 @@
 ﻿using DotEditor.GUIExt.IMGUI;
 using DotEditor.GUIExt.NativeDrawer;
+using DotEngine.Core.Extensions;
 using DotEngine.GUIExt.NativeDrawer;
-using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -143,11 +143,11 @@ namespace DotEditor.GUIExt.EditDrawer
         private string GetTypeInfo(Type type)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"IsStructType = {TypeUtility.IsStructType(type)}");
-            sb.AppendLine($"IsListType = {TypeUtility.IsListType(type)}");
-            sb.AppendLine($"IsArrayType = {TypeUtility.IsArrayType(type)}");
-            sb.AppendLine($"IsPrimitiveType = {TypeUtility.IsPrimitiveType(type)}");
-            sb.AppendLine($"IsEnumType = {TypeUtility.IsEnumType(type)}");
+            sb.AppendLine($"IsStructType = {type.IsStructType()}");
+            sb.AppendLine($"IsListType = {type.IsListType()}");
+            sb.AppendLine($"IsArrayType = {type.IsArrayType()}");
+            sb.AppendLine($"IsPrimitiveType = {type.IsPrimitiveType()}");
+            sb.AppendLine($"IsEnumType = {type.IsEnumType()}");
             return sb.ToString();
         }
 

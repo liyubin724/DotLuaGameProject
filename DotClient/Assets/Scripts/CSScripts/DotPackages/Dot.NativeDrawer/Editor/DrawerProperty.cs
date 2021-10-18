@@ -6,6 +6,8 @@ using DotEditor.NativeDrawer.Property;
 using DotEditor.NativeDrawer.Verification;
 using DotEditor.NativeDrawer.Visible;
 using DotEngine;
+using DotEngine.Core.Extensions;
+using DotEngine.Core.Utilities;
 using DotEngine.NativeDrawer;
 using DotEngine.NativeDrawer.Layout;
 using DotEngine.Utilities;
@@ -13,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace DotEditor.NativeDrawer
 {
@@ -56,7 +59,7 @@ namespace DotEditor.NativeDrawer
             {
                 if (IsArrayElement)
                 {
-                    return TypeUtility.GetElementTypeInArrayOrList(Field.FieldType);
+                    return Field.FieldType.GetElementTypeInArrayOrList();
                 }
 
                 return Field.FieldType;
@@ -136,7 +139,7 @@ namespace DotEditor.NativeDrawer
                     var drawer = DrawerUtility.CreateAttrDrawer(this, attr);
                     if (drawer == null)
                     {
-                        DebugLog.Warning("DrawerProperty::Init->drawer not found.attr = " + attr.GetType().Name);
+                        Debug.LogWarning("DrawerProperty::Init->drawer not found.attr = " + attr.GetType().Name);
                     }else
                     {
                         if (drawer.GetType().IsSubclassOf(typeof(DecoratorDrawer)))
@@ -161,7 +164,7 @@ namespace DotEditor.NativeDrawer
                         {
                             if (labelDrawer != null)
                             {
-                                DebugLog.Warning("DrawerProperty::Init->labelDrawer has been found.attr = " + attr.GetType().Name);
+                                Debug.LogWarning("DrawerProperty::Init->labelDrawer has been found.attr = " + attr.GetType().Name);
                             } else
                             {
                                 labelDrawer = drawer as PropertyLabelDrawer;
@@ -170,7 +173,7 @@ namespace DotEditor.NativeDrawer
                         {
                             if (contentDrawer != null)
                             {
-                                DebugLog.Warning("DrawerProperty::Init->contentDrawer has been found.attr = " + attr.GetType().Name);
+                                Debug.LogWarning("DrawerProperty::Init->contentDrawer has been found.attr = " + attr.GetType().Name);
                             }
                             else
                             {
@@ -188,7 +191,7 @@ namespace DotEditor.NativeDrawer
                 {
                     if (DrawerUtility.IsTypeSupported(ValueType))
                     {
-                        if (TypeUtility.IsStructOrClassType(ValueType) && Value != null)
+                        if (ValueType.IsStructOrClassType() && Value != null)
                         {
                             drawerObject = new DrawerObject(Value);
                         }
@@ -283,7 +286,7 @@ namespace DotEditor.NativeDrawer
 
                                 if (DrawerUtility.IsTypeSupported(ValueType))
                                 {
-                                    if (TypeUtility.IsStructOrClassType(ValueType) && Value != null)
+                                    if (ValueType.IsStructOrClassType() && Value != null)
                                     {
                                         drawerObject = new DrawerObject(Value);
                                     }
@@ -341,7 +344,7 @@ namespace DotEditor.NativeDrawer
 
         internal void ClearArrayElement()
         {
-            if (TypeUtility.IsArrayOrListType(ValueType))
+            if (ValueType.IsArrayOrListType())
             {
                 if (ValueType.IsArray)
                 {
@@ -356,9 +359,9 @@ namespace DotEditor.NativeDrawer
 
         internal void AddArrayElement()
         {
-            if (TypeUtility.IsArrayOrListType(ValueType))
+            if (ValueType.IsArrayOrListType())
             {
-                object element = DrawerUtility.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(ValueType));
+                object element = DrawerUtility.CreateInstance(ValueType.GetElementTypeInArrayOrList());
                 if (ValueType.IsArray)
                 {
                     Array array = (Array)Value;
@@ -375,7 +378,7 @@ namespace DotEditor.NativeDrawer
 
         internal void RemoveArrayElementAtIndex(int index)
         {
-            if(TypeUtility.IsArrayOrListType(ValueType))
+            if(ValueType.IsArrayOrListType())
             {
                 if(ValueType.IsArray)
                 {

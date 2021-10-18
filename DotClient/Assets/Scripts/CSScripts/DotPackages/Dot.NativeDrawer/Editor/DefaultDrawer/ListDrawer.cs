@@ -1,5 +1,5 @@
 ﻿using DotEditor.GUIExtension;
-using DotEngine.Utilities;
+using DotEngine.Core.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -16,7 +16,7 @@ namespace DotEditor.NativeDrawer.DefaultDrawer
 
         protected override bool IsValidProperty()
         {
-            return TypeUtility.IsArrayOrListType(Property.ValueType);
+            return Property.ValueType.IsArrayOrListType();
         }
 
         protected override void OnDrawProperty(string label)

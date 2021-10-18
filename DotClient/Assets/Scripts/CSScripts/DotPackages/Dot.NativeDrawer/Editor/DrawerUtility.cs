@@ -1,6 +1,7 @@
 ﻿using DotEditor.NativeDrawer.Property;
+using DotEngine.Core.Extensions;
+using DotEngine.Core.Utilities;
 using DotEngine.NativeDrawer;
-using DotEngine.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,7 +55,7 @@ namespace DotEditor.NativeDrawer
         {
             if(type.IsArray)
             {
-                return Array.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(type), 0);
+                return Array.CreateInstance(type.GetElementTypeInArrayOrList(), 0);
             }else if(type == typeof(string))
             {
                 return string.Empty;
@@ -111,7 +112,7 @@ namespace DotEditor.NativeDrawer
             {
                 return typeof(Enum);
             }
-            if(TypeUtility.IsArrayOrListType(type))
+            if(type.IsArrayOrListType())
             {
                 return typeof(IList);
             }
@@ -295,7 +296,7 @@ namespace DotEditor.NativeDrawer
                 }
                 else
                 {
-                    if (TypeUtility.IsCastableTo(value1.GetType(), typeof(IComparable)))
+                    if (value1.GetType().IsCastableTo(typeof(IComparable)))
                     {
                         int compared = ((IComparable)value1).CompareTo((IComparable)value2);
                         if(compared == 0)

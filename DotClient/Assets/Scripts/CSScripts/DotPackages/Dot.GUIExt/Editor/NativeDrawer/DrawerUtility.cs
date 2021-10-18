@@ -1,4 +1,6 @@
-﻿using DotEngine.GUIExt.NativeDrawer;
+﻿using DotEngine.Core.Extensions;
+using DotEngine.Core.Utilities;
+using DotEngine.GUIExt.NativeDrawer;
 using DotEngine.Utilities;
 using System;
 using System.Collections.Generic;
@@ -77,17 +79,17 @@ namespace DotEditor.GUIExt.NativeDrawer
 
         public static bool IsTypeSupported(Type type)
         {
-            return TypeUtility.IsPrimitiveType(type) ||
-                TypeUtility.IsStructOrClassType(type) ||
-                TypeUtility.IsArrayOrListType(type) ||
-                TypeUtility.IsEnumType(type);
+            return type.IsPrimitiveType() ||
+                type.IsStructOrClassType() ||
+                type.IsArrayOrListType() ||
+                type.IsEnumType();
         }
 
         public static SystemObject GetTypeInstance(Type type)
         {
             if (type.IsArray)
             {
-                return Array.CreateInstance(TypeUtility.GetElementTypeInArrayOrList(type), 0);
+                return Array.CreateInstance(type.GetElementTypeInArrayOrList(), 0);
             }
             else if (type == typeof(string))
             {

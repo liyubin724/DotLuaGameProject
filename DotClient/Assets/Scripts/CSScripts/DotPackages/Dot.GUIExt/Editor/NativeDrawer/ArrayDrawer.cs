@@ -1,4 +1,4 @@
-﻿using DotEngine.Utilities;
+﻿using DotEngine.Core.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace DotEditor.GUIExt.NativeDrawer
             {
                 if(Target!=null && Target is IList list)
                 {
-                    return TypeUtility.GetElementTypeInArrayOrList(list.GetType());
+                    return list.GetType().GetElementTypeInArrayOrList();
                 }
                 return null;
             }
@@ -82,10 +82,10 @@ namespace DotEditor.GUIExt.NativeDrawer
                 SystemObject item = DrawerUtility.GetTypeInstance(ItemType);
                 if(item!=null)
                 {
-                    if (TypeUtility.IsArrayType(list.GetType()))
+                    if (list.GetType().IsArrayType())
                     {
                         Array array = (Array)list;
-                        DotEngine.Utilities.ArrayUtility.Add(ref array, item);
+                        DotEngine.Core.Utilities.ArrayUtility.Add(ref array, item);
 
                         Target = array;
                     }
@@ -103,10 +103,10 @@ namespace DotEditor.GUIExt.NativeDrawer
         {
             if (Target != null && Target is IList list)
             {
-                if (TypeUtility.IsArrayType(list.GetType()))
+                if (list.GetType().IsArrayType())
                 {
                     Array array = (Array)list;
-                    DotEngine.Utilities.ArrayUtility.Remove(ref array, index);
+                    DotEngine.Core.Utilities.ArrayUtility.Remove(ref array, index);
 
                     Target = array;
                 }

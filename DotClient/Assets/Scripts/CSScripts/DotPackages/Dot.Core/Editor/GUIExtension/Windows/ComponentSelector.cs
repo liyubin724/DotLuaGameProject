@@ -155,7 +155,7 @@ namespace DotEditor.GUIExtension.Windows
                         if (t == mType || t.IsSubclassOf(mType) && !list.Contains(obj))
                             list.Add(obj);
                     }
-                    else if (PrefabUtility.GetPrefabType(obj) == PrefabType.Prefab)
+                    else if (PrefabUtility.GetPrefabAssetType(obj) == PrefabAssetType.Regular)
                     {
                         UnityObject t = (obj as GameObject).GetComponent(mType);
                         if (t != null && !list.Contains(t)) list.Add(t);
