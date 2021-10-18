@@ -1,5 +1,4 @@
-﻿
-using DotEditor.Asset.Build;
+﻿using DotEditor.Asset.Group;
 using DotEditor.Utilities;
 using DotEngine.Crypto;
 using DotEngine.Utilities;
@@ -18,31 +17,46 @@ namespace DotEditor.Asset.AssetPacker
 {
     public static class AssetPackerUtil
     {
-        public static AssetPackerConfig GetAssetPackerConfig()
+        public static PackerData GetPackerData()
         {
-            AssetPackerConfig packerConfig = new AssetPackerConfig();
-
-            AssetBuildGroup[] groups = AssetDatabaseUtility.FindInstances<AssetBuildGroup>();
-            if(groups!=null && groups.Length>0)
+            AssetGroupCreater[] groups = AssetDatabaseUtility.FindInstances<AssetGroupCreater>();
+            List<AssetResult> results = new List<AssetResult>();
+            foreach (var group in groups)
             {
-                foreach(var group in groups)
+                results.AddRange(group.GetResults());
+            }
+
+            PackerData packerData = new PackerData();
+
+            var groupNames = results.GroupBy((result) => result.GroupName).ToList();
+            foreach (var gn in groupNames)
+            {
+                PackerGroupData groupData = new PackerGroupData();
+                groupData.GroupName = gn.Key;
+                packerData.groupDatas.Add(groupData);
+
+                var bundleNames = gn.GroupBy((result) => result.Bundle).ToList();
+                foreach(var bn in bundleNames)
                 {
-                    AssetPackerGroupData groupData = new AssetPackerGroupData();
-                    //groupData.groupName = group.GroupName;
-                    //groupData.isMain = group.isMain;
-                    //groupData.isPreload = group.isPreload;
-                    //groupData.isNeverDestroy = group.isNeverDestroy;
+                    PackerBundleData bundleData = new PackerBundleData();
+                    bundleData.BundlePath = bn.Key;
+                    groupData.bundleDatas.Add(bundleData);
 
-                    groupData.assetFiles = GetAssetsInGroup(group);
+                    foreach(var ad in bn)
+                    {
+                        PackerAssetData assetData = new PackerAssetData();
+                        assetData.Address = ad.Address;
+                        assetData.Path = ad.Path;
+                        assetData.IsMainAsset = ad.IsMainAsset;
+                        assetData.IsScene = ad.IsScene;
+                        assetData.Labels = ad.Labels;
 
-                    packerConfig.groupDatas.Add(groupData);
+                        bundleData.assetDatas.Add(assetData);
+                    }
                 }
             }
-            packerConfig.Sort();
 
-            AddAddressGroup(packerConfig);
-
-            return packerConfig;
+            return packerData;
         }
 
         private static string AddressGroupName = "Default Address Group";
@@ -76,22 +90,22 @@ namespace DotEditor.Asset.AssetPacker
             //}
         }
 
-        private static void RemoveAddressGroup(AssetPackerConfig assetPackerConfig)
-        {
-            if (assetPackerConfig != null)
-            {
-                foreach (var group in assetPackerConfig.groupDatas)
-                {
-                    if (group.groupName == AddressGroupName)
-                    {
-                        assetPackerConfig.groupDatas.Remove(group);
-                        break;
-                    }
-                }
-            }
-        }
+        //private static void RemoveAddressGroup(AssetPackerConfig assetPackerConfig)
+        //{
+        //    if (assetPackerConfig != null)
+        //    {
+        //        foreach (var group in assetPackerConfig.groupDatas)
+        //        {
+        //            if (group.groupName == AddressGroupName)
+        //            {
+        //                assetPackerConfig.groupDatas.Remove(group);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
 
-        private static List<AssetPackerAddressData> GetAssetsInGroup(AssetBuildGroup groupData)
+        private static List<PackerBundleData> GetAssetsInGroup(AssetBuildGroup groupData)
         {
             List<string> assets = new List<string>();
             foreach(var filter in groupData.filters)
@@ -104,10 +118,10 @@ namespace DotEditor.Asset.AssetPacker
             }
             assets = assets.Distinct().ToList();
 
-            List<AssetPackerAddressData> addressDatas = new List<AssetPackerAddressData>();
+            List<PackerBundleData> addressDatas = new List<PackerBundleData>();
             foreach(var asset in assets)
             {
-                AssetPackerAddressData data = new AssetPackerAddressData();
+                PackerBundleData data = new PackerBundleData();
                 //data.assetPath = asset;
                 //data.assetAddress = groupData.AddressOperation.GetAddressName(asset);
                 //data.bundlePath = groupData.AddressOperation.GetBundleName(asset);
@@ -188,7 +202,7 @@ namespace DotEditor.Asset.AssetPacker
                 EditorUtility.DisplayProgressBar("Set Bundle Names", "", 0f);
             }
 
-            List<AssetPackerAddressData> addressDatas = new List<AssetPackerAddressData>();
+            List<PackerBundleData> addressDatas = new List<PackerBundleData>();
             assetPackerConfig.groupDatas.ForEach((groupData) =>
             {
                 addressDatas.AddRange(groupData.assetFiles);
@@ -198,11 +212,11 @@ namespace DotEditor.Asset.AssetPacker
             {
                 if (isShowProgressBar)
                 {
-                    EditorUtility.DisplayProgressBar("Set Bundle Names", addressDatas[i].assetPath, i / (float)addressDatas.Count);
+                    EditorUtility.DisplayProgressBar("Set Bundle Names", addressDatas[i].Path, i / (float)addressDatas.Count);
                 }
 
-                string assetPath = addressDatas[i].assetPath;
-                string bundlePath = addressDatas[i].bundlePath;
+                string assetPath = addressDatas[i].Path;
+                string bundlePath = addressDatas[i].Bundle;
                 if(bundlePathFormat == BundlePathFormatType.MD5)
                 {
                     bundlePath = addressDatas[i].bundlePathMd5;
@@ -269,14 +283,14 @@ namespace DotEditor.Asset.AssetPacker
                 return;
             }
 
-            if(string.IsNullOrEmpty(buildConfig.bundleOutputDir))
+            if(string.IsNullOrEmpty(buildConfig.OutputDir))
             {
                 Debug.Log("AssetPackerUtil::PackAssetBundle->bundleOutputDir is null.");
                 return;
             }
 
-            string outputDir = $"{buildConfig.bundleOutputDir}/{buildConfig.buildTarget.ToString()}/assetbundles";
-            if (buildConfig.cleanupBeforeBuild && Directory.Exists(outputDir))
+            string outputDir = $"{buildConfig.OutputDir}/{buildConfig.Target.ToString()}/assetbundles";
+            if (buildConfig.CleanupBeforeBuild && Directory.Exists(outputDir))
             {
                 Directory.Delete(outputDir, true);
             }

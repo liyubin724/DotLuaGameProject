@@ -26,32 +26,28 @@ namespace DotEditor.Asset.AssetPacker
     [Serializable]
     public class BundleBuildConfig
     {
-        public string bundleOutputDir = null;
-        public bool cleanupBeforeBuild = false;
+        public string OutputDir = null;
+        public bool CleanupBeforeBuild = false;
 
-        public BundlePathFormatType pathFormat = BundlePathFormatType.Origin;
+        public BundlePathFormatType PathFormat = BundlePathFormatType.Origin;
 
-        public ValidBuildTarget buildTarget = ValidBuildTarget.StandaloneWindows64;
-        public CompressOption compression = CompressOption.StandardCompression;
-        public BuildAssetBundleOptions bundleOptions = BuildAssetBundleOptions.DeterministicAssetBundle;
-
-        public BundleBuildConfig()
-        {
-        }
+        public ValidBuildTarget Target = ValidBuildTarget.StandaloneWindows64;
+        public CompressOption Compression = CompressOption.StandardCompression;
+        public BuildAssetBundleOptions BundleOptions = BuildAssetBundleOptions.DeterministicAssetBundle;
 
         public BuildTarget GetBuildTarget()
         {
-            return (BuildTarget)buildTarget;
+            return (BuildTarget)Target;
         }
 
         public BuildAssetBundleOptions GetBundleOptions()
         {
-            BuildAssetBundleOptions options = bundleOptions;
-            if (compression == CompressOption.Uncompressed)
+            BuildAssetBundleOptions options = BundleOptions;
+            if (Compression == CompressOption.Uncompressed)
             {
                 return options | BuildAssetBundleOptions.UncompressedAssetBundle;
             }
-            else if (compression == CompressOption.ChunkBasedCompression)
+            else if (Compression == CompressOption.ChunkBasedCompression)
             {
                 return options | BuildAssetBundleOptions.ChunkBasedCompression;
             }

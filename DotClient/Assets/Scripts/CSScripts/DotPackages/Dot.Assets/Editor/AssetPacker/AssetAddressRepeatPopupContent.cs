@@ -7,13 +7,13 @@ namespace DotEditor.Asset.AssetPacker
 {
     public class AssetAddressRepeatPopupContent : PopupWindowContent
     {
-        public AssetPackerAddressData[] RepeatAddressDatas { get; set; }
+        public PackerBundleData[] RepeatAddressDatas { get; set; }
         private Vector2 scrollPos = Vector2.zero;
         public override void OnGUI(Rect rect)
         {
             GUILayout.BeginArea(rect);
             {
-                EditorGUILayout.LabelField($"Repeat Address({RepeatAddressDatas[0].assetAddress})", EGUIStyles.MiddleCenterLabel);
+                EditorGUILayout.LabelField($"Repeat Address({RepeatAddressDatas[0].Address})", EGUIStyles.MiddleCenterLabel);
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos, EditorStyles.helpBox);
                 {
                     for(int i =0;i<RepeatAddressDatas.Length;i++)
@@ -25,9 +25,9 @@ namespace DotEditor.Asset.AssetPacker
                             {
                                 EGUI.BeginLabelWidth(60);
                                 {
-                                    EditorGUILayout.TextField("Path : ", RepeatAddressDatas[i].assetPath);
+                                    EditorGUILayout.TextField("Path : ", RepeatAddressDatas[i].Path);
 
-                                    UnityObject uObj = AssetDatabase.LoadAssetAtPath<UnityObject>(RepeatAddressDatas[i].assetPath);
+                                    UnityObject uObj = AssetDatabase.LoadAssetAtPath<UnityObject>(RepeatAddressDatas[i].Path);
                                     EditorGUILayout.ObjectField("Target:",uObj, typeof(UnityObject), false);
                                 }
                                 EGUI.EndLableWidth();

@@ -1,6 +1,4 @@
-﻿using DotEngine.Assets;
-using DotEngine.Core.Extensions;
-using DotEngine.Crypto;
+﻿using DotEngine.Core.Extensions;
 using DotEngine.NativeDrawer.Decorator;
 using DotEngine.NativeDrawer.Property;
 using System;
@@ -38,14 +36,12 @@ namespace DotEditor.Asset.Group
     [Serializable]
     public class AssetBundleOperation
     {
-        public bool IsUseMD5 = false;
-
         [Help("AB打包方式.\nTogether:将筛选出来的所有的资源打到一个包内\nSeparate:将筛选出来的资源每个都单独打包")]
         [EnumButton]
         public AssetPackMode PackMode = AssetPackMode.Separate;
     }
 
-    public class AssetGroup : ScriptableObject
+    public class AssetGroupCreater : ScriptableObject
     {
         [Help("此配置是否生效")]
         public bool Enable = true;
@@ -81,31 +77,6 @@ namespace DotEditor.Asset.Group
             return assetPaths.Distinct().ToArray();
         }
         
-        public AssetDetail[] GetAssetDetails()
-        {
-            if(!IsMainAssets)
-            {
-                return new AssetDetail[0];
-            }
-
-            List<AssetDetail> details = new List<AssetDetail>();
-            string[] assetPaths = GetAssetPaths();
-            foreach (var assetPath in assetPaths)
-            {
-                AssetDetail detail = new AssetDetail()
-                {
-                    Address = GetAddressName(assetPath),
-                    Path = assetPath,
-                    Bundle = GetBundleName(assetPath),
-                    IsScene = IsScene(assetPath),
-                    Labels = AddressOperation.Labels,
-                };
-                details.Add(detail);
-            }
-
-            return details.ToArray();
-        }
-
         private string GetAddressName(string assetPath)
         {
             if (AddressOperation.AddressMode == AssetAddressMode.FullPath)
@@ -132,10 +103,6 @@ namespace DotEditor.Asset.Group
             }
 
             bundleName = bundleName.ToLower();
-            if(BundleOperation.IsUseMD5)
-            {
-                bundleName = MD5Crypto.Md5(bundleName).ToLower();
-            }
 
             return bundleName;
         }
@@ -149,5 +116,38 @@ namespace DotEditor.Asset.Group
             return false;
         }
 
+        private string[] GetLabels(string assetPath)
+        {
+            return AddressOperation.Labels;
+        }
+
+        public AssetResult[] GetResults()
+        {
+            if(!Enable)
+            {
+                return new AssetResult[0];
+            }
+
+            List<AssetResult> results = new List<AssetResult>();
+            string[] assetPaths = GetAssetPaths();
+            foreach(var assetPath in assetPaths)
+            {
+                AssetResult result = new AssetResult();
+                result.GroupName = GroupName;
+                result.IsMainAsset = IsMainAssets;
+                if(IsMainAssets)
+                {
+                    result.Address = GetAddressName(assetPath);
+                }
+                result.Bundle = GetBundleName(assetPath);
+                result.Path = assetPath;
+                result.IsScene = IsScene(assetPath);
+                result.Labels = GetLabels(assetPath);
+
+                results.Add(result);
+            }
+
+            return results.ToArray();
+        }
     }
 }

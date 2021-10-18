@@ -17,11 +17,11 @@ namespace DotEditor.Asset.AssetPacker
 
     public class AssetPackerWindow : EditorWindow
     {
-        [MenuItem("Game/Asset/Packer Window",priority =10)]
+        [MenuItem("Game/Asset/Asset Packer Window",priority =10)]
         public static void ShowWin()
         {
             AssetPackerWindow win = EditorWindow.GetWindow<AssetPackerWindow>();
-            win.titleContent = new GUIContent("Bundle Packer");
+            win.titleContent = new GUIContent("Asset Packer");
             win.Show();
         }
         private static readonly string ASSET_BUNDLE_SYMBOL = "ASSET_BUNDLE";
@@ -46,19 +46,19 @@ namespace DotEditor.Asset.AssetPacker
         private TreeViewState assetPackerTreeViewState;
 
         private AssetPackerConfig assetPackerConfig = null;
-        private Dictionary<string, List<AssetPackerAddressData>> addressRepeatDataDic = new Dictionary<string, List<AssetPackerAddressData>>();
+        private Dictionary<string, List<PackerBundleData>> addressRepeatDataDic = new Dictionary<string, List<PackerBundleData>>();
         private void OnEnable()
         {
-            assetPackerConfig = AssetPackerUtil.GetAssetPackerConfig();
+            assetPackerConfig = AssetPackerUtil.GetPackerData();
 
             foreach(var group in assetPackerConfig.groupDatas)
             {
                 foreach(var data in group.assetFiles)
                 {
-                    if(!addressRepeatDataDic.TryGetValue(data.assetAddress,out List<AssetPackerAddressData> dataList))
+                    if(!addressRepeatDataDic.TryGetValue(data.Address,out List<PackerBundleData> dataList))
                     {
-                        dataList = new List<AssetPackerAddressData>();
-                        addressRepeatDataDic.Add(data.assetAddress, dataList);
+                        dataList = new List<PackerBundleData>();
+                        addressRepeatDataDic.Add(data.Address, dataList);
                     }
                     dataList.Add(data);
                 }
@@ -70,9 +70,9 @@ namespace DotEditor.Asset.AssetPacker
             }
         }
 
-        public bool IsAddressRepeated(string address,out List<AssetPackerAddressData> datas)
+        public bool IsAddressRepeated(string address,out List<PackerBundleData> datas)
         {
-            if(addressRepeatDataDic.TryGetValue(address,out List<AssetPackerAddressData> list))
+            if(addressRepeatDataDic.TryGetValue(address,out List<PackerBundleData> list))
             {
                 if(list.Count>1)
                 {
@@ -85,11 +85,11 @@ namespace DotEditor.Asset.AssetPacker
             return false;
         }
 
-        public bool IsGroupAddressRepeated(AssetPackerGroupData group)
+        public bool IsGroupAddressRepeated(PackerGroupData group)
         {
             foreach(var data in group.assetFiles)
             {
-                if(IsAddressRepeated(data.assetAddress, out List <AssetPackerAddressData> list))
+                if(IsAddressRepeated(data.Address, out List <PackerBundleData> list))
                 {
                     return true;
                 }
@@ -208,11 +208,11 @@ namespace DotEditor.Asset.AssetPacker
 
                     EditorGUI.BeginChangeCheck();
                     {
-                        bundleBuildConfig.bundleOutputDir = EGUILayout.DrawDiskFolderSelection(Contents.BuildOutputDirStr, bundleBuildConfig.bundleOutputDir);
-                        bundleBuildConfig.pathFormat = (BundlePathFormatType)EditorGUILayout.EnumPopup(Contents.BuildPathFormatContent, bundleBuildConfig.pathFormat);
-                        bundleBuildConfig.cleanupBeforeBuild = EditorGUILayout.Toggle(Contents.BuildCleanup, bundleBuildConfig.cleanupBeforeBuild);
-                        bundleBuildConfig.buildTarget = (ValidBuildTarget)EditorGUILayout.EnumPopup(Contents.BuildTargetContent, bundleBuildConfig.buildTarget);
-                        bundleBuildConfig.compression = (CompressOption)EditorGUILayout.EnumPopup(Contents.BuildCompressionContent, bundleBuildConfig.compression);
+                        bundleBuildConfig.OutputDir = EGUILayout.DrawDiskFolderSelection(Contents.BuildOutputDirStr, bundleBuildConfig.OutputDir);
+                        bundleBuildConfig.PathFormat = (BundlePathFormatType)EditorGUILayout.EnumPopup(Contents.BuildPathFormatContent, bundleBuildConfig.PathFormat);
+                        bundleBuildConfig.CleanupBeforeBuild = EditorGUILayout.Toggle(Contents.BuildCleanup, bundleBuildConfig.CleanupBeforeBuild);
+                        bundleBuildConfig.Target = (ValidBuildTarget)EditorGUILayout.EnumPopup(Contents.BuildTargetContent, bundleBuildConfig.Target);
+                        bundleBuildConfig.Compression = (CompressOption)EditorGUILayout.EnumPopup(Contents.BuildCompressionContent, bundleBuildConfig.Compression);
                     }
                     if (EditorGUI.EndChangeCheck())
                     {
@@ -236,7 +236,7 @@ namespace DotEditor.Asset.AssetPacker
                     }
                     if (GUILayout.Button(Contents.OperationSetBundleNameContent))
                     {
-                        AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.pathFormat,true);
+                        AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.PathFormat,true);
                     }
                     EditorGUILayout.Space();
                     if (GUILayout.Button("Pack Bundle"))
@@ -257,7 +257,7 @@ namespace DotEditor.Asset.AssetPacker
                                 //AssetAddressUtil.BuildAssetAddressConfig();
 
                                 AssetPackerUtil.ClearBundleNames(true);
-                                AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.pathFormat, true);
+                                AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.PathFormat, true);
                                 AssetPackerUtil.PackAssetBundle(assetPackerConfig, bundleBuildConfig);
                             };
                         }
@@ -281,7 +281,7 @@ namespace DotEditor.Asset.AssetPacker
             assetPackerTreeView.Window = this;
         }
 
-        private bool FilterAddressData(AssetPackerAddressData addressData)
+        private bool FilterAddressData(PackerBundleData addressData)
         {
             if (string.IsNullOrEmpty(searchText))
             {
@@ -291,18 +291,18 @@ namespace DotEditor.Asset.AssetPacker
             bool isValid = false;
             if (searchCategoryIndex == 0 || searchCategoryIndex == 1)
             {
-                if (!string.IsNullOrEmpty(addressData.assetAddress))
+                if (!string.IsNullOrEmpty(addressData.Address))
                 {
-                    isValid = addressData.assetAddress.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+                    isValid = addressData.Address.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
             }
             if (!isValid)
             {
                 if (searchCategoryIndex == 0 || searchCategoryIndex == 2)
                 {
-                    if (!string.IsNullOrEmpty(addressData.assetPath))
+                    if (!string.IsNullOrEmpty(addressData.Path))
                     {
-                        isValid = addressData.assetPath.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+                        isValid = addressData.Path.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
                     }
                 }
             }
@@ -310,16 +310,16 @@ namespace DotEditor.Asset.AssetPacker
             {
                 if (searchCategoryIndex == 0 || searchCategoryIndex == 3)
                 {
-                    if (!string.IsNullOrEmpty(addressData.bundlePath))
+                    if (!string.IsNullOrEmpty(addressData.Bundle))
                     {
-                        string bPath = $"{addressData.bundlePath} {addressData.bundlePathMd5}";
+                        string bPath = $"{addressData.Bundle} {addressData.bundlePathMd5}";
                         isValid = bPath.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
                     }
                 }
             }
             if (!isValid)
             {
-                string label = string.Join(",", addressData.labels);
+                string label = string.Join(",", addressData.Labels);
                 if (searchCategoryIndex == 0 || searchCategoryIndex == 4)
                 {
                     if (!string.IsNullOrEmpty(label))
@@ -339,7 +339,7 @@ namespace DotEditor.Asset.AssetPacker
 
             for(int i =0;i<assetPackerConfig.groupDatas.Count;++i)
             {
-                AssetPackerGroupData groupData = assetPackerConfig.groupDatas[i];
+                PackerGroupData groupData = assetPackerConfig.groupDatas[i];
                 AssetPackerTreeData groupTreeData = new AssetPackerTreeData();
                 groupTreeData.groupData = groupData;
 
@@ -350,7 +350,7 @@ namespace DotEditor.Asset.AssetPacker
 
                 for(int j=0;j<groupData.assetFiles.Count;++j)
                 {
-                    AssetPackerAddressData addressData = groupData.assetFiles[j];
+                    PackerBundleData addressData = groupData.assetFiles[j];
                     if(FilterAddressData(addressData))
                     {
                         AssetPackerTreeData elementTreeData = new AssetPackerTreeData();

@@ -6,8 +6,8 @@ using UnityEditor;
 using UnityEngine;
 namespace DotEditor.Asset.Group
 {
-    [CustomEditor(typeof(AssetGroup))]
-    public class AssetGroupEditor :  DrawerEditor
+    [CustomEditor(typeof(AssetGroupCreater))]
+    public class AssetGroupCreaterEditor :  DrawerEditor
     {
         private EGUIListView<string> listViewer = null;
 
@@ -34,7 +34,7 @@ namespace DotEditor.Asset.Group
                 if (GUILayout.Button("Filter", GUILayout.Height(40)))
                 {
                     List<string> files = new List<string>();
-                    AssetGroup group = target as AssetGroup;
+                    AssetGroupCreater group = target as AssetGroupCreater;
                     files.AddRange(group.GetAssetPaths());
 
                     listViewer = new EGUIListView<string>();

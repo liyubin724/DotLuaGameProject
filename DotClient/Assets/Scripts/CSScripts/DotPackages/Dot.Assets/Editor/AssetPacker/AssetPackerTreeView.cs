@@ -10,7 +10,7 @@ namespace DotEditor.Asset.AssetPacker
 {
     public class AssetPackerTreeData
     {
-        public AssetPackerGroupData groupData;
+        public PackerGroupData groupData;
         public int dataIndex = -1;
 
         public bool IsGroup { get => dataIndex < 0; }
@@ -65,7 +65,7 @@ namespace DotEditor.Asset.AssetPacker
         {
             var item = (TreeViewItem<TreeElementWithData<AssetPackerTreeData>>)args.item;
             AssetPackerTreeData groupTreeData = item.data.Data;
-            AssetPackerGroupData groupData = groupTreeData.groupData;
+            PackerGroupData groupData = groupTreeData.groupData;
 
             int childCount = item.data.children == null ? 0 : item.data.children.Count;
 
@@ -81,12 +81,12 @@ namespace DotEditor.Asset.AssetPacker
             }
             else
             {
-                AssetPackerAddressData addressData = groupData.assetFiles[groupTreeData.dataIndex];
+                PackerBundleData addressData = groupData.assetFiles[groupTreeData.dataIndex];
                 DrawAddressData(contentRect, addressData);
             }
         }
 
-        private void DrawGroupData(Rect contentRect,int itemID,AssetPackerGroupData groupData,int childCount)
+        private void DrawGroupData(Rect contentRect,int itemID,PackerGroupData groupData,int childCount)
         {
             Rect drawRect = new Rect(contentRect.x, contentRect.y, contentRect.height, contentRect.height);
             if (Window.IsGroupAddressRepeated(groupData))
@@ -118,10 +118,10 @@ namespace DotEditor.Asset.AssetPacker
             EditorGUI.LabelField(drawRect,new GUIContent(groupName));
         }
 
-        private void DrawAddressData(Rect contentRect,AssetPackerAddressData addressData)
+        private void DrawAddressData(Rect contentRect,PackerBundleData addressData)
         {
             Rect drawRect = new Rect(contentRect.x, contentRect.y, 24, 24);
-            if (Window.IsAddressRepeated(addressData.assetAddress, out List<AssetPackerAddressData> datas))
+            if (Window.IsAddressRepeated(addressData.Address, out List<PackerBundleData> datas))
             {
                 if (GUI.Button(drawRect,addressRepeatContent))
                 {
@@ -139,7 +139,7 @@ namespace DotEditor.Asset.AssetPacker
 
             EGUI.BeginLabelWidth(80);
             {
-                EditorGUI.TextField(drawRect,"address", addressData.assetAddress);
+                EditorGUI.TextField(drawRect,"address", addressData.Address);
             }
             EGUI.EndLableWidth();
 
@@ -148,13 +148,13 @@ namespace DotEditor.Asset.AssetPacker
 
             EGUI.BeginLabelWidth(80);
             {
-                EditorGUI.TextField(drawRect, "path", addressData.assetPath);
+                EditorGUI.TextField(drawRect, "path", addressData.Path);
                 drawRect.y += drawRect.height;
-                EditorGUI.TextField(drawRect, "bundle", addressData.bundlePath);
+                EditorGUI.TextField(drawRect, "bundle", addressData.Bundle);
                 drawRect.y += drawRect.height;
                 EditorGUI.TextField(drawRect, "bundle-md5", addressData.bundlePathMd5);
                 drawRect.y += drawRect.height;
-                EditorGUI.TextField(drawRect, "labels", string.Join(",", addressData.labels));
+                EditorGUI.TextField(drawRect, "labels", string.Join(",", addressData.Labels));
             }
             EGUI.EndLableWidth();
 
@@ -165,7 +165,7 @@ namespace DotEditor.Asset.AssetPacker
 
             if (GUI.Button(drawRect,"Select"))
             {
-                SelectionUtility.PingObject(addressData.assetPath);
+                SelectionUtility.PingObject(addressData.Path);
             }
         }
     }
