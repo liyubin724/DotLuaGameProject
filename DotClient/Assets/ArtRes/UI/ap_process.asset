@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3458062901692393338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d590514daac890e47a8150423630f5b1, type: 3}
+  m_Name: apr_set_atlas_platform
+  m_EditorClassIdentifier: 
+  Platform: Android
+  MaxSize: 2048
+  Format: 47
+--- !u!114 &-758978164985833617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d590514daac890e47a8150423630f5b1, type: 3}
+  m_Name: apr_set_atlas_platform
+  m_EditorClassIdentifier: 
+  Platform: iPhone
+  MaxSize: 2048
+  Format: 48
+--- !u!114 &-377045052933558656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3594757647d804bb0ea2102be633ff, type: 3}
+  m_Name: apr_set_as_sprite
+  m_EditorClassIdentifier: 
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f973674ca712a4c878e61a891a4921, type: 3}
+  m_Name: ap_process
+  m_EditorClassIdentifier: 
+  PostType: 0
+  Filter:
+    Folder: Assets/ArtRes/UI/Common
+    IsIncludeSub: 1
+    FileNameRegex: ^\w*.png$
+  Rulers:
+  - {fileID: -377045052933558656}
+  - {fileID: 2463284861962989805}
+  - {fileID: 6557069005947286069}
+  - {fileID: -3458062901692393338}
+  - {fileID: -758978164985833617}
+--- !u!114 &2463284861962989805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5afc961c7aed89e48960f52ccc6e1200, type: 3}
+  m_Name: apr_pack_as_atlas
+  m_EditorClassIdentifier: 
+  TargetFolder: Assets/ArtRes/UI/Atlas
+  AtlasName: 
+  AllowRotation: 0
+  TightPacking: 0
+  Padding: 2
+--- !u!114 &6557069005947286069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d590514daac890e47a8150423630f5b1, type: 3}
+  m_Name: apr_set_atlas_platform
+  m_EditorClassIdentifier: 
+  Platform: Standalone
+  MaxSize: 2048
+  Format: 4
