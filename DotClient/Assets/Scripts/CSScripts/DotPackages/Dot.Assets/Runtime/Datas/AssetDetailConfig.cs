@@ -1,9 +1,33 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace DotEngine.Assets
 {
     public class AssetDetailConfig
     {
+        public static AssetDetailConfig ReadFromFile(string filePath)
+        {
+            if(string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            {
+                return null;
+            }
+            string content = File.ReadAllText(filePath);
+            return JsonConvert.DeserializeObject<AssetDetailConfig>(content);
+        }
+
+        public static bool WriteToFile(AssetDetailConfig config,string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath) || config == null)
+            {
+                return false;
+            }
+
+            string jsonContent = JsonConvert.SerializeObject(config);
+            File.WriteAllText(filePath, jsonContent);
+            return true;
+        }
+
         public AssetDetail[] Details = new AssetDetail[0];
 
         private Dictionary<string, AssetDetail> addressToDetailDic = null;
