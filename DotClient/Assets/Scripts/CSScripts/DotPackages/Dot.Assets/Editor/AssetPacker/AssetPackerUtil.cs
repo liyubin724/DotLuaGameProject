@@ -95,8 +95,14 @@ namespace DotEditor.Asset.AssetPacker
             return $"{Path.GetFullPath(".").Replace("\\", "/")}/AssetConfig/bundle_build_config.json";
         }
 
-        public static void BuildAssetBundles(PackerData packerData, BundleBuildData buildData, string outputDir)
+        public static void BuildAssetBundles(PackerData packerData, BundleBuildData buildData)
         {
+            string outputDir = buildData.OutputDir;
+            if(string.IsNullOrEmpty(outputDir))
+            {
+                Debug.LogError("The outputDir is empty");
+                return;
+            }
             if(Directory.Exists(outputDir)&&buildData.CleanupBeforeBuild)
             {
                 Directory.Delete(outputDir);

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
@@ -36,3 +37,4 @@ namespace DotEngine.Assets.Operations
         }
     }
 }
+#endif
