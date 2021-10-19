@@ -192,12 +192,12 @@ namespace DotEditor.Asset.AssetPacker
             EditorGUILayout.EndHorizontal();
         }
 
-        private BundleBuildConfig bundleBuildConfig = null;
+        private BundleBuildData bundleBuildConfig = null;
         private void DrawPackOperation()
         {
             if(bundleBuildConfig == null)
             {
-                bundleBuildConfig = AssetPackerUtil.ReadBundleBuildConfig();
+                bundleBuildConfig = AssetPackerUtil.ReadBuildData();
             }
 
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
@@ -216,7 +216,7 @@ namespace DotEditor.Asset.AssetPacker
                     }
                     if (EditorGUI.EndChangeCheck())
                     {
-                        AssetPackerUtil.WriteBundleBuildConfig(bundleBuildConfig);
+                        AssetPackerUtil.WriteBuildData(bundleBuildConfig);
                     }
                 }
                 EditorGUILayout.EndVertical();

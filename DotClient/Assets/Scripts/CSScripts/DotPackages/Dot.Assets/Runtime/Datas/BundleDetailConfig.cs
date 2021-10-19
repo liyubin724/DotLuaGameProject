@@ -92,6 +92,8 @@ namespace DotEngine.Assets
     public class BundleDetail
     {
         public string Path;
+        public string Hash;
+        public string CRC;
         public string MD5;
         public string[] Dependencies = new string[0];
 

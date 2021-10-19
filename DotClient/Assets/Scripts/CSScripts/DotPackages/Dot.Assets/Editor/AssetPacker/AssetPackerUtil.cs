@@ -1,17 +1,14 @@
 ﻿using DotEditor.Asset.Group;
 using DotEditor.Utilities;
-using DotEngine.Crypto;
-using DotEngine.Utilities;
+using DotEngine.Assets;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.U2D;
+using UnityEditor.Build.Pipeline;
 using UnityEngine;
-using UnityEngine.U2D;
-using UnityObject = UnityEngine.Object;
+using UnityEngine.Build.Pipeline;
 
 namespace DotEditor.Asset.AssetPacker
 {
@@ -59,253 +56,95 @@ namespace DotEditor.Asset.AssetPacker
             return packerData;
         }
 
-        private static string AddressGroupName = "Default Address Group";
-        private static void AddAddressGroup(AssetPackerConfig assetPackerConfig)
+        public static BundleBuildData ReadBuildData()
         {
-            //if (assetPackerConfig != null)
-            //{
-            //    RemoveAddressGroup(assetPackerConfig);
+            BundleBuildData bundlePackConfig = null;
 
-            //    string[] assetPaths = AssetDatabaseUtility.FindAssets<AssetAddressConfig>();
-            //    if (assetPaths == null || assetPaths.Length == 0)
-            //    {
-            //        Debug.LogError("AssetPackUtil::AddAddressGroup->AssetAddressConfig is not found!");
-            //        return;
-            //    }
-
-            //    AssetPackerGroupData groupData = new AssetPackerGroupData()
-            //    {
-            //        groupName = AddressGroupName,
-            //    };
-            //    AssetPackerAddressData addressData = new AssetPackerAddressData()
-            //    {
-            //        //assetAddress = AssetConst.ASSET_ADDRESS_CONFIG_NAME,
-            //        //assetPath = assetPaths[0],
-            //        //bundlePath = AssetConst.ASSET_ADDRESS_BUNDLE_NAME,
-            //        //bundlePathMd5 = MD5Crypto.Md5(AssetConst.ASSET_ADDRESS_BUNDLE_NAME).ToLower(),
-            //    };
-            //    groupData.assetFiles.Add(addressData);
-
-            //    assetPackerConfig.groupDatas.Add(groupData);
-            //}
-        }
-
-        //private static void RemoveAddressGroup(AssetPackerConfig assetPackerConfig)
-        //{
-        //    if (assetPackerConfig != null)
-        //    {
-        //        foreach (var group in assetPackerConfig.groupDatas)
-        //        {
-        //            if (group.groupName == AddressGroupName)
-        //            {
-        //                assetPackerConfig.groupDatas.Remove(group);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
-        private static List<PackerBundleData> GetAssetsInGroup(AssetBuildGroup groupData)
-        {
-            List<string> assets = new List<string>();
-            foreach(var filter in groupData.filters)
-            {
-                //string[] finderAssets = filter.Filter();
-                //if(finderAssets!=null && finderAssets.Length>0)
-                //{
-                //    assets.AddRange(finderAssets);
-                //}
-            }
-            assets = assets.Distinct().ToList();
-
-            List<PackerBundleData> addressDatas = new List<PackerBundleData>();
-            foreach(var asset in assets)
-            {
-                PackerBundleData data = new PackerBundleData();
-                //data.assetPath = asset;
-                //data.assetAddress = groupData.AddressOperation.GetAddressName(asset);
-                //data.bundlePath = groupData.AddressOperation.GetBundleName(asset);
-                //data.bundlePathMd5 = MD5Crypto.Md5(data.bundlePath).ToLower();
-                //data.labels = groupData.AddressOperation.GetLabels();
-
-                addressDatas.Add(data);
-            }
-            return addressDatas;
-        }
-
-        private static string GetBundleBuildConfigPath()
-        {
-            return $"{Path.GetFullPath(".").Replace("\\", "/")}/AssetConfig/bundle_build_config.json";
-        }
-
-        public static BundleBuildConfig ReadBundleBuildConfig()
-        {
-            BundleBuildConfig bundlePackConfig = null;
-
-            string configPath = GetBundleBuildConfigPath();
-            if(File.Exists(configPath))
+            string configPath = GetBundleBuildDataFilePath();
+            if (File.Exists(configPath))
             {
                 string configContent = File.ReadAllText(configPath);
-                bundlePackConfig = JsonConvert.DeserializeObject<BundleBuildConfig>(configContent);
+                bundlePackConfig = JsonConvert.DeserializeObject<BundleBuildData>(configContent);
             }
 
-            if(bundlePackConfig == null)
+            if (bundlePackConfig == null)
             {
-                bundlePackConfig = new BundleBuildConfig();
+                bundlePackConfig = new BundleBuildData();
             }
             return bundlePackConfig;
         }
 
-        public static void WriteBundleBuildConfig(BundleBuildConfig config)
+        public static void WriteBuildData(BundleBuildData buildData)
         {
-            if (config == null)
+            if (buildData == null)
             {
                 return;
             }
-            string configPath = GetBundleBuildConfigPath();
+            string configPath = GetBundleBuildDataFilePath();
             string dir = Path.GetDirectoryName(configPath);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
-            var json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            var json = JsonConvert.SerializeObject(buildData, Formatting.Indented);
             File.WriteAllText(configPath, json);
         }
 
-        public static void ClearBundleNames(bool isShowProgressBar = false)
+        private static string GetBundleBuildDataFilePath()
         {
-            string[] bundleNames = AssetDatabase.GetAllAssetBundleNames();
-            if (isShowProgressBar)
-            {
-                EditorUtility.DisplayProgressBar("Clear Bundle Names", "", 0.0f);
-            }
-            for (int i = 0; i < bundleNames.Length; i++)
-            {
-                if (isShowProgressBar)
-                {
-                    EditorUtility.DisplayProgressBar("Clear Bundle Names", bundleNames[i], i / (float)bundleNames.Length);
-                }
-                AssetDatabase.RemoveAssetBundleName(bundleNames[i], true);
-            }
-            if (isShowProgressBar)
-            {
-                EditorUtility.ClearProgressBar();
-            }
-
-            AssetDatabase.SaveAssets();
+            return $"{Path.GetFullPath(".").Replace("\\", "/")}/AssetConfig/bundle_build_config.json";
         }
 
-        public static void SetAssetBundleNames(AssetPackerConfig assetPackerConfig, BundlePathFormatType bundlePathFormat,bool isShowProgressBar = false)
+        public static void BuildAssetBundles(PackerData packerData, BundleBuildData buildData, string outputDir)
         {
-            if (isShowProgressBar)
+            var manifest = PackAssetBundle(packerData, buildData, outputDir);
+            if(manifest==null)
             {
-                EditorUtility.DisplayProgressBar("Set Bundle Names", "", 0f);
-            }
-
-            List<PackerBundleData> addressDatas = new List<PackerBundleData>();
-            assetPackerConfig.groupDatas.ForEach((groupData) =>
-            {
-                addressDatas.AddRange(groupData.assetFiles);
-            });
-
-            for (int i = 0; i < addressDatas.Count; ++i)
-            {
-                if (isShowProgressBar)
-                {
-                    EditorUtility.DisplayProgressBar("Set Bundle Names", addressDatas[i].Path, i / (float)addressDatas.Count);
-                }
-
-                string assetPath = addressDatas[i].Path;
-                string bundlePath = addressDatas[i].Bundle;
-                if(bundlePathFormat == BundlePathFormatType.MD5)
-                {
-                    bundlePath = addressDatas[i].bundlePathMd5;
-                }
-
-                AssetImporter ai = AssetImporter.GetAtPath(assetPath);
-                ai.assetBundleName = bundlePath;
-
-                if (Path.GetExtension(assetPath).ToLower() == ".spriteatlas")
-                {
-                    SetSpriteBundleNameByAtlas(assetPath, bundlePath);
-                }
-            }
-
-            if (isShowProgressBar)
-            {
-                EditorUtility.ClearProgressBar();
-            }
-
-            AssetDatabase.SaveAssets();
-        }
-
-        private static void SetSpriteBundleNameByAtlas(string atlasAssetPath, string bundlePath)
-        {
-            SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(atlasAssetPath);
-            if (atlas != null)
-            {
-                List<string> spriteAssetPathList = new List<string>();
-                UnityObject[] objs = atlas.GetPackables();
-                foreach (var obj in objs)
-                {
-                    if (obj.GetType() == typeof(Sprite))
-                    {
-                        spriteAssetPathList.Add(AssetDatabase.GetAssetPath(obj));
-                    }
-                    else if (obj.GetType() == typeof(DefaultAsset))
-                    {
-                        string folderPath = AssetDatabase.GetAssetPath(obj);
-                        string[] assets = AssetDatabaseUtility.FindAssetInFolder<Sprite>(folderPath);
-                        spriteAssetPathList.AddRange(assets);
-                    }
-                }
-                spriteAssetPathList.Distinct();
-                foreach (var path in spriteAssetPathList)
-                {
-                    AssetImporter ai = AssetImporter.GetAtPath(path);
-                    ai.assetBundleName = bundlePath;
-                }
-            }
-        }
-
-        public static void PackAssetBundle(AssetPackerConfig packerConfig, BundleBuildConfig buildConfig)
-        {
-            IAssetBundlePacker bundlePacker = null;
-            Type[] bundlePackerTypes = AssemblyUtility.GetDerivedTypes(typeof(IAssetBundlePacker));
-            if(bundlePackerTypes!=null && bundlePackerTypes.Length>0)
-            {
-                bundlePacker = (IAssetBundlePacker)Activator.CreateInstance(bundlePackerTypes[0]);
-            }
-
-            if(bundlePacker == null)
-            {
-                Debug.LogError("AssetPackerUtil::PackAssetBundle->DoPackAssetBundle is null.");
+                Debug.LogError("PackAssetBundle Failed");
                 return;
             }
 
-            if(string.IsNullOrEmpty(buildConfig.OutputDir))
-            {
-                Debug.Log("AssetPackerUtil::PackAssetBundle->bundleOutputDir is null.");
-                return;
-            }
-
-            string outputDir = $"{buildConfig.OutputDir}/{buildConfig.Target.ToString()}/assetbundles";
-            if (buildConfig.CleanupBeforeBuild && Directory.Exists(outputDir))
-            {
-                Directory.Delete(outputDir, true);
-            }
-            if (!Directory.CreateDirectory(outputDir).Exists)
-            {
-                Debug.LogError("AssetPackUitl::PackAssetBundle->Folder is not found. dir = " + outputDir);
-                return;
-            }
-
-            //AssetBundleConfig bundleConfig = bundlePacker.PackAssetBundle(packerConfig, buildConfig,outputDir);
-            //var json = JsonConvert.SerializeObject(bundleConfig, Formatting.Indented);
-            //string jsonFilePath = $"{outputDir}/{AssetConst.ASSET_BUNDLE_CONFIG_NAME}";
-            //File.WriteAllText(jsonFilePath, json);
+            var bundleDetailConfig = CreateBundleDetailConfig(manifest);
+            string detailConfigFilePath = $"{outputDir}/{AssetConst.GetBundleDetailConfigFile()}";
+            BundleDetailConfig.WriteToFile(bundleDetailConfig, detailConfigFilePath);
         }
 
+        private static CompatibilityAssetBundleManifest PackAssetBundle(PackerData packerData, BundleBuildData buildData, string outputDir)
+        {
+            List<AssetBundleBuild> bundleBuilds = new List<AssetBundleBuild>();
+            foreach (var group in packerData.groupDatas)
+            {
+                foreach (var bundle in group.bundleDatas)
+                {
+                    AssetBundleBuild build = new AssetBundleBuild();
+                    build.assetBundleName = bundle.BundlePath;
+                    build.assetNames = (from asset in bundle.assetDatas select asset.Path).ToArray();
+                    bundleBuilds.Add(build);
+                }
+            }
+            var manifest = CompatibilityBuildPipeline.BuildAssetBundles(outputDir, bundleBuilds.ToArray(), buildData.GetBundleOptions(), buildData.GetBuildTarget());
+            return manifest;
+        }
+
+        private static BundleDetailConfig CreateBundleDetailConfig(CompatibilityAssetBundleManifest manifest)
+        { 
+            List<BundleDetail> details = new List<BundleDetail>();
+            string[] bundles = manifest.GetAllAssetBundles();
+            foreach (var bundlePath in bundles)
+            {
+                BundleDetail detail = new BundleDetail();
+                detail.Path = bundlePath;
+                detail.Hash = manifest.GetAssetBundleHash(bundlePath).ToString();
+                detail.CRC = manifest.GetAssetBundleCrc(bundlePath).ToString();
+                detail.Dependencies = manifest.GetAllDependencies(bundlePath);
+
+                details.Add(detail);
+            }
+            BundleDetailConfig detailConfig = new BundleDetailConfig();
+            detailConfig.Details = details.ToArray();
+
+            return detailConfig;
+        }
     }
 
 }

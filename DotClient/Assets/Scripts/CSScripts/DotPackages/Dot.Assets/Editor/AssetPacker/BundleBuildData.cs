@@ -24,7 +24,7 @@ namespace DotEditor.Asset.AssetPacker
     }
 
     [Serializable]
-    public class BundleBuildConfig
+    public class BundleBuildData
     {
         public string OutputDir = null;
         public bool CleanupBeforeBuild = false;

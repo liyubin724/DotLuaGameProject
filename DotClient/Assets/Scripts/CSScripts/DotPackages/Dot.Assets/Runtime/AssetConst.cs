@@ -16,5 +16,10 @@ namespace DotEngine.Assets
         {
             return $"Assets/{ASSET_DETAIL_CONFIG_NAME}.json";
         }
+
+        public static string GetBundleDetailConfigFile()
+        {
+            return $"{BUNDLE_DETAIL_CONFIG_NAME}.json";
+        }
     }
 }
