@@ -29,6 +29,8 @@ namespace DotEditor.Asset.AssetPacker
         public string OutputDir = null;
         public bool CleanupBeforeBuild = false;
 
+        public bool IsForceRebuild = false;
+
         public BundlePathFormatType PathFormat = BundlePathFormatType.Origin;
 
         public ValidBuildTarget Target = ValidBuildTarget.StandaloneWindows64;
@@ -43,6 +45,10 @@ namespace DotEditor.Asset.AssetPacker
         public BuildAssetBundleOptions GetBundleOptions()
         {
             BuildAssetBundleOptions options = BundleOptions;
+            if(IsForceRebuild)
+            {
+                options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
+            }
             if (Compression == CompressOption.Uncompressed)
             {
                 return options | BuildAssetBundleOptions.UncompressedAssetBundle;

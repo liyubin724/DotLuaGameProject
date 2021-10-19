@@ -15,9 +15,19 @@ namespace DotEditor.Asset.AssetPacker
         AssetBundle,
     }
 
+    public enum SearchCategory
+    {
+        All = 0,
+        Group = 1,
+        Bundle = 2,
+        AssetAddress = 3,
+        AssetPath = 4,
+        AssetLabels = 5,
+    }
+
     public class AssetPackerWindow : EditorWindow
     {
-        [MenuItem("Game/Asset/Asset Packer Window",priority =10)]
+        [MenuItem("Game/Asset/Asset Packer Window", priority = 10)]
         public static void ShowWin()
         {
             AssetPackerWindow win = EditorWindow.GetWindow<AssetPackerWindow>();
@@ -27,42 +37,57 @@ namespace DotEditor.Asset.AssetPacker
         private static readonly string ASSET_BUNDLE_SYMBOL = "ASSET_BUNDLE";
 
         private RunMode runMode = RunMode.AssetDatabase;
-        
+
         private bool isExpandAll = false;
 
         private ToolbarSearchField searchField = null;
         public string[] SearchCategories = new string[]
         {
             "All",
-            "Address",
-            "Path",
+            "Group",
             "Bundle",
-            "Labels",
+            "Asset Address",
+            "Asset Path",
+            "Asset Labels",
         };
-        private int searchCategoryIndex = 0;
+        private SearchCategory searchCategory = SearchCategory.All;
         private string searchText = "";
 
         private AssetPackerTreeView assetPackerTreeView;
         private TreeViewState assetPackerTreeViewState;
 
-        private AssetPackerConfig assetPackerConfig = null;
-        private Dictionary<string, List<PackerBundleData>> addressRepeatDataDic = new Dictionary<string, List<PackerBundleData>>();
+        private PackerData packerData = null;
+        public PackerData GetData() => packerData;
+        public PackerGroupData GetGroupData(int groupIndex)
+        {
+            return packerData.groupDatas[groupIndex];
+        }
+        public PackerBundleData GetBundleData(int groupIndex, int bundleIndex)
+        {
+            return GetGroupData(groupIndex).bundleDatas[bundleIndex];
+        }
+        public PackerAssetData GetAssetData(int groupIndex,int bundleIndex,int assetIndex)
+        {
+            return GetBundleData(groupIndex, bundleIndex).assetDatas[assetIndex];
+        }
+
+        //private Dictionary<string, List<PackerBundleData>> addressRepeatDataDic = new Dictionary<string, List<PackerBundleData>>();
         private void OnEnable()
         {
-            assetPackerConfig = AssetPackerUtil.GetPackerData();
+            packerData = AssetPackerUtil.GetPackerData();
 
-            foreach(var group in assetPackerConfig.groupDatas)
-            {
-                foreach(var data in group.assetFiles)
-                {
-                    if(!addressRepeatDataDic.TryGetValue(data.Address,out List<PackerBundleData> dataList))
-                    {
-                        dataList = new List<PackerBundleData>();
-                        addressRepeatDataDic.Add(data.Address, dataList);
-                    }
-                    dataList.Add(data);
-                }
-            }
+            //foreach(var group in assetPackerConfig.groupDatas)
+            //{
+            //    foreach(var data in group.assetFiles)
+            //    {
+            //        if(!addressRepeatDataDic.TryGetValue(data.Address,out List<PackerBundleData> dataList))
+            //        {
+            //            dataList = new List<PackerBundleData>();
+            //            addressRepeatDataDic.Add(data.Address, dataList);
+            //        }
+            //        dataList.Add(data);
+            //    }
+            //}
 
             if (PlayerSettingsUtility.HasScriptingDefineSymbol(ASSET_BUNDLE_SYMBOL))
             {
@@ -72,14 +97,14 @@ namespace DotEditor.Asset.AssetPacker
 
         public bool IsAddressRepeated(string address,out List<PackerBundleData> datas)
         {
-            if(addressRepeatDataDic.TryGetValue(address,out List<PackerBundleData> list))
-            {
-                if(list.Count>1)
-                {
-                    datas = list;
-                    return true;
-                }
-            }
+            //if(addressRepeatDataDic.TryGetValue(address,out List<PackerBundleData> list))
+            //{
+            //    if(list.Count>1)
+            //    {
+            //        datas = list;
+            //        return true;
+            //    }
+            //}
 
             datas = null;
             return false;
@@ -87,13 +112,13 @@ namespace DotEditor.Asset.AssetPacker
 
         public bool IsGroupAddressRepeated(PackerGroupData group)
         {
-            foreach(var data in group.assetFiles)
-            {
-                if(IsAddressRepeated(data.Address, out List <PackerBundleData> list))
-                {
-                    return true;
-                }
-            }
+            //foreach(var data in group.assetFiles)
+            //{
+            //    if(IsAddressRepeated(data.Address, out List <PackerBundleData> list))
+            //    {
+            //        return true;
+            //    }
+            //}
             return false;
         }
 
@@ -177,9 +202,9 @@ namespace DotEditor.Asset.AssetPacker
                     }, (category) =>
                     {
                         int newIndex = Array.IndexOf(SearchCategories, category);
-                        if(searchCategoryIndex!=newIndex)
+                        if((int)searchCategory!=newIndex)
                         {
-                            searchCategoryIndex = newIndex;
+                            searchCategory = (SearchCategory)newIndex;
                             SetTreeModel();
                         }
                     });
@@ -232,16 +257,16 @@ namespace DotEditor.Asset.AssetPacker
                     EditorGUILayout.Space();
                     if (GUILayout.Button(Contents.OperationCleanBundleNameContent))
                     {
-                        AssetPackerUtil.ClearBundleNames(true);
+                        //AssetPackerUtil.ClearBundleNames(true);
                     }
                     if (GUILayout.Button(Contents.OperationSetBundleNameContent))
                     {
-                        AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.PathFormat,true);
+                        //AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.PathFormat,true);
                     }
                     EditorGUILayout.Space();
                     if (GUILayout.Button("Pack Bundle"))
                     {
-                        AssetPackerUtil.PackAssetBundle(assetPackerConfig, bundleBuildConfig);
+                        //AssetPackerUtil.PackAssetBundle(assetPackerConfig, bundleBuildConfig);
                     }
                 }
                 EditorGUILayout.EndVertical();
@@ -256,9 +281,9 @@ namespace DotEditor.Asset.AssetPacker
                             {
                                 //AssetAddressUtil.BuildAssetAddressConfig();
 
-                                AssetPackerUtil.ClearBundleNames(true);
-                                AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.PathFormat, true);
-                                AssetPackerUtil.PackAssetBundle(assetPackerConfig, bundleBuildConfig);
+                                //AssetPackerUtil.ClearBundleNames(true);
+                                //AssetPackerUtil.SetAssetBundleNames(assetPackerConfig, bundleBuildConfig.PathFormat, true);
+                                //AssetPackerUtil.PackAssetBundle(assetPackerConfig, bundleBuildConfig);
                             };
                         }
                     }
@@ -281,54 +306,100 @@ namespace DotEditor.Asset.AssetPacker
             assetPackerTreeView.Window = this;
         }
 
-        private bool FilterAddressData(PackerBundleData addressData)
+        private bool FilterGroupData(PackerGroupData groupData)
+        {
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return true;
+            }
+            if (searchCategory == SearchCategory.All || searchCategory == SearchCategory.Group)
+            {
+                if (!string.IsNullOrEmpty(groupData.GroupName) && 
+                    groupData.GroupName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+
+                if (searchCategory == SearchCategory.Group)
+                {
+                    return false;
+                }
+            }
+
+            foreach (var bundleData in groupData.bundleDatas)
+            {
+                if(FilterBundleData(bundleData))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool FilterBundleData(PackerBundleData bundleData)
         {
             if (string.IsNullOrEmpty(searchText))
             {
                 return true;
             }
 
-            bool isValid = false;
-            if (searchCategoryIndex == 0 || searchCategoryIndex == 1)
+            if(searchCategory == SearchCategory.All || searchCategory == SearchCategory.Bundle)
             {
-                if (!string.IsNullOrEmpty(addressData.Address))
+                if(bundleData.BundlePath.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    isValid = addressData.Address.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+                    return true;
+                }
+
+                if(searchCategory == SearchCategory.Bundle)
+                {
+                    return false;
                 }
             }
-            if (!isValid)
+
+            foreach (var assetData in bundleData.assetDatas)
             {
-                if (searchCategoryIndex == 0 || searchCategoryIndex == 2)
+                if(FilterAddressData(assetData))
                 {
-                    if (!string.IsNullOrEmpty(addressData.Path))
-                    {
-                        isValid = addressData.Path.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
-                    }
+                    return true;
                 }
             }
-            if (!isValid)
+            return false;
+        }
+
+        private bool FilterAddressData(PackerAssetData assetData)
+        {
+            if (string.IsNullOrEmpty(searchText))
             {
-                if (searchCategoryIndex == 0 || searchCategoryIndex == 3)
+                return true;
+            }
+
+            if (searchCategory == SearchCategory.All || searchCategory == SearchCategory.AssetAddress)
+            {
+                if (!string.IsNullOrEmpty(assetData.Address) && 
+                    assetData.Address.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    if (!string.IsNullOrEmpty(addressData.Bundle))
-                    {
-                        string bPath = $"{addressData.Bundle} {addressData.bundlePathMd5}";
-                        isValid = bPath.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
-                    }
+                    return true;
                 }
             }
-            if (!isValid)
+            if (searchCategory == SearchCategory.All || searchCategory == SearchCategory.AssetPath)
             {
-                string label = string.Join(",", addressData.Labels);
-                if (searchCategoryIndex == 0 || searchCategoryIndex == 4)
+                if (!string.IsNullOrEmpty(assetData.Path) &&
+                    assetData.Path.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    if (!string.IsNullOrEmpty(label))
-                    {
-                        isValid = label.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
-                    }
+                    return true;
                 }
             }
-            return isValid;
+            if (searchCategory == SearchCategory.All || searchCategory == SearchCategory.AssetLabels)
+            {
+                string label = string.Join(",", assetData.Labels);
+                if (!string.IsNullOrEmpty(label) &&
+                    label.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void SetTreeModel()
@@ -337,33 +408,53 @@ namespace DotEditor.Asset.AssetPacker
             TreeElementWithData<AssetPackerTreeData> treeModelRoot = treeModel.root;
             treeModelRoot.children?.Clear();
 
-            for(int i =0;i<assetPackerConfig.groupDatas.Count;++i)
+            int id = 1;
+            for(int i = 0;i<packerData.groupDatas.Count;++i)
             {
-                PackerGroupData groupData = assetPackerConfig.groupDatas[i];
-                AssetPackerTreeData groupTreeData = new AssetPackerTreeData();
-                groupTreeData.groupData = groupData;
-
-                TreeElementWithData<AssetPackerTreeData> groupElementData = new TreeElementWithData<AssetPackerTreeData>(
-                    groupTreeData, "", 0, (i + 1) * 100000);
-
-                treeModel.AddElement(groupElementData, treeModelRoot, treeModelRoot.hasChildren ? treeModelRoot.children.Count : 0);
-
-                for(int j=0;j<groupData.assetFiles.Count;++j)
+                var groupData = packerData.groupDatas[i];
+                if(FilterGroupData(groupData))
                 {
-                    PackerBundleData addressData = groupData.assetFiles[j];
-                    if(FilterAddressData(addressData))
+                    AssetPackerTreeData groupTreeData = new AssetPackerTreeData();
+                    groupTreeData.GroupIndex = i;
+
+                    TreeElementWithData<AssetPackerTreeData> groupElementData = new TreeElementWithData<AssetPackerTreeData>(groupTreeData, "", 0, id);
+                    treeModel.AddElement(groupElementData, treeModelRoot, treeModelRoot.hasChildren ? treeModelRoot.children.Count : 0);
+                    id++;
+
+                    for(int j = 0;j<groupData.bundleDatas.Count;j++)
                     {
-                        AssetPackerTreeData elementTreeData = new AssetPackerTreeData();
-                        elementTreeData.groupData = groupData;
-                        elementTreeData.dataIndex = j;
+                        PackerBundleData bundleData = groupData.bundleDatas[i];
+                        if(FilterBundleData(bundleData))
+                        {
+                            AssetPackerTreeData bundleTreeData = new AssetPackerTreeData();
+                            bundleTreeData.GroupIndex = i;
+                            bundleTreeData.BundleIndex = j;
 
-                        TreeElementWithData<AssetPackerTreeData> elementData = new TreeElementWithData<AssetPackerTreeData>(
-                                elementTreeData, "", 1, (i + 1) * 100000 + (j + 1));
+                            TreeElementWithData<AssetPackerTreeData> bundleElementData = new TreeElementWithData<AssetPackerTreeData>(bundleTreeData, "", 0, id);
+                            treeModel.AddElement(bundleElementData, groupElementData, groupElementData.hasChildren ? groupElementData.children.Count : 0);
+                            id++;
 
-                        treeModel.AddElement(elementData, groupElementData, groupElementData.hasChildren ? groupElementData.children.Count : 0);
+                            for(int k = 0;k<bundleData.assetDatas.Count;k++)
+                            {
+                                PackerAssetData assetData = bundleData.assetDatas[k];
+                                if(FilterAddressData(assetData))
+                                {
+                                    AssetPackerTreeData assetTreeData = new AssetPackerTreeData();
+                                    assetTreeData.GroupIndex = i;
+                                    assetTreeData.BundleIndex = j;
+                                    assetTreeData.AssetIndex = k;
+
+                                    TreeElementWithData<AssetPackerTreeData> assetElementData = new TreeElementWithData<AssetPackerTreeData>(assetTreeData, "", 0, id);
+                                    treeModel.AddElement(assetElementData, bundleElementData, bundleElementData.hasChildren ? bundleElementData.children.Count : 0);
+                                    id++;
+
+                                }
+                            }
+                        }
                     }
                 }
             }
+
         }
 
         static class Contents

@@ -97,6 +97,16 @@ namespace DotEditor.Asset.AssetPacker
 
         public static void BuildAssetBundles(PackerData packerData, BundleBuildData buildData, string outputDir)
         {
+            if(Directory.Exists(outputDir)&&buildData.CleanupBeforeBuild)
+            {
+                Directory.Delete(outputDir);
+            }
+
+            if(!Directory.Exists(outputDir))
+            {
+                Directory.CreateDirectory(outputDir);
+            }
+
             var manifest = PackAssetBundle(packerData, buildData, outputDir);
             if(manifest==null)
             {

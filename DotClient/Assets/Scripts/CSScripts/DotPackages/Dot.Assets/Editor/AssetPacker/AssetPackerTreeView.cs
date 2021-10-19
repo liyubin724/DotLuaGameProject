@@ -1,6 +1,6 @@
-﻿using DotEditor.TreeGUI;
+﻿using DotEditor.GUIExtension;
+using DotEditor.TreeGUI;
 using DotEditor.Utilities;
-using DotEditor.GUIExtension;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -10,10 +10,33 @@ namespace DotEditor.Asset.AssetPacker
 {
     public class AssetPackerTreeData
     {
-        public PackerGroupData groupData;
-        public int dataIndex = -1;
+        public int GroupIndex = -1;
+        public int BundleIndex = -1;
+        public int AssetIndex = -1;
 
-        public bool IsGroup { get => dataIndex < 0; }
+        public bool IsGroup
+        {
+            get
+            {
+                return GroupIndex >= 0 && BundleIndex < 0 && AssetIndex < 0;
+            }
+        }
+
+        public bool IsBundle
+        {
+            get
+            {
+                return GroupIndex >= 0 && BundleIndex >= 0 && AssetIndex < 0;
+            }
+        }
+
+        public bool IsAsset
+        {
+            get
+            {
+                return GroupIndex >= 0 && BundleIndex >= 0 && AssetIndex >= 0;
+            }
+        }
 
         public static AssetPackerTreeData Root
         {
@@ -25,10 +48,12 @@ namespace DotEditor.Asset.AssetPacker
     {
         private const float SINGLE_ROW_HEIGHT = 17;
 
+        private const int GROUP_ROW_HEIGHT = 20;
+        private const int BUNDLE_ROW_HEIGHT = 20;
+        private const int ASSET_ROW_HEIGHT = 40;
+
         public AssetPackerWindow Window { get; set; } = null;
-
         private GUIContent addressRepeatContent;
-
         public AssetPackerTreeView(TreeViewState state, TreeModel<TreeElementWithData<AssetPackerTreeData>> model)
             : base(state, model)
         {
@@ -51,21 +76,26 @@ namespace DotEditor.Asset.AssetPacker
         protected override float GetCustomRowHeight(int row, TreeViewItem item)
         {
             var viewItem = (TreeViewItem<TreeElementWithData<AssetPackerTreeData>>)item;
-            AssetPackerTreeData groupTreeData = viewItem.data.Data;
-            if (groupTreeData.IsGroup)
+            AssetPackerTreeData treeData = viewItem.data.Data;
+            if(treeData.IsGroup)
             {
-                return SINGLE_ROW_HEIGHT + 8;
+                return GROUP_ROW_HEIGHT;
             }
-            else
+            if(treeData.IsBundle)
             {
-                return SINGLE_ROW_HEIGHT * 5;
+                return BUNDLE_ROW_HEIGHT;
             }
+            if(treeData.IsAsset)
+            {
+                return ASSET_ROW_HEIGHT;
+            }
+            return GROUP_ROW_HEIGHT;
         }
+
         protected override void RowGUI(RowGUIArgs args)
         {
             var item = (TreeViewItem<TreeElementWithData<AssetPackerTreeData>>)args.item;
-            AssetPackerTreeData groupTreeData = item.data.Data;
-            PackerGroupData groupData = groupTreeData.groupData;
+            AssetPackerTreeData treeData = item.data.Data;
 
             int childCount = item.data.children == null ? 0 : item.data.children.Count;
 
@@ -75,98 +105,89 @@ namespace DotEditor.Asset.AssetPacker
             contentRect.y += 2;
             contentRect.height -= 4;
 
-            if (groupTreeData.IsGroup)
+            if (treeData.IsGroup)
             {
-                DrawGroupData(contentRect, args.item.id,groupData, childCount);
+                DrawGroupData(contentRect,Window.GetGroupData(treeData.GroupIndex), childCount);
             }
-            else
+            else if(treeData.IsBundle)
             {
-                PackerBundleData addressData = groupData.assetFiles[groupTreeData.dataIndex];
-                DrawAddressData(contentRect, addressData);
+                DrawBundleData(contentRect, Window.GetBundleData(treeData.GroupIndex, treeData.BundleIndex),childCount);
+            }else if(treeData.IsAsset)
+            {
+                DrawAddressData(contentRect, Window.GetAssetData(treeData.GroupIndex,treeData.BundleIndex,treeData.AssetIndex));
             }
         }
 
-        private void DrawGroupData(Rect contentRect,int itemID,PackerGroupData groupData,int childCount)
+        private void DrawGroupData(Rect contentRect,PackerGroupData groupData,int childCount)
         {
             Rect drawRect = new Rect(contentRect.x, contentRect.y, contentRect.height, contentRect.height);
-            if (Window.IsGroupAddressRepeated(groupData))
-            {
-                if (GUI.Button(drawRect,addressRepeatContent))
-                {
-                    SetExpanded(itemID, true);
-                }
-            }
-
             drawRect.x += drawRect.width + 5;
             drawRect.width = contentRect.width - drawRect.x;
 
-            string groupName = groupData.groupName;
-            if (groupData.isMain)
-            {
-                groupName += "(Main)";
-            }
-            if (groupData.isPreload)
-            {
-                groupName += "(Preload)";
-            }
-            if (groupData.isNeverDestroy)
-            {
-                groupName += "(NeverDestroy)";
-            }
-            groupName += "  " + childCount;
-
-            EditorGUI.LabelField(drawRect,new GUIContent(groupName));
+            EditorGUI.LabelField(drawRect,new GUIContent($"{groupData.GroupName}({childCount})"));
         }
 
-        private void DrawAddressData(Rect contentRect,PackerBundleData addressData)
+        private void DrawBundleData(Rect contentRect,PackerBundleData bundleData, int childCount)
         {
-            Rect drawRect = new Rect(contentRect.x, contentRect.y, 24, 24);
-            if (Window.IsAddressRepeated(addressData.Address, out List<PackerBundleData> datas))
-            {
-                if (GUI.Button(drawRect,addressRepeatContent))
-                {
-                    AssetAddressRepeatPopupContent content = new AssetAddressRepeatPopupContent()
-                    {
-                        RepeatAddressDatas = datas.ToArray(),
-                    };
-                    PopupWindow.Show(drawRect, content);
-                }
-            }
-
+            Rect drawRect = new Rect(contentRect.x, contentRect.y, contentRect.height, contentRect.height);
             drawRect.x += drawRect.width + 5;
-            drawRect.width = (contentRect.width - drawRect.x - contentRect.height - 20)*.5f;
-            drawRect.height = EditorGUIUtility.singleLineHeight;
+            drawRect.width = contentRect.width - drawRect.x;
 
+            EditorGUI.LabelField(drawRect, new GUIContent($"{bundleData.BundlePath}({childCount})"));
+        }
+
+        private void DrawAddressData(Rect contentRect, PackerAssetData assetData)
+        {
+            EGUI.DrawAreaLine(contentRect, Color.black);
+
+            Rect pingBtnRect = new Rect(contentRect.x + contentRect.width - contentRect.height, contentRect.y, contentRect.height, contentRect.height);
+            if (GUI.Button(pingBtnRect, "Select"))
+            {
+                SelectionUtility.PingObject(assetData.Path);
+            }
+
+            Rect ValueRect = new Rect(contentRect.x, contentRect.y, contentRect.width - contentRect.height, contentRect.height);
+            EGUI.DrawAreaLine(contentRect, Color.grey);
+
+            Rect drawRect = new Rect(ValueRect.x, ValueRect.y, ValueRect.width*0.5f, ValueRect.height*0.5f);
             EGUI.BeginLabelWidth(80);
             {
-                EditorGUI.TextField(drawRect,"address", addressData.Address);
+                EditorGUI.TextField(drawRect, "path", assetData.Path);
             }
             EGUI.EndLableWidth();
 
-            drawRect.x += drawRect.width+5;
-            drawRect.height = EditorGUIUtility.singleLineHeight;
-
+            drawRect = new Rect(ValueRect.x, ValueRect.y + drawRect.height, ValueRect.width * 0.5f, ValueRect.height * 0.5f);
             EGUI.BeginLabelWidth(80);
             {
-                EditorGUI.TextField(drawRect, "path", addressData.Path);
-                drawRect.y += drawRect.height;
-                EditorGUI.TextField(drawRect, "bundle", addressData.Bundle);
-                drawRect.y += drawRect.height;
-                EditorGUI.TextField(drawRect, "bundle-md5", addressData.bundlePathMd5);
-                drawRect.y += drawRect.height;
-                EditorGUI.TextField(drawRect, "labels", string.Join(",", addressData.Labels));
+                EditorGUI.TextField(drawRect, "address", assetData.Address);
             }
             EGUI.EndLableWidth();
 
-            drawRect = contentRect;
-            drawRect.x += contentRect.width - contentRect.height - 20;
-            drawRect.width = contentRect.height;
-            drawRect.height = contentRect.height;
-
-            if (GUI.Button(drawRect,"Select"))
+            drawRect = new Rect(ValueRect.x + ValueRect.width * 0.5f, ValueRect.y, ValueRect.width * 0.5f, ValueRect.height * 0.5f);
+            EGUI.BeginLabelWidth(80);
             {
-                SelectionUtility.PingObject(addressData.Path);
+                EditorGUI.TextField(drawRect, "labels", string.Join(",", assetData.Labels));
             }
+            EGUI.EndLableWidth();
+
+            drawRect = new Rect(ValueRect.x + ValueRect.width * 0.5f, ValueRect.y + drawRect.height, ValueRect.width * 0.5f, ValueRect.height * 0.5f);
+            EGUI.BeginLabelWidth(80);
+            {
+                
+            }
+            EGUI.EndLableWidth();
+            //if (Window.IsAddressRepeated(assetData.Address, out List<PackerBundleData> datas))
+            //{
+            //    if (GUI.Button(drawRect,addressRepeatContent))
+            //    {
+            //        AssetAddressRepeatPopupContent content = new AssetAddressRepeatPopupContent()
+            //        {
+            //            RepeatAddressDatas = datas.ToArray(),
+            //        };
+            //        PopupWindow.Show(drawRect, content);
+            //    }
+            //}
+
         }
     }
 }
