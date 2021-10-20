@@ -14,16 +14,11 @@ namespace DotEditor.Asset.Dependency
     internal class AssetDependencyTreeViewModel : GridViewModel
     {
         private string[] m_IgnoreExtensions = new string[0];
+        private AssetDependencyConfig dependencyConfig = null;
 
-        public override bool HasChild(GridViewData data)
+        public void SetDependencyConfig(AssetDependencyConfig config)
         {
-            AssetDependencyData adData = data.GetData<AssetDependencyData>();
-
-            int count = (from d in adData.directlyDepends
-                         where Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(d).ToLower()) < 0
-                         select d).Count();
-
-            return count > 0;
+            dependencyConfig = config;
         }
 
         public void SetIgnoreExtension(string[] extensions)
@@ -42,6 +37,17 @@ namespace DotEditor.Asset.Dependency
             return Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(assetPath).ToLower()) >= 0;
         }
 
+        public override bool HasChild(GridViewData data)
+        {
+            AssetDependency adData = data.GetData<AssetDependency>();
+
+            int count = (from d in adData.directlyDepends
+                         where Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(d).ToLower()) < 0
+                         select d).Count();
+
+            return count > 0;
+        }
+
         public int[] ShowDependency(string[] assetPaths)
         {
             Clear();
@@ -54,7 +60,7 @@ namespace DotEditor.Asset.Dependency
                     continue;
                 }
 
-                AssetDependencyData adData = AssetDependencyUtil.GetDependencyData(assetPath);
+                AssetDependency adData = dependencyConfig.GetData(assetPath);
                 GridViewData viewData = new GridViewData(assetPath, adData);
                 AddChildData(RootData, viewData);
 
@@ -88,7 +94,7 @@ namespace DotEditor.Asset.Dependency
 
         private void CreateSelectedAsset(GridViewData data,string selectedAssetPath,List<int> selectedIDs)
         {
-            AssetDependencyData adData = data.GetData<AssetDependencyData>();
+            AssetDependency adData = data.GetData<AssetDependency>();
             if(adData.assetPath == selectedAssetPath)
             {
                 selectedIDs.Add(data.ID);
@@ -104,7 +110,7 @@ namespace DotEditor.Asset.Dependency
                         {
                             continue;
                         }
-                        AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(childAssetPath);
+                        AssetDependency childADData = dependencyConfig.GetData(childAssetPath);
                         GridViewData viewData = new GridViewData(childAssetPath, childADData);
                         AddChildData(data, viewData);
                     }
@@ -124,7 +130,7 @@ namespace DotEditor.Asset.Dependency
             {
                 return;
             }
-            AssetDependencyData adData = data.GetData<AssetDependencyData>();
+            AssetDependency adData = data.GetData<AssetDependency>();
             if(adData.directlyDepends!=null && adData.directlyDepends.Length>0)
             {
                 for(int i =0;i<adData.directlyDepends.Length;++i)
@@ -136,7 +142,7 @@ namespace DotEditor.Asset.Dependency
                         continue;
                     }
 
-                    AssetDependencyData childADData = AssetDependencyUtil.GetDependencyData(assetPath);
+                    AssetDependency childADData = dependencyConfig.GetData(assetPath);
                     var childData = new GridViewData(assetPath, childADData);
                     AddChildData(data, childData);
                 }
@@ -158,14 +164,14 @@ namespace DotEditor.Asset.Dependency
 
         protected override void OnItemDoubleClicked(GridViewData itemData)
         {
-            AssetDependencyData adData = itemData.GetData< AssetDependencyData>();
+            AssetDependency adData = itemData.GetData< AssetDependency>();
             SelectionUtility.PingObject(adData.assetPath);
             SelectionUtility.ActiveObject(adData.assetPath);
         }
 
         protected override void OnDrawRowItem(Rect rect, GridViewData itemData)
         {
-            AssetDependencyData adData = itemData.GetData<AssetDependencyData>();
+            AssetDependency adData = itemData.GetData<AssetDependency>();
 
             Rect iconRect = new Rect(rect.x, rect.y, rect.height, rect.height);
             UnityObject assetObj = AssetDatabase.LoadAssetAtPath(adData.assetPath, typeof(UnityObject));

@@ -12,7 +12,13 @@ namespace DotEngine.Core.IO
                 return null;
             }
             string content = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<T>(content);
+            T result = JsonConvert.DeserializeObject<T>(content);
+            if(typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            {
+                ((ISerialization)result).DoDeserialize();
+            }
+
+            return result;
         }
 
         public static T ReadFromText<T>(string text) where T : class
@@ -21,8 +27,14 @@ namespace DotEngine.Core.IO
             {
                 return null;
             }
+            
+            T result = JsonConvert.DeserializeObject<T>(text);
+            if (typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            {
+                ((ISerialization)result).DoDeserialize();
+            }
 
-            return JsonConvert.DeserializeObject<T>(text);
+            return result;
         }
     }
 }

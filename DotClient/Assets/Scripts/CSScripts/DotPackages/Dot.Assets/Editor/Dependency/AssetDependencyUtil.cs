@@ -1,108 +1,86 @@
 ﻿using DotEditor.Utilities;
-using System;
+using DotEngine.Core.IO;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace DotEditor.Asset.Dependency
 {
     public static class AssetDependencyUtil
     {
-        private static AssetDependencyConfig allAssetData = null;
-        public static AssetDependencyConfig GetOrCreateAllAssetData()
+        private static string ASSET_DEPENDENCY_CONFIG_NAME = "asset_dependency_config.json";
+        private static string GetConfigFilePath()
         {
-            if (allAssetData != null)
-            {
-                return allAssetData;
-            }
-            AssetDependencyConfig[] datas = AssetDatabaseUtility.FindInstances<AssetDependencyConfig>();
-            if (datas != null && datas.Length > 0)
-            {
-                allAssetData = datas[0];
-            }
-            if (allAssetData == null)
-            {
-                allAssetData = ScriptableObject.CreateInstance<AssetDependencyConfig>();
-            }
-
-            return allAssetData;
+            string dataPath = Application.dataPath;
+            return dataPath.Substring(0, dataPath.IndexOf("Assets")) + "AssetConfig/" + ASSET_DEPENDENCY_CONFIG_NAME;
         }
 
-        public static void FindAllAssetData(Action<string, string, float> progressAction = null)
+        public static AssetDependencyConfig GetAssetDependencyConfig()
         {
-            AssetDependencyConfig data = GetOrCreateAllAssetData();
-            data.Clear();
-
-            List<string> assetPaths = new List<string>();
-
-            string assetDirectory = PathUtility.GetDiskPath("Assets");
-            string[] allDirectoriesInAsset = Directory.GetDirectories(assetDirectory, "*", SearchOption.AllDirectories);
-            for (int i = 0; i < allDirectoriesInAsset.Length; ++i)
+            string filePath = GetConfigFilePath();
+            AssetDependencyConfig dependencyConfig;
+            if(File.Exists(filePath))
             {
-                string dir = allDirectoriesInAsset[i].Replace("\\", "/");
-                if (dir.IndexOf("/Plugins") >= 0 || dir.IndexOf("/StreamingAssets") >= 0 || dir.IndexOf("/Editor") >= 0)
+                dependencyConfig = JSONReader.ReadFromFile<AssetDependencyConfig>(filePath);
+            }else
+            {
+                dependencyConfig = new AssetDependencyConfig();
+            }
+            
+            return dependencyConfig;
+        }
+
+        public static AssetDependencyConfig FindAllAssetData()
+        {
+            List<string> assetPaths = new List<string>();
+            string assetDirectory = PathUtility.GetDiskPath("Assets");
+            List<string> assetSubdirectories = new List<string>() { assetDirectory};
+            while(assetSubdirectories.Count>0)
+            {
+                string dir = assetSubdirectories[0].Replace("\\","/");
+                assetSubdirectories.RemoveAt(0);
+
+                if (dir.IndexOf("/Plugins") >= 0 || dir.IndexOf("/StreamingAssets") >= 0 || 
+                    dir.IndexOf("/Editor") >= 0 )
                 {
                     continue;
                 }
 
-                progressAction?.Invoke("Search files", $"Search:{dir}", i / (float)allDirectoriesInAsset.Length);
-
                 (from file in Directory.GetFiles(dir, "*.*", SearchOption.TopDirectoryOnly)
-                 where Path.GetExtension(file).ToLower() != ".meta"
+                 let ext = Path.GetExtension(file).ToLower()
+                 where ext != ".meta" && ext!=".temp" && ext!=".bak"
                  select PathUtility.GetAssetPath(file)
                                   ).ToList().ForEach((f) => { assetPaths.Add(f); });
+
+                string[] subdirectories = Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
+                if(subdirectories!=null && subdirectories.Length>0)
+                {
+                    assetSubdirectories.AddRange(subdirectories);
+                }
             }
 
+            AssetDependencyConfig dependencyConfig = new AssetDependencyConfig();
             if (assetPaths.Count > 0)
             {
                 for(int i =0;i<assetPaths.Count;++i)
                 {
-                    progressAction?.Invoke("Get Dependency", $"{assetPaths[i]}", i / (float)assetPaths.Count);
-                    allAssetData.AddData(GetDependencyData(assetPaths[i]));
-                }
-            }
-            EditorUtility.SetDirty(allAssetData);
-        }
+                    AssetDependency dependency = new AssetDependency()
+                    {
+                        assetPath = assetPaths[i],
+                        directlyDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPaths[i], null),
+                        allDepends = AssetDatabaseUtility.GetDependencies(assetPaths[i], null),
+                    };
 
-        public static AssetDependencyData[] GetAssetUsedBy(string assetPath, Action<string, string, float> progressAction = null)
-        {
-            AssetDependencyConfig allAssetData = GetOrCreateAllAssetData();
-
-            List<AssetDependencyData> result = new List<AssetDependencyData>();
-            for (int i =0;i<allAssetData.assetDatas.Count;++i)
-            {
-                AssetDependencyData data = allAssetData.assetDatas[i];
-
-                progressAction?.Invoke("Get Asset Used By ", $"{data.assetPath}", i / (float)allAssetData.assetDatas.Count);
-
-                if (ArrayUtility.IndexOf(data.allDepends, assetPath) >= 0 && data.assetPath != assetPath)
-                {
-                    result.Add(data);
+                    dependencyConfig.AddData(dependency);
                 }
             }
 
-            return result.ToArray();
+            string filePath = GetConfigFilePath();
+            JSONWriter.WriteToFile(dependencyConfig, filePath);
+
+            return dependencyConfig;
         }
 
-        public static AssetDependencyData GetDependencyData(string assetPath, string[] ignoreExt = null)
-        {
-            AssetDependencyConfig allAssetData = GetOrCreateAllAssetData();
-            AssetDependencyData assetData = allAssetData.GetData(assetPath);
-            if(assetData == null)
-            {
-                assetData = new AssetDependencyData()
-                {
-                    assetPath = assetPath,
-                    directlyDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPath, ignoreExt),
-                    allDepends = AssetDatabaseUtility.GetDependencies(assetPath, ignoreExt),
-                };
-                allAssetData.AddData(assetData);
-
-                EditorUtility.SetDirty(allAssetData);
-            }
-            return assetData;
-        }
     }
 }

@@ -14,12 +14,22 @@ namespace DotEngine.Core.IO
                 return;
             }
 
+            if (typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            {
+                ((ISerialization)data).DoSerialize();
+            }
+
             string jsonContent = JsonConvert.SerializeObject(data);
             File.WriteAllText(filePath, jsonContent);
         }
 
         public static string WriteToText<T>(T data) where T:class
         {
+            if (typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            {
+                ((ISerialization)data).DoSerialize();
+            }
+
             return JsonConvert.SerializeObject(data);
         }
     }
