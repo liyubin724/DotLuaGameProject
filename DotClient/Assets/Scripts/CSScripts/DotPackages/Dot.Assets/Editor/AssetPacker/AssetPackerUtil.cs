@@ -105,7 +105,7 @@ namespace DotEditor.Asset.Packer
             }
             if(Directory.Exists(outputDir)&&buildData.CleanupBeforeBuild)
             {
-                Directory.Delete(outputDir);
+                Directory.Delete(outputDir,true);
             }
 
             if(!Directory.Exists(outputDir))

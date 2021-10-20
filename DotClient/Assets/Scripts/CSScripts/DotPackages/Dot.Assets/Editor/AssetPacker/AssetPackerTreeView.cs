@@ -140,14 +140,13 @@ namespace DotEditor.Asset.Packer
         {
             EGUI.DrawAreaLine(contentRect, Color.black);
 
-            Rect pingBtnRect = new Rect(contentRect.x + contentRect.width - contentRect.height, contentRect.y, contentRect.height, contentRect.height);
-            if (GUI.Button(pingBtnRect, "Select"))
+            Rect pingBtnRect = new Rect(contentRect.x + contentRect.width - contentRect.height*2, contentRect.y, contentRect.height*2, contentRect.height);
+            if (GUI.Button(pingBtnRect, "Ping"))
             {
                 SelectionUtility.PingObject(assetData.Path);
             }
 
-            Rect ValueRect = new Rect(contentRect.x, contentRect.y, contentRect.width - contentRect.height, contentRect.height);
-            EGUI.DrawAreaLine(contentRect, Color.grey);
+            Rect ValueRect = new Rect(contentRect.x, contentRect.y, contentRect.width - contentRect.height*2, contentRect.height);
 
             Rect drawRect = new Rect(ValueRect.x, ValueRect.y, ValueRect.width*0.5f, ValueRect.height*0.5f);
             EGUI.BeginLabelWidth(80);

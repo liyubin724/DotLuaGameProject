@@ -27,10 +27,17 @@ namespace DotEditor.Asset.Group
         public string[] Labels = new string[0];
     }
 
-    public enum AssetPackMode
+    public enum BundlePackMode
     {
         Together,
         Separate,
+    }
+
+    public enum BundleNamedMode
+    {
+        FullPath = 0,
+        FileName,
+        PathAsName,
     }
 
     [Serializable]
@@ -38,7 +45,11 @@ namespace DotEditor.Asset.Group
     {
         [Help("AB打包方式.\nTogether:将筛选出来的所有的资源打到一个包内\nSeparate:将筛选出来的资源每个都单独打包")]
         [EnumButton]
-        public AssetPackMode PackMode = AssetPackMode.Separate;
+        public BundlePackMode PackMode = BundlePackMode.Separate;
+
+        [Help("设定Bundle的命名规则")]
+        [EnumButton]
+        public BundleNamedMode NamedMode = BundleNamedMode.FullPath;
     }
 
     public class AssetGroupCreater : ScriptableObject
@@ -64,7 +75,7 @@ namespace DotEditor.Asset.Group
 
         public string[] GetAssetPaths()
         {
-            if(string.IsNullOrEmpty(RootFolder) || filters.Count == 0)
+            if (string.IsNullOrEmpty(RootFolder) || filters.Count == 0)
             {
                 return new string[0];
             }
@@ -76,7 +87,7 @@ namespace DotEditor.Asset.Group
             }
             return assetPaths.Distinct().ToArray();
         }
-        
+
         private string GetAddressName(string assetPath)
         {
             if (AddressOperation.AddressMode == AssetAddressMode.FullPath)
@@ -92,19 +103,40 @@ namespace DotEditor.Asset.Group
         private string GetBundleName(string assetPath)
         {
             string bundleName = assetPath;
-            if (BundleOperation.PackMode == AssetPackMode.Separate)
+            if (BundleOperation.NamedMode == BundleNamedMode.FullPath)
             {
-                bundleName = assetPath.ReplaceSpecialCharacter("_");
+                bundleName = assetPath;
+                if (BundleOperation.PackMode == BundlePackMode.Together)
+                {
+                    bundleName = Path.GetDirectoryName(assetPath).Replace("\\", "/");
+                }
             }
-            else if (BundleOperation.PackMode == AssetPackMode.Together)
+            else if (BundleOperation.NamedMode == BundleNamedMode.FileName)
             {
-                string rootFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
-                bundleName = rootFolder.ReplaceSpecialCharacter("_");
+                if (BundleOperation.PackMode == BundlePackMode.Separate)
+                {
+                    bundleName = Path.GetFileName(assetPath);
+                }
+                else if (BundleOperation.PackMode == BundlePackMode.Together)
+                {
+                    string rootFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
+                    bundleName = rootFolder.Substring(rootFolder.LastIndexOf("/")+1);
+                }
+            }
+            else if (BundleOperation.NamedMode == BundleNamedMode.PathAsName)
+            {
+                if (BundleOperation.PackMode == BundlePackMode.Separate)
+                {
+                    bundleName = assetPath.Replace("/", "_");
+                }
+                else if (BundleOperation.PackMode == BundlePackMode.Together)
+                {
+                    string rootFolder = Path.GetDirectoryName(assetPath).Replace("\\", "/");
+                    bundleName = rootFolder.Replace("/", "_");
+                }
             }
 
-            bundleName = bundleName.ToLower();
-
-            return bundleName;
+            return bundleName.ReplaceSpecialCharacter("_").ToLower();
         }
 
         private bool IsScene(string assetPath)
@@ -123,19 +155,19 @@ namespace DotEditor.Asset.Group
 
         public AssetResult[] GetResults()
         {
-            if(!Enable)
+            if (!Enable)
             {
                 return new AssetResult[0];
             }
 
             List<AssetResult> results = new List<AssetResult>();
             string[] assetPaths = GetAssetPaths();
-            foreach(var assetPath in assetPaths)
+            foreach (var assetPath in assetPaths)
             {
                 AssetResult result = new AssetResult();
                 result.GroupName = GroupName;
                 result.IsMainAsset = IsMainAssets;
-                if(IsMainAssets)
+                if (IsMainAssets)
                 {
                     result.Address = GetAddressName(assetPath);
                 }
