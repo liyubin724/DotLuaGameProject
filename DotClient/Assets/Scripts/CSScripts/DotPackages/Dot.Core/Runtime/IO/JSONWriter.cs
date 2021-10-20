@@ -14,7 +14,7 @@ namespace DotEngine.Core.IO
                 return;
             }
 
-            if (typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            if (typeof(ISerialization).IsAssignableFrom(typeof(T)))
             {
                 ((ISerialization)data).DoSerialize();
             }
@@ -25,7 +25,7 @@ namespace DotEngine.Core.IO
 
         public static string WriteToText<T>(T data) where T:class
         {
-            if (typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            if (typeof(ISerialization).IsAssignableFrom(typeof(T)))
             {
                 ((ISerialization)data).DoSerialize();
             }

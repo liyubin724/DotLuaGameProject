@@ -13,7 +13,8 @@ namespace DotEngine.Core.IO
             }
             string content = File.ReadAllText(filePath);
             T result = JsonConvert.DeserializeObject<T>(content);
-            if(typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            
+            if(typeof(ISerialization).IsAssignableFrom(typeof(T)))
             {
                 ((ISerialization)result).DoDeserialize();
             }
@@ -29,7 +30,7 @@ namespace DotEngine.Core.IO
             }
             
             T result = JsonConvert.DeserializeObject<T>(text);
-            if (typeof(T).IsAssignableFrom(typeof(ISerialization)))
+            if (typeof(ISerialization).IsAssignableFrom(typeof(T)))
             {
                 ((ISerialization)result).DoDeserialize();
             }

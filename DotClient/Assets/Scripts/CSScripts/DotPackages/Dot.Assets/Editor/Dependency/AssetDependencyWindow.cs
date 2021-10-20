@@ -88,7 +88,7 @@ namespace DotEditor.Asset.Dependency
                 InitTreeView();
             }
             
-            DrawAllAssetDependency();
+            DrawDependency();
             DrawSelectedAsset();
             DrawIngoreAssetExtension();
             DrawTreeViewToolbar();
@@ -125,7 +125,7 @@ namespace DotEditor.Asset.Dependency
                 if (toolbarSelectedIndex == 0)
                 {
                     int[] expandIDs = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(new string[] { assetPath });
-                    m_TreeView.Reload(expandIDs, null);
+                    m_TreeView.Reload(expandIDs, new int[0]);
                 }
                 else if (toolbarSelectedIndex == 1)
                 {
@@ -154,7 +154,7 @@ namespace DotEditor.Asset.Dependency
             }
         }
 
-        private void DrawAllAssetDependency()
+        private void DrawDependency()
         {
             EditorGUILayout.BeginHorizontal();
             {

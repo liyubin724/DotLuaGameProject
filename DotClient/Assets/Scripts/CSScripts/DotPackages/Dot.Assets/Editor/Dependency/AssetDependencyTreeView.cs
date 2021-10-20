@@ -42,7 +42,7 @@ namespace DotEditor.Asset.Dependency
             AssetDependency adData = data.GetData<AssetDependency>();
 
             int count = (from d in adData.directlyDepends
-                         where Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(d).ToLower()) < 0
+                         where !IsAssetIgnored(d)
                          select d).Count();
 
             return count > 0;
@@ -71,6 +71,8 @@ namespace DotEditor.Asset.Dependency
 
         public void ShowSelected(string selectedAssetPath,out List<int> expandIDs,out List<int> selectedIDs)
         {
+            Clear();
+
             selectedIDs = new List<int>();
             expandIDs = new List<int>();
             foreach(var child in RootData.Children)
@@ -124,6 +126,15 @@ namespace DotEditor.Asset.Dependency
             }
         }
 
+        protected override void OnDataCollapse(GridViewData data)
+        {
+            if(!data.IsExpand)
+            {
+                return;
+            }
+            data.Children.Clear();
+        }
+
         protected override void OnDataExpand(GridViewData data)
         {
             if(data.IsExpand)
@@ -146,7 +157,7 @@ namespace DotEditor.Asset.Dependency
                     var childData = new GridViewData(assetPath, childADData);
                     AddChildData(data, childData);
                 }
-            }    
+            }
         }
     }
 

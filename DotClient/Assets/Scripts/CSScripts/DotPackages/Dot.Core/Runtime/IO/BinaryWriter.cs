@@ -26,6 +26,11 @@ namespace DotEngine.Core.IO
             FileStream fileStream = null;
             try
             {
+                if (typeof(ISerialization).IsAssignableFrom(typeof(T)))
+                {
+                    ((ISerialization)data).DoSerialize();
+                }
+
                 BinaryFormatter bf = new BinaryFormatter();
                 fileStream = File.Create(filePath);
                 bf.Serialize(fileStream, data);

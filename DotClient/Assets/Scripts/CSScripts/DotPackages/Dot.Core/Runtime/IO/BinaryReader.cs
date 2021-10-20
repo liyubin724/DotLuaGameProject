@@ -16,6 +16,11 @@ namespace DotEngine.Core.IO
                     BinaryFormatter bf = new BinaryFormatter();
                     fileStream = File.OpenRead(filePath);
                     data = (T)bf.Deserialize(fileStream);
+
+                    if (typeof(ISerialization).IsAssignableFrom(typeof(T)))
+                    {
+                        ((ISerialization)data).DoDeserialize();
+                    }
                 }
                 catch
                 {
