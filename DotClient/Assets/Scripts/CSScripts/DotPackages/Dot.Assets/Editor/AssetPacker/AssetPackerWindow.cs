@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace DotEditor.Asset.AssetPacker
+namespace DotEditor.Asset.Packer
 {
     public enum RunMode
     {
@@ -32,6 +32,7 @@ namespace DotEditor.Asset.AssetPacker
         {
             AssetPackerWindow win = EditorWindow.GetWindow<AssetPackerWindow>();
             win.titleContent = new GUIContent("Asset Packer");
+            win.minSize = new Vector2(Styles.PackOperationWidth * 2, Styles.PackOperationWidth);
             win.Show();
         }
         private static readonly string ASSET_BUNDLE_SYMBOL = "ASSET_BUNDLE";
@@ -284,8 +285,8 @@ namespace DotEditor.Asset.AssetPacker
             }
             if (searchCategory == SearchCategory.All || searchCategory == SearchCategory.Group)
             {
-                if (!string.IsNullOrEmpty(groupData.GroupName) && 
-                    groupData.GroupName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                if (!string.IsNullOrEmpty(groupData.Name) && 
+                    groupData.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     return true;
                 }
@@ -315,7 +316,7 @@ namespace DotEditor.Asset.AssetPacker
 
             if(searchCategory == SearchCategory.All || searchCategory == SearchCategory.Bundle)
             {
-                if(bundleData.BundlePath.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                if(bundleData.Path.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     return true;
                 }
@@ -450,6 +451,8 @@ namespace DotEditor.Asset.AssetPacker
         static class Styles
         {
             internal static int PackOperationWidth = 300;
+            internal static int PackOperationMaxWidth = 300;
+            internal static int PackOperationMinWidth = 200;
             internal static int ToolbarBtnWidth = 120; 
 
         }

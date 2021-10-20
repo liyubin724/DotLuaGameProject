@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace DotEditor.Asset.AssetPacker
+namespace DotEditor.Asset.Packer
 {
     public class AssetPackerTreeData
     {
@@ -124,7 +124,7 @@ namespace DotEditor.Asset.AssetPacker
             drawRect.x += drawRect.width + 5;
             drawRect.width = contentRect.width - drawRect.x;
 
-            EditorGUI.LabelField(drawRect,new GUIContent($"{groupData.GroupName}({childCount})"));
+            EditorGUI.LabelField(drawRect,new GUIContent($"{groupData.Name}({childCount})"));
         }
 
         private void DrawBundleData(Rect contentRect,PackerBundleData bundleData, int childCount)
@@ -133,7 +133,7 @@ namespace DotEditor.Asset.AssetPacker
             drawRect.x += drawRect.width + 5;
             drawRect.width = contentRect.width - drawRect.x;
 
-            EditorGUI.LabelField(drawRect, new GUIContent($"{bundleData.BundlePath}({childCount})"));
+            EditorGUI.LabelField(drawRect, new GUIContent($"{bundleData.Path}({childCount})"));
         }
 
         private void DrawAddressData(Rect contentRect, PackerAssetData assetData)

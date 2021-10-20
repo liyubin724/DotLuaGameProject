@@ -1,6 +1,6 @@
-﻿using DotEditor.Utilities;
+﻿using DotEditor.Asset.Packer;
+using DotEditor.Utilities;
 using DotEngine.Assets;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -34,39 +34,13 @@ namespace DotEditor.Asset.Group
         [MenuItem("Assets/Create/Asset/Build Asset Detail Config", priority = 1)]
         public static void BuildAssetDetailConfig()
         {
-            AssetGroupCreater[] groups = AssetDatabaseUtility.FindInstances<AssetGroupCreater>();
-            if (groups != null && groups.Length > 0)
-            {
-                AssetDetailConfig config = new AssetDetailConfig();
+            PackerData packerData = AssetPackerUtil.GetPackerData();
+            AssetDetailConfig detailConfig = AssetPackerUtil.CreateAssetDetailConfig(packerData);
 
-                List<AssetDetail> details = new List<AssetDetail>();
-                foreach(var group in groups)
-                {
-                    AssetResult[] results = group.GetResults();
-                    foreach (var result in results)
-                    {
-                        if(!result.IsMainAsset)
-                        {
-                            continue;
-                        }
-
-                        AssetDetail detail = new AssetDetail()
-                        {
-                            Address = result.Address,
-                            Path = result.Path,
-                            Bundle = result.Bundle,
-                            IsScene = result.IsScene,
-                            Labels = result.Labels
-                        };
-                        details.Add(detail);
-                    }
-                }
-                config.Details = details.ToArray();
-                string assetFilePath = AssetConst.GetAssetDetailConfigPathInProject();
-                
-                AssetDetailConfig.WriteToFile(config, PathUtility.GetDiskPath(assetFilePath));
-                AssetDatabase.ImportAsset(assetFilePath);
-            }
+            string assetFilePath = AssetConst.GetAssetDetailConfigPathInProject();
+            string diskFilePath = PathUtility.GetDiskPath(assetFilePath);
+            AssetDetailConfig.WriteToFile(detailConfig, diskFilePath);
+            AssetDatabase.ImportAsset(assetFilePath);
         }
     }
 }

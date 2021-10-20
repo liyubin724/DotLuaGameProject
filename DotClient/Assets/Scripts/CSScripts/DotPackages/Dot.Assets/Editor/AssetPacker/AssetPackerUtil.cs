@@ -10,7 +10,7 @@ using UnityEditor.Build.Pipeline;
 using UnityEngine;
 using UnityEngine.Build.Pipeline;
 
-namespace DotEditor.Asset.AssetPacker
+namespace DotEditor.Asset.Packer
 {
     public static class AssetPackerUtil
     {
@@ -29,14 +29,14 @@ namespace DotEditor.Asset.AssetPacker
             foreach (var gn in groupNames)
             {
                 PackerGroupData groupData = new PackerGroupData();
-                groupData.GroupName = gn.Key;
+                groupData.Name = gn.Key;
                 packerData.groupDatas.Add(groupData);
 
                 var bundleNames = gn.GroupBy((result) => result.Bundle).ToList();
                 foreach(var bn in bundleNames)
                 {
                     PackerBundleData bundleData = new PackerBundleData();
-                    bundleData.BundlePath = bn.Key;
+                    bundleData.Path = bn.Key;
                     groupData.bundleDatas.Add(bundleData);
 
                     foreach(var ad in bn)
@@ -120,9 +120,13 @@ namespace DotEditor.Asset.AssetPacker
                 return;
             }
 
+            var assetDetailConfig = CreateAssetDetailConfig(packerData);
+            string assetDetailConfigFilePath = $"{outputDir}/{AssetConst.GetAssetDetailConfigFileName()}";
+            AssetDetailConfig.WriteToFile(assetDetailConfig, assetDetailConfigFilePath);
+
             var bundleDetailConfig = CreateBundleDetailConfig(manifest);
-            string detailConfigFilePath = $"{outputDir}/{AssetConst.GetBundleDetailConfigFile()}";
-            BundleDetailConfig.WriteToFile(bundleDetailConfig, detailConfigFilePath);
+            string bundleDetailConfigFilePath = $"{outputDir}/{AssetConst.GetBundleDetailConfigFileName()}";
+            BundleDetailConfig.WriteToFile(bundleDetailConfig, bundleDetailConfigFilePath);
         }
 
         private static CompatibilityAssetBundleManifest PackAssetBundle(PackerData packerData, BundleBuildData buildData, string outputDir)
@@ -133,13 +137,43 @@ namespace DotEditor.Asset.AssetPacker
                 foreach (var bundle in group.bundleDatas)
                 {
                     AssetBundleBuild build = new AssetBundleBuild();
-                    build.assetBundleName = bundle.BundlePath;
+                    build.assetBundleName = bundle.Path;
                     build.assetNames = (from asset in bundle.assetDatas select asset.Path).ToArray();
                     bundleBuilds.Add(build);
                 }
             }
             var manifest = CompatibilityBuildPipeline.BuildAssetBundles(outputDir, bundleBuilds.ToArray(), buildData.GetBundleOptions(), buildData.GetBuildTarget());
             return manifest;
+        }
+
+        public static AssetDetailConfig CreateAssetDetailConfig(PackerData packerData)
+        {
+            List<AssetDetail> details = new List<AssetDetail>();
+            foreach (var group in packerData.groupDatas)
+            {
+                foreach (var bundle in group.bundleDatas)
+                {
+                    foreach(var asset in bundle.assetDatas)
+                    {
+                        if(asset.IsMainAsset)
+                        {
+                            AssetDetail detail = new AssetDetail()
+                            {
+                                Address = asset.Address,
+                                Path = asset.Path,
+                                Bundle = bundle.Path,
+                                IsScene = asset.IsScene,
+                                Labels = asset.Labels,
+                            };
+                            details.Add(detail);
+                        }
+                    }
+                }
+            }
+
+            AssetDetailConfig detailConfig = new AssetDetailConfig();
+            detailConfig.Details = details.ToArray();
+            return detailConfig;
         }
 
         private static BundleDetailConfig CreateBundleDetailConfig(CompatibilityAssetBundleManifest manifest)

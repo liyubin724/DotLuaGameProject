@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DotEditor.Asset.AssetPacker
+namespace DotEditor.Asset.Packer
 {
     public class PackerData
     {
@@ -9,13 +9,13 @@ namespace DotEditor.Asset.AssetPacker
 
     public class PackerGroupData
     {
-        public string GroupName;
+        public string Name;
         public List<PackerBundleData> bundleDatas = new List<PackerBundleData>();
     }
 
     public class PackerBundleData
     {
-        public string BundlePath;
+        public string Path;
 
         public List<PackerAssetData> assetDatas = new List<PackerAssetData>();
     }
