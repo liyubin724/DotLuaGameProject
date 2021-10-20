@@ -23,7 +23,7 @@ namespace DotEditor.Asset.Dependency
             win.Show();
         }
 
-        private AllAssetDependencyData m_AllAssetData = null;
+        private AssetDependencyConfig m_AllAssetData = null;
         private UnityObject m_SelectedAsset = null;
         private IngoreAssetExtension[] m_IngoreAssetExtensions = new IngoreAssetExtension[]
         {
@@ -36,13 +36,7 @@ namespace DotEditor.Asset.Dependency
             new IngoreAssetExtension()
             {
                 displayName = "cs",
-                extension = ".cs,.dll",
-                isSelected = true,
-            },
-            new IngoreAssetExtension()
-            {
-                displayName = "lua",
-                extension = ".txt,.lua",
+                extension = ".cs,.dll,.m,.cpp,.c,.h,.lua",
                 isSelected = true,
             },
             new IngoreAssetExtension()
@@ -166,7 +160,7 @@ namespace DotEditor.Asset.Dependency
         {
             EditorGUILayout.BeginHorizontal();
             {
-                EditorGUILayout.ObjectField("All Asset Data", m_AllAssetData, typeof(AllAssetDependencyData), false);
+                EditorGUILayout.ObjectField("All Asset Data", m_AllAssetData, typeof(AssetDependencyConfig), false);
                 if (GUILayout.Button("Reload", GUILayout.Width(80)))
                 {
                     if (EditorUtility.DisplayDialog("Warning", "This will take a lot of time.Are you sure?", "OK", "Cancel"))

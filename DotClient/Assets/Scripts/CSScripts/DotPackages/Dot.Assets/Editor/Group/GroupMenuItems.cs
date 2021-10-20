@@ -1,6 +1,7 @@
 ﻿using DotEditor.Asset.Packer;
 using DotEditor.Utilities;
 using DotEngine.Assets;
+using DotEngine.Core.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,7 +40,8 @@ namespace DotEditor.Asset.Group
 
             string assetFilePath = AssetConst.GetAssetDetailConfigPathInProject();
             string diskFilePath = PathUtility.GetDiskPath(assetFilePath);
-            AssetDetailConfig.WriteToFile(detailConfig, diskFilePath);
+            
+            JSONWriter.WriteToFile<AssetDetailConfig>(detailConfig, diskFilePath);
             AssetDatabase.ImportAsset(assetFilePath);
         }
     }

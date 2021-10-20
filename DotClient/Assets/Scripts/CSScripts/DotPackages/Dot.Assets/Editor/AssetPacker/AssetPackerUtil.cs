@@ -1,6 +1,7 @@
 ﻿using DotEditor.Asset.Group;
 using DotEditor.Utilities;
 using DotEngine.Assets;
+using DotEngine.Core.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -122,11 +123,11 @@ namespace DotEditor.Asset.Packer
 
             var assetDetailConfig = CreateAssetDetailConfig(packerData);
             string assetDetailConfigFilePath = $"{outputDir}/{AssetConst.GetAssetDetailConfigFileName()}";
-            AssetDetailConfig.WriteToFile(assetDetailConfig, assetDetailConfigFilePath);
-
+            JSONWriter.WriteToFile<AssetDetailConfig>(assetDetailConfig, assetDetailConfigFilePath);
+            
             var bundleDetailConfig = CreateBundleDetailConfig(manifest);
             string bundleDetailConfigFilePath = $"{outputDir}/{AssetConst.GetBundleDetailConfigFileName()}";
-            BundleDetailConfig.WriteToFile(bundleDetailConfig, bundleDetailConfigFilePath);
+            JSONWriter.WriteToFile<BundleDetailConfig>(bundleDetailConfig, bundleDetailConfigFilePath);
         }
 
         private static CompatibilityAssetBundleManifest PackAssetBundle(PackerData packerData, BundleBuildData buildData, string outputDir)

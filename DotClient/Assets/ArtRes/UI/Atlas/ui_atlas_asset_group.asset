@@ -25,3 +25,4 @@ MonoBehaviour:
     - atlas
   BundleOperation:
     PackMode: 1
+    NamedMode: 2

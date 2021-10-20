@@ -1,48 +1,9 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 
 namespace DotEngine.Assets
 {
     public class BundleDetailConfig
     {
-        public static BundleDetailConfig ReadFromFile(string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-            {
-                return null;
-            }
-            string content = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<BundleDetailConfig>(content);
-        }
-
-        public static bool WriteToFile(BundleDetailConfig config, string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath) || config == null)
-            {
-                return false;
-            }
-
-            string jsonContent = JsonConvert.SerializeObject(config);
-            File.WriteAllText(filePath, jsonContent);
-            return true;
-        }
-
-        public static BundleDetailConfig ReadFromText(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return null;
-            }
-
-            return JsonConvert.DeserializeObject<BundleDetailConfig>(text);
-        }
-
-        public static string WriteToText(BundleDetailConfig config)
-        {
-            return JsonConvert.SerializeObject(config);
-        }
-
         public int Version = 1;
         public BundleDetail[] Details = new BundleDetail[0];
 

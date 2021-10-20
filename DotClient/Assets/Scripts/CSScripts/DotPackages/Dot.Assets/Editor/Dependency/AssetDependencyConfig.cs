@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace DotEditor.Asset.Dependency
 {
-    public class AllAssetDependencyData : ScriptableObject, ISerializationCallbackReceiver
+    public class AssetDependencyConfig : ScriptableObject, ISerializationCallbackReceiver
     {
         public List<AssetDependencyData> assetDatas = new List<AssetDependencyData>();
 
@@ -54,5 +55,13 @@ namespace DotEditor.Asset.Dependency
                 assetDataDic.Add(data.assetPath, data);
             }
         }
+    }
+
+    [Serializable]
+    public class AssetDependencyData
+    {
+        public string assetPath;
+        public string[] directlyDepends = new string[0];
+        public string[] allDepends = new string[0];
     }
 }

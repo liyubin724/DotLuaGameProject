@@ -10,21 +10,21 @@ namespace DotEditor.Asset.Dependency
 {
     public static class AssetDependencyUtil
     {
-        private static AllAssetDependencyData allAssetData = null;
-        public static AllAssetDependencyData GetOrCreateAllAssetData()
+        private static AssetDependencyConfig allAssetData = null;
+        public static AssetDependencyConfig GetOrCreateAllAssetData()
         {
             if (allAssetData != null)
             {
                 return allAssetData;
             }
-            AllAssetDependencyData[] datas = AssetDatabaseUtility.FindInstances<AllAssetDependencyData>();
+            AssetDependencyConfig[] datas = AssetDatabaseUtility.FindInstances<AssetDependencyConfig>();
             if (datas != null && datas.Length > 0)
             {
                 allAssetData = datas[0];
             }
             if (allAssetData == null)
             {
-                allAssetData = ScriptableObject.CreateInstance<AllAssetDependencyData>();
+                allAssetData = ScriptableObject.CreateInstance<AssetDependencyConfig>();
             }
 
             return allAssetData;
@@ -32,7 +32,7 @@ namespace DotEditor.Asset.Dependency
 
         public static void FindAllAssetData(Action<string, string, float> progressAction = null)
         {
-            AllAssetDependencyData data = GetOrCreateAllAssetData();
+            AssetDependencyConfig data = GetOrCreateAllAssetData();
             data.Clear();
 
             List<string> assetPaths = new List<string>();
@@ -68,7 +68,7 @@ namespace DotEditor.Asset.Dependency
 
         public static AssetDependencyData[] GetAssetUsedBy(string assetPath, Action<string, string, float> progressAction = null)
         {
-            AllAssetDependencyData allAssetData = GetOrCreateAllAssetData();
+            AssetDependencyConfig allAssetData = GetOrCreateAllAssetData();
 
             List<AssetDependencyData> result = new List<AssetDependencyData>();
             for (int i =0;i<allAssetData.assetDatas.Count;++i)
@@ -88,7 +88,7 @@ namespace DotEditor.Asset.Dependency
 
         public static AssetDependencyData GetDependencyData(string assetPath, string[] ignoreExt = null)
         {
-            AllAssetDependencyData allAssetData = GetOrCreateAllAssetData();
+            AssetDependencyConfig allAssetData = GetOrCreateAllAssetData();
             AssetDependencyData assetData = allAssetData.GetData(assetPath);
             if(assetData == null)
             {
