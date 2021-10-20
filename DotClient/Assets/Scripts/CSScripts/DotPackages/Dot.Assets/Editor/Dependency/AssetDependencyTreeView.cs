@@ -32,98 +32,42 @@ namespace DotEditor.Asset.Dependency
             }
         }
 
-        private bool IsAssetIgnored(string assetPath)
+        public int[] ShowAssets(string[] assetPaths)
         {
-            return Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(assetPath).ToLower()) >= 0;
+            Clear();
+            List<int> ids = new List<int>();
+            if(assetPaths!=null && assetPaths.Length>0)
+            {
+                foreach (var assetPath in assetPaths)
+                {
+                    if (IsAssetIgnored(assetPath))
+                    {
+                        continue;
+                    }
+
+                    AssetDependency adData = dependencyConfig.GetData(assetPath);
+                    GridViewData viewData = new GridViewData(assetPath, adData);
+                    AddChildData(RootData, viewData);
+
+                    ids.Add(viewData.ID);
+                }
+            }
+            return ids.ToArray();
         }
 
         public override bool HasChild(GridViewData data)
         {
             AssetDependency adData = data.GetData<AssetDependency>();
+            if(adData == null)
+            {
+                return false;
+            }
 
             int count = (from d in adData.directlyDepends
                          where !IsAssetIgnored(d)
                          select d).Count();
 
             return count > 0;
-        }
-
-        public int[] ShowDependency(string[] assetPaths)
-        {
-            Clear();
-
-            List<int> ids = new List<int>();
-            foreach(var assetPath in assetPaths)
-            {
-                if(IsAssetIgnored(assetPath))
-                {
-                    continue;
-                }
-
-                AssetDependency adData = dependencyConfig.GetData(assetPath);
-                GridViewData viewData = new GridViewData(assetPath, adData);
-                AddChildData(RootData, viewData);
-
-                ids.Add(viewData.ID);
-            }
-            return ids.ToArray();
-        }
-
-        public void ShowSelected(string selectedAssetPath,out List<int> expandIDs,out List<int> selectedIDs)
-        {
-            Clear();
-
-            selectedIDs = new List<int>();
-            expandIDs = new List<int>();
-            foreach(var child in RootData.Children)
-            {
-                CreateSelectedAsset(child, selectedAssetPath, selectedIDs);
-            }
-
-            selectedIDs = selectedIDs.Distinct().ToList();
-
-            foreach(var id in selectedIDs)
-            {
-                GridViewData parentData = GetDataByID(id).Parent;
-                while(parentData!= RootData)
-                {
-                    expandIDs.Add(parentData.ID);
-                    parentData = parentData.Parent;
-                }
-            }
-            expandIDs = expandIDs.Distinct().ToList();
-        }
-
-        private void CreateSelectedAsset(GridViewData data,string selectedAssetPath,List<int> selectedIDs)
-        {
-            AssetDependency adData = data.GetData<AssetDependency>();
-            if(adData.assetPath == selectedAssetPath)
-            {
-                selectedIDs.Add(data.ID);
-                return;
-            }
-            if (adData.allDepends != null && Array.IndexOf(adData.allDepends, selectedAssetPath) >= 0)
-            {
-                if(!data.IsExpand)
-                {
-                    foreach(var childAssetPath in adData.directlyDepends)
-                    {
-                        if(IsAssetIgnored(childAssetPath))
-                        {
-                            continue;
-                        }
-                        AssetDependency childADData = dependencyConfig.GetData(childAssetPath);
-                        GridViewData viewData = new GridViewData(childAssetPath, childADData);
-                        AddChildData(data, viewData);
-                    }
-                    data.IsExpand = true;
-                }
-
-                foreach(var childData in data.Children)
-                {
-                    CreateSelectedAsset(childData, selectedAssetPath, selectedIDs);
-                }
-            }
         }
 
         protected override void OnDataCollapse(GridViewData data)
@@ -159,6 +103,11 @@ namespace DotEditor.Asset.Dependency
                 }
             }
         }
+
+        private bool IsAssetIgnored(string assetPath)
+        {
+            return Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(assetPath).ToLower()) >= 0;
+        }
     }
 
     internal class AssetDependencyTreeView : EGUITreeView
@@ -175,14 +124,22 @@ namespace DotEditor.Asset.Dependency
 
         protected override void OnItemDoubleClicked(GridViewData itemData)
         {
-            AssetDependency adData = itemData.GetData< AssetDependency>();
+            AssetDependency adData = itemData.GetData<AssetDependency>();
+            if (adData == null)
+            {
+                return;
+            }
             SelectionUtility.PingObject(adData.assetPath);
-            SelectionUtility.ActiveObject(adData.assetPath);
         }
 
         protected override void OnDrawRowItem(Rect rect, GridViewData itemData)
         {
             AssetDependency adData = itemData.GetData<AssetDependency>();
+            if(adData == null)
+            {
+                EditorGUI.LabelField(rect, "The data is null");
+                return;
+            }
 
             Rect iconRect = new Rect(rect.x, rect.y, rect.height, rect.height);
             UnityObject assetObj = AssetDatabase.LoadAssetAtPath(adData.assetPath, typeof(UnityObject));

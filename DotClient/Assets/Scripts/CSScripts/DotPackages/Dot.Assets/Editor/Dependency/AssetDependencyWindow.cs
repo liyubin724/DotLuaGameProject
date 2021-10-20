@@ -1,18 +1,10 @@
-﻿using DotEditor.GUIExtension;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 namespace DotEditor.Asset.Dependency
 {
-    public class IngoreAssetExtension
-    {
-        public string displayName = "";
-        public string extension = "";
-        public bool isSelected = false;
-    }
-
     public class AssetDependencyWindow : EditorWindow
     {
         [MenuItem("Game/Asset/Dependency Window", priority = 20)]
@@ -25,34 +17,14 @@ namespace DotEditor.Asset.Dependency
 
         private AssetDependencyConfig assetDependencyConfig = null;
         private UnityObject selectedAsset = null;
-        private IngoreAssetExtension[] ingoreAssetExtensions = new IngoreAssetExtension[]
-        {
-            new IngoreAssetExtension()
-            {
-                displayName = "txt",
-                extension = ".txt",
-                isSelected = true,
-            },
-            new IngoreAssetExtension()
-            {
-                displayName = "cs",
-                extension = ".cs,.dll,.m,.cpp,.c,.h,.lua",
-                isSelected = true,
-            },
-            new IngoreAssetExtension()
-            {
-                displayName = "Shader",
-                extension = ".shader,.cginc",
-                isSelected = false,
-            },
-        };
 
         private GUIContent[] toolbarContents = new GUIContent[]
         {
-            new GUIContent("DependOn"),
+            new GUIContent("Depends"),
             new GUIContent("UsedBy"),
         };
         private int toolbarSelectedIndex = 0;
+        private bool isAutoRefresh = false;
 
         private AssetDependencyTreeView m_TreeView = null;
 
@@ -71,7 +43,14 @@ namespace DotEditor.Asset.Dependency
                 && Selection.activeObject.GetType() != typeof(DefaultAsset)
                 && EditorUtility.IsPersistent(Selection.activeObject))
             {
-                selectedAsset = Selection.activeObject;
+                if(Selection.activeObject!=selectedAsset)
+                {
+                    selectedAsset = Selection.activeObject;
+                    if(isAutoRefresh)
+                    {
+                        RefreshTreeView();
+                    }
+                }
             }
         }
 
@@ -87,21 +66,38 @@ namespace DotEditor.Asset.Dependency
             {
                 InitTreeView();
             }
-            
-            DrawDependency();
+            DrawToolbar();
+
             DrawSelectedAsset();
-            DrawIngoreAssetExtension();
             DrawTreeViewToolbar();
 
             Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
             m_TreeView.OnGUI(rect);
         }
 
+        private void DrawToolbar()
+        {
+            EditorGUILayout.BeginHorizontal("toolbar", GUILayout.ExpandWidth(true));
+            {
+                if (GUILayout.Button("Reload", EditorStyles.toolbarButton, GUILayout.Width(80)))
+                {
+                    if (EditorUtility.DisplayDialog("Warning", "This will take a lot of time.Are you sure?", "OK", "Cancel"))
+                    {
+                        assetDependencyConfig = AssetDependencyUtil.FindAllAssetData();
+                        RefreshTreeView();
+                    }
+                }
+                GUILayout.FlexibleSpace();
+
+                isAutoRefresh = EditorGUILayout.Toggle("Auto Refresh", isAutoRefresh, EditorStyles.toggle);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
         private void InitTreeView()
         {
             AssetDependencyTreeViewModel treeViewModel = new AssetDependencyTreeViewModel();
             treeViewModel.SetDependencyConfig(assetDependencyConfig);
-            treeViewModel.SetIgnoreExtension(GetSelectedIgnoreExtensions());
 
             m_TreeView = new AssetDependencyTreeView(treeViewModel);
             RefreshTreeView();
@@ -117,15 +113,17 @@ namespace DotEditor.Asset.Dependency
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                int[] expandIDs = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(new string[0]);
-                m_TreeView.Reload(expandIDs, null);
+                var viewMode = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>();
+                viewMode.Clear();
+                m_TreeView.Reload();
             }
             else
             {
+                var treeViewMode = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>();
                 if (toolbarSelectedIndex == 0)
                 {
-                    int[] expandIDs = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(new string[] { assetPath });
-                    m_TreeView.Reload(expandIDs, new int[0]);
+                    int[] expandIDs = treeViewMode.ShowAssets(new string[] { assetPath });
+                    m_TreeView.Reload(expandIDs, null);
                 }
                 else if (toolbarSelectedIndex == 1)
                 {
@@ -136,10 +134,8 @@ namespace DotEditor.Asset.Dependency
                     {
                         usedAssets.AddRange((from data in usedDatas select data.assetPath).ToArray());
                     }
-                    m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowDependency(usedAssets.ToArray());
-                    m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().ShowSelected(assetPath,out var expandIDs,out var selectedIDs);
-
-                    m_TreeView.Reload(expandIDs.ToArray(), selectedIDs.ToArray());
+                    treeViewMode.ShowAssets(usedAssets.ToArray());
+                    m_TreeView.Reload();
                 }
             }
         }
@@ -154,82 +150,23 @@ namespace DotEditor.Asset.Dependency
             }
         }
 
-        private void DrawDependency()
-        {
-            EditorGUILayout.BeginHorizontal();
-            {
-                if (GUILayout.Button("Reload", GUILayout.Width(80)))
-                {
-                    if (EditorUtility.DisplayDialog("Warning", "This will take a lot of time.Are you sure?", "OK", "Cancel"))
-                    {
-                        assetDependencyConfig = AssetDependencyUtil.FindAllAssetData();
-                        RefreshTreeView();
-                    }
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-        }
-
         private void DrawSelectedAsset()
         {
             EditorGUILayout.BeginHorizontal();
             {
-                selectedAsset = EditorGUILayout.ObjectField("Selected Asset", selectedAsset, typeof(UnityObject), false);
+                var newSelectedAsset = EditorGUILayout.ObjectField("Selected Asset", selectedAsset, typeof(UnityObject), false);
+                if(newSelectedAsset != selectedAsset && isAutoRefresh)
+                {
+                    RefreshTreeView();
+                }
 
                 if(GUILayout.Button("Search ...",GUILayout.Width(80)))
                 {
                     RefreshTreeView();
                 }
-                EditorGUI.BeginDisabledGroup(toolbarSelectedIndex != 1);
-                {
-                    if (GUILayout.Button("Selected ...", GUILayout.Width(80)))
-                    {
-                        RefreshTreeView();
-                    }
-                }
-                EditorGUI.EndDisabledGroup();
             }
             EditorGUILayout.EndHorizontal();
             
         }
-
-        private void DrawIngoreAssetExtension()
-        {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            {
-                EditorGUILayout.LabelField("Ignore Asset Extension:");
-                EGUI.BeginIndent();
-                {
-                    EditorGUI.BeginChangeCheck();
-                    {
-                        foreach (var extension in ingoreAssetExtensions)
-                        {
-                            extension.isSelected = EditorGUILayout.Toggle(extension.displayName, extension.isSelected);
-                        }
-                    }
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        m_TreeView.GetViewModel<AssetDependencyTreeViewModel>().SetIgnoreExtension(GetSelectedIgnoreExtensions());
-                    }
-                }
-                EGUI.EndIndent();
-            }
-            EditorGUILayout.EndVertical();
-        }
-
-        private string[] GetSelectedIgnoreExtensions()
-        {
-            return (from extension in ingoreAssetExtensions
-                    where extension.isSelected
-                    let exts = extension.extension.Split(new char[] { ',' })
-                    from ext in exts
-                    select ext
-                    ).ToArray();
-        }
-    }
-
-    class Contents
-    {
-
     }
 }

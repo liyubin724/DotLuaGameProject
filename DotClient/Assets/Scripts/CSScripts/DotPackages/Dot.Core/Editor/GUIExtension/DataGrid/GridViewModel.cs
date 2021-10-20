@@ -21,7 +21,7 @@ namespace DotEditor.GUIExtension.DataGrid
             };
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             m_IDToDataDic.Clear();
             RootData.Children.Clear();
