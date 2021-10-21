@@ -277,9 +277,11 @@ namespace DotEditor.Utilities
         private static string[] GetAssetDependencies(string assetPath, bool isRecursive, string[] ignoreExt)
         {
             string[] assetPaths = AssetDatabase.GetDependencies(assetPath, isRecursive);
+
             return (from path in assetPaths
                     let ext = Path.GetExtension(path).ToLower()
-                    where path!= assetPath && ((ignoreExt!=null && Array.IndexOf(ignoreExt, ext) < 0) || (ignoreExt == null))
+                    let type = AssetDatabase.GetMainAssetTypeAtPath(path)
+                    where path != assetPath && ((ignoreExt!=null && Array.IndexOf(ignoreExt, ext) < 0) || (ignoreExt == null)) && type != typeof(DefaultAsset)
                     select path).ToArray();
         }
 

@@ -181,10 +181,32 @@ namespace DotEditor.GUIExtension
             }
         }
 
-        public static Texture2D GetAssetPreviewIcon(string assetPath)
+        public static Texture2D GetAssetPreview(UnityObject uObject)
         {
-            UnityObject uObj = AssetDatabase.LoadAssetAtPath<UnityObject>(assetPath);
-            return AssetPreview.GetAssetPreview(uObj);
+            if(uObject == null)
+            {
+                return ErrorIcon;
+            }
+            Texture2D previewIcon = AssetPreview.GetAssetPreview(uObject);
+            if(previewIcon == null)
+            {
+                previewIcon = AssetPreview.GetMiniThumbnail(uObject);
+            }
+            if(previewIcon == null)
+            {
+                previewIcon = AssetPreview.GetMiniTypeThumbnail(uObject.GetType());
+            }
+            if(previewIcon == null)
+            {
+                previewIcon = EGUIResources.MakeColorTexture(80, 80, Color.grey);
+            }
+            return previewIcon;
+        }
+
+        public static Texture2D GetAssetPreview(string assetPath)
+        {
+            UnityObject uObject = AssetDatabase.LoadAssetAtPath<UnityObject>(assetPath);
+            return GetAssetPreview(uObject);
         }
 
         public static Texture2D GetAssetMiniThumbnail(string assetPath)

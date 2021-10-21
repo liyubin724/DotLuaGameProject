@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DotEditor.GUIExtension;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -26,7 +27,7 @@ namespace DotEditor.Asset.Dependency
         private int toolbarSelectedIndex = 0;
         private bool isAutoRefresh = false;
 
-        private AssetDependencyTreeView m_TreeView = null;
+        private AssetDependencyTreeView treeView = null;
 
         private void OnEnable()
         {
@@ -62,17 +63,44 @@ namespace DotEditor.Asset.Dependency
 
         private void OnGUI()
         {
-            if (m_TreeView == null)
+            if (treeView == null)
             {
                 InitTreeView();
             }
             DrawToolbar();
 
-            DrawSelectedAsset();
-            DrawTreeViewToolbar();
+            EditorGUILayout.BeginHorizontal();
+            {
+                var newSelectedAsset = EditorGUILayout.ObjectField("Selected Asset", selectedAsset, typeof(UnityObject), false);
+                if (newSelectedAsset != selectedAsset && isAutoRefresh)
+                {
+                    RefreshTreeView();
+                }
+                if(!isAutoRefresh)
+                {
+                    if (GUILayout.Button("Search ...", GUILayout.Width(80)))
+                    {
+                        RefreshTreeView();
+                    }
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
 
             Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-            m_TreeView.OnGUI(rect);
+            EGUI.DrawAreaLine(rect, Color.black);
+
+            Rect toolbarRect = new Rect(rect.x, rect.y, rect.width, 30);
+            int selectedIndex = GUI.Toolbar(toolbarRect, toolbarSelectedIndex, toolbarContents);
+            if (selectedIndex != toolbarSelectedIndex)
+            {
+                toolbarSelectedIndex = selectedIndex;
+                RefreshTreeView();
+            }
+
+            Rect treeViewRect = new Rect(rect.x, rect.y + toolbarRect.height, rect.width, rect.height - toolbarRect.height);
+            treeView.OnGUI(treeViewRect);
         }
 
         private void DrawToolbar()
@@ -89,7 +117,12 @@ namespace DotEditor.Asset.Dependency
                 }
                 GUILayout.FlexibleSpace();
 
-                isAutoRefresh = EditorGUILayout.Toggle("Auto Refresh", isAutoRefresh, EditorStyles.toggle);
+                var newAutoRefresh = EditorGUILayout.ToggleLeft("Auto Refresh", isAutoRefresh);
+                if(newAutoRefresh!=isAutoRefresh)
+                {
+                    isAutoRefresh = newAutoRefresh;
+                    RefreshTreeView();
+                }
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -99,7 +132,7 @@ namespace DotEditor.Asset.Dependency
             AssetDependencyTreeViewModel treeViewModel = new AssetDependencyTreeViewModel();
             treeViewModel.SetDependencyConfig(assetDependencyConfig);
 
-            m_TreeView = new AssetDependencyTreeView(treeViewModel);
+            treeView = new AssetDependencyTreeView(treeViewModel);
             RefreshTreeView();
         }
 
@@ -113,17 +146,17 @@ namespace DotEditor.Asset.Dependency
 
             if (string.IsNullOrEmpty(assetPath))
             {
-                var viewMode = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>();
+                var viewMode = treeView.GetViewModel<AssetDependencyTreeViewModel>();
                 viewMode.Clear();
-                m_TreeView.Reload();
+                treeView.Reload();
             }
             else
             {
-                var treeViewMode = m_TreeView.GetViewModel<AssetDependencyTreeViewModel>();
+                var treeViewMode = treeView.GetViewModel<AssetDependencyTreeViewModel>();
                 if (toolbarSelectedIndex == 0)
                 {
                     int[] expandIDs = treeViewMode.ShowAssets(new string[] { assetPath });
-                    m_TreeView.Reload(expandIDs, null);
+                    treeView.Reload(expandIDs, null);
                 }
                 else if (toolbarSelectedIndex == 1)
                 {
@@ -135,38 +168,9 @@ namespace DotEditor.Asset.Dependency
                         usedAssets.AddRange((from data in usedDatas select data.assetPath).ToArray());
                     }
                     treeViewMode.ShowAssets(usedAssets.ToArray());
-                    m_TreeView.Reload();
+                    treeView.Reload();
                 }
             }
-        }
-
-        private void DrawTreeViewToolbar()
-        {
-            int selectedIndex = GUILayout.Toolbar(toolbarSelectedIndex, toolbarContents, GUILayout.ExpandWidth(true), GUILayout.Height(40));
-            if (selectedIndex != toolbarSelectedIndex)
-            {
-                toolbarSelectedIndex = selectedIndex;
-                RefreshTreeView();
-            }
-        }
-
-        private void DrawSelectedAsset()
-        {
-            EditorGUILayout.BeginHorizontal();
-            {
-                var newSelectedAsset = EditorGUILayout.ObjectField("Selected Asset", selectedAsset, typeof(UnityObject), false);
-                if(newSelectedAsset != selectedAsset && isAutoRefresh)
-                {
-                    RefreshTreeView();
-                }
-
-                if(GUILayout.Button("Search ...",GUILayout.Width(80)))
-                {
-                    RefreshTreeView();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-            
         }
     }
 }

@@ -13,23 +13,11 @@ namespace DotEditor.Asset.Dependency
 {
     internal class AssetDependencyTreeViewModel : GridViewModel
     {
-        private string[] m_IgnoreExtensions = new string[0];
         private AssetDependencyConfig dependencyConfig = null;
 
         public void SetDependencyConfig(AssetDependencyConfig config)
         {
             dependencyConfig = config;
-        }
-
-        public void SetIgnoreExtension(string[] extensions)
-        {
-            if(extensions!=null && extensions.Length>0)
-            {
-                m_IgnoreExtensions = (from ie in extensions select ie.ToLower()).ToArray();
-            }else
-            {
-                m_IgnoreExtensions = new string[0];
-            }
         }
 
         public int[] ShowAssets(string[] assetPaths)
@@ -40,11 +28,6 @@ namespace DotEditor.Asset.Dependency
             {
                 foreach (var assetPath in assetPaths)
                 {
-                    if (IsAssetIgnored(assetPath))
-                    {
-                        continue;
-                    }
-
                     AssetDependency adData = dependencyConfig.GetData(assetPath);
                     GridViewData viewData = new GridViewData(assetPath, adData);
                     AddChildData(RootData, viewData);
@@ -63,11 +46,7 @@ namespace DotEditor.Asset.Dependency
                 return false;
             }
 
-            int count = (from d in adData.directlyDepends
-                         where !IsAssetIgnored(d)
-                         select d).Count();
-
-            return count > 0;
+            return adData.directlyDepends.Length > 0;
         }
 
         protected override void OnDataCollapse(GridViewData data)
@@ -92,21 +71,15 @@ namespace DotEditor.Asset.Dependency
                 {
                     string assetPath = adData.directlyDepends[i];
 
-                    if (IsAssetIgnored(assetPath))
-                    {
-                        continue;
-                    }
-
                     AssetDependency childADData = dependencyConfig.GetData(assetPath);
+                    if(childADData == null)
+                    {
+                        Debug.Log("SSSSSSSSSSS->" + assetPath);
+                    }
                     var childData = new GridViewData(assetPath, childADData);
                     AddChildData(data, childData);
                 }
             }
-        }
-
-        private bool IsAssetIgnored(string assetPath)
-        {
-            return Array.IndexOf(m_IgnoreExtensions, Path.GetExtension(assetPath).ToLower()) >= 0;
         }
     }
 
@@ -142,18 +115,17 @@ namespace DotEditor.Asset.Dependency
             }
 
             Rect iconRect = new Rect(rect.x, rect.y, rect.height, rect.height);
-            UnityObject assetObj = AssetDatabase.LoadAssetAtPath(adData.assetPath, typeof(UnityObject));
-            Texture2D previewIcon = null;
+            UnityObject assetObj = adData.cachedUObject;
             if(assetObj == null)
             {
-                previewIcon = EGUIResources.ErrorIcon;
-            }else if (!AssetPreview.IsLoadingAssetPreview(assetObj.GetInstanceID()))
-            {
-                previewIcon = AssetPreview.GetAssetPreview(assetObj);
+                assetObj = AssetDatabase.LoadAssetAtPath(adData.assetPath, typeof(UnityObject));
+                adData.cachedUObject = assetObj;
             }
-            if (previewIcon == null)
+            Texture2D previewIcon = adData.cachedPreview;
+            if(previewIcon == null)
             {
-                previewIcon = EGUIResources.MakeColorTexture((int)iconRect.width, (int)iconRect.height, Color.grey);
+                previewIcon = EGUIResources.GetAssetPreview(assetObj);
+                adData.cachedPreview = previewIcon;
             }
             GUI.DrawTexture(iconRect, previewIcon, ScaleMode.ScaleAndCrop);
 

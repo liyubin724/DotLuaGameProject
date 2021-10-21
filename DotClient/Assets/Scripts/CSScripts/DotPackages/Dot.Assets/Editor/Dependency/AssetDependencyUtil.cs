@@ -1,5 +1,7 @@
 ﻿using DotEditor.Utilities;
 using DotEngine.Core.IO;
+using DotEngine.Core.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +12,23 @@ namespace DotEditor.Asset.Dependency
     public static class AssetDependencyUtil
     {
         private static string ASSET_DEPENDENCY_CONFIG_NAME = "asset_dependency_config.json";
+        private static string[] IngoreFolders = new string[]
+        {
+            "/Plugins",
+            "/StreamingAssets",
+            "/Editor"
+        };
+        private static string[] IngoreFileExts = new string[]
+        {
+            ".txt",
+            ".lua",
+            ".temp",
+            ".tmp",
+            ".cs",
+            ".dll",
+            ".meta",
+            ".bak"
+        };
         private static string GetConfigFilePath()
         {
             string dataPath = Application.dataPath;
@@ -41,15 +60,15 @@ namespace DotEditor.Asset.Dependency
                 string dir = assetSubdirectories[0].Replace("\\","/");
                 assetSubdirectories.RemoveAt(0);
 
-                if (dir.IndexOf("/Plugins") >= 0 || dir.IndexOf("/StreamingAssets") >= 0 || 
-                    dir.IndexOf("/Editor") >= 0 )
+                var isIngore = (from folder in IngoreFolders where dir.IndexOf(folder) >= 0 select folder).Any();
+                if(isIngore)
                 {
                     continue;
                 }
 
                 (from file in Directory.GetFiles(dir, "*.*", SearchOption.TopDirectoryOnly)
                  let ext = Path.GetExtension(file).ToLower()
-                 where ext != ".meta" && ext!=".temp" && ext!=".bak"
+                 where Array.IndexOf(IngoreFileExts,ext) < 0
                  select PathUtility.GetAssetPath(file)
                                   ).ToList().ForEach((f) => { assetPaths.Add(f); });
 
@@ -68,8 +87,8 @@ namespace DotEditor.Asset.Dependency
                     AssetDependency dependency = new AssetDependency()
                     {
                         assetPath = assetPaths[i],
-                        directlyDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPaths[i], null),
-                        allDepends = AssetDatabaseUtility.GetDependencies(assetPaths[i], null),
+                        directlyDepends = AssetDatabaseUtility.GetDirectlyDependencies(assetPaths[i], IngoreFileExts),
+                        allDepends = AssetDatabaseUtility.GetDependencies(assetPaths[i], IngoreFileExts),
                     };
 
                     dependencyConfig.AddData(dependency);

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
 namespace DotEditor.Asset.Dependency
 {
@@ -89,5 +91,8 @@ namespace DotEditor.Asset.Dependency
         public string assetPath;
         public string[] directlyDepends = new string[0];
         public string[] allDepends = new string[0];
+
+        internal UnityObject cachedUObject = null;
+        internal Texture2D cachedPreview = null;
     }
 }
