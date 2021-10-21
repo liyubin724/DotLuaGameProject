@@ -10,17 +10,7 @@ namespace DotEngine.Assets
 {
     public delegate void AsyncLoadAssetStart(string address, SystemObject userdata);
     public delegate void AsyncLoadAssetComplete(string address, UnityObject uObj, SystemObject userdata);
-    public delegate void AsyncLoadAssetProgress(string address, float progress, SystemObject userdata);
-
-    public enum AsyncPriority
-    {
-        VeryLow = 100,
-        Low = 200,
-        Default = 300,
-        High = 400,
-        VeryHigh = 500,
-    }
-
+    public delegate void AsyncLoadAssetProgress(string address, float progress, SystemObject userdata)
     public enum LoaderState
     {
         None = 0,
