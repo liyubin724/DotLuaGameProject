@@ -19,7 +19,7 @@ namespace DotEngine.Assets
         Running,
     }
 
-    public abstract class ALoader
+    public abstract class ATLoader
     {
         public int MaxAsycOperationCount { get; set; } = 10;
         public int MaxInstanceOperationCount { get; set; } = 5;
@@ -28,7 +28,7 @@ namespace DotEngine.Assets
         protected Action initCallback = null;
         protected LoaderState State { get; set; } = LoaderState.None;
 
-        public ALoader(AssetDetailConfig detailConfig)
+        public ATLoader(AssetDetailConfig detailConfig)
         {
             assetDetailConfig = detailConfig;
         }

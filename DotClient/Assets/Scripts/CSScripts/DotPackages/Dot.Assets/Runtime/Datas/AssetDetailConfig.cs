@@ -64,6 +64,16 @@ namespace DotEngine.Assets
             return null;
         }
 
+        public string[] GetPathsByAddresses(string[] addresses)
+        {
+            string[] paths = new string[addresses.Length];
+            for (int i = 0; i < addresses.Length; i++)
+            {
+                paths[i] = GetPathByAddress(addresses[i]);
+            }
+            return paths;
+        }
+
         public string GetAddressByPath(string path)
         {
             if(pathToDetailDic.TryGetValue(path,out var detail))
@@ -80,6 +90,12 @@ namespace DotEngine.Assets
                 return list.ToArray();
             }
             return new string[0];
+        }
+
+        public string[] GetPathsByLabel(string label)
+        {
+            string[] addresses = GetAddressesByLabel(label);
+            return GetPathsByAddresses(addresses);
         }
 
         public string GetBundleByAddress(string address)

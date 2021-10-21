@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.Assets.Loaders
+namespace DotEngine.Assets
 {
     public class AssetNode : IPoolItem
     {
@@ -21,6 +21,43 @@ namespace DotEngine.Assets.Loaders
             {
                 path = value;
             }
+        }
+
+        public UnityObject GetAsset()
+        {
+            if (mainAsset == null)
+            {
+                return null;
+            }
+            if (mainAsset.TryGetTarget(out UnityObject target))
+            {
+                return target;
+            }
+            return null;
+        }
+
+        public void SetAsset(UnityObject asset)
+        {
+            if (mainAsset == null)
+            {
+                mainAsset = new WeakReference<UnityObject>(asset);
+            }
+            else
+            {
+                mainAsset.SetTarget(asset);
+            }
+        }
+
+        public UnityObject GetInstance()
+        {
+            UnityObject asset = GetAsset();
+            if (asset != null)
+            {
+                UnityObject instance = UnityObject.Instantiate(asset);
+                instances.Add(new WeakReference<UnityObject>(instance));
+                return instance;
+            }
+            return null;
         }
 
         public bool IsAssetValid()
@@ -49,47 +86,6 @@ namespace DotEngine.Assets.Loaders
                 }
             }
             return instances.Count == 0;
-        }
-
-        public UnityObject GetAsset()
-        {
-            if(mainAsset ==  null)
-            {
-                return null;
-            }
-            if(mainAsset.TryGetTarget(out UnityObject target))
-            {
-                if(target == null)
-                {
-                    return null;
-                }
-                return target;
-            }
-            return null;
-        }
-
-        public void SetAsset(UnityObject asset)
-        {
-            if(mainAsset == null)
-            {
-                mainAsset = new WeakReference<UnityObject>(asset);
-            }
-            else
-            {
-                mainAsset.SetTarget(asset);
-            }
-        }
-
-        public UnityObject GetInstance()
-        {
-            UnityObject asset = GetAsset();
-            if(asset!=null)
-            {
-                UnityObject instance = UnityObject.Instantiate(asset);
-                instances.Add(new WeakReference<UnityObject>(instance));
-                return instance;
-            }
-            return null;
         }
 
         public void OnGet()

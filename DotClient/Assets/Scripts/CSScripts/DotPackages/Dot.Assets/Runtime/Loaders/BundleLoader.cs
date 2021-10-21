@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace DotEngine.Assets.Loaders
 {
-    public class BundleLoader : ALoader
+    public class BundleLoader : ATLoader
     {
         private ItemPool<BundleNode> bundleNodePool = new ItemPool<BundleNode>();
         private ItemPool<AssetNode> assetNodePool = new ItemPool<AssetNode>();
