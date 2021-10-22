@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.Assets.Operations
+namespace DotEngine.Assets
 {
     public abstract class AAsyncOperation : AOperation
     {

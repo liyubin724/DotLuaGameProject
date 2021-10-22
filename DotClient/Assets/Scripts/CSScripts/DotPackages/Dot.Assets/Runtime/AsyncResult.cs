@@ -2,7 +2,7 @@
 
 namespace DotEngine.Assets
 {
-    public class AssetAsyncResult
+    public class AsyncResult
     {
         internal int id = -1;
 

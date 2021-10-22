@@ -48,7 +48,7 @@ namespace DotEngine.Assets
             }
         }
 
-        public UnityObject GetInstance()
+        public UnityObject CreateInstance()
         {
             UnityObject asset = GetAsset();
             if (asset != null)
@@ -60,12 +60,29 @@ namespace DotEngine.Assets
             return null;
         }
 
+        public void DestroyInstance(UnityObject uObject)
+        {
+            for (int i = instances.Count - 1; i >= 0; --i)
+            {
+                WeakReference<UnityObject> weakRef = instances[i];
+                if (weakRef == null || !weakRef.TryGetTarget(out UnityObject target))
+                {
+                    instances.RemoveAt(i);
+                }else if(target == uObject)
+                {
+                    UnityObject.Destroy(target);
+                    instances.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
         public bool IsAssetValid()
         {
             return !string.IsNullOrEmpty(path) && GetAsset() != null;
         }
 
-        public bool CanDestroy()
+        public bool IsInUnused()
         {
             if(IsAssetValid())
             {
