@@ -37,7 +37,7 @@ namespace DotEngine.Assets
             throw new NotImplementedException();
         }
 
-        protected override void OnWillReleaseAssetNode(AssetNode node)
+        protected override void OnDestroyAssetNode(AssetNode node)
         {
             throw new NotImplementedException();
         }

@@ -35,7 +35,10 @@ namespace DotEngine.Assets
     {
         None = 0,
         WaitingForStart,
-
+        Loading,
+        WaitingForInstance,
+        instancing,
+        Finished,
     }
 
     public interface ILoader

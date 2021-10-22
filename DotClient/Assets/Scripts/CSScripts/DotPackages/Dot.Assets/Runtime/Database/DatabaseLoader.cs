@@ -30,7 +30,7 @@ namespace DotEngine.Assets
             return true;
         }
 
-        protected override void OnWillReleaseAssetNode(AssetNode node)
+        protected override void OnDestroyAssetNode(AssetNode node)
         {
             
         }
