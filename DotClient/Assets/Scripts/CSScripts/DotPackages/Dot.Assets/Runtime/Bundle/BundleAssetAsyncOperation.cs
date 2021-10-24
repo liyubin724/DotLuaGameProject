@@ -3,7 +3,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
-    public class BundleAssetLoadAsyncOperation : AAsyncOperation
+    public class BundleAssetAsyncOperation : AAsyncOperation
     {
         private AssetBundle assetBundle = null;
         public void SetBundle(AssetBundle bundle)

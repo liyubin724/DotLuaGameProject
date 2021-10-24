@@ -9,16 +9,16 @@ namespace DotEngine.Assets
 
     public class BundleLoader : ALoader
     {
-        private ItemPool<BundleLoadAsyncOperation> bundleOperationPool = new ItemPool<BundleLoadAsyncOperation>();
-        private ItemPool<BundleAssetLoadAsyncOperation> assetOperationPool = new ItemPool<BundleAssetLoadAsyncOperation>();
+        private ItemPool<BundleAsyncOperation> bundleOperationPool = new ItemPool<BundleAsyncOperation>();
+        private ItemPool<BundleAssetAsyncOperation> assetOperationPool = new ItemPool<BundleAssetAsyncOperation>();
         private ItemPool<BundleNode> bundleNodePool = new ItemPool<BundleNode>();
 
         private string bundleRootDir;
         private BundleDetailConfig bundleDetailConfig = null;
 
         private int operationCount = 0;
-        private Dictionary<string, BundleLoadAsyncOperation> bundleOperationDic = new Dictionary<string, BundleLoadAsyncOperation>();
-        private Dictionary<string, BundleAssetLoadAsyncOperation> assetOperationDic = new Dictionary<string, BundleAssetLoadAsyncOperation>();
+        private Dictionary<string, BundleAsyncOperation> bundleOperationDic = new Dictionary<string, BundleAsyncOperation>();
+        private Dictionary<string, BundleAssetAsyncOperation> assetOperationDic = new Dictionary<string, BundleAssetAsyncOperation>();
         private List<AAsyncOperation> operations = new List<AAsyncOperation>();
 
         private Dictionary<string, BundleNode> bundleNodeDic = new Dictionary<string, BundleNode>();
@@ -300,7 +300,7 @@ namespace DotEngine.Assets
 
         private void CreateBundleOperation(string bundlePath)
         {
-            BundleLoadAsyncOperation bundleOperation = bundleOperationPool.Get();
+            BundleAsyncOperation bundleOperation = bundleOperationPool.Get();
             bundleOperation.DoInitilize(bundlePath, bundleRootDir);
             bundleOperation.OnOperationComplete = OnBundleCreated;
 
@@ -309,7 +309,7 @@ namespace DotEngine.Assets
         }
         private void OnBundleCreated(AAsyncOperation operation)
         {
-            BundleLoadAsyncOperation bundleOperation = (BundleLoadAsyncOperation)operation;
+            BundleAsyncOperation bundleOperation = (BundleAsyncOperation)operation;
             string bundlePath = bundleOperation.Path;
             if (bundleNodeDic.TryGetValue(bundlePath, out var node))
             {
@@ -323,7 +323,7 @@ namespace DotEngine.Assets
 
         private void CreateAssetOperation(BundleNode bundleNode, string assetPath)
         {
-            BundleAssetLoadAsyncOperation assetOperation = assetOperationPool.Get();
+            BundleAssetAsyncOperation assetOperation = assetOperationPool.Get();
             assetOperation.DoInitilize(assetPath);
             assetOperation.OnOperationComplete = OnAssetFromBundleCreated;
 
@@ -333,7 +333,7 @@ namespace DotEngine.Assets
 
         private void OnAssetFromBundleCreated(AAsyncOperation operation)
         {
-            BundleAssetLoadAsyncOperation assetOperation = (BundleAssetLoadAsyncOperation)operation;
+            BundleAssetAsyncOperation assetOperation = (BundleAssetAsyncOperation)operation;
             string assetPath = operation.Path;
             if(assetNodeDic.TryGetValue(assetPath,out var assetNode))
             {

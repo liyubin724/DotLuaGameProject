@@ -3,7 +3,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
-    public class BundleLoadAsyncOperation : AAsyncOperation
+    public class BundleAsyncOperation : AAsyncOperation
     {
         private string bundleRootDir = null;
         public override bool IsFinished

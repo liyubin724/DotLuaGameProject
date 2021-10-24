@@ -3,9 +3,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.Assets.Operations
+namespace DotEngine.Assets
 {
-    public class DatabaseAssetLoadAsyncOperation : AAsyncOperation
+    public class DatabaseAssetAsyncOperation : AAsyncOperation
     {
         public override bool IsFinished
         {
