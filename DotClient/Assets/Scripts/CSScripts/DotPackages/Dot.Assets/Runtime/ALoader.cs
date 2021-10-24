@@ -23,7 +23,7 @@ namespace DotEngine.Assets
         protected ItemPool<AssetNode> assetNodePool = new ItemPool<AssetNode>();
         private UniqueIntID uniqueIDCreator = new UniqueIntID();
 
-        public int AsyncOperationMaxCount { get; set; } = 10;
+        public int OperationMaxCount { get; set; } = 10;
         public LoaderState State { get; protected set; } = LoaderState.None;
 
         protected AssetDetailConfig assetDetailConfig = null;

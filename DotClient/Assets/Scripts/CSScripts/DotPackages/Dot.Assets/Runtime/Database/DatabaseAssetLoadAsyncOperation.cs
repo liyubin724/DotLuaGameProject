@@ -5,7 +5,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public class DatabaseLoadAsyncOperation : AAsyncOperation
+    public class DatabaseAssetLoadAsyncOperation : AAsyncOperation
     {
         public override bool IsFinished
         {

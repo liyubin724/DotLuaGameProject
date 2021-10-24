@@ -14,6 +14,13 @@ namespace DotEngine.Assets
         protected bool isRunning = false;
         protected AsyncOperation operation = null;
 
+        public bool IsRunning
+        {
+            get
+            {
+                return isRunning;
+            }
+        }
         public abstract bool IsFinished { get;}
         public abstract float Progress { get; }
 

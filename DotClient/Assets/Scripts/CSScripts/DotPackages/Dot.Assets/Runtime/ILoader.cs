@@ -45,7 +45,7 @@ namespace DotEngine.Assets
     public interface ILoader
     {
         LoaderState State { get; }
-        int AsyncOperationMaxCount { get; set; }
+        int OperationMaxCount { get; set; }
 
         void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params SystemObject[] values);
 
