@@ -9,6 +9,7 @@ namespace DotEngine.Assets
     {
         internal string Path { get; private set; }
         internal NodeState State { get; set; } = NodeState.None;
+
         private WeakReference<UnityObject> assetRef = null;
         private List<WeakReference<UnityObject>> instanceRefs = new List<WeakReference<UnityObject>>();
 
@@ -43,7 +44,21 @@ namespace DotEngine.Assets
 
         internal bool IsLoaded()
         {
-            return State == NodeState.Loaded || State == NodeState.LoadError;
+            if(State == NodeState.LoadError)
+            {
+                return true;
+            }else if(State == NodeState.Loaded)
+            {
+                if(IsAssetValid())
+                {
+                    return true;
+                }else
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         internal bool IsLoading()
@@ -51,24 +66,9 @@ namespace DotEngine.Assets
             return State == NodeState.Loading;
         }
 
-        internal bool IsValid()
-        {
-            if (State == NodeState.Loaded)
-            {
-                return assetRef != null && assetRef.TryGetTarget(out var _);
-            }
-
-            return false;
-        }
-
         internal bool IsAssetValid()
         {
-            if (State == NodeState.Loaded)
-            {
-                return assetRef != null && assetRef.TryGetTarget(out var _);
-            }
-
-            return false;
+            return assetRef != null && assetRef.TryGetTarget(out var _);
         }
 
         internal UnityObject GetAsset()

@@ -5,6 +5,36 @@ namespace DotEngine.Assets
 {
     public class DatabaseLoader : ALoader
     {
+        protected override bool CanStartRequest()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnAsyncRequestEnd(AsyncRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnAsyncRequestStart(AsyncRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnAsyncRequestUpdate(AsyncRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnCreateAssetNodeAsync(AssetNode assetNode)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnCreateAssetNodeSync(AssetNode assetNode)
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override void OnInitialize(params object[] values)
         {
         }
@@ -13,6 +43,11 @@ namespace DotEngine.Assets
         {
             State = LoaderState.Initialized;
             return true;
+        }
+
+        protected override void OnReleaseAssetNode(AssetNode assetNode)
+        {
+            throw new System.NotImplementedException();
         }
 
         protected override void OnUnloadUnusedAssets()
@@ -25,29 +60,10 @@ namespace DotEngine.Assets
             return true;
         }
 
-        protected override UnityObject LoadAsset(string assetPath)
+        protected override UnityObject RequestAssetSync(string assetPath)
         {
             return AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
         }
 
-        protected override bool CanStartRequest()
-        {
-            return true;
-        }
-
-        protected override void StartRequest(AsyncRequest request)
-        {
-            
-        }
-
-        protected override void UpdateRequest(AsyncRequest request)
-        {
-            
-        }
-
-        protected override void EndRequest(AsyncRequest request)
-        {
-            
-        }
     }
 }

@@ -6,7 +6,6 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
-
     public class BundleLoader : ALoader
     {
         private ItemPool<BundleAsyncOperation> bundleOperationPool = new ItemPool<BundleAsyncOperation>();
@@ -53,7 +52,7 @@ namespace DotEngine.Assets
         }
         #endregion
 
-        protected override UnityObject LoadAsset(string assetPath)
+        protected override UnityObject RequestAssetSync(string assetPath)
         {
             var bundlePath = assetDetailConfig.GetBundleByPath(assetPath);
             BundleNode bundleNode = GetBundleNode(bundlePath);
@@ -67,18 +66,11 @@ namespace DotEngine.Assets
             return operationCount < OperationMaxCount;
         }
 
-        protected override void StartRequest(AsyncRequest request)
+        protected override void OnAsyncRequestStart(AsyncRequest request)
         {
-            string[] assetPaths = request.paths;
-            for (int i = 0; i < assetPaths.Length; i++)
-            {
-                string assetPath = assetPaths[i];
-                AssetNode assetNode = GetAsyncAssetNode(assetPath);
-                assetNode.RetainRef();
-            }
         }
 
-        protected override void UpdateRequest(AsyncRequest request)
+        protected override void OnAsyncRequestUpdate(AsyncRequest request)
         {
             var result = request.result;
             string[] assetPaths = request.paths;
@@ -103,7 +95,7 @@ namespace DotEngine.Assets
                     }
                     assetNode.ReleaseRef();
                     continue;
-                }else if(assetNode.IsLoading())
+                }else
                 {
                     string bundlePath = assetDetailConfig.GetBundleByPath(assetPath);
                     BundleNode bundleNode = bundleNodeDic[bundlePath];
@@ -112,9 +104,6 @@ namespace DotEngine.Assets
                         CreateAssetOperation(bundleNode, assetPath);
                     }
                     request.SetProgress(i, GetAsyncAssetProgress(assetPath));
-                }else
-                {
-                    throw new Exception();
                 }
             }
             if(result.IsDone())
@@ -129,7 +118,7 @@ namespace DotEngine.Assets
             }
         }
 
-        protected override void EndRequest(AsyncRequest request)
+        protected override void OnAsyncRequestEnd(AsyncRequest request)
         {
 
         }
@@ -182,6 +171,22 @@ namespace DotEngine.Assets
                 progress = 0.0f;
             }
             return progress;
+        }
+
+        protected override void OnCreateAssetNodeSync(AssetNode assetNode)
+        {
+        }
+
+        protected override void OnCreateAssetNodeAsync(AssetNode assetNode)
+        {
+            string bundlePath = assetDetailConfig.GetBundleByPath(assetNode.Path);
+            BundleNode bundleNode = GetAsyncBundleNode(bundlePath);
+            bundleNode.RetainRef();
+        }
+
+        protected override void OnReleaseAssetNode(AssetNode assetNode)
+        {
+            
         }
 
         #region Sync
@@ -286,7 +291,7 @@ namespace DotEngine.Assets
             bundleOperation.OnOperationComplete = OnBundleCreated;
 
             bundleOperationDic.Add(bundlePath, bundleOperation);
-            operations.Add(bundleOperation);
+            operationLDic.Add(bundlePath, bundleOperation);
         }
         private void OnBundleCreated(AAsyncOperation operation)
         {
@@ -299,7 +304,7 @@ namespace DotEngine.Assets
             bundleOperationDic.Remove(bundlePath);
             bundleOperationPool.Release(bundleOperation);
 
-            operations.Remove(bundleOperation);
+            operationLDic.Remove(bundlePath);
         }
 
         private void CreateAssetOperation(BundleNode bundleNode, string assetPath)
@@ -309,7 +314,7 @@ namespace DotEngine.Assets
             assetOperation.OnOperationComplete = OnAssetFromBundleCreated;
 
             assetOperationDic.Add(assetPath, assetOperation);
-            operations.Add(assetOperation);
+            operationLDic.Add(assetPath, assetOperation);
         }
 
         private void OnAssetFromBundleCreated(AAsyncOperation operation)
@@ -323,7 +328,7 @@ namespace DotEngine.Assets
             assetOperationDic.Remove(assetPath);
             assetOperationPool.Release(assetOperation);
 
-            operations.Remove(assetOperation);
+            operationLDic.Remove(assetPath);
         }
         #endregion
     }

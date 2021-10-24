@@ -33,10 +33,9 @@ namespace DotEngine.Assets
         protected SimplePriorityQueue<AsyncRequest, AsyncPriority> waitingAsyncRequestQueue = new SimplePriorityQueue<AsyncRequest, AsyncPriority>();
         protected List<AsyncRequest> runningRequestList = new List<AsyncRequest>();
 
-        protected Dictionary<string, AssetNode> assetNodeDic = new Dictionary<string, AssetNode>();
-
         protected int operationCount = 0;
-        protected List<AAsyncOperation> operations = new List<AAsyncOperation>();
+        protected ListDictionary<string, AAsyncOperation> operationLDic = new ListDictionary<string, AAsyncOperation>();
+        protected Dictionary<string, AssetNode> assetNodeDic = new Dictionary<string, AssetNode>();
 
         private AsyncOperation unloadUnusedOperation = null;
         protected OnUnloadUnusedFinished unloadUnusedCallback = null;
@@ -60,7 +59,7 @@ namespace DotEngine.Assets
         public UnityObject LoadAssetByAddress(string address)
         {
             string assetPath = assetDetailConfig.GetPathByAddress(address);
-            AssetNode assetNode = GetAssetNode(assetPath);
+            AssetNode assetNode = GetAssetNodeSync(assetPath);
 
             return assetNode.GetAsset();
         }
@@ -68,7 +67,7 @@ namespace DotEngine.Assets
         public UnityObject InstanceAssetByAddress(string address)
         {
             string assetPath = assetDetailConfig.GetPathByAddress(address);
-            AssetNode assetNode = GetAssetNode(assetPath);
+            AssetNode assetNode = GetAssetNodeSync(assetPath);
 
             return assetNode.CreateInstance();
         }
@@ -267,14 +266,14 @@ namespace DotEngine.Assets
                 return;
             }
 
-            if (operations.Count > 0 && operationCount < OperationMaxCount)
+            if (operationLDic.Count > 0 && operationCount < OperationMaxCount)
             {
                 int diffCount = OperationMaxCount - operationCount;
-                for (int i = 0; i < operations.Count; i++)
+                for (int i = 0; i < operationLDic.Count; i++)
                 {
-                    if (!operations[i].IsRunning)
+                    if (!operationLDic[i].IsRunning)
                     {
-                        operations[i].DoStart();
+                        operationLDic[i].DoStart();
                         diffCount--;
                     }
                     if (diffCount <= 0)
@@ -287,7 +286,7 @@ namespace DotEngine.Assets
             for (int i = runningRequestList.Count - 1; i > 0; --i)
             {
                 AsyncRequest request = runningRequestList[i];
-                UpdateRequest(request);
+                OnAsyncRequestUpdate(request);
 
                 if (request.state == AsyncState.LoadFinished)
                 {
@@ -297,14 +296,14 @@ namespace DotEngine.Assets
                     }
                     else
                     {
-                        EndRequest(request);
+                        OnAsyncRequestEnd(request);
                         runningRequestList.RemoveAt(i);
                         asyncRequestPool.Release(request);
                     }
                 }
                 else if (request.state == AsyncState.InstanceFinished)
                 {
-                    EndRequest(request);
+                    OnAsyncRequestEnd(request);
                     runningRequestList.RemoveAt(i);
                     asyncRequestPool.Release(request);
                 }
@@ -318,7 +317,17 @@ namespace DotEngine.Assets
             {
                 AsyncRequest request = waitingAsyncRequestQueue.Dequeue();
                 request.state = AsyncState.Loading;
-                StartRequest(request);
+
+                string[] assetPaths = request.paths;
+                for (int i = 0; i < assetPaths.Length; i++)
+                {
+                    string assetPath = assetPaths[i];
+                    AssetNode assetNode = GetAssetNodeAsync(assetPath);
+                    assetNode.RetainRef();
+                }
+
+                OnAsyncRequestStart(request);
+
                 runningRequestList.Add(request);
             }
 
@@ -341,6 +350,9 @@ namespace DotEngine.Assets
         {
 
         }
+
+        #region request asset
+        protected abstract UnityObject RequestAssetSync(string assetPath);
 
         private AsyncResult RequestAssetsAsync(
             string label,
@@ -379,35 +391,65 @@ namespace DotEngine.Assets
 
             return result;
         }
+        #endregion
 
-        private AssetNode GetAssetNode(string assetPath)
+        #region get asset node
+        private AssetNode GetAssetNodeSync(string assetPath)
         {
-            if(assetNodeDic.TryGetValue(assetPath,out var node))
+            if (assetNodeDic.TryGetValue(assetPath, out var node))
             {
-                if(node.IsAssetValid())
+                if (node.IsLoaded())
                 {
                     return node;
-                }else
-                {
-                    throw new Exception();
                 }
+                else
+                {
+                    if(operationLDic.TryGetValue(assetPath,out var operation))
+                    {
+                        throw new Exception();
+                    }else
+                    {
+                        node.SetAsset(RequestAssetSync(assetPath));
+                        return node;
+                    }
+                }
+            }
+            node = assetNodePool.Get();
+            node.DoInitialize(assetPath);
+            node.SetAsset(RequestAssetSync(assetPath));
+
+            OnCreateAssetNodeSync(node);
+
+            assetNodeDic.Add(assetPath, node);
+            return node;
+        }
+        private AssetNode GetAssetNodeAsync(string assetPath)
+        {
+            if (assetNodeDic.TryGetValue(assetPath, out var node))
+            {
+                return node;
             }
 
             node = assetNodePool.Get();
             node.DoInitialize(assetPath);
-            UnityObject uObject = LoadAsset(assetPath);
-            node.SetAsset(uObject);
+            node.State = NodeState.Loading;
+
+            OnCreateAssetNodeAsync(node);
 
             assetNodeDic.Add(assetPath, node);
 
             return node;
         }
-
-        protected abstract UnityObject LoadAsset(string assetPath);
+        protected abstract void OnCreateAssetNodeSync(AssetNode assetNode);
+        protected abstract void OnCreateAssetNodeAsync(AssetNode assetNode);
+        protected abstract void OnReleaseAssetNode(AssetNode assetNode);
+        #endregion
 
         protected abstract bool CanStartRequest();
-        protected abstract void StartRequest(AsyncRequest request);
-        protected abstract void UpdateRequest(AsyncRequest request);
-        protected abstract void EndRequest(AsyncRequest request);
+        protected abstract void OnAsyncRequestStart(AsyncRequest request);
+        protected abstract void OnAsyncRequestUpdate(AsyncRequest request);
+        protected abstract void OnAsyncRequestEnd(AsyncRequest request);
+
+
     }
 }
