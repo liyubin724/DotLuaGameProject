@@ -10,17 +10,18 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
+
     public class BundleLoader : ALoader
     {
-        private ItemPool<BundleCreateAsyncOperation> createAsyncOpeartionPool = new ItemPool<BundleCreateAsyncOperation>();
-        private ItemPool<BundleLoadAsyncOperation> loadAsyncOperationPool = new ItemPool<BundleLoadAsyncOperation>();
+        private ItemPool<BundleLoadAsyncOperation> bundleLoadAsyncOpeartionPool = new ItemPool<BundleLoadAsyncOperation>();
+        private ItemPool<BundleAssetLoadAsyncOperation> assetLoadAsyncOperationPool = new ItemPool<BundleAssetLoadAsyncOperation>();
         private ItemPool<BundleNode> bundleNodePool = new ItemPool<BundleNode>();
 
         private string bundleRootDir;
         private BundleDetailConfig bundleDetailConfig = null;
 
-        private Dictionary<string, BundleCreateAsyncOperation> createAsyncOperationDic = new Dictionary<string, BundleCreateAsyncOperation>();
-        private Dictionary<string, BundleLoadAsyncOperation> loadAsyncOperationDic = new Dictionary<string, BundleLoadAsyncOperation>();
+        private Dictionary<string, BundleLoadAsyncOperation> createAsyncOperationDic = new Dictionary<string, BundleLoadAsyncOperation>();
+        private Dictionary<string, BundleAssetLoadAsyncOperation> loadAsyncOperationDic = new Dictionary<string, BundleAssetLoadAsyncOperation>();
         private Dictionary<string, BundleNode> bundleNodeDic = new Dictionary<string, BundleNode>();
 
         #region initialize
@@ -248,7 +249,7 @@ namespace DotEngine.Assets
 
             BundleNode mainBundleNode = bundleNodePool.Get();
             mainBundleNode.State = NodeState.Loading;
-            BundleCreateAsyncOperation createAsyncOperation = LoadBundleAsync(bundlePath);
+            BundleLoadAsyncOperation createAsyncOperation = LoadBundleAsync(bundlePath);
             createAsyncOperationDic.Add(bundlePath, createAsyncOperation);
 
             string[] dependBundlePaths = bundleDetailConfig.GetDependencies(bundlePath);
@@ -264,9 +265,9 @@ namespace DotEngine.Assets
         }
 
 
-        private BundleCreateAsyncOperation LoadBundleAsync(string bundlePath)
+        private BundleLoadAsyncOperation LoadBundleAsync(string bundlePath)
         {
-            BundleCreateAsyncOperation createAsyncOperation = createAsyncOpeartionPool.Get();
+            BundleLoadAsyncOperation createAsyncOperation = bundleLoadAsyncOpeartionPool.Get();
             createAsyncOperation.DoInitilize(bundlePath, bundleRootDir);
             createAsyncOperation.OnOperationComplete = OnBundleCreated;
 
@@ -274,19 +275,19 @@ namespace DotEngine.Assets
         }
         private void OnBundleCreated(AAsyncOperation operation)
         {
-            BundleCreateAsyncOperation createAsyncOperation = (BundleCreateAsyncOperation)operation;
+            BundleLoadAsyncOperation createAsyncOperation = (BundleLoadAsyncOperation)operation;
             string bundlePath = createAsyncOperation.Path;
             if (bundleNodeDic.TryGetValue(bundlePath, out var node))
             {
                 node.Bundle = (AssetBundle)createAsyncOperation.GetAsset();
             }
             createAsyncOperationDic.Remove(bundlePath);
-            createAsyncOpeartionPool.Release(createAsyncOperation);
+            bundleLoadAsyncOpeartionPool.Release(createAsyncOperation);
         }
 
-        private BundleLoadAsyncOperation LoadAssetFromBundleAsync(BundleNode bundleNode, string assetPath)
+        private BundleAssetLoadAsyncOperation LoadAssetFromBundleAsync(BundleNode bundleNode, string assetPath)
         {
-            BundleLoadAsyncOperation loadAsyncOperation = loadAsyncOperationPool.Get();
+            BundleAssetLoadAsyncOperation loadAsyncOperation = assetLoadAsyncOperationPool.Get();
             loadAsyncOperation.DoInitilize(assetPath);
             loadAsyncOperation.OnOperationComplete = OnAssetFromBundleCreated;
 
@@ -295,14 +296,14 @@ namespace DotEngine.Assets
 
         private void OnAssetFromBundleCreated(AAsyncOperation operation)
         {
-            BundleLoadAsyncOperation loadAsyncOperation = (BundleLoadAsyncOperation)operation;
+            BundleAssetLoadAsyncOperation loadAsyncOperation = (BundleAssetLoadAsyncOperation)operation;
             string assetPath = operation.Path;
             if(assetNodeDic.TryGetValue(assetPath,out var assetNode))
             {
                 assetNode.SetAsset(loadAsyncOperation.GetAsset());
             }
             loadAsyncOperationDic.Remove(assetPath);
-            loadAsyncOperationPool.Release(loadAsyncOperation);
+            assetLoadAsyncOperationPool.Release(loadAsyncOperation);
         }
         #endregion
     }

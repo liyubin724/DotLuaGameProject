@@ -1,25 +1,19 @@
 ﻿using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEngine.Assets.Operations
+namespace DotEngine.Assets
 {
     public class BundleLoadAsyncOperation : AAsyncOperation
     {
-        private AssetBundle assetBundle = null;
-        public void SetBundle(AssetBundle bundle)
-        {
-            assetBundle = bundle;
-        }
-
+        private string bundleRootDir = null;
         public override bool IsFinished
         {
             get
             {
-                if (!isRunning)
+                if(!isRunning)
                 {
                     return false;
-                }
-                else
+                }else
                 {
                     return operation.isDone;
                 }
@@ -30,11 +24,10 @@ namespace DotEngine.Assets.Operations
         {
             get
             {
-                if (!isRunning)
+                if(!isRunning)
                 {
                     return 0.0f;
-                }
-                else
+                }else
                 {
                     return operation.progress;
                 }
@@ -43,26 +36,27 @@ namespace DotEngine.Assets.Operations
 
         public override UnityObject GetAsset()
         {
-            if (IsFinished)
+            if(IsFinished)
             {
-                AssetBundleRequest request = (AssetBundleRequest)operation;
-                return request.asset;
+                AssetBundleCreateRequest request = (AssetBundleCreateRequest)operation;
+                return request.assetBundle;
             }
             return null;
+        }
+
+        public override void DoInitilize(string path, params object[] values)
+        {
+            base.DoInitilize(path, values);
+            bundleRootDir = (string)(values[0]);
         }
 
         protected override AsyncOperation CreateOperation()
         {
-            if (assetBundle != null)
-            {
-                return assetBundle.LoadAssetAsync(Path);
-            }
-            return null;
+            return AssetBundle.LoadFromFileAsync($"{bundleRootDir}/{Path}");
         }
 
         protected override void DestroyOperation()
         {
-            assetBundle = null;
         }
     }
 }
