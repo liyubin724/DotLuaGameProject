@@ -7,102 +7,158 @@ namespace DotEngine.Assets
 {
     public class AssetNode : IPoolItem
     {
-        private string path;
-        private WeakReference<UnityObject> mainAsset = null;
-        private List<WeakReference<UnityObject>> instances = new List<WeakReference<UnityObject>>();
+        internal string Path { get; private set; }
+        internal NodeState State { get; set; } = NodeState.None;
+        private WeakReference<UnityObject> assetRef = null;
+        private List<WeakReference<UnityObject>> instanceRefs = new List<WeakReference<UnityObject>>();
 
-        public string Path
+        private int refCount = 0;
+        private UnityObject cachedAsset = null;
+        internal void RetainRef()
         {
-            get
+            ++refCount;
+            if (cachedAsset == null && assetRef != null && assetRef.TryGetTarget(out var target))
             {
-                return path;
+                cachedAsset = target;
             }
-            set
+        }
+        internal void ReleaseRef()
+        {
+            --refCount;
+            if (refCount == 0 && cachedAsset != null)
             {
-                path = value;
+                cachedAsset = null;
+            }
+            if (refCount < 0)
+            {
+                throw new Exception();
             }
         }
 
-        public UnityObject GetAsset()
+        internal void DoInitialize(string path)
         {
-            if (mainAsset == null)
+            Path = path;
+            State = NodeState.None;
+        }
+
+        internal bool IsLoaded()
+        {
+            return State == NodeState.Loaded || State == NodeState.LoadError;
+        }
+
+        internal bool IsLoading()
+        {
+            return State == NodeState.Loading;
+        }
+
+        internal bool IsValid()
+        {
+            if (State == NodeState.Loaded)
+            {
+                return assetRef != null && assetRef.TryGetTarget(out var _);
+            }
+
+            return false;
+        }
+
+        internal bool IsAssetValid()
+        {
+            if (State == NodeState.Loaded)
+            {
+                return assetRef != null && assetRef.TryGetTarget(out var _);
+            }
+
+            return false;
+        }
+
+        internal UnityObject GetAsset()
+        {
+            if (assetRef == null)
             {
                 return null;
             }
-            if (mainAsset.TryGetTarget(out UnityObject target))
+            if (assetRef.TryGetTarget(out UnityObject target))
             {
                 return target;
             }
             return null;
         }
-
-        public void SetAsset(UnityObject asset)
+        internal void SetAsset(UnityObject asset)
         {
-            if (mainAsset == null)
+            if (asset == null)
             {
-                mainAsset = new WeakReference<UnityObject>(asset);
+                State = NodeState.LoadError;
+                assetRef = null;
             }
             else
             {
-                mainAsset.SetTarget(asset);
+                State = NodeState.Loaded;
+                if (assetRef == null)
+                {
+                    assetRef = new WeakReference<UnityObject>(asset);
+                }
+                else
+                {
+                    assetRef.SetTarget(asset);
+                }
+                if (refCount > 0 && cachedAsset == null)
+                {
+                    cachedAsset = asset;
+                }
             }
         }
 
-        public UnityObject CreateInstance()
+        internal UnityObject CreateInstance()
         {
             UnityObject asset = GetAsset();
             if (asset != null)
             {
                 UnityObject instance = UnityObject.Instantiate(asset);
-                instances.Add(new WeakReference<UnityObject>(instance));
+                bool isAdded = false;
+                for (int i = 0; i < instanceRefs.Count; i++)
+                {
+                    if (!instanceRefs[i].TryGetTarget(out var _))
+                    {
+                        isAdded = true;
+                        instanceRefs[i].SetTarget(instance);
+                        break;
+                    }
+                }
+                if (!isAdded)
+                {
+                    instanceRefs.Add(new WeakReference<UnityObject>(instance));
+                }
                 return instance;
             }
             return null;
         }
-
-        public void DestroyInstance(UnityObject uObject)
+        internal void DestroyInstance(UnityObject uObject)
         {
-            for (int i = instances.Count - 1; i >= 0; --i)
+            for (int i = 0; i < instanceRefs.Count; i++)
             {
-                WeakReference<UnityObject> weakRef = instances[i];
-                if (weakRef == null || !weakRef.TryGetTarget(out UnityObject target))
+                WeakReference<UnityObject> weakRef = instanceRefs[i];
+                if (weakRef.TryGetTarget(out var target) && target == uObject)
                 {
-                    instances.RemoveAt(i);
-                }else if(target == uObject)
-                {
-                    UnityObject.Destroy(target);
-                    instances.RemoveAt(i);
+                    weakRef.SetTarget(null);
                     break;
                 }
             }
         }
 
-        public bool IsAssetValid()
+        public bool IsInUsing()
         {
-            return !string.IsNullOrEmpty(path) && GetAsset() != null;
-        }
-
-        public bool IsInUnused()
-        {
-            if(IsAssetValid())
+            if (IsAssetValid())
             {
-                return false;
+                return true;
             }
-            for (int i = instances.Count-1; i >=0; --i)
+            for (int i = 0; i < instanceRefs.Count; i++)
             {
-                WeakReference<UnityObject> weakRef = instances[i];
-                if(weakRef ==null || !weakRef.TryGetTarget(out UnityObject target))
+                if (instanceRefs[i].TryGetTarget(out var _))
                 {
-                    instances.RemoveAt(i);
-                    return false;
-                }
-                if(target == null)
-                {
-                    instances.RemoveAt(i);
-                    return false;
+                    return true;
                 }
             }
-            return instances.Count == 0;
+            return false;
         }
 
         public void OnGet()
@@ -111,9 +167,11 @@ namespace DotEngine.Assets
 
         public void OnRelease()
         {
-            path = null;
-            mainAsset = null;
-            instances.Clear();
+            Path = null;
+            State = NodeState.None;
+            refCount = 0;
+            assetRef = null;
+            instanceRefs.Clear();
         }
     }
 }

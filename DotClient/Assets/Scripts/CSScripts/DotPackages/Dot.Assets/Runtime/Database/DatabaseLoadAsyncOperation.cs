@@ -5,17 +5,19 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets.Operations
 {
-    public class DatabaseLoadAsyncOperation : AOperation
+    public class DatabaseLoadAsyncOperation : AAsyncOperation
     {
         public override bool IsFinished
         {
             get
             {
-                if(isRunning && !string.IsNullOrEmpty(assetPath))
+                if(!isRunning)
                 {
                     return true;
+                }else
+                {
+                    return false;
                 }
-                return false;
             }
         }
 
@@ -23,17 +25,28 @@ namespace DotEngine.Assets.Operations
         {
             get
             {
-                if (isRunning && !string.IsNullOrEmpty(assetPath))
+                if(!isRunning)
+                {
+                    return 0.0f;
+                }else
                 {
                     return 1.0f;
                 }
-                return 0.0f;
             }
         }
 
         public override UnityObject GetAsset()
         {
-            return AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
+            return AssetDatabase.LoadAssetAtPath(Path, typeof(UnityObject));
+        }
+
+        protected override AsyncOperation CreateOperation()
+        {
+            return null;
+        }
+
+        protected override void DestroyOperation()
+        {
         }
     }
 }

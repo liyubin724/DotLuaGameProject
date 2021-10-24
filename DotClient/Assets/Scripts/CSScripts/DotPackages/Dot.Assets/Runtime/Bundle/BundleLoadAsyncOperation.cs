@@ -11,11 +11,51 @@ namespace DotEngine.Assets.Operations
             assetBundle = bundle;
         }
 
-        protected override AsyncOperation CreateOperation(string path)
+        public override bool IsFinished
+        {
+            get
+            {
+                if (!isRunning)
+                {
+                    return false;
+                }
+                else
+                {
+                    return operation.isDone;
+                }
+            }
+        }
+
+        public override float Progress
+        {
+            get
+            {
+                if (!isRunning)
+                {
+                    return 0.0f;
+                }
+                else
+                {
+                    return operation.progress;
+                }
+            }
+        }
+
+        public override UnityObject GetAsset()
+        {
+            if (IsFinished)
+            {
+                AssetBundleRequest request = (AssetBundleRequest)operation;
+                return request.asset;
+            }
+            return null;
+        }
+
+        protected override AsyncOperation CreateOperation()
         {
             if (assetBundle != null)
             {
-                return assetBundle.LoadAssetAsync(path);
+                return assetBundle.LoadAssetAsync(Path);
             }
             return null;
         }
@@ -23,12 +63,6 @@ namespace DotEngine.Assets.Operations
         protected override void DestroyOperation()
         {
             assetBundle = null;
-        }
-
-        protected override UnityObject GetFromOperation()
-        {
-            AssetBundleRequest request = (AssetBundleRequest)operation;
-            return request.asset;
         }
     }
 }

@@ -4,28 +4,42 @@ namespace DotEngine.Assets
 {
     public class AsyncResult
     {
-        internal int id = -1;
+        public int ID { get; private set; } = 0;
 
         private string[] addresses = null;
-        private UnityObject[] uObjects = null;
-        private float[] progresses = null;
         private bool[] loadedFlags = null;
+        private float[] progresses = null;
+        private UnityObject[] uObjects = null;
 
-        public bool IsDone()
+        internal void DoInitialize(int id, string[] addresses)
         {
-            foreach(var flag in loadedFlags)
+            ID = id;
+            this.addresses = addresses;
+            uObjects = new UnityObject[addresses.Length];
+            progresses = new float[addresses.Length];
+            loadedFlags = new bool[addresses.Length];
+
+            for (int i = 0; i < addresses.Length; ++i)
             {
-                if(!flag)
-                {
-                    return false;
-                }
+                uObjects[i] = null;
+                progresses[i] = 0.0f;
+                loadedFlags[i] = false;
             }
-            return true;
+        }
+
+        public int Count()
+        {
+            return addresses.Length;
+        }
+
+        public string GetAddressAt(int index)
+        {
+            return addresses[index];
         }
 
         public UnityObject GetUObject()
         {
-            if(uObjects.Length>0)
+            if (uObjects.Length > 0)
             {
                 return uObjects[0];
             }
@@ -37,9 +51,21 @@ namespace DotEngine.Assets
             return uObjects;
         }
 
+        public UnityObject GetUObjectAt(int index)
+        {
+            return uObjects[index];
+        }
+
+        internal void SetUObjectAt(int index, UnityObject uObject)
+        {
+            uObjects[index] = uObject;
+            loadedFlags[index] = true;
+            progresses[index] = 1.0f;
+        }
+
         public float GetProgress()
         {
-            if(progresses != null && progresses.Length>0)
+            if (progresses != null && progresses.Length > 0)
             {
                 return progresses[0];
             }
@@ -54,38 +80,38 @@ namespace DotEngine.Assets
         public float TotalProgress()
         {
             float sum = 0;
-            foreach(var progress in progresses)
+            foreach (var progress in progresses)
             {
                 sum += progress;
             }
             return sum / progresses.Length;
         }
 
-        internal void SetAddress(string[] addresses)
+        public float GetProgressAt(int index)
         {
-            this.addresses = addresses;
-            uObjects = new UnityObject[addresses.Length];
-            progresses = new float[addresses.Length];
-            loadedFlags = new bool[addresses.Length];
-
-            for (int i =0;i< addresses.Length;++i)
-            {
-                uObjects[i] = null;
-                progresses[i] = 0.0f;
-                loadedFlags[i] = false;
-            }
+            return progresses[index];
         }
 
-        internal void SetUObject(int index,UnityObject uObject)
-        {
-            uObjects[index] = uObject;
-            loadedFlags[index] = true;
-            progresses[index] = 1.0f;
-        }
-
-        internal void SetProgress(int index,float progress)
+        internal void SetProgressAt(int index, float progress)
         {
             progresses[index] = progress;
+        }
+
+        public bool IsDoneAt(int index)
+        {
+            return loadedFlags[index];
+        }
+
+        public bool IsDone()
+        {
+            foreach (var flag in loadedFlags)
+            {
+                if (!flag)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

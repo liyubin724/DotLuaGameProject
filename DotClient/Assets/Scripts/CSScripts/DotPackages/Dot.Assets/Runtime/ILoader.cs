@@ -11,7 +11,7 @@ namespace DotEngine.Assets
     public delegate void OnLoadAssetComplete(string address, UnityObject uObject, SystemObject userdata);
 
     public delegate void OnLoadAssetsProgress(string[] addresses, float[] progress, SystemObject userdata);
-    public delegate void OnLoadAssetsComplete(string[] addresses, float[] progresses, SystemObject userdata);
+    public delegate void OnLoadAssetsComplete(string[] addresses, UnityObject[] uObjects, SystemObject userdata);
 
     public enum LoaderState
     {
@@ -36,16 +36,16 @@ namespace DotEngine.Assets
         None = 0,
         WaitingForStart,
         Loading,
+        LoadFinished,
         WaitingForInstance,
-        instancing,
-        Finished,
+        Instancing,
+        InstanceFinished,
     }
 
     public interface ILoader
     {
         LoaderState State { get; }
         int AsyncOperationMaxCount { get; set; }
-        int InstanceMaxCount { get; set; }
 
         void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params SystemObject[] values);
 

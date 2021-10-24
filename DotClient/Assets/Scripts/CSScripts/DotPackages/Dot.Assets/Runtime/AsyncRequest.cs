@@ -1,5 +1,6 @@
 ﻿using DotEngine.Pool;
 using SystemObject = System.Object;
+using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
@@ -19,6 +20,34 @@ namespace DotEngine.Assets
         internal SystemObject userdata = null;
 
         internal AsyncResult result = null;
+
+        public bool IsDone()
+        {
+            return result.IsDone();
+        }
+
+        public void SetProgress(int index, float progress)
+        {
+            float preProgress = result.GetProgressAt(index);
+            if (preProgress != progress)
+            {
+                result.SetProgressAt(index, progress);
+
+                progressCallback?.Invoke(addresses[index], progress, userdata);
+                progressesCallback?.Invoke(addresses, result.GetProgresses(), userdata);
+            }
+        }
+
+        public void SetUObject(int index, UnityObject uObject)
+        {
+            result.SetUObjectAt(index, uObject);
+            completeCallback?.Invoke(addresses[index], uObject, userdata);
+
+            if (result.IsDone())
+            {
+                completesCallback?.Invoke(addresses, result.GetUObjects(), userdata);
+            }
+        }
 
         public void OnGet()
         {

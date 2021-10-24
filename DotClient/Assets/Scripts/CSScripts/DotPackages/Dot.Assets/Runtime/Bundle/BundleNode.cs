@@ -2,29 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DotEngine.Assets.Loaders
+namespace DotEngine.Assets
 {
-    public class BundleNode : IPoolItem
+    internal class BundleNode : IPoolItem
     {
-        private string path;
-        private bool isBundleLoaded = false;
+        internal string Path { get; private set; }
+        internal bool IsNeverDestroy { get; private set; } = false;
+        internal NodeState State { get; set; } = NodeState.None;
         private AssetBundle bundle;
-        private List<BundleNode> depends = new List<BundleNode>();
-        private bool isNeverDestroy = false;
-
-        public string Path
-        {
-            get
-            {
-                return path;
-            }
-            set
-            {
-                path = value;
-            }
-        }
-
-        public AssetBundle Bundle
+        internal AssetBundle Bundle
         {
             get
             {
@@ -33,19 +19,25 @@ namespace DotEngine.Assets.Loaders
             set
             {
                 bundle = value;
-                isBundleLoaded = true;
+                if(bundle!=null)
+                {
+                    State = NodeState.Loaded;
+                }else
+                {
+                    State = NodeState.LoadError;
+                }
             }
         }
 
-        public bool IsDone
+        private int refCount = 0;
+        internal void RetainRef() => ++refCount;
+        internal void ReleaseRef() => --refCount;
+
+        internal bool IsDone
         {
             get
             {
-                if (string.IsNullOrEmpty(path))
-                {
-                    return false;
-                }
-                if (!isBundleLoaded)
+                if(State == NodeState.None || State == NodeState.Loading)
                 {
                     return false;
                 }
@@ -60,35 +52,27 @@ namespace DotEngine.Assets.Loaders
             }
         }
 
-        private int refCount = 0;
-        public void RetainRef() => ++refCount;
-        public void ReleaseRef() => --refCount;
-
-        public bool IsNeverDestroy
-        {
-            get
-            {
-                return IsNeverDestroy;
-            }
-            set
-            {
-                isNeverDestroy = value;
-            }
-        }
-
-        public bool CanDestroy()
-        {
-            if(refCount>0 || isNeverDestroy)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public void AddDepend(BundleNode node)
+        private List<BundleNode> depends = new List<BundleNode>();
+        internal void BindDepend(BundleNode node)
         {
             node.RetainRef();
             depends.Add(node);
+        }
+
+        internal bool IsInUsing()
+        {
+            if(refCount > 0 || IsNeverDestroy)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal void DoInitialize(string path,bool isNeverDestroy = false)
+        {
+            Path = path;
+            IsNeverDestroy = isNeverDestroy;
+            State = NodeState.None;
         }
 
         public void OnGet()
@@ -101,15 +85,15 @@ namespace DotEngine.Assets.Loaders
             {
                 d.ReleaseRef();
             }
-
-            path = null;
-            isBundleLoaded = false;
+            depends.Clear();
             if (bundle != null)
             {
                 bundle.Unload(true);
             }
             bundle = null;
-            depends.Clear();
+            refCount = 0;
+            State = NodeState.None;
+            Path = null;
         }
     }
 }

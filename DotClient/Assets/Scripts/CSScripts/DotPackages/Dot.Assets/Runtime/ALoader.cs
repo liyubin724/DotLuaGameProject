@@ -3,24 +3,28 @@ using DotEngine.Pool;
 using Priority_Queue;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
+    public enum NodeState
+    {
+        None = 0,
+        Loading,
+        Loaded,
+        LoadError,
+    }
+
     public abstract class ALoader : ILoader
     {
         private ItemPool<AsyncRequest> asyncRequestPool = new ItemPool<AsyncRequest>();
-        private ItemPool<AssetNode> assetNodePool = new ItemPool<AssetNode>();
+        protected ItemPool<AssetNode> assetNodePool = new ItemPool<AssetNode>();
         private UniqueIntID uniqueIDCreator = new UniqueIntID();
 
-        public LoaderState State { get; protected set; } = LoaderState.None;
         public int AsyncOperationMaxCount { get; set; } = 10;
-        public int InstanceMaxCount { get; set; } = 10;
+        public LoaderState State { get; protected set; } = LoaderState.None;
 
         protected AssetDetailConfig assetDetailConfig = null;
         protected OnInitFinished initializedCallback = null;
@@ -29,11 +33,12 @@ namespace DotEngine.Assets
         protected SimplePriorityQueue<AsyncRequest, AsyncPriority> waitingAsyncRequestQueue = new SimplePriorityQueue<AsyncRequest, AsyncPriority>();
         protected List<AsyncRequest> runningRequestList = new List<AsyncRequest>();
 
-        protected List<AOperation> assetAsyncOperations = new List<AOperation>();
         protected Dictionary<string, AssetNode> assetNodeDic = new Dictionary<string, AssetNode>();
 
+        private AsyncOperation unloadUnusedOperation = null;
         protected OnUnloadUnusedFinished unloadUnusedCallback = null;
 
+        #region Initialize
         public void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params SystemObject[] values)
         {
             State = LoaderState.Initializing;
@@ -43,6 +48,10 @@ namespace DotEngine.Assets
 
             OnInitialize(values);
         }
+        protected abstract void OnInitialize(params SystemObject[] values);
+        protected abstract bool OnInitializeUpdate(float deltaTime);
+
+        #endregion
 
         #region Load Asset
         public UnityObject LoadAssetByAddress(string address)
@@ -178,10 +187,11 @@ namespace DotEngine.Assets
 
         #endregion
 
+        #region instance or destroy 
         public UnityObject InstanceUObject(string address, UnityObject uObject)
         {
             string path = assetDetailConfig.GetPathByAddress(address);
-            if(assetNodeDic.TryGetValue(path,out var node))
+            if (assetNodeDic.TryGetValue(path, out var node))
             {
                 return node.CreateInstance();
             }
@@ -194,23 +204,25 @@ namespace DotEngine.Assets
             if (assetNodeDic.TryGetValue(path, out var node))
             {
                 node.DestroyInstance(uObject);
-                if(!node.IsInUnused())
-                {
-                    assetNodeDic.Remove(path);
-                    OnDestroyAssetNode(node);
-                    assetNodePool.Release(node);
-                }
-            }else
+            }
+            else
             {
                 UnityObject.Destroy(uObject);
             }
         }
 
+        #endregion
+
+        #region unload unused
         public void UnloadUnusedAssets(OnUnloadUnusedFinished unloadCallback)
         {
-            if(unloadUnusedCallback !=null)
+            if (unloadUnusedCallback != null)
             {
                 Debug.LogError("");
+                return;
+            }
+            if (unloadUnusedOperation != null)
+            {
                 return;
             }
 
@@ -218,18 +230,23 @@ namespace DotEngine.Assets
 
             GC.Collect();
             GC.Collect();
-            Resources.UnloadUnusedAssets();
+            unloadUnusedOperation = Resources.UnloadUnusedAssets();
 
             OnUnloadUnusedAssets();
         }
 
-        public void DoUdpate(float deltaTime,float unscaleDeltaTime)
+        protected abstract void OnUnloadUnusedAssets();
+        protected abstract bool OnUnloadUnusedAssetsUpdate();
+
+        #endregion
+
+        public void DoUdpate(float deltaTime, float unscaleDeltaTime)
         {
-            if(State == LoaderState.Initializing)
+            if (State == LoaderState.Initializing)
             {
-                if(OnInitializeUpdate(deltaTime))
+                if (OnInitializeUpdate(deltaTime))
                 {
-                    if(State == LoaderState.Initialized)
+                    if (State == LoaderState.Initialized)
                     {
                         State = LoaderState.Running;
                         initializedCallback?.Invoke(true);
@@ -242,30 +259,60 @@ namespace DotEngine.Assets
                 return;
             }
 
-            if(State != LoaderState.Running)
+            if (State != LoaderState.Running)
             {
                 return;
             }
 
-            for (int i = 0; i < assetAsyncOperations.Count; )
+            for (int i = runningRequestList.Count - 1; i > 0; --i)
             {
-                var operation = assetAsyncOperations[i];
-                if (operation.IsFinished)
-                {
+                AsyncRequest request = runningRequestList[i];
+                UpdateRequest(request);
 
-                }
-                else
+                if (request.state == AsyncState.LoadFinished)
                 {
-                    ++i;
+                    if (request.isInstance)
+                    {
+                        request.state = AsyncState.WaitingForInstance;
+                    }
+                    else
+                    {
+                        EndRequest(request);
+                        runningRequestList.RemoveAt(i);
+                        asyncRequestPool.Release(request);
+                    }
+                }
+                else if (request.state == AsyncState.InstanceFinished)
+                {
+                    EndRequest(request);
+                    runningRequestList.RemoveAt(i);
+                    asyncRequestPool.Release(request);
+                }
+                else if (request.state == AsyncState.WaitingForInstance)
+                {
+                    request.state = AsyncState.Instancing;
                 }
             }
 
-            if (unloadUnusedCallback!=null)
+            while (waitingAsyncRequestQueue.Count > 0 && CanStartRequest())
             {
-                if(OnUnloadUnusedAssetsUpdate())
+                AsyncRequest request = waitingAsyncRequestQueue.Dequeue();
+                request.state = AsyncState.Loading;
+                StartRequest(request);
+                runningRequestList.Add(request);
+            }
+
+            if (unloadUnusedOperation != null)
+            {
+                if (unloadUnusedOperation.isDone)
                 {
-                    unloadUnusedCallback.Invoke();
-                    unloadUnusedCallback = null;
+                    if (OnUnloadUnusedAssetsUpdate())
+                    {
+                        unloadUnusedCallback.Invoke();
+                        unloadUnusedCallback = null;
+
+                        unloadUnusedOperation = null;
+                    }
                 }
             }
         }
@@ -303,8 +350,7 @@ namespace DotEngine.Assets
             request.state = AsyncState.WaitingForStart;
 
             AsyncResult result = new AsyncResult();
-            result.id = id;
-            result.SetAddress(addresses);
+            result.DoInitialize(id, addresses);
 
             request.result = result;
 
@@ -316,43 +362,32 @@ namespace DotEngine.Assets
 
         private AssetNode GetAssetNode(string assetPath)
         {
-            if (assetNodeDic.TryGetValue(assetPath, out var assetNode))
+            if(assetNodeDic.TryGetValue(assetPath,out var node))
             {
-                if (assetNode != null && assetNode.IsAssetValid())
+                if(node.IsAssetValid())
                 {
-                    return assetNode;
+                    return node;
+                }else
+                {
+                    throw new Exception();
                 }
             }
 
+            node = assetNodePool.Get();
+            node.DoInitialize(assetPath);
             UnityObject uObject = LoadAsset(assetPath);
-            if (assetNode == null)
-            {
-                assetNode = new AssetNode
-                {
-                    Path = assetPath
-                };
+            node.SetAsset(uObject);
 
-                assetNodeDic.Add(assetPath, assetNode);
-            }
-            assetNode.SetAsset(uObject);
+            assetNodeDic.Add(assetPath, node);
 
-            return assetNode;
+            return node;
         }
-
-        protected abstract void OnInitialize(params SystemObject[] values);
-        protected abstract bool OnInitializeUpdate(float deltaTime);
 
         protected abstract UnityObject LoadAsset(string assetPath);
 
-        protected abstract void OnUnloadUnusedAssets();
-        protected abstract bool OnUnloadUnusedAssetsUpdate();
-
-        protected abstract void OnCreateAssetNode(AssetNode node);
-        protected abstract void OnDestroyAssetNode(AssetNode node);
-
-        protected abstract AOperation GetAssetLoadOperation(string assetPath);
-
-        protected abstract bool TryToStartReqeust(AsyncRequest request);
-
+        protected abstract bool CanStartRequest();
+        protected abstract void StartRequest(AsyncRequest request);
+        protected abstract void UpdateRequest(AsyncRequest request);
+        protected abstract void EndRequest(AsyncRequest request);
     }
 }

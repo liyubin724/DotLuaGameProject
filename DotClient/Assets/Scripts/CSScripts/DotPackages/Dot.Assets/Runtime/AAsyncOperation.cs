@@ -1,75 +1,64 @@
-﻿using System;
+﻿using DotEngine.Pool;
 using UnityEngine;
+using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
-    public abstract class AAsyncOperation : AOperation
+    public delegate void OnAsyncOperationComplete(AAsyncOperation operation);
+
+    public abstract class AAsyncOperation : IPoolItem
     {
+        public string Path { get; set; }
+
+        protected bool isRunning = false;
         protected AsyncOperation operation = null;
 
-        public event Action OnCompleteCallback = null;
+        public abstract bool IsFinished { get;}
+        public abstract float Progress { get; }
 
-        public override bool IsFinished
+        public OnAsyncOperationComplete OnOperationComplete = null;
+
+        public virtual void DoInitilize(string path,params SystemObject[] values)
         {
-            get
+            this.Path = path;
+        }
+
+        public virtual void DoStart()
+        {
+            isRunning = true;
+            operation = CreateOperation();
+            if(operation!=null)
             {
-                if(isRunning && operation!=null)
-                {
-                    return operation.isDone;
-                }
-                return false;
+                operation.completed += OnComplete;
             }
         }
 
-        public override float Progress
+        public virtual void DoEnd()
         {
-            get
-            {
-                if(isRunning && operation !=null)
-                {
-                    return operation.progress;
-                }
-                return 0.0f;
-            }
+            DestroyOperation();
+
+            isRunning = false;
+            Path = null;
+            operation = null;
         }
 
-        public override UnityObject GetAsset()
+        public virtual void OnGet()
         {
-            if(!IsFinished)
-            {
-                Debug.LogError("The asyncOperation has finished.");
-                return null;
-            }
-            return GetFromOperation();
         }
 
-
-        public override void DoStart()
+        public virtual void OnRelease()
         {
-            base.DoStart();
-
-            operation = CreateOperation(assetPath);
-            operation.completed += OnComplete;
         }
 
         private void OnComplete(AsyncOperation ao)
         {
             operation.completed -= OnComplete;
-
-            OnCompleteCallback?.Invoke();
+            OnOperationComplete?.Invoke(this);
         }
 
-        public override void DoEnd()
-        {
-            DestroyOperation();
-
-            operation = null;
-            base.DoEnd();
-        }
-
-        protected abstract AsyncOperation CreateOperation(string path);
+        public abstract UnityObject GetAsset();
+        protected abstract AsyncOperation CreateOperation();
         protected abstract void DestroyOperation();
-        protected abstract UnityObject GetFromOperation();
     }
 }

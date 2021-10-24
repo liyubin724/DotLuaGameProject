@@ -34,5 +34,30 @@ namespace DotEngine.Assets
         {
             
         }
+
+        protected override void OnCreateAssetNode(AssetNode node)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override bool CanStartRequest()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void StartRequest(AsyncRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void UpdateRequest(AsyncRequest reqest)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void EndRequest(AsyncRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
