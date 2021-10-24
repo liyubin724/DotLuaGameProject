@@ -35,6 +35,9 @@ namespace DotEngine.Assets
 
         protected Dictionary<string, AssetNode> assetNodeDic = new Dictionary<string, AssetNode>();
 
+        protected int operationCount = 0;
+        protected List<AAsyncOperation> operations = new List<AAsyncOperation>();
+
         private AsyncOperation unloadUnusedOperation = null;
         protected OnUnloadUnusedFinished unloadUnusedCallback = null;
 
@@ -262,6 +265,23 @@ namespace DotEngine.Assets
             if (State != LoaderState.Running)
             {
                 return;
+            }
+
+            if (operations.Count > 0 && operationCount < OperationMaxCount)
+            {
+                int diffCount = OperationMaxCount - operationCount;
+                for (int i = 0; i < operations.Count; i++)
+                {
+                    if (!operations[i].IsRunning)
+                    {
+                        operations[i].DoStart();
+                        diffCount--;
+                    }
+                    if (diffCount <= 0)
+                    {
+                        break;
+                    }
+                }
             }
 
             for (int i = runningRequestList.Count - 1; i > 0; --i)

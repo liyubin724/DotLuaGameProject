@@ -10,17 +10,10 @@ namespace DotEngine.Assets
     public abstract class AAsyncOperation : IPoolItem
     {
         public string Path { get; set; }
+        public bool IsRunning { get; protected set; } = false;
 
-        protected bool isRunning = false;
         protected AsyncOperation operation = null;
 
-        public bool IsRunning
-        {
-            get
-            {
-                return isRunning;
-            }
-        }
         public abstract bool IsFinished { get;}
         public abstract float Progress { get; }
 
@@ -33,7 +26,7 @@ namespace DotEngine.Assets
 
         public virtual void DoStart()
         {
-            isRunning = true;
+            IsRunning = true;
             operation = CreateOperation();
             if(operation!=null)
             {
@@ -45,7 +38,7 @@ namespace DotEngine.Assets
         {
             DestroyOperation();
 
-            isRunning = false;
+            IsRunning = false;
             Path = null;
             operation = null;
         }
@@ -56,11 +49,15 @@ namespace DotEngine.Assets
 
         public virtual void OnRelease()
         {
+            DoEnd();
         }
 
-        private void OnComplete(AsyncOperation ao)
+        protected void OnComplete(AsyncOperation ao)
         {
-            operation.completed -= OnComplete;
+            if(operation!=null)
+            {
+                operation.completed -= OnComplete;
+            }
             OnOperationComplete?.Invoke(this);
         }
 

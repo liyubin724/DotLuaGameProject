@@ -15,7 +15,7 @@ namespace DotEngine.Assets
         {
             get
             {
-                if (!isRunning)
+                if (!IsRunning)
                 {
                     return false;
                 }
@@ -30,7 +30,7 @@ namespace DotEngine.Assets
         {
             get
             {
-                if (!isRunning)
+                if (!IsRunning)
                 {
                     return 0.0f;
                 }

@@ -16,10 +16,8 @@ namespace DotEngine.Assets
         private string bundleRootDir;
         private BundleDetailConfig bundleDetailConfig = null;
 
-        private int operationCount = 0;
         private Dictionary<string, BundleAsyncOperation> bundleOperationDic = new Dictionary<string, BundleAsyncOperation>();
         private Dictionary<string, BundleAssetAsyncOperation> assetOperationDic = new Dictionary<string, BundleAssetAsyncOperation>();
-        private List<AAsyncOperation> operations = new List<AAsyncOperation>();
 
         private Dictionary<string, BundleNode> bundleNodeDic = new Dictionary<string, BundleNode>();
 
@@ -82,23 +80,6 @@ namespace DotEngine.Assets
 
         protected override void UpdateRequest(AsyncRequest request)
         {
-            if (operations.Count > 0 && operationCount < OperationMaxCount)
-            {
-                int diffCount = OperationMaxCount - operationCount;
-                for (int i = 0; i < operations.Count; i++)
-                {
-                    if(!operations[i].IsRunning)
-                    {
-                        operations[i].DoStart();
-                        diffCount--;
-                    }
-                    if(diffCount<=0)
-                    {
-                        break;
-                    }
-                }
-            }
-
             var result = request.result;
             string[] assetPaths = request.paths;
             for (int i = 0; i < assetPaths.Length; i++)

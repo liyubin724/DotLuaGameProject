@@ -5,18 +5,13 @@ namespace DotEngine.Assets
 {
     public class DatabaseLoader : ALoader
     {
-        protected override UnityObject LoadAsset(string assetPath)
-        {
-            return AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
-        }
-
         protected override void OnInitialize(params object[] values)
         {
-            
         }
 
         protected override bool OnInitializeUpdate(float deltaTime)
         {
+            State = LoaderState.Initialized;
             return true;
         }
 
@@ -30,34 +25,29 @@ namespace DotEngine.Assets
             return true;
         }
 
-        protected override void OnDestroyAssetNode(AssetNode node)
+        protected override UnityObject LoadAsset(string assetPath)
         {
-            
-        }
-
-        protected override void OnCreateAssetNode(AssetNode node)
-        {
-            throw new System.NotImplementedException();
+            return AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
         }
 
         protected override bool CanStartRequest()
         {
-            throw new System.NotImplementedException();
+            return true;
         }
 
         protected override void StartRequest(AsyncRequest request)
         {
-            throw new System.NotImplementedException();
+            
         }
 
-        protected override void UpdateRequest(AsyncRequest reqest)
+        protected override void UpdateRequest(AsyncRequest request)
         {
-            throw new System.NotImplementedException();
+            
         }
 
         protected override void EndRequest(AsyncRequest request)
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

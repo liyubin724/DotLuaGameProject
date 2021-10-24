@@ -11,7 +11,7 @@ namespace DotEngine.Assets
         {
             get
             {
-                if(!isRunning)
+                if(!IsRunning)
                 {
                     return true;
                 }else
@@ -25,7 +25,7 @@ namespace DotEngine.Assets
         {
             get
             {
-                if(!isRunning)
+                if(!IsRunning)
                 {
                     return 0.0f;
                 }else
@@ -33,6 +33,12 @@ namespace DotEngine.Assets
                     return 1.0f;
                 }
             }
+        }
+
+        public override void DoStart()
+        {
+            base.DoStart();
+            OnComplete(null);
         }
 
         public override UnityObject GetAsset()
