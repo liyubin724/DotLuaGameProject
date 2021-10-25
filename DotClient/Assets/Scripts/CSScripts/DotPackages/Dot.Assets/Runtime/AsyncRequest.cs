@@ -8,7 +8,6 @@ namespace DotEngine.Assets
     {
         internal int id = -1;
         internal AsyncState state = AsyncState.None;
-        internal string label = null;
         internal string[] addresses = null;
         internal string[] paths = null;
         internal bool isInstance = false;
@@ -57,7 +56,6 @@ namespace DotEngine.Assets
         {
             id = -1;
             state = AsyncState.None;
-            label = null;
             addresses = null;
             paths = null;
             isInstance = false;

@@ -21,8 +21,9 @@ namespace DotEngine.Assets
         private Dictionary<string, BundleNode> bundleNodeDic = new Dictionary<string, BundleNode>();
 
         #region initialize
-        protected override void OnInitialize(params object[] values)
+        public override void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params object[] values)
         {
+            base.DoInitialize(detailConfig, initCallback, values);
             bundleRootDir = (string)(values[0]);
             bundleDetailConfig = (BundleDetailConfig)(values[1]);
         }
@@ -41,14 +42,24 @@ namespace DotEngine.Assets
         }
         #endregion
 
-        #region unload unused
-        protected override void OnUnloadUnusedAssets()
+        #region unload
+        protected override bool OnUnloadAssetsUpdate()
         {
+            bool isFinished = true;
+            var keys = bundleNodeDic.Keys;
+            foreach(var key in keys)
+            {
+                BundleNode node = bundleNodeDic[key];
+                if(!node.IsInUsing())
+                {
+                    isFinished = false;
 
-        }
-        protected override bool OnUnloadUnusedAssetsUpdate()
-        {
-            return true;
+                    bundleNodeDic.Remove(key);
+                    bundleNodePool.Release(node);
+                }
+            }
+
+            return isFinished;
         }
         #endregion
 
@@ -186,7 +197,9 @@ namespace DotEngine.Assets
 
         protected override void OnReleaseAssetNode(AssetNode assetNode)
         {
-            
+            string bundlePath = assetDetailConfig.GetBundleByPath(assetNode.Path);
+            BundleNode bundleNode = GetAsyncBundleNode(bundlePath);
+            bundleNode.ReleaseRef();
         }
 
         #region Sync
@@ -283,7 +296,6 @@ namespace DotEngine.Assets
             return mainBundleNode;
         }
 
-
         private void CreateBundleOperation(string bundlePath)
         {
             BundleAsyncOperation bundleOperation = bundleOperationPool.Get();
@@ -326,9 +338,13 @@ namespace DotEngine.Assets
                 assetNode.SetAsset(assetOperation.GetAsset());
             }
             assetOperationDic.Remove(assetPath);
-            assetOperationPool.Release(assetOperation);
-
             operationLDic.Remove(assetPath);
+            assetOperationPool.Release(assetOperation);
+        }
+
+        protected override void OnAsyncRequestCancel(AsyncRequest request)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

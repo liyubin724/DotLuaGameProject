@@ -10,6 +10,11 @@ namespace DotEngine.Assets
             throw new System.NotImplementedException();
         }
 
+        protected override void OnAsyncRequestCancel(AsyncRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override void OnAsyncRequestEnd(AsyncRequest request)
         {
             throw new System.NotImplementedException();
@@ -37,12 +42,12 @@ namespace DotEngine.Assets
 
         protected override void OnInitialize(params object[] values)
         {
+            throw new System.NotImplementedException();
         }
 
         protected override bool OnInitializeUpdate(float deltaTime)
         {
-            State = LoaderState.Initialized;
-            return true;
+            throw new System.NotImplementedException();
         }
 
         protected override void OnReleaseAssetNode(AssetNode assetNode)
@@ -50,14 +55,9 @@ namespace DotEngine.Assets
             throw new System.NotImplementedException();
         }
 
-        protected override void OnUnloadUnusedAssets()
+        protected override bool OnUnloadAssetsUpdate()
         {
-            
-        }
-
-        protected override bool OnUnloadUnusedAssetsUpdate()
-        {
-            return true;
+            throw new System.NotImplementedException();
         }
 
         protected override UnityObject RequestAssetSync(string assetPath)

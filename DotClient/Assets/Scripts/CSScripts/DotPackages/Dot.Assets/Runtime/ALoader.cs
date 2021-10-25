@@ -19,7 +19,7 @@ namespace DotEngine.Assets
 
     public abstract class ALoader : ILoader
     {
-        private ItemPool<AsyncRequest> asyncRequestPool = new ItemPool<AsyncRequest>();
+        private ItemPool<AsyncRequest> requestPool = new ItemPool<AsyncRequest>();
         protected ItemPool<AssetNode> assetNodePool = new ItemPool<AssetNode>();
         private UniqueIntID uniqueIDCreator = new UniqueIntID();
 
@@ -29,34 +29,32 @@ namespace DotEngine.Assets
         protected AssetDetailConfig assetDetailConfig = null;
         protected OnInitFinished initializedCallback = null;
 
-        protected Dictionary<int, AsyncRequest> asyncRequestDic = new Dictionary<int, AsyncRequest>();
-        protected SimplePriorityQueue<AsyncRequest, AsyncPriority> waitingAsyncRequestQueue = new SimplePriorityQueue<AsyncRequest, AsyncPriority>();
+        protected Dictionary<int, AsyncRequest> requestDic = new Dictionary<int, AsyncRequest>();
+        protected SimplePriorityQueue<AsyncRequest, AsyncPriority> waitingRequestQueue = new SimplePriorityQueue<AsyncRequest, AsyncPriority>();
         protected List<AsyncRequest> runningRequestList = new List<AsyncRequest>();
 
         protected int operationCount = 0;
         protected ListDictionary<string, AAsyncOperation> operationLDic = new ListDictionary<string, AAsyncOperation>();
         protected Dictionary<string, AssetNode> assetNodeDic = new Dictionary<string, AssetNode>();
 
-        private AsyncOperation unloadUnusedOperation = null;
-        protected OnUnloadUnusedFinished unloadUnusedCallback = null;
+        private AsyncOperation unloadOperation = null;
+        private List<OnUnloadFinished> unloadFinishedCallbacks = new List<OnUnloadFinished>();
 
         #region Initialize
-        public void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params SystemObject[] values)
+        public virtual void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params SystemObject[] values)
         {
             State = LoaderState.Initializing;
 
             assetDetailConfig = detailConfig;
             initializedCallback = initCallback;
-
-            OnInitialize(values);
         }
-        protected abstract void OnInitialize(params SystemObject[] values);
+
         protected abstract bool OnInitializeUpdate(float deltaTime);
 
         #endregion
 
-        #region Load Asset
-        public UnityObject LoadAssetByAddress(string address)
+        #region Load Asset Sync
+        private UnityObject LoadAssetSync(string address)
         {
             string assetPath = assetDetailConfig.GetPathByAddress(address);
             AssetNode assetNode = GetAssetNodeSync(assetPath);
@@ -64,7 +62,7 @@ namespace DotEngine.Assets
             return assetNode.GetAsset();
         }
 
-        public UnityObject InstanceAssetByAddress(string address)
+        private UnityObject InstanceAssetSync(string address)
         {
             string assetPath = assetDetailConfig.GetPathByAddress(address);
             AssetNode assetNode = GetAssetNodeSync(assetPath);
@@ -72,68 +70,29 @@ namespace DotEngine.Assets
             return assetNode.CreateInstance();
         }
 
-        public UnityObject[] LoadAssetsByAddress(string[] addresses)
+        public UnityObject[] LoadAssetsSync(string[] addresses)
         {
             UnityObject[] results = new UnityObject[addresses.Length];
             for (int i = 0; i < addresses.Length; i++)
             {
-                results[i] = LoadAssetByAddress(addresses[i]);
+                results[i] = LoadAssetSync(addresses[i]);
             }
             return results;
         }
 
-        public UnityObject[] InstanceAssetsByAdress(string[] addresses)
+        public UnityObject[] InstanceAssetsSync(string[] addresses)
         {
             UnityObject[] results = new UnityObject[addresses.Length];
             for (int i = 0; i < addresses.Length; i++)
             {
-                results[i] = InstanceAssetByAddress(addresses[i]);
+                results[i] = InstanceAssetSync(addresses[i]);
             }
             return results;
         }
-
-        public UnityObject[] LoadAssetsByLabel(string label)
-        {
-            string[] addresses = assetDetailConfig.GetAddressesByLabel(label);
-            return LoadAssetsByAddress(addresses);
-        }
-
-        public UnityObject[] InstanceAssetsByLabel(string label)
-        {
-            string[] addresses = assetDetailConfig.GetAddressesByLabel(label);
-            return InstanceAssetsByAdress(addresses);
-        }
-
         #endregion
 
         #region Load Asset Async
-        public AsyncResult LoadAssetAsyncByAddress(
-            string address,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            AsyncPriority priority,
-            SystemObject userdata)
-        {
-            string[] addresses = new string[] { address };
-            string[] paths = new string[] { assetDetailConfig.GetPathByAddress(address) };
-
-            return RequestAssetsAsync(null, addresses, paths, false, progressCallback, completeCallback, null, null, priority, userdata);
-        }
-
-        public AsyncResult InstanceAssetAsyncByAddress(
-            string address,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            AsyncPriority priority,
-            SystemObject userdata)
-        {
-            string[] addresses = new string[] { address };
-            string[] paths = new string[] { assetDetailConfig.GetPathByAddress(address) };
-
-            return RequestAssetsAsync(null, addresses, paths, true, progressCallback, completeCallback, null, null, priority, userdata);
-        }
-
-        public AsyncResult LoadAssetsAsyncByAddress(
+        public AsyncResult LoadAssetsAsync(
             string[] addresses,
             OnLoadAssetProgress progressCallback,
             OnLoadAssetComplete completeCallback,
@@ -143,10 +102,10 @@ namespace DotEngine.Assets
             SystemObject userdata)
         {
             string[] paths = assetDetailConfig.GetPathsByAddresses(addresses);
-            return RequestAssetsAsync(null, addresses, paths, false, progressCallback, completeCallback, progressesCallback, completesCallback, priority, userdata);
+            return RequestAssetsAsync(addresses, paths, false, progressCallback, completeCallback, progressesCallback, completesCallback, priority, userdata);
         }
 
-        public AsyncResult InstanceAssetsAsyncByAdress(
+        public AsyncResult InstanceAssetsAsync(
             string[] addresses,
             OnLoadAssetProgress progressCallback,
             OnLoadAssetComplete completeCallback,
@@ -156,35 +115,38 @@ namespace DotEngine.Assets
             SystemObject userdata)
         {
             string[] paths = assetDetailConfig.GetPathsByAddresses(addresses);
-            return RequestAssetsAsync(null, addresses, paths, false, progressCallback, completeCallback, progressesCallback, completesCallback, priority, userdata);
+            return RequestAssetsAsync(addresses, paths, false, progressCallback, completeCallback, progressesCallback, completesCallback, priority, userdata);
         }
 
-        public AsyncResult LoadAssetsAsyncByLabel(
-            string label,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            OnLoadAssetsProgress progressesCallback,
-            OnLoadAssetsComplete completesCallback,
-            AsyncPriority priority,
-            SystemObject userdata)
+        public void CancelAssetsAsync(AsyncResult result)
         {
-            string[] addresses = assetDetailConfig.GetAddressesByLabel(label);
-            string[] paths = assetDetailConfig.GetPathsByAddresses(addresses);
-            return RequestAssetsAsync(label, addresses, paths, false, progressCallback, completeCallback, progressesCallback, completesCallback, priority, userdata);
-        }
+            if(result.IsDone())
+            {
+                return;
+            }
+            if(requestDic.TryGetValue(result.ID,out var request))
+            {
+                if(waitingRequestQueue.Contains(request))
+                {
+                    waitingRequestQueue.Remove(request);
+                }else if(runningRequestList.Contains(request))
+                {
+                    runningRequestList.Remove(request);
+                    foreach (var assetPath in request.paths)
+                    {
+                        if (assetNodeDic.TryGetValue(assetPath, out var assetNode))
+                        {
+                            assetNode.ReleaseRef();
+                        }else
+                        {
+                            Debug.LogError("");
+                        }
+                    }
+                    OnAsyncRequestCancel(request);
+                }
 
-        public AsyncResult InstanceAssetsAsyncByLabel(
-            string label,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            OnLoadAssetsProgress progressesCallback,
-            OnLoadAssetsComplete completesCallback,
-            AsyncPriority priority,
-            SystemObject userdata)
-        {
-            string[] addresses = assetDetailConfig.GetAddressesByLabel(label);
-            string[] paths = assetDetailConfig.GetPathsByAddresses(addresses);
-            return RequestAssetsAsync(label, addresses, paths, true, progressCallback, completeCallback, progressesCallback, completesCallback, priority, userdata);
+                requestDic.Remove(request.id);
+            }
         }
 
         #endregion
@@ -216,29 +178,37 @@ namespace DotEngine.Assets
         #endregion
 
         #region unload unused
-        public void UnloadUnusedAssets(OnUnloadUnusedFinished unloadCallback)
+        public void UnloadUnusedAssets()
         {
-            if (unloadUnusedCallback != null)
+            var keys = assetNodeDic.Keys;
+            foreach(var key in keys)
             {
-                Debug.LogError("");
-                return;
+                AssetNode node = assetNodeDic[key];
+                if(!node.IsInUsing())
+                {
+                    OnReleaseAssetNode(node);
+                    assetNodeDic.Remove(key);
+                    assetNodePool.Release(node);
+                }
             }
-            if (unloadUnusedOperation != null)
-            {
-                return;
-            }
-
-            unloadUnusedCallback = unloadCallback;
-
-            GC.Collect();
-            GC.Collect();
-            unloadUnusedOperation = Resources.UnloadUnusedAssets();
-
-            OnUnloadUnusedAssets();
         }
 
-        protected abstract void OnUnloadUnusedAssets();
-        protected abstract bool OnUnloadUnusedAssetsUpdate();
+        public void UnloadAssets(OnUnloadFinished finishedCallback)
+        {
+            unloadFinishedCallbacks.Add(finishedCallback);
+            if(unloadOperation!=null)
+            {
+                return;
+            }
+
+            GC.Collect();
+            GC.Collect();
+            unloadOperation = Resources.UnloadUnusedAssets();
+
+            UnloadUnusedAssets();
+        }
+
+        protected abstract bool OnUnloadAssetsUpdate();
 
         #endregion
 
@@ -250,8 +220,8 @@ namespace DotEngine.Assets
                 {
                     if (State == LoaderState.Initialized)
                     {
-                        State = LoaderState.Running;
                         initializedCallback?.Invoke(true);
+                        State = LoaderState.Running;
                     }
                     else
                     {
@@ -297,15 +267,17 @@ namespace DotEngine.Assets
                     else
                     {
                         OnAsyncRequestEnd(request);
+                        requestDic.Remove(request.id);
                         runningRequestList.RemoveAt(i);
-                        asyncRequestPool.Release(request);
+                        requestPool.Release(request);
                     }
                 }
                 else if (request.state == AsyncState.InstanceFinished)
                 {
                     OnAsyncRequestEnd(request);
+                    requestDic.Remove(request.id);
                     runningRequestList.RemoveAt(i);
-                    asyncRequestPool.Release(request);
+                    requestPool.Release(request);
                 }
                 else if (request.state == AsyncState.WaitingForInstance)
                 {
@@ -313,9 +285,9 @@ namespace DotEngine.Assets
                 }
             }
 
-            while (waitingAsyncRequestQueue.Count > 0 && CanStartRequest())
+            while (waitingRequestQueue.Count > 0 && CanStartRequest())
             {
-                AsyncRequest request = waitingAsyncRequestQueue.Dequeue();
+                AsyncRequest request = waitingRequestQueue.Dequeue();
                 request.state = AsyncState.Loading;
 
                 string[] assetPaths = request.paths;
@@ -331,16 +303,14 @@ namespace DotEngine.Assets
                 runningRequestList.Add(request);
             }
 
-            if (unloadUnusedOperation != null)
+            if (unloadOperation != null)
             {
-                if (unloadUnusedOperation.isDone)
+                if (unloadOperation.isDone)
                 {
-                    if (OnUnloadUnusedAssetsUpdate())
+                    if (OnUnloadAssetsUpdate())
                     {
-                        unloadUnusedCallback.Invoke();
-                        unloadUnusedCallback = null;
-
-                        unloadUnusedOperation = null;
+                        unloadFinishedCallbacks.Clear();
+                        unloadOperation = null;
                     }
                 }
             }
@@ -355,7 +325,6 @@ namespace DotEngine.Assets
         protected abstract UnityObject RequestAssetSync(string assetPath);
 
         private AsyncResult RequestAssetsAsync(
-            string label,
             string[] addresses,
             string[] paths,
             bool isInstance,
@@ -367,9 +336,8 @@ namespace DotEngine.Assets
             SystemObject userdata)
         {
             int id = uniqueIDCreator.GetNextID();
-            AsyncRequest request = asyncRequestPool.Get();
+            AsyncRequest request = requestPool.Get();
             request.id = id;
-            request.label = label;
             request.addresses = addresses;
             request.paths = paths;
             request.isInstance = isInstance;
@@ -386,8 +354,8 @@ namespace DotEngine.Assets
 
             request.result = result;
 
-            asyncRequestDic.Add(id, request);
-            waitingAsyncRequestQueue.Enqueue(request, request.priority);
+            requestDic.Add(id, request);
+            waitingRequestQueue.Enqueue(request, request.priority);
 
             return result;
         }
@@ -449,7 +417,7 @@ namespace DotEngine.Assets
         protected abstract void OnAsyncRequestStart(AsyncRequest request);
         protected abstract void OnAsyncRequestUpdate(AsyncRequest request);
         protected abstract void OnAsyncRequestEnd(AsyncRequest request);
-
+        protected abstract void OnAsyncRequestCancel(AsyncRequest request);
 
     }
 }

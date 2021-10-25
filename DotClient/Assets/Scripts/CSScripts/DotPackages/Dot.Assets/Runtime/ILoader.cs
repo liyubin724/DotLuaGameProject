@@ -5,7 +5,7 @@ using UnityObject = UnityEngine.Object;
 namespace DotEngine.Assets
 {
     public delegate void OnInitFinished(bool result);
-    public delegate void OnUnloadUnusedFinished();
+    public delegate void OnUnloadFinished();
 
     public delegate void OnLoadAssetProgress(string address, float progress, SystemObject userdata);
     public delegate void OnLoadAssetComplete(string address, UnityObject uObject, SystemObject userdata);
@@ -49,28 +49,11 @@ namespace DotEngine.Assets
 
         void DoInitialize(AssetDetailConfig detailConfig, OnInitFinished initCallback, params SystemObject[] values);
 
-        UnityObject LoadAssetByAddress(string address);
-        UnityObject InstanceAssetByAddress(string address);
-        UnityObject[] LoadAssetsByAddress(string[] addresses);
-        UnityObject[] InstanceAssetsByAdress(string[] addresses);
+        UnityObject[] LoadAssetsSync(string[] addresses);
 
-        UnityObject[] LoadAssetsByLabel(string label);
-        UnityObject[] InstanceAssetsByLabel(string label);
+        UnityObject[] InstanceAssetsSync(string[] addresses);
 
-        AsyncResult LoadAssetAsyncByAddress(
-            string address,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            AsyncPriority priority,
-            SystemObject userdata);
-        AsyncResult InstanceAssetAsyncByAddress(
-            string address,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            AsyncPriority priority, 
-            SystemObject userdata);
-
-        AsyncResult LoadAssetsAsyncByAddress(
+        AsyncResult LoadAssetsAsync(
             string[] addresses,
             OnLoadAssetProgress progressCallback,
             OnLoadAssetComplete completeCallback,
@@ -78,7 +61,8 @@ namespace DotEngine.Assets
             OnLoadAssetsComplete completesCallback,
             AsyncPriority priority,
             SystemObject userdata);
-        AsyncResult InstanceAssetsAsyncByAdress(
+
+        AsyncResult InstanceAssetsAsync(
             string[] addresses,
             OnLoadAssetProgress progressCallback,
             OnLoadAssetComplete completeCallback,
@@ -86,29 +70,17 @@ namespace DotEngine.Assets
             OnLoadAssetsComplete completesCallback,
             AsyncPriority priority,
             SystemObject userdata);
-        AsyncResult LoadAssetsAsyncByLabel(
-            string label,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            OnLoadAssetsProgress progressesCallback,
-            OnLoadAssetsComplete completesCallback,
-            AsyncPriority priority,
-            SystemObject userdata);
-        AsyncResult InstanceAssetsAsyncByLabel(
-            string label,
-            OnLoadAssetProgress progressCallback,
-            OnLoadAssetComplete completeCallback,
-            OnLoadAssetsProgress progressesCallback,
-            OnLoadAssetsComplete completesCallback,
-            AsyncPriority priority,
-            SystemObject userdata);
+
+        void CancelAssetsAsync(AsyncResult result);
 
         UnityObject InstanceUObject(string address, UnityObject uObject);
         void DestroyUObject(string address,UnityObject uObject);
 
         void DoUdpate(float deltaTime, float unscaleDeltaTime);
 
-        void UnloadUnusedAssets(OnUnloadUnusedFinished unloadCallback);
+        void UnloadUnusedAssets();
+
+        void UnloadAssets(OnUnloadFinished finishedCallback);
 
         void DoDestroy();
     }
