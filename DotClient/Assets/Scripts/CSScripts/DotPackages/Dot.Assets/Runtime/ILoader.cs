@@ -31,7 +31,7 @@ namespace DotEngine.Assets
         VeryHigh = 500,
     }
 
-    public enum AsyncState
+    public enum RequestState
     {
         None = 0,
         WaitingForStart,

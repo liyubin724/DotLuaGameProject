@@ -220,8 +220,8 @@ namespace DotEngine.Assets
                 {
                     if (State == LoaderState.Initialized)
                     {
-                        initializedCallback?.Invoke(true);
                         State = LoaderState.Running;
+                        initializedCallback?.Invoke(true);
                     }
                     else
                     {
@@ -256,13 +256,16 @@ namespace DotEngine.Assets
             for (int i = runningRequestList.Count - 1; i > 0; --i)
             {
                 AsyncRequest request = runningRequestList[i];
-                OnAsyncRequestUpdate(request);
+                if(request.state == RequestState.Instancing || request.state == RequestState.Loading)
+                {
+                    OnAsyncRequestUpdate(request);
+                }
 
-                if (request.state == AsyncState.LoadFinished)
+                if (request.state == RequestState.LoadFinished)
                 {
                     if (request.isInstance)
                     {
-                        request.state = AsyncState.WaitingForInstance;
+                        request.state = RequestState.Instancing;
                     }
                     else
                     {
@@ -272,23 +275,23 @@ namespace DotEngine.Assets
                         requestPool.Release(request);
                     }
                 }
-                else if (request.state == AsyncState.InstanceFinished)
+                else if (request.state == RequestState.InstanceFinished)
                 {
                     OnAsyncRequestEnd(request);
                     requestDic.Remove(request.id);
                     runningRequestList.RemoveAt(i);
                     requestPool.Release(request);
                 }
-                else if (request.state == AsyncState.WaitingForInstance)
+                else if (request.state == RequestState.WaitingForInstance)
                 {
-                    request.state = AsyncState.Instancing;
+                    request.state = RequestState.Instancing;
                 }
             }
 
-            while (waitingRequestQueue.Count > 0 && CanStartRequest())
+            while (waitingRequestQueue.Count > 0 && (operationCount < OperationMaxCount))
             {
                 AsyncRequest request = waitingRequestQueue.Dequeue();
-                request.state = AsyncState.Loading;
+                request.state = RequestState.Loading;
 
                 string[] assetPaths = request.paths;
                 for (int i = 0; i < assetPaths.Length; i++)
@@ -347,7 +350,7 @@ namespace DotEngine.Assets
             request.completesCallback = completesCallback;
             request.priority = priority;
             request.userdata = userdata;
-            request.state = AsyncState.WaitingForStart;
+            request.state = RequestState.WaitingForStart;
 
             AsyncResult result = new AsyncResult();
             result.DoInitialize(id, addresses);
@@ -361,7 +364,7 @@ namespace DotEngine.Assets
         }
         #endregion
 
-        #region get asset node
+        #region asset node
         private AssetNode GetAssetNodeSync(string assetPath)
         {
             if (assetNodeDic.TryGetValue(assetPath, out var node))
@@ -413,11 +416,11 @@ namespace DotEngine.Assets
         protected abstract void OnReleaseAssetNode(AssetNode assetNode);
         #endregion
 
-        protected abstract bool CanStartRequest();
+        #region async request
         protected abstract void OnAsyncRequestStart(AsyncRequest request);
         protected abstract void OnAsyncRequestUpdate(AsyncRequest request);
         protected abstract void OnAsyncRequestEnd(AsyncRequest request);
         protected abstract void OnAsyncRequestCancel(AsyncRequest request);
-
+        #endregion
     }
 }

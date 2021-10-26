@@ -7,7 +7,7 @@ namespace DotEngine.Assets
     public class AsyncRequest : IPoolItem
     {
         internal int id = -1;
-        internal AsyncState state = AsyncState.None;
+        internal RequestState state = RequestState.None;
         internal string[] addresses = null;
         internal string[] paths = null;
         internal bool isInstance = false;
@@ -55,7 +55,7 @@ namespace DotEngine.Assets
         public void OnRelease()
         {
             id = -1;
-            state = AsyncState.None;
+            state = RequestState.None;
             addresses = null;
             paths = null;
             isInstance = false;
