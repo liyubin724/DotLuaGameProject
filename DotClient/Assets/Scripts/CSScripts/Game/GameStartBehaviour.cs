@@ -17,28 +17,20 @@ namespace Game
 {
     public class GameStartBehaviour : MonoBehaviour
     {
-        private ILoader assetLoader = null;
-
         private void Awake()
         {
             PersistentUObjectHelper.AddGameObject(gameObject);
             GameLauncher.Startup();
 
-#if UNITY_EDITOR
-            string assetFilePath = AssetConst.GetAssetDetailConfigPathInProject();
-            string content = AssetDatabase.LoadAssetAtPath<TextAsset>(assetFilePath).text;
-            AssetDetailConfig assetDetailConfig = JSONReader.ReadFromText<AssetDetailConfig>(content);
-            assetDetailConfig.InitConfig();
-
-            assetLoader = new DatabaseLoader();
-            assetLoader.DoInitialize(assetDetailConfig, (result) =>
+            LoaderUtill.Init((result) =>
             {
                 string assetPath = "TestPrefab";
-                UnityObject[] uObjects = assetLoader.InstanceAssetsSync(new string[] { assetPath });
-                if(uObjects == null || uObjects.Length == 0)
+                UnityObject[] uObjects = LoaderUtill.InstanceAssetsSync(new string[] { assetPath });
+                if (uObjects == null || uObjects.Length == 0)
                 {
                     Debug.LogError("FFFFFFFFFFFFFFFFFFFFFF");
-                }else
+                }
+                else
                 {
                     UnityObject uObject = uObjects[0];
                     (uObject as GameObject).name = "Test Prefab";
@@ -46,28 +38,20 @@ namespace Game
 
                 }
 
-                assetLoader.LoadAssetsAsync(new string[] { "login_panel" }, null, (index,address, uObject, userdata) =>
+                LoaderUtill.LoadAssetsAsync(new string[] { "login_panel" }, null, (index, address, uObject, userdata) =>
                 {
-                    if(uObject!=null)
+                    if (uObject != null)
                     {
-                        UnityObject instance = assetLoader.InstanceUObject(address, uObject);
+                        UnityObject instance = LoaderUtill.InstanceUObject(address, uObject);
                         (instance as GameObject).name = "Test Login Panel";
-                    }else
+                    }
+                    else
                     {
                         Debug.LogError("DDDDDDDDDDDDD");
                     }
 
                 }, null, null, AsyncPriority.Default, null);
             });
-#endif
-        }
-
-        private void Update()
-        {
-            if(assetLoader!=null)
-            {
-                assetLoader.DoUdpate(Time.deltaTime, Time.unscaledDeltaTime);
-            }
         }
 
         private void OnDisable()

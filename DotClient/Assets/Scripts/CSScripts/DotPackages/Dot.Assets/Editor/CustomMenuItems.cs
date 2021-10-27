@@ -39,7 +39,7 @@ namespace DotEditor.Assets
             PackerData packerData = AssetPackerUtil.GetPackerData();
             AssetDetailConfig detailConfig = AssetPackerUtil.CreateAssetDetailConfig(packerData);
 
-            string assetFilePath = AssetConst.GetAssetDetailConfigPathInProject();
+            string assetFilePath = AssetConst.GetAssetDetailConfigPathInEditor();
             string diskFilePath = PathUtility.GetDiskPath(assetFilePath);
             
             JSONWriter.WriteToFile<AssetDetailConfig>(detailConfig, diskFilePath);
