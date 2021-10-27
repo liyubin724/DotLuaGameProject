@@ -1,7 +1,7 @@
 ﻿using DotEditor.GUIExtension;
 using UnityEditor;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [CustomEditor(typeof(SetAtlasPlatformRuler))]
     public class SetAtlasPlatformRulerEditor : Editor

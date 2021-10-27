@@ -2,7 +2,7 @@
 using DotEngine.Context.Interfaces;
 using UnityEngine;
 
-namespace DotEditor.Asset.Post
+namespace DotEditor.Assets.Post
 {
     public class AssetPostRuler : ScriptableObject,IContextObject
     {

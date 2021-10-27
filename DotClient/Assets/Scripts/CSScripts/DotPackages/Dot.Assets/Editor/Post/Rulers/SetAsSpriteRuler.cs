@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [AssetPostRulerMenu("Sprite Atlas/SetAsSprite", "apr_set_as_sprite")]
     public class SetAsSpriteRuler : AssetPostRuler

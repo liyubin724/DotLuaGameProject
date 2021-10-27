@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
-namespace DotEditor.Asset.Packer
+namespace DotEditor.Assets.Packer
 {
     public class AssetAddressRepeatPopupContent : PopupWindowContent
     {

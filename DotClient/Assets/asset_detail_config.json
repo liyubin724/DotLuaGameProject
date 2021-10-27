@@ -1,1 +1,23 @@
-{"Version":1,"Details":[{"Address":"login_panel","Path":"Assets/ArtRes/UI/Prefabs/login_panel.prefab","Bundle":"assets/artres/ui/prefabs/login_panel_prefab","IsScene":false,"Labels":["ui"]},{"Address":"TestPrefab","Path":"Assets/ArtRes/UI/Prefabs/TestPrefab.prefab","Bundle":"assets/artres/ui/prefabs/testprefab_prefab","IsScene":false,"Labels":["ui"]}]}
+{
+  "Version": 1,
+  "Details": [
+    {
+      "Address": "login_panel",
+      "Path": "Assets/ArtRes/UI/Prefabs/login_panel.prefab",
+      "Bundle": "assets/artres/ui/prefabs/login_panel_prefab",
+      "IsScene": false,
+      "Labels": [
+        "ui"
+      ]
+    },
+    {
+      "Address": "TestPrefab",
+      "Path": "Assets/ArtRes/UI/Prefabs/TestPrefab.prefab",
+      "Bundle": "assets/artres/ui/prefabs/testprefab_prefab",
+      "IsScene": false,
+      "Labels": [
+        "ui"
+      ]
+    }
+  ]
+}

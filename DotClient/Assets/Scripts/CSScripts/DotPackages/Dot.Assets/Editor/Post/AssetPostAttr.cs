@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotEditor.Asset.Post
+namespace DotEditor.Assets.Post
 {
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
     public class AssetPostRulerMenuAttribute:Attribute

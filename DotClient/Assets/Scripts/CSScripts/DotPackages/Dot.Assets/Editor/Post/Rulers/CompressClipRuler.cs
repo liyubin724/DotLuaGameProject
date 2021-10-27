@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [AssetPostRulerMenu("Animation Clip/Compress Clip","apr_compress_clip")]
     public class CompressClipRuler : AssetPostRuler

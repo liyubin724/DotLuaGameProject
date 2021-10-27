@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace DotEditor.Asset.Post
+namespace DotEditor.Assets.Post
 {
     [CustomEditor(typeof(AssetPostProcess))]
     public class AssetPostProcessEditor : Editor

@@ -1,13 +1,14 @@
-﻿using DotEditor.Asset.Packer;
+﻿using DotEditor.Assets.Group;
+using DotEditor.Assets.Packer;
 using DotEditor.Utilities;
 using DotEngine.Assets;
 using DotEngine.Core.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace DotEditor.Asset.Group
+namespace DotEditor.Assets
 {
-    public static class GroupMenuItems
+    public static class CustomMenuItems
     {
         [MenuItem("Game/Asset/Create Address Group", priority = 0)]
         [MenuItem("Assets/Create/Asset/Create Address Group", priority = 0)]
@@ -43,6 +44,12 @@ namespace DotEditor.Asset.Group
             
             JSONWriter.WriteToFile<AssetDetailConfig>(detailConfig, diskFilePath);
             AssetDatabase.ImportAsset(assetFilePath);
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        private static void OnRuntimeInitializeOnLoad()
+        {
+            BuildAssetDetailConfig();
         }
     }
 }

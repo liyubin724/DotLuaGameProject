@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace DotEditor.Asset.Packer
+namespace DotEditor.Assets.Packer
 {
     public enum RunMode
     {

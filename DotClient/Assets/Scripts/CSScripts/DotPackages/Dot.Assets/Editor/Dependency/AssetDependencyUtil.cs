@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace DotEditor.Asset.Dependency
+namespace DotEditor.Assets.Dependency
 {
     public static class AssetDependencyUtil
     {

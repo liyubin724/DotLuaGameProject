@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 
-namespace DotEditor.Asset
+namespace DotEditor.Assets
 {
     [Serializable]
     public class AssetCountQuantityInfo

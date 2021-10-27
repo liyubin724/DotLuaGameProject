@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine.U2D;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [AssetPostRulerMenu("Sprite Atlas/Set Platform", "apr_set_atlas_platform")]
     public class SetAtlasPlatformRuler : AssetPostRuler

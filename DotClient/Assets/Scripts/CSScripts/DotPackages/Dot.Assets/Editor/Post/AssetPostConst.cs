@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEditor.Asset.Post
+namespace DotEditor.Assets.Post
 {
     public static class AssetPostContextKeys
     {

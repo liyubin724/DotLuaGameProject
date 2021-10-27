@@ -3,7 +3,7 @@ using DotEngine.Context.Attributes;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [AssetPostRulerMenu("Animation Clip/Extract Clip", "apr_extract_clip")]
     public class ExtractClipFromFBXRuler : AssetPostRuler

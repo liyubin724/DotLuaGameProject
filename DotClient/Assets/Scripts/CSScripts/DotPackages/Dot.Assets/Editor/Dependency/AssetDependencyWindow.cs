@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
-namespace DotEditor.Asset.Dependency
+namespace DotEditor.Assets.Dependency
 {
     public class AssetDependencyWindow : EditorWindow
     {

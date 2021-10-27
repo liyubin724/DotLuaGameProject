@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DotEditor.Asset.Post
+namespace DotEditor.Assets.Post
 {
     [CreateAssetMenu(menuName = "Asset Post Process", fileName = "ap_process",order = 11)]
     public class AssetPostProcess : ScriptableObject

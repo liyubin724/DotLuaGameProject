@@ -1,9 +1,9 @@
 ﻿using DotEditor.GUIExtension;
 using UnityEditor;
 using UnityEngine;
-using static DotEditor.Asset.Post.AssetPostProcess;
+using static DotEditor.Assets.Post.AssetPostProcess;
 
-namespace DotEditor.Asset.Post
+namespace DotEditor.Assets.Post
 {
     [CustomPropertyDrawer(typeof(AssetPostFilter))]
     public class AssetPostFilterDrawer : PropertyDrawer

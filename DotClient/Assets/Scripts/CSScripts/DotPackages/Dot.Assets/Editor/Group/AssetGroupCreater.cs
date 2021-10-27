@@ -8,7 +8,7 @@ using System.Linq;
 using UnityEngine;
 using Space = DotEngine.NativeDrawer.Decorator.SpaceAttribute;
 
-namespace DotEditor.Asset.Group
+namespace DotEditor.Assets.Group
 {
     public enum AssetAddressMode
     {

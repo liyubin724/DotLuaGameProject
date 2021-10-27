@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEditor;
 
-namespace DotEditor.Asset.Packer
+namespace DotEditor.Assets.Packer
 {
     public enum CompressOption
     {

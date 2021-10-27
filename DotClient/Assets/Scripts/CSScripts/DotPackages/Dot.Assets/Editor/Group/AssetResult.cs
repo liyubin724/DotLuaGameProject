@@ -1,4 +1,4 @@
-﻿namespace DotEditor.Asset.Group
+﻿namespace DotEditor.Assets.Group
 {
     public class AssetResult
     {

@@ -4,7 +4,7 @@ using DotEditor.NativeDrawer;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-namespace DotEditor.Asset.Group
+namespace DotEditor.Assets.Group
 {
     [CustomEditor(typeof(AssetGroupCreater))]
     public class AssetGroupCreaterEditor :  DrawerEditor
@@ -27,7 +27,7 @@ namespace DotEditor.Asset.Group
 
                 if (GUILayout.Button("Execute", GUILayout.Height(40)))
                 {
-                    GroupMenuItems.BuildAssetDetailConfig();
+                    CustomMenuItems.BuildAssetDetailConfig();
                     EditorUtility.DisplayDialog("Finished", "Finished", "OK");
                 }
 

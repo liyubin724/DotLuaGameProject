@@ -1,7 +1,7 @@
 ﻿using DotEditor.GUIExtension;
 using UnityEditor;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [CustomEditor(typeof(ExtractClipFromFBXRuler))]
     public class ExtractClipFromFBXRulerEditor : Editor

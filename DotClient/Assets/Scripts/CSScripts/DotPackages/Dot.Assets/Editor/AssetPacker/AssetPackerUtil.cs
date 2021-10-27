@@ -1,8 +1,7 @@
-﻿using DotEditor.Asset.Group;
+﻿using DotEditor.Assets.Group;
 using DotEditor.Utilities;
 using DotEngine.Assets;
 using DotEngine.Core.IO;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +10,7 @@ using UnityEditor.Build.Pipeline;
 using UnityEngine;
 using UnityEngine.Build.Pipeline;
 
-namespace DotEditor.Asset.Packer
+namespace DotEditor.Assets.Packer
 {
     public static class AssetPackerUtil
     {
@@ -64,8 +63,7 @@ namespace DotEditor.Asset.Packer
             string configPath = GetBundleBuildDataFilePath();
             if (File.Exists(configPath))
             {
-                string configContent = File.ReadAllText(configPath);
-                bundlePackConfig = JsonConvert.DeserializeObject<BundleBuildData>(configContent);
+                bundlePackConfig = JSONReader.ReadFromFile<BundleBuildData>(configPath);
             }
 
             if (bundlePackConfig == null)
@@ -87,8 +85,7 @@ namespace DotEditor.Asset.Packer
             {
                 Directory.CreateDirectory(dir);
             }
-            var json = JsonConvert.SerializeObject(buildData, Formatting.Indented);
-            File.WriteAllText(configPath, json);
+            JSONWriter.WriteToFile(buildData, configPath);
         }
 
         private static string GetBundleBuildDataFilePath()

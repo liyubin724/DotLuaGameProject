@@ -5,9 +5,9 @@ using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.U2D;
-using static DotEditor.Asset.Post.AssetPostProcess;
+using static DotEditor.Assets.Post.AssetPostProcess;
 
-namespace DotEditor.Asset.Post.Rulers
+namespace DotEditor.Assets.Post.Rulers
 {
     [AssetPostRulerMenu("Sprite Atlas/PackSpriteAsAtlas", "apr_pack_as_atlas")]
     public class PackSpriteAsAtlasRuler : AssetPostRuler

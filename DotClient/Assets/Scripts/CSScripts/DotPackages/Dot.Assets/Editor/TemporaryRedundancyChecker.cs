@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine.U2D;
 
-namespace DotEditor.Asset
+namespace DotEditor.Assets
 {
     public class TemporaryRedundancyChecker
     {

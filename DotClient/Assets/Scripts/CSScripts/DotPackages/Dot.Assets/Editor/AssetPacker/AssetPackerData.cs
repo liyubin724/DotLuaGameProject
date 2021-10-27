@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DotEditor.Asset.Packer
+namespace DotEditor.Assets.Packer
 {
     public class PackerData
     {
