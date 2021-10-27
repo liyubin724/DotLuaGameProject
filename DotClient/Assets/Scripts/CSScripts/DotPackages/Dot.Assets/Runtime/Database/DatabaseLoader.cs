@@ -54,16 +54,16 @@ namespace DotEngine.Assets
                 }
                 else
                 {
-                    if(!operationLDic.TryGetValue(assetPath,out var operation))
+                    if(!operationLDic.TryGetValue(assetPath,out var assetOperation))
                     {
-                        DatabaseAssetAsyncOperation assetOperation = assetOperationPool.Get();
+                        assetOperation = assetOperationPool.Get();
                         assetOperation.DoInitilize(assetPath);
                         assetOperation.OnOperationComplete = OnAssetLoadCompleted;
 
                         operationLDic.Add(assetPath, assetOperation);
                     }
                     
-                    request.SetProgress(i, operation.Progress);
+                    request.SetProgress(i, assetOperation.Progress);
                 }
             }
             if (result.IsDone())

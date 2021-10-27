@@ -11,10 +11,10 @@ namespace DotEngine.Assets
         internal string[] addresses = null;
         internal string[] paths = null;
         internal bool isInstance = false;
-        internal OnLoadAssetProgress progressCallback;
-        internal OnLoadAssetComplete completeCallback;
-        internal OnLoadAssetsProgress progressesCallback;
-        internal OnLoadAssetsComplete completesCallback;
+        internal OnAssetProgress progressCallback;
+        internal OnAssetComplete completeCallback;
+        internal OnAssetsProgress progressesCallback;
+        internal OnAssetsComplete completesCallback;
         internal AsyncPriority priority = AsyncPriority.Default;
         internal SystemObject userdata = null;
 
@@ -32,19 +32,19 @@ namespace DotEngine.Assets
             {
                 result.SetProgressAt(index, progress);
 
-                progressCallback?.Invoke(addresses[index], progress, userdata);
-                progressesCallback?.Invoke(addresses, result.GetProgresses(), userdata);
+                progressCallback?.Invoke(id, addresses[index], progress, userdata);
+                progressesCallback?.Invoke(id, addresses, result.GetProgresses(), userdata);
             }
         }
 
         public void SetUObject(int index, UnityObject uObject)
         {
             result.SetUObjectAt(index, uObject);
-            completeCallback?.Invoke(addresses[index], uObject, userdata);
+            completeCallback?.Invoke(id, addresses[index], uObject, userdata);
 
             if (result.IsDone())
             {
-                completesCallback?.Invoke(addresses, result.GetUObjects(), userdata);
+                completesCallback?.Invoke(id, addresses, result.GetUObjects(), userdata);
             }
         }
 

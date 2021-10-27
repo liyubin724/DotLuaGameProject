@@ -3,7 +3,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
-    public class AsyncResult
+    public class AsyncResult : IPoolItem
     {
         public int ID { get; private set; } = 0;
 
@@ -113,6 +113,19 @@ namespace DotEngine.Assets
                 }
             }
             return true;
+        }
+
+        public void OnGet()
+        {
+        }
+
+        public void OnRelease()
+        {
+            ID = 0;
+            addresses = null;
+            loadedFlags = null;
+            progresses = null;
+            uObjects = null;
         }
     }
 }

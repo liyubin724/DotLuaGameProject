@@ -46,7 +46,7 @@ namespace Game
 
                 }
 
-                assetLoader.LoadAssetsAsync(new string[] { "login_panel" }, null, (address, uObject, userdata) =>
+                assetLoader.LoadAssetsAsync(new string[] { "login_panel" }, null, (index,address, uObject, userdata) =>
                 {
                     if(uObject!=null)
                     {
