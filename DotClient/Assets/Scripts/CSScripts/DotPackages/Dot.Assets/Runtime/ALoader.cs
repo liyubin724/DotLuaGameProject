@@ -253,7 +253,7 @@ namespace DotEngine.Assets
                 }
             }
 
-            for (int i = runningRequestList.Count - 1; i > 0; --i)
+            for (int i = runningRequestList.Count - 1; i >= 0; --i)
             {
                 AsyncRequest request = runningRequestList[i];
                 if(request.state == RequestState.Instancing || request.state == RequestState.Loading)
@@ -367,11 +367,11 @@ namespace DotEngine.Assets
         #region asset node
         private AssetNode GetAssetNodeSync(string assetPath)
         {
-            if (assetNodeDic.TryGetValue(assetPath, out var node))
+            if (assetNodeDic.TryGetValue(assetPath, out var assetNode))
             {
-                if (node.IsLoaded())
+                if (assetNode.IsLoaded())
                 {
-                    return node;
+                    return assetNode;
                 }
                 else
                 {
@@ -380,19 +380,19 @@ namespace DotEngine.Assets
                         throw new Exception();
                     }else
                     {
-                        node.SetAsset(RequestAssetSync(assetPath));
-                        return node;
+                        assetNode.SetAsset(RequestAssetSync(assetPath));
+                        return assetNode;
                     }
                 }
             }
-            node = assetNodePool.Get();
-            node.DoInitialize(assetPath);
-            node.SetAsset(RequestAssetSync(assetPath));
+            assetNode = assetNodePool.Get();
+            assetNode.DoInitialize(assetPath);
+            assetNode.SetAsset(RequestAssetSync(assetPath));
 
-            OnCreateAssetNodeSync(node);
+            OnCreateAssetNodeSync(assetNode);
 
-            assetNodeDic.Add(assetPath, node);
-            return node;
+            assetNodeDic.Add(assetPath, assetNode);
+            return assetNode;
         }
         private AssetNode GetAssetNodeAsync(string assetPath)
         {

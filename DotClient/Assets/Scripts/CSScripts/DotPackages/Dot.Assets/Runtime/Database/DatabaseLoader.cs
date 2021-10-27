@@ -1,69 +1,123 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using DotEngine.Pool;
+using UnityEditor;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Assets
 {
     public class DatabaseLoader : ALoader
     {
-        protected override bool CanStartRequest()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnAsyncRequestCancel(AsyncRequest request)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnAsyncRequestEnd(AsyncRequest request)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnAsyncRequestStart(AsyncRequest request)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnAsyncRequestUpdate(AsyncRequest request)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnCreateAssetNodeAsync(AssetNode assetNode)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnCreateAssetNodeSync(AssetNode assetNode)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnInitialize(params object[] values)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        private ItemPool<DatabaseAssetAsyncOperation> assetOperationPool = new ItemPool<DatabaseAssetAsyncOperation>();
         protected override bool OnInitializeUpdate(float deltaTime)
         {
-            throw new System.NotImplementedException();
+            State = LoaderState.Initialized;
+            return true;
         }
 
-        protected override void OnReleaseAssetNode(AssetNode assetNode)
-        {
-            throw new System.NotImplementedException();
-        }
 
-        protected override bool OnUnloadAssetsUpdate()
-        {
-            throw new System.NotImplementedException();
-        }
-
+        #region Sync
         protected override UnityObject RequestAssetSync(string assetPath)
         {
             return AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityObject));
         }
 
+        #endregion
+        protected override void OnAsyncRequestStart(AsyncRequest request)
+        {
+        }
+
+        protected override void OnAsyncRequestUpdate(AsyncRequest request)
+        {
+            var result = request.result;
+            string[] assetPaths = request.paths;
+            for (int i = 0; i < assetPaths.Length; i++)
+            {
+                if (result.IsDoneAt(i))
+                {
+                    continue;
+                }
+
+                string assetPath = assetPaths[i];
+                AssetNode assetNode = assetNodeDic[assetPath];
+                if (assetNode.IsLoaded())
+                {
+                    if (request.isInstance)
+                    {
+                        request.SetUObject(i, assetNode.CreateInstance());
+                    }
+                    else
+                    {
+                        request.SetUObject(i, assetNode.GetAsset());
+                    }
+                    assetNode.ReleaseRef();
+                    continue;
+                }
+                else
+                {
+                    if(!operationLDic.TryGetValue(assetPath,out var operation))
+                    {
+                        DatabaseAssetAsyncOperation assetOperation = assetOperationPool.Get();
+                        assetOperation.DoInitilize(assetPath);
+                        assetOperation.OnOperationComplete = OnAssetLoadCompleted;
+
+                        operationLDic.Add(assetPath, assetOperation);
+                    }
+                    
+                    request.SetProgress(i, operation.Progress);
+                }
+            }
+            if (result.IsDone())
+            {
+                if (request.isInstance)
+                {
+                    request.state = RequestState.InstanceFinished;
+                }
+                else
+                {
+                    request.state = RequestState.LoadFinished;
+                }
+            }
+        }
+
+        private void OnAssetLoadCompleted(AAsyncOperation operation)
+        {
+            DatabaseAssetAsyncOperation assetOperation = (DatabaseAssetAsyncOperation)operation;
+            string assetPath = operation.Path;
+            if (assetNodeDic.TryGetValue(assetPath, out var assetNode))
+            {
+                assetNode.SetAsset(assetOperation.GetAsset());
+            }
+            operationLDic.Remove(assetPath);
+            assetOperationPool.Release(assetOperation);
+        }
+
+        protected override void OnAsyncRequestEnd(AsyncRequest request)
+        {
+        }
+
+        protected override void OnAsyncRequestCancel(AsyncRequest request)
+        {
+        }
+
+
+        protected override void OnCreateAssetNodeAsync(AssetNode assetNode)
+        {
+        }
+
+        protected override void OnCreateAssetNodeSync(AssetNode assetNode)
+        {
+        }
+
+        protected override void OnReleaseAssetNode(AssetNode assetNode)
+        {
+        }
+
+        protected override bool OnUnloadAssetsUpdate()
+        {
+            return true;
+        }
+
+        
     }
 }
+#endif

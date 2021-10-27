@@ -201,8 +201,32 @@ namespace DotEngine.Assets
         protected override void OnReleaseAssetNode(AssetNode assetNode)
         {
             string bundlePath = assetDetailConfig.GetBundleByPath(assetNode.Path);
-            BundleNode bundleNode = GetAsyncBundleNode(bundlePath);
+            TryToReleaseBundleNode(bundlePath);
+        }
+
+        private void TryToReleaseBundleNode(string bundlePath)
+        {
+            if(!bundleNodeDic.TryGetValue(bundlePath,out var bundleNode))
+            {
+                return;
+            }
             bundleNode.ReleaseRef();
+            if (!bundleNode.IsInUsing())
+            {
+                bundleNodeDic.Remove(bundlePath);
+                bundleNodePool.Release(bundleNode);
+
+                string[] dependBundlePaths = bundleDetailConfig.GetDependencies(bundlePath);
+                foreach (var dbp in dependBundlePaths)
+                {
+                    BundleNode dependBundleNode = bundleNodeDic[dbp];
+                    if (!dependBundleNode.IsInUsing())
+                    {
+                        bundleNodeDic.Remove(bundlePath);
+                        bundleNodePool.Release(bundleNode);
+                    }
+                }
+            }
         }
 
         #region Sync
@@ -258,6 +282,7 @@ namespace DotEngine.Assets
         #endregion
 
         #region Async
+
         private BundleNode GetAsyncBundleNode(string bundlePath)
         {
             if (bundleNodeDic.TryGetValue(bundlePath, out var bundleNode))
