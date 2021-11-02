@@ -180,7 +180,7 @@ namespace DotEngine.Net
             if (client != null && client.IsConnected)
             {
                 byte[] messageBytes = messageHandler.Serialize(messageId, message);
-                return client.SendAsync(messageBytes);
+                return client.SendMessage(messageBytes);
             }
             else
             {
