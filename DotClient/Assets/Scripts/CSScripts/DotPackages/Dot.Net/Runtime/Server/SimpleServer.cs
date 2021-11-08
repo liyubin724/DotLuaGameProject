@@ -65,7 +65,14 @@ namespace DotEngine.Net
             {
                 return false;
             }
-            return session.SendMessage(dataBytes);
+            sendBuffer.Clear();
+
+            int len = dataBytes.Length;
+            byte[] lenBytes = BitConverter.GetBytes(len);
+            sendBuffer.Append(lenBytes);
+            sendBuffer.Append(dataBytes);
+
+            return session.SendAsync(sendBuffer.Data, sendBuffer.Offset, sendBuffer.Size);
         }
 
         protected override TcpSession CreateSession()

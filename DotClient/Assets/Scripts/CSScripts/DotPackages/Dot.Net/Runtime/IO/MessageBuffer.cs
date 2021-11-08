@@ -32,10 +32,10 @@
             {
                 return null;
             }
-            if (activedStream.ReadInt(0, out int totalMessageLen) && totalMessageLen <= messageLen)
+            if (activedStream.ReadInt(0, out int totalMessageLen) && totalMessageLen+sizeof(int) <= messageLen)
             {
                 byte[] bytes = new byte[totalMessageLen];
-                activedStream.Read(bytes, sizeof(int), totalMessageLen);
+                activedStream.Read(bytes, 0, totalMessageLen);
 
                 MoveStream(sizeof(int) + totalMessageLen);
 

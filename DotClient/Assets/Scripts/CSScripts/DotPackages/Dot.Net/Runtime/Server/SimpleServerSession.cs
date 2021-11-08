@@ -17,30 +17,12 @@ namespace DotEngine.Net
 
     public class SimpleServerSession : TcpSession
     {
-        private ByteBuffer sendBuffer = new ByteBuffer();
         private MessageBuffer receivedBuffer = new MessageBuffer();
 
         public IServerSessionHandler Handler { get; set; }
 
         public SimpleServerSession(TcpServer server) : base(server)
         {
-        }
-
-        public bool SendMessage(byte[] dataBytes)
-        {
-            if(!IsConnected)
-            {
-                return false;
-            }
-
-            sendBuffer.Clear();
-
-            int len = dataBytes.Length;
-            byte[] lenBytes = BitConverter.GetBytes(len);
-            sendBuffer.Append(lenBytes);
-            sendBuffer.Append(dataBytes);
-
-            return SendAsync(sendBuffer.Data, sendBuffer.Offset, sendBuffer.Size);
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)

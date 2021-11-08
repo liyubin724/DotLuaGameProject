@@ -12,7 +12,6 @@ namespace DotEngine.Net
     {
         Unreachable = 0,
         Connected,
-        Normal,
         Disconnected,
         Error,
     }
@@ -29,14 +28,6 @@ namespace DotEngine.Net
         private MessageBuffer receivedBuffer = new MessageBuffer();
 
         public IClientHandler Handler { get; set; }
-
-        public SimpleClient(IPEndPoint endpoint) : base(endpoint)
-        {
-        }
-
-        public SimpleClient(IPAddress address, int port) : base(address, port)
-        {
-        }
 
         public SimpleClient(string address, int port) : base(address, port)
         {

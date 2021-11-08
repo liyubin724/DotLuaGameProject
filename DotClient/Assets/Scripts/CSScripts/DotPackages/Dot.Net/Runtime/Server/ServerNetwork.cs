@@ -64,22 +64,22 @@ namespace DotEngine.Net
         {
             if(server!=null)
             {
-                return false;
-            }
-
-            if(server.Endpoint.Port != port)
-            {
-                server.DisconnectAll();
-                server.Dispose();
+                server.Handler = null;
+                server.Stop();
                 server = null;
             }
 
             server = new SimpleServer(IPAddress.Any, port);
+            server.Handler = this;
             return server.Start();
         }
 
         public bool Stop()
         {
+            if(server == null)
+            {
+                return false;
+            }
             return server.Stop();
         }
 
@@ -181,7 +181,7 @@ namespace DotEngine.Net
             }
             lock (receviedMessageList)
             {
-                for (int i = 0; i < receviedMessageList.Count; ++i)
+                while(receviedMessageList.Count>0)
                 {
                     ServerReceivedMessage message = receviedMessageList[0];
                     receviedMessageList.RemoveAt(0);

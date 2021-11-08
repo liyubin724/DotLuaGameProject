@@ -57,7 +57,6 @@ namespace DotEngine.Net
                 return client != null && client.IsConnecting;
             }
         }
-
         public bool IsConnected
         {
             get
@@ -65,6 +64,8 @@ namespace DotEngine.Net
                 return client != null && client.IsConnected;
             }
         }
+
+        public bool AutoDisconnectedWhenError { get; set; } = true;
 
         private IMessageEncoder messageEncoder;
         private IMessageDecoder messageDecoder;
@@ -88,12 +89,18 @@ namespace DotEngine.Net
 
         public bool Connect(string ip,int port)
         {
-            if(client !=null)
+            if(client != null)
             {
-                client.Dispose();
+                client.Disconnect();
+                client.Handler = null;
                 client = null;
+
+                State = ClientState.Unreachable;
+                targetState = ClientState.Unreachable;
             }
+
             client = new SimpleClient(ip, port);
+            client.Handler = this;
             return client.Connect();
         }
 
@@ -101,7 +108,6 @@ namespace DotEngine.Net
         {
             if(client == null)
             {
-                Debug.LogError("");
                 return false;
             }
 
@@ -112,10 +118,9 @@ namespace DotEngine.Net
         {
             if(client!=null)
             {
-                return client.DisconnectAsync();
+                return false;
             }
-
-            return false;
+            return client.DisconnectAsync();
         }
 
         public bool SendEmptyMessage(int messageId)
@@ -164,7 +169,6 @@ namespace DotEngine.Net
                     State = targetState;
                     if(targetState == ClientState.Connected)
                     {
-                        State = ClientState.Normal;
                         NetConnected?.Invoke();
                     }else if(targetState == ClientState.Disconnected)
                     {
@@ -172,39 +176,46 @@ namespace DotEngine.Net
                     }else if(targetState == ClientState.Error)
                     {
                         NetError?.Invoke();
+                        if(AutoDisconnectedWhenError)
+                        {
+                            Disconnect();
+                        }
                     }
                 }
-            }
-
-            if(!IsConnected)
-            {
-                return;
-            }
-
-            if(State == ClientState.Error)
-            {
-                Disconnect();
-                return;
             }
 
             lock (receviedMessageList)
             {
-                int maxCount = Math.Min(receviedMessageList.Count, DecodeMessageMaxCount);
-                for (int i = 0; i < maxCount; ++i)
+                if(receviedMessageList.Count>0)
                 {
-                    ClientReceviedMessage message = receviedMessageList[0];
-                    receviedMessageList.RemoveAt(0);
-
-                    if (messageListenerDic.TryGetValue(message.Id, out var list))
+                    if(IsConnected)
                     {
-                        foreach (var listener in list)
+                        int maxCount = Math.Min(receviedMessageList.Count, DecodeMessageMaxCount);
+                        for (int i = 0; i < maxCount; ++i)
                         {
-                            listener(message.Id, message.Body);
-                        }
-                    }
+                            ClientReceviedMessage message = receviedMessageList[0];
+                            receviedMessageList.RemoveAt(0);
 
-                    receviedMessagePool.Release(message);
+                            if (messageListenerDic.TryGetValue(message.Id, out var list))
+                            {
+                                foreach (var listener in list)
+                                {
+                                    listener(message.Id, message.Body);
+                                }
+                            }
+
+                            receviedMessagePool.Release(message);
+                        }
+                    }else
+                    {
+                        foreach (var message in receviedMessageList)
+                        {
+                            receviedMessagePool.Release(message);
+                        }
+                        receviedMessageList.Clear();
+                    }
                 }
+
             }
         }
 
