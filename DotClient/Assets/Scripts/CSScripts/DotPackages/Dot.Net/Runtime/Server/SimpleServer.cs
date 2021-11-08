@@ -12,7 +12,7 @@ namespace DotEngine.Net
 
     public class SimpleServer : TcpServer,IServerSessionHandler
     {
-        private Buffer sendBuffer = new Buffer();
+        private ByteBuffer sendBuffer = new ByteBuffer();
 
         public IServerHandler Handler { get; set; }
 
@@ -55,7 +55,17 @@ namespace DotEngine.Net
 
         public bool MulticastMessageTo(Guid guid, byte[] dataBytes)
         {
+            if (!IsStarted)
+            {
+                return false;
+            }
 
+            SimpleServerSession session = FindSession(guid) as SimpleServerSession;
+            if(session == null)
+            {
+                return false;
+            }
+            return session.SendMessage(dataBytes);
         }
 
         protected override TcpSession CreateSession()

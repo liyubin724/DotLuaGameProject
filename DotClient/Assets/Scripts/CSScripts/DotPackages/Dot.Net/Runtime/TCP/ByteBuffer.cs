@@ -7,7 +7,7 @@ namespace DotEngine.Net
     /// <summary>
     /// Dynamic byte buffer
     /// </summary>
-    public class Buffer
+    public class ByteBuffer
     {
         private byte[] _data;
         private long _size;
@@ -42,15 +42,15 @@ namespace DotEngine.Net
         /// <summary>
         /// Initialize a new expandable buffer with zero capacity
         /// </summary>
-        public Buffer() { _data = new byte[0]; _size = 0; _offset = 0; }
+        public ByteBuffer() { _data = new byte[0]; _size = 0; _offset = 0; }
         /// <summary>
         /// Initialize a new expandable buffer with the given capacity
         /// </summary>
-        public Buffer(long capacity) { _data = new byte[capacity]; _size = 0; _offset = 0; }
+        public ByteBuffer(long capacity) { _data = new byte[capacity]; _size = 0; _offset = 0; }
         /// <summary>
         /// Initialize a new expandable buffer with the given data
         /// </summary>
-        public Buffer(byte[] data) { _data = data; _size = data.Length; _offset = 0; }
+        public ByteBuffer(byte[] data) { _data = data; _size = data.Length; _offset = 0; }
 
         #region Memory buffer methods
 

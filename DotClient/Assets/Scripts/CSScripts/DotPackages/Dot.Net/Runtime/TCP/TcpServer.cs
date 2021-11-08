@@ -329,6 +329,15 @@ namespace DotEngine.Net
             return Sessions.TryGetValue(id, out TcpSession result) ? result : null;
         }
 
+        public void DisconnectSession(Guid id)
+        {
+            TcpSession session = FindSession(id);
+            if(session!=null)
+            {
+                session.Disconnect();
+            }
+        }
+
         /// <summary>
         /// Register a new session
         /// </summary>

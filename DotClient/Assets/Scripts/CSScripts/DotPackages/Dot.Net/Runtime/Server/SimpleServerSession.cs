@@ -17,7 +17,7 @@ namespace DotEngine.Net
 
     public class SimpleServerSession : TcpSession
     {
-        private Buffer sendBuffer = new Buffer();
+        private ByteBuffer sendBuffer = new ByteBuffer();
         private MessageBuffer receivedBuffer = new MessageBuffer();
 
         public IServerSessionHandler Handler { get; set; }
@@ -28,6 +28,11 @@ namespace DotEngine.Net
 
         public bool SendMessage(byte[] dataBytes)
         {
+            if(!IsConnected)
+            {
+                return false;
+            }
+
             sendBuffer.Clear();
 
             int len = dataBytes.Length;

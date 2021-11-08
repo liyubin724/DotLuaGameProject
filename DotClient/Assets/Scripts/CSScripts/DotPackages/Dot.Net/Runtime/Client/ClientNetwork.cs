@@ -86,6 +86,38 @@ namespace DotEngine.Net
             messageDecoder = decoder;
         }
 
+        public bool Connect(string ip,int port)
+        {
+            if(client !=null)
+            {
+                client.Dispose();
+                client = null;
+            }
+            client = new SimpleClient(ip, port);
+            return client.Connect();
+        }
+
+        public bool Reconnect()
+        {
+            if(client == null)
+            {
+                Debug.LogError("");
+                return false;
+            }
+
+            return client.ReconnectAsync();
+        }
+
+        public bool Disconnect()
+        {
+            if(client!=null)
+            {
+                return client.DisconnectAsync();
+            }
+
+            return false;
+        }
+
         public bool SendEmptyMessage(int messageId)
         {
             return SendMessage(messageId, null);
@@ -142,6 +174,17 @@ namespace DotEngine.Net
                         NetError?.Invoke();
                     }
                 }
+            }
+
+            if(!IsConnected)
+            {
+                return;
+            }
+
+            if(State == ClientState.Error)
+            {
+                Disconnect();
+                return;
             }
 
             lock (receviedMessageList)

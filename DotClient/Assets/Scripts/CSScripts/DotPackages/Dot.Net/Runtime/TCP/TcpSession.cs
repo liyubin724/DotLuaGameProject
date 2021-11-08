@@ -119,9 +119,9 @@ namespace DotEngine.Net
             IsSocketDisposed = false;
 
             // Setup buffers
-            _receiveBuffer = new Buffer();
-            _sendBufferMain = new Buffer();
-            _sendBufferFlush = new Buffer();
+            _receiveBuffer = new ByteBuffer();
+            _sendBufferMain = new ByteBuffer();
+            _sendBufferFlush = new ByteBuffer();
 
             // Setup event args
             _receiveEventArg = new SocketAsyncEventArgs();
@@ -229,13 +229,13 @@ namespace DotEngine.Net
 
         // Receive buffer
         private bool _receiving;
-        private Buffer _receiveBuffer;
+        private ByteBuffer _receiveBuffer;
         private SocketAsyncEventArgs _receiveEventArg;
         // Send buffer
         private readonly object _sendLock = new object();
         private bool _sending;
-        private Buffer _sendBufferMain;
-        private Buffer _sendBufferFlush;
+        private ByteBuffer _sendBufferMain;
+        private ByteBuffer _sendBufferFlush;
         private SocketAsyncEventArgs _sendEventArg;
         private long _sendBufferFlushOffset;
 

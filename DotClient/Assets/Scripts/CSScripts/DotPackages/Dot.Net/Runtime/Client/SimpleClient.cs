@@ -25,7 +25,7 @@ namespace DotEngine.Net
 
     public class SimpleClient : TcpClient
     {
-        private Buffer sendBuffer = new Buffer();
+        private ByteBuffer sendBuffer = new ByteBuffer();
         private MessageBuffer receivedBuffer = new MessageBuffer();
 
         public IClientHandler Handler { get; set; }
