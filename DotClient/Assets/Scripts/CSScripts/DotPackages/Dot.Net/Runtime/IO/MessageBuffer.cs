@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Net
 {
-    public class MessageBuff
+    public class MessageBuffer
     {
         private int activedStreamIndex = 0;
         private MessageStream[] streams = new MessageStream[]

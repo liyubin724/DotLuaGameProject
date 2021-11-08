@@ -10,9 +10,6 @@ namespace DotEngine.Net
         public IMessageEncryptor Encryptor { get; set; }
         public IMessageDecryptor Decryptor { get; set; }
 
-        private int serializeIndex = 0;
-        private int deserializeIndex = 0;
-
         private MemoryStream stream = new MemoryStream();
 
         public bool Deserialize(byte[] bytes, out int messageId, out object message)
