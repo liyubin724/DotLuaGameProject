@@ -115,7 +115,7 @@ namespace DotEngine.Net
                 return false;
             }
 
-            return client.ReconnectAsync();
+            return client.ConnectAsync();
         }
 
         public bool Disconnect()

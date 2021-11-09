@@ -34,12 +34,6 @@ namespace DotEngine.Net
         {
         }
 
-        public override bool ConnectAsync()
-        {
-            Handler?.OnStateChanged(ClientState.Connecting);
-            return base.ConnectAsync();
-        }
-
         public bool SendMessage(byte[] dataBytes)
         {
             sendBuffer.Clear();

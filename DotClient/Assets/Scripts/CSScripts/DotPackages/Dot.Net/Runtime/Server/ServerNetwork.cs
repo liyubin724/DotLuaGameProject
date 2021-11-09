@@ -271,7 +271,7 @@ namespace DotEngine.Net
                     parameterInfos[2].ParameterType == typeof(byte[]))
                 {
                     var attr = mInfo.GetCustomAttribute<CustomMessageListenerAttribute>(true);
-                    if (attr != null && attr.ListenerType == MessageListenerType.Client && attr.MessageId > 0)
+                    if (attr != null && attr.ListenerType == MessageListenerType.Server && attr.MessageId > 0)
                     {
                         UnregisterListener(attr.MessageId);
                     }
