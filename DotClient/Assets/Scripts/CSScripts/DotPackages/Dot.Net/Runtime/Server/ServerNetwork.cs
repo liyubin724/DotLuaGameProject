@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection;
 using System.Text;
 
 namespace DotEngine.Net
@@ -62,7 +63,7 @@ namespace DotEngine.Net
 
         public bool Start(int port)
         {
-            if(server!=null)
+            if (server != null)
             {
                 server.Handler = null;
                 server.Stop();
@@ -76,7 +77,7 @@ namespace DotEngine.Net
 
         public bool Stop()
         {
-            if(server == null)
+            if (server == null)
             {
                 return false;
             }
@@ -181,7 +182,7 @@ namespace DotEngine.Net
             }
             lock (receviedMessageList)
             {
-                while(receviedMessageList.Count>0)
+                while (receviedMessageList.Count > 0)
                 {
                     ServerReceivedMessage message = receviedMessageList[0];
                     receviedMessageList.RemoveAt(0);
@@ -211,7 +212,7 @@ namespace DotEngine.Net
             list.Add(listener);
         }
 
-        public void UnRegisterListener(int messageId)
+        public void UnregisterListener(int messageId)
         {
             if (messageListenerDic.TryGetValue(messageId, out var list))
             {
@@ -230,6 +231,49 @@ namespace DotEngine.Net
                     {
                         messageListenerDic.Remove(messageId);
                         ListPool<ServerMessageListener>.Release(list);
+                    }
+                }
+            }
+        }
+
+        public void RegisterListener(Type targetType)
+        {
+            MethodInfo[] methodInfos = targetType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var mInfo in methodInfos)
+            {
+                ParameterInfo[] parameterInfos = mInfo.GetParameters();
+                if (parameterInfos.Length == 3 &&
+                    parameterInfos[0].ParameterType == typeof(Guid) &&
+                    parameterInfos[1].ParameterType == typeof(int) &&
+                    parameterInfos[2].ParameterType == typeof(byte[]))
+                {
+                    var attr = mInfo.GetCustomAttribute<CustomMessageListenerAttribute>(true);
+                    if (attr != null && attr.ListenerType == MessageListenerType.Server && attr.MessageId > 0)
+                    {
+                        RegisterListener(attr.MessageId, (guid, messageId, messageBody) =>
+                        {
+                            mInfo.Invoke(null, new object[] { guid, messageId, messageBody });
+                        });
+                    }
+                }
+            }
+        }
+
+        public void UnregisterListener(Type targetType)
+        {
+            MethodInfo[] methodInfos = targetType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var mInfo in methodInfos)
+            {
+                ParameterInfo[] parameterInfos = mInfo.GetParameters();
+                if (parameterInfos.Length == 3 &&
+                    parameterInfos[0].ParameterType == typeof(Guid) &&
+                    parameterInfos[1].ParameterType == typeof(int) &&
+                    parameterInfos[2].ParameterType == typeof(byte[]))
+                {
+                    var attr = mInfo.GetCustomAttribute<CustomMessageListenerAttribute>(true);
+                    if (attr != null && attr.ListenerType == MessageListenerType.Client && attr.MessageId > 0)
+                    {
+                        UnregisterListener(attr.MessageId);
                     }
                 }
             }

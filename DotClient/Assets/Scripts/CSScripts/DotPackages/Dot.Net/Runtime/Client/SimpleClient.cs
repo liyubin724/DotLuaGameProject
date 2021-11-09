@@ -11,6 +11,7 @@ namespace DotEngine.Net
     public enum ClientState
     {
         Unreachable = 0,
+        Connecting,
         Connected,
         Disconnected,
         Error,
@@ -31,6 +32,12 @@ namespace DotEngine.Net
 
         public SimpleClient(string address, int port) : base(address, port)
         {
+        }
+
+        public override bool ConnectAsync()
+        {
+            Handler?.OnStateChanged(ClientState.Connecting);
+            return base.ConnectAsync();
         }
 
         public bool SendMessage(byte[] dataBytes)

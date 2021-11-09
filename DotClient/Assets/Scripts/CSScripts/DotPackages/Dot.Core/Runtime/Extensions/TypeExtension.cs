@@ -16,7 +16,7 @@ namespace DotEngine.Core.Extensions
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <returns></returns>
-        public static bool IsCastableTo(this Type from, Type to)
+        public static bool CanCastableTo(this Type from, Type to)
         {
             if (to.IsAssignableFrom(from)) return true;
             var methods = from.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -33,7 +33,7 @@ namespace DotEngine.Core.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string PrettyName(this Type type)
+        public static string GetPrettyName(this Type type)
         {
             if (type == null) return "null";
 
@@ -55,7 +55,7 @@ namespace DotEngine.Core.Extensions
                 string[] stypes = new string[types.Length];
                 for (int i = 0; i < types.Length; i++)
                 {
-                    stypes[i] = types[i].PrettyName();
+                    stypes[i] = types[i].GetPrettyName();
                 }
                 return s + "<" + string.Join(", ", stypes) + ">";
             }
@@ -67,10 +67,10 @@ namespace DotEngine.Core.Extensions
                     rank += ",";
                 }
                 Type elementType = type.GetElementType();
-                if (!elementType.IsArray) return elementType.PrettyName() + "[" + rank + "]";
+                if (!elementType.IsArray) return elementType.GetPrettyName() + "[" + rank + "]";
                 else
                 {
-                    string s = elementType.PrettyName();
+                    string s = elementType.GetPrettyName();
                     int i = s.IndexOf('[');
                     return s.Substring(0, i) + "[" + rank + "]" + s.Substring(i);
                 }
@@ -89,6 +89,11 @@ namespace DotEngine.Core.Extensions
                 return type.GetGenericArguments()[0];
             }
             return null;
+        }
+
+        public static bool IsStatic(this Type type)
+        {
+            return type.IsAbstract && type.IsSealed;
         }
 
         public static bool IsStructOrClassType(this Type type) => IsClassType(type) || IsStructType(type);

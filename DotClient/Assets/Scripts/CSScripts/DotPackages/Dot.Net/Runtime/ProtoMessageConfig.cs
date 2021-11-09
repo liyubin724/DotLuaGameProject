@@ -38,9 +38,7 @@ namespace DotEngine.Net
         public int Id;
         public string Name;
         public string Desc;
-        public int CompressType;
-        public int UncompressType;
-        public int EncryptorType;
-        public int DecryptorType;
+        public bool IsCompress = false;
+        public bool IsEncrypt = false;
     }
 }

@@ -296,7 +296,7 @@ namespace DotEditor.NativeDrawer
                 }
                 else
                 {
-                    if (value1.GetType().IsCastableTo(typeof(IComparable)))
+                    if (value1.GetType().CanCastableTo(typeof(IComparable)))
                     {
                         int compared = ((IComparable)value1).CompareTo((IComparable)value2);
                         if(compared == 0)

@@ -1,6 +1,7 @@
 ﻿using DotEngine.Pool;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -89,18 +90,15 @@ namespace DotEngine.Net
 
         public bool Connect(string ip,int port)
         {
-            if(client != null)
+            if(client!=null)
             {
-                client.Disconnect();
-                client.Handler = null;
-                client = null;
-
-                State = ClientState.Unreachable;
-                targetState = ClientState.Unreachable;
+                Debug.LogError("The network has been created.");
+                return false;
             }
 
             client = new SimpleClient(ip, port);
             client.Handler = this;
+            
             return client.ConnectAsync();
         }
 
@@ -108,6 +106,12 @@ namespace DotEngine.Net
         {
             if(client == null)
             {
+                Debug.LogError("The network hasn't been created");
+                return false;
+            }
+            if(client.IsConnecting || client.IsConnected)
+            {
+                Debug.LogError("The network is connecting");
                 return false;
             }
 
@@ -118,9 +122,20 @@ namespace DotEngine.Net
         {
             if(client == null)
             {
+                Debug.LogError("The network hasn't been created");
                 return false;
             }
+
             return client.DisconnectAsync();
+        }
+
+        public void Dispose()
+        {
+            if(client!=null)
+            {
+                client.Dispose();
+                client = null;
+            }
         }
 
         public bool SendEmptyMessage(int messageId)
@@ -128,12 +143,11 @@ namespace DotEngine.Net
             return SendMessage(messageId, null);
         }
 
-        public bool SendMessage(int messageId,byte[] messageBody)
+        public bool SendMessage(int messageId,byte[] messageBody,bool needEncrypt = false,bool needCompress = false)
         {
             if(IsConnected)
             {
-                byte[] dataBytes = messageEncoder.Encode(messageId, messageBody, IsMessageNeedEncrypt(messageId), IsMessageNeedCompress(messageId));
-
+                byte[] dataBytes = messageEncoder.Encode(messageId, messageBody, needEncrypt, needCompress);
                 return client.SendMessage(dataBytes);
             }
 
@@ -143,16 +157,6 @@ namespace DotEngine.Net
         public bool SendText(int messageId,string messageText)
         {
             return SendMessage(messageId, Encoding.Unicode.GetBytes(messageText));
-        }
-
-        private bool IsMessageNeedEncrypt(int messageId)
-        {
-            return false;
-        }
-
-        private bool IsMessageNeedCompress(int messageId)
-        {
-            return false;
         }
 
         public void DoUpdate(float deltaTime,float unscaleDeltaTime)
@@ -231,7 +235,48 @@ namespace DotEngine.Net
             list.Add(listener);
         }
 
-        public void UnRegisterListener(int messageId)
+        public void RegisterListener(Type targetType)
+        {
+            MethodInfo[] methodInfos = targetType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach(var mInfo in methodInfos)
+            {
+                ParameterInfo[] parameterInfos = mInfo.GetParameters();
+                if(parameterInfos.Length == 2 && 
+                    parameterInfos[0].ParameterType == typeof(int) && 
+                    parameterInfos[1].ParameterType == typeof(byte[]) )
+                {
+                    var attr = mInfo.GetCustomAttribute<CustomMessageListenerAttribute>(true);
+                    if(attr!=null && attr.ListenerType == MessageListenerType.Client && attr.MessageId>0)
+                    {
+                        RegisterListener(attr.MessageId, (messageId, messageBody) =>
+                        {
+                            mInfo.Invoke(null, new object[] { messageId, messageBody });
+                        });
+                    }
+                }
+            }
+        }
+
+        public void UnregisterListener(Type targetType)
+        {
+            MethodInfo[] methodInfos = targetType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (var mInfo in methodInfos)
+            {
+                ParameterInfo[] parameterInfos = mInfo.GetParameters();
+                if (parameterInfos.Length == 2 &&
+                    parameterInfos[0].ParameterType == typeof(int) &&
+                    parameterInfos[1].ParameterType == typeof(byte[]))
+                {
+                    var attr = mInfo.GetCustomAttribute<CustomMessageListenerAttribute>(true);
+                    if (attr != null && attr.ListenerType == MessageListenerType.Client && attr.MessageId > 0)
+                    {
+                        UnregisterListener(attr.MessageId);
+                    }
+                }
+            }
+        }
+
+        public void UnregisterListener(int messageId)
         {
             if (messageListenerDic.TryGetValue(messageId, out var list))
             {
@@ -255,7 +300,7 @@ namespace DotEngine.Net
             }
         }
 
-        public void UnRegisterAll()
+        public void UnregisterAll()
         {
             foreach (var kvp in messageListenerDic)
             {
@@ -263,8 +308,6 @@ namespace DotEngine.Net
             }
             messageListenerDic.Clear();
         }
-
-
         #endregion
 
         public void OnStateChanged(ClientState state)
