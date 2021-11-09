@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889b8ff282d436246a57ba730115df5f, type: 3}
+  m_Name: bitmap_font_config
+  m_EditorClassIdentifier: 
+  outputAssetDir: 
+  padding: 2
+  maxSize: 1024
+  fontChars:
+  - fontName: 
+    charSpace: 0
+    chars: 2d002d00
+    textures:
+    - {fileID: 0}
+    - {fileID: 0}
+  - fontName: 
+    charSpace: 0
+    chars: 
+    textures: []
