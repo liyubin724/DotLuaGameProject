@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace DotEngine.Net
 {
-    public class MessageConfig : ISerialization
+    public class ProtoMessageConfig : ISerialization
     {
-        public List<MessageData> Datas = new List<MessageData>();
+        public List<ProtoMessageData> Datas = new List<ProtoMessageData>();
 
-        private Dictionary<int, MessageData> dataDic = new Dictionary<int, MessageData>();
+        private Dictionary<int, ProtoMessageData> dataDic = new Dictionary<int, ProtoMessageData>();
 
-        public MessageData GetData(int messageId)
+        public ProtoMessageData GetData(int messageId)
         {
             if (dataDic.TryGetValue(messageId, out var data))
             {
@@ -33,7 +33,7 @@ namespace DotEngine.Net
         }
     }
 
-    public class MessageData
+    public class ProtoMessageData
     {
         public int Id;
         public string Name;
