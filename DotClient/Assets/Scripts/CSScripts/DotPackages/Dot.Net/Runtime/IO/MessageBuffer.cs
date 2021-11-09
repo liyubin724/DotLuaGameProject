@@ -1,4 +1,6 @@
-﻿namespace DotEngine.Net
+﻿using System.IO;
+
+namespace DotEngine.Net
 {
     public class MessageBuffer
     {
@@ -19,7 +21,7 @@
             GetStream().Write(bytes, 0, bytes.Length);
         }
 
-        public void WriteBytes(byte[] bytes,int start,int size)
+        public void WriteBytes(byte[] bytes, int start, int size)
         {
             GetStream().Write(bytes, start, size);
         }
@@ -27,17 +29,18 @@
         public byte[] ReadMessage()
         {
             MessageStream activedStream = GetStream();
-            long messageLen = activedStream.Length;
-            if (messageLen < sizeof(int))
+            long streamLength = activedStream.Length;
+            if (streamLength < sizeof(int))
             {
                 return null;
             }
-            if (activedStream.ReadInt(0, out int totalMessageLen) && totalMessageLen+sizeof(int) <= messageLen)
+            activedStream.Seek(0, SeekOrigin.Begin);
+            if (activedStream.ReadInt(0, out int messageLength) && messageLength + sizeof(int) <= streamLength)
             {
-                byte[] bytes = new byte[totalMessageLen];
-                activedStream.Read(bytes, 0, totalMessageLen);
+                byte[] bytes = new byte[messageLength];
+                activedStream.Read(bytes, 0, messageLength);
 
-                MoveStream(sizeof(int) + totalMessageLen);
+                MoveStream(sizeof(int) + messageLength);
 
                 return bytes;
             }

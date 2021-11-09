@@ -101,7 +101,7 @@ namespace DotEngine.Net
 
             client = new SimpleClient(ip, port);
             client.Handler = this;
-            return client.Connect();
+            return client.ConnectAsync();
         }
 
         public bool Reconnect()
@@ -116,7 +116,7 @@ namespace DotEngine.Net
 
         public bool Disconnect()
         {
-            if(client!=null)
+            if(client == null)
             {
                 return false;
             }

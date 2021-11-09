@@ -28,12 +28,14 @@ namespace DotEngine.Net
                         return false;
                     }
                     offset += 1;
+
                     bool needUncompress = *(b + offset) > 0;
                     if(needUncompress && Uncompressor == null)
                     {
                         Debug.LogError("the data can't be uncompressed ,because the uncompressor is NULL");
                         return false;
                     }
+                    offset += 1;
 
                     body = new byte[len - offset];
                     Array.Copy(dataBytes, offset, body, 0, body.Length);

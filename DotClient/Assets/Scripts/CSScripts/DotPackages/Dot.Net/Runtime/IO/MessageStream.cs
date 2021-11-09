@@ -24,7 +24,7 @@ namespace DotEngine.Net
         public bool ReadByte(int startIndex, out byte value)
         {
             value = 0;
-            if (startIndex + sizeof(int) <= Length)
+            if (startIndex + sizeof(byte) <= Length)
             {
                 Seek(startIndex, SeekOrigin.Begin);
                 value = (byte)ReadByte();
@@ -37,6 +37,7 @@ namespace DotEngine.Net
         public void Clear()
         {
             SetLength(0);
+            Seek(0, SeekOrigin.Begin);
         }
     }
 }

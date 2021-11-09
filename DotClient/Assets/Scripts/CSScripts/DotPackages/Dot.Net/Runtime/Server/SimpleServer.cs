@@ -39,18 +39,14 @@ namespace DotEngine.Net
             {
                 return false;
             }
-            sendBuffer.Clear();
 
+            sendBuffer.Clear();
             int len = dataBytes.Length;
             byte[] lenBytes = BitConverter.GetBytes(len);
             sendBuffer.Append(lenBytes);
             sendBuffer.Append(dataBytes);
 
-            foreach (var session in Sessions.Values)
-            {
-                session.SendAsync(sendBuffer.Data, sendBuffer.Offset, sendBuffer.Size);
-            }
-            return true;
+            return Multicast(sendBuffer.Data, sendBuffer.Offset, sendBuffer.Size);
         }
 
         public bool MulticastMessageTo(Guid guid, byte[] dataBytes)
