@@ -11,3 +11,8 @@ bin
 *.csproj
 *.iml
 *.iml.meta
+
+# Ignore the auto-generated AOT compatibility dll.
+/Assets/Plugins/Sirenix/Assemblies/AOT/*
+# Ignore all unpacked demos.
+/Assets/Plugins/Sirenix/Demos/*
