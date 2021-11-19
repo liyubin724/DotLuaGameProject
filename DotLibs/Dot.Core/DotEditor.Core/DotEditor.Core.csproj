@@ -50,7 +50,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="EditorStyleViewer\BuiltInResourcesWindow.cs" />
     <Compile Include="EditorStyleViewer\EditorStyleViewer.cs" />
     <Compile Include="Extensions\AssemblyEx.cs" />

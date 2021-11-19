@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ContextIEAttribute.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="ContextContainer.cs" />
     <Compile Include="ContextException.cs" />
     <Compile Include="ContextUtil.cs" />
