@@ -1,0 +1,13 @@
+using System;
+using System.IO;
+
+namesapce DotTest.CodeGen
+{
+	public class <%=context.className%>
+	{
+		public void PrintLog()
+		{
+			
+		}
+	}
+}
