@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XLua;
 
-namespace DotTools.CodeGen
+namespace DotTools.Config
 {
-    public class LuaEngine
+    class Program
     {
-        public LuaEnv Env { get; private set; }
-
+        static void Main(string[] args)
+        {
+        }
     }
 }

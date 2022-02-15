@@ -51,6 +51,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dot.PB", "Dot.PB", "{FBFE54
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotTools.PBExporter", "Tools\DotTools.PBExporter\DotTools.PBExporter.csproj", "{9C306EB5-96E4-4514-B2C0-3C80516FB777}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotTools.Config", "Config\DotTools.Config\DotTools.Config.csproj", "{CF9DE88B-8BC8-4C75-BA3C-9EB2803875D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{9C306EB5-96E4-4514-B2C0-3C80516FB777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C306EB5-96E4-4514-B2C0-3C80516FB777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C306EB5-96E4-4514-B2C0-3C80516FB777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF9DE88B-8BC8-4C75-BA3C-9EB2803875D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF9DE88B-8BC8-4C75-BA3C-9EB2803875D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF9DE88B-8BC8-4C75-BA3C-9EB2803875D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF9DE88B-8BC8-4C75-BA3C-9EB2803875D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -134,6 +140,7 @@ Global
 		{4BC56256-DF10-4253-986C-C9A5AFDE2391} = {707633C8-0359-45C8-A0D4-8CDF416DF7F2}
 		{FBFE541D-A34F-4F83-86CD-B93E0F9ECD46} = {91DB402D-D45B-4FDD-8D3C-09CF30293FCC}
 		{9C306EB5-96E4-4514-B2C0-3C80516FB777} = {FBFE541D-A34F-4F83-86CD-B93E0F9ECD46}
+		{CF9DE88B-8BC8-4C75-BA3C-9EB2803875D0} = {FA2E0ACE-04F1-4BE2-90AA-267AC8EBC462}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC1A1D71-B246-460A-86E5-9A9EA22693D1}
