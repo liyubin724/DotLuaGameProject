@@ -95,7 +95,6 @@
     <Folder Include="IO\" />
     <Folder Include="MathE\" />
     <Folder Include="Net\" />
-    <Folder Include="Notification\" />
     <Folder Include="Serialization\" />
   </ItemGroup>
   <ItemGroup>
