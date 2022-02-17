@@ -1,7 +1,6 @@
-﻿using DotEngine.Core.Extensions;
-using System;
+﻿using System;
 
-namespace DotEngine.Core.Utilities
+namespace DotEngine.Utilities
 {
     public static class ArrayUtility
     {
