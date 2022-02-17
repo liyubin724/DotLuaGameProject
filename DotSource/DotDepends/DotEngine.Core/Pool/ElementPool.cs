@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DotEngine.Pool
 {
@@ -46,8 +47,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                UnityEngine.Debug.LogError("ObjectPool::Release->The element has been push into pool!");
-                return;
+                throw new Exception("ElementPool<T>::Release->The element has been push into pool!");
             }
 #endif
             element.OnReleaseToPool();

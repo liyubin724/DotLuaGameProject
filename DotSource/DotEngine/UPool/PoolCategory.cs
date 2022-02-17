@@ -40,7 +40,7 @@ namespace DotEngine.UPool
             {
                 return itemGroup;
             }
-            PoolUtill.Logger.Warning("The pool is not found.name = " + name);
+            PoolUtill.Warning("The pool is not found.name = " + name);
             return null;
         }
 
@@ -54,7 +54,7 @@ namespace DotEngine.UPool
         {
             if (itemTemplate == null)
             {
-                PoolUtill.Logger.Error("Template is Null");
+                PoolUtill.Error("Template is Null");
                 return null;
             }
 
@@ -64,7 +64,7 @@ namespace DotEngine.UPool
                 itemGroupDic.Add(itemName, itemGroup);
                 return itemGroup;
             }
-            PoolUtill.Logger.Warning("The pool has been created.uniqueName = " + itemName);
+            PoolUtill.Warning("The pool has been created.uniqueName = " + itemName);
             return null;
         }
 
@@ -82,15 +82,15 @@ namespace DotEngine.UPool
             }
             else
             {
-                PoolUtill.Logger.Warning("The pool is not found.name = " + name);
+                PoolUtill.Warning("The pool is not found.name = " + name);
             }
         }
 
-        internal void DoUpdate(float deltaTime, float unscaleDeltaTime)
+        internal void DoUpdate(float deltaTime)
         {
             foreach (var kvp in itemGroupDic)
             {
-                kvp.Value.DoUpdate(deltaTime, unscaleDeltaTime);
+                kvp.Value.DoUpdate(deltaTime);
             }
         }
 

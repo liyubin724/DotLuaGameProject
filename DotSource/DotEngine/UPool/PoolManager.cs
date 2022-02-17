@@ -1,6 +1,6 @@
-﻿using DotEngine.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.UPool
 {
@@ -8,11 +8,10 @@ namespace DotEngine.UPool
     {
         private static readonly string POOL_ROOT_NAME = "PoolMgr";
 
-        public static readonly string GLOBAL_CATEGORY_NAME = "Global Category";
-        public static readonly string GLOBAL_GOBJ_ROOT_GROUP_NAME = "Global Root Group";
-
         private static PoolManager manager = null;
-        public static PoolManager InitMgr()
+        public static PoolManager GetInstance() => manager;
+
+        public static PoolManager CreateMgr()
         {
             if (manager == null)
             {
@@ -22,9 +21,7 @@ namespace DotEngine.UPool
             return manager;
         }
 
-        public static PoolManager GetInstance() => manager;
-
-        public static void DisposeMgr()
+        public static void DestroyMgr()
         {
             if (manager != null)
             {
@@ -33,7 +30,7 @@ namespace DotEngine.UPool
             manager = null;
         }
 
-        private Transform containerTransform = null;
+        private Transform mgrTransform = null;
         private Dictionary<string, PoolCategory> categoryDic = new Dictionary<string, PoolCategory>();
 
         private PoolManager()
@@ -42,26 +39,19 @@ namespace DotEngine.UPool
 
         private void DoInitialize()
         {
-            containerTransform = PersistentUObjectHelper.CreateTransform(POOL_ROOT_NAME);
-            UpdateManager.GetInstance().AddUpdater(this);
-
-            PoolCategory globalCategory = CreateCategory(GLOBAL_CATEGORY_NAME);
-            GameObject rootGObject = new GameObject("Root GObject");
-            PoolGroup rootGObjGroup = globalCategory.CreateGroup(GLOBAL_GOBJ_ROOT_GROUP_NAME, TemplateType.RuntimeInstance, rootGObject);
-            rootGObjGroup.SetPreload(10, 1, null);
+            mgrTransform = PersistentUObjectHelper.CreateTransform(POOL_ROOT_NAME);
         }
 
         private void DoDestroy()
         {
-            UpdateManager.GetInstance().RemoveUpdater(this);
             foreach (var kvp in categoryDic)
             {
                 kvp.Value.DoDestroy();
             }
             categoryDic.Clear();
 
-            Object.Destroy(containerTransform.gameObject);
-            containerTransform = null;
+            UnityObject.Destroy(mgrTransform.gameObject);
+            mgrTransform = null;
         }
 
         /// <summary>
@@ -95,7 +85,7 @@ namespace DotEngine.UPool
         {
             if (!categoryDic.TryGetValue(name, out PoolCategory category))
             {
-                category = new PoolCategory(name, containerTransform);
+                category = new PoolCategory(name, mgrTransform);
                 categoryDic.Add(name, category);
             }
             return category;
@@ -114,11 +104,11 @@ namespace DotEngine.UPool
             }
         }
 
-        public void DoUpdate(float deltaTime, float unscaleDeltaTime)
+        public void DoUpdate(float deltaTime)
         {
             foreach (var kvp in categoryDic)
             {
-                kvp.Value.DoUpdate(deltaTime, unscaleDeltaTime);
+                kvp.Value.DoUpdate(deltaTime);
             }
         }
     }

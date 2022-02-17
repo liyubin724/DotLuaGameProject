@@ -53,8 +53,6 @@
     <Compile Include="Crypto\CryptoHelper.cs" />
     <Compile Include="Crypto\DESCrypto.cs" />
     <Compile Include="Crypto\MD5Crypto.cs" />
-    <Compile Include="ICopy.cs" />
-    <Compile Include="IDeepCopy.cs" />
     <Compile Include="Config\Ini\IO\IniReader.cs" />
     <Compile Include="Config\Ini\IO\IniTextBuffer.cs" />
     <Compile Include="Config\Ini\IO\IniWriter.cs" />
@@ -75,24 +73,16 @@
     <Compile Include="Injection\Reflection\InjectReflection.cs" />
     <Compile Include="Injection\Reflection\InjectReflectionTypeInfo.cs" />
     <Compile Include="Log\Appender\UnityConsoleAppender.cs" />
-    <Compile Include="Pool\OPool\ElementPool.cs" />
-    <Compile Include="Pool\OPool\ListPool.cs" />
-    <Compile Include="Pool\OPool\ObjectPool.cs" />
-    <Compile Include="Pool\OPool\ObjectPool_Generic.cs" />
-    <Compile Include="Pool\UPool\PoolCategory.cs" />
-    <Compile Include="Pool\UPool\PoolGroup.cs" />
-    <Compile Include="Pool\UPool\PoolManager.cs" />
-    <Compile Include="Pool\UPool\PoolUtill.cs" />
+    <Compile Include="PersistentUObjectHelper.cs" />
+    <Compile Include="UPool\PoolCategory.cs" />
+    <Compile Include="UPool\PoolGroup.cs" />
+    <Compile Include="UPool\PoolManager.cs" />
+    <Compile Include="UPool\PoolUtill.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\ArrayUtility.cs" />
-    <Compile Include="Utilities\AssemblyUtility.cs" />
-    <Compile Include="Utilities\BitUtility.cs" />
     <Compile Include="Utilities\JsonUtility.cs" />
-    <Compile Include="Utilities\MathUtil.cs" />
     <Compile Include="Utilities\RectUtility.cs" />
-    <Compile Include="Utilities\ReflectionUtility.cs" />
-    <Compile Include="Utilities\StructUtility.cs" />
-    <Compile Include="Utilities\SysObjectUtility.cs" />
+    <Compile Include="Utilities\TransformUtility.cs" />
+    <Compile Include="Utilities\UObjectUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AI\BehaviourLine\" />
@@ -109,6 +99,10 @@
     <Folder Include="Serialization\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotDepends\DotEngine.Core\DotEngine.Core.csproj">
+      <Project>{3b63d16a-95fe-4e4b-af72-4ab062900d57}</Project>
+      <Name>DotEngine.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotDepends\DotEngine.Log\DotEngine.Log.csproj">
       <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
       <Name>DotEngine.Log</Name>

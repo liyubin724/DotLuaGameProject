@@ -100,7 +100,7 @@ namespace DotEngine.UPool
             }
         }
 
-        internal void DoUpdate(float deltaTime,float unscaleDeltaTime)
+        internal void DoUpdate(float deltaTime)
         {
             //preload
             if(preloadTotalAmount > 0)
@@ -115,7 +115,7 @@ namespace DotEngine.UPool
             //cull
             if(isCullEnable && cullDelayTime > 0)
             {
-                preCullTime += unscaleDeltaTime;
+                preCullTime += deltaTime;
                 if (preCullTime >= cullDelayTime)
                 {
                     Cull();
@@ -290,7 +290,7 @@ namespace DotEngine.UPool
         {
             if(item == null)
             {
-                PoolUtill.Logger.Error("GameObjectPool::ReleaseItem->Item is Null");
+                PoolUtill.Error("GameObjectPool::ReleaseItem->Item is Null");
                 return;
             }
 

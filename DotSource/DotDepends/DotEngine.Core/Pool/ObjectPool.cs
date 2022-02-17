@@ -50,8 +50,7 @@ namespace DotEngine.Pool
 #if DEBUG
             if (m_Stack.Contains(element))
             {
-                UnityEngine.Debug.LogError("ObjectPool::Release->The element has been released");
-                return;
+                throw new Exception("ObjectPool::Release->The element has been push into pool!");
             }
 #endif
 
