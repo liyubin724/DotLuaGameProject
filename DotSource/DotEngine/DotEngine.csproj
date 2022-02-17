@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{906A63F2-E8B6-4F50-85F0-844C73C8DCDC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotEngine</RootNamespace>
+    <AssemblyName>DotEngine</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>libs\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Config\Ini\Exceptions\IniReaderException.cs" />
+    <Compile Include="Crypto\AESCrypto.cs" />
+    <Compile Include="Crypto\CryptoHelper.cs" />
+    <Compile Include="Crypto\DESCrypto.cs" />
+    <Compile Include="Crypto\MD5Crypto.cs" />
+    <Compile Include="ICopy.cs" />
+    <Compile Include="IDeepCopy.cs" />
+    <Compile Include="Config\Ini\IO\IniReader.cs" />
+    <Compile Include="Config\Ini\IO\IniTextBuffer.cs" />
+    <Compile Include="Config\Ini\IO\IniWriter.cs" />
+    <Compile Include="Config\Ini\Models\IniData.cs" />
+    <Compile Include="Config\Ini\Models\IniProperty.cs" />
+    <Compile Include="Config\Ini\Models\IniSection.cs" />
+    <Compile Include="Config\Ini\Styles\IniReaderStyle.cs" />
+    <Compile Include="Config\Ini\Styles\IniSchemeStyle.cs" />
+    <Compile Include="Config\Ini\Styles\IniWriterStyle.cs" />
+    <Compile Include="Injection\Attributes\InjectUsageAttribute.cs" />
+    <Compile Include="Injection\InjectContext.cs" />
+    <Compile Include="Injection\InjectException.cs" />
+    <Compile Include="Injection\InjectObject.cs" />
+    <Compile Include="Injection\InjectUtility.cs" />
+    <Compile Include="Injection\Interfaces\IInjectContext.cs" />
+    <Compile Include="Injection\Interfaces\IInjectObject.cs" />
+    <Compile Include="Injection\Reflection\InjectMemberInfo.cs" />
+    <Compile Include="Injection\Reflection\InjectReflection.cs" />
+    <Compile Include="Injection\Reflection\InjectReflectionTypeInfo.cs" />
+    <Compile Include="Log\Appender\UnityConsoleAppender.cs" />
+    <Compile Include="Pool\OPool\ElementPool.cs" />
+    <Compile Include="Pool\OPool\ListPool.cs" />
+    <Compile Include="Pool\OPool\ObjectPool.cs" />
+    <Compile Include="Pool\OPool\ObjectPool_Generic.cs" />
+    <Compile Include="Pool\UPool\PoolCategory.cs" />
+    <Compile Include="Pool\UPool\PoolGroup.cs" />
+    <Compile Include="Pool\UPool\PoolManager.cs" />
+    <Compile Include="Pool\UPool\PoolUtill.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ArrayUtility.cs" />
+    <Compile Include="Utilities\AssemblyUtility.cs" />
+    <Compile Include="Utilities\BitUtility.cs" />
+    <Compile Include="Utilities\JsonUtility.cs" />
+    <Compile Include="Utilities\MathUtil.cs" />
+    <Compile Include="Utilities\RectUtility.cs" />
+    <Compile Include="Utilities\ReflectionUtility.cs" />
+    <Compile Include="Utilities\StructUtility.cs" />
+    <Compile Include="Utilities\SysObjectUtility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AI\BehaviourLine\" />
+    <Folder Include="AI\BehaviourTree\" />
+    <Folder Include="AI\FSM\" />
+    <Folder Include="Asset\" />
+    <Folder Include="Config\NDB\" />
+    <Folder Include="Framework\" />
+    <Folder Include="IMGUI\" />
+    <Folder Include="IO\" />
+    <Folder Include="MathE\" />
+    <Folder Include="Net\" />
+    <Folder Include="Notification\" />
+    <Folder Include="Serialization\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotDepends\DotEngine.Log\DotEngine.Log.csproj">
+      <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
+      <Name>DotEngine.Log</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

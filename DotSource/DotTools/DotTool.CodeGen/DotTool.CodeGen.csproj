@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4BC56256-DF10-4253-986C-C9A5AFDE2391}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotTools.CodeGen</RootNamespace>
+    <AssemblyName>DotTools.CodeGen</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;XLUA_GENERAL</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;XLUA_GENERAL</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>DotTools.CodeGen.Generator</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Colorful.Console">
+      <HintPath>libs\Colorful.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine">
+      <HintPath>libs\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chunk.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Context.cs" />
+    <Compile Include="Generator.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scanner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XLuaExt\LuaEnv_Extension.cs" />
+    <Compile Include="XLuaExt\LuaFunction_Extension.cs" />
+    <Compile Include="XLuaExt\LuaTable_Extension.cs" />
+    <Compile Include="XLuaExt\Lua_Extension.cs" />
+    <Compile Include="XLua\CodeEmit.cs" />
+    <Compile Include="XLua\CopyByValue.cs" />
+    <Compile Include="XLua\DelegateBridge.cs" />
+    <Compile Include="XLua\GenAttributes.cs" />
+    <Compile Include="XLua\GenericDelegateBridge.cs" />
+    <Compile Include="XLua\InternalGlobals.cs" />
+    <Compile Include="XLua\LuaBase.cs" />
+    <Compile Include="XLua\LuaDLL.cs" />
+    <Compile Include="XLua\LuaEnv.cs" />
+    <Compile Include="XLua\LuaException.cs" />
+    <Compile Include="XLua\LuaFunction.cs" />
+    <Compile Include="XLua\LuaTable.cs" />
+    <Compile Include="XLua\MethodWarpsCache.cs" />
+    <Compile Include="XLua\ObjectCasters.cs" />
+    <Compile Include="XLua\ObjectPool.cs" />
+    <Compile Include="XLua\ObjectTranslator.cs" />
+    <Compile Include="XLua\ObjectTranslatorPool.cs" />
+    <Compile Include="XLua\RawObject.cs" />
+    <Compile Include="XLua\SignatureLoader.cs" />
+    <Compile Include="XLua\StaticLuaCallbacks.cs" />
+    <Compile Include="XLua\TypeExtensions.cs" />
+    <Compile Include="XLua\Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DotDepends\DotEngine.Log\DotEngine.Log.csproj">
+      <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
+      <Name>DotEngine.Log</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\TemplateCommon.txt" />
+    <None Include="Resources\TestTemplate.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

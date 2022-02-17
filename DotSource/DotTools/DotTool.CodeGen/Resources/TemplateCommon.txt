@@ -1,0 +1,3 @@
+print = function(text)
+	CS.System.Console.WriteLine(text);
+end
