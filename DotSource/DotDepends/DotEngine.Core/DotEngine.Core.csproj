@@ -43,8 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generic\ListDictionary.cs" />
+    <Compile Include="Generic\UniqueIDCreator.cs" />
     <Compile Include="ICopy.cs" />
     <Compile Include="IDeepCopy.cs" />
+    <Compile Include="MathLib.cs" />
     <Compile Include="Notify\DispatchManager.cs" />
     <Compile Include="Notify\Interfaces\INotifier.cs" />
     <Compile Include="Notify\Interfaces\IObserver.cs" />
@@ -55,6 +58,11 @@
     <Compile Include="Pool\ObjectPool.cs" />
     <Compile Include="Pool\ObjectPool_Generic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Timer\HierarchicalTimerWheel.cs" />
+    <Compile Include="Timer\TimerExceptions.cs" />
+    <Compile Include="Timer\TimerInstance.cs" />
+    <Compile Include="Timer\TimerTask.cs" />
+    <Compile Include="Timer\TimerWheel.cs" />
     <Compile Include="Utilities\ArrayUtility.cs" />
     <Compile Include="Utilities\BitUtility.cs" />
     <Compile Include="Utilities\MathUtil.cs" />
