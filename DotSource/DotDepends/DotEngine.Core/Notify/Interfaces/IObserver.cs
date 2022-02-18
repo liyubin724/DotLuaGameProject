@@ -4,7 +4,7 @@
     {
         void OnActivate();
         string[] ListNotificationInterests();
-        void HandleNotification(INotification notification);
+        void HandleNotification(string notificationName, object body);
         void OnDeactivate();
     }
 }

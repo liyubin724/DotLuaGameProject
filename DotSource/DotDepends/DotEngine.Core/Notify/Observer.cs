@@ -18,7 +18,7 @@
         }
 
         public abstract string[] ListNotificationInterests();
-        public abstract void HandleNotification(INotification notification);
+        public abstract void HandleNotification(string notificationName,object body);
 
         public void OnDeactivate()
         {
