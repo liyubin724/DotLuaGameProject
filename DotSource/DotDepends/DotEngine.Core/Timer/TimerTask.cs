@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace DotEngine.Timer
+﻿namespace DotEngine.Timer
 {
     public enum TimerTaskCategory
     {
@@ -40,25 +38,25 @@ namespace DotEngine.Timer
             if(intervalInSec <=0 && totalInSec > 0)
             {
                 m_Category = TimerTaskCategory.End;
-                m_TotalInMS = Mathf.RoundToInt(totalInSec * 1000);
+                m_TotalInMS = MathLib.RoundToInt(totalInSec * 1000);
 
                 TriggerLeftInMS = m_TotalInMS;
             }else if(intervalInSec > 0 && totalInSec <= 0)
             {
                 m_Category = TimerTaskCategory.Interval;
-                m_IntervalInMS = Mathf.RoundToInt(intervalInSec * 1000);
+                m_IntervalInMS = MathLib.RoundToInt(intervalInSec * 1000);
 
                 TriggerLeftInMS = m_IntervalInMS;
             }else if(intervalInSec>0 && totalInSec > 0)
             {
                 m_Category = TimerTaskCategory.IntervalAndEnd;
-                m_IntervalInMS = Mathf.RoundToInt(intervalInSec * 1000);
-                m_TotalInMS = Mathf.RoundToInt(totalInSec * 1000);
+                m_IntervalInMS = MathLib.RoundToInt(intervalInSec * 1000);
+                m_TotalInMS = MathLib.RoundToInt(totalInSec * 1000);
 
                 TriggerLeftInMS = m_IntervalInMS;
             }else
             {
-                DebugLog.Error("Timer error");
+                throw new TimerException("Timer error");
             }
             m_OnIntervalEvent = intervalCallback;
             m_OnEndEvent = endCallback;
@@ -101,8 +99,7 @@ namespace DotEngine.Timer
                     }
                 }else
                 {
-                    DebugLog.Error("Timer error");
-                    return true;
+                    throw new TimerException("Timer error");
                 }
             }else
             {

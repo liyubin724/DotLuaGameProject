@@ -1,7 +1,6 @@
 ﻿using DotEngine.Generic;
 using DotEngine.Pool;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DotEngine.Timer
 {
@@ -12,8 +11,8 @@ namespace DotEngine.Timer
     /// </summary>
     public class HierarchicalTimerWheel
     {
-        private GenericObjectPool<TimerTask> m_TaskPool = null;
-        private UniqueIntIDCreator m_IndexCreator = new UniqueIntIDCreator();
+        private ObjectPool<TimerTask> m_TaskPool = null;
+        private IntIDCreator m_IndexCreator = new IntIDCreator();
 
         private TimerWheel m_LowLevelWheel = null;
         private TimerWheel[] m_Wheels = null;
@@ -38,7 +37,7 @@ namespace DotEngine.Timer
 
         public HierarchicalTimerWheel(TimerWheel[] wheels) 
         {
-            m_TaskPool = new GenericObjectPool<TimerTask>(() => new TimerTask(), null, (task) => task.Reset());
+            m_TaskPool = new ObjectPool<TimerTask>(() => new TimerTask(), null, (task) => task.Reset());
 
             if(wheels!=null && wheels.Length>0)
             {
@@ -62,7 +61,7 @@ namespace DotEngine.Timer
             TimerEventHandler endCallback,
             object userdata)
         {
-            int index = m_IndexCreator.NextID;
+            int index = m_IndexCreator.GetNextID();
 
             TimerTask task = m_TaskPool.Get();
             task.SetData(index, intervalInSec, totalInSec, intervalCallback, endCallback, userdata);
@@ -148,13 +147,13 @@ namespace DotEngine.Timer
 
         public void DoUpdate(float deltaTime)
         {
-            if(!m_IsPaused && m_Handlers.Count>0)
+            if(!m_IsPaused)
             {
-                m_ElapseInMS += Mathf.RoundToInt(deltaTime * 1000);
+                m_ElapseInMS += MathLib.RoundToInt(deltaTime * 1000);
 
                 if (m_ElapseInMS >= m_LowLevelWheel.TickInMS)
                 {
-                    int count = Mathf.FloorToInt(m_ElapseInMS / m_LowLevelWheel.TickInMS);
+                    int count = MathLib.FloorToInt(m_ElapseInMS / m_LowLevelWheel.TickInMS);
                     m_LowLevelWheel.DoPushWheel(count);
 
                     m_ElapseInMS %= m_LowLevelWheel.TickInMS;
@@ -177,8 +176,7 @@ namespace DotEngine.Timer
             int nextLevel = level + 1;
             if(nextLevel >= m_Wheels.Length)
             {
-                DebugLog.Error("Timer", "Timer Error");
-                return;
+                throw new TimerException("Timer Error");
             }
 
             m_Wheels[nextLevel].DoPushWheel(1);
@@ -216,8 +214,6 @@ namespace DotEngine.Timer
                 }
             }
         }
-
-
     }
 }
 

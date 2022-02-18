@@ -47,6 +47,7 @@
     <Compile Include="Generic\UniqueIDCreator.cs" />
     <Compile Include="ICopy.cs" />
     <Compile Include="IDeepCopy.cs" />
+    <Compile Include="MathLib.cs" />
     <Compile Include="Notify\DispatchManager.cs" />
     <Compile Include="Notify\Interfaces\INotifier.cs" />
     <Compile Include="Notify\Interfaces\IObserver.cs" />

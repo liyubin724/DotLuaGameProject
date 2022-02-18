@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Timer
 {
-    class TimerExceptions
+    public class TimerException : Exception
     {
+        public TimerException(string message) : base(message)
+        {
+
+        }
     }
 }
