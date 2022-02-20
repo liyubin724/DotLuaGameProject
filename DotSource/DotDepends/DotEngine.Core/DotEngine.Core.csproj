@@ -65,6 +65,7 @@
     <Compile Include="Timer\TimerWheel.cs" />
     <Compile Include="Utilities\ArrayUtility.cs" />
     <Compile Include="Utilities\BitUtility.cs" />
+    <Compile Include="Utilities\GuidUtility.cs" />
     <Compile Include="Utilities\MathUtil.cs" />
     <Compile Include="Utilities\ReflectionUtility.cs" />
     <Compile Include="Utilities\StringUtility.cs" />

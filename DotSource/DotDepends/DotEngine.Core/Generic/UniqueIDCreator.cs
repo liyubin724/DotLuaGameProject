@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DotEngine.Utilities;
+using System;
 
 namespace DotEngine.Generic
 {
@@ -8,27 +8,16 @@ namespace DotEngine.Generic
         T GetNextID();
     }
 
-    public class GUIDCreator : IUniqueIDCreator<string>
+    public class GuidCreator : IUniqueIDCreator<string>
     {
-        public static GUIDCreator Default = new GUIDCreator();
-
-        private Dictionary<string, bool> guidDic = new Dictionary<string, bool>();
-        public GUIDCreator()
+        public static GuidCreator Default = new GuidCreator();
+        public GuidCreator()
         {
         }
 
         public string GetNextID()
         {
-            Guid guid = Guid.NewGuid();
-            string strGuid = guid.ToString("N");
-            if (guidDic.ContainsKey(strGuid))
-            {
-                strGuid = GetNextID();
-            }
-
-            guidDic.Add(strGuid, true);
-
-            return strGuid;
+            return GuidUtility.CreateNew();
         }
     }
 
