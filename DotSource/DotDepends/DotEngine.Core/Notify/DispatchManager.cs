@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.Pool;
+using System;
 using System.Collections.Generic;
 
 namespace DotEngine.Notify
@@ -16,7 +17,7 @@ namespace DotEngine.Notify
 
         public static DispatchManager CreateMgr()
         {
-            if(manager == null)
+            if (manager == null)
             {
                 manager = new DispatchManager();
                 manager.OnInitilize();
@@ -26,7 +27,7 @@ namespace DotEngine.Notify
 
         public static void DestroyMgr()
         {
-            if(manager!=null)
+            if (manager != null)
             {
                 manager.OnDestroy();
                 manager = null;
@@ -34,10 +35,14 @@ namespace DotEngine.Notify
         }
 
         private readonly Dictionary<string, List<NotificationHandler>> observerDic = null;
+        private readonly Stack<string> notifyNameStack = null;
+        private readonly Dictionary<string, List<NotificationHandler>> waitingToUnregisterObserverDic = null;
 
         private DispatchManager()
         {
             observerDic = new Dictionary<string, List<NotificationHandler>>();
+            notifyNameStack = new Stack<string>();
+            waitingToUnregisterObserverDic = new Dictionary<string, List<NotificationHandler>>();
         }
 
         public void OnInitilize()
@@ -51,9 +56,9 @@ namespace DotEngine.Notify
 
         public void RegisterObserver(string notificationName, NotificationHandler notifyHanlder)
         {
-            if(!observerDic.TryGetValue(notificationName,out var handlers))
+            if (!observerDic.TryGetValue(notificationName, out var handlers))
             {
-                handlers = new List<NotificationHandler>();
+                handlers = ListPool<NotificationHandler>.Get();
                 observerDic.Add(notificationName, handlers);
             }
 
@@ -70,32 +75,107 @@ namespace DotEngine.Notify
         {
             if (observerDic.TryGetValue(notificationName, out var handlers))
             {
-                handlers.Remove(notifyHandler);
+                if (IsDispatching(notificationName))
+                {
+                    AddWaitingToUnregisterObserver(notificationName, notifyHandler);
+                }
+                else
+                {
+                    handlers.Remove(notifyHandler);
+
+                    if (handlers.Count == 0)
+                    {
+                        ListPool<NotificationHandler>.Release(handlers);
+                        observerDic.Remove(notificationName);
+                    }
+                }
             }
         }
 
         public void UnregisterObserver(string notificationName)
         {
-            if(observerDic.ContainsKey(notificationName))
+            if (observerDic.TryGetValue(notificationName, out var handlers))
             {
-                observerDic.Remove(notificationName);
+                if (IsDispatching(notificationName))
+                {
+                    foreach (var handler in handlers)
+                    {
+                        AddWaitingToUnregisterObserver(notificationName, handler);
+                    }
+                }
+                else
+                {
+                    ListPool<NotificationHandler>.Release(handlers);
+                    observerDic.Remove(notificationName);
+                }
             }
         }
 
-        public void Notify(string notificationName,object body = null)
+        public void Notify(string notificationName, object body = null)
         {
             if (observerDic.TryGetValue(notificationName, out var handlers))
             {
-                foreach (var handler in handlers)
+                notifyNameStack.Push(notificationName);
+                int index = 0;
+                while (index < handlers.Count)
                 {
-                    handler(notificationName,body);
+                    var handler = handlers[index];
+                    if (!waitingToUnregisterObserverDic.TryGetValue(notificationName, out var unvalidHandlers))
+                    {
+                        handler(notificationName, body);
+                    }
+                    else if (!unvalidHandlers.Contains(handler))
+                    {
+                        handler(notificationName, body);
+                    }
+
+                    ++index;
                 }
+                notifyNameStack.Pop();
+            }
+
+            if (!IsDispatching() && waitingToUnregisterObserverDic.Count > 0)
+            {
+                ClearWaitingUnregisterObserver();
             }
         }
 
         public void ClearAll()
         {
             observerDic.Clear();
+        }
+
+        private bool IsDispatching(string name)
+        {
+            return notifyNameStack.Contains(name);
+        }
+
+        private bool IsDispatching()
+        {
+            return notifyNameStack.Count > 0;
+        }
+
+        private void AddWaitingToUnregisterObserver(string notificationName, NotificationHandler notifyHandler)
+        {
+            if (!waitingToUnregisterObserverDic.TryGetValue(notificationName, out var unregisterObserverList))
+            {
+                unregisterObserverList = ListPool<NotificationHandler>.Get();
+                waitingToUnregisterObserverDic.Add(notificationName, unregisterObserverList);
+            }
+            unregisterObserverList.Add(notifyHandler);
+        }
+
+        private void ClearWaitingUnregisterObserver()
+        {
+            foreach (var kvp in waitingToUnregisterObserverDic)
+            {
+                foreach (var handler in kvp.Value)
+                {
+                    UnregisterObserver(kvp.Key, handler);
+                }
+                ListPool<NotificationHandler>.Release(kvp.Value);
+            }
+            waitingToUnregisterObserverDic.Clear();
         }
     }
 }
