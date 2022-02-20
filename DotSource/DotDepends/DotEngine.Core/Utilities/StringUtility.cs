@@ -112,5 +112,17 @@ namespace DotEngine.Utilities
             }
             return (hash & 0x7FFFFFFF);
         }
+
+        public static Guid ConvertToGuid(this string guidStr,string format = "N")
+        {
+            if (Guid.TryParseExact(guidStr, format, out var result))
+            {
+                return result;
+            }
+            else
+            {
+                return Guid.Empty;
+            }
+        }
     }
 }
