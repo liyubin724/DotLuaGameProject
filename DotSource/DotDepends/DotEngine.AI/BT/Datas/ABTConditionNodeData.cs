@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Datas
 {
-    public class BTDataIdentificationAttribute : Attribute
+    public abstract class ABTConditionNodeData : ABTNodeData
     {
     }
 }

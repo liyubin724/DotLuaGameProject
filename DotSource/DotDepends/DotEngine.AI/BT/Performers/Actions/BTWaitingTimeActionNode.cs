@@ -2,25 +2,26 @@
 
 namespace DotEngine.AI.BT
 {
-    public class BTWaitingFrameActionNode : ABTActionNode
+    public class BTWaitingTimeActionNode : ABTActionNode
     {
-        private BTWaitingFrameActionData actionData;
-        private int leftFrameCount = 0;
+        private BTWaitingTimeActionData actionData;
+        private float leftDuration = 0.0f;
 
         public override void DoEnter()
         {
             base.DoEnter();
             if(actionData == null)
             {
-                actionData = GetData<BTWaitingFrameActionData>();
+                actionData = GetNodeData<BTWaitingTimeActionData>();
             }
-            leftFrameCount = actionData.FrameCount;
+
+            leftDuration = actionData.Duration;
         }
 
         public override EBTResult DoExecute(float deltaTime)
         {
-            leftFrameCount--;
-            if(leftFrameCount>0)
+            leftDuration -= deltaTime;
+            if(leftDuration>=0)
             {
                 return EBTResult.Running;
             }
@@ -29,7 +30,7 @@ namespace DotEngine.AI.BT
 
         public override void DoExit()
         {
-            leftFrameCount = 0;
+            leftDuration = 0.0f;
 
             base.DoExit();
         }

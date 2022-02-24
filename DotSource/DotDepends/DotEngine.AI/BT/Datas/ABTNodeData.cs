@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Datas
 {
-
-    public class BTRootData : BTData
+    public class ABTNodeData
     {
-
+        public uint DataId;
+        public string Guid;
     }
 }

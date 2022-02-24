@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT.Datas
 {
-    public class BTWaitingFrameActionData : ABTActionNodeData
+    public class BTRateSelectorComposeData : BTSelectorComposeData
     {
-        public int Count;
+        public List<float> Rates = new List<float>();
     }
 }

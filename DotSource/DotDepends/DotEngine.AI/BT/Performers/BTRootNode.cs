@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT.Datas
+namespace DotEngine.AI.BT
 {
-    public class BTWaitingFrameActionData : ABTActionNodeData
+    public class BTRootNode : ABTNode
     {
-        public int Count;
+
     }
 }

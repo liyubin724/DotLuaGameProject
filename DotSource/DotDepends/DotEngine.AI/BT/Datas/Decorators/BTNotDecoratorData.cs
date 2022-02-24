@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Datas
 {
-    public class BTData
+    public class BTNotDecoratorData : BTDecoratorNodeData
     {
-        public uint TypeId;
-        public string Guid;
     }
 }

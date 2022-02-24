@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Datas
 {
-    public static class BTConst
+    public class BTLoopDecoratorData : BTDecoratorNodeData
     {
-
+        public int Count;
     }
 }

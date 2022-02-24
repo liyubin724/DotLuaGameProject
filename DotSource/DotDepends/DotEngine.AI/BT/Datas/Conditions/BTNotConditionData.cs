@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT
 {
-    public class BTRootNode
+    public class BTNotConditionData : BTConditionNodeData
     {
+        public BTConditionNodeData ConditionData;
     }
 }
