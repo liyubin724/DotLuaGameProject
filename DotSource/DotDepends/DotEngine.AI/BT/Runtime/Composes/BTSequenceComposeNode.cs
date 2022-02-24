@@ -23,7 +23,7 @@ namespace DotEngine.AI.BT
             throw new NotImplementedException();
         }
 
-        public override bool IsValid()
+        public override bool CanExecute()
         {
             throw new NotImplementedException();
         }

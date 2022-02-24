@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT
 {
-    public class BTData
+    public class BTAlwaysTrueConditionData : BTData
     {
     }
 }

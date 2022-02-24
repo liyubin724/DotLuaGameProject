@@ -7,16 +7,13 @@ namespace DotEngine.AI.BT
         private BTWaitingTimeActionData actionData;
         private float leftDuration = 0.0f;
 
-        public override void DoInitilize(BTData data)
-        {
-            base.DoInitilize(data);
-
-            actionData = GetData<BTWaitingTimeActionData>();
-        }
-
         public override void DoEnter()
         {
             base.DoEnter();
+            if(actionData == null)
+            {
+                actionData = GetData<BTWaitingTimeActionData>();
+            }
 
             leftDuration = actionData.Duration;
         }
@@ -31,12 +28,11 @@ namespace DotEngine.AI.BT
             return EBTResult.Success;
         }
 
-        public override void DoDestroy()
+        public override void DoExit()
         {
             leftDuration = 0.0f;
-            actionData = null;
 
-            base.DoDestroy();
+            base.DoExit();
         }
     }
 }

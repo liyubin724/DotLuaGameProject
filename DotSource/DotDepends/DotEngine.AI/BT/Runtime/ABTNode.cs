@@ -6,7 +6,6 @@
         protected BTContext Context => Controller?.Context;
 
         protected BTData Data { get; private set; }
-
         protected T GetData<T>() where T : BTData
         {
             return (T)Data;

@@ -7,16 +7,13 @@ namespace DotEngine.AI.BT
         private BTWaitingFrameActionData actionData;
         private int leftFrameCount = 0;
 
-        public override void DoInitilize(BTData data)
-        {
-            base.DoInitilize(data);
-            actionData = GetData<BTWaitingFrameActionData>();
-        }
-
         public override void DoEnter()
         {
             base.DoEnter();
-
+            if(actionData == null)
+            {
+                actionData = GetData<BTWaitingFrameActionData>();
+            }
             leftFrameCount = actionData.FrameCount;
         }
 
@@ -30,12 +27,11 @@ namespace DotEngine.AI.BT
             return EBTResult.Success;
         }
 
-        public override void DoDestroy()
+        public override void DoExit()
         {
             leftFrameCount = 0;
-            actionData = null;
 
-            base.DoDestroy();
+            base.DoExit();
         }
     }
 }

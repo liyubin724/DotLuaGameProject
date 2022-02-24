@@ -20,6 +20,23 @@ namespace DotEngine.AI.BT
         private bool isRunning = false;
         public bool IsRunning => isRunning;
 
+        private Stack<ABTExecutorNode> runningNodeStack = new Stack<ABTExecutorNode>();
+        internal void PushNode(ABTExecutorNode node)
+        {
+            runningNodeStack.Push(node);
+        }
+
+        internal void PopNode(ABTExecutorNode node)
+        {
+            var currentNode = runningNodeStack.Pop();
+            if(currentNode!=node)
+            {
+                throw new Exception();
+            }
+        }
+
+        private BTRootNode rootNode = null;
+
         public void DoInitilize()
         {
 
