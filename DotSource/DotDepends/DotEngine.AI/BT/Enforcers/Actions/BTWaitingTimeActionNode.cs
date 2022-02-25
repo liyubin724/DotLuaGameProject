@@ -15,7 +15,7 @@ namespace DotEngine.AI.BT
                 actionData = GetNodeData<BTWaitingTimeActionData>();
             }
 
-            leftDuration = actionData.Duration;
+            leftDuration = actionData.TimeDuration;
         }
 
         public override EBTResult DoExecute(float deltaTime)

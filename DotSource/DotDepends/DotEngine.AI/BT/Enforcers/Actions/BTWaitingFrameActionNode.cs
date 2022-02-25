@@ -14,7 +14,7 @@ namespace DotEngine.AI.BT
             {
                 actionData = GetNodeData<BTWaitingFrameActionData>();
             }
-            leftFrameCount = actionData.Count;
+            leftFrameCount = actionData.FrameCount;
         }
 
         public override EBTResult DoExecute(float deltaTime)

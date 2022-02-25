@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.AI.BT.Datas
 {
-    public class BTWaitingTimeActionData : BTActionNodeData
+    public class BTTimeLoopDecoratorData : BTDecoratorNodeData
     {
         public float TimeDuration;
     }

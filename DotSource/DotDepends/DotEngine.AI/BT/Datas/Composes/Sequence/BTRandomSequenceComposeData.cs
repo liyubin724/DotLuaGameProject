@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.AI.BT.Datas
 {
-    public class BTRandomSequenceComposeData : BTSequenceComposeData
+    public class BTRandomSequenceComposeData : BTComposeNodeData
     {
     }
 }

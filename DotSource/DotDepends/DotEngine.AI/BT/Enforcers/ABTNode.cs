@@ -7,13 +7,13 @@ namespace DotEngine.AI.BT
         internal BTController Controller { get; set; }
         protected BTContext Context => Controller?.Context;
 
-        protected ABTNodeData NodeData { get; private set; }
-        protected T GetNodeData<T>() where T : ABTNodeData
+        protected BTNodeData NodeData { get; private set; }
+        protected T GetNodeData<T>() where T : BTNodeData
         {
             return (T)NodeData;
         }
 
-        public virtual void DoInitilize(ABTNodeData nodeData)
+        public virtual void DoInitilize(BTNodeData nodeData)
         {
             NodeData = nodeData;
         }

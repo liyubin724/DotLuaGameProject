@@ -1,4 +1,4 @@
-﻿namespace DotEngine.AI.BT
+﻿namespace DotEngine.AI.BT.Datas
 {
     public enum EBTLogicalOperatorType
     {
@@ -9,7 +9,7 @@
     public class BTLogicalConditionData : BTConditionNodeData
     {
         public BTConditionNodeData LeftConditionData;
-        public BTConditionNodeData RightConditionData;
         public EBTLogicalOperatorType OperatorType = EBTLogicalOperatorType.And;
+        public BTConditionNodeData RightConditionData;
     }
 }

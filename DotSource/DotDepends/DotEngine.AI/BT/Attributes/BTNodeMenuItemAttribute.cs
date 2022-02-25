@@ -5,11 +5,13 @@ namespace DotEngine.AI.BT.Attributes
     [AttributeUsage(AttributeTargets.Class,AllowMultiple =false,Inherited =false)]
     public class BTNodeMenuItemAttribute : Attribute
     {
-        public string MenuPath { get; private set; }
+        public string Path { get; private set; }
+        public string Name { get; private set; }
         
-        public BTNodeMenuItemAttribute(string path)
+        public BTNodeMenuItemAttribute(string path,string name)
         {
-            MenuPath = path;
+            Path = path;
+            Name = name;
         }
     }
 }

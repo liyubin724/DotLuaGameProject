@@ -2,8 +2,8 @@
 
 namespace DotEngine.AI.BT.Datas
 {
-    public class BTRateSequenceComposeData : BTSequenceComposeData
+    public class BTRateSequenceComposeData : BTComposeNodeData
     {
-        public List<float> RateDatas = new List<float>();
+        public List<float> Rates = new List<float>();
     }
 }

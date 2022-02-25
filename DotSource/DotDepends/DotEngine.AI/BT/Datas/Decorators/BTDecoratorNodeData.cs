@@ -1,7 +1,7 @@
 ﻿namespace DotEngine.AI.BT.Datas
 {
-    public class BTDecoratorNodeData : ABTExecutorNodeData
+    public class BTDecoratorNodeData : BTExecutorNodeData
     {
-        public ABTExecutorNodeData ExecutorNodeData;
+        public BTExecutorNodeData ExecutorData;
     }
 }

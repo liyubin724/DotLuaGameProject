@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.AI.BT.Datas
 {
-    public class BTNotConditionData : BTConditionNodeData
+    public class BTExecutorNodeData : BTNodeData
     {
         public BTConditionNodeData ConditionData;
     }

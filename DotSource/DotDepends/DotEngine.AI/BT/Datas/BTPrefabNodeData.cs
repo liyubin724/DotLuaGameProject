@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT.Datas
 {
-    public class BTLoopDecoratorData : BTDecoratorNodeData
+    public class BTPrefabNodeData : BTNodeData
     {
-        public int Count;
+
     }
 }
