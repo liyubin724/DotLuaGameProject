@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT.Enforcers
 {
     public class BTController
     {
-        private BTContext context = new BTContext();
-        public BTContext Context
+        private BTBlackboard blackboard = new BTBlackboard();
+        public BTBlackboard Blackboard
         {
             get
             {
-                return context;
+                return blackboard;
             }
         }
 

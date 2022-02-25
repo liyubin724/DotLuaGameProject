@@ -5,7 +5,7 @@ namespace DotEngine.AI.BT.Enforcers
     public abstract class BTANode
     {
         public BTController Controller { get; private set; }
-        public BTContext Context => Controller?.Context;
+        public BTBlackboard Blackboard => Controller?.Blackboard;
 
         protected BTNodeData NodeData { get; private set; }
         protected T GetNodeData<T>() where T : BTNodeData

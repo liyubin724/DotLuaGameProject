@@ -2,6 +2,6 @@
 {
     public class BTExecutorNodeData : BTNodeData
     {
-        public BTConditionNodeData ConditionData;
+        public BTConditionNodeData PreconditionData;
     }
 }

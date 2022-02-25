@@ -2,7 +2,7 @@
 
 namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTContext : InjectStringContext
+    public class BTBlackboard : InjectStringContext
     {
     }
 }

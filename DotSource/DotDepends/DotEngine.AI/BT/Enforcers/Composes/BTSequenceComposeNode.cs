@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTSequenceComposeNode : ABTComposeNode
+    public class BTSequenceComposeNode : BTAComposeNode
     {
         public override void DoEnter()
         {

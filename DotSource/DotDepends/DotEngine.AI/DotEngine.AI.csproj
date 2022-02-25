@@ -54,7 +54,7 @@
     <Compile Include="BT\Datas\Composes\Parallel\BTParallelComposeData.cs" />
     <Compile Include="BT\Datas\Composes\Selector\BTRandomSelectorComposeData.cs" />
     <Compile Include="BT\Datas\Composes\Sequence\BTRandomSequenceComposeData.cs" />
-    <Compile Include="BT\Datas\Composes\Selector\BTRateSelectorComposeData.cs" />
+    <Compile Include="BT\Datas\Composes\Selector\BTWeightedSelectorComposeData.cs" />
     <Compile Include="BT\Datas\Composes\Sequence\BTRateSequenceComposeData.cs" />
     <Compile Include="BT\Datas\Composes\Sequence\BTIndexSequenceComposeData.cs" />
     <Compile Include="BT\Datas\BTConditionNodeData.cs" />
@@ -71,10 +71,12 @@
     <Compile Include="BT\Enforcers\Actions\BTWaitingTimeActionNode.cs" />
     <Compile Include="BT\Datas\BTNodeData.cs" />
     <Compile Include="BT\Enforcers\Actions\BTAActionNode.cs" />
-    <Compile Include="BT\Enforcers\BTContext.cs" />
+    <Compile Include="BT\Enforcers\BTBlackboard.cs" />
     <Compile Include="BT\Enforcers\BTController.cs" />
     <Compile Include="BT\Enforcers\BTRootNode.cs" />
     <Compile Include="BT\Enforcers\Composes\BTSequenceComposeNode.cs" />
+    <Compile Include="BT\Enforcers\Composes\Parallel\BTParallelComposeNode.cs" />
+    <Compile Include="BT\Enforcers\Composes\Sequence\BTIndexSequenceComposeNode.cs" />
     <Compile Include="BT\Enforcers\Conditions\BTConstConditionNode.cs" />
     <Compile Include="BT\Enforcers\Conditions\BTLogicalConditionNode.cs" />
     <Compile Include="BT\Enforcers\Conditions\BTNotConditionNode.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="BT\Enforcers\Decorators\BTTimeLoopDecoratorNode.cs" />
     <Compile Include="BT\Enforcers\EBTResult.cs" />
     <Compile Include="BT\Enforcers\Actions\BTWaitingFrameActionNode.cs" />
-    <Compile Include="BT\Enforcers\Composes\ABTComposeNode.cs" />
+    <Compile Include="BT\Enforcers\Composes\BTAComposeNode.cs" />
     <Compile Include="BT\Enforcers\BTAConditionNode.cs" />
     <Compile Include="BT\Enforcers\Decorators\BTADecoratorNode.cs" />
     <Compile Include="BT\Enforcers\BTAExecutorNode.cs" />

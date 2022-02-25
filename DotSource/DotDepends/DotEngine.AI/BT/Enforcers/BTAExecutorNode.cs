@@ -5,14 +5,14 @@ namespace DotEngine.AI.BT.Enforcers
     public abstract class BTAExecutorNode : BTANode
     {
         protected BTExecutorNodeData ExecutorData { get; private set; }
-        protected BTAConditionNode ConditionNode { get; set; }
+        protected BTAConditionNode PreconditionNode { get; set; }
 
         public override void DoInitilize(BTController controller, BTNodeData data)
         {
             base.DoInitilize(controller, data);
             ExecutorData = data as BTExecutorNodeData;
 
-            if(ExecutorData!=null && ExecutorData.ConditionData!=null)
+            if(ExecutorData!=null && ExecutorData.PreconditionData!=null)
             {
 
             }
@@ -20,7 +20,7 @@ namespace DotEngine.AI.BT.Enforcers
 
         public virtual bool CanExecute()
         {
-            return ConditionNode == null ? true : ConditionNode.IsMeet();
+            return PreconditionNode == null ? true : PreconditionNode.IsMeet();
         }
 
         public virtual void DoEnter()
@@ -37,7 +37,7 @@ namespace DotEngine.AI.BT.Enforcers
 
         public override void DoDestroy()
         {
-            ConditionNode = null;
+            PreconditionNode = null;
             ExecutorData = null;
             base.DoDestroy();
         }
