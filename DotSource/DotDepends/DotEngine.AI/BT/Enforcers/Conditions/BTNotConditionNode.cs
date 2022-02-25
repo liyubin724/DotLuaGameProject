@@ -1,12 +1,31 @@
-﻿namespace DotEngine.AI.BT
+﻿using DotEngine.AI.BT.Datas;
+
+namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTNotConditionNode : ABTConditionNode
+    public class BTNotConditionNode : BTAConditionNode
     {
-        public ABTConditionNode ConditionNode;
+        private BTAConditionNode conditionNode;
+
+        public override void DoInitilize(BTController controller, BTNodeData data)
+        {
+            base.DoInitilize(controller, data);
+        }
 
         public override bool IsMeet()
         {
-            return !(ConditionNode == null ? false : ConditionNode.IsMeet());
+            if(ConditionData == null)
+            {
+                return false;
+            }
+
+            return conditionNode.IsMeet();
+        }
+
+        public override void DoDestroy()
+        {
+            conditionNode = null;
+
+            base.DoDestroy();
         }
     }
 }

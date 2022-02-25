@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Enforcers
 {
-    public abstract class ABTComposeNode : ABTExecutorNode
+    public abstract class ABTComposeNode : BTAExecutorNode
     {
-        protected List<ABTExecutorNode> nodes = new List<ABTExecutorNode>();
+        protected List<BTAExecutorNode> nodes = new List<BTAExecutorNode>();
 
 
     }

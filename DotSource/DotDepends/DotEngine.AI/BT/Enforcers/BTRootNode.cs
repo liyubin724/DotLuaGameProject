@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTRootNode : ABTNode
+    public class BTRootNode : BTANode
     {
 
     }

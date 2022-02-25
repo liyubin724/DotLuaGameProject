@@ -1,4 +1,4 @@
-﻿namespace DotEngine.AI.BT
+﻿namespace DotEngine.AI.BT.Enforcers
 {
     public enum EBTResult
     {

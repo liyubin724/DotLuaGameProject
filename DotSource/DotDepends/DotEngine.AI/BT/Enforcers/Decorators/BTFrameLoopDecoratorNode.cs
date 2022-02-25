@@ -2,25 +2,27 @@
 
 namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTWaitingFrameActionNode : BTAActionNode
+    public class BTFrameLoopDecoratorNode : BTADecoratorNode
     {
         private int leftFrameCount = 0;
 
         public override void DoEnter()
         {
             base.DoEnter();
-
-            leftFrameCount = !(ActionData is BTWaitingFrameActionData data) ? 0 : data.FrameCount;
+            leftFrameCount = !(DecoratorData is BTFrameLoopDecoratorData data) ? 0 : data.FrameCount;
         }
 
         public override EBTResult DoExecute(float deltaTime)
         {
-            leftFrameCount--;
-            if(leftFrameCount>0)
+
+            --leftFrameCount;
+            ExecutorNode?.DoExecute(deltaTime);
+
+            if (leftFrameCount <= 0)
             {
-                return EBTResult.Running;
+                return EBTResult.Success;
             }
-            return EBTResult.Success;
+            return EBTResult.Running;
         }
 
         public override void DoExit()

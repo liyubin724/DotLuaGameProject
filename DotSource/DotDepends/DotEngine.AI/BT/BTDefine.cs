@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DotEngine.AI.BT
 {
-    public abstract class ABTDecoratorNode : ABTExecutorNode
+    public static class BTDefine
     {
+
     }
 }

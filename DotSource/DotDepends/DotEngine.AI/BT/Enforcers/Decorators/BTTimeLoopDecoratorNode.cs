@@ -2,25 +2,26 @@
 
 namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTWaitingTimeActionNode : BTAActionNode
+    public class BTTimeLoopDecoratorNode : BTADecoratorNode
     {
         private float leftTimeDuration = 0.0f;
 
         public override void DoEnter()
         {
             base.DoEnter();
-
-            leftTimeDuration = !(ActionData is BTWaitingTimeActionData data) ? 0 : data.TimeDuration;
+            leftTimeDuration = !(DecoratorData is BTTimeLoopDecoratorData data) ? 0 : data.TimeDuration;
         }
 
         public override EBTResult DoExecute(float deltaTime)
         {
             leftTimeDuration -= deltaTime;
-            if(leftTimeDuration>=0)
+            ExecutorNode?.DoExecute(deltaTime);
+
+            if(leftTimeDuration <= 0)
             {
-                return EBTResult.Running;
+                return EBTResult.Success;
             }
-            return EBTResult.Success;
+            return EBTResult.Running;
         }
 
         public override void DoExit()

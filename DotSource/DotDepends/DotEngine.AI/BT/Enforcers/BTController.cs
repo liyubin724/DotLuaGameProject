@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotEngine.AI.BT
+namespace DotEngine.AI.BT.Enforcers
 {
     public class BTController
     {
@@ -20,13 +20,13 @@ namespace DotEngine.AI.BT
         private bool isRunning = false;
         public bool IsRunning => isRunning;
 
-        private Stack<ABTExecutorNode> runningNodeStack = new Stack<ABTExecutorNode>();
-        internal void PushNode(ABTExecutorNode node)
+        private Stack<BTAExecutorNode> runningNodeStack = new Stack<BTAExecutorNode>();
+        internal void PushNode(BTAExecutorNode node)
         {
             runningNodeStack.Push(node);
         }
 
-        internal void PopNode(ABTExecutorNode node)
+        internal void PopNode(BTAExecutorNode node)
         {
             var currentNode = runningNodeStack.Pop();
             if(currentNode!=node)
