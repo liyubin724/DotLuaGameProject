@@ -20,4 +20,43 @@ namespace DotEngine.Pool
             sm_ListPool.Release(list);
         }
     }
+
+    public static class StringListPool
+    {
+        public static List<string> Get()
+        {
+            return ListPool<string>.Get();
+        }
+
+        public static void Release(List<string> list)
+        {
+            ListPool<string>.Release(list);
+        }
+    }
+
+    public static class FloatListPool
+    {
+        public static List<float> Get()
+        {
+            return ListPool<float>.Get();
+        }
+
+        public static void Release(List<float> list)
+        {
+            ListPool<float>.Release(list);
+        }
+    }
+
+    public static class IntListPool
+    {
+        public static List<int> Get()
+        {
+            return ListPool<int>.Get();
+        }
+
+        public static void Release(List<int> list)
+        {
+            ListPool<int>.Release(list);
+        }
+    }
 }
