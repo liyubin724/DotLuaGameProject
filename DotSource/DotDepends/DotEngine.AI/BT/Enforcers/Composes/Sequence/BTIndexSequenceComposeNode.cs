@@ -1,48 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DotEngine.AI.BT.Enforcers
+﻿namespace DotEngine.AI.BT.Enforcers
 {
-    public class BTIndexSequenceComposeNode : BTAComposeNode
+    public class BTIndexSequenceComposeNode : BTASequenceComposeNode
     {
-        private int currentIndex = 0;
-
-        public override void DoEnter()
+        protected override void OnIndexRealign()
         {
-            base.DoEnter();
-            currentIndex = 0;
-        }
-
-        public override EBTResult DoExecute(float deltaTime)
-        {
-            for(int i =currentIndex;i<ExecutorNodes.Count;i++)
+            for(int i =0;i<ExecutorNodes.Count;i++)
             {
-                var node = ExecutorNodes[i];
-                if(!node.CanExecute())
-                {
-                    return EBTResult.Faiture;
-                }
-                Controller?.PushNode(node);
-                var result = node.DoExecute(deltaTime);
-                if(result!=EBTResult.Running)
-                {
-                    Controller.PopNode(node);
-                }
-                else
-                {
-                    return EBTResult.Running;
-                }
+                sortedIndexes.Add(i);
             }
-            return EBTResult.Success;
-        }
-
-        public override void DoExit()
-        {
-            currentIndex = 0;
-            base.DoExit();
         }
     }
 }

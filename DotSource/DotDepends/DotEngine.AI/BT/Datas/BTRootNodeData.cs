@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.AI.BT.Datas
 {
-    public class BTRootNodeData : BTNodeData
+    public class BTRootNodeData : BTExecutorNodeData
     {
         public BTExecutorNodeData ExecutorNodeData;
     }

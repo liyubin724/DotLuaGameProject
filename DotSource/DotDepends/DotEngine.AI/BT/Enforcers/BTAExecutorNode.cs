@@ -6,6 +6,7 @@ namespace DotEngine.AI.BT.Enforcers
     {
         protected BTExecutorNodeData ExecutorData { get; private set; }
         protected BTAConditionNode PreconditionNode { get; set; }
+        public bool IsRunning { get; set; } = false;
 
         public override void DoInitilize(BTController controller, BTNodeData data)
         {
@@ -26,6 +27,7 @@ namespace DotEngine.AI.BT.Enforcers
         public virtual void DoEnter()
         {
             Controller?.PushNode(this);
+            IsRunning = true;
         }
 
         public abstract EBTResult DoExecute(float deltaTime);
@@ -33,6 +35,7 @@ namespace DotEngine.AI.BT.Enforcers
         public virtual void DoExit()
         {
             Controller?.PopNode(this);
+            IsRunning = false;
         }
 
         public override void DoDestroy()
