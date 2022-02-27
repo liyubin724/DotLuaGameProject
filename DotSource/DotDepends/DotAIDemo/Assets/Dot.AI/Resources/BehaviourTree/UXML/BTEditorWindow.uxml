@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="mainContainer">
+        <ui:VisualElement name="headerContainer" pickingMode="Ignore" style="height:21;width:auto">
+            <uie:Toolbar>
+                <uie:ToolbarButton name="openButton" text="Open" />
+                <uie:ToolbarButton name="newButton" text="New" />
+                <uie:ToolbarButton name="saveButton" text="Save" />
+            </uie:Toolbar>
+        </ui:VisualElement>
+        <ui:VisualElement name="graphViewContainer"/>
+    </ui:VisualElement>
+</ui:UXML>

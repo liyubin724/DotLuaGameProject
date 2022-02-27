@@ -29,6 +29,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.AI", "DotDepends\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Injection", "DotDepends\DotEngine.Injection\DotEngine.Injection.csproj", "{91731A7E-906E-47F2-8589-280605C88C43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEditor.AI", "DotDepends\DotEditor.AI\DotEditor.AI.csproj", "{C9583F08-1A96-45A3-8C87-C2E8630E0875}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4FC32B27-C564-4C31-9D99-1EAB72B0C3F3}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +78,10 @@ Global
 		{91731A7E-906E-47F2-8589-280605C88C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91731A7E-906E-47F2-8589-280605C88C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91731A7E-906E-47F2-8589-280605C88C43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9583F08-1A96-45A3-8C87-C2E8630E0875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9583F08-1A96-45A3-8C87-C2E8630E0875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9583F08-1A96-45A3-8C87-C2E8630E0875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9583F08-1A96-45A3-8C87-C2E8630E0875}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +96,7 @@ Global
 		{3B63D16A-95FE-4E4B-AF72-4AB062900D57} = {0773A1C8-C9CF-4F99-BF11-4D25CFBEC2EC}
 		{7B008B81-B281-43EB-9D00-D35EEE49FCEB} = {0773A1C8-C9CF-4F99-BF11-4D25CFBEC2EC}
 		{91731A7E-906E-47F2-8589-280605C88C43} = {0773A1C8-C9CF-4F99-BF11-4D25CFBEC2EC}
+		{C9583F08-1A96-45A3-8C87-C2E8630E0875} = {0773A1C8-C9CF-4F99-BF11-4D25CFBEC2EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9006B8A1-C1A9-4AF1-90FF-B54E8A33073B}
