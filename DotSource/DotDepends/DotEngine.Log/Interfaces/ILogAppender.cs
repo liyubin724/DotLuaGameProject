@@ -9,7 +9,7 @@ namespace DotEngine.Log
         ILogFormatter Formatter { get; set; }
 
         void DoInitialize();
-        void DoReceive(string tag, LogLevel level, string message);
+        void DoReceive(string tag, LogLevel level, string message, string stacktrace);
         void DoDestroy();
     }
 }

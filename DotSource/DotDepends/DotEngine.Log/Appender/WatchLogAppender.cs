@@ -6,15 +6,19 @@ namespace DotEngine.Log
     {
         public const string NAME = "WatchLogAppender";
 
-        public event Action<string, LogLevel, string> HandLogEvent;
+        private Action<string, LogLevel, string, string> handlerAction;
 
-        public WatchLogAppender(ILogFormatter formatter = null):base(NAME,formatter)
+        public WatchLogAppender(
+            Action<string, LogLevel, string, string> handler,
+            string name = NAME,
+            ILogFormatter formatter = null) : base(NAME, formatter)
         {
+            handlerAction = handler;
         }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage)
+        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage, string stacktrace)
         {
-            HandLogEvent?.Invoke(tag, level, formattedMessage);
+            handlerAction?.Invoke(tag, level, formattedMessage, stacktrace);
         }
     }
 }

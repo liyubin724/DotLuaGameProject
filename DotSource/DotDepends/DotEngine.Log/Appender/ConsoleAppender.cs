@@ -4,14 +4,19 @@ namespace DotEngine.Log
 {
     public class ConsoleAppender : LogAppender
     {
-        public static readonly string NAME = "Console";
+        public const string NAME = "Console";
 
-        public ConsoleAppender() : base(NAME)
+        public ConsoleAppender(string name = NAME) : base(name)
         { }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage)
+        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage, string stacktrace)
         {
-            Console.WriteLine(formattedMessage);
+            string message = formattedMessage;
+            if(!string.IsNullOrEmpty(stacktrace))
+            {
+                message = $"{formattedMessage}{Environment.NewLine}{stacktrace}";
+            }
+            Console.WriteLine(message);
         }
     }
 }

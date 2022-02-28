@@ -96,9 +96,10 @@ namespace DotEngine.Log
         {
             if ((ValidLogLevel & logLevel) > 0)
             {
+                string stackTrace = string.Empty;
                 if ((StacktraceLogLevel & logLevel) > 0)
                 {
-                    message += Environment.NewLine + new StackTrace(4, true).ToString();
+                    stackTrace = new StackTrace(4, true).ToString();
                 }
 
                 foreach (var kvp in appenderDic)
@@ -106,7 +107,7 @@ namespace DotEngine.Log
                     ILogAppender appender = kvp.Value;
                     if ((appender.Level & logLevel) > 0)
                     {
-                        appender.DoReceive(tag, logLevel, message);
+                        appender.DoReceive(tag, logLevel, message, stackTrace);
                     }
                 }
             }

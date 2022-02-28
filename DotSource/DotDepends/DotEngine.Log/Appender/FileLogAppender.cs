@@ -8,7 +8,7 @@ namespace DotEngine.Log
 {
     public class FileLogAppender : LogAppender
     {
-        public static readonly string NAME = "FileAppender";
+        public const string NAME = "FileAppender";
 
         private int forceFlushCount = 1;
         public int ForceFlushCount
@@ -40,7 +40,7 @@ namespace DotEngine.Log
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         private string outputFileName = null;
 
-        public FileLogAppender(string fileDir = null, ILogFormatter formatter = null) : base(NAME, formatter)
+        public FileLogAppender(string fileDir = null, string name = NAME, ILogFormatter formatter = null) : base(name, formatter)
         {
             outputDir = fileDir;
         }
@@ -128,9 +128,14 @@ namespace DotEngine.Log
             tokenSource.Cancel();
         }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage)
+        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage, string stacktrace)
         {
-            cachedLogs.Enqueue(formattedMessage);
+            string message = formattedMessage;
+            if (!string.IsNullOrEmpty(stacktrace))
+            {
+                message = $"{formattedMessage}{Environment.NewLine}{stacktrace}";
+            }
+            cachedLogs.Enqueue(message);
         }
     }
 }

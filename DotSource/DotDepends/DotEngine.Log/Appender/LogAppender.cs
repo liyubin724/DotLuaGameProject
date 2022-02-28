@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DotEngine.Log
+﻿namespace DotEngine.Log
 {
     public abstract class LogAppender : ILogAppender
     {
@@ -18,16 +16,16 @@ namespace DotEngine.Log
         {
         }
 
-        public void DoReceive(string tag, LogLevel level,string message)
+        public void DoReceive(string tag, LogLevel level, string message, string stacktrace)
         {
-            if((Level & level) > 0)
+            if ((Level & level) > 0)
             {
                 string fMessage = Formatter.FormatMessage(tag, level, message);
-                OutputMessage(tag, level, fMessage);
+                OutputMessage(tag, level, fMessage, stacktrace);
             }
         }
 
-        protected abstract void OutputMessage(string tag, LogLevel level, string formattedMessage);
+        protected abstract void OutputMessage(string tag, LogLevel level, string formattedMessage, string stacktrace);
 
         public virtual void DoDestroy()
         {
