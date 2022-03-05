@@ -47,7 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="LogData.cs" />
+    <Compile Include="LogViewWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -57,4 +58,9 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
+copy $(TargetDir)$(TargetName).pdb $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
