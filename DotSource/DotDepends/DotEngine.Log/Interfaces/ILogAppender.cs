@@ -5,11 +5,10 @@ namespace DotEngine.Log
     public interface ILogAppender
     {
         string Name { get; }
-        LogLevel Level { get; set; }
-        ILogFormatter Formatter { get; set; }
+        LogLevel AliveLevel { get; set; }
 
         void DoInitialize();
-        void DoReceive(string tag, LogLevel level, string message, string stacktrace);
+        void DoReceive(DateTime time, string tag, LogLevel level, string message, string stacktree);
         void DoDestroy();
     }
 }

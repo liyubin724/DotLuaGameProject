@@ -73,11 +73,6 @@ namespace DotEngine.Log
             return logger;
         }
 
-        public bool HasAppender(string name)
-        {
-            return appenderDic.ContainsKey(name);
-        }
-
         public void AddAppender(ILogAppender appender)
         {
             string name = appender.Name;
@@ -101,18 +96,18 @@ namespace DotEngine.Log
         {
             if ((ValidLogLevel & logLevel) > 0)
             {
-                string stackTrace = string.Empty;
+                string stacktree = string.Empty;
                 if ((StacktraceLogLevel & logLevel) > 0)
                 {
-                    stackTrace = new StackTrace(4, true).ToString();
+                    stacktree = new StackTrace(4, true).ToString();
                 }
 
                 foreach (var kvp in appenderDic)
                 {
                     ILogAppender appender = kvp.Value;
-                    if ((appender.Level & logLevel) > 0)
+                    if ((appender.AliveLevel & logLevel) > 0)
                     {
-                        appender.DoReceive(tag, logLevel, message, stackTrace);
+                        appender.DoReceive(DateTime.Now, tag, logLevel, message, stacktree);
                     }
                 }
             }

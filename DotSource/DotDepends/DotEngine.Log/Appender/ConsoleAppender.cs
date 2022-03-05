@@ -2,20 +2,15 @@
 
 namespace DotEngine.Log
 {
-    public class ConsoleAppender : LogAppender
+    public class ConsoleAppender : AFormatLogAppender
     {
         public const string NAME = "Console";
 
-        public ConsoleAppender(string name = NAME) : base(name)
+        public ConsoleAppender(string name = NAME, ILogFormatter formatter = null) : base(name, formatter)
         { }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage, string stacktrace)
+        protected override void OutputFormattedMessage(string message)
         {
-            string message = formattedMessage;
-            if(!string.IsNullOrEmpty(stacktrace))
-            {
-                message = $"{formattedMessage}{Environment.NewLine}{stacktrace}";
-            }
             Console.WriteLine(message);
         }
     }
