@@ -2,16 +2,16 @@
 
 namespace DotEngine.Log
 {
-    public class ConsoleAppender : LogAppender
+    public class ConsoleAppender : AFormatLogAppender
     {
-        public static readonly string NAME = "Console";
+        public const string NAME = "Console";
 
-        public ConsoleAppender() : base(NAME)
+        public ConsoleAppender(string name = NAME, ILogFormatter formatter = null) : base(name, formatter)
         { }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage)
+        protected override void OutputFormattedMessage(string message)
         {
-            Console.WriteLine(formattedMessage);
+            Console.WriteLine(message);
         }
     }
 }

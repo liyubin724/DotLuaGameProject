@@ -2,7 +2,7 @@
 
 namespace DotEngine.Log
 {
-    public class UnityConsoleAppender : LogAppender
+    public class UnityConsoleAppender : ALogAppender
     {
         public static readonly string NAME = "UnityConsoleAppender";
         public UnityConsoleAppender(ILogFormatter formatter = null) : base(NAME, formatter)

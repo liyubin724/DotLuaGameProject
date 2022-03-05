@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Log
 {
-    public class FileLogAppender : LogAppender
+    public class FileAppender : AFormatLogAppender
     {
-        public static readonly string NAME = "FileAppender";
+        public const string NAME = "FileAppender";
 
         private int forceFlushCount = 1;
         public int ForceFlushCount
@@ -40,12 +40,12 @@ namespace DotEngine.Log
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         private string outputFileName = null;
 
-        public FileLogAppender(string fileDir = null, ILogFormatter formatter = null) : base(NAME, formatter)
+        public FileAppender(string fileDir = null, string name = NAME, ILogFormatter formatter = null) : base(name, formatter)
         {
             outputDir = fileDir;
         }
 
-        ~FileLogAppender()
+        ~FileAppender()
         {
             tokenSource.Cancel();
         }
@@ -128,9 +128,9 @@ namespace DotEngine.Log
             tokenSource.Cancel();
         }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage)
+        protected override void OutputFormattedMessage(string message)
         {
-            cachedLogs.Enqueue(formattedMessage);
+            cachedLogs.Enqueue(message);
         }
     }
 }

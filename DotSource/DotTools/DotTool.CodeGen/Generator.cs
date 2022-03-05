@@ -14,7 +14,7 @@ namespace DotTools.CodeGen
         {
             LogManager.CreateMgr();
             LogManager.GetInstance().AddAppender(new ConsoleAppender());
-            LogManager.GetInstance().AddAppender(new FileLogAppender());
+            LogManager.GetInstance().AddAppender(new FileAppender());
 
             LuaEnv luaEnv = new LuaEnv();
 
