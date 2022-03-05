@@ -46,10 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Appender\WatchLogAppender.cs" />
-    <Compile Include="Appender\LogAppender.cs" />
+    <Compile Include="Appender\AFormatLogAppender.cs" />
+    <Compile Include="Appender\WatcherAppender.cs" />
+    <Compile Include="Appender\ALogAppender.cs" />
     <Compile Include="Appender\ConsoleAppender.cs" />
-    <Compile Include="Appender\FileLogAppender.cs" />
+    <Compile Include="Appender\FileAppender.cs" />
     <Compile Include="Formatter\DefaultLogFormatter.cs" />
     <Compile Include="Interfaces\ILogAppender.cs" />
     <Compile Include="Interfaces\ILogFormatter.cs" />
