@@ -48,7 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogData.cs" />
-    <Compile Include="LogViewWindow.cs" />
+    <Compile Include="LogItemViewer.cs" />
+    <Compile Include="LogViewerWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

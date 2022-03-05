@@ -73,6 +73,11 @@ namespace DotEngine.Log
             return logger;
         }
 
+        public bool HasAppender(string name)
+        {
+            return appenderDic.ContainsKey(name);
+        }
+
         public void AddAppender(ILogAppender appender)
         {
             string name = appender.Name;
