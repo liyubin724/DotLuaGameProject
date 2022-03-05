@@ -6,13 +6,13 @@ namespace DotEngine.AI.BT.Attributes
     public class BTNodeIdentificationAttribute : Attribute
     {
         public uint DataId { get; private set; }
-        public string Name { get; private set; }
+        public string DisplayName { get; private set; }
         public string Tooltips { get; set; } = string.Empty;
 
-        public BTNodeIdentificationAttribute(uint dataId, string name)
+        public BTNodeIdentificationAttribute(uint dataId, string dispalyName)
         {
             DataId = dataId;
-            Name = name;
+            DisplayName = dispalyName;
         }
     }
 }

@@ -8,6 +8,12 @@ using UnityEditor.Experimental.GraphView;
 
 namespace DotEditor.AI.BT
 {
+    public enum BTEPortLinkDirection
+    {
+        Parent = 0,
+        Child,
+    }
+
     public class BTNodeView : Node
     {
         public BTGraphView GraphView { get; private set; }
@@ -16,7 +22,24 @@ namespace DotEditor.AI.BT
         {
             GraphView = graphView;
             NodeData = nodeData;
+
+            Type dataType = nodeData.GetType();
+            title = dataType.Name;
+
+
         }
 
+
+        public void CreatePort(BTEPortLinkDirection linkDirection)
+        {
+            var direction = Direction.Input;
+            var container = inputContainer;
+            if(linkDirection == BTEPortLinkDirection.Child)
+            {
+                direction = Direction.Output;
+                container = outputContainer;
+            }
+
+        }
     }
 }
