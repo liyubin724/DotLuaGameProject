@@ -60,8 +60,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
-copy $(TargetDir)$(TargetName).pdb $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
+    <PostBuildEvent>$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)$(TargetName).dll
+$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.Log.dll
+copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
+copy $(TargetDir)$(TargetName).dll.mdb $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
+copy $(TargetDir)DotEngine.Log.dll $(ProjectDir)..\DotLogDemo\Assets\Dot.Log
+copy $(TargetDir)DotEngine.Log.dll.mdb $(ProjectDir)..\DotLogDemo\Assets\Dot.Log
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
