@@ -92,6 +92,7 @@ namespace DotEditor.Log
                 ToolbarButton clearBtn = new ToolbarButton(() =>
                 {
                     logDatas.Clear();
+                    searchedLogDatas.Clear();
                     contentListView.Refresh();
                 });
                 clearBtn.text = "Clear";
@@ -139,6 +140,13 @@ namespace DotEditor.Log
                     UpdateSearchedDatas();
                 });
                 toolbar.Add(searchField);
+
+                EnumFlagsField levelFlagsField = new EnumFlagsField(watcherAppender.AliveLevel);
+                levelFlagsField.RegisterValueChangedCallback((callback) =>
+                {
+                    watcherAppender.AliveLevel = (LogLevel)callback.newValue;
+                });
+                toolbar.Add(levelFlagsField);
             };
             rootVisualElement.Add(toolbar);
         }
@@ -158,7 +166,7 @@ namespace DotEditor.Log
             };
             contentListView.bindItem = (itemViewer, itemIndex) =>
             {
-                LogData data = logDatas[itemIndex];
+                LogData data = contentListView.itemsSource[itemIndex] as LogData;
                 (itemViewer as LogItemViewer).SetItemData(data);
             };
             contentListView.onSelectionChange += (selectedEnumerable) =>
