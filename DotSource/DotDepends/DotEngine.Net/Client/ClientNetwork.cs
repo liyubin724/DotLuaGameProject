@@ -1,4 +1,5 @@
 ﻿using NetCoreServer;
+using System;
 using System.Net;
 
 namespace DotEngine.Net
@@ -6,15 +7,13 @@ namespace DotEngine.Net
     public enum ClientNetworkState
     {
         Unreachable = 0,
-        Connecting,
         Connected,
-        Disconnecting,
         Disconnected,
         Error,
     }
 
-    public delegate void ClientNetworkStateChanged(ClientNetwork client, ClientNetworkState prevState, ClientNetworkState curState);
-    public delegate void ClientNetworkDataReceived(ClientNetwork client, byte[] msgBytes);
+    public delegate void ClientNetworkStateChanged();
+    public delegate void ClientNetworkDataReceived(byte[] msgBytes);
 
     public class ClientNetwork : TcpClient
     {
@@ -27,7 +26,10 @@ namespace DotEngine.Net
 
         public int ReadCountAtOnce { get; set; } = -1;
 
-        public ClientNetworkStateChanged OnStateChanged;
+        public ClientNetworkStateChanged OnNetConnected;
+        public ClientNetworkStateChanged OnNetDisconnected;
+        public ClientNetworkStateChanged OnNetError;
+
         public ClientNetworkDataReceived OnDataReceived;
 
         public ClientNetwork(string address, int port) : base(new IPEndPoint(IPAddress.Parse(address), port))
@@ -40,7 +42,18 @@ namespace DotEngine.Net
             {
                 if (prevState != currState)
                 {
-                    OnStateChanged?.Invoke(this, prevState, currState);
+                    if (currState == ClientNetworkState.Connected)
+                    {
+                        OnNetConnected?.Invoke();
+                    }
+                    else if (currState == ClientNetworkState.Disconnected)
+                    {
+                        OnNetDisconnected?.Invoke();
+                    }
+                    else if (currState == ClientNetworkState.Error)
+                    {
+                        OnNetError?.Invoke();
+                    }
                     prevState = currState;
                 }
             }
@@ -53,7 +66,7 @@ namespace DotEngine.Net
                     byte[] dataBytes = dataBuffer.ReadMessage();
                     while (dataBytes != null && (index < 0 || index < ReadCountAtOnce))
                     {
-                        OnDataReceived?.Invoke(this, dataBytes);
+                        OnDataReceived?.Invoke(dataBytes);
                         dataBytes = dataBuffer.ReadMessage();
                         index++;
                     }
@@ -61,40 +74,71 @@ namespace DotEngine.Net
             }
         }
 
-        public override bool Connect()
+        public override long Send(byte[] buffer, long offset, long size)
         {
-            lock (stateLocker)
+            if (buffer == null || buffer.Length - offset < size || size < 0)
             {
-                currState = ClientNetworkState.Connecting;
+                return 0;
             }
-            return base.Connect();
+            int dataLen = (int)size + sizeof(int);
+            byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            byte[] dataBytes = new byte[dataLen];
+            Array.Copy(lenBytes, dataBytes, sizeof(int));
+            Array.Copy(buffer, offset, dataBytes, sizeof(int), size);
+            return base.Send(dataBytes, 0, dataLen);
         }
 
-        public override bool ConnectAsync()
+        public override bool SendAsync(byte[] buffer, long offset, long size)
         {
-            lock (stateLocker)
+            if (buffer == null || buffer.Length - offset < size || size < 0)
             {
-                currState = ClientNetworkState.Connecting;
+                return false;
             }
-            return base.ConnectAsync();
+
+            int dataLen = (int)size + sizeof(int);
+            byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            byte[] dataBytes = new byte[dataLen];
+            Array.Copy(lenBytes, dataBytes, sizeof(int));
+            Array.Copy(buffer, offset, dataBytes, sizeof(int), size);
+            return base.SendAsync(dataBytes, 0, dataLen);
         }
 
-        public override bool Disconnect()
+        public long SendMessage(int messId, byte[] messBytes)
         {
-            lock (stateLocker)
+            int dataLen = sizeof(int) + sizeof(int);
+            if (messBytes != null && messBytes.Length > 0)
             {
-                currState = ClientNetworkState.Disconnecting;
+                dataLen += messBytes.Length;
             }
-            return base.Disconnect();
+            byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            byte[] messIdBytes = BitConverter.GetBytes(messId);
+            byte[] dataBytes = new byte[dataLen];
+            Array.Copy(lenBytes, dataBytes, sizeof(int));
+            Array.Copy(messIdBytes, dataBytes, sizeof(int));
+            if (messBytes != null && messBytes.Length > 0)
+            {
+                Array.Copy(messBytes, 0, dataBytes, sizeof(int), messBytes.Length);
+            }
+            return base.Send(dataBytes, 0, dataLen);
         }
 
-        public override bool DisconnectAsync()
+        public bool SendMessageAsync(int messId, byte[] messBytes)
         {
-            lock (stateLocker)
+            int dataLen = sizeof(int) + sizeof(int);
+            if (messBytes != null && messBytes.Length > 0)
             {
-                currState = ClientNetworkState.Disconnecting;
+                dataLen += messBytes.Length;
             }
-            return base.DisconnectAsync();
+            byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            byte[] messIdBytes = BitConverter.GetBytes(messId);
+            byte[] dataBytes = new byte[dataLen];
+            Array.Copy(lenBytes, dataBytes, sizeof(int));
+            Array.Copy(messIdBytes, dataBytes, sizeof(int));
+            if (messBytes != null && messBytes.Length > 0)
+            {
+                Array.Copy(messBytes, 0, dataBytes, sizeof(int), messBytes.Length);
+            }
+            return base.SendAsync(dataBytes, 0, dataLen);
         }
 
         protected override void OnConnected()
