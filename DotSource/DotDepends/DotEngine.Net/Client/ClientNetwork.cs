@@ -64,7 +64,7 @@ namespace DotEngine.Net
                 {
                     int index = 1;
                     byte[] dataBytes = dataBuffer.ReadMessage();
-                    while (dataBytes != null && (index < 0 || index < ReadCountAtOnce))
+                    while (dataBytes != null && (ReadCountAtOnce < 0 || index < ReadCountAtOnce))
                     {
                         OnDataReceived?.Invoke(dataBytes);
                         dataBytes = dataBuffer.ReadMessage();
@@ -80,8 +80,8 @@ namespace DotEngine.Net
             {
                 return 0;
             }
+            byte[] lenBytes = BitConverter.GetBytes((int)size);
             int dataLen = (int)size + sizeof(int);
-            byte[] lenBytes = BitConverter.GetBytes(dataLen);
             byte[] dataBytes = new byte[dataLen];
             Array.Copy(lenBytes, dataBytes, sizeof(int));
             Array.Copy(buffer, offset, dataBytes, sizeof(int), size);
@@ -95,8 +95,8 @@ namespace DotEngine.Net
                 return false;
             }
 
+            byte[] lenBytes = BitConverter.GetBytes((int)size);
             int dataLen = (int)size + sizeof(int);
-            byte[] lenBytes = BitConverter.GetBytes(dataLen);
             byte[] dataBytes = new byte[dataLen];
             Array.Copy(lenBytes, dataBytes, sizeof(int));
             Array.Copy(buffer, offset, dataBytes, sizeof(int), size);
@@ -105,38 +105,40 @@ namespace DotEngine.Net
 
         public long SendMessage(int messId, byte[] messBytes)
         {
-            int dataLen = sizeof(int) + sizeof(int);
+            int dataLen = sizeof(int);
             if (messBytes != null && messBytes.Length > 0)
             {
                 dataLen += messBytes.Length;
             }
             byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            dataLen += sizeof(int);
             byte[] messIdBytes = BitConverter.GetBytes(messId);
             byte[] dataBytes = new byte[dataLen];
             Array.Copy(lenBytes, dataBytes, sizeof(int));
             Array.Copy(messIdBytes, dataBytes, sizeof(int));
             if (messBytes != null && messBytes.Length > 0)
             {
-                Array.Copy(messBytes, 0, dataBytes, sizeof(int), messBytes.Length);
+                Array.Copy(messBytes, 0, dataBytes, sizeof(int) + sizeof(int), messBytes.Length);
             }
             return base.Send(dataBytes, 0, dataLen);
         }
 
         public bool SendMessageAsync(int messId, byte[] messBytes)
         {
-            int dataLen = sizeof(int) + sizeof(int);
+            int dataLen = sizeof(int);
             if (messBytes != null && messBytes.Length > 0)
             {
                 dataLen += messBytes.Length;
             }
             byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            dataLen += sizeof(int);
             byte[] messIdBytes = BitConverter.GetBytes(messId);
             byte[] dataBytes = new byte[dataLen];
             Array.Copy(lenBytes, dataBytes, sizeof(int));
             Array.Copy(messIdBytes, dataBytes, sizeof(int));
             if (messBytes != null && messBytes.Length > 0)
             {
-                Array.Copy(messBytes, 0, dataBytes, sizeof(int), messBytes.Length);
+                Array.Copy(messBytes, 0, dataBytes, sizeof(int) + sizeof(int), messBytes.Length);
             }
             return base.SendAsync(dataBytes, 0, dataLen);
         }

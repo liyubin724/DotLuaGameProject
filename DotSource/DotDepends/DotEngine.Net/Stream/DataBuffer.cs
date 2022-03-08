@@ -1,4 +1,6 @@
-﻿namespace DotEngine.Net
+﻿using System.IO;
+
+namespace DotEngine.Net
 {
     public class DataBuffer
     {
@@ -40,8 +42,7 @@
             {
                 if (msgByteLen + startOffset <= streamLen)
                 {
-                    byte[] msgBytes = new byte[msgByteLen];
-                    activedStream.Read(msgBytes, startOffset + sizeof(int), msgByteLen);
+                    activedStream.ReadBytes(startOffset + sizeof(int), msgByteLen, out var msgBytes);
                     MoveStream(startOffset + sizeof(int) + msgByteLen);
 
                     return msgBytes;

@@ -1,12 +1,7 @@
 ﻿using NetCoreServer;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.Net
 {
@@ -20,11 +15,12 @@ namespace DotEngine.Net
 
     public delegate void ServerNetworkStateChanged();
     public delegate void ServerNetworkSessionChanged(Guid guid);
+    public delegate void ServerNetowrkSessionDataReceived(Guid guid, byte[] dataBytes);
 
     class SessionData
     {
         public Guid guid;
-        public byte[] dataBytes;
+        public byte[] bytes;
     }
 
     public class ServerNetwork : TcpServer
@@ -36,6 +32,8 @@ namespace DotEngine.Net
         public ServerNetworkSessionChanged OnSessionConnected;
         public ServerNetworkSessionChanged OnSessionDisconnected;
         public ServerNetworkSessionChanged OnSessionError;
+
+        public ServerNetowrkSessionDataReceived OnDataReceived;
 
         private ConcurrentQueue<SessionData> sessionDatas = new ConcurrentQueue<SessionData>();
 
@@ -56,7 +54,24 @@ namespace DotEngine.Net
                     (session as ServerSession).DoUdpate(deltaTime);
                 }
             }
+            if(sessionDatas.Count>0)
+            {
+                while(sessionDatas.TryDequeue(out var data))
+                {
+                    OnDataReceived?.Invoke(data.guid, data.bytes);
+                }
+            }
+        }
 
+        public bool Multicast(int messId, byte[] messBody)
+        {
+            if (!IsStarted)
+                return false;
+
+            foreach (var session in Sessions.Values)
+                (session as ServerSession).SendMessage(messId,messBody);
+
+            return true;
         }
 
         protected override TcpSession CreateSession()
@@ -79,7 +94,7 @@ namespace DotEngine.Net
                 sessionDatas.Enqueue(new SessionData()
                 {
                     guid = session.Id,
-                    dataBytes = dataBytes
+                    bytes = dataBytes
                 });
             };
 
@@ -88,17 +103,17 @@ namespace DotEngine.Net
 
         protected override void OnStarted()
         {
-            base.OnStarted();
+            OnNetStarted?.Invoke();
         }
 
         protected override void OnStopped()
         {
-            base.OnStopped();
+            OnNetStopped?.Invoke();
         }
 
         protected override void OnError(SocketError error)
         {
-            base.OnError(error);
+            OnNetError?.Invoke();
         }
     }
 }
