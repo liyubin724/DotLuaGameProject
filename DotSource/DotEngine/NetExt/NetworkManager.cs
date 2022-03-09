@@ -2,9 +2,6 @@
 using DotEngine.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.NetExt
 {
@@ -17,6 +14,10 @@ namespace DotEngine.NetExt
         public ClientNetwork clientNetwork;
         private Dictionary<int, List<NetworkMessageHandler>> handlerDic;
 
+        public event Action OnConnected;
+        public event Action OnDisconnected;
+        public event Action OnError;
+
         protected override void OnInit()
         {
             handlerDic = new Dictionary<int, List<NetworkMessageHandler>>();
@@ -24,7 +25,7 @@ namespace DotEngine.NetExt
 
         protected override void OnDestroy()
         {
-            if(clientNetwork!=null && clientNetwork.IsConnected)
+            if (clientNetwork != null && clientNetwork.IsConnected)
             {
                 clientNetwork.Dispose();
                 clientNetwork = null;
@@ -33,67 +34,81 @@ namespace DotEngine.NetExt
             base.OnDestroy();
         }
 
-        public void Connect(string ip,int port)
+        public void Connect(string ip, int port)
         {
-            if(clientNetwork!=null)
+            if (clientNetwork != null)
             {
                 clientNetwork.Dispose();
                 clientNetwork = null;
             }
 
             clientNetwork = new ClientNetwork(ip, port);
+            clientNetwork.OnNetConnected = () =>
+            {
+                OnConnected?.Invoke();
+            };
+            clientNetwork.OnNetDisconnected = () =>
+            {
+                OnDisconnected?.Invoke();
+            };
+            clientNetwork.OnNetError = () =>
+            {
+                OnError?.Invoke();
+            };
             clientNetwork.OnDataReceived = OnDataReceived;
-            
+            clientNetwork.ConnectAsync();
         }
 
-        public void RegisterMessageHandler(int messageId,NetworkMessageHandler handler)
+        public void Reconnect()
         {
-            if(!handlerDic.TryGetValue(messageId,out var list))
+            if (clientNetwork != null && clientNetwork.IsConnected)
+            {
+                return;
+            }
+
+            clientNetwork.ReconnectAsync();
+        }
+
+        public void Disconnect()
+        {
+            if (clientNetwork == null || !clientNetwork.IsConnected)
+            {
+                return;
+            }
+            clientNetwork.DisconnectAsync();
+        }
+
+        public void DoUpdate(float deltaTime,float unscaleDeltaTime)
+        {
+            if(clientNetwork!=null && clientNetwork.IsConnected)
+            {
+                clientNetwork.DoUpdate(deltaTime);
+            }
+        }
+
+        public void RegisterMessageHandler(int messageId, NetworkMessageHandler handler)
+        {
+            if (!handlerDic.TryGetValue(messageId, out var list))
             {
                 list = new List<NetworkMessageHandler>();
                 handlerDic.Add(messageId, list);
             }
 
-            if(!list.Contains(handler))
+            if (!list.Contains(handler))
             {
                 list.Add(handler);
             }
         }
 
-        public void UnregisterMessageHandler(int messageId,NetworkMessageHandler handler)
+        public void UnregisterMessageHandler(int messageId, NetworkMessageHandler handler)
         {
-            if(handlerDic.TryGetValue(messageId,out var list) && list.Contains(handler))
+            if (handlerDic.TryGetValue(messageId, out var list) && list.Contains(handler))
             {
                 list.Remove(handler);
             }
         }
 
-        public void SendMessage(int messId, byte[] messBytes)
-        {
-            if(clientNetwork == null || !clientNetwork.IsConnected)
-            {
-                return;
-            }
-
-            int dataLen = sizeof(int);
-            if (messBytes != null && messBytes.Length > 0)
-            {
-                dataLen += messBytes.Length;
-            }
-            byte[] lenBytes = BitConverter.GetBytes(dataLen);
-            dataLen += sizeof(int);
-            byte[] messIdBytes = BitConverter.GetBytes(messId);
-            byte[] dataBytes = new byte[dataLen];
-            Array.Copy(lenBytes, dataBytes, sizeof(int));
-            Array.Copy(messIdBytes, dataBytes, sizeof(int));
-            if (messBytes != null && messBytes.Length > 0)
-            {
-                Array.Copy(messBytes, 0, dataBytes, sizeof(int) + sizeof(int), messBytes.Length);
-            }
-            clientNetwork.Send(dataBytes, 0, dataLen);
-        }
-
-        public void SendMessageAsync(int messId, byte[] messBytes)
+        public void SendMessage(int messageId, byte[] messageBytes)
         {
             if (clientNetwork == null || !clientNetwork.IsConnected)
             {
@@ -101,19 +116,44 @@ namespace DotEngine.NetExt
             }
 
             int dataLen = sizeof(int);
-            if (messBytes != null && messBytes.Length > 0)
+            if (messageBytes != null && messageBytes.Length > 0)
             {
-                dataLen += messBytes.Length;
+                dataLen += messageBytes.Length;
             }
             byte[] lenBytes = BitConverter.GetBytes(dataLen);
             dataLen += sizeof(int);
-            byte[] messIdBytes = BitConverter.GetBytes(messId);
+            byte[] messIdBytes = BitConverter.GetBytes(messageId);
             byte[] dataBytes = new byte[dataLen];
             Array.Copy(lenBytes, dataBytes, sizeof(int));
             Array.Copy(messIdBytes, dataBytes, sizeof(int));
-            if (messBytes != null && messBytes.Length > 0)
+            if (messageBytes != null && messageBytes.Length > 0)
             {
-                Array.Copy(messBytes, 0, dataBytes, sizeof(int) + sizeof(int), messBytes.Length);
+                Array.Copy(messageBytes, 0, dataBytes, sizeof(int) + sizeof(int), messageBytes.Length);
+            }
+            clientNetwork.Send(dataBytes, 0, dataLen);
+        }
+
+        public void SendMessageAsync(int messageId, byte[] messageBytes)
+        {
+            if (clientNetwork == null || !clientNetwork.IsConnected)
+            {
+                return;
+            }
+
+            int dataLen = sizeof(int);
+            if (messageBytes != null && messageBytes.Length > 0)
+            {
+                dataLen += messageBytes.Length;
+            }
+            byte[] lenBytes = BitConverter.GetBytes(dataLen);
+            dataLen += sizeof(int);
+            byte[] messIdBytes = BitConverter.GetBytes(messageId);
+            byte[] dataBytes = new byte[dataLen];
+            Array.Copy(lenBytes, dataBytes, sizeof(int));
+            Array.Copy(messIdBytes, dataBytes, sizeof(int));
+            if (messageBytes != null && messageBytes.Length > 0)
+            {
+                Array.Copy(messageBytes, 0, dataBytes, sizeof(int) + sizeof(int), messageBytes.Length);
             }
             clientNetwork.SendAsync(dataBytes, 0, dataLen);
         }
@@ -121,16 +161,16 @@ namespace DotEngine.NetExt
         private void OnDataReceived(byte[] dataBytes)
         {
             int messageId = BitConverter.ToInt32(dataBytes, 0);
-            if(handlerDic.TryGetValue(messageId,out var list))
+            if (handlerDic.TryGetValue(messageId, out var list))
             {
                 Byte[] messageBytes = null;
-                if(dataBytes.Length>0)
+                if (dataBytes.Length > 0)
                 {
                     messageBytes = new byte[dataBytes.Length - sizeof(int)];
                     Array.Copy(dataBytes, sizeof(int), messageBytes, 0, messageBytes.Length);
                 }
                 var handlers = list.ToArray();
-                foreach(var handler in handlers)
+                foreach (var handler in handlers)
                 {
                     handler?.Invoke(messageId, messageBytes);
                 }
