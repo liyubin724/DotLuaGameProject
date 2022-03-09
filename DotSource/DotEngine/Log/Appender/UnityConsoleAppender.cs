@@ -1,16 +1,28 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace DotEngine.Log
 {
     public class UnityConsoleAppender : ALogAppender
     {
-        public static readonly string NAME = "UnityConsoleAppender";
-        public UnityConsoleAppender(ILogFormatter formatter = null) : base(NAME, formatter)
+        public const string NAME = "UnityConsoleAppender";
+
+        public UnityConsoleAppender() : base(NAME)
         {
         }
 
-        protected override void OutputMessage(string tag, LogLevel level, string formattedMessage)
+        protected override void OutputMessage(System.DateTime time, string tag, LogLevel level, string message, string stacktree)
         {
+            string formattedMessage;
+            if (string.IsNullOrEmpty(stacktree))
+            {
+                formattedMessage = $"[{time.ToString("yyyy-MM-dd HH:mm:ss FFF")}] [{level.ToString().ToUpper()}] [{tag}] {message}";
+            }
+            else
+            {
+                formattedMessage = $"[{time.ToString("yyyy-MM-dd HH:mm:ss FFF")}] [{level.ToString().ToUpper()}] [{tag}] {message} {Environment.NewLine}{stacktree}";
+            }
+
             if (level >= LogLevel.Error)
             {
                 Debug.LogError(formattedMessage);

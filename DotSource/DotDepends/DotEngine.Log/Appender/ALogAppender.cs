@@ -16,15 +16,15 @@ namespace DotEngine.Log
         {
         }
 
-        public void DoReceive(DateTime time, string tag, LogLevel level, string message, string stacktree)
+        public void DoReceive(DateTime time, string tag, LogLevel level, string message, string stacktrace)
         {
             if ((AliveLevel & level) > 0)
             {
-                OutputMessage(time, tag, level, message, stacktree);
+                OutputMessage(time, tag, level, message, stacktrace);
             }
         }
 
-        protected abstract void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktree);
+        protected abstract void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktrace);
 
         public virtual void DoDestroy()
         {

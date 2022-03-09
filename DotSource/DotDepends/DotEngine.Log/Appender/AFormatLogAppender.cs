@@ -10,9 +10,9 @@ namespace DotEngine.Log
             Formatter = formatter ?? new DefaultLogFormatter();
         }
 
-        protected override void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktree)
+        protected override void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktrace)
         {
-            string formattedMessage = Formatter.FormatMessage(time, tag, level, message, stacktree);
+            string formattedMessage = Formatter.FormatMessage(time, tag, level, message, stacktrace);
             OutputFormattedMessage(formattedMessage);
         }
 

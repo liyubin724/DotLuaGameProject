@@ -2,23 +2,21 @@
 
 namespace DotEngine.Log
 {
-    public delegate void WatcherHandler(DateTime time, string tag, LogLevel level, string message, string stacktree);
+    public delegate void WatcherHandler(DateTime time, string tag, LogLevel level, string message, string stacktrace);
 
     public class WatcherAppender : ALogAppender
     {
         public const string NAME = "WatchLogAppender";
 
-        public event WatcherHandler HandLogEvent;
-        private WatcherHandler logHandler = null;
-
+        private WatcherHandler logHandler;
         public WatcherAppender(WatcherHandler handler, string name = NAME) : base(name)
         {
             logHandler = handler;
         }
 
-        protected override void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktree)
+        protected override void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktrace)
         {
-            logHandler?.Invoke(time, tag, level, message, stacktree);
+            logHandler?.Invoke(time, tag, level, message, stacktrace);
         }
     }
 }
