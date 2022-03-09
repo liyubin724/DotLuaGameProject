@@ -31,9 +31,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Net", "DotDepends
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotTests", "DotTests", "{EA57108D-2F33-4DB0-9809-AE3F3DCC2444}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotTest.Net.Server", "DotTests\DotTest.Net.Server\DotTest.Net.Server.csproj", "{953C2809-03B7-41F0-A3C0-43495755180A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotTest.Net.Server", "DotTests\DotTest.Net.Server\DotTest.Net.Server.csproj", "{953C2809-03B7-41F0-A3C0-43495755180A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotTest.Net.Client", "DotTests\DotTest.Net.Client\DotTest.Net.Client.csproj", "{96612F6B-A99D-47D4-B49F-9A18D1F052C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotTest.Net.Client", "DotTests\DotTest.Net.Client\DotTest.Net.Client.csproj", "{96612F6B-A99D-47D4-B49F-9A18D1F052C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PriorityQueue", "DotDepends\PriorityQueue\PriorityQueue.csproj", "{ECBDFA0F-FED1-40AB-883D-F4A28245E418}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -177,6 +179,18 @@ Global
 		{96612F6B-A99D-47D4-B49F-9A18D1F052C3}.Release|x64.Build.0 = Release|Any CPU
 		{96612F6B-A99D-47D4-B49F-9A18D1F052C3}.Release|x86.ActiveCfg = Release|Any CPU
 		{96612F6B-A99D-47D4-B49F-9A18D1F052C3}.Release|x86.Build.0 = Release|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Debug|x64.Build.0 = Debug|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Debug|x86.Build.0 = Debug|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Release|x64.ActiveCfg = Release|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Release|x64.Build.0 = Release|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Release|x86.ActiveCfg = Release|Any CPU
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,6 +207,7 @@ Global
 		{D16C3FE4-C0D6-43A7-A265-2E8589ADBF6B} = {0773A1C8-C9CF-4F99-BF11-4D25CFBEC2EC}
 		{953C2809-03B7-41F0-A3C0-43495755180A} = {EA57108D-2F33-4DB0-9809-AE3F3DCC2444}
 		{96612F6B-A99D-47D4-B49F-9A18D1F052C3} = {EA57108D-2F33-4DB0-9809-AE3F3DCC2444}
+		{ECBDFA0F-FED1-40AB-883D-F4A28245E418} = {0773A1C8-C9CF-4F99-BF11-4D25CFBEC2EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9006B8A1-C1A9-4AF1-90FF-B54E8A33073B}

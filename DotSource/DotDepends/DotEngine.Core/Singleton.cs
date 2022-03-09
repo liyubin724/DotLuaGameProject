@@ -27,9 +27,6 @@
             }
         }
 
-        protected Singleton()
-        { }
-
         protected virtual void OnInit()
         { }
 
