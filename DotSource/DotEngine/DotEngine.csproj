@@ -74,6 +74,9 @@
     <Compile Include="Injection\Reflection\InjectReflectionTypeInfo.cs" />
     <Compile Include="Log\Appender\UnityConsoleAppender.cs" />
     <Compile Include="PersistentUObjectHelper.cs" />
+    <Compile Include="Updater\IUpdate.cs" />
+    <Compile Include="Updater\UpdateBehaviour.cs" />
+    <Compile Include="Updater\UpdateManager.cs" />
     <Compile Include="UPool\PoolCategory.cs" />
     <Compile Include="UPool\PoolGroup.cs" />
     <Compile Include="UPool\PoolManager.cs" />
@@ -105,6 +108,10 @@
     <ProjectReference Include="..\DotDepends\DotEngine.Log\DotEngine.Log.csproj">
       <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
       <Name>DotEngine.Log</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotDepends\PriorityQueue\PriorityQueue.csproj">
+      <Project>{ecbdfa0f-fed1-40ab-883d-f4a28245e418}</Project>
+      <Name>PriorityQueue</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
