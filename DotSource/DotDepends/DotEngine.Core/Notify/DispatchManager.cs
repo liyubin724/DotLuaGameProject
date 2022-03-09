@@ -6,52 +6,29 @@ namespace DotEngine.Notify
 {
     public delegate void NotificationHandler(string name, object body);
 
-    public sealed class DispatchManager
+    public class DispatchManager : Singleton<DispatchManager>
     {
-        private static DispatchManager manager = null;
-
-        public static DispatchManager GetInstance()
-        {
-            return manager;
-        }
-
-        public static DispatchManager CreateMgr()
-        {
-            if (manager == null)
-            {
-                manager = new DispatchManager();
-                manager.OnInitilize();
-            }
-            return manager;
-        }
-
-        public static void DestroyMgr()
-        {
-            if (manager != null)
-            {
-                manager.OnDestroy();
-                manager = null;
-            }
-        }
-
         private readonly Dictionary<string, List<NotificationHandler>> observerDic = null;
         private readonly Stack<string> notifyNameStack = null;
         private readonly Dictionary<string, List<NotificationHandler>> waitingToUnregisterObserverDic = null;
 
-        private DispatchManager()
+        public DispatchManager()
         {
             observerDic = new Dictionary<string, List<NotificationHandler>>();
             notifyNameStack = new Stack<string>();
             waitingToUnregisterObserverDic = new Dictionary<string, List<NotificationHandler>>();
         }
 
-        public void OnInitilize()
+        protected override void OnInit()
         {
+
         }
 
-        public void OnDestroy()
+        protected override void OnDestroy()
         {
             observerDic.Clear();
+
+            base.OnDestroy();
         }
 
         public void RegisterObserver(string notificationName, NotificationHandler notifyHanlder)
