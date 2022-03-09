@@ -73,6 +73,7 @@
     <Compile Include="Injection\Reflection\InjectReflection.cs" />
     <Compile Include="Injection\Reflection\InjectReflectionTypeInfo.cs" />
     <Compile Include="Log\Appender\UnityConsoleAppender.cs" />
+    <Compile Include="NetExt\NetworkManager.cs" />
     <Compile Include="PersistentUObjectHelper.cs" />
     <Compile Include="Updater\IUpdate.cs" />
     <Compile Include="Updater\UpdateBehaviour.cs" />
@@ -97,7 +98,6 @@
     <Folder Include="IMGUI\" />
     <Folder Include="IO\" />
     <Folder Include="MathE\" />
-    <Folder Include="Net\" />
     <Folder Include="Serialization\" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +112,10 @@
     <ProjectReference Include="..\DotDepends\PriorityQueue\PriorityQueue.csproj">
       <Project>{ecbdfa0f-fed1-40ab-883d-f4a28245e418}</Project>
       <Name>PriorityQueue</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotDepends\DotEngine.Net\DotEngine.Net.csproj">
+      <Project>{d16c3fe4-c0d6-43a7-a265-2e8589adbf6b}</Project>
+      <Name>DotEngine.Net</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
