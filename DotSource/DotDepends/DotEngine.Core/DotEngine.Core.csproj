@@ -48,11 +48,12 @@
     <Compile Include="ICopy.cs" />
     <Compile Include="IDeepCopy.cs" />
     <Compile Include="MathLib.cs" />
-    <Compile Include="Notify\DispatchManager.cs" />
-    <Compile Include="Notify\Interfaces\INotifier.cs" />
-    <Compile Include="Notify\Interfaces\IObserver.cs" />
-    <Compile Include="Notify\Notifier.cs" />
-    <Compile Include="Notify\Observer.cs" />
+    <Compile Include="Notification\ANotifier.cs" />
+    <Compile Include="Notification\AObserver.cs" />
+    <Compile Include="Notification\Dispatcher.cs" />
+    <Compile Include="Notification\INotifier.cs" />
+    <Compile Include="Notification\IObserver.cs" />
+    <Compile Include="Notification\DispatcherManager.cs" />
     <Compile Include="Pool\ElementPool.cs" />
     <Compile Include="Pool\ListPool.cs" />
     <Compile Include="Pool\ObjectPool.cs" />
