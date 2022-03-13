@@ -1,8 +1,9 @@
-﻿using System;
+﻿using DotEngine.Notification;
+using System;
 
 namespace DotEngine.Framework
 {
-    public interface IEntity
+    public interface IEntity : IObserver, INotifier
     {
         int UniqueId { get; }
         bool Enable { get; set; }
@@ -30,19 +31,16 @@ namespace DotEngine.Framework
         T[] GetControllers<T>() where T : IController;
         IController[] GetAllControllers();
 
-        void AddController<T>(string name, T controller) where T : IController;
+        bool AddController<T>(string name, T controller) where T : IController;
         IController CreateController(string name, Type controllerType);
         IController CreateController<T>(string name) where T : IController;
 
         bool RemoveController(string name);
-        bool RemoveControllers(string[] names);
+        void RemoveControllers(string[] names);
         void RemoveAllControllers();
 
         void ReplaceController<T>(string name, T controller) where T : IController;
-        void ReplaceController<T>(string name) where T : IController;
-        void ReplaceController(string name, Type controllerType);
-
-        void BroadcastMessage(string name, object body);
-        void BubbleMessage(string name, object body);
+        T ReplaceController<T>(string name) where T : IController;
+        IController ReplaceController(string name, Type controllerType);
     }
 }

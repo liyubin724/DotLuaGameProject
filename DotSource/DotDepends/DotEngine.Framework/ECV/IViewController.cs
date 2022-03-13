@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DotEngine.Framework
+﻿namespace DotEngine.Framework
 {
-    class IViewController
+    public interface IViewController : IController
     {
+        IView View { get; set; }
     }
 }

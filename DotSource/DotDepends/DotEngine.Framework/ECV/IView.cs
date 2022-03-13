@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotEngine.Framework
 {
-    class IView
+    public interface IView
     {
     }
 }

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ECV\AEntity.cs" />
     <Compile Include="ECV\IController.cs" />
     <Compile Include="ECV\IEntity.cs" />
     <Compile Include="ECV\IUpdate.cs" />
@@ -54,8 +55,6 @@
       <Name>DotEngine.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ECV\Core\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
