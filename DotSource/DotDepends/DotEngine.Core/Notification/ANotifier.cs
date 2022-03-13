@@ -4,7 +4,7 @@
     {
         public Dispatcher Dispatcher { get; set; }
 
-        public void SendMessage(string name, object body = null)
+        public void SendNotification(string name, object body = null)
         {
             Dispatcher?.Notify(name, body);
         }

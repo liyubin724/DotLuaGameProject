@@ -22,9 +22,9 @@
             dispatcher.RegisterObserver(observer);
         }
 
-        public void RegisterObserver(string name, MessageHandler handler)
+        public void RegisterObserver(string name, NotificationHandler handler)
         {
-            dispatcher.RegisterObserver(name, handler);
+            dispatcher.Subscribe(name, handler);
         }
 
         public void UnregisterObserver(IObserver observer)
@@ -32,14 +32,14 @@
             dispatcher.UnregisterObserver(observer);
         }
 
-        public void UnregisterObserver(string name, MessageHandler handler)
+        public void UnregisterObserver(string name, NotificationHandler handler)
         {
-            dispatcher.UnregisterObserver(name, handler);
+            dispatcher.Unsubscribe(name, handler);
         }
 
         public void UnregisterObserver(string name)
         {
-            dispatcher.UnregisterObserver(name);
+            dispatcher.Unregister(name);
         }
 
         public void Notify(string name, object body = null)
