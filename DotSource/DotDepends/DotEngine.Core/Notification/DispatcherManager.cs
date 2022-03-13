@@ -17,29 +17,29 @@
             base.OnDestroy();
         }
 
-        public void RegisterObserver(IObserver observer)
+        public void Subscribe(IObserver observer)
         {
-            dispatcher.RegisterObserver(observer);
+            dispatcher.Subscribe(observer);
         }
 
-        public void RegisterObserver(string name, MessageHandler handler)
+        public void Subscribe(string name, NotificationHandler handler)
         {
-            dispatcher.RegisterObserver(name, handler);
+            dispatcher.Subscribe(name, handler);
         }
 
-        public void UnregisterObserver(IObserver observer)
+        public void Unsubscribe(IObserver observer)
         {
-            dispatcher.UnregisterObserver(observer);
+            dispatcher.Unsubscribe(observer);
         }
 
-        public void UnregisterObserver(string name, MessageHandler handler)
+        public void Unsubscribe(string name, NotificationHandler handler)
         {
-            dispatcher.UnregisterObserver(name, handler);
+            dispatcher.Unsubscribe(name, handler);
         }
 
-        public void UnregisterObserver(string name)
+        public void Unsubscribe(string name)
         {
-            dispatcher.UnregisterObserver(name);
+            dispatcher.Unsubscribe(name);
         }
 
         public void Notify(string name, object body = null)

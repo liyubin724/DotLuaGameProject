@@ -2,7 +2,7 @@
 {
     public interface IObserver
     {
-        string[] ListInterestMessage();
-        void HandleMessage(string name, object body = null);
+        string[] ListInterestNotification();
+        void HandleNotification(string name, object body = null);
     }
 }
