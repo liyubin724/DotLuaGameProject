@@ -7,7 +7,7 @@
     <ProjectGuid>{3B63D16A-95FE-4E4B-AF72-4AB062900D57}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotEngine</RootNamespace>
+    <RootNamespace>DotEngine.Core</RootNamespace>
     <AssemblyName>DotEngine.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\ParamNullException.cs" />
+    <Compile Include="Exceptions\TypeNotFoundException.cs" />
+    <Compile Include="Extensions\ReflectionExtension.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
+    <Compile Include="Extensions\TypeExtension.cs" />
     <Compile Include="Generic\ListDictionary.cs" />
     <Compile Include="Generic\UniqueIDCreator.cs" />
     <Compile Include="ICopy.cs" />
@@ -66,13 +71,14 @@
     <Compile Include="Timer\TimerTask.cs" />
     <Compile Include="Timer\TimerWheel.cs" />
     <Compile Include="Utilities\ArrayUtility.cs" />
+    <Compile Include="Utilities\AssemblyUtility.cs" />
     <Compile Include="Utilities\BitUtility.cs" />
     <Compile Include="Utilities\GuidUtility.cs" />
     <Compile Include="Utilities\MathUtil.cs" />
     <Compile Include="Utilities\ReflectionUtility.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\StructUtility.cs" />
-    <Compile Include="Utilities\SysObjectUtility.cs" />
+    <Compile Include="Utilities\SystemObjectUtility.cs" />
     <Compile Include="Utilities\TypeUtility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
