@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotEngine.Core.Extensions;
+using System;
 
 namespace DotEngine.Utilities
 {

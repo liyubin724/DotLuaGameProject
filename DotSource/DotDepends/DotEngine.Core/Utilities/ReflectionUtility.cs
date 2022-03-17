@@ -9,8 +9,8 @@ namespace DotEngine.Utilities
     {
         private const BindingFlags allBindingFlags = BindingFlags.Instance | BindingFlags.Static
             | BindingFlags.NonPublic | BindingFlags.Public;
-        private const BindingFlags allDeclaredBindingFlags = BindingFlags.Instance | BindingFlags.Static 
-            | BindingFlags.NonPublic | BindingFlags.Public 
+        private const BindingFlags allDeclaredBindingFlags = BindingFlags.Instance | BindingFlags.Static
+            | BindingFlags.NonPublic | BindingFlags.Public
             | BindingFlags.DeclaredOnly;
 
         #region Get Type
@@ -21,19 +21,21 @@ namespace DotEngine.Utilities
                 return null;
 
             Func<Type, bool> predicate;
-            if(name.IndexOf(',')>0)
+            if (name.IndexOf(',') > 0)
             {
                 predicate = (type) =>
                 {
                     return type.AssemblyQualifiedName.Equals(name, isIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
                 };
-            }else if(name.IndexOf('.')>0)
+            }
+            else if (name.IndexOf('.') > 0)
             {
                 predicate = (type) =>
                 {
                     return type.FullName.Equals(name, isIgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
                 };
-            }else
+            }
+            else
             {
                 predicate = (type) =>
                 {
@@ -83,14 +85,14 @@ namespace DotEngine.Utilities
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var isSubclass = baseType.IsGenericType
                 ? (Func<Type, bool>)
-                  ((type) => IsSubclassOfRawGeneric(type,baseType))
+                  ((type) => IsSubclassOfRawGeneric(type, baseType))
                 : ((type) => type.IsSubclassOf(baseType));
 
             foreach (var assembly in assemblies)
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (!isSubclass(type) ||(!type.IsVisible&&!allowInvisible) || (!allowAbstract && type.IsAbstract))
+                    if (!isSubclass(type) || (!type.IsVisible && !allowInvisible) || (!allowAbstract && type.IsAbstract))
                     {
                         continue;
                     }
@@ -104,23 +106,23 @@ namespace DotEngine.Utilities
         #endregion
 
         #region Get Field
-        public static IEnumerable<FieldInfo> GetAllFields(object target,Func<FieldInfo,bool> predicate)
+        public static IEnumerable<FieldInfo> GetAllFields(object target, Func<FieldInfo, bool> predicate)
         {
             return GetAllFields(target.GetType(), predicate);
         }
 
-        public static IEnumerable<FieldInfo> GetAllFields(Type type,Func<FieldInfo,bool> predicate)
+        public static IEnumerable<FieldInfo> GetAllFields(Type type, Func<FieldInfo, bool> predicate)
         {
             var types = new List<Type>() { type };
-            while(types.Last().BaseType !=null)
+            while (types.Last().BaseType != null)
             {
                 types.Add(types.Last().BaseType);
             }
 
-            for(int i =0;i<types.Count;++i)
+            for (int i = 0; i < types.Count; ++i)
             {
                 var fInfos = types[i].GetFields(allDeclaredBindingFlags).Where(predicate);
-                foreach(var fInfo in fInfos)
+                foreach (var fInfo in fInfos)
                 {
                     yield return fInfo;
                 }
@@ -164,12 +166,12 @@ namespace DotEngine.Utilities
         #endregion
 
         #region Get Property
-        public static IEnumerable<PropertyInfo> GetAllProperties(object target,Func<PropertyInfo,bool> predicate)
+        public static IEnumerable<PropertyInfo> GetAllProperties(object target, Func<PropertyInfo, bool> predicate)
         {
             return GetAllProperties(target.GetType(), predicate);
         }
 
-        public static IEnumerable<PropertyInfo> GetAllProperties(Type type,Func<PropertyInfo,bool> predicate)
+        public static IEnumerable<PropertyInfo> GetAllProperties(Type type, Func<PropertyInfo, bool> predicate)
         {
             var types = new List<Type>() { type };
             while (types.Last().BaseType != null)
@@ -227,10 +229,11 @@ namespace DotEngine.Utilities
             return GetAllProperties(type, (pInfo) =>
             {
                 bool isStatic = false;
-                if(pInfo.GetMethod!=null)
+                if (pInfo.GetMethod != null)
                 {
                     isStatic = pInfo.GetMethod.IsStatic;
-                }else
+                }
+                else
                 {
                     isStatic = pInfo.SetMethod.IsStatic;
                 }
@@ -245,7 +248,7 @@ namespace DotEngine.Utilities
             return GetAllMethods(target.GetType(), predicate);
         }
 
-        public static IEnumerable<MethodInfo> GetAllMethods(Type type,Func<MethodInfo,bool> predicate)
+        public static IEnumerable<MethodInfo> GetAllMethods(Type type, Func<MethodInfo, bool> predicate)
         {
             var mInfos = type.GetMethods(allBindingFlags)
                 .Where(predicate);
@@ -260,7 +263,7 @@ namespace DotEngine.Utilities
             return GetMethod(target.GetType(), methodName, isIgnoreCase);
         }
 
-        public static MethodInfo GetMethod(Type type,string methodName,bool isIgnoreCase = false)
+        public static MethodInfo GetMethod(Type type, string methodName, bool isIgnoreCase = false)
         {
             return GetAllMethods(type, (mInfo) =>
             {

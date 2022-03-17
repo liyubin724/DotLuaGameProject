@@ -62,6 +62,9 @@
     <Compile Include="Config\Ini\Styles\IniReaderStyle.cs" />
     <Compile Include="Config\Ini\Styles\IniSchemeStyle.cs" />
     <Compile Include="Config\Ini\Styles\IniWriterStyle.cs" />
+    <Compile Include="Extensions\RectExtension.cs" />
+    <Compile Include="Extensions\TransformExtension.cs" />
+    <Compile Include="Extensions\UnityObjectExtension.cs" />
     <Compile Include="Injection\Attributes\InjectUsageAttribute.cs" />
     <Compile Include="Injection\InjectContext.cs" />
     <Compile Include="Injection\InjectException.cs" />
