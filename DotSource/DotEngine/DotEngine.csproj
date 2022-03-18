@@ -65,16 +65,6 @@
     <Compile Include="Extensions\RectExtension.cs" />
     <Compile Include="Extensions\TransformExtension.cs" />
     <Compile Include="Extensions\UnityObjectExtension.cs" />
-    <Compile Include="Injection\Attributes\InjectUsageAttribute.cs" />
-    <Compile Include="Injection\InjectContext.cs" />
-    <Compile Include="Injection\InjectException.cs" />
-    <Compile Include="Injection\InjectObject.cs" />
-    <Compile Include="Injection\InjectUtility.cs" />
-    <Compile Include="Injection\Interfaces\IInjectContext.cs" />
-    <Compile Include="Injection\Interfaces\IInjectObject.cs" />
-    <Compile Include="Injection\Reflection\InjectMemberInfo.cs" />
-    <Compile Include="Injection\Reflection\InjectReflection.cs" />
-    <Compile Include="Injection\Reflection\InjectReflectionTypeInfo.cs" />
     <Compile Include="Log\Appender\UnityConsoleAppender.cs" />
     <Compile Include="NetExt\NetworkManager.cs" />
     <Compile Include="PersistentUObjectHelper.cs" />
