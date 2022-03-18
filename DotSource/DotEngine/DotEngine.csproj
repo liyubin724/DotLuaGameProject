@@ -81,15 +81,12 @@
     <Compile Include="Updater\IUpdate.cs" />
     <Compile Include="Updater\UpdateBehaviour.cs" />
     <Compile Include="Updater\UpdateManager.cs" />
-    <Compile Include="UPool\PoolCategory.cs" />
-    <Compile Include="UPool\PoolGroup.cs" />
-    <Compile Include="UPool\PoolManager.cs" />
-    <Compile Include="UPool\PoolUtill.cs" />
+    <Compile Include="Pool\UGOPoolGroup.cs" />
+    <Compile Include="Pool\UGOPool.cs" />
+    <Compile Include="Pool\UGOPoolManager.cs" />
+    <Compile Include="Pool\UGOPoolUtill.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\JsonUtility.cs" />
-    <Compile Include="Utilities\RectUtility.cs" />
-    <Compile Include="Utilities\TransformUtility.cs" />
-    <Compile Include="Utilities\UObjectUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AI\BehaviourLine\" />

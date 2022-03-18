@@ -1,16 +1,18 @@
-﻿using System;
+﻿using DotEngine.Extensions;
+using DotEngine.Log;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.UPool
 {
-    public delegate void PreloadComplete(string groupName, string assetPath);
+    public delegate void PoolPreloadComplete(string assetPath);
 
     /// <summary>
     /// 用于创建缓存池的模板的类型
     /// </summary>
-    public enum TemplateType
+    public enum UGOTemplateType
     {
         Prefab = 0,//使用Prefab做为缓存池模型
         PrefabInstance,//使用Prefab实例化后的对象做为模板
@@ -20,47 +22,36 @@ namespace DotEngine.UPool
     /// <summary>
     /// 以GameObject为对象的缓存池
     /// </summary>
-    public class PoolGroup
+    public class UGOPool
     {
-        public string categoryName;
-        private Transform groupTransform;
-
         /// <summary>
         /// 资源标识，一般使用资源的路径或者指定一个唯一的名称
         /// </summary>
-        public string assetPath;
-        public TemplateType templateType;
-        /// <summary>
-        /// 缓存池中使用的GameObject的模板
-        /// </summary>
-        private GameObject template = null;
+        public string AssetPath { get; private set; }
 
-        /// <summary>
-        /// 缓存池预加载完后回调
-        /// </summary>
-        private PreloadComplete preloadCompleteCallback = null;
+        private UGOTemplateType templateType;
+        // 缓存池中使用的GameObject的模板
+        private GameObject templateGameObject;
+        // 用于缓存对象的结点
+        private Transform poolTransform;
+        // 缓存池预加载完后回调
+        private PoolPreloadComplete preloadCompleteCallback = null;
         //预加载的GameObject数量
         private int preloadTotalAmount = 0;
         //每帧加载的数量，可以防止一次大量的预加载造成卡顿，一般可以在Loading中提前处理
-        private int preloadOnceAmount = 1;
+        private int preloadOnceAmount = 0;
 
-        private bool isCullEnable = true;
-        //进行清理时，一次性清理的数量，为0表示一次性清理所有的
-        private int cullOnceAmount  = 0;
+        private bool isCullEnable = false;
+        //进行清理时，一次性清理的数量，为小于等于0表示一次性清理所有的
+        private int cullOnceAmount = 0;
         //两次清理执行时间间隔,以秒为单位
         private float cullDelayTime = 60.0f;
         private float preCullTime = 0.0f;
 
-        //缓存池中GameObejct对象可以创建的最大的上限，如果超出则无法生成新的GameObject
-        //值为0时，表示无限制
-        private int limitMaxAmount = int.MaxValue;
-        //缓存池清理时，池中至少保持的GameObject的数量下限
-        //值为0时表示无限制
-        private int limitMinAmount = 0;
+        //可以缓存的对象的数量
+        private int cachedMaxAmount = int.MaxValue;
 
-        /// <summary>
-        /// 空闲的GameObject对象栈
-        /// </summary>
+        // 空闲的GameObject对象栈
         private Queue<GameObject> unusedItemQueue = new Queue<GameObject>();
 
         /// <summary>
@@ -70,50 +61,49 @@ namespace DotEngine.UPool
         /// </summary>
         private List<WeakReference<GameObject>> usedItemList = new List<WeakReference<GameObject>>();
 
-        internal PoolGroup(
-            string categoryName,
-            Transform parentTransform, 
-            string assetPath, 
-            TemplateType templateType, 
+        internal UGOPool(
+            Transform parentTransform,
+            string assetPath,
+            UGOTemplateType templateType,
             GameObject templateGObj)
         {
-            this.categoryName = categoryName;
-            if(PoolUtill.IsDebug)
+            AssetPath = assetPath;
+            this.templateType = templateType;
+            templateGameObject = templateGObj;
+            if (UGOPoolUtill.IsDebug)
             {
-                GameObject gObj = new GameObject(assetPath);
-                groupTransform = gObj.transform;
-
-                groupTransform.SetParent(parentTransform, false);
-            }else
+                poolTransform = new GameObject(assetPath).transform;
+                poolTransform.SetParent(parentTransform, false);
+            }
+            else
             {
-                groupTransform = parentTransform;
+                poolTransform = parentTransform;
             }
 
-            this.assetPath = assetPath;
-            this.templateType = templateType;
-            template = templateGObj;
-
-            if(templateType != TemplateType.Prefab)
+            if (templateType != UGOTemplateType.Prefab)
             {
-                template.SetActive(false);
-                template.transform.SetParent(groupTransform, false);
+                templateGameObject.SetActive(false);
+                templateGameObject.transform.SetParent(poolTransform, false);
             }
         }
 
         internal void DoUpdate(float deltaTime)
         {
-            //preload
-            if(preloadTotalAmount > 0)
+            if (preloadTotalAmount > 0)
             {
                 PreloadItem();
-            }else if(preloadCompleteCallback!=null)
+                return;
+            }
+
+            if (preloadCompleteCallback != null)
             {
-                preloadCompleteCallback.Invoke(categoryName, assetPath);
+                preloadCompleteCallback.Invoke(AssetPath);
                 preloadCompleteCallback = null;
+                return;
             }
 
             //cull
-            if(isCullEnable && cullDelayTime > 0)
+            if (isCullEnable && cullDelayTime > 0)
             {
                 preCullTime += deltaTime;
                 if (preCullTime >= cullDelayTime)
@@ -124,8 +114,8 @@ namespace DotEngine.UPool
             }
         }
 
-#region Preload
-        public void SetPreload(int totalAmount, int onceAmount, PreloadComplete callback = null)
+        #region Preload
+        public void SetPreload(int totalAmount, int onceAmount, PoolPreloadComplete callback = null)
         {
             preloadTotalAmount = totalAmount;
             preloadOnceAmount = onceAmount;
@@ -143,7 +133,7 @@ namespace DotEngine.UPool
             for (int i = 0; i < amount; ++i)
             {
                 GameObject instance = CreateItem();
-                instance.transform.SetParent(groupTransform, false);
+                instance.transform.SetParent(poolTransform, false);
                 instance.SetActive(false);
 
                 unusedItemQueue.Enqueue(instance);
@@ -151,23 +141,19 @@ namespace DotEngine.UPool
 
             preloadTotalAmount -= amount;
         }
-#endregion
+        #endregion
 
-#region Cull
-        public void SetCullEnable(bool enable)
-        {
-            isCullEnable = enable;
-        }
-
+        #region Cull
         public void SetCull(int onceAmount, float delayTime)
         {
+            isCullEnable = true;
             cullOnceAmount = onceAmount;
             cullDelayTime = delayTime;
         }
 
         private void Cull()
         {
-            if(PoolUtill.IsDebug)
+            if (UGOPoolUtill.IsDebug)
             {
                 for (int i = usedItemList.Count - 1; i >= 0; --i)
                 {
@@ -178,11 +164,12 @@ namespace DotEngine.UPool
                 }
             }
 
-            if (unusedItemQueue.Count <= limitMinAmount)
+            if (unusedItemQueue.Count <= cachedMaxAmount)
             {
                 return;
             }
-            int amount = unusedItemQueue.Count - limitMinAmount;
+
+            int amount = unusedItemQueue.Count - cachedMaxAmount;
             if (cullOnceAmount > 0)
             {
                 amount = Mathf.Min(amount, cullOnceAmount);
@@ -192,25 +179,24 @@ namespace DotEngine.UPool
                 DestroyItem(unusedItemQueue.Dequeue());
             }
         }
-#endregion
+        #endregion
 
-#region Limit
-        public void SetLimit(int minAmount,int maxAmount)
+        #region cached max count
+        public void SetCachedMaxCount(int count)
         {
-            limitMinAmount = minAmount;
-            limitMaxAmount = maxAmount;
+            cachedMaxAmount = count;
         }
-#endregion
+        #endregion
 
-#region GetItem
+        #region GetItem
         /// <summary>
         /// 从缓存池中得到一个GameObject对象
         /// </summary>
-        /// <param name="isAutoSetActive">是否激获取到的GameObject,默认为true</param>
+        /// <param name="isActive">是否激获取到的GameObject,默认为true</param>
         /// <returns></returns>
-        public GameObject GetItem(bool isAutoSetActive = true)
+        public GameObject GetItem(bool isActive = true)
         {
-            GameObject item = null;
+            GameObject item;
             if (unusedItemQueue.Count > 0)
             {
                 item = unusedItemQueue.Dequeue();
@@ -222,10 +208,9 @@ namespace DotEngine.UPool
 
             if (item != null)
             {
-                item.SetActive(isAutoSetActive);
-                //item.BroadcastMessage("DoGet", SendMessageOptions.DontRequireReceiver);
+                item.SetActive(isActive);
 
-                if(PoolUtill.IsDebug)
+                if (UGOPoolUtill.IsDebug)
                 {
                     usedItemList.Add(new WeakReference<GameObject>(item));
                 }
@@ -238,78 +223,79 @@ namespace DotEngine.UPool
         /// 从缓存池中得到指定类型的组件
         /// </summary>
         /// <typeparam name="T">继承于MonoBehaviour的组件</typeparam>
-        /// <param name="isAutoActive">是否激获取到的GameObject,默认为true</param>
+        /// <param name="isActive">是否激获取到的GameObject,默认为true</param>
         /// <returns></returns>
-        public T GetComponentItem<T>(bool isAutoActive = true,bool autoAddIfNot = false) where T:MonoBehaviour
+        public T GetComponentItem<T>(bool isActive = true, bool addIfNot = false) where T : MonoBehaviour
         {
-            if(template.GetComponent<T> ()==null && !autoAddIfNot)
+            if (templateGameObject.GetComponent<T>() == null && !addIfNot)
             {
                 return null;
             }
 
-            GameObject gObj = GetItem(isAutoActive);
-            T component = null;
-            if(gObj!=null)
+            GameObject gObj = GetItem(isActive);
+            if (gObj != null)
             {
-                component = gObj.GetComponent<T>();
-                if(component == null && autoAddIfNot)
+                T component = gObj.GetComponent<T>();
+                if (component == null && addIfNot)
                 {
                     component = gObj.AddComponent<T>();
                 }
+                if(component == null)
+                {
+                    ReleaseItem(gObj);
+                }
+                return component;
             }
 
-            return component;
+            return null;
         }
 
         private GameObject CreateItem()
         {
             GameObject item = null;
-            if(templateType == TemplateType.RuntimeInstance)
+            if (templateType == UGOTemplateType.RuntimeInstance)
             {
-                item = UnityObject.Instantiate(template);
+                item = UnityObject.Instantiate(templateGameObject);
             }
             else
             {
-                item = (GameObject)PoolUtill.InstantiateProvider(assetPath, template);
+                item = (GameObject)UGOPoolUtill.InstantiateProvider(AssetPath, templateGameObject);
             }
             return item;
         }
 
         private void DestroyItem(GameObject item)
         {
-            PoolUtill.DestroyProvider(assetPath, item);
+            if(templateType == UGOTemplateType.RuntimeInstance)
+            {
+                UnityObject.Destroy(item);
+            }
+            else
+            {
+                UGOPoolUtill.DestroyProvider(AssetPath, item);
+            }
         }
-#endregion
+        #endregion
 
-#region Release Item
+        #region Release Item
         /// <summary>
         /// 回收GameObject
         /// </summary>
         /// <param name="item"></param>
         public void ReleaseItem(GameObject item)
         {
-            if(item == null)
+            if (item == null)
             {
-                PoolUtill.Error("GameObjectPool::ReleaseItem->Item is Null");
+                LogUtil.Error(UGOPoolUtill.LOG_TAG,"GameObjectPool::ReleaseItem->Item is Null");
                 return;
             }
 
-            if(unusedItemQueue.Count > limitMaxAmount)
-            {
-                DestroyItem(item);
-                return;
-            }
-
-            item.transform.SetParent(groupTransform, false);
-            item.SetActive(false);
-            unusedItemQueue.Enqueue(item);
-
-            if(PoolUtill.IsDebug)
+            if (UGOPoolUtill.IsDebug)
             {
                 //从使用列表中删除要回收的对象
                 for (int i = usedItemList.Count - 1; i >= 0; i--)
                 {
-                    if(usedItemList[i].TryGetTarget(out GameObject target) && !target.IsNull())
+                    if (usedItemList[i].TryGetTarget(out GameObject target) && !target.IsNull())
                     {
                         if (target != item)
                         {
@@ -327,36 +313,47 @@ namespace DotEngine.UPool
                     }
                 }
             }
+
+            if (unusedItemQueue.Count >= cachedMaxAmount)
+            {
+                DestroyItem(item);
+                return;
+            }
+
+            item.transform.SetParent(poolTransform, false);
+            item.SetActive(false);
+            unusedItemQueue.Enqueue(item);
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// 销毁缓存池
         /// </summary>
-        internal void DoDestroy()
+        internal void Destroy()
         {
             preloadCompleteCallback = null;
             usedItemList.Clear();
 
-            for (int i = unusedItemQueue.Count - 1; i >= 0; i--)
+            while(unusedItemQueue.Count>0)
             {
                 DestroyItem(unusedItemQueue.Dequeue());
             }
-            unusedItemQueue.Clear();
 
-            if(templateType == TemplateType.PrefabInstance || templateType == TemplateType.RuntimeInstance)
+            if(templateType == UGOTemplateType.RuntimeInstance)
             {
-                DestroyItem(template);
+                UnityObject.Destroy(templateGameObject);
             }
-            template = null;
-
-            assetPath = null;
-            categoryName = null;
-            if(PoolUtill.IsDebug)
+            else if(templateType == UGOTemplateType.PrefabInstance)
             {
-                UnityObject.Destroy(groupTransform.gameObject);
+                UGOPoolUtill.DestroyProvider(AssetPath, templateGameObject);
+            }
+            templateGameObject = null;
+            AssetPath = null;
+
+            if (UGOPoolUtill.IsDebug)
+            {
+                UnityObject.Destroy(poolTransform.gameObject);
             }
         }
-
     }
 }

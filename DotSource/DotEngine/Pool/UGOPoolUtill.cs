@@ -1,30 +1,13 @@
-﻿using DotEngine.Log;
-using System;
+﻿using System;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.UPool
 {
-    public static class PoolUtill
+    public static class UGOPoolUtill
     {
-        #region Logger
-        private const string LOGGER_TAG = "UPool";
-        internal static void Error(string message)
-        {
-            LogUtil.GetLogger(LOGGER_TAG).Error(message);
-        }
+        internal static string LOG_TAG = "UGOPool";
 
-        internal static void Warning(string message)
-        {
-            LogUtil.GetLogger(LOGGER_TAG).Warning(message);
-        }
-
-        internal static void Info(string message)
-        {
-            LogUtil.GetLogger(LOGGER_TAG).Info(message);
-        }
-        #endregion
-
-        public static bool IsDebug { get; set; } = true;
+        public static bool IsDebug { get; set; } = false;
 
         #region asset
         internal static Func<string, UnityObject, UnityObject> InstantiateProvider { get; set; } = (assetPath, uObj) =>
@@ -49,14 +32,5 @@ namespace DotEngine.UPool
             }
         }
         #endregion
-
-        internal static bool IsNull(this UnityObject obj)
-        {
-            if (obj == null || obj.Equals(null))
-            {
-                return true;
-            }
-            return false;
-        }
     }
 }
