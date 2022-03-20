@@ -1,28 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DotEngine.FSM
 {
-    public class FSMachine : IFSState
+    public class FSMachine
     {
-        public string Name { get; set; }
         public FSBlackboard Blackboard { get; private set; }
 
-        private Dictionary<string, IFSState> stateDic = null;
+        private Dictionary<string, IFSState> stateDic = new Dictionary<string, IFSState>();
+        private Dictionary<string, List<IFSTransition>> transitionDic = new Dictionary<string, List<IFSTransition>>();
 
-        public FSMachine()
-        {
-            Blackboard = new FSBlackboard();
-            stateDic = new Dictionary<string, IFSState>();
-        }
+        private string defaultStateName = null;
+        private string currentStateName = null;
+        private bool isRunning = false;
 
-        public bool HasState(string name)
-        {
-            return stateDic.ContainsKey(name);
-        }
+        public bool IsRunning => isRunning;
 
         public bool AddState(IFSState state)
         {
@@ -34,33 +25,113 @@ namespace DotEngine.FSM
             {
                 return false;
             }
+
             stateDic.Add(state.Name, state);
+            state.DoInitilize(this);
+
+            if (state.IsDefault)
+            {
+                defaultStateName = state.Name;
+            }
             return true;
         }
 
-        public void DoInitilize(FSMachine machine)
+        public void AddTransition(FSTransition transition)
         {
-            throw new NotImplementedException();
+            if (transition == null)
+            {
+                return;
+            }
+
+            if (!transitionDic.TryGetValue(transition.From, out var list))
+            {
+                list = new List<IFSTransition>();
+                transitionDic.Add(transition.From, list);
+            }
+            list.Add(transition);
+            transition.DoInitilize(this);
         }
 
-        public void DoEnter(string from)
+        public void DoInitilize(FSBlackboard blackboard = null)
         {
-            throw new NotImplementedException();
+            Blackboard = blackboard ?? new FSBlackboard();
+        }
+
+        public void DoActivate()
+        {
+            if (isRunning)
+            {
+                return;
+            }
+
+            isRunning = true;
+            if (!string.IsNullOrEmpty(currentStateName))
+            {
+                return;
+            }
+            if (string.IsNullOrEmpty(defaultStateName))
+            {
+                return;
+            }
+
+            currentStateName = defaultStateName;
+            IFSState state = stateDic[currentStateName];
+            state.DoEnter(null);
         }
 
         public void DoUpdate(float deltaTime)
         {
-            throw new NotImplementedException();
+            if (!isRunning || string.IsNullOrEmpty(currentStateName))
+            {
+                return;
+            }
+
+            IFSState currentState = stateDic[currentStateName];
+            currentState.DoUpdate(deltaTime);
+
+            if (transitionDic.TryGetValue(currentStateName, out var transitions))
+            {
+                foreach (var transition in transitions)
+                {
+                    if (transition.Condition.IsSatisfy())
+                    {
+                        string nextStateName = transition.To;
+                        currentState.DoLeave(nextStateName);
+
+                        IFSState toState = stateDic[nextStateName];
+                        toState.DoEnter(currentStateName);
+
+                        currentStateName = nextStateName;
+                        break;
+                    }
+                }
+            }
         }
 
-        public void DoLeave(string to)
+        public void DoDeactivate()
         {
-            throw new NotImplementedException();
+            isRunning = false;
         }
 
         public void DoDestroy()
         {
-            throw new NotImplementedException();
+            isRunning = false;
+            foreach(var state in stateDic.Values)
+            {
+                state.DoDestroy();
+            }
+            stateDic.Clear();
+            foreach(var transitions in transitionDic.Values)
+            {
+                foreach(var transition in transitions)
+                {
+                    transition.DoDestroy();
+                }
+            }
+            transitionDic.Clear();
+            currentStateName = null;
+            defaultStateName = null;
+            Blackboard = null;
         }
     }
 }

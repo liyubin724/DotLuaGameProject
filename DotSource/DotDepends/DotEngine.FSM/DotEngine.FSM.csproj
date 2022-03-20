@@ -41,17 +41,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CustomFSConditionAttribute.cs" />
+    <Compile Include="Attributes\CustomFSStateAttribute.cs" />
     <Compile Include="Conditions\AFSCondition.cs" />
     <Compile Include="Conditions\FSAndCondition.cs" />
+    <Compile Include="Conditions\FSFalseCondition.cs" />
     <Compile Include="Conditions\FSNotCondition.cs" />
     <Compile Include="Conditions\FSOrCondition.cs" />
+    <Compile Include="Conditions\FSTrueCondition.cs" />
     <Compile Include="FSBlackboard.cs" />
     <Compile Include="IFSCondition.cs" />
     <Compile Include="FSMachine.cs" />
+    <Compile Include="IFSTransition.cs" />
     <Compile Include="States\AFSState.cs" />
-    <Compile Include="FSTransition.cs" />
+    <Compile Include="Transitions\FSTransition.cs" />
     <Compile Include="IFSState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotEngine.Injection\DotEngine.Injection.csproj">
+      <Project>{80da1e18-5e91-4b9f-a5b9-16e57e3db285}</Project>
+      <Name>DotEngine.Injection</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

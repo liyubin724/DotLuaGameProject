@@ -3,6 +3,7 @@
     public interface IFSState
     {
         string Name { get; set; }
+        bool IsDefault { get; set; }
 
         void DoInitilize(FSMachine machine);
         void DoEnter(string from);

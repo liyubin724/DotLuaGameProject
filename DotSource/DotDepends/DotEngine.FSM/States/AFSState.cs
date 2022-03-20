@@ -3,6 +3,7 @@
     public abstract class AFSState : IFSState
     {
         public string Name { get; set; }
+        public bool IsDefault { get; set; }
 
         protected FSMachine Machine { get; set; }
 
@@ -17,7 +18,7 @@
 
         public virtual void DoLeave(string to) { }
 
-        public void DoDestroy()
+        public virtual void DoDestroy()
         {
             Machine = null;
         }

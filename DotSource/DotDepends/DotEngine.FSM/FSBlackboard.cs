@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DotEngine.Injection;
 
 namespace DotEngine.FSM
 {
-    public class FSBlackboard
+    public class FSBlackboard : InjectContext<string>
     {
     }
 }
