@@ -50,6 +50,7 @@
     <Compile Include="Conditions\FSOrCondition.cs" />
     <Compile Include="Conditions\FSTrueCondition.cs" />
     <Compile Include="FSBlackboard.cs" />
+    <Compile Include="FSData.cs" />
     <Compile Include="IFSCondition.cs" />
     <Compile Include="FSMachine.cs" />
     <Compile Include="IFSTransition.cs" />

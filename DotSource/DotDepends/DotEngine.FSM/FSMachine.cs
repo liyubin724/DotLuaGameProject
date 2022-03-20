@@ -1,60 +1,60 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace DotEngine.FSM
 {
     public class FSMachine
     {
-        public FSBlackboard Blackboard { get; private set; }
+        public FSBlackboard Blackboard { get; set; }
+        public List<IFSState> States { get; set; }
+        public List<IFSTransition> Transitions { get; set; }
+        public string InitState { get; set; }
+        public bool IsRunWhenInitlized { get; set; } = true;
 
         private Dictionary<string, IFSState> stateDic = new Dictionary<string, IFSState>();
         private Dictionary<string, List<IFSTransition>> transitionDic = new Dictionary<string, List<IFSTransition>>();
 
-        private string defaultStateName = null;
-        private string currentStateName = null;
-        private bool isRunning = false;
+        private string currentState = null;
+        public string CurrentState => currentState;
 
+        private bool isRunning = false;
         public bool IsRunning => isRunning;
 
-        public bool AddState(IFSState state)
+        public void DoInitilize()
         {
-            if (state == null)
+            if(Blackboard == null)
             {
-                return false;
+                Blackboard = new FSBlackboard();
             }
-            if (stateDic.ContainsKey(state.Name))
+            if(States!=null && States.Count>0)
             {
-                return false;
+                foreach(var state in States)
+                {
+                    if(stateDic.ContainsKey(state.Name))
+                    {
+                        stateDic.Add(state.Name, state);
+                        state.DoInitilize(this);
+                    }
+                }
+            }
+            if(Transitions!=null && Transitions.Count>0)
+            {
+                foreach(var transition in Transitions)
+                {
+                    if(!transitionDic.TryGetValue(transition.From,out var list))
+                    {
+                        list = new List<IFSTransition>();
+                        transitionDic.Add(transition.From, list);
+                    }
+                    list.Add(transition);
+                    transition.DoInitilize(this);
+                }
             }
 
-            stateDic.Add(state.Name, state);
-            state.DoInitilize(this);
-
-            if (state.IsDefault)
+            if(IsRunWhenInitlized)
             {
-                defaultStateName = state.Name;
+                DoActivate();
             }
-            return true;
-        }
-
-        public void AddTransition(FSTransition transition)
-        {
-            if (transition == null)
-            {
-                return;
-            }
-
-            if (!transitionDic.TryGetValue(transition.From, out var list))
-            {
-                list = new List<IFSTransition>();
-                transitionDic.Add(transition.From, list);
-            }
-            list.Add(transition);
-            transition.DoInitilize(this);
-        }
-
-        public void DoInitilize(FSBlackboard blackboard = null)
-        {
-            Blackboard = blackboard ?? new FSBlackboard();
         }
 
         public void DoActivate()
@@ -65,43 +65,43 @@ namespace DotEngine.FSM
             }
 
             isRunning = true;
-            if (!string.IsNullOrEmpty(currentStateName))
+            if (!string.IsNullOrEmpty(currentState))
             {
                 return;
             }
-            if (string.IsNullOrEmpty(defaultStateName))
+            if (string.IsNullOrEmpty(InitState))
             {
                 return;
             }
 
-            currentStateName = defaultStateName;
-            IFSState state = stateDic[currentStateName];
+            currentState = InitState;
+            IFSState state = stateDic[currentState];
             state.DoEnter(null);
         }
 
         public void DoUpdate(float deltaTime)
         {
-            if (!isRunning || string.IsNullOrEmpty(currentStateName))
+            if (!isRunning || string.IsNullOrEmpty(currentState))
             {
                 return;
             }
 
-            IFSState currentState = stateDic[currentStateName];
-            currentState.DoUpdate(deltaTime);
+            IFSState runningState = stateDic[currentState];
+            runningState.DoUpdate(deltaTime);
 
-            if (transitionDic.TryGetValue(currentStateName, out var transitions))
+            if (transitionDic.TryGetValue(currentState, out var transitions))
             {
                 foreach (var transition in transitions)
                 {
                     if (transition.Condition.IsSatisfy())
                     {
                         string nextStateName = transition.To;
-                        currentState.DoLeave(nextStateName);
+                        runningState.DoLeave(nextStateName);
 
                         IFSState toState = stateDic[nextStateName];
-                        toState.DoEnter(currentStateName);
+                        toState.DoEnter(this.currentState);
 
-                        currentStateName = nextStateName;
+                        this.currentState = nextStateName;
                         break;
                     }
                 }
@@ -129,8 +129,7 @@ namespace DotEngine.FSM
                 }
             }
             transitionDic.Clear();
-            currentStateName = null;
-            defaultStateName = null;
+            currentState = null;
             Blackboard = null;
         }
     }
