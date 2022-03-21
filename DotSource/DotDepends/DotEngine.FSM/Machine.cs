@@ -3,16 +3,16 @@ using System;
 
 namespace DotEngine.FSM
 {
-    public class FSMachine
+    public class Machine
     {
-        public FSBlackboard Blackboard { get; set; }
-        public List<IFSState> States { get; set; }
-        public List<IFSTransition> Transitions { get; set; }
+        public Blackboard Blackboard { get; set; }
+        public List<IState> States { get; set; }
+        public List<ITransition> Transitions { get; set; }
         public string InitState { get; set; }
         public bool IsRunWhenInitlized { get; set; } = true;
 
-        private Dictionary<string, IFSState> stateDic = new Dictionary<string, IFSState>();
-        private Dictionary<string, List<IFSTransition>> transitionDic = new Dictionary<string, List<IFSTransition>>();
+        private Dictionary<string, IState> stateDic = new Dictionary<string, IState>();
+        private Dictionary<string, List<ITransition>> transitionDic = new Dictionary<string, List<ITransition>>();
 
         private string currentState = null;
         public string CurrentState => currentState;
@@ -24,7 +24,7 @@ namespace DotEngine.FSM
         {
             if(Blackboard == null)
             {
-                Blackboard = new FSBlackboard();
+                Blackboard = new Blackboard();
             }
             if(States!=null && States.Count>0)
             {
@@ -43,7 +43,7 @@ namespace DotEngine.FSM
                 {
                     if(!transitionDic.TryGetValue(transition.From,out var list))
                     {
-                        list = new List<IFSTransition>();
+                        list = new List<ITransition>();
                         transitionDic.Add(transition.From, list);
                     }
                     list.Add(transition);
@@ -75,7 +75,7 @@ namespace DotEngine.FSM
             }
 
             currentState = InitState;
-            IFSState state = stateDic[currentState];
+            IState state = stateDic[currentState];
             state.DoEnter(null);
         }
 
@@ -86,7 +86,7 @@ namespace DotEngine.FSM
                 return;
             }
 
-            IFSState runningState = stateDic[currentState];
+            IState runningState = stateDic[currentState];
             runningState.DoUpdate(deltaTime);
 
             if (transitionDic.TryGetValue(currentState, out var transitions))
@@ -98,7 +98,7 @@ namespace DotEngine.FSM
                         string nextStateName = transition.To;
                         runningState.DoLeave(nextStateName);
 
-                        IFSState toState = stateDic[nextStateName];
+                        IState toState = stateDic[nextStateName];
                         toState.DoEnter(this.currentState);
 
                         this.currentState = nextStateName;

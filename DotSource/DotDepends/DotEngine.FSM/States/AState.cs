@@ -1,13 +1,13 @@
 ﻿namespace DotEngine.FSM
 {
-    public abstract class AFSState : IFSState
+    public abstract class AState : IState
     {
         public string Name { get; set; }
         public bool IsDefault { get; set; }
 
-        protected FSMachine Machine { get; set; }
+        protected Machine Machine { get; set; }
 
-        public virtual void DoInitilize(FSMachine machine)
+        public virtual void DoInitilize(Machine machine)
         {
             Machine = machine;
         }

@@ -1,10 +1,10 @@
 ﻿namespace DotEngine.FSM
 {
-    public interface IFSState
+    public interface IState
     {
         string Name { get; set; }
 
-        void DoInitilize(FSMachine machine);
+        void DoInitilize(Machine machine);
         void DoEnter(string from);
         void DoUpdate(float deltaTime);
         void DoLeave(string to);

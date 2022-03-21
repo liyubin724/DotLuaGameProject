@@ -1,13 +1,13 @@
 ﻿namespace DotEngine.FSM
 {
-    public class FSTransition : IFSTransition
+    public class Transition : ITransition
     {
         public string From { get; set; }
         public string To { get; set; }
-        public IFSCondition Condition { get; set; }
+        public ICondition Condition { get; set; }
 
-        protected FSMachine machine;
-        public virtual void DoInitilize(FSMachine machine)
+        protected Machine machine;
+        public virtual void DoInitilize(Machine machine)
         {
             this.machine = machine;
         }

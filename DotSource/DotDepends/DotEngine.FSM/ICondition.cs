@@ -1,8 +1,8 @@
 ﻿namespace DotEngine.FSM
 {
-    public interface IFSCondition
+    public interface ICondition
     {
-        void DoInitilize(FSBlackboard blackboard);
+        void DoInitilize(Blackboard blackboard);
         bool IsSatisfy();
         void DoDestroy();
     }

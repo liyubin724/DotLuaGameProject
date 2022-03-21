@@ -1,12 +1,12 @@
 ﻿namespace DotEngine.FSM
 {
-    public interface IFSTransition
+    public interface ITransition
     {
         string From { get; set; }
         string To { get; set; }
-        IFSCondition Condition { get; set; }
+        ICondition Condition { get; set; }
 
-        void DoInitilize(FSMachine machine);
+        void DoInitilize(Machine machine);
         void DoDestroy();
     }
 }

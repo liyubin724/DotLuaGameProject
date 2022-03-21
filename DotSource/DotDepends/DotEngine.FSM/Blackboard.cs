@@ -2,7 +2,7 @@
 
 namespace DotEngine.FSM
 {
-    public class FSBlackboard : InjectContext<string>
+    public class Blackboard : InjectContext<string>
     {
     }
 }
