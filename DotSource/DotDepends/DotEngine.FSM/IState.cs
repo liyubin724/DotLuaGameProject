@@ -2,7 +2,8 @@
 {
     public interface IState
     {
-        string Name { get; set; }
+        string Guid { get; set; }
+        string DisplayName { get; set; }
 
         void DoInitilize(Machine machine);
         void DoEnter(string from);

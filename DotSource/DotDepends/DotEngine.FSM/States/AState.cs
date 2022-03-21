@@ -2,7 +2,8 @@
 {
     public abstract class AState : IState
     {
-        public string Name { get; set; }
+        public string Guid { get; set; }
+        public string DisplayName { get; set; }
         public bool IsDefault { get; set; }
 
         protected Machine Machine { get; set; }

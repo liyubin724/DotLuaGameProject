@@ -2,7 +2,10 @@
 {
     public abstract class ACondition : ICondition
     {
-        public Blackboard Blackboard { get; set; }
+        public string Guid{get;set;}
+        public string DisplayName { get; set; }
+
+        protected Blackboard Blackboard { get; set; }
 
         public virtual void DoInitilize(Blackboard blackboard)
         {

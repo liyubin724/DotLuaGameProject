@@ -1,7 +1,11 @@
 ﻿namespace DotEngine.FSM
 {
+    [CustomCondition(4, "Not", "")]
     public class NotCondition : ICondition
     {
+        public string Guid { get; set; }
+        public string DisplayName { get; set; }
+
         public ICondition Condition { get; set; }
 
         public void DoInitilize(Blackboard blackboard)

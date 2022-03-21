@@ -1,7 +1,11 @@
 ﻿namespace DotEngine.FSM
 {
+    [CustomCondition(3, "And", "")]
     public class AndCondition : ICondition
     {
+        public string Guid { get; set; }
+        public string DisplayName { get; set; }
+
         public ICondition ConditionA { get; set; }
         public ICondition ConditionB { get; set; }
 

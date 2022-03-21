@@ -5,6 +5,7 @@ namespace DotEngine.FSM
     public class AssetData
     {
         public HeaderData HeaderData;
+        public List<BlackboardData> BlackboardDatas = new List<BlackboardData>();
         public List<MachineData> MachineDatas = new List<MachineData>();
         public List<StateData> StateDatas = new List<StateData>();
         public List<TransitionData> TransitionDatas = new List<TransitionData>();
@@ -16,14 +17,32 @@ namespace DotEngine.FSM
         public string RootMachineGuid;
     }
 
+    public enum BlackboardValueType
+    {
+        String = 0,
+        Int,
+        Float,
+        Bool,
+    }
+
+    public class BlackboardData
+    {
+        public string Key;
+
+        public BlackboardValueType ValueType = BlackboardValueType.String;
+        public bool BoolValue;
+        public string StrValue;
+        public int IntValue;
+        public float FloatValue;
+    }
+
     public class MachineData
     {
         public string Guid;
-
         public string DisplayName;
-
         public string InitStateGuid;
         public bool AutoRunWhenInitlized;
+
         public List<string> stateGuids = new List<string>();
         public List<string> transitionGuids = new List<string>();
     }

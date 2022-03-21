@@ -3,55 +3,75 @@ using System;
 
 namespace DotEngine.FSM
 {
+    public delegate void StateChanged(string fromGuid, string toGuid);
+
     public class Machine
     {
+        public string Guid { get; set; }
+        public string DisplayName { get; set; }
+        public string InitStateGuid { get; set; }
+        public bool AutoRunWhenInitlized { get; set; } = true;
+
         public Blackboard Blackboard { get; set; }
-        public List<IState> States { get; set; }
-        public List<ITransition> Transitions { get; set; }
-        public string InitState { get; set; }
-        public bool IsRunWhenInitlized { get; set; } = true;
 
-        private Dictionary<string, IState> stateDic = new Dictionary<string, IState>();
-        private Dictionary<string, List<ITransition>> transitionDic = new Dictionary<string, List<ITransition>>();
-
-        private string currentState = null;
-        public string CurrentState => currentState;
+        private string currentStateGuid = null;
+        public string CurrentStateGuid => currentStateGuid;
 
         private bool isRunning = false;
         public bool IsRunning => isRunning;
 
+        public event StateChanged OnStateChanged;
+
+        private Dictionary<string, IState> stateDic = new Dictionary<string, IState>();
+        private Dictionary<string, List<Transition>> transitionDic = new Dictionary<string, List<Transition>>();
+
+        internal void AddState(IState state)
+        {
+            if (state == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (stateDic.ContainsKey(state.Guid))
+            {
+                throw new ArgumentException();
+            }
+
+            stateDic.Add(state.Guid, state);
+        }
+
+        internal void AddTransition(Transition transition)
+        {
+            if (transition == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (!transitionDic.TryGetValue(transition.FromStateGuid, out var list))
+            {
+                list = new List<Transition>();
+                transitionDic.Add(transition.FromStateGuid, list);
+            }
+            list.Add(transition);
+        }
+
         public void DoInitilize()
         {
-            if(Blackboard == null)
+            if (Blackboard == null)
             {
                 Blackboard = new Blackboard();
             }
-            if(States!=null && States.Count>0)
+            foreach (var state in stateDic.Values)
             {
-                foreach(var state in States)
-                {
-                    if(stateDic.ContainsKey(state.Name))
-                    {
-                        stateDic.Add(state.Name, state);
-                        state.DoInitilize(this);
-                    }
-                }
+                state.DoInitilize(this);
             }
-            if(Transitions!=null && Transitions.Count>0)
+            foreach (var list in transitionDic.Values)
             {
-                foreach(var transition in Transitions)
+                foreach (var transition in list)
                 {
-                    if(!transitionDic.TryGetValue(transition.From,out var list))
-                    {
-                        list = new List<ITransition>();
-                        transitionDic.Add(transition.From, list);
-                    }
-                    list.Add(transition);
                     transition.DoInitilize(this);
                 }
             }
 
-            if(IsRunWhenInitlized)
+            if (AutoRunWhenInitlized)
             {
                 DoActivate();
             }
@@ -65,43 +85,35 @@ namespace DotEngine.FSM
             }
 
             isRunning = true;
-            if (!string.IsNullOrEmpty(currentState))
+            if (!string.IsNullOrEmpty(currentStateGuid))
             {
                 return;
             }
-            if (string.IsNullOrEmpty(InitState))
+            if (string.IsNullOrEmpty(InitStateGuid))
             {
                 return;
             }
 
-            currentState = InitState;
-            IState state = stateDic[currentState];
-            state.DoEnter(null);
+            TransitionTo(InitStateGuid);
         }
 
         public void DoUpdate(float deltaTime)
         {
-            if (!isRunning || string.IsNullOrEmpty(currentState))
+            if (!isRunning || string.IsNullOrEmpty(currentStateGuid))
             {
                 return;
             }
 
-            IState runningState = stateDic[currentState];
+            IState runningState = stateDic[currentStateGuid];
             runningState.DoUpdate(deltaTime);
 
-            if (transitionDic.TryGetValue(currentState, out var transitions))
+            if (transitionDic.TryGetValue(currentStateGuid, out var transitions))
             {
                 foreach (var transition in transitions)
                 {
                     if (transition.Condition.IsSatisfy())
                     {
-                        string nextStateName = transition.To;
-                        runningState.DoLeave(nextStateName);
-
-                        IState toState = stateDic[nextStateName];
-                        toState.DoEnter(this.currentState);
-
-                        this.currentState = nextStateName;
+                        TransitionTo(transition.ToStateGuid);
                         break;
                     }
                 }
@@ -116,21 +128,44 @@ namespace DotEngine.FSM
         public void DoDestroy()
         {
             isRunning = false;
-            foreach(var state in stateDic.Values)
+            OnStateChanged = null;
+            foreach (var state in stateDic.Values)
             {
                 state.DoDestroy();
             }
             stateDic.Clear();
-            foreach(var transitions in transitionDic.Values)
+            foreach (var transitions in transitionDic.Values)
             {
-                foreach(var transition in transitions)
+                foreach (var transition in transitions)
                 {
                     transition.DoDestroy();
                 }
             }
             transitionDic.Clear();
-            currentState = null;
+            currentStateGuid = null;
+            Blackboard.Clear();
             Blackboard = null;
+        }
+
+        private void TransitionTo(string toStateGuid)
+        {
+            if (toStateGuid == currentStateGuid)
+            {
+                return;
+            }
+            IState currentState = string.IsNullOrEmpty(currentStateGuid) ? null : stateDic[currentStateGuid];
+            if (currentState != null)
+            {
+                currentState.DoLeave(toStateGuid);
+            }
+
+            string preStateGuid = currentStateGuid;
+
+            currentStateGuid = toStateGuid;
+            IState toState = stateDic[currentStateGuid];
+            toState.DoEnter(preStateGuid);
+
+            OnStateChanged?.Invoke(preStateGuid, currentStateGuid);
         }
     }
 }
