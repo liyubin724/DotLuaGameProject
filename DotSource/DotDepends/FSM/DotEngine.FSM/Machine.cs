@@ -105,7 +105,7 @@ namespace DotEngine.FSM
             }
 
             IState runningState = stateDic[currentStateGuid];
-            runningState.DoUpdate(deltaTime);
+            runningState.DoExecute(deltaTime);
 
             if (transitionDic.TryGetValue(currentStateGuid, out var transitions))
             {

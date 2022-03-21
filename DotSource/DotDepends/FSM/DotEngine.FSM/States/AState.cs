@@ -15,7 +15,7 @@
 
         public virtual void DoEnter(string from) { }
 
-        public abstract void DoUpdate(float deltaTime);
+        public abstract void DoExecute(float deltaTime);
 
         public virtual void DoLeave(string to) { }
 
