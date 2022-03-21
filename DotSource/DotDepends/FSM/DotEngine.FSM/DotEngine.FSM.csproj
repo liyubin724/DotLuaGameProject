@@ -60,11 +60,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotEngine.Core\DotEngine.Core.csproj">
+    <ProjectReference Include="..\..\DotEngine.Core\DotEngine.Core.csproj">
       <Project>{3b63d16a-95fe-4e4b-af72-4ab062900d57}</Project>
       <Name>DotEngine.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DotEngine.Injection\DotEngine.Injection.csproj">
+    <ProjectReference Include="..\..\DotEngine.Injection\DotEngine.Injection.csproj">
       <Project>{80da1e18-5e91-4b9f-a5b9-16e57e3db285}</Project>
       <Name>DotEngine.Injection</Name>
     </ProjectReference>
