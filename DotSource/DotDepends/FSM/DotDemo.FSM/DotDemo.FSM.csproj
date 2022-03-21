@@ -43,14 +43,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conditions\IsThirst.cs" />
+    <Compile Include="Miner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\EnterMineAndDigForNuggest.cs" />
+    <Compile Include="States\GoHomeAndSleepTilRested.cs" />
+    <Compile Include="States\QuenchThirst.cs" />
+    <Compile Include="States\VisitBankAndDepositGold.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="States\" />
+    <ProjectReference Include="..\DotEngine.FSM\DotEngine.FSM.csproj">
+      <Project>{61FA463E-055D-494E-A44E-1D4368DD94C8}</Project>
+      <Name>DotEngine.FSM</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

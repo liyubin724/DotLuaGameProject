@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="dot_fsm_styles.uss" />
+    <uie:Toolbar>
+        <uie:ToolbarButton text="New" display-tooltip-when-elided="true" name="newBtn" />
+        <uie:ToolbarButton text="Open" display-tooltip-when-elided="true" name="openBtn" />
+    </uie:Toolbar>
+    <ui:VisualElement name="contentContainer" style="flex-direction: column; height: 100%; width: 100%;">
+        <ui:ListView focusable="true" name="blackboardListView" />
+        <ui:VisualElement name="blackboardHeader" class="header" style="width: 100%; height: 25px;">
+            <ui:Label text="Label" display-tooltip-when-elided="true" />
+        </ui:VisualElement>
+        <ui:ListView focusable="true" name="machineListView" />
+        <ui:ListView focusable="true" name="stateListView" />
+        <ui:ListView focusable="true" name="transitionListView" />
+        <ui:ListView focusable="true" name="conditionListView" />
+    </ui:VisualElement>
+</ui:UXML>
