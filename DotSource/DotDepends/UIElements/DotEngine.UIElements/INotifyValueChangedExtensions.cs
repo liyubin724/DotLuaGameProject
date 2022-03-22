@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-namespace QuickEye.UIToolkit
+namespace DotEngine.UIElements
 {
     public static class INotifyValueChangedExtensions
     {
