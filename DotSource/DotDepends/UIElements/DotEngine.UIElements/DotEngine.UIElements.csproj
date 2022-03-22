@@ -49,7 +49,6 @@
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Extensions\VisualElementExtensions.cs" />
     <Compile Include="Extensions\UQueryExtensions.cs" />
-    <Compile Include="FluentVisualElementExtensions.cs" />
     <Compile Include="INotifyValueChangedExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
