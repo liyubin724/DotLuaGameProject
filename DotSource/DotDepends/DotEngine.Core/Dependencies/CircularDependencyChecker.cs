@@ -27,7 +27,7 @@ namespace DotEngine.Core
             CreateDependenceData(datas, out var dependenceDic, out var indegreeDic);
 
             Stack<T> zeroIndegreeStack = new Stack<T>();
-            if (!PickZeroIndegreeInToStack(indegreeDic, zeroIndegreeStack))
+            if (PickZeroIndegreeInToStack(indegreeDic, zeroIndegreeStack))
             {
                 return false;
             }
@@ -45,7 +45,7 @@ namespace DotEngine.Core
             CreateDependenceData(datas, out var dependenceDic, out var indegreeDic);
 
             Stack<T> zeroIndegreeStack = new Stack<T>();
-            if (!PickZeroIndegreeInToStack(indegreeDic, zeroIndegreeStack))
+            if (PickZeroIndegreeInToStack(indegreeDic, zeroIndegreeStack))
             {
                 return false;
             }
@@ -60,14 +60,19 @@ namespace DotEngine.Core
 
             foreach (var data in datas)
             {
-                if (dependenceDic.TryGetValue(data.Main, out var depends))
+                if (!dependenceDic.TryGetValue(data.Main, out var mainDepends))
                 {
-                    depends = new List<T>();
-                    dependenceDic.Add(data.Main, depends);
+                    mainDepends = new List<T>();
+                    dependenceDic.Add(data.Main, mainDepends);
                 }
-                if (!depends.Contains(data.Depend))
+                if(!dependenceDic.ContainsKey(data.Depend))
                 {
-                    depends.Add(data.Depend);
+                    dependenceDic.Add(data.Depend, new List<T>());
+                }
+
+                if (!mainDepends.Contains(data.Depend))
+                {
+                    mainDepends.Add(data.Depend);
 
                     if (indegreeDic.ContainsKey(data.Depend))
                     {
@@ -93,16 +98,22 @@ namespace DotEngine.Core
 
             foreach (var data in datas)
             {
-                if (dependenceDic.TryGetValue(data.Main, out var depends))
+                if (dependenceDic.TryGetValue(data.Main, out var mainDepends))
                 {
-                    depends = new List<T>();
-                    dependenceDic.Add(data.Main, depends);
+                    mainDepends = new List<T>();
+                    dependenceDic.Add(data.Main, mainDepends);
                 }
+
                 foreach(var depend in data.Depends)
                 {
-                    if (!depends.Contains(depend))
+                    if (!dependenceDic.ContainsKey(depend))
                     {
-                        depends.Add(depend);
+                        dependenceDic.Add(depend, new List<T>());
+                    }
+
+                    if (!mainDepends.Contains(depend))
+                    {
+                        mainDepends.Add(depend);
 
                         if (indegreeDic.ContainsKey(depend))
                         {
