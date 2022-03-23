@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dependencies\CircularDependencyChecker.cs" />
     <Compile Include="Exceptions\ParamNullException.cs" />
     <Compile Include="Exceptions\TypeNotFoundException.cs" />
     <Compile Include="Extensions\ReflectionExtension.cs" />
@@ -52,7 +53,7 @@
     <Compile Include="Generic\UniqueIDCreator.cs" />
     <Compile Include="ICopy.cs" />
     <Compile Include="IDeepCopy.cs" />
-    <Compile Include="MathLib.cs" />
+    <Compile Include="MathExt\MathLib.cs" />
     <Compile Include="Notification\ANotifier.cs" />
     <Compile Include="Notification\AObserver.cs" />
     <Compile Include="Notification\Dispatcher.cs" />
