@@ -1,6 +1,7 @@
 ﻿using DotEngine.FSM;
 using DotEngine.UIElements;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DotEditor.FSM
@@ -66,44 +67,55 @@ namespace DotEditor.FSM
             }
         }
 
+        [Q("key")]
         private TextField m_KeyField;
+        [Q("value-type")]
         private EnumField m_ValueTypeField;
+        [Q("bool-value")]
         private Toggle m_BoolValueField;
+        [Q("string-value")]
         private TextField m_StringValueField;
+        [Q("int-value")]
         private IntegerField m_IntValueField;
+        [Q("float-value")]
         private FloatField m_FloatValueField;
 
 
         public BlackboardView()
         {
-            this.SetDisplay(DisplayStyle.Flex);
-            this.SetRow();
+            var visualTreeAsset = Resources.Load<VisualTreeAsset>("dot_fsm_blackboard_uxml");
+            var visualTree = visualTreeAsset.CloneTree();
+            Add(visualTree);
 
-            m_KeyField = new TextField("Key");
+            visualTree.AssignQueryResults(this);
+            //this.SetDisplay(DisplayStyle.Flex);
+            //this.SetRow();
 
-            Add(m_KeyField);
+            //m_KeyField = new TextField("Key");
 
-            m_ValueTypeField = new EnumField("ValueType", BlackboardValueType.String);
-            m_ValueTypeField.RegisterValueChangedCallback((e) =>
-            {
-                BindedData.ValueType = (BlackboardValueType)e.newValue;
-                UpdateFieldVisible();
-            });
-            Add(m_ValueTypeField);
+            //Add(m_KeyField);
 
-            m_BoolValueField = new Toggle("BoolValue");
-            Add(m_BoolValueField);
+            //m_ValueTypeField = new EnumField("ValueType", BlackboardValueType.String);
+            //m_ValueTypeField.RegisterValueChangedCallback((e) =>
+            //{
+            //    BindedData.ValueType = (BlackboardValueType)e.newValue;
+            //    UpdateFieldVisible();
+            //});
+            //Add(m_ValueTypeField);
 
-            m_StringValueField = new TextField("StringValue");
-            Add(m_StringValueField);
+            //m_BoolValueField = new Toggle("BoolValue");
+            //Add(m_BoolValueField);
 
-            m_IntValueField = new IntegerField("IntValue");
-            Add(m_IntValueField);
+            //m_StringValueField = new TextField("StringValue");
+            //Add(m_StringValueField);
 
-            m_FloatValueField = new FloatField("FloatValue");
-            Add(m_FloatValueField);
+            //m_IntValueField = new IntegerField("IntValue");
+            //Add(m_IntValueField);
 
-            UpdateFieldVisible();
+            //m_FloatValueField = new FloatField("FloatValue");
+            //Add(m_FloatValueField);
+
+            //UpdateFieldVisible();
         }
 
         private void UpdateFieldVisible()

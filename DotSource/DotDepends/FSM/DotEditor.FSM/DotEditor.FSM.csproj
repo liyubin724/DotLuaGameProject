@@ -68,6 +68,9 @@
       <Name>DotEngine.FSM</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dot_fsm_blackboard_xuml.uxml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)$(TargetName).dll

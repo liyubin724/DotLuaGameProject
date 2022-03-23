@@ -6,3 +6,28 @@
     border-top-width: 2px;
     border-bottom-width: 2px;
 }
+
+#blackboard {
+    flex-direction: row;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(144, 138, 138, 255);
+    border-right-color: rgba(144, 138, 138, 255);
+    border-top-color: rgba(144, 138, 138, 255);
+    border-bottom-color: rgba(144, 138, 138, 255);
+    font-size: 20px;
+    width: 100%;
+}
+
+#blackboard Label {
+    -unity-font-style: normal;
+    width: auto;
+    max-width: 120px;
+    min-width: 120px;
+}
+
+#blackboard #unity-text-input {
+    min-width: 200px;
+}
