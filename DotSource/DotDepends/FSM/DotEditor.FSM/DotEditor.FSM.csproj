@@ -55,6 +55,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DotEngine.Core\DotEngine.Core.csproj">
+      <Project>{3B63D16A-95FE-4E4B-AF72-4AB062900D57}</Project>
+      <Name>DotEngine.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj">
       <Project>{baed7a18-6b05-4be0-b331-552e221b3150}</Project>
       <Name>DotEngine.UIElements</Name>
@@ -70,6 +74,8 @@
 $(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.UIElements.dll
 copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM\Editor
 copy $(TargetDir)DotEngine.UIElements.dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
+copy $(TargetDir)$(TargetName).dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM\Editor
+copy $(TargetDir)DotEngine.UIElements.dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

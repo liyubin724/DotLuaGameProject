@@ -77,6 +77,9 @@ $(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.Injection.dll
 copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
 copy $(TargetDir)DotEngine.Core.dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
 copy $(TargetDir)DotEngine.Injection.dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
+copy $(TargetDir)$(TargetName).dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
+copy $(TargetDir)DotEngine.Core.dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
+copy $(TargetDir)DotEngine.Injection.dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
