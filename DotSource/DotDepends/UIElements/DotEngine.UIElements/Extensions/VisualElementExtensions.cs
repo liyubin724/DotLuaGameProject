@@ -47,20 +47,34 @@ namespace DotEngine.UIElements
             return self;
         }
 
-        public static VisualElement SetWidth(this VisualElement self, float v)
+        public static VisualElement SetWidth(this VisualElement self, float v, LengthUnit unit = LengthUnit.Pixel)
         {
-            var c = self.style.width;
-            c = v;
-            self.style.width = c;
+            StyleLength width = new Length(v, unit);
+            self.style.width = width;
 
             return self;
         }
 
-        public static VisualElement SetHeight(this VisualElement self, float v)
+        public static VisualElement SetWidth(this VisualElement self, StyleKeyword keyword)
         {
-            var c = self.style.height;
-            c = v;
-            self.style.height = c;
+            StyleLength width = new StyleLength(keyword);
+            self.style.width = width;
+
+            return self;
+        }
+
+        public static VisualElement SetHeight(this VisualElement self, float v, LengthUnit unit = LengthUnit.Pixel)
+        {
+            StyleLength height = new Length(v, unit);
+            self.style.height = height;
+
+            return self;
+        }
+
+        public static VisualElement SetHeight(this VisualElement self, StyleKeyword keyword)
+        {
+            StyleLength height = new StyleLength(keyword);
+            self.style.height = height;
 
             return self;
         }
@@ -207,6 +221,15 @@ namespace DotEngine.UIElements
             return self;
         }
 
+        public static VisualElement SetMargin(this VisualElement self, float v, LengthUnit v2)
+        {
+            SetMarginBottom(self, v, v2);
+            SetMarginLeft(self, v, v2);
+            SetMarginRight(self, v, v2);
+            SetMarginTop(self, v, v2);
+            return self;
+        }
+
         public static VisualElement SetMarginLeft(this VisualElement self, float v, LengthUnit v2)
         {
             var c = self.style.marginLeft;
@@ -252,6 +275,15 @@ namespace DotEngine.UIElements
             c.value = c2;
             self.style.marginBottom = c;
 
+            return self;
+        }
+
+        public static VisualElement SetPadding(this VisualElement self, float v, LengthUnit v2)
+        {
+            SetPaddingLeft(self, v, v2);
+            SetPaddingRight(self, v, v2);
+            SetPaddingBottom(self, v, v2);
+            SetPaddingTop(self, v, v2);
             return self;
         }
 
