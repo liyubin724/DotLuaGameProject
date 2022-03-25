@@ -1,18 +1,20 @@
-@ECHO OFF
+@ECHO ON
 
 SET SolutionDir=%1
 SET ProjectDir=%2
 SET ConfigurationName=%3
 SET ProjectName=%4
 SET OutputDir=%5
+SET ToolDir=%6
 
 SET TargetDir=%ProjectDir%bin\%ConfigurationName%
 
-SET Pdb2mdbToolPath=%SolutionDir%Tools\pdb2mdb\pdb2mdb.exe
+SET Pdb2mdbToolPath=%ToolDir%Tools\pdb2mdb\pdb2mdb.exe
 
 IF NOT EXIST %OutputDir% (
     MD %OutputDir%
 )
+ECHO %OutputDir%
 
 SETLOCAL enabledelayedexpansion
 FOR /r %TargetDir%\ %%f IN (*.dll) DO (
@@ -21,7 +23,7 @@ FOR /r %TargetDir%\ %%f IN (*.dll) DO (
     SET fileFullPath=%%f
     SET fileName=%%~nf
 
-    REM ECHO !fileName!
+    ECHO !fileName!
 
     IF [!fileName!] NEQ [UnityEngine] (
         if [!fileName!] NEQ [UnityEditor] (

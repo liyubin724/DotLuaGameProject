@@ -71,15 +71,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)$(TargetName).dll
-$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.Core.dll
-$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.Injection.dll
-copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-copy $(TargetDir)DotEngine.Core.dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-copy $(TargetDir)DotEngine.Injection.dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-copy $(TargetDir)$(TargetName).dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-copy $(TargetDir)DotEngine.Core.dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-copy $(TargetDir)DotEngine.Injection.dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

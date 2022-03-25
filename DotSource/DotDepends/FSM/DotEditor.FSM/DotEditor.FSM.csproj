@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DotEngine.Core\DotEngine.Core.csproj">
-      <Project>{3B63D16A-95FE-4E4B-AF72-4AB062900D57}</Project>
+      <Project>{3b63d16a-95fe-4e4b-af72-4ab062900d57}</Project>
       <Name>DotEngine.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj">
@@ -76,6 +76,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(ProjectDir)events\post-build-events.bat $(SolutionDir) $(ProjectDir) $(ConfigurationName) $(ProjectName) $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM</PostBuildEvent>
+    <PostBuildEvent>call $(SolutionDir)events\post-build-events.bat $(SolutionDir) $(ProjectDir) $(ConfigurationName) $(ProjectName) $(SolutionDir)DotFSMDemo\Assets\Dot.FSM\ $(SolutionDir)..\..\</PostBuildEvent>
   </PropertyGroup>
 </Project>
