@@ -51,7 +51,8 @@
   <ItemGroup>
     <Compile Include="AssetDataEditorWindow.cs" />
     <Compile Include="BlackboardView.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="DataContainerView.cs" />
+    <Compile Include="MachineView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,16 +70,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\dot_fsm_blackboard_xuml.uxml" />
+    <Content Include="Resources\Editor\dot_fsm_blackboard_xuml.uxml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)$(TargetName).dll
-$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.UIElements.dll
-copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM\Editor
-copy $(TargetDir)DotEngine.UIElements.dll $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-copy $(TargetDir)$(TargetName).dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM\Editor
-copy $(TargetDir)DotEngine.UIElements.dll.mdb $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM
-</PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)events\post-build-events.bat $(SolutionDir) $(ProjectDir) $(ConfigurationName) $(ProjectName) $(ProjectDir)..\DotFSMDemo\Assets\Dot.FSM</PostBuildEvent>
   </PropertyGroup>
 </Project>

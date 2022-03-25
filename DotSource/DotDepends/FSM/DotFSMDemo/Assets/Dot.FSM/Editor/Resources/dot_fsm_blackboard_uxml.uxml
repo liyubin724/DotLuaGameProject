@@ -2,10 +2,12 @@
     <Style src="dot_fsm_styles.uss" />
     <ui:VisualElement name="blackboard">
         <ui:TextField name="key" label="Key" text="Key" />
-        <uie:EnumField label="Value Type" value="Center" name="value-type" type="DotEngine.FSM.BlackboardValueType,DotEngine.FSM" style="max-width: none;" />
-        <ui:Toggle label="Bool Value" name="bool-value" />
-        <ui:TextField picking-mode="Ignore" label="String Value" name="string-value" />
-        <uie:IntegerField label="Int Value" value="0" name="int-value" />
-        <uie:FloatField label="Float Value" value="0" name="float-value" />
+        <uie:EnumField label="Value Type" value="String" name="value-type" type="DotEngine.FSM.BlackboardValueType, DotEngine.FSM" style="max-width: none;" />
+        <ui:VisualElement name="value" style="flex-direction: row;">
+            <ui:TextField picking-mode="Ignore" label="String Value" name="string-value" />
+            <uie:IntegerField label="Int Value" value="0" name="int-value" />
+            <uie:FloatField label="Float Value" value="0" name="float-value" />
+            <ui:Toggle label="Bool Value" name="bool-value" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

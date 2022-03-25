@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="dot_fsm_styles.uss" />
+    <ui:VisualElement name="data-container">
+        <ui:Label text="Label" display-tooltip-when-elided="true" name="data-header" style="background-color: rgb(29, 26, 26);" />
+        <ui:ListView focusable="true" name="data-list" reorderable="true" style="width: 100%; height: 100%;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -47,6 +47,7 @@ namespace DotEditor.FSM
                     {
                         view.BindedData.FloatValue = m_IntValue.GetValueFromBag(bag, cc);
                     }
+                    view.UpdateFieldVisible();
                 }
             }
         }
@@ -69,6 +70,8 @@ namespace DotEditor.FSM
 
         [Q("key")]
         private TextField m_KeyField;
+        [Q("value")]
+        private VisualElement m_ValueContainer;
         [Q("value-type")]
         private EnumField m_ValueTypeField;
         [Q("bool-value")]
@@ -80,6 +83,7 @@ namespace DotEditor.FSM
         [Q("float-value")]
         private FloatField m_FloatValueField;
 
+        private VisualElement m_ShowingElement = null;
 
         public BlackboardView()
         {
@@ -88,64 +92,70 @@ namespace DotEditor.FSM
             Add(visualTree);
 
             visualTree.AssignQueryResults(this);
-            //this.SetDisplay(DisplayStyle.Flex);
-            //this.SetRow();
+            m_ValueContainer.Remove(m_BoolValueField);
+            m_ValueContainer.Remove(m_StringValueField);
+            m_ValueContainer.Remove(m_IntValueField);
+            m_ValueContainer.Remove(m_FloatValueField);
 
-            //m_KeyField = new TextField("Key");
-
-            //Add(m_KeyField);
-
-            //m_ValueTypeField = new EnumField("ValueType", BlackboardValueType.String);
-            //m_ValueTypeField.RegisterValueChangedCallback((e) =>
-            //{
-            //    BindedData.ValueType = (BlackboardValueType)e.newValue;
-            //    UpdateFieldVisible();
-            //});
-            //Add(m_ValueTypeField);
-
-            //m_BoolValueField = new Toggle("BoolValue");
-            //Add(m_BoolValueField);
-
-            //m_StringValueField = new TextField("StringValue");
-            //Add(m_StringValueField);
-
-            //m_IntValueField = new IntegerField("IntValue");
-            //Add(m_IntValueField);
-
-            //m_FloatValueField = new FloatField("FloatValue");
-            //Add(m_FloatValueField);
-
-            //UpdateFieldVisible();
+            UpdateFieldVisible();
+            m_ValueTypeField.RegisterValueChangedCallback((e) =>
+            {
+                BindedData.ValueType = (BlackboardValueType)e.newValue;
+                UpdateFieldVisible();
+            });
+            m_BoolValueField.RegisterValueChangedCallback((e) =>
+            {
+                BindedData.BoolValue = m_BoolValueField.value;
+                UpdateFieldVisible();
+            });
+            m_StringValueField.RegisterValueChangedCallback((e) =>
+            {
+                BindedData.StrValue = m_StringValueField.value;
+                UpdateFieldVisible();
+            });
+            m_IntValueField.RegisterValueChangedCallback((e) =>
+            {
+                BindedData.IntValue = m_IntValueField.value;
+                UpdateFieldVisible();
+            });
+            m_FloatValueField.RegisterValueChangedCallback((e) =>
+            {
+                BindedData.FloatValue = m_FloatValueField.value;
+                UpdateFieldVisible();
+            });
         }
 
         private void UpdateFieldVisible()
         {
-            m_ValueTypeField.SetVisibility(Visibility.Hidden);
-            m_BoolValueField.SetVisibility(Visibility.Hidden);
-            m_StringValueField.SetVisibility(Visibility.Hidden);
-            m_IntValueField.SetVisibility(Visibility.Hidden);
-            m_FloatValueField.SetVisibility(Visibility.Hidden);
+            if (m_ShowingElement != null)
+            {
+                m_ValueContainer.Remove(m_ShowingElement);
+            }
+
             if (BindedData != null)
             {
-                m_ValueTypeField.SetVisibility(Visibility.Visible);
+                m_ValueTypeField.SetValueWithoutNotify(bindedData.ValueType);
                 if (BindedData.ValueType == BlackboardValueType.Bool)
                 {
-                    m_BoolValueField.SetVisibility(Visibility.Visible);
+                    m_ShowingElement = m_BoolValueField;
                 }
                 else if (BindedData.ValueType == BlackboardValueType.String)
                 {
-                    m_StringValueField.SetVisibility(Visibility.Visible);
+                    m_ShowingElement = m_StringValueField;
                 }
                 else if (BindedData.ValueType == BlackboardValueType.Int)
                 {
-                    m_IntValueField.SetVisibility(Visibility.Visible);
+                    m_ShowingElement = m_IntValueField;
                 }
                 else if (BindedData.ValueType == BlackboardValueType.Float)
                 {
-                    m_FloatValueField.SetVisibility(Visibility.Visible);
+                    m_ShowingElement = m_FloatValueField;
+                }
+                if (m_ShowingElement != null)
+                {
+                    m_ValueContainer.Add(m_ShowingElement);
                 }
             }
-            
         }
     }
 }
