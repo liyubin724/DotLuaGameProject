@@ -4,24 +4,20 @@ using System.Linq;
 
 namespace DotEngine.Config.Ini
 {
-    public class IniData : IDeepCopy<IniData>, IEnumerable<IniSection>
+    public class IniConfig : IDeepCopy<IniConfig>, IEnumerable<IniSection>
     {
-        public static readonly string GLOBAL_SECTION_NAME = "__global__";
+        private Dictionary<string, IniSection> sections = new Dictionary<string, IniSection>();
 
-        private Dictionary<string, IniSection> sections = null;
-
-        public string[] SectionNames => sections.Keys.ToArray();
         public int SectionCount => sections.Count;
+        public string[] SectionNames => sections.Keys.ToArray();
 
-        public IniData()
+        public IniConfig()
         {
-            sections = new Dictionary<string, IniSection>();
         }
 
-        public IniData(IniData data)
+        public IniConfig(IniConfig data)
         {
-            sections = new Dictionary<string, IniSection>();
-            foreach(IniSection section in data)
+            foreach (IniSection section in data)
             {
                 sections.Add(section.Name, section.DeepCopy());
             }
@@ -30,7 +26,7 @@ namespace DotEngine.Config.Ini
         public bool ContainsSection(string sectionName) => sections.ContainsKey(sectionName);
         public IniSection AddSection(string sectionName)
         {
-            if(!sections.TryGetValue(sectionName,out var section))
+            if (!sections.TryGetValue(sectionName, out var section))
             {
                 section = new IniSection(sectionName);
                 sections.Add(sectionName, section);
@@ -47,7 +43,7 @@ namespace DotEngine.Config.Ini
             return section;
         }
 
-        public IniSection GetSection(string sectionName,bool isCreateIfNExist = false)
+        public IniSection GetSection(string sectionName, bool isCreateIfNExist = false)
         {
             if (!sections.TryGetValue(sectionName, out var section) && isCreateIfNExist)
             {
@@ -62,10 +58,10 @@ namespace DotEngine.Config.Ini
             sections.Clear();
         }
 
-        public IniProperty GetProperty(string sectionName,string propertyKey)
+        public IniProperty GetProperty(string sectionName, string propertyKey)
         {
             IniSection section = GetSection(sectionName, false);
-            if(section!=null)
+            if (section != null)
             {
                 return section.GetProperty(propertyKey, false);
             }
@@ -74,9 +70,9 @@ namespace DotEngine.Config.Ini
 
         public IniProperty GetProperty(string propertyKey)
         {
-            foreach(var section in this)
+            foreach (var section in this)
             {
-                if(section.ContainsProperty(propertyKey))
+                if (section.ContainsProperty(propertyKey))
                 {
                     return section.GetProperty(propertyKey, false);
                 }
@@ -84,14 +80,14 @@ namespace DotEngine.Config.Ini
             return null;
         }
 
-        public IniData DeepCopy()
+        public IniConfig DeepCopy()
         {
-            return new IniData(this);
+            return new IniConfig(this);
         }
 
         public IEnumerator<IniSection> GetEnumerator()
         {
-            foreach(var name in sections.Keys)
+            foreach (var name in sections.Keys)
             {
                 yield return sections[name];
             }

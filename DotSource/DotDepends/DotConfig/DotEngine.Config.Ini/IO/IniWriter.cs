@@ -9,75 +9,47 @@ namespace DotEngine.Config.Ini
         private static IniSchemeStyle schemeStyle = null;
         private static IniWriterStyle writerStyle = null;
 
-        public static string WriteToString(IniData iniData, IniSchemeStyle schemeStyle = null, IniWriterStyle writerStyle = null)
+        public static string WriteToString(IniConfig iniData, IniSchemeStyle schemeStyle = null, IniWriterStyle writerStyle = null)
         {
-            BeginWrite();
+            IniWriter.schemeStyle = schemeStyle ?? new IniSchemeStyle();
+            IniWriter.writerStyle = writerStyle ?? new IniWriterStyle();
 
             TextWriter writer = new StringWriter(new StringBuilder());
 
-            IniSection globalSection = iniData.GetSection(IniData.GLOBAL_SECTION_NAME, false);
-            if (globalSection != null)
-            {
-                WriteSection(globalSection, writer);
-            }
             foreach (var section in iniData)
             {
-                if (section.Name != IniData.GLOBAL_SECTION_NAME)
-                {
-                    WriteSection(section, writer);
-                }
+                WriteSection(section, writer);
             }
-
-            EndWrite();
 
             writer.Flush();
+            
             string iniString = writer.ToString();
             writer.Close();
+
             return iniString;
-        }
-
-        private static void BeginWrite()
-        {
-            if (schemeStyle == null)
-            {
-                schemeStyle = new IniSchemeStyle();
-            }
-            if (writerStyle == null)
-            {
-                writerStyle = new IniWriterStyle();
-            }
-        }
-
-        private static void EndWrite()
-        {
-            schemeStyle = null;
-            writerStyle = null;
         }
 
         private static void WriteSection(IniSection section, TextWriter writer)
         {
-            if (section.Name != IniData.GLOBAL_SECTION_NAME)
+            if (writerStyle.IsNewLineBeforeSection)
             {
-                if (writerStyle.IsNewLineBeforeSection)
-                {
-                    writer.Write($"{writerStyle.NewLineString}");
-                }
+                writer.Write($"{writerStyle.NewLineString}");
+            }
 
-                List<string> comments = section.Comments;
-                if (comments != null && comments.Count > 0)
+            List<string> comments = section.Comments;
+            if (comments != null && comments.Count > 0)
+            {
+                foreach (var comment in comments)
                 {
-                    foreach (var comment in comments)
-                    {
-                        writer.Write($"{schemeStyle.CommentString}{comment}{writerStyle.NewLineString}");
-                    }
+                    writer.Write($"{schemeStyle.CommentString}{comment}{writerStyle.NewLineString}");
                 }
+            }
 
-                writer.Write($"{schemeStyle.SectionStartString}{section.Name}{schemeStyle.SectionEndString}{writerStyle.NewLineString}");
+            writer.Write($"{schemeStyle.SectionStartString}{section.Name}{schemeStyle.SectionEndString}{writerStyle.NewLineString}");
 
-                if (writerStyle.IsNewLineAfterSection)
-                {
-                    writer.Write($"{writerStyle.NewLineString}");
-                }
+            if (writerStyle.IsNewLineAfterSection)
+            {
+                writer.Write($"{writerStyle.NewLineString}");
             }
 
             foreach (var property in section)

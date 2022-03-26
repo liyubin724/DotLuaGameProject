@@ -12,44 +12,163 @@
 
         public string CommentString
         {
-            get => string.IsNullOrEmpty(commentStr) ? ";" : commentStr;
-            set => commentStr = value?.Trim();
+            get
+            {
+                if(string.IsNullOrEmpty(commentStr))
+                {
+                    commentStr = "#";
+                }
+                return commentStr;
+            }
+            set
+            {
+                if(!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if(!string.IsNullOrEmpty(value))
+                    {
+                        commentStr = value;
+                    }
+                }
+            }
         }
 
         public string SectionStartString
         {
-            get => string.IsNullOrEmpty(sectionStartStr) ? "[" : sectionStartStr;
-            set => sectionStartStr = value?.Trim();
+            get
+            {
+                if (string.IsNullOrEmpty(sectionStartStr))
+                {
+                    sectionStartStr = "[";
+                }
+                return sectionStartStr;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        sectionStartStr = value;
+                    }
+                }
+            }
         }
 
         public string SectionEndString
         {
-            get => string.IsNullOrEmpty(sectionEndStr) ? "]" : sectionEndStr;
-            set => sectionEndStr = value?.Trim();
+            get
+            {
+                if (string.IsNullOrEmpty(sectionEndStr))
+                {
+                    sectionEndStr = "]";
+                }
+                return sectionEndStr;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        sectionEndStr = value;
+                    }
+                }
+            }
         }
 
         public string OptionalValueStartString
         {
-            get => string.IsNullOrEmpty(optionalValueStartStr) ? "{" : optionalValueStartStr;
-            set => optionalValueStartStr = value?.Trim();
+            get
+            {
+                if (string.IsNullOrEmpty(optionalValueStartStr))
+                {
+                    optionalValueStartStr = "{";
+                }
+                return optionalValueStartStr;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        optionalValueStartStr = value;
+                    }
+                }
+            }
         }
 
         public string OptionalValueEndString
         {
-            get => string.IsNullOrEmpty(optionalValueEndStr) ? "}" : optionalValueEndStr;
-            set => optionalValueEndStr = value?.Trim();
+            get
+            {
+                if (string.IsNullOrEmpty(optionalValueEndStr))
+                {
+                    optionalValueEndStr = "}";
+                }
+                return optionalValueEndStr;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        optionalValueEndStr = value;
+                    }
+                }
+            }
         }
 
         public string OptionalValueAssigmentString
         {
-            get => string.IsNullOrEmpty(optionalValueAssigmentStr) ? "=" : optionalValueAssigmentStr;
-            set => optionalValueAssigmentStr = value?.Trim();
+            get
+            {
+                if (string.IsNullOrEmpty(optionalValueAssigmentStr))
+                {
+                    optionalValueAssigmentStr = ";";
+                }
+                return optionalValueAssigmentStr;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        optionalValueAssigmentStr = value;
+                    }
+                }
+            }
         }
 
         public string PropertyAssigmentString
         {
-            get => string.IsNullOrEmpty(propertyAssigmentStr) ? "=" : propertyAssigmentStr;
-            set => propertyAssigmentStr = value?.Trim();
+            get
+            {
+                if (string.IsNullOrEmpty(propertyAssigmentStr))
+                {
+                    propertyAssigmentStr = "=";
+                }
+                return propertyAssigmentStr;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        propertyAssigmentStr = value;
+                    }
+                }
+            }
         }
     }
 }

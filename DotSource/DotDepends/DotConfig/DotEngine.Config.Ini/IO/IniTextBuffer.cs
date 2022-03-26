@@ -54,6 +54,7 @@ namespace DotEngine.Config.Ini
             }
 
             currentLineNumber++;
+
             lineRange.Start = 0;
             lineRange.Size = lineContent.Length;
 

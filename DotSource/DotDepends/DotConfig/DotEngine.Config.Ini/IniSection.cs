@@ -6,39 +6,13 @@ namespace DotEngine.Config.Ini
 {
     public class IniSection : IDeepCopy<IniSection>, IEnumerable<IniProperty>
     {
-        private string name;
-        public string Name => name;
+        public string Name { get; private set; }
+        public List<string> Comments { get; set; } = new List<string>();
 
-        private List<string> comments = null;
-        public List<string> Comments
-        {
-            get
-            {
-                if (comments == null)
-                {
-                    comments = new List<string>();
-                }
-                return comments;
-            }
-            set
-            {
-                comments?.Clear();
-                if (value != null)
-                {
-                    if (comments == null)
-                    {
-                        comments = new List<string>();
-                    }
-                    comments.AddRange(value);
-                }
-            }
-        }
-
-        private Dictionary<string, IniProperty> properties;
-
-        public string[] PropertyKeys => properties.Keys.ToArray();
+        private Dictionary<string, IniProperty> properties = new Dictionary<string, IniProperty>();
 
         public int PropertyCount => properties.Count;
+        public string[] PropertyKeys => properties.Keys.ToArray();
 
         public IniProperty this[string propertyKey]
         {
@@ -54,50 +28,40 @@ namespace DotEngine.Config.Ini
 
         public IniSection(string name)
         {
-            this.name = name;
-            properties = new Dictionary<string, IniProperty>();
+            Name = name;
         }
 
-        public IniSection(IniSection section) : this(section.Name)
+        public IniSection(IniSection section)
         {
-            name = section.Name;
-            if(section.comments!=null)
+            Name = section.Name;
+            Comments.AddRange(section.Comments);
+            foreach (var property in section)
             {
-                Comments = section.comments;
-            }
-            foreach(var property in section)
-            {
-                if (properties.ContainsKey(property.Key))
-                {
-                    properties[property.Key] = property.DeepCopy();
-                }
-                else
-                {
-                    properties.Add(property.Key, property.DeepCopy());
-                }
+                properties.Add(property.Key, property.DeepCopy());
             }
         }
 
         public bool ContainsProperty(string propertyKey) => properties.ContainsKey(propertyKey);
-        public IniProperty AddProperty(string propertyKey,string propertyValue,string[] comments = null, string[] optionalValues = null)
+
+        public IniProperty AddProperty(string propertyKey, string propertyValue, string[] comments = null, string[] optionalValues = null)
         {
             if (properties.ContainsKey(propertyKey))
             {
-                return null;
+                throw new IniPropertyRepeatException(propertyKey);
             }
+
             IniProperty property = new IniProperty(propertyKey, propertyValue);
-            if (property != null)
+            if(comments!=null && comments.Length>0)
             {
-                if(comments!=null && comments.Length>0)
-                {
-                    property.Comments.AddRange(comments);
-                }
-                if(optionalValues != null && optionalValues.Length>0)
-                {
-                    property.OptionalValues.AddRange(optionalValues);
-                }
+                property.Comments.AddRange(comments);
             }
+            if(optionalValues!=null && optionalValues.Length>0)
+            {
+                property.OptionalValues.AddRange(optionalValues);
+            }
+
             properties.Add(propertyKey, property);
+
             return property;
         }
 
@@ -106,13 +70,14 @@ namespace DotEngine.Config.Ini
             if (properties.TryGetValue(propertyKey, out var property))
             {
                 properties.Remove(propertyKey);
+
                 return property;
             }
 
             return null;
         }
 
-        public IniProperty GetProperty(string propertyKey,bool isCreateIfNExist = false)
+        public IniProperty GetProperty(string propertyKey, bool isCreateIfNExist = false)
         {
             if (!properties.TryGetValue(propertyKey, out var property) && isCreateIfNExist)
             {
@@ -129,10 +94,10 @@ namespace DotEngine.Config.Ini
 
         public void ClearComments()
         {
-            comments?.Clear();
-            foreach(IniProperty property in this)
+            Comments.Clear();
+            foreach (IniProperty property in this)
             {
-                property.Comments = null;
+                property.Comments.Clear();
             }
         }
 

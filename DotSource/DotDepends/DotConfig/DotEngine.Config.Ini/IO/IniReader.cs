@@ -13,8 +13,8 @@ namespace DotEngine.Config.Ini
     public class IniReader
     {
         private static IniSchemeStyle schemeStyle = null;
-
         private static IniReaderStyle readerStyle = null;
+
         private static List<string> tempComments = new List<string>();
         private static List<string> tempOptionalValues = new List<string>();
         private static string tempSectionName = null;
@@ -28,14 +28,16 @@ namespace DotEngine.Config.Ini
             }
         }
 
-        public static IniData ReadFromString(string iniString,  IniSchemeStyle schemeStyle = null, IniReaderStyle readerStyle = null)
+        public static IniConfig ReadFromString(string iniString, IniSchemeStyle schemeStyle = null, IniReaderStyle readerStyle = null)
         {
-            IniReader.schemeStyle = schemeStyle;
-            IniReader.readerStyle = readerStyle;
+            IniReader.schemeStyle = schemeStyle ?? new IniSchemeStyle();
+            IniReader.readerStyle = readerStyle ?? new IniReaderStyle() ;
+            tempComments.Clear();
+            tempOptionalValues.Clear();
+            tempSectionName = null;
+            tempExceptions.Clear();
 
-            BeginRead();
-
-            IniData iniData = new IniData();
+            IniConfig iniData = new IniConfig();
 
             IniTextBuffer stringBuffer = new IniTextBuffer(iniString);
             while (stringBuffer.ReadLine())
@@ -50,50 +52,19 @@ namespace DotEngine.Config.Ini
 
                     if (readerStyle.ThrowExceptionsOnError)
                     {
-                        EndRead();
-
-                        throw;
+                        throw e;
                     }
                 }
             }
 
-            if(tempExceptions.Count>0)
+            if (tempExceptions.Count > 0)
             {
                 iniData = null;
             }
-
-            EndRead();
-            
             return iniData;
         }
 
-        private static void BeginRead()
-        {
-            if(schemeStyle == null)
-            {
-                schemeStyle = new IniSchemeStyle();
-            }
-            if(readerStyle == null)
-            {
-                readerStyle = new IniReaderStyle();
-            }
-            tempComments.Clear();
-            tempOptionalValues.Clear();
-            tempSectionName = null;
-            tempExceptions.Clear();
-        }
-
-        private static void EndRead()
-        {
-            schemeStyle = null;
-            readerStyle = null;
-            tempComments.Clear();
-            tempOptionalValues.Clear();
-            tempSectionName = null;
-            tempExceptions.Clear();
-        }
-
-        private static void ProcessLine(IniTextBuffer buffer, IniData iniData)
+        private static void ProcessLine(IniTextBuffer buffer, IniConfig iniData)
         {
             if (buffer.IsEmpty(buffer.Range) || buffer.IsWhitespace(buffer.Range)) return;
 
@@ -109,7 +80,7 @@ namespace DotEngine.Config.Ini
             throw new IniReaderException("Error:Couldn't parse text", buffer.LineNumber, buffer.LineContent);
         }
 
-        private static ProcessLineState ProcessComment(IniTextBuffer buffer, IniData iniData)
+        private static ProcessLineState ProcessComment(IniTextBuffer buffer, IniConfig iniData)
         {
             IniLineRange range = buffer.Range.DeepCopy();
             buffer.TrimStart(range);
@@ -138,7 +109,7 @@ namespace DotEngine.Config.Ini
             return ProcessLineState.Success;
         }
 
-        private static ProcessLineState ProcessSection(IniTextBuffer buffer, IniData iniData)
+        private static ProcessLineState ProcessSection(IniTextBuffer buffer, IniConfig iniData)
         {
             IniLineRange range = buffer.Range.DeepCopy();
             buffer.Trim(range);
@@ -185,7 +156,7 @@ namespace DotEngine.Config.Ini
             return ProcessLineState.Success;
         }
 
-        private static ProcessLineState ProcessOptionalValue(IniTextBuffer buffer, IniData iniData)
+        private static ProcessLineState ProcessOptionalValue(IniTextBuffer buffer, IniConfig iniData)
         {
             IniLineRange range = buffer.Range.DeepCopy();
             buffer.Trim(range);
@@ -241,7 +212,7 @@ namespace DotEngine.Config.Ini
             return ProcessLineState.Success;
         }
 
-        private static ProcessLineState ProcessProperty(IniTextBuffer buffer, IniData iniData)
+        private static ProcessLineState ProcessProperty(IniTextBuffer buffer, IniConfig iniData)
         {
             IniLineRange range = buffer.Range.DeepCopy();
             buffer.TrimStart(range);
@@ -254,19 +225,12 @@ namespace DotEngine.Config.Ini
 
             if (string.IsNullOrEmpty(tempSectionName))
             {
-                if (readerStyle.AllowKeysWithoutSection)
+                if (!readerStyle.ThrowExceptionsOnError)
                 {
-                    tempSectionName = IniData.GLOBAL_SECTION_NAME;
+                    return ProcessLineState.Error;
                 }
-                else
-                {
-                    if (!readerStyle.ThrowExceptionsOnError)
-                    {
-                        return ProcessLineState.Error;
-                    }
 
-                    throw new IniReaderException("Error:The section is not found for property", buffer.LineNumber, buffer.LineContent);
-                }
+                throw new IniReaderException("Error:The section is not found for property", buffer.LineNumber, buffer.LineContent);
             }
 
             IniLineRange keyRange = new IniLineRange();

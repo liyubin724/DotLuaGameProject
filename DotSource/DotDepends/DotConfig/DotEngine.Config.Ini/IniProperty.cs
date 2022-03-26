@@ -4,28 +4,21 @@ namespace DotEngine.Config.Ini
 {
     public class IniProperty : IDeepCopy<IniProperty>
     {
-        private string key;
-        private string value = "";
-        private List<string> comments = null;
-        private List<string> optionalValues = null;
+        public string Key { get; private set; }
+        public string Value { get; private set; }
 
-        public string Key
-        {
-            get
-            {
-                return key;
-            }
-        }
+        public List<string> Comments { get; set; } = new List<string>();
+        public List<string> OptionalValues { get; set; } = new List<string>();
 
         public string StringValue
         {
             get
             {
-                return value;
+                return Value;
             }
             set
             {
-                this.value = value;
+                Value = value;
             }
         }
 
@@ -34,7 +27,7 @@ namespace DotEngine.Config.Ini
             get
             {
 
-                if (bool.TryParse(value, out var result))
+                if (bool.TryParse(Value, out var result))
                 {
                     return result;
                 }
@@ -42,7 +35,7 @@ namespace DotEngine.Config.Ini
             }
             set
             {
-                this.value = value.ToString();
+                Value = value.ToString();
             }
         }
 
@@ -50,7 +43,7 @@ namespace DotEngine.Config.Ini
         {
             get
             {
-                if (int.TryParse(value, out var result))
+                if (int.TryParse(Value, out var result))
                 {
                     return result;
                 }
@@ -58,7 +51,7 @@ namespace DotEngine.Config.Ini
             }
             set
             {
-                this.value = value.ToString();
+                Value = value.ToString();
             }
         }
 
@@ -66,7 +59,7 @@ namespace DotEngine.Config.Ini
         {
             get
             {
-                if (float.TryParse(value, out var result))
+                if (float.TryParse(Value, out var result))
                 {
                     return result;
                 }
@@ -74,76 +67,23 @@ namespace DotEngine.Config.Ini
             }
             set
             {
-                this.value = value.ToString();
-            }
-        }
-
-        public List<string> Comments
-        {
-            get
-            {
-                if (comments == null)
-                {
-                    comments = new List<string>();
-                }
-                return comments;
-            }
-            set
-            {
-                comments?.Clear();
-                if (value != null)
-                {
-                    if (comments == null)
-                    {
-                        comments = new List<string>();
-                    }
-                    comments.AddRange(value);
-                }
-            }
-        }
-
-        public List<string> OptionalValues
-        {
-            get
-            {
-                if (optionalValues == null)
-                {
-                    optionalValues = new List<string>();
-                }
-                return optionalValues;
-            }
-            set
-            {
-                optionalValues?.Clear();
-                if (value != null)
-                {
-                    if (optionalValues == null)
-                    {
-                        optionalValues = new List<string>();
-                    }
-                    optionalValues.AddRange(value);
-                }
+                Value = value.ToString();
             }
         }
 
         public IniProperty(string key, string value = "")
         {
-            this.key = key;
-            this.value = value;
+            Key = key;
+            Value = value;
         }
 
-        internal IniProperty(IniProperty p)
+        public IniProperty(IniProperty p)
         {
-            key = p.Key;
-            value = p.StringValue;
-            if (p.comments != null)
-            {
-                Comments = p.Comments;
-            }
-            if (p.optionalValues != null)
-            {
-                OptionalValues = p.OptionalValues;
-            }
+            Key = p.Key;
+            Value = p.Value;
+
+            Comments.AddRange(p.Comments);
+            OptionalValues.AddRange(p.OptionalValues);
         }
 
         public IniProperty DeepCopy()
