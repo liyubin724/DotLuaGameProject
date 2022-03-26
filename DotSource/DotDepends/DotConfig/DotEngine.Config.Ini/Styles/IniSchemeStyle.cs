@@ -2,46 +2,23 @@
 {
     public class IniSchemeStyle
     {
-        private string commentStr = "#";
-        private string sectionStartStr = "[";
-        private string sectionEndStr = "]";
-        private string optionalValueStartStr = "--{";
-        private string optionalValueEndStr = "}";
-        private string optionalValueAssigmentStr = ",";
-        private string propertyAssigmentStr = "=";
+        private string commentPrefix = "#";
+        private string sectionPrefix = "[";
+        private string sectionPostfix = "]";
+        private string optionalValuePrefix = "--{";
+        private string optionalValuePostfix = "}";
+        private string optionalValueAssigment = ";";
+        private string propertyAssigment = "=";
 
-        public string CommentString
+        public string CommentPrefix
         {
             get
             {
-                if(string.IsNullOrEmpty(commentStr))
+                if (string.IsNullOrEmpty(commentPrefix))
                 {
-                    commentStr = "#";
+                    commentPrefix = "#";
                 }
-                return commentStr;
-            }
-            set
-            {
-                if(!string.IsNullOrEmpty(value))
-                {
-                    value = value.Trim();
-                    if(!string.IsNullOrEmpty(value))
-                    {
-                        commentStr = value;
-                    }
-                }
-            }
-        }
-
-        public string SectionStartString
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(sectionStartStr))
-                {
-                    sectionStartStr = "[";
-                }
-                return sectionStartStr;
+                return commentPrefix;
             }
             set
             {
@@ -50,21 +27,25 @@
                     value = value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        sectionStartStr = value;
+                        commentPrefix = value;
+                    }
+                    else
+                    {
+                        commentPrefix = "#";
                     }
                 }
             }
         }
 
-        public string SectionEndString
+        public string SectionPrefix
         {
             get
             {
-                if (string.IsNullOrEmpty(sectionEndStr))
+                if (string.IsNullOrEmpty(sectionPrefix))
                 {
-                    sectionEndStr = "]";
+                    sectionPrefix = "[";
                 }
-                return sectionEndStr;
+                return sectionPrefix;
             }
             set
             {
@@ -73,21 +54,25 @@
                     value = value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        sectionEndStr = value;
+                        sectionPrefix = value;
+                    }
+                    else
+                    {
+                        sectionPrefix = "[";
                     }
                 }
             }
         }
 
-        public string OptionalValueStartString
+        public string SectionPostfix
         {
             get
             {
-                if (string.IsNullOrEmpty(optionalValueStartStr))
+                if (string.IsNullOrEmpty(sectionPostfix))
                 {
-                    optionalValueStartStr = "{";
+                    sectionPostfix = "]";
                 }
-                return optionalValueStartStr;
+                return sectionPostfix;
             }
             set
             {
@@ -96,21 +81,25 @@
                     value = value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        optionalValueStartStr = value;
+                        sectionPostfix = value;
+                    }
+                    else
+                    {
+                        sectionPostfix = "]";
                     }
                 }
             }
         }
 
-        public string OptionalValueEndString
+        public string OptionalValuePrefix
         {
             get
             {
-                if (string.IsNullOrEmpty(optionalValueEndStr))
+                if (string.IsNullOrEmpty(optionalValuePrefix))
                 {
-                    optionalValueEndStr = "}";
+                    optionalValuePrefix = "{";
                 }
-                return optionalValueEndStr;
+                return optionalValuePrefix;
             }
             set
             {
@@ -119,21 +108,25 @@
                     value = value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        optionalValueEndStr = value;
+                        optionalValuePrefix = value;
+                    }
+                    else
+                    {
+                        optionalValuePrefix = "--{";
                     }
                 }
             }
         }
 
-        public string OptionalValueAssigmentString
+        public string OptionalValuePostfix
         {
             get
             {
-                if (string.IsNullOrEmpty(optionalValueAssigmentStr))
+                if (string.IsNullOrEmpty(optionalValuePostfix))
                 {
-                    optionalValueAssigmentStr = ";";
+                    optionalValuePostfix = "}";
                 }
-                return optionalValueAssigmentStr;
+                return optionalValuePostfix;
             }
             set
             {
@@ -142,21 +135,25 @@
                     value = value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        optionalValueAssigmentStr = value;
+                        optionalValuePostfix = value;
+                    }
+                    else
+                    {
+                        optionalValuePostfix = "}";
                     }
                 }
             }
         }
 
-        public string PropertyAssigmentString
+        public string OptionalValueAssigment
         {
             get
             {
-                if (string.IsNullOrEmpty(propertyAssigmentStr))
+                if (string.IsNullOrEmpty(optionalValueAssigment))
                 {
-                    propertyAssigmentStr = "=";
+                    optionalValueAssigment = ";";
                 }
-                return propertyAssigmentStr;
+                return optionalValueAssigment;
             }
             set
             {
@@ -165,7 +162,38 @@
                     value = value.Trim();
                     if (!string.IsNullOrEmpty(value))
                     {
-                        propertyAssigmentStr = value;
+                        optionalValueAssigment = value;
+                    }
+                    else
+                    {
+                        optionalValueAssigment = ";";
+                    }
+                }
+            }
+        }
+
+        public string PropertyAssigment
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(propertyAssigment))
+                {
+                    propertyAssigment = "=";
+                }
+                return propertyAssigment;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    value = value.Trim();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        propertyAssigment = value;
+                    }
+                    else
+                    {
+                        propertyAssigment = "=";
                     }
                 }
             }

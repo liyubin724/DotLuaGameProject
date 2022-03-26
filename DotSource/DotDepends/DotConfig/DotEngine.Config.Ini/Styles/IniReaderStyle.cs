@@ -3,10 +3,6 @@
     public class IniReaderStyle
     {
         /// <summary>
-        /// 读取时遇到错误时是否抛出异常
-        /// </summary>
-        public bool ThrowExceptionsOnError { get; set; } = true;
-        /// <summary>
         /// 读取时是否读取注释信息
         /// </summary>
         public bool IsParseComments { get; set; } = true;
@@ -22,10 +18,9 @@
         /// 是否去除可选值开始与结尾处的空白字符
         /// </summary>
         public bool IsTrimOptionalValues { get; set; } = true;
-        /// <summary>
-        /// 对属性值是否去除开始与结尾处的空白字符
-        /// </summary>
-        public bool IsTrimProperties { get; set; } = true;
+        
+        public bool IsTrimPropertyKey { get; set; } = true;
+        public bool IsTrimPropertyValue { get; set; } = true;
         /// <summary>
         /// 
         /// </summary>

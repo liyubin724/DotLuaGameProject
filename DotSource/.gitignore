@@ -2,4 +2,13 @@ Logs
 Temp
 obj
 bin
+packages
+
+Library
+
 .vs
+.idea
+*.sln
+*.csproj
+*.iml
+*.iml.meta

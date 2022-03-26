@@ -9,16 +9,16 @@ namespace DotEngine.Config.Ini
         public string Name { get; private set; }
         public List<string> Comments { get; set; } = new List<string>();
 
-        private Dictionary<string, IniProperty> properties = new Dictionary<string, IniProperty>();
+        private Dictionary<string, IniProperty> propertyDic = new Dictionary<string, IniProperty>();
 
-        public int PropertyCount => properties.Count;
-        public string[] PropertyKeys => properties.Keys.ToArray();
+        public int PropertyCount => propertyDic.Count;
+        public string[] PropertyKeys => propertyDic.Keys.ToArray();
 
         public IniProperty this[string propertyKey]
         {
             get
             {
-                if (properties.TryGetValue(propertyKey, out var property))
+                if (propertyDic.TryGetValue(propertyKey, out var property))
                 {
                     return property;
                 }
@@ -37,15 +37,15 @@ namespace DotEngine.Config.Ini
             Comments.AddRange(section.Comments);
             foreach (var property in section)
             {
-                properties.Add(property.Key, property.DeepCopy());
+                propertyDic.Add(property.Key, property.DeepCopy());
             }
         }
 
-        public bool ContainsProperty(string propertyKey) => properties.ContainsKey(propertyKey);
+        public bool ContainsProperty(string propertyKey) => propertyDic.ContainsKey(propertyKey);
 
         public IniProperty AddProperty(string propertyKey, string propertyValue, string[] comments = null, string[] optionalValues = null)
         {
-            if (properties.ContainsKey(propertyKey))
+            if (propertyDic.ContainsKey(propertyKey))
             {
                 throw new IniPropertyRepeatException(propertyKey);
             }
@@ -60,16 +60,25 @@ namespace DotEngine.Config.Ini
                 property.OptionalValues.AddRange(optionalValues);
             }
 
-            properties.Add(propertyKey, property);
+            propertyDic.Add(propertyKey, property);
 
             return property;
         }
 
+        public void AddProperty(IniProperty property)
+        {
+            if (propertyDic.ContainsKey(property.Key))
+            {
+                throw new IniPropertyRepeatException(property.Key);
+            }
+            propertyDic.Add(property.Key, property);
+        }
+
         public IniProperty RemoveProperty(string propertyKey)
         {
-            if (properties.TryGetValue(propertyKey, out var property))
+            if (propertyDic.TryGetValue(propertyKey, out var property))
             {
-                properties.Remove(propertyKey);
+                propertyDic.Remove(propertyKey);
 
                 return property;
             }
@@ -79,7 +88,7 @@ namespace DotEngine.Config.Ini
 
         public IniProperty GetProperty(string propertyKey, bool isCreateIfNExist = false)
         {
-            if (!properties.TryGetValue(propertyKey, out var property) && isCreateIfNExist)
+            if (!propertyDic.TryGetValue(propertyKey, out var property) && isCreateIfNExist)
             {
                 property = AddProperty(propertyKey, string.Empty);
             }
@@ -89,7 +98,7 @@ namespace DotEngine.Config.Ini
 
         public void ClearProperties()
         {
-            properties.Clear();
+            propertyDic.Clear();
         }
 
         public void ClearComments()
@@ -108,13 +117,13 @@ namespace DotEngine.Config.Ini
 
         public IEnumerator<IniProperty> GetEnumerator()
         {
-            foreach (string key in properties.Keys)
-                yield return properties[key];
+            foreach (string key in propertyDic.Keys)
+                yield return propertyDic[key];
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return properties.GetEnumerator();
+            return propertyDic.GetEnumerator();
         }
     }
 }

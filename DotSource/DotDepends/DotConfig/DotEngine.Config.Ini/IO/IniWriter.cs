@@ -15,10 +15,14 @@ namespace DotEngine.Config.Ini
             IniWriter.writerStyle = writerStyle ?? new IniWriterStyle();
 
             TextWriter writer = new StringWriter(new StringBuilder());
-
+            bool isFirstSection = true;
             foreach (var section in iniData)
             {
-                WriteSection(section, writer);
+                WriteSection(section, writer,isFirstSection);
+                if(!isFirstSection)
+                {
+                    isFirstSection = false;
+                }
             }
 
             writer.Flush();
@@ -29,9 +33,9 @@ namespace DotEngine.Config.Ini
             return iniString;
         }
 
-        private static void WriteSection(IniSection section, TextWriter writer)
+        private static void WriteSection(IniSection section, TextWriter writer,bool isFirstSection = false)
         {
-            if (writerStyle.IsNewLineBeforeSection)
+            if (writerStyle.IsNewLineBeforeSection && isFirstSection)
             {
                 writer.Write($"{writerStyle.NewLineString}");
             }
@@ -41,11 +45,11 @@ namespace DotEngine.Config.Ini
             {
                 foreach (var comment in comments)
                 {
-                    writer.Write($"{schemeStyle.CommentString}{comment}{writerStyle.NewLineString}");
+                    writer.Write($"{schemeStyle.CommentPrefix}{comment}{writerStyle.NewLineString}");
                 }
             }
 
-            writer.Write($"{schemeStyle.SectionStartString}{section.Name}{schemeStyle.SectionEndString}{writerStyle.NewLineString}");
+            writer.Write($"{schemeStyle.SectionPrefix}{section.Name}{schemeStyle.SectionPostfix}{writerStyle.NewLineString}");
 
             if (writerStyle.IsNewLineAfterSection)
             {
@@ -70,26 +74,26 @@ namespace DotEngine.Config.Ini
             {
                 foreach (var comment in comments)
                 {
-                    writer.Write($"{schemeStyle.CommentString}{comment}{writerStyle.NewLineString}");
+                    writer.Write($"{schemeStyle.CommentPrefix}{comment}{writerStyle.NewLineString}");
                 }
             }
 
             List<string> optionalValues = property.OptionalValues;
             if (optionalValues != null && optionalValues.Count > 0)
             {
-                writer.Write($"{schemeStyle.OptionalValueStartString}");
+                writer.Write($"{schemeStyle.OptionalValuePrefix}");
                 for (int i = 0; i < optionalValues.Count; ++i)
                 {
                     writer.Write($"{optionalValues[i]}");
                     if (i < optionalValues.Count - 1)
                     {
-                        writer.Write($"{schemeStyle.OptionalValueAssigmentString}");
+                        writer.Write($"{schemeStyle.OptionalValueAssigment}");
                     }
                 }
-                writer.Write($"{schemeStyle.OptionalValueEndString}{writerStyle.NewLineString}");
+                writer.Write($"{schemeStyle.OptionalValuePostfix}{writerStyle.NewLineString}");
             }
 
-            writer.Write($"{property.Key}{writerStyle.SpacesBetweenKeyAndAssigment}{schemeStyle.PropertyAssigmentString}{writerStyle.SpacesBetweenAssigmentAndValue}{property.StringValue}{writerStyle.NewLineString}");
+            writer.Write($"{property.Key}{writerStyle.SpacesBetweenKeyAndAssigment}{schemeStyle.PropertyAssigment}{writerStyle.SpacesBetweenAssigmentAndValue}{property.StringValue}{writerStyle.NewLineString}");
             if (writerStyle.IsNewLineAfterProperty)
             {
                 writer.Write($"{writerStyle.NewLineString}");

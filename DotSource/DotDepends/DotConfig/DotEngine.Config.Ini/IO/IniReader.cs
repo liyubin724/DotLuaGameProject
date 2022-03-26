@@ -1,285 +1,191 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace DotEngine.Config.Ini
 {
-    enum ProcessLineState
-    {
-        Success = 0,
-        Unrecognized = 1,
-        Error = 2,
-    }
-
-    public class IniReader
+    public static class IniReader
     {
         private static IniSchemeStyle schemeStyle = null;
         private static IniReaderStyle readerStyle = null;
+        private static IniText textBuffer = new IniText();
 
-        private static List<string> tempComments = new List<string>();
-        private static List<string> tempOptionalValues = new List<string>();
-        private static string tempSectionName = null;
-        private static List<Exception> tempExceptions = new List<Exception>();
-
-        public static Exception[] GetReaderExceptions
-        {
-            get
-            {
-                return tempExceptions.ToArray();
-            }
-        }
+        private static string cachedSectionName = null;
+        private static List<string> cachedComments = new List<string>();
+        private static List<string> cachedOptionalValues = new List<string>();
 
         public static IniConfig ReadFromString(string iniString, IniSchemeStyle schemeStyle = null, IniReaderStyle readerStyle = null)
         {
+            if(string.IsNullOrEmpty(iniString))
+            {
+                return null;
+            }
+
             IniReader.schemeStyle = schemeStyle ?? new IniSchemeStyle();
             IniReader.readerStyle = readerStyle ?? new IniReaderStyle() ;
-            tempComments.Clear();
-            tempOptionalValues.Clear();
-            tempSectionName = null;
-            tempExceptions.Clear();
+            cachedComments.Clear();
+            cachedOptionalValues.Clear();
+            cachedSectionName = null;
 
-            IniConfig iniData = new IniConfig();
+            textBuffer.Text = iniString;
+            IniConfig iniConfig = new IniConfig();
+            IniLine iniLine = new IniLine();
 
-            IniTextBuffer stringBuffer = new IniTextBuffer(iniString);
-            while (stringBuffer.ReadLine())
+            int lineStartIndex = 0;
+            while(textBuffer.ReadLine(lineStartIndex,ref iniLine))
             {
-                try
+                lineStartIndex = iniLine.End + 1;
+                if (textBuffer.IsContentWhitespace(iniLine))
                 {
-                    ProcessLine(stringBuffer, iniData);
+                    continue;
                 }
-                catch (Exception e)
+                if (ProcessCommentLine(iniLine))
                 {
-                    tempExceptions.Add(e);
+                    continue;
+                }
+                if(ProcessSection(iniLine,out var section))
+                {
+                    iniConfig.AddSection(section);
+                    section.Comments.AddRange(cachedComments);
+                    cachedComments.Clear();
+                    continue;
+                }
+                if(ProcessOptionalValue(iniLine))
+                {
+                    continue;
+                }
+                if(ProcessProperty(iniLine,out var property))
+                {
+                    property.Comments.AddRange(cachedComments);
+                    property.OptionalValues.AddRange(cachedOptionalValues);
 
-                    if (readerStyle.ThrowExceptionsOnError)
-                    {
-                        throw e;
-                    }
+                    var s = iniConfig.GetSection(cachedSectionName);
+                    s.AddProperty(property);
+                    continue;
                 }
             }
 
-            if (tempExceptions.Count > 0)
-            {
-                iniData = null;
-            }
-            return iniData;
+            return iniConfig;
         }
 
-        private static void ProcessLine(IniTextBuffer buffer, IniConfig iniData)
+        private static bool ProcessSection(IniLine line,out IniSection section)
         {
-            if (buffer.IsEmpty(buffer.Range) || buffer.IsWhitespace(buffer.Range)) return;
-
-            ProcessLineState state = ProcessComment(buffer, iniData);
-            if (state == ProcessLineState.Error || state == ProcessLineState.Success) return;
-            state = ProcessOptionalValue(buffer, iniData);
-            if (state == ProcessLineState.Error || state == ProcessLineState.Success) return;
-            state = ProcessSection(buffer, iniData);
-            if (state == ProcessLineState.Error || state == ProcessLineState.Success) return;
-            state = ProcessProperty(buffer, iniData);
-            if (state == ProcessLineState.Error || state == ProcessLineState.Success) return;
-
-            throw new IniReaderException("Error:Couldn't parse text", buffer.LineNumber, buffer.LineContent);
+            section = null;
+            if (!textBuffer.IsContentStartWith(line, schemeStyle.SectionPrefix))
+            {
+                return false;
+            }
+            int index = textBuffer.FindContent(line.ContentStart, line.ContentEnd, schemeStyle.OptionalValuePostfix);
+            if (index < 0)
+            {
+                throw new IniReaderLineFormatException(textBuffer.GetContent(line));
+            }
+            int prefixLen = schemeStyle.SectionPrefix.Length;
+            string sectionName = textBuffer.GetContent(line.ContentStart + prefixLen, index);
+            if(string.IsNullOrEmpty(sectionName))
+            {
+                throw new IniReaderLineFormatException(textBuffer.GetContent(line));
+            }
+            if(string.IsNullOrEmpty(cachedSectionName) || cachedSectionName!=sectionName)
+            {
+                section = new IniSection(sectionName);
+            }
+            cachedSectionName = sectionName;
+            return true;
         }
 
-        private static ProcessLineState ProcessComment(IniTextBuffer buffer, IniConfig iniData)
+        private static bool ProcessCommentLine(IniLine line)
         {
-            IniLineRange range = buffer.Range.DeepCopy();
-            buffer.TrimStart(range);
-            if (!buffer.IsStartWith(range, schemeStyle.CommentString))
+            if(!textBuffer.IsContentStartWith(line,schemeStyle.CommentPrefix))
             {
-                return ProcessLineState.Unrecognized;
+                return false;
             }
-            if (!readerStyle.IsParseComments)
+            if(!readerStyle.IsParseComments)
             {
-                return ProcessLineState.Success;
+                return true;
             }
-
-            int startIndex = buffer.FindString(range, schemeStyle.CommentString) + schemeStyle.CommentString.Length;
-            int endIndex = range.End;
-            range.Start = startIndex;
-            range.Size = endIndex - startIndex + 1;
-
-            if (readerStyle.IsTrimComments)
+            int commentPrefixLen = schemeStyle.CommentPrefix.Length;
+            string comment = textBuffer.GetContent(line.ContentStart + commentPrefixLen, line.ContentSize);
+            if(readerStyle.IsTrimComments)
             {
-                buffer.Trim(range);
+                comment = comment.Trim();
             }
-
-            string comment = buffer.GetString(range);
-            tempComments.Add(comment);
-
-            return ProcessLineState.Success;
+            if(!string.IsNullOrEmpty(comment))
+            {
+                cachedComments.Add(comment);
+            }
+            return true;
         }
 
-        private static ProcessLineState ProcessSection(IniTextBuffer buffer, IniConfig iniData)
+        private static bool ProcessOptionalValue(IniLine line)
         {
-            IniLineRange range = buffer.Range.DeepCopy();
-            buffer.Trim(range);
-            if (!buffer.IsStartWith(range, schemeStyle.SectionStartString))
+            if (!textBuffer.IsContentStartWith(line, schemeStyle.OptionalValuePrefix))
             {
-                return ProcessLineState.Unrecognized;
+                return false;
             }
-            if (!buffer.IsEndWith(range, schemeStyle.SectionEndString))
+            int index = textBuffer.FindContent(line.ContentStart, line.ContentEnd, schemeStyle.OptionalValuePostfix);
+            if(index < 0)
             {
-                if (!readerStyle.ThrowExceptionsOnError)
+                throw new IniReaderLineFormatException(textBuffer.GetContent(line));
+            }
+            if(!readerStyle.IsParseOptionalValues)
+            {
+                return true;
+            }
+
+            int prefixLen = schemeStyle.OptionalValuePostfix.Length;
+            string valueContent = textBuffer.GetContent(line.ContentStart + prefixLen, index);
+            string[] values = valueContent.Split(new string[] { schemeStyle.OptionalValueAssigment }, StringSplitOptions.RemoveEmptyEntries);
+            if(values!=null && values.Length>0)
+            {
+                if(readerStyle.IsTrimOptionalValues)
                 {
-                    return ProcessLineState.Error;
+                    values = (from value in values let v = value.Trim() where !string.IsNullOrEmpty(v) select v).ToArray();
                 }
-                throw new IniReaderException($"Error:No closing section value({schemeStyle.SectionEndString}). ", buffer.LineNumber, buffer.LineContent);
-            }
-
-            int startIndex = range.Start + schemeStyle.SectionStartString.Length;
-            int endIndex = range.End - schemeStyle.SectionEndString.Length;
-            range.Start = startIndex;
-            range.Size = endIndex - startIndex + 1;
-
-            if (readerStyle.IsTrimSections)
-            {
-                buffer.Trim(range);
-            }
-
-            string sectionName = buffer.GetString(range);
-            if (string.IsNullOrEmpty(sectionName))
-            {
-                if (!readerStyle.ThrowExceptionsOnError)
+                if(values.Length>0)
                 {
-                    return ProcessLineState.Error;
+                    cachedOptionalValues.AddRange(values);
                 }
-                throw new IniReaderException($"Error:The name of section is empty. ", buffer.LineNumber, buffer.LineContent);
             }
-
-            tempSectionName = sectionName;
-            IniSection section = iniData.AddSection(tempSectionName);
-            if (readerStyle.IsParseComments && tempComments.Count > 0)
-            {
-                section.Comments = tempComments;
-                tempComments.Clear();
-            }
-            return ProcessLineState.Success;
+            return true;
         }
 
-        private static ProcessLineState ProcessOptionalValue(IniTextBuffer buffer, IniConfig iniData)
+        private static bool ProcessProperty(IniLine line,out IniProperty property)
         {
-            IniLineRange range = buffer.Range.DeepCopy();
-            buffer.Trim(range);
-            if (!buffer.IsStartWith(range, schemeStyle.OptionalValueStartString))
+            property = null;
+            string valueContent = textBuffer.GetContent(line);
+            if(string.IsNullOrEmpty(valueContent))
             {
-                return ProcessLineState.Unrecognized;
+                return false;
             }
-            if (!buffer.IsEndWith(range, schemeStyle.OptionalValueEndString))
+            if(string.IsNullOrEmpty(cachedSectionName))
             {
-                if (!readerStyle.ThrowExceptionsOnError)
-                {
-                    return ProcessLineState.Error;
-                }
-                throw new IniReaderException($"Error:No closing option value({schemeStyle.OptionalValueEndString}). ", buffer.LineNumber, buffer.LineContent);
+                throw new IniReaderLineSectionNullException();
             }
 
-            if (!readerStyle.IsParseOptionalValues)
+            int assigmentIndex = valueContent.IndexOf(schemeStyle.PropertyAssigment);
+            if(assigmentIndex<0)
             {
-                return ProcessLineState.Success;
+                throw new IniReaderLineFormatException(valueContent);
+            }
+            string propertyKey = valueContent.Substring(line.ContentStart, assigmentIndex);
+            string propertyValue = valueContent.Substring(assigmentIndex + schemeStyle.PropertyAssigment.Length, line.ContentEnd);
+            if(readerStyle.IsTrimPropertyKey)
+            {
+                propertyKey = propertyKey.Trim();
+            }
+            if(string.IsNullOrEmpty(propertyKey))
+            {
+                throw new IniReaderLinePropertyKeyEmptyException();
+            }
+            if(readerStyle.IsTrimPropertyValue)
+            {
+                propertyValue = propertyValue.Trim();
             }
 
-            int startIndex = range.Start + schemeStyle.OptionalValueStartString.Length;
-            int endIndex = range.End - schemeStyle.OptionalValueEndString.Length;
-            range.Start = startIndex;
-            range.Size = endIndex - startIndex + 1;
+            property = new IniProperty(propertyKey, propertyValue);
 
-            string optionalValueStr = buffer.GetString(range);
-            if (string.IsNullOrEmpty(optionalValueStr))
-            {
-                if (!readerStyle.ThrowExceptionsOnError)
-                {
-                    return ProcessLineState.Error;
-                }
-                throw new IniReaderException($"Error:The value of optionalValue is empty. ", buffer.LineNumber, buffer.LineContent);
-            }
-
-            string[] optionalValues = optionalValueStr.Split(new string[] { schemeStyle.OptionalValueAssigmentString }, StringSplitOptions.RemoveEmptyEntries);
-            if (readerStyle.IsTrimOptionalValues)
-            {
-                foreach (var v in optionalValues)
-                {
-                    string trimedValue = v.Trim();
-                    if (!string.IsNullOrEmpty(trimedValue))
-                    {
-                        tempOptionalValues.Add(trimedValue);
-                    }
-                }
-            }
-            else
-            {
-                tempOptionalValues.AddRange(optionalValues);
-            }
-            return ProcessLineState.Success;
-        }
-
-        private static ProcessLineState ProcessProperty(IniTextBuffer buffer, IniConfig iniData)
-        {
-            IniLineRange range = buffer.Range.DeepCopy();
-            buffer.TrimStart(range);
-
-            int assigmentStartIndex = buffer.FindString(range, schemeStyle.PropertyAssigmentString);
-            if (assigmentStartIndex < 0)
-            {
-                return ProcessLineState.Unrecognized;
-            }
-
-            if (string.IsNullOrEmpty(tempSectionName))
-            {
-                if (!readerStyle.ThrowExceptionsOnError)
-                {
-                    return ProcessLineState.Error;
-                }
-
-                throw new IniReaderException("Error:The section is not found for property", buffer.LineNumber, buffer.LineContent);
-            }
-
-            IniLineRange keyRange = new IniLineRange();
-            keyRange.Start = range.Start;
-            keyRange.Size = assigmentStartIndex - range.Start;
-            buffer.Trim(keyRange);
-            if (buffer.IsEmpty(keyRange))
-            {
-                if (readerStyle.ThrowExceptionsOnError)
-                {
-                    return ProcessLineState.Error;
-                }
-                throw new IniReaderException("Error:The key of property is empty.", buffer.LineNumber, buffer.LineContent);
-            }
-
-            IniLineRange valueRange = new IniLineRange();
-            valueRange.Start = assigmentStartIndex + schemeStyle.PropertyAssigmentString.Length;
-            valueRange.Size = range.End - valueRange.Start + 1;
-            if (readerStyle.IsTrimProperties)
-            {
-                buffer.Trim(valueRange);
-            }
-
-            string propertyKey = buffer.GetString(keyRange);
-
-            IniSection section = iniData.GetSection(tempSectionName, true);
-            if (section.ContainsProperty(propertyKey))
-            {
-                if (readerStyle.ThrowExceptionsOnError)
-                {
-                    return ProcessLineState.Error;
-                }
-                throw new IniReaderException("Error:The key of property is repeated.", buffer.LineNumber, buffer.LineContent);
-            }
-
-            string propertyValue = buffer.GetString(valueRange);
-
-            IniProperty property = section.AddProperty(propertyKey, propertyValue);
-            if (readerStyle.IsParseComments && tempComments.Count > 0)
-            {
-                property.Comments = tempComments;
-                tempComments.Clear();
-            }
-            if (readerStyle.IsParseOptionalValues && tempOptionalValues.Count > 0)
-            {
-                property.OptionalValues = tempOptionalValues;
-                tempOptionalValues.Clear();
-            }
-            return ProcessLineState.Success;
+            return true;
         }
     }
 }

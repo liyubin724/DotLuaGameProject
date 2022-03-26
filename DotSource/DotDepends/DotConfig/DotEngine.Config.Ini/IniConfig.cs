@@ -6,10 +6,10 @@ namespace DotEngine.Config.Ini
 {
     public class IniConfig : IDeepCopy<IniConfig>, IEnumerable<IniSection>
     {
-        private Dictionary<string, IniSection> sections = new Dictionary<string, IniSection>();
+        private Dictionary<string, IniSection> sectionDic = new Dictionary<string, IniSection>();
 
-        public int SectionCount => sections.Count;
-        public string[] SectionNames => sections.Keys.ToArray();
+        public int SectionCount => sectionDic.Count;
+        public string[] SectionNames => sectionDic.Keys.ToArray();
 
         public IniConfig()
         {
@@ -19,43 +19,52 @@ namespace DotEngine.Config.Ini
         {
             foreach (IniSection section in data)
             {
-                sections.Add(section.Name, section.DeepCopy());
+                sectionDic.Add(section.Name, section.DeepCopy());
             }
         }
 
-        public bool ContainsSection(string sectionName) => sections.ContainsKey(sectionName);
+        public bool ContainsSection(string sectionName) => sectionDic.ContainsKey(sectionName);
         public IniSection AddSection(string sectionName)
         {
-            if (!sections.TryGetValue(sectionName, out var section))
+            if (!sectionDic.TryGetValue(sectionName, out var section))
             {
                 section = new IniSection(sectionName);
-                sections.Add(sectionName, section);
+                sectionDic.Add(sectionName, section);
             }
             return section;
         }
 
+        public void AddSection(IniSection section)
+        {
+            if(sectionDic.ContainsKey(section.Name))
+            {
+                throw new IniSectionRepeatException(section.Name);
+            }
+            sectionDic.Add(section.Name, section);
+        }
+
         public IniSection RemoveSection(string sectionName)
         {
-            if (sections.TryGetValue(sectionName, out var section))
+            if (sectionDic.TryGetValue(sectionName, out var section))
             {
-                sections.Remove(sectionName);
+                sectionDic.Remove(sectionName);
             }
             return section;
         }
 
         public IniSection GetSection(string sectionName, bool isCreateIfNExist = false)
         {
-            if (!sections.TryGetValue(sectionName, out var section) && isCreateIfNExist)
+            if (!sectionDic.TryGetValue(sectionName, out var section) && isCreateIfNExist)
             {
                 section = new IniSection(sectionName);
-                sections.Add(sectionName, section);
+                sectionDic.Add(sectionName, section);
             }
             return section;
         }
 
         public void ClearSections()
         {
-            sections.Clear();
+            sectionDic.Clear();
         }
 
         public IniProperty GetProperty(string sectionName, string propertyKey)
@@ -87,15 +96,15 @@ namespace DotEngine.Config.Ini
 
         public IEnumerator<IniSection> GetEnumerator()
         {
-            foreach (var name in sections.Keys)
+            foreach (var name in sectionDic.Keys)
             {
-                yield return sections[name];
+                yield return sectionDic[name];
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return sections.GetEnumerator();
+            return sectionDic.GetEnumerator();
         }
     }
 }

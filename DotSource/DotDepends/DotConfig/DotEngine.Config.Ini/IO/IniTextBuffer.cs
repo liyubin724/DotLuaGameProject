@@ -33,7 +33,7 @@ namespace DotEngine.Config.Ini
 
         private int currentLineNumber = 0;
         public int LineNumber => currentLineNumber;
-
+         
         private string lineContent = null;
         public string LineContent => lineContent;
 
