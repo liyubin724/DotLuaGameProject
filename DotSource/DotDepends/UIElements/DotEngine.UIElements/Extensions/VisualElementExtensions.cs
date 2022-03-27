@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Vector3 = UnityEngine.Vector3;
 
-namespace DotEditor.UIElements
+namespace DotEngine.UIElements
 {
     public static class VisualElementExtensions
     {

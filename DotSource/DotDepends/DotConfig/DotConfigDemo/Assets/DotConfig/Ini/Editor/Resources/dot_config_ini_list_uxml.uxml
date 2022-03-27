@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="dot_config_ini_styles.uss" />
+    <ui:VisualElement name="section-list-header" style="flex-direction: row;">
+        <ui:Label text="Section Name List" display-tooltip-when-elided="true" />
+        <ui:Button text="+" display-tooltip-when-elided="true" name="section-list-add-button" />
+    </ui:VisualElement>
+    <ui:ListView focusable="true" name="section-list-view" />
+</ui:UXML>

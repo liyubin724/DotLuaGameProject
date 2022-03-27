@@ -1,0 +1,36 @@
+#property-container {
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-left-color: rgba(79, 77, 60, 255);
+    border-right-color: rgba(79, 77, 60, 255);
+    border-top-color: rgba(79, 77, 60, 255);
+    border-bottom-color: rgba(79, 77, 60, 255);
+}
+
+#property-container Label {
+    width: auto;
+    min-width: 100px;
+    max-width: 150px;
+}
+
+#section-list-view {
+    height: 100%;
+    border-left-color: rgba(31, 27, 27, 255);
+    border-right-color: rgba(31, 27, 27, 255);
+    border-top-color: rgba(31, 27, 27, 255);
+    border-bottom-color: rgba(31, 27, 27, 255);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+#section-list-header {
+    background-color: rgba(29, 26, 26, 255);
+}

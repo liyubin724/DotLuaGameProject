@@ -6,7 +6,7 @@ namespace DotEngine.Config.Ini
 {
     public class IniSection : IDeepCopy<IniSection>, IEnumerable<IniProperty>
     {
-        public string Name { get; private set; }
+        public string Name { get; internal set; }
         public List<string> Comments { get; set; } = new List<string>();
 
         private Dictionary<string, IniProperty> propertyDic = new Dictionary<string, IniProperty>();

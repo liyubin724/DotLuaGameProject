@@ -4,8 +4,8 @@ namespace DotEngine.Config.Ini
 {
     public class IniProperty : IDeepCopy<IniProperty>
     {
-        public string Key { get; private set; }
-        public string Value { get; private set; }
+        public string Key { get; internal set; }
+        public string Value { get; internal set; }
 
         public List<string> Comments { get; set; } = new List<string>();
         public List<string> OptionalValues { get; set; } = new List<string>();
