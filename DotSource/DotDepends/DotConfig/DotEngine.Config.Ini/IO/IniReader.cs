@@ -8,7 +8,7 @@ namespace DotEngine.Config.Ini
     {
         private static IniSchemeStyle schemeStyle = null;
         private static IniReaderStyle readerStyle = null;
-        private static IniText textBuffer = new IniText();
+        private static IniTextBuffer textBuffer = new IniTextBuffer();
 
         private static string cachedSectionName = null;
         private static List<string> cachedComments = new List<string>();
@@ -29,7 +29,7 @@ namespace DotEngine.Config.Ini
 
             textBuffer.Text = iniString;
             IniConfig iniConfig = new IniConfig();
-            IniLine iniLine = new IniLine();
+            IniLineRange iniLine = new IniLineRange();
 
             int lineStartIndex = 0;
             while(textBuffer.ReadLine(lineStartIndex,ref iniLine))
@@ -68,20 +68,20 @@ namespace DotEngine.Config.Ini
             return iniConfig;
         }
 
-        private static bool ProcessSection(IniLine line,out IniSection section)
+        private static bool ProcessSection(IniLineRange line,out IniSection section)
         {
             section = null;
             if (!textBuffer.IsContentStartWith(line, schemeStyle.SectionPrefix))
             {
                 return false;
             }
-            int index = textBuffer.FindContent(line.ContentStart, line.ContentEnd, schemeStyle.OptionalValuePostfix);
+            int index = textBuffer.FindContent(line.ContentStart, line.ContentEnd, schemeStyle.SectionPostfix);
             if (index < 0)
             {
                 throw new IniReaderLineFormatException(textBuffer.GetContent(line));
             }
             int prefixLen = schemeStyle.SectionPrefix.Length;
-            string sectionName = textBuffer.GetContent(line.ContentStart + prefixLen, index);
+            string sectionName = textBuffer.GetContent(line.ContentStart + prefixLen, index-1);
             if(string.IsNullOrEmpty(sectionName))
             {
                 throw new IniReaderLineFormatException(textBuffer.GetContent(line));
@@ -94,7 +94,7 @@ namespace DotEngine.Config.Ini
             return true;
         }
 
-        private static bool ProcessCommentLine(IniLine line)
+        private static bool ProcessCommentLine(IniLineRange line)
         {
             if(!textBuffer.IsContentStartWith(line,schemeStyle.CommentPrefix))
             {
@@ -105,7 +105,7 @@ namespace DotEngine.Config.Ini
                 return true;
             }
             int commentPrefixLen = schemeStyle.CommentPrefix.Length;
-            string comment = textBuffer.GetContent(line.ContentStart + commentPrefixLen, line.ContentSize);
+            string comment = textBuffer.GetContent(line.ContentStart + commentPrefixLen, line.ContentSize-commentPrefixLen);
             if(readerStyle.IsTrimComments)
             {
                 comment = comment.Trim();
@@ -117,7 +117,7 @@ namespace DotEngine.Config.Ini
             return true;
         }
 
-        private static bool ProcessOptionalValue(IniLine line)
+        private static bool ProcessOptionalValue(IniLineRange line)
         {
             if (!textBuffer.IsContentStartWith(line, schemeStyle.OptionalValuePrefix))
             {
@@ -133,8 +133,8 @@ namespace DotEngine.Config.Ini
                 return true;
             }
 
-            int prefixLen = schemeStyle.OptionalValuePostfix.Length;
-            string valueContent = textBuffer.GetContent(line.ContentStart + prefixLen, index);
+            int prefixLen = schemeStyle.OptionalValuePrefix.Length;
+            string valueContent = textBuffer.GetContent(line.ContentStart + prefixLen, index-line.ContentStart-prefixLen);
             string[] values = valueContent.Split(new string[] { schemeStyle.OptionalValueAssigment }, StringSplitOptions.RemoveEmptyEntries);
             if(values!=null && values.Length>0)
             {
@@ -150,7 +150,7 @@ namespace DotEngine.Config.Ini
             return true;
         }
 
-        private static bool ProcessProperty(IniLine line,out IniProperty property)
+        private static bool ProcessProperty(IniLineRange line,out IniProperty property)
         {
             property = null;
             string valueContent = textBuffer.GetContent(line);
@@ -168,8 +168,8 @@ namespace DotEngine.Config.Ini
             {
                 throw new IniReaderLineFormatException(valueContent);
             }
-            string propertyKey = valueContent.Substring(line.ContentStart, assigmentIndex);
-            string propertyValue = valueContent.Substring(assigmentIndex + schemeStyle.PropertyAssigment.Length, line.ContentEnd);
+            string propertyKey = valueContent.Substring(0, assigmentIndex-schemeStyle.PropertyAssigment.Length);
+            string propertyValue = valueContent.Substring(assigmentIndex + schemeStyle.PropertyAssigment.Length);
             if(readerStyle.IsTrimPropertyKey)
             {
                 propertyKey = propertyKey.Trim();

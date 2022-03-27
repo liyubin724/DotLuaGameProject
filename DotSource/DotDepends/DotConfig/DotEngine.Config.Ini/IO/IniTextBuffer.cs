@@ -1,193 +1,296 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
 
 namespace DotEngine.Config.Ini
 {
     class IniLineRange : IDeepCopy<IniLineRange>
     {
-        public int Start { get; set; }
-        public int Size { get; set; }
-
-        public int End
+        private int start = -1;
+        public int Start { get; set; } = -1;
+        private int end = -1;
+        public int End { get; set; } = -1;
+        public int Size
         {
-            get => Start + Size - 1;
+            get
+            {
+                if (Start < 0 || End < 0 || Start > End)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return End - Start + 1;
+                }
+            }
+        }
+
+        public int ContentStart { get; set; } = -1;
+        public int ContentEnd { get; set; } = -1;
+        public int ContentSize
+        {
+            get
+            {
+                if (ContentStart < 0 || ContentEnd < 0 || ContentStart > ContentEnd)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return ContentEnd - ContentStart + 1;
+                }
+            }
         }
 
         public IniLineRange DeepCopy()
         {
-            IniLineRange result = new IniLineRange();
-            result.Start = Start;
-            result.Size = Size;
-            return result;
+            return new IniLineRange()
+            {
+                Start = Start,
+                End = End,
+
+                ContentStart = ContentStart,
+                ContentEnd = ContentEnd,
+            };
         }
 
         public void Reset()
         {
-            Start = 0;
-            Size = 0;
+            Start = -1;
+            End = -1;
+            ContentStart = -1;
+            ContentEnd = -1;
         }
     }
 
+
     class IniTextBuffer
     {
-        private TextReader textReader = null;
-
-        private int currentLineNumber = 0;
-        public int LineNumber => currentLineNumber;
-         
-        private string lineContent = null;
-        public string LineContent => lineContent;
-
-        private IniLineRange lineRange = new IniLineRange();
-        public IniLineRange Range => lineRange;
-
-        public IniTextBuffer(string iniString)
+        public string Text { get; set; }
+        public IniTextBuffer()
         {
-            textReader = new StringReader(iniString);
         }
 
-        public bool ReadLine()
+        public bool ReadLine(int start, ref IniLineRange line)
         {
-            lineContent = textReader.ReadLine();
-            if (lineContent == null)
+            if (string.IsNullOrEmpty(Text) || start <0 ||start >= Text.Length)
             {
                 return false;
             }
 
-            currentLineNumber++;
-
-            lineRange.Start = 0;
-            lineRange.Size = lineContent.Length;
+            int end = start;
+            while (end < Text.Length)
+            {
+                if (Text[end] == '\n')
+                {
+                    break;
+                }
+                end++;
+            }
+            line.Start = start;
+            line.End = end;
+            line.ContentStart = start;
+            line.ContentEnd = end;
+            if (line.ContentSize > 0)
+            {
+                if (Text[line.ContentEnd] == '\n')
+                {
+                    line.ContentEnd--;
+                    if (line.ContentSize > 0)
+                    {
+                        if (Text[line.ContentEnd] == '\r')
+                        {
+                            line.ContentEnd--;
+                        }
+                    }
+                }
+            }
 
             return true;
         }
 
-        public bool IsEmpty(IniLineRange range)
+        public bool IsContentEmpty(IniLineRange line)
         {
-            return range.Size == 0;
+            return line.ContentSize == 0;
         }
 
-        public bool IsWhitespace(IniLineRange range)
+        public bool IsContentWhitespace(IniLineRange line)
         {
-            int index = range.Start;
-            while (index <= range.End && char.IsWhiteSpace(lineContent[index]))
+            if (line.ContentSize == 0)
             {
-                ++index;
+                return true;
             }
-            return index > range.End;
+            int index = line.ContentStart;
+            while (index <= line.ContentEnd && !char.IsWhiteSpace(Text[index]))
+            {
+                return false;
+            }
+            return true;
         }
 
-        public void TrimStart(IniLineRange range)
+        public void TrimContentStart(IniLineRange line)
         {
-            if (string.IsNullOrEmpty(lineContent))
-            {
-                return;
-            }
-            int index = range.Start;
-            while (index <= range.End && char.IsWhiteSpace(lineContent[index]))
-            {
-                ++index;
-            }
-
-            int endIndex = range.End;
-            range.Start = index;
-            range.Size = endIndex - index + 1;
-        }
-
-        public void TrimEnd(IniLineRange range)
-        {
-            if (string.IsNullOrEmpty(lineContent))
+            if (line.ContentSize == 0)
             {
                 return;
             }
-            int index = range.End;
-            while (index >= range.Start && char.IsWhiteSpace(lineContent[index]))
+
+            while (line.ContentStart <= line.ContentEnd && char.IsWhiteSpace(Text[line.ContentStart]))
             {
-                --index;
+                line.ContentStart++;
             }
-            range.Size = index - range.Start + 1;
+            if(line.ContentStart>line.ContentEnd)
+            {
+                line.ContentStart = line.ContentEnd = -1;
+            }
         }
 
-        public void Trim(IniLineRange range)
+        public void TrimContentEnd(IniLineRange line)
         {
-            TrimStart(range);
-            TrimEnd(range);
+            if (line.ContentSize == 0)
+            {
+                return;
+            }
+
+            while (line.ContentEnd >= line.ContentStart && char.IsWhiteSpace(Text[line.ContentEnd]))
+            {
+                line.ContentEnd--;
+            }
+            if(line.ContentEnd<line.ContentStart)
+            {
+                line.ContentStart = line.ContentEnd = -1;
+            }
         }
 
-        public bool IsStartWith(IniLineRange range, string str)
+        public void TrimContent(IniLineRange line)
         {
-            if (string.IsNullOrEmpty(str))
+            TrimContentStart(line);
+            TrimContentEnd(line);
+        }
+
+        public bool IsContentStartWith(IniLineRange line, string prefix)
+        {
+            if (line.ContentSize == 0 || string.IsNullOrEmpty(prefix))
+            {
+                return false;
+            }
+            if (line.ContentSize < prefix.Length)
             {
                 return false;
             }
 
-            int strIndex = 0;
-            int lineIndex = range.Start;
-            for (; strIndex < str.Length; ++strIndex, ++lineIndex)
+            for (int lineStartIndex = line.ContentStart, prefixIndex = 0;
+                prefixIndex < prefix.Length;
+                lineStartIndex++, prefixIndex++)
             {
-                if (str[strIndex] != lineContent[lineIndex]) return false;
+                if (prefix[prefixIndex] != Text[lineStartIndex]) return false;
             }
-
             return true;
         }
 
-        public bool IsEndWith(IniLineRange range, string str)
+        public bool IsContentEndWith(IniLineRange line, string postfix)
         {
-            if (string.IsNullOrEmpty(str)) return false;
-
-            int strIndex = str.Length - 1;
-            int lineIndex = range.End;
-            for (; strIndex >= 0; --strIndex, --lineIndex)
+            if (line.ContentSize == 0 || string.IsNullOrEmpty(postfix))
             {
-                if (str[strIndex] != lineContent[lineIndex]) return false;
+                return false;
+            }
+            if (line.ContentSize < postfix.Length)
+            {
+                return false;
             }
 
+            for (int lineEndIndex = line.ContentEnd, postfixIndex = postfix.Length - 1;
+                postfixIndex >= 0;
+                lineEndIndex--, postfixIndex--)
+            {
+                if (postfix[postfixIndex] != Text[lineEndIndex]) return false;
+            }
             return true;
         }
 
-        public string GetString(IniLineRange range)
+        public string GetContent(IniLineRange line)
         {
-            if (string.IsNullOrEmpty(lineContent)
-                || range.Size == 0
-                || range.Start < 0
-                || range.Start + range.Size - 1 > lineContent.Length)
+            if (line.ContentSize == 0)
             {
                 return string.Empty;
             }
 
-            return lineContent.Substring(range.Start, range.Size);
+            return Text.Substring(line.ContentStart, line.ContentSize);
         }
 
-        public int FindString(IniLineRange range, string str)
+        public string GetContent(int start, int size)
         {
-            if (string.IsNullOrEmpty(str)) return -1;
-
-            int strStartIndex = -1;
-
-            int strIndex = 0;
-            int lineIndex = range.Start;
-            for (; lineIndex <= range.End && strIndex < str.Length; ++lineIndex)
+            if (size <= 0 || start < 0 || start + size > Text.Length)
             {
-                if (str[strIndex] == lineContent[lineIndex])
+                return string.Empty;
+            }
+            return Text.Substring(start, size);
+        }
+
+        //public IniLineRange[] SplitContent(IniLineRange line, string splitStr)
+        //{
+        //    if (line.ContentSize == 0)
+        //    {
+        //        return new IniLineRange[0];
+        //    }
+
+        //    List<IniLineRange> results = new List<IniLineRange>();
+
+        //    IniLineRange preLine = line.DeepCopy();
+        //    int splitIndex = FindContent(line.ContentStart, line.ContentEnd, splitStr);
+        //    while (splitIndex >= 0)
+        //    {
+        //        preLine = new IniLineRange()
+        //        {
+        //            Start = line.Start,
+        //            Size = line.Size,
+        //            ContentStart = preLine.ContentStart,
+        //            ContentSize = splitIndex - preLine.ContentStart,
+        //        };
+        //        results.Add(preLine);
+
+        //        splitIndex = FindContent(preLine.ContentStart + splitStr.Length, line.ContentEnd, splitStr);
+        //    }
+        //    return results.ToArray();
+        //}
+
+        public int FindContent(int start, int end, string splitStr)
+        {
+            if (start < 0 || end < start || string.IsNullOrEmpty(splitStr))
+            {
+                return -1;
+            }
+            int size = end - start + 1;
+            if (size < splitStr.Length)
+            {
+                return -1;
+            }
+
+            int lineStartIndex = start;
+            int splitIndex = 0;
+            int resultIndex = -1;
+            while (lineStartIndex <= end)
+            {
+                if (Text[lineStartIndex] == splitStr[splitIndex])
                 {
-                    if (strStartIndex < 0)
+                    if (splitIndex == 0)
                     {
-                        strStartIndex = lineIndex;
+                        resultIndex = lineStartIndex;
                     }
-                    ++strIndex;
+
+                    splitIndex++;
+                    if (splitIndex > splitStr.Length-1)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    strStartIndex = -1;
-                    strIndex = 0;
+                    splitIndex = 0;
+                    resultIndex = -1;
                 }
+                lineStartIndex++;
             }
 
-            if (strStartIndex >= 0 && strIndex == str.Length)
-            {
-                return strStartIndex;
-            }
-
-            return -1;
+            return resultIndex;
         }
     }
 }

@@ -43,9 +43,8 @@
   <ItemGroup>
     <Compile Include="Exceptions\IniExceptions.cs" />
     <Compile Include="IDeepCopy.cs" />
-    <Compile Include="IO\IniText.cs" />
-    <Compile Include="IO\IniReader.cs" />
     <Compile Include="IO\IniTextBuffer.cs" />
+    <Compile Include="IO\IniReader.cs" />
     <Compile Include="IO\IniWriter.cs" />
     <Compile Include="IniConfig.cs" />
     <Compile Include="IniProperty.cs" />
