@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEditor.Config.Ini", "Dot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.UIElements", "..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj", "{BAED7A18-6B05-4BE0-B331-552E221B3150}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Depends", "Depends", "{916C452F-3258-4B1F-BCC2-7E8E86BA6F38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Injection", "..\DotEngine.Injection\DotEngine.Injection.csproj", "{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,9 +49,17 @@ Global
 		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BAED7A18-6B05-4BE0-B331-552E221B3150} = {916C452F-3258-4B1F-BCC2-7E8E86BA6F38}
+		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285} = {916C452F-3258-4B1F-BCC2-7E8E86BA6F38}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D41E34DA-076C-4D0A-8993-9E10E951F268}
