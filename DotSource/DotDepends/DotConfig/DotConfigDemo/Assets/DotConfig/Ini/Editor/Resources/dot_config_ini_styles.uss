@@ -1,36 +1,56 @@
-#property-container {
-    border-left-width: 2px;
-    border-right-width: 2px;
-    border-top-width: 2px;
-    border-bottom-width: 2px;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    border-left-color: rgba(79, 77, 60, 255);
-    border-right-color: rgba(79, 77, 60, 255);
-    border-top-color: rgba(79, 77, 60, 255);
-    border-bottom-color: rgba(79, 77, 60, 255);
+.list-header {
+    width: 100%;
+    height: 25px;
+    background-color: rgba(38, 38, 38, 255);
+    flex-direction: row;
 }
 
-#property-container Label {
-    width: auto;
-    min-width: 100px;
-    max-width: 150px;
+.list-title--label {
+    -unity-font-style: bold;
+    font-size: 22px;
+    white-space: nowrap;
+    color: rgba(140, 121, 78, 255);
 }
 
-#section-list-view {
+.list--flex-space {
+    width: 100%;
     height: 100%;
-    border-left-color: rgba(31, 27, 27, 255);
-    border-right-color: rgba(31, 27, 27, 255);
-    border-top-color: rgba(31, 27, 27, 255);
-    border-bottom-color: rgba(31, 27, 27, 255);
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
 }
 
-#section-list-header {
-    background-color: rgba(29, 26, 26, 255);
+.list-container {
+    width: 100%;
+    height: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.list-container--listview {
+    width: 100%;
+    height: 100%;
+}
+
+.section-detail-header {
+    background-color: rgba(34, 33, 30, 255);
+}
+
+.section-detail-header--name-label {
+    -unity-font-style: bold;
+    font-size: 22px;
+    -unity-text-align: middle-center;
+}
+
+.section-detail--comment-textfield {
+    height: 100%;
+    padding-bottom: 4px;
+}
+
+#comment-textfield Label {
+    width: 100px;
+    min-width: 100px;
+}
+
+#comment-container {
+    height: 80px;
 }

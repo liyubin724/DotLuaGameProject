@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="dot_config_ini_styles.uss" />
+    <uie:Toolbar name="toolbar-container">
+        <uie:ToolbarButton text="Create" display-tooltip-when-elided="true" name="toolbar-create-btn" />
+        <uie:ToolbarButton text="Open" display-tooltip-when-elided="true" name="toolbar-open-btn" />
+        <uie:ToolbarButton text="Save" display-tooltip-when-elided="true" name="toolbar-save-btn" />
+        <uie:ToolbarButton text="Save As" display-tooltip-when-elided="true" name="toolbar-saveas-btn" />
+    </uie:Toolbar>
+    <ui:VisualElement name="content-container" style="width: 100%; height: 100%;" />
+</ui:UXML>
