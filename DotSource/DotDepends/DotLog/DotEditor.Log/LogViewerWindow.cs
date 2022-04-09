@@ -1,4 +1,5 @@
 ﻿using DotEngine.Log;
+using DotEngine.UIElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,19 +32,23 @@ namespace DotEditor.Log
         private string searchText = string.Empty;
         private List<LogData> searchedLogDatas = new List<LogData>();
 
-        private ListView contentListView;
-        private TextField stacktraceLabel;
+        private LogDataListViewer m_DataListView;
+        private TextField m_StacktraceText;
+        private LogLevel m_AliveLevel = LogLevelConst.All;
+
         void OnEnable()
         {
             allFieldNames = (from fieldInfo in typeof(LogData).GetFields(BindingFlags.Public | BindingFlags.Instance)
                              select fieldInfo.Name).ToList();
             searchedFieldNames.AddRange(allFieldNames);
             searchedFieldNames = searchedFieldNames.Distinct().ToList();
-            watcherAppender = new WatcherAppender(OnLogReceived, WatcherAppenderName);
+            watcherAppender = new WatcherAppender(WatcherAppenderName);
+            watcherAppender.AliveLevel = m_AliveLevel;
+            watcherAppender.LogHandler = OnLogReceived;
             if (Application.isPlaying)
             {
                 var logMgr = LogManager.GetInstance();
-                if(logMgr == null)
+                if (logMgr == null)
                 {
                     logMgr = LogManager.CreateMgr();
                 }
@@ -55,34 +60,12 @@ namespace DotEditor.Log
                 EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
                 EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
             }
-
-            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
-            LogLevel[] levels = new LogLevel[]
-            {
-                LogLevel.Info,LogLevel.Warning,LogLevel.Error
-            };
-            for (int i = 0; i < 100; i++)
-            {
-                int levelValue = UnityEngine.Random.Range(0, levels.Length);
-
-                LogData data = new LogData()
-                {
-                    Time = DateTime.Now,
-                    Tag = "Main " + i,
-                    Level = levels[levelValue],
-                    Message = "Message " + i,
-                    Stacktrace = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFStacktrace " + i,
-                };
-                logDatas.Add(data);
-            }
-
-            UpdateSearchedDatas();
         }
 
         void CreateGUI()
         {
             CreateToolbarGUI();
-            CreateLogContentGUI();
+            CreateContentGUI();
         }
 
         void CreateToolbarGUI()
@@ -93,7 +76,7 @@ namespace DotEditor.Log
                 {
                     logDatas.Clear();
                     searchedLogDatas.Clear();
-                    contentListView.Refresh();
+                    m_DataListView.UpdateViewer();
                 });
                 clearBtn.text = "Clear";
                 toolbar.Add(clearBtn);
@@ -141,7 +124,8 @@ namespace DotEditor.Log
                 });
                 toolbar.Add(searchField);
 
-                EnumFlagsField levelFlagsField = new EnumFlagsField(watcherAppender.AliveLevel);
+                EnumFlagsField levelFlagsField = new EnumFlagsField(m_AliveLevel);
+                levelFlagsField.label = "Alive Level";
                 levelFlagsField.RegisterValueChangedCallback((callback) =>
                 {
                     watcherAppender.AliveLevel = (LogLevel)callback.newValue;
@@ -151,41 +135,34 @@ namespace DotEditor.Log
             rootVisualElement.Add(toolbar);
         }
 
-        void CreateLogContentGUI()
+        void CreateContentGUI()
         {
-            contentListView = new ListView();
-            contentListView.style.flexGrow = 1;
-
-            contentListView.itemsSource = searchedLogDatas;
-            contentListView.reorderable = false;
-            contentListView.selectionType = SelectionType.Single;
-
-            contentListView.makeItem = () =>
-            {
-                return new LogItemViewer();
-            };
-            contentListView.bindItem = (itemViewer, itemIndex) =>
-            {
-                LogData data = contentListView.itemsSource[itemIndex] as LogData;
-                (itemViewer as LogItemViewer).SetItemData(data);
-            };
-            contentListView.onSelectionChange += (selectedEnumerable) =>
-            {
-                var logData = selectedEnumerable.ToList()[0] as LogData;
-                if (logData != null)
-                {
-                    stacktraceLabel.value = logData.Stacktrace;
-                }
-            };
-            stacktraceLabel = new TextField();
-            stacktraceLabel.isReadOnly = true;
-            stacktraceLabel.style.whiteSpace = WhiteSpace.Normal;
-            stacktraceLabel.style.minHeight = 60;
-
-            TwoPaneSplitView splitView = new TwoPaneSplitView(1, 150, TwoPaneSplitViewOrientation.Vertical);
-            splitView.Add(contentListView);
-            splitView.Add(stacktraceLabel);
+            TwoPaneSplitView splitView = new TwoPaneSplitView();
+            splitView.orientation = TwoPaneSplitViewOrientation.Vertical;
+            splitView.fixedPaneIndex = 1;
+            splitView.fixedPaneInitialDimension = 80;
             rootVisualElement.Add(splitView);
+
+            m_DataListView = new LogDataListViewer();
+            m_DataListView.BindedData = searchedLogDatas;
+            splitView.Add(m_DataListView);
+
+            VisualElement stacktraceElement = new VisualElement();
+            stacktraceElement.ExpandWidth();
+            stacktraceElement.SetHeight(80);
+            splitView.Add(stacktraceElement);
+
+            m_StacktraceText = new TextField();
+            m_StacktraceText.label = null;
+            m_StacktraceText.ExpandWidthAndHeight();
+            m_StacktraceText.multiline = true;
+            m_StacktraceText.isReadOnly = true;
+            stacktraceElement.Add(m_StacktraceText);
+
+            m_DataListView.OnDataSelected += (data) =>
+            {
+                m_StacktraceText.value = data == null ? string.Empty : data.Stacktrace;
+            };
         }
 
         private void OnLogReceived(DateTime time, string tag, LogLevel level, string message, string stacktree)
@@ -203,7 +180,7 @@ namespace DotEditor.Log
             if (IsMatchSearch(data))
             {
                 searchedLogDatas.Add(data);
-                contentListView.Refresh();
+                m_DataListView?.UpdateViewer();
             }
         }
 
@@ -217,7 +194,7 @@ namespace DotEditor.Log
                     searchedLogDatas.Add(data);
                 }
             }
-            contentListView?.Refresh();
+            m_DataListView?.UpdateViewer();
         }
 
         private bool IsMatchSearch(LogData data)

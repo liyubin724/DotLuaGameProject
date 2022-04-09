@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotEditor.Log</RootNamespace>
     <AssemblyName>DotEditor.Log</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,11 +49,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogData.cs" />
-    <Compile Include="LogItemViewer.cs" />
+    <Compile Include="LogDataListViewer.cs" />
+    <Compile Include="LogDataViewer.cs" />
+    <Compile Include="LogFlagViewer.cs" />
     <Compile Include="LogViewerWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj">
+      <Project>{baed7a18-6b05-4be0-b331-552e221b3150}</Project>
+      <Name>DotEngine.UIElements</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotEngine.Log\DotEngine.Log.csproj">
       <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
       <Name>DotEngine.Log</Name>
@@ -60,12 +67,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)$(TargetName).dll
-$(SolutionDir)Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.Log.dll
-copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
-copy $(TargetDir)$(TargetName).dll.mdb $(ProjectDir)..\DotLogDemo\Assets\Dot.Log\Editor
-copy $(TargetDir)DotEngine.Log.dll $(ProjectDir)..\DotLogDemo\Assets\Dot.Log
-copy $(TargetDir)DotEngine.Log.dll.mdb $(ProjectDir)..\DotLogDemo\Assets\Dot.Log
+    <PostBuildEvent>SET ToolDir=$(SolutionDir)..\..\
+SET BuildEventPath=%25ToolDir%25\Tools\build-events\post-build-events.bat
+CALL %25BuildEventPath%25 $(SolutionDir) $(ProjectDir) $(ConfigurationName) $(ProjectName) $(SolutionDir)\DotLogDemo\Assets\Dot.Log\ %25ToolDir%25
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
