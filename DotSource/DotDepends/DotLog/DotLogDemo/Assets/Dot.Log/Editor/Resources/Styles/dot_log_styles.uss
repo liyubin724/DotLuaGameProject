@@ -1,0 +1,49 @@
+#data-container {
+    width: 100%;
+    height: 30px;
+    flex-direction: row;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-left-color: rgba(128, 123, 76, 255);
+    border-right-color: rgba(128, 123, 76, 255);
+    border-top-color: rgba(128, 123, 76, 255);
+    border-bottom-color: rgba(128, 123, 76, 255);
+}
+
+#data-level-container {
+    width: 30px;
+    height: 30px;
+    max-width: 30px;
+    min-width: 30px;
+    max-height: 30px;
+    min-height: 30px;
+}
+
+#data-datetime-label {
+    max-width: 280px;
+    width: 280px;
+    font-size: 22px;
+    -unity-text-align: middle-center;
+    min-width: 280px;
+    height: 100%;
+}
+
+#data-tag-label {
+    -unity-font-style: bold;
+    font-size: 22px;
+    -unity-text-align: middle-center;
+    width: 80px;
+    height: 100%;
+    max-width: 80px;
+    min-width: 80px;
+}
+
+#data-message-text {
+    width: 100%;
+    height: 100%;
+    font-size: 22px;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}

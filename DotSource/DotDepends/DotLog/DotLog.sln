@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32228.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEditor.Log", "DotEditor.Log\DotEditor.Log.csproj", "{90794A17-5AFB-4CCC-BC69-ACC3D814964D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Log", "DotEngine.Log\DotEngine.Log.csproj", "{61EBE018-C6AD-4962-A86A-7B831FF296F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotDepends", "DotDepends", "{A2CEE101-15C3-42A5-9265-CC35691CA242}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.UIElements", "..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj", "{BAED7A18-6B05-4BE0-B331-552E221B3150}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90794A17-5AFB-4CCC-BC69-ACC3D814964D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90794A17-5AFB-4CCC-BC69-ACC3D814964D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90794A17-5AFB-4CCC-BC69-ACC3D814964D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90794A17-5AFB-4CCC-BC69-ACC3D814964D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61EBE018-C6AD-4962-A86A-7B831FF296F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61EBE018-C6AD-4962-A86A-7B831FF296F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61EBE018-C6AD-4962-A86A-7B831FF296F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61EBE018-C6AD-4962-A86A-7B831FF296F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAED7A18-6B05-4BE0-B331-552E221B3150}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BAED7A18-6B05-4BE0-B331-552E221B3150} = {A2CEE101-15C3-42A5-9265-CC35691CA242}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDC8CD74-D9DF-48A1-8C34-6950720D7CF1}
+	EndGlobalSection
+EndGlobal
