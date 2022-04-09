@@ -44,9 +44,14 @@ namespace DotEngine.Config.WDB
             return field;
         }
 
+        public void AddFields(WDBField[] fields)
+        {
+            this.fields.AddRange(fields);
+        }
+
         public WDBField GetFieldAtIndex(int index)
         {
-            if (index < 0 || index >= rows.Count)
+            if (index < 0 || index >= fields.Count)
             {
                 throw new IndexOutOfRangeException();
             }
@@ -70,6 +75,11 @@ namespace DotEngine.Config.WDB
             WDBRow r = new WDBRow(row);
             rows.Add(r);
             return r;
+        }
+
+        public void AddRows(WDBRow[] rows)
+        {
+            this.rows.AddRange(rows);
         }
 
         public WDBRow GetRowAtIndex(int index)

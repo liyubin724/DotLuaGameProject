@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Depends", "Depends", "{916C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Injection", "..\DotEngine.Injection\DotEngine.Injection.csproj", "{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigConverter", "ConfigConverter\ConfigConverter.csproj", "{AE43A665-F083-4385-BEC5-742B5A77A2EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80DA1E18-5E91-4B9F-A5B9-16E57E3DB285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE43A665-F083-4385-BEC5-742B5A77A2EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE43A665-F083-4385-BEC5-742B5A77A2EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE43A665-F083-4385-BEC5-742B5A77A2EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE43A665-F083-4385-BEC5-742B5A77A2EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
