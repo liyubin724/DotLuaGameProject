@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="/Assets/Dot.Log/Editor/Resources/Styles/dot_log_styles.uss" />
+    <ui:VisualElement name="toolbar-container">
+        <uie:Toolbar>
+            <uie:ToolbarButton text="Clear" display-tooltip-when-elided="true" name="clear-toolbar-btn" />
+            <uie:ToolbarSpacer style="width: 100%;" />
+            <uie:ToolbarPopupSearchField focusable="true" name="data-search" style="width: 200px;" />
+        </uie:Toolbar>
+    </ui:VisualElement>
+    <ui:VisualElement name="title-container" />
+    <ui:VisualElement name="content-container" />
+</ui:UXML>

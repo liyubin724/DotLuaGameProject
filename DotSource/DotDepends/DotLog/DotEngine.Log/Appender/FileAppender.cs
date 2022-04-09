@@ -8,8 +8,6 @@ namespace DotEngine.Log
 {
     public class FileAppender : AFormatLogAppender
     {
-        public const string NAME = "FileAppender";
-
         private int forceFlushCount = 1;
         public int ForceFlushCount
         {
@@ -40,7 +38,7 @@ namespace DotEngine.Log
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         private string outputFileName = null;
 
-        public FileAppender(string fileDir = null, string name = NAME, ILogFormatter formatter = null) : base(name, formatter)
+        public FileAppender(string name, string fileDir, ILogFormatter formatter = null) : base(name, formatter)
         {
             outputDir = fileDir;
         }

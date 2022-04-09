@@ -6,17 +6,15 @@ namespace DotEngine.Log
 
     public class WatcherAppender : ALogAppender
     {
-        public const string NAME = "WatchLogAppender";
+        public WatcherHandler LogHandler { get; set; }
 
-        private WatcherHandler logHandler;
-        public WatcherAppender(WatcherHandler handler, string name = NAME) : base(name)
+        public WatcherAppender(string name) : base(name)
         {
-            logHandler = handler;
         }
 
         protected override void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktrace)
         {
-            logHandler?.Invoke(time, tag, level, message, stacktrace);
+            LogHandler?.Invoke(time, tag, level, message, stacktrace);
         }
     }
 }
