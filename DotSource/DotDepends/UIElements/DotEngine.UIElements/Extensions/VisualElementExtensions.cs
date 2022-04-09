@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Vector3 = UnityEngine.Vector3;
 
-namespace DotEditor.UIElements
+namespace DotEngine.UIElements
 {
     public static class VisualElementExtensions
     {
@@ -63,6 +63,13 @@ namespace DotEditor.UIElements
             return self;
         }
 
+        public static VisualElement ExpandWidth(this VisualElement self)
+        {
+            self.style.width = new Length(100, LengthUnit.Percent);
+
+            return self;
+        }
+
         public static VisualElement SetHeight(this VisualElement self, float v, LengthUnit unit = LengthUnit.Pixel)
         {
             StyleLength height = new Length(v, unit);
@@ -75,6 +82,21 @@ namespace DotEditor.UIElements
         {
             StyleLength height = new StyleLength(keyword);
             self.style.height = height;
+
+            return self;
+        }
+
+        public static VisualElement ExpandHeight(this VisualElement self)
+        {
+            self.style.height = new Length(100, LengthUnit.Percent);
+
+            return self;
+        }
+
+        public static VisualElement ExpandWidthAndHeight(this VisualElement self)
+        {
+            self.style.width = new Length(100, LengthUnit.Percent);
+            self.style.height = new Length(100, LengthUnit.Percent);
 
             return self;
         }
@@ -221,7 +243,7 @@ namespace DotEditor.UIElements
             return self;
         }
 
-        public static VisualElement SetMargin(this VisualElement self, float v, LengthUnit v2)
+        public static VisualElement SetMargin(this VisualElement self, float v, LengthUnit v2 = LengthUnit.Pixel)
         {
             SetMarginBottom(self, v, v2);
             SetMarginLeft(self, v, v2);
@@ -371,7 +393,7 @@ namespace DotEditor.UIElements
             return self;
         }
 
-        public static VisualElement SetFontSize(this VisualElement self, float v, LengthUnit v2)
+        public static VisualElement SetFontSize(this VisualElement self, float v, LengthUnit v2 = LengthUnit.Pixel)
         {
             var c = self.style.fontSize;
             var c2 = c.value;
