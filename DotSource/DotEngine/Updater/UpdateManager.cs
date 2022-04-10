@@ -1,183 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.Updater
 {
     public class UpdateManager : Singleton<UpdateManager>
     {
-        public const string UPDATE_BEHAVIOUR_NAME = "Updater";
+        private static string ROOT_NAME = "UpdateMgr";
 
-        private UpdateBehaviour updateBehaviour = null;
+        private GameObject rootGO;
 
-        private List<Action<float, float>> updateHandlers = new List<Action<float, float>>();
-        private List<Action<float, float>> lateUpdateHandlers = new List<Action<float, float>>();
-        private List<Action<float, float>> fixedUpdateHandlers = new List<Action<float, float>>();
+        private List<WeakReference<Action<float, float>>> updateHandlers = new List<WeakReference<Action<float, float>>>();
+        private List<WeakReference<Action<float, float>>> lateUpdateHandlers = new List<WeakReference<Action<float, float>>>();
+        private List<WeakReference<Action<float, float>>> fixedUpdateHandlers = new List<WeakReference<Action<float, float>>>();
 
         public UpdateManager()
         {
         }
 
-        public void RegisterUpdater(IUpdate updater)
-        {
-            if(updater == null || updateHandlers.Contains(updater.DoUpdate))
-            {
-                return;
-            }
-            updateHandlers.Add(updater.DoUpdate);
-        }
-
-        public void RegisterUpdater(Action<float,float> updater)
-        {
-            if (updater == null || updateHandlers.Contains(updater))
-            {
-                return;
-            }
-            updateHandlers.Add(updater);
-        }
-
-        public void UnregisterUpdater(IUpdate updater)
-        {
-            if (updater == null || !updateHandlers.Contains(updater.DoUpdate))
-            {
-                return;
-            }
-            updateHandlers.Remove(updater.DoUpdate);
-        }
-
-        public void UnregisterUpdater(Action<float,float> updater)
-        {
-            if (updater == null || !updateHandlers.Contains(updater))
-            {
-                return;
-            }
-            updateHandlers.Remove(updater);
-        }
-
-        public void RegisterLateUpdater(ILateUpdate lateUpdater)
-        {
-            if (lateUpdater == null || lateUpdateHandlers.Contains(lateUpdater.DoLateUpdate))
-            {
-                return;
-            }
-            lateUpdateHandlers.Add(lateUpdater.DoLateUpdate);
-        }
-
-        public void RegisterLateUpdater(Action<float, float> lateUpdater)
-        {
-            if (lateUpdater == null || lateUpdateHandlers.Contains(lateUpdater))
-            {
-                return;
-            }
-            lateUpdateHandlers.Add(lateUpdater);
-        }
-
-        public void UnregisterLateUpdater(ILateUpdate lateUpdater)
-        {
-            if (lateUpdater == null || !lateUpdateHandlers.Contains(lateUpdater.DoLateUpdate))
-            {
-                return;
-            }
-            lateUpdateHandlers.Remove(lateUpdater.DoLateUpdate);
-        }
-
-        public void UnregisterLateUpdater(Action<float, float> lateUpdater)
-        {
-            if (lateUpdater == null || !lateUpdateHandlers.Contains(lateUpdater))
-            {
-                return;
-            }
-            lateUpdateHandlers.Remove(lateUpdater);
-        }
-
-        public void RegisterFixedUpdater(IFixedUpdate fixedUpdater)
-        {
-            if (fixedUpdater == null || !fixedUpdateHandlers.Contains(fixedUpdater.DoFixedUpdate))
-            {
-                return;
-            }
-            fixedUpdateHandlers.Add(fixedUpdater.DoFixedUpdate);
-        }
-
-        public void RegisterFixedUpdater(Action<float, float> fixedUpdater)
-        {
-            if (fixedUpdater == null || !fixedUpdateHandlers.Contains(fixedUpdater))
-            {
-                return;
-            }
-            fixedUpdateHandlers.Add(fixedUpdater);
-        }
-
-        public void UnregisterFixedUpdater(IFixedUpdate fixedUpdater)
-        {
-            if (fixedUpdater == null || !fixedUpdateHandlers.Contains(fixedUpdater.DoFixedUpdate))
-            {
-                return;
-            }
-            fixedUpdateHandlers.Remove(fixedUpdater.DoFixedUpdate);
-        }
-
-        public void UnregisterFixedUpdater(Action<float, float> fixedUpdater)
-        {
-            if (fixedUpdater == null || !fixedUpdateHandlers.Contains(fixedUpdater))
-            {
-                return;
-            }
-            fixedUpdateHandlers.Remove(fixedUpdater);
-        }
-
         protected override void OnInit()
         {
-            if(updateBehaviour == null)
+            rootGO = PersistentUObjectHelper.CreateGameObject(ROOT_NAME);
+
+            UpdateBehaviour updateBehaviour = rootGO.AddComponent<UpdateBehaviour>();
+            updateBehaviour.Handler = (deltaTime, unscaleDeltaTime) =>
             {
-                updateBehaviour = PersistentUObjectHelper.CreateComponent<UpdateBehaviour>(UPDATE_BEHAVIOUR_NAME);
-                updateBehaviour.SetHandler(OnUpdate, OnLateUpdate, OnFixedUpdate);
-            }
+                InvokeHanlders(updateHandlers, deltaTime, unscaleDeltaTime);
+            };
+
+            LateUpdateBehaviour lateUpdateBehaviour = rootGO.AddComponent<LateUpdateBehaviour>();
+            lateUpdateBehaviour.Handler = (deltaTime, unscaleDeltaTime) =>
+            {
+                InvokeHanlders(lateUpdateHandlers, deltaTime, unscaleDeltaTime);
+            };
+
+            FixedUpdateBehaviour fixedUpdateBehaviour = rootGO.AddComponent<FixedUpdateBehaviour>();
+            fixedUpdateBehaviour.Handler = (deltaTime, unscaleDeltaTime) =>
+            {
+                InvokeHanlders(fixedUpdateHandlers, deltaTime, unscaleDeltaTime);
+            };
+
+            base.OnInit();
         }
 
         protected override void OnDestroy()
         {
-            if(updateBehaviour)
-            {
-                updateBehaviour.SetHandler(null, null, null);
-                UnityObject.Destroy(updateBehaviour.gameObject);
-            }
-            updateBehaviour = null;
+            updateHandlers.Clear();
+            lateUpdateHandlers.Clear();
+            fixedUpdateHandlers.Clear();
+
+            UnityObject.Destroy(rootGO.gameObject);
+            rootGO = null;
 
             base.OnDestroy();
         }
 
-        private void OnUpdate(float deltaTime,float unscaleDeltaTime)
+        private void InvokeHanlders(List<WeakReference<Action<float, float>>> handlers, float deltaTime, float unscaleDeltaTime)
         {
-            if(updateHandlers.Count>0)
+            for (int i = 0; i < handlers.Count;)
             {
-                for(int i =0;i<updateHandlers.Count;++i)
+                var handler = handlers[i];
+                if (handler.TryGetTarget(out var action))
                 {
-                    updateHandlers[i].Invoke(deltaTime, unscaleDeltaTime);
+                    action.Invoke(deltaTime, unscaleDeltaTime);
+                    i++;
+                }
+                else
+                {
+                    handlers.RemoveAt(i);
+                }
+            }
+        }
+        private void Register(List<WeakReference<Action<float, float>>> handlers, Action<float, float> updater)
+        {
+            if (updater == null)
+            {
+                return;
+            }
+#if DEBUG
+            foreach (var handler in updateHandlers)
+            {
+                if (handler.TryGetTarget(out var action) && action == updater)
+                {
+                    throw new Exception("The action has been registered");
+                }
+            }
+#endif
+            updateHandlers.Add(new WeakReference<Action<float, float>>(updater));
+        }
+        private void Unregister(List<WeakReference<Action<float, float>>> handlers, Action<float, float> updater)
+        {
+            if (updater == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < updateHandlers.Count; i++)
+            {
+                var handler = updateHandlers[i];
+                if (handler.TryGetTarget(out var action) && action == updater)
+                {
+                    updateHandlers.RemoveAt(i);
+                    break;
                 }
             }
         }
 
-        private void OnLateUpdate(float deltaTime,float unscaleDeltaTime)
-        {
-            if (lateUpdateHandlers.Count > 0)
-            {
-                for (int i = 0; i < lateUpdateHandlers.Count; ++i)
-                {
-                    lateUpdateHandlers[i].Invoke(deltaTime, unscaleDeltaTime);
-                }
-            }
-        }
+        public void RegisterUpdater(Action<float, float> updater) => Register(updateHandlers, updater);
+        public void UnregisterUpdater(Action<float, float> updater) => Unregister(updateHandlers, updater);
 
-        private void OnFixedUpdate(float deltaTime,float unscaleDeltaTime)
-        {
-            if (fixedUpdateHandlers.Count > 0)
-            {
-                for (int i = 0; i < fixedUpdateHandlers.Count; ++i)
-                {
-                    fixedUpdateHandlers[i].Invoke(deltaTime, unscaleDeltaTime);
-                }
-            }
-        }
+        public void RegisterLateUpdater(Action<float, float> lateUpdater) => Register(lateUpdateHandlers, lateUpdater);
+        public void UnregisterLateUpdater(Action<float, float> lateUpdater) => Unregister(lateUpdateHandlers, lateUpdater);
+
+        public void RegisterFixedUpdater(Action<float, float> fixedUpdater) => Register(fixedUpdateHandlers, fixedUpdater);
+        public void UnregisterFixedUpdater(Action<float, float> fixedUpdater) => Unregister(fixedUpdateHandlers, fixedUpdater);
+
     }
 }
