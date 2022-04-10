@@ -1,9 +1,5 @@
 ﻿using DotEngine.Injection;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.Config.WDB
 {
@@ -18,5 +14,15 @@ namespace DotEngine.Config.WDB
 
     public class WDBContext : InjectStringContext
     {
+        private List<string> errors = new List<string>();
+
+        public WDBContext()
+        {
+            Add(WDBContextKey.ERROR_NAME, errors);
+        }
+
+        public bool HasError() => errors.Count == 0;
+        public void AppendError(string message) => errors.Add(message);
+        public string[] GetErrors() => errors.ToArray();
     }
 }

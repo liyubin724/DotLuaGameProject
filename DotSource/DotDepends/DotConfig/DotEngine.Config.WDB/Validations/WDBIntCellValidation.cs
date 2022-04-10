@@ -11,7 +11,7 @@
             string cellContent = cell.GetContent(field);
             if (!int.TryParse(cellContent, out _))
             {
-                AddErrorMessage(context, string.Format(WDBErrorMessages.CELL_PARSE_ERROR, cellContent, cell.Row, cell.Column, typeof(int)));
+                context.AppendError(string.Format(WDBErrorMessages.CELL_CONTENT_CONVERT_ERROR, cellContent, cell.Row, cell.Column, typeof(int)));
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DotEngine.Config.WDB
 {
-    public abstract class WDBValidation
+    public abstract class WDBCellValidation
     {
         public string[] Values { get; private set; }
 
@@ -13,24 +13,23 @@ namespace DotEngine.Config.WDB
             Values = values;
         }
 
-        public abstract void Verify(WDBContext context);
-
-        protected void AddErrorMessage(WDBContext context, string errorMsg)
+        protected WDBField GetField(WDBContext context)
         {
-            List<string> errors = context.Get<List<string>>(WDBContextKey.ERROR_NAME);
-            if(errors == null)
-            {
-                errors = new List<string>();
-                context.Add(WDBContextKey.ERROR_NAME, errors);
-            }
-            errors.Add(errorMsg);
+            return context.Get<WDBField>(WDBContextKey.CURRENT_FIELD_NAME);
         }
+
+        protected WDBCell GetCell(WDBContext context)
+        {
+            return context.Get<WDBCell>(WDBContextKey.CURRENT_CELL_NAME);
+        }
+
+        public abstract void Verify(WDBContext context);
     }
 
-    public static class WDBValidationFactory
+    public static class WDBCellValidationFactory
     {
         private static Dictionary<string, Type> fieldTypeDic = new Dictionary<string, Type>();
-        static WDBValidationFactory()
+        static WDBCellValidationFactory()
         {
             var assembly = typeof(WDBField).Assembly;
             var types = (from type in assembly.GetTypes()
@@ -48,11 +47,11 @@ namespace DotEngine.Config.WDB
             }
         }
 
-        public static WDBValidation CreateValidation(string validationName)
+        public static WDBCellValidation CreateValidation(string validationName)
         {
             if (fieldTypeDic.TryGetValue(validationName, out var type))
             {
-                return Activator.CreateInstance(type) as WDBValidation;
+                return Activator.CreateInstance(type) as WDBCellValidation;
             }
             return null;
         }

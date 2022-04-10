@@ -121,6 +121,17 @@ namespace DotTool.Config
                 WDBContext context = new WDBContext();
                 foreach(var sheet in sheets)
                 {
+                    sheet.Check(context);
+
+                    if(context.HasError())
+                    {
+                        foreach(var error in context.GetErrors())
+                        {
+                            printLogHandler(LogType.Error, error);
+                        }
+                        continue;
+                    }
+
                     string targetContent = null;
                     if(options.FormatType == TargetFormatType.Json)
                     {

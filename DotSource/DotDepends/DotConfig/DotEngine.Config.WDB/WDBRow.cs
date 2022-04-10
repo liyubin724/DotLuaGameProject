@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DotEngine.Config.WDB
 {
-    public class  WDBRow : IEnumerable<WDBCell>
+    public class  WDBRow : IEnumerable<WDBCell>,IWDBValidationChecker
     {
         public int Row { get; private set; }
 
@@ -100,6 +100,30 @@ namespace DotEngine.Config.WDB
             }
             strBuilder.Append("}");
             return strBuilder.ToString();
+        }
+
+        public void Check(WDBContext context)
+        {
+            WDBSheet sheet = context.Get<WDBSheet>(WDBContextKey.CURRENT_SHEET_NAME);
+            context.Add(WDBContextKey.CURRENT_ROW_NAME, this);
+            {
+                if(sheet.FieldCount!=CellCount)
+                {
+                    context.AppendError(string.Format(WDBErrorMessages.ROW_CELL_COUNT_ERROR, CellCount, Row, sheet.FieldCount));
+                }
+                else
+                {
+                    for(int i =0;i<CellCount;i++)
+                    {
+                        context.Add(WDBContextKey.CURRENT_FIELD_NAME, sheet.GetFieldAtIndex(i));
+                        {
+                            cells[i].Check(context);
+                        }
+                        context.Remove(WDBContextKey.CURRENT_FIELD_NAME);
+                    }
+                }
+            }
+            context.Remove(WDBContextKey.CURRENT_ROW_NAME);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    public class WDBCell
+    public class WDBCell : IWDBValidationChecker
     {
         public int Row { get; private set; }
         public int Column { get; private set; }
@@ -26,6 +26,20 @@
         public override string ToString()
         {
             return $"{{row = {Row},column = {Column},content = {Content}}}";
+        }
+
+        public void Check(WDBContext context)
+        {
+            WDBField field = context.Get<WDBField>(WDBContextKey.CURRENT_FIELD_NAME);
+            context.Add(WDBContextKey.CURRENT_CELL_NAME, this);
+            {
+                var cellValidations = field.GetValidations();
+                for(int i =0;i<cellValidations.Length;i++)
+                {
+                    cellValidations[i].Verify(context);
+                }
+            }
+            context.Remove(WDBContextKey.CURRENT_CELL_NAME);
         }
     }
 }

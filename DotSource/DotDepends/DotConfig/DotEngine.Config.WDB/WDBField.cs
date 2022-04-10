@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DotEngine.Config.WDB
 {
-    public abstract class WDBField
+    public abstract class WDBField : IWDBValidationChecker
     {
+        private const string NAME_REGEX_PATTERN = @"^[A-Za-z][A-Za-z0-9]{2,9}";
+
         public int Column { get; private set; }
 
         public string Type { get; private set; }
@@ -58,9 +61,9 @@ namespace DotEngine.Config.WDB
             return string.IsNullOrEmpty(DefaultContent) ? GetTypeDefaultContent() : DefaultContent;
         }
 
-        public WDBValidation[] GetValidations()
+        public WDBCellValidation[] GetValidations()
         {
-            List<WDBValidation> result = new List<WDBValidation>();
+            List<WDBCellValidation> result = new List<WDBCellValidation>();
 
             List<string> rules = new List<string>();
             var defaultValidations = GetTypeDefaultValidations();
@@ -84,7 +87,7 @@ namespace DotEngine.Config.WDB
                 {
                     if (WDBUtility.ParserValidationRule(rule, out var name, out var values))
                     {
-                        WDBValidation validation = WDBValidationFactory.CreateValidation(name);
+                        WDBCellValidation validation = WDBCellValidationFactory.CreateValidation(name);
                         if (validation != null)
                         {
                             validation.SetRule(values);
@@ -107,6 +110,18 @@ namespace DotEngine.Config.WDB
 
         protected abstract string GetTypeDefaultContent();
         protected abstract string[] GetTypeDefaultValidations();
+
+        public void Check(WDBContext context)
+        {
+            if (string.IsNullOrEmpty(Name))
+            {
+                context.AppendError(WDBErrorMessages.FIELD_NAME_EMPTY_ERROR);
+            }
+            else if (!Regex.IsMatch(Name, NAME_REGEX_PATTERN))
+            {
+                context.AppendError(string.Format(WDBErrorMessages.FIELD_NAME_FORMAT_ERROR, Name,Column));
+            }
+        }
     }
 
     public static class WDBFieldFactory
