@@ -97,12 +97,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DotDepends\DotEngine.Log\DotEngine.Log.csproj">
-      <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
-      <Name>DotEngine.Log</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Resources\TemplateCommon.txt" />
     <None Include="Resources\TestTemplate.txt" />
   </ItemGroup>
