@@ -2,8 +2,8 @@
 {
     public enum WDBFieldPlatform
     {
-        All = 'a',
-        Client = 'c',
-        Server = 's',
+        All = 0,
+        Client,
+        Server,
     }
 }
