@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="dot_config_ini_styles.uss" />
+    <ui:VisualElement name="name-container" class="section-detail-header">
+        <ui:Label text="Label" display-tooltip-when-elided="true" name="section-name-label" class="section-detail-header--name-label" />
+    </ui:VisualElement>
+    <ui:VisualElement name="comment-container">
+        <ui:TextField picking-mode="Ignore" label="Comment:" name="comment-textfield" class="section-detail--comment-textfield" />
+    </ui:VisualElement>
+    <ui:VisualElement name="property-list-container" class="list-container" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;">
+        <ui:VisualElement name="list-header" class="list-header">
+            <ui:Label text="Properties" display-tooltip-when-elided="true" class="list-title--label" />
+            <ui:VisualElement class="list--flex-space" />
+            <ui:Button text="+" display-tooltip-when-elided="true" name="add-property-btn" />
+        </ui:VisualElement>
+        <ui:VisualElement name="list-container" class="list-container">
+            <ui:ListView focusable="true" name="list-view" class="list-container--listview" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

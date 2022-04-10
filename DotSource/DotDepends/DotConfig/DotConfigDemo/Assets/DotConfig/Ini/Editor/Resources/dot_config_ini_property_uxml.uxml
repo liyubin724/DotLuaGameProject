@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="dot_config_ini_styles.uss" />
+    <ui:VisualElement name="property-container">
+        <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" text="filler text" name="key-textfield" />
+        <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" text="filler text" name="value-textfield" />
+    </ui:VisualElement>
+</ui:UXML>
