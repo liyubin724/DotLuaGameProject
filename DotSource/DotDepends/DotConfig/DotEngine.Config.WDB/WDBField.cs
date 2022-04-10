@@ -46,7 +46,7 @@ namespace DotEngine.Config.WDB
             }
             set
             {
-                Platform = value.ToString("G").ToLower();
+                Platform = value.ToString().ToLower();
             }
         }
 
