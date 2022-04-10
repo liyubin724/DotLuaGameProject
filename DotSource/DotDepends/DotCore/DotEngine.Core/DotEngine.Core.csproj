@@ -43,6 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cypto\AESCrypto.cs" />
+    <Compile Include="Cypto\CryptoHelper.cs" />
+    <Compile Include="Cypto\DESCrypto.cs" />
+    <Compile Include="Cypto\MD5Crypto.cs" />
     <Compile Include="Dependencies\CircularDependencyChecker.cs" />
     <Compile Include="Exceptions\ParamNullException.cs" />
     <Compile Include="Exceptions\TypeNotFoundException.cs" />

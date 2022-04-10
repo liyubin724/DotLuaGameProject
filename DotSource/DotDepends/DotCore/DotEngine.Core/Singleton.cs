@@ -13,6 +13,7 @@
             }
             return instance;
         }
+
         public static T GetInstance()
         {
             return instance;
