@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{346F74C4-6542-4940-B4ED-FE2CAC144E2F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotEngine.Config.WDB</RootNamespace>
+    <AssemblyName>DotEngine.Config.WDB</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\CustomFieldAttribute.cs" />
+    <Compile Include="Attributes\CustomValidationAttribute.cs" />
+    <Compile Include="Exceptions\WDBExceptions.cs" />
+    <Compile Include="Fields\WDBBoolField.cs" />
+    <Compile Include="Fields\WDBFieldNames.cs" />
+    <Compile Include="Fields\WDBFloatField.cs" />
+    <Compile Include="Fields\WDBIntField.cs" />
+    <Compile Include="Fields\WDBLongField.cs" />
+    <Compile Include="Fields\WDBRefField.cs" />
+    <Compile Include="Fields\WDBStringField.cs" />
+    <Compile Include="Fields\WDBUAssetField.cs" />
+    <Compile Include="IWDBValidationChecker.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validations\WDBBoolCellValidation.cs" />
+    <Compile Include="Validations\WDBFloatCellValidation.cs" />
+    <Compile Include="Validations\WDBIntCellValidation.cs" />
+    <Compile Include="Validations\WDBLongCellValidation.cs" />
+    <Compile Include="Validations\WDBValidationNames.cs" />
+    <Compile Include="WDBCell.cs" />
+    <Compile Include="WDBContext.cs" />
+    <Compile Include="WDBErrorMessages.cs" />
+    <Compile Include="WDBField.cs" />
+    <Compile Include="WDBFieldPlatform.cs" />
+    <Compile Include="WDBFieldType.cs" />
+    <Compile Include="WDBRow.cs" />
+    <Compile Include="WDBSheet.cs" />
+    <Compile Include="WDBUtility.cs" />
+    <Compile Include="WDBCellValidation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DotEngine.Injection\DotEngine.Injection.csproj">
+      <Project>{80da1e18-5e91-4b9f-a5b9-16e57e3db285}</Project>
+      <Name>DotEngine.Injection</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

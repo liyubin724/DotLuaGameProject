@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{26D17211-D347-4197-BB4C-12C8D6E894F5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotEditor.Config.Ini</RootNamespace>
+    <AssemblyName>DotEditor.Config.Ini</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEditor">
+      <HintPath>..\libs\Editor\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\libs\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IniConfigEditorWindow.cs" />
+    <Compile Include="IniPropertyView.cs" />
+    <Compile Include="IniSectionView.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj">
+      <Project>{baed7a18-6b05-4be0-b331-552e221b3150}</Project>
+      <Name>DotEngine.UIElements</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotEngine.Config.Ini\DotEngine.Config.Ini.csproj">
+      <Project>{f2aebb54-a3c8-4b7f-8924-cfe417f937fb}</Project>
+      <Name>DotEngine.Config.Ini</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>call $(SolutionDir)..\..\Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.Config.Ini.dll
+call $(SolutionDir)..\..\Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEngine.UIElements.dll
+call $(SolutionDir)..\..\Tools\pdb2mdb\pdb2mdb.exe $(TargetDir)DotEditor.Config.Ini.dll
+
+copy $(TargetDir)DotEngine.Config.Ini.dll $(SolutionDir)DotConfigDemo\Assets\DotConfig\Ini\
+copy $(TargetDir)DotEngine.Config.Ini.dll.mdb $(SolutionDir)DotConfigDemo\Assets\DotConfig\Ini\
+copy $(TargetDir)DotEditor.Config.Ini.dll $(SolutionDir)DotConfigDemo\Assets\DotConfig\Ini\Editor\
+copy $(TargetDir)DotEditor.Config.Ini.dll.mdb $(SolutionDir)DotConfigDemo\Assets\DotConfig\Ini\Editor\
+copy $(TargetDir)DotEngine.UIElements.dll $(SolutionDir)DotConfigDemo\Assets\DotConfig\Ini\
+copy $(TargetDir)DotEngine.UIElements.dll.mdb $(SolutionDir)DotConfigDemo\Assets\DotConfig\Ini\</PostBuildEvent>
+  </PropertyGroup>
+</Project>
