@@ -28,7 +28,7 @@ namespace DotTool.Config
 
     public class Options
     {
-        [Option('f',"input",Required =true,HelpText ="The path of the file")]
+        [Option('i',"input",Required =true,HelpText ="The path of the file")]
         public string InputFilePath { get; set; }
         [Option('r', "file-type", Required = true, HelpText = "The type of the file")]
         public OriginFileType FileType { get; set; }
@@ -50,7 +50,7 @@ namespace DotTool.Config
         static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args).WithParsed(OnSuccess).WithNotParsed(OnFaile);
-
+            PrintLog(LogType.Error, "FFFFFFFF");
             System.Console.ReadLine();
         }
 
