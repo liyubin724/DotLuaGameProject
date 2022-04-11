@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField("int")]
+    [CustomField(WDBFieldNames.INT_NAME)]
     public class WDBIntField : WDBField
     {
         public WDBIntField(int column, string type) : base(column, type)

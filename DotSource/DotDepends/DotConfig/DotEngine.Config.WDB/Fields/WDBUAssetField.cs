@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField("uasset")]
+    [CustomField(WDBFieldNames.UASSET_NAME)]
     public class WDBUAssetField : WDBField
     {
         public WDBUAssetField(int column, string type) : base(column, type)
