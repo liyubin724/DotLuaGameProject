@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField("ref")]
+    [CustomField(WDBFieldNames.REF_NAME)]
     public class WDBRefField : WDBField
     {
         public WDBRefField(int column, string type) : base(column, type)

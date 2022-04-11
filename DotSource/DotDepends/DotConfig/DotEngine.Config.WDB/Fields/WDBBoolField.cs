@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField("bool")]
+    [CustomField(WDBFieldNames.BOOL_NAME)]
     public class WDBBoolField : WDBField
     {
         public WDBBoolField(int column, string type) : base(column, type)

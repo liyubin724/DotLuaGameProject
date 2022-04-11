@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField("float")]
+    [CustomField(WDBFieldNames.FLOAT_NAME)]
     public class WDBFloatField : WDBField
     {
         public WDBFloatField(int column, string type) : base(column, type)

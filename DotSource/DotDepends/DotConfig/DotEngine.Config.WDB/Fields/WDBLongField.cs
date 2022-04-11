@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField("long")]
+    [CustomField(WDBFieldNames.LONG_NAME)]
     public class WDBLongField : WDBField
     {
         public WDBLongField(int column, string type) : base(column, type)

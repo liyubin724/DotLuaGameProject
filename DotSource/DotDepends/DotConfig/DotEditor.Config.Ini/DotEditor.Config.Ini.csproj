@@ -53,10 +53,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj">
-      <Project>{baed7a18-6b05-4be0-b331-552e221b3150}</Project>
-      <Name>DotEngine.UIElements</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DotEngine.Config.Ini\DotEngine.Config.Ini.csproj">
       <Project>{f2aebb54-a3c8-4b7f-8924-cfe417f937fb}</Project>
       <Name>DotEngine.Config.Ini</Name>
