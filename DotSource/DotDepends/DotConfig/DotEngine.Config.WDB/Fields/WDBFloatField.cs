@@ -3,6 +3,14 @@
     [CustomField(WDBFieldNames.FLOAT_NAME)]
     public class WDBFloatField : WDBField
     {
+        public override WDBFieldType FieldType
+        {
+            get
+            {
+                return WDBFieldType.Float;
+            }
+        }
+
         public WDBFloatField(int column, string type) : base(column, type)
         {
         }
@@ -14,7 +22,7 @@
 
         protected override string[] GetTypeDefaultValidations()
         {
-            return new string[] { WDBValidationNames.FLOAT_NAME };
+            return new string[] { WDBCellValidationNames.FLOAT_NAME };
         }
     }
 }

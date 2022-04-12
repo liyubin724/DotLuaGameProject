@@ -1,9 +1,9 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomField(WDBFieldNames.BOOL_NAME)]
-    public class WDBBoolField : WDBField
+    [CustomField(WDBFieldNames.DATETIME_NAME)]
+    public class WDBDateTimeField : WDBField
     {
-        public WDBBoolField(int column, string type) : base(column, type)
+        public WDBDateTimeField(int column, string type) : base(column, type)
         {
         }
 
@@ -11,18 +11,18 @@
         {
             get
             {
-                return WDBFieldType.Bool;
+                return WDBFieldType.DateTime;
             }
         }
 
         protected override string GetTypeDefaultContent()
         {
-            return "false";
+            return "1970-1-1 0:0:0 000";
         }
 
         protected override string[] GetTypeDefaultValidations()
         {
-            return new string[] { WDBCellValidationNames.BOOL_NAME };
+            return new string[] { WDBCellValidationNames.DATETIME_NAME };
         }
     }
 }

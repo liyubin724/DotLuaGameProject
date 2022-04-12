@@ -46,6 +46,7 @@
     <Compile Include="Attributes\CustomValidationAttribute.cs" />
     <Compile Include="Exceptions\WDBExceptions.cs" />
     <Compile Include="Fields\WDBBoolField.cs" />
+    <Compile Include="Fields\WDBDateTimeField.cs" />
     <Compile Include="Fields\WDBFieldNames.cs" />
     <Compile Include="Fields\WDBFloatField.cs" />
     <Compile Include="Fields\WDBIntField.cs" />
@@ -56,10 +57,11 @@
     <Compile Include="IWDBValidationChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validations\WDBBoolCellValidation.cs" />
+    <Compile Include="Validations\WDBDateTimeCellValidation.cs" />
     <Compile Include="Validations\WDBFloatCellValidation.cs" />
     <Compile Include="Validations\WDBIntCellValidation.cs" />
     <Compile Include="Validations\WDBLongCellValidation.cs" />
-    <Compile Include="Validations\WDBValidationNames.cs" />
+    <Compile Include="Validations\WDBCellValidationNames.cs" />
     <Compile Include="WDBCell.cs" />
     <Compile Include="WDBContext.cs" />
     <Compile Include="WDBErrorMessages.cs" />

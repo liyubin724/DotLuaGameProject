@@ -3,6 +3,14 @@
     [CustomField(WDBFieldNames.LONG_NAME)]
     public class WDBLongField : WDBField
     {
+        public override WDBFieldType FieldType
+        {
+            get
+            {
+                return WDBFieldType.Long;
+            }
+        }
+
         public WDBLongField(int column, string type) : base(column, type)
         {
         }
@@ -14,7 +22,7 @@
 
         protected override string[] GetTypeDefaultValidations()
         {
-            return new string[] { WDBValidationNames.LONG_NAME };
+            return new string[] { WDBCellValidationNames.LONG_NAME };
         }
     }
 }

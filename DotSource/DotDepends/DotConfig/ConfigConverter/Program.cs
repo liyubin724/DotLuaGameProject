@@ -1,6 +1,7 @@
 ﻿using Colorful;
 using CommandLine;
 using DotEngine.Config.WDB;
+using Microsoft.VisualBasic.FileIO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -49,8 +50,19 @@ namespace DotTool.Config
     {
         static void Main(string[] args)
         {
+            //TextFieldParser parser = new TextFieldParser(@"D:\sticker.txt");
+            //parser.SetDelimiters(new string[] { "\t" });
+            //while(!parser.EndOfData)
+            //{
+
+            //    long lineNumber = parser.LineNumber;
+            //    string[] fields = parser.ReadFields();
+            //    Console.WriteLine(lineNumber.ToString() + " = " + (parser.LineNumber).ToString());
+            //    Console.WriteLine(string.Join(",", fields));
+            //}
+
+            //parser.Dispose();
             Parser.Default.ParseArguments<Options>(args).WithParsed(OnSuccess).WithNotParsed(OnFaile);
-            PrintLog(LogType.Error, "FFFFFFFF");
             System.Console.ReadLine();
         }
 

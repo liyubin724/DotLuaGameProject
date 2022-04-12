@@ -1,4 +1,5 @@
 ﻿using DotEngine.Config.WDB;
+using System;
 using System.Text;
 
 namespace DotTool.Config
@@ -88,6 +89,17 @@ namespace DotTool.Config
             else if (field.FieldType == WDBFieldType.String || field.FieldType == WDBFieldType.UAsset)
             {
                 content = content ?? string.Empty;
+            }else if(field.FieldType == WDBFieldType.DateTime)
+            {
+                if(!DateTime.TryParse(content,out var dateTime))
+                {
+                    content = "0";
+                }
+                else
+                {
+                    var timeSpan = DateTime.Parse(content) - new DateTime(1970, 1, 1, 0, 0, 0);
+                    content = ((long)timeSpan.TotalMilliseconds).ToString();
+                }
             }
 
             return content;
@@ -126,7 +138,7 @@ namespace DotTool.Config
                     builder.AppendLine($"{GetIndent(indent)}{field.Name} = 0,");
                 }
             }
-            else if (field.FieldType == WDBFieldType.Long)
+            else if (field.FieldType == WDBFieldType.Long || field.FieldType == WDBFieldType.DateTime)
             {
                 if (long.TryParse(content, out long result))
                 {
@@ -147,12 +159,7 @@ namespace DotTool.Config
 
         private static string GetIndent(int indent)
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < indent * 4; i++)
-            {
-                builder.Append(" ");
-            }
-            return builder.ToString();
+            return new string(' ', indent * 4);
         }
     }
 }

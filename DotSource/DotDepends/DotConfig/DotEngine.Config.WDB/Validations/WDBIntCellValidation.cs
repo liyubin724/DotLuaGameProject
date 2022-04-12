@@ -1,6 +1,6 @@
 ﻿namespace DotEngine.Config.WDB
 {
-    [CustomValidation(WDBValidationNames.INT_NAME)]
+    [CustomValidation(WDBCellValidationNames.INT_NAME)]
     public class WDBIntCellValidation : WDBCellValidation
     {
         public override void Verify(WDBContext context)

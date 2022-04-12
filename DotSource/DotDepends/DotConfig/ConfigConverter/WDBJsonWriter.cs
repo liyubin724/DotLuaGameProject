@@ -1,6 +1,7 @@
 ﻿using DotEngine.Config.WDB;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace DotTool.Config
 {
@@ -87,6 +88,10 @@ namespace DotTool.Config
             else if (field.FieldType == WDBFieldType.String || field.FieldType == WDBFieldType.UAsset)
             {
                 return content ?? string.Empty;
+            } else if (field.FieldType == WDBFieldType.DateTime)
+            {
+                var timeSpan = DateTime.Parse(content) - new DateTime(1970, 1, 1, 0, 0, 0);
+                return (long)timeSpan.TotalMilliseconds;
             }
             return content;
         }
