@@ -7,7 +7,7 @@ namespace DotEngine.Config.WDB
 {
     public abstract class WDBField : IWDBValidationChecker
     {
-        private const string NAME_REGEX_PATTERN = @"^[A-Za-z][A-Za-z0-9]{2,9}";
+        private const string NAME_REGEX_PATTERN = @"^[A-Za-z][A-Za-z0-9]{1,9}";
 
         public int Column { get; private set; }
 

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotEngine.Config.WDB
 {
+    [CustomValidation(WDBCellValidationNames.DATETIME_NAME)]
     public class WDBDateTimeCellValidation : WDBCellValidation
     {
         public override void Verify(WDBContext context)

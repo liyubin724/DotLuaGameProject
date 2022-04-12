@@ -17,7 +17,7 @@
 
         protected override string GetTypeDefaultContent()
         {
-            return "1970-1-1 0:0:0 000";
+            return "1970-1-1 0:0:0";
         }
 
         protected override string[] GetTypeDefaultValidations()

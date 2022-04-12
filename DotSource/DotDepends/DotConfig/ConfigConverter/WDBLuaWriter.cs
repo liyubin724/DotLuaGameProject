@@ -25,7 +25,7 @@ namespace DotTool.Config
                 WDBField keyField = sheet.GetFieldAtIndex(0);
                 WDBCell keyCell = row.GetCellByIndex(0);
                 indent++;
-                string keyStr = GetStringValue(keyField, keyCell);
+                string keyStr = keyCell.GetContent(keyField);
                 builder.AppendLine($"{GetIndent(indent)}[{keyStr}] = {{");
 
                 for (int f = 0; f < sheet.FieldCount; f++)
@@ -53,56 +53,6 @@ namespace DotTool.Config
             builder.AppendLine($"return {sheet.Name}");
 
             return builder.ToString();
-        }
-
-        private static string GetStringValue(WDBField field, WDBCell cell)
-        {
-            string content = cell.GetContent(field);
-            if (field.FieldType == WDBFieldType.Bool)
-            {
-                if (!bool.TryParse(content, out bool result))
-                {
-                    content = "false";
-                }
-            }
-            else if (field.FieldType == WDBFieldType.Float)
-            {
-                if (!float.TryParse(content, out float result))
-                {
-                    content = "0";
-                }
-            }
-            else if (field.FieldType == WDBFieldType.Int || field.FieldType == WDBFieldType.Ref)
-            {
-                if (!int.TryParse(content, out int result))
-                {
-                    content = "0";
-                }
-            }
-            else if (field.FieldType == WDBFieldType.Long)
-            {
-                if (!long.TryParse(content, out long result))
-                {
-                    content = "0";
-                }
-            }
-            else if (field.FieldType == WDBFieldType.String || field.FieldType == WDBFieldType.UAsset)
-            {
-                content = content ?? string.Empty;
-            }else if(field.FieldType == WDBFieldType.DateTime)
-            {
-                if(!DateTime.TryParse(content,out var dateTime))
-                {
-                    content = "0";
-                }
-                else
-                {
-                    var timeSpan = DateTime.Parse(content) - new DateTime(1970, 1, 1, 0, 0, 0);
-                    content = ((long)timeSpan.TotalMilliseconds).ToString();
-                }
-            }
-
-            return content;
         }
 
         private static void AppendValueLine(StringBuilder builder, int indent, WDBField field, WDBCell cell)
@@ -138,7 +88,7 @@ namespace DotTool.Config
                     builder.AppendLine($"{GetIndent(indent)}{field.Name} = 0,");
                 }
             }
-            else if (field.FieldType == WDBFieldType.Long || field.FieldType == WDBFieldType.DateTime)
+            else if (field.FieldType == WDBFieldType.Long)
             {
                 if (long.TryParse(content, out long result))
                 {
@@ -152,8 +102,18 @@ namespace DotTool.Config
             else if (field.FieldType == WDBFieldType.String || field.FieldType == WDBFieldType.UAsset)
             {
                 string value = content ?? string.Empty;
-
                 builder.AppendLine($"{GetIndent(indent)}{field.Name} = [[{value}]],");
+            }else if(field.FieldType == WDBFieldType.DateTime)
+            {
+                if (!DateTime.TryParse(content,out var result))
+                {
+                    builder.AppendLine($"{GetIndent(indent)}{field.Name} = 0,");
+                }
+                else
+                {
+                    var timeSpan = result - new DateTime(1970, 1, 1, 0, 0, 0);
+                    builder.AppendLine($"{GetIndent(indent)}{field.Name} = {(long)timeSpan.TotalMilliseconds},");
+                }
             }
         }
 
