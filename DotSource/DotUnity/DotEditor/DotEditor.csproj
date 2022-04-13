@@ -40,90 +40,40 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEditor">
+      <HintPath>libs\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataGrid\EasyListView.cs" />
-    <Compile Include="DataGrid\EGUIGridView.cs" />
-    <Compile Include="DataGrid\EGUITreeView.cs" />
-    <Compile Include="DataGrid\GridTreeView.cs" />
-    <Compile Include="DataGrid\GridViewData.cs" />
-    <Compile Include="DataGrid\GridViewHeader.cs" />
-    <Compile Include="DataGrid\GridViewModel.cs" />
-    <Compile Include="EditDrawerWindow.cs" />
-    <Compile Include="EGUI.cs" />
-    <Compile Include="EGUILayout.cs" />
-    <Compile Include="EGUIResources.cs" />
-    <Compile Include="EGUIStyles.cs" />
-    <Compile Include="EGUIUtility.cs" />
-    <Compile Include="IMGUI\Drawers\ButtonDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\ClickableSpringLabel.cs" />
-    <Compile Include="IMGUI\Drawers\DragLineDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\EasyListViewDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\EnumButtonDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\FloatSliderDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\HeaderDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\HorizontalLayoutDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\HorizontalLineDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\IntSliderDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\MultilineTextDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\OpenFilePathDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\OpenFolderPathDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\PopupDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\SearchFieldDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\SpaceDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\ToolbarButtonDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\ToolbarDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\ToolbarToggleDrawer.cs" />
-    <Compile Include="IMGUI\Drawers\VerticalLayoutDrawer.cs" />
-    <Compile Include="IMGUI\ILayoutDrawable.cs" />
-    <Compile Include="IMGUI\IMatchFilter.cs" />
-    <Compile Include="IMGUI\IValueProvider.cs" />
-    <Compile Include="IMGUI\LayoutDrawable.cs" />
-    <Compile Include="IMGUI\RList\ReorderableListProperty.cs" />
-    <Compile Include="IMGUI\ValueProviderLayoutDrawable.cs" />
-    <Compile Include="NativeDrawer\ArrayDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\AttrLayoutDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Content\ContentAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Content\EnumButtonAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Content\FloatSliderAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Decorator\BoxedHeaderAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Decorator\ButtonAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Decorator\DecoratorAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Decorator\HelpAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Decorator\SeparatorLineAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Decorator\SpaceAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\BeginGroupAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\BeginHorizontalAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\BeginIndentAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\EndGroupAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\EndHorizontalAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\EndIndentAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Layout\LayoutAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Visible\CompareVisibleAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Visible\HideAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Visible\ShowAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Visible\VisibleAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\AttrDrawers\Visible\VisibleIfAttrDrawer.cs" />
-    <Compile Include="NativeDrawer\DrawerUtility.cs" />
-    <Compile Include="NativeDrawer\InstanceDrawer.cs" />
-    <Compile Include="NativeDrawer\ItemDrawer.cs" />
-    <Compile Include="NativeDrawer\LayoutDrawer.cs" />
-    <Compile Include="NativeDrawer\ObjectDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\BoolTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\BoundsTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\EnumTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\FloatTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\IntTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\RectTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\StringTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\TypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\UnsupportedTypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\Vector2TypeDrawer.cs" />
-    <Compile Include="NativeDrawer\TypeDrawers\Vector3TypeDrawer.cs" />
+    <Compile Include="FBX\AnimationClipCompressor.cs" />
+    <Compile Include="FBX\AnimationClipExtractor.cs" />
+    <Compile Include="FBX\FBXMenuOptions.cs" />
+    <Compile Include="FBX\ModelOptimizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Win\PopupWindow.cs" />
+    <Compile Include="Utilities\AssetDatabaseUtility.cs" />
+    <Compile Include="Utilities\DirectoryUtility.cs" />
+    <Compile Include="Utilities\ExplorerUtility.cs" />
+    <Compile Include="Utilities\FileUtility.cs" />
+    <Compile Include="Utilities\GraphicsSettingsUtility.cs" />
+    <Compile Include="Utilities\MeshUtility.cs" />
+    <Compile Include="Utilities\PathUtility.cs" />
+    <Compile Include="Utilities\PlayerSettingsUtility.cs" />
+    <Compile Include="Utilities\PrefabUtility.cs" />
+    <Compile Include="Utilities\ScreenCaptureUtility.cs" />
+    <Compile Include="Utilities\SelectionUtility.cs" />
+    <Compile Include="Utilities\SerializedPropertyUtility.cs" />
+    <Compile Include="Utilities\SpriteAtlasUtility.cs" />
+    <Compile Include="Utilities\UnityObjectUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DotDepends\DotCore\DotEngine.Core\DotEngine.Core.csproj">
+      <Project>{3b63d16a-95fe-4e4b-af72-4ab062900d57}</Project>
+      <Name>DotEngine.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotEngine\DotEngine.csproj">
       <Project>{906a63f2-e8b6-4f50-85f0-844c73c8dcdc}</Project>
       <Name>DotEngine</Name>

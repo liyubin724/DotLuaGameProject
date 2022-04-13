@@ -114,21 +114,18 @@
     <Compile Include="Utilities\JsonUtility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AI\BehaviourLine\" />
-    <Folder Include="AI\BehaviourTree\" />
-    <Folder Include="AI\FSM\" />
     <Folder Include="Config\NDB\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotDepends\DotCore\DotEngine.Core\DotEngine.Core.csproj">
+    <ProjectReference Include="..\..\DotDepends\DotCore\DotEngine.Core\DotEngine.Core.csproj">
       <Project>{3b63d16a-95fe-4e4b-af72-4ab062900d57}</Project>
       <Name>DotEngine.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DotDepends\DotLog\DotEngine.Log\DotEngine.Log.csproj">
+    <ProjectReference Include="..\..\DotDepends\DotLog\DotEngine.Log\DotEngine.Log.csproj">
       <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
       <Name>DotEngine.Log</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DotDepends\DotNet\DotEngine.Net\DotEngine.Net.csproj">
+    <ProjectReference Include="..\..\DotDepends\DotNet\DotEngine.Net\DotEngine.Net.csproj">
       <Project>{d16c3fe4-c0d6-43a7-a265-2e8589adbf6b}</Project>
       <Name>DotEngine.Net</Name>
     </ProjectReference>

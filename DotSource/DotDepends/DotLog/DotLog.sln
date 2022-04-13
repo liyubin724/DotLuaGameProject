@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.Log", "DotEngine.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotDepends", "DotDepends", "{A2CEE101-15C3-42A5-9265-CC35691CA242}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.UIElements", "..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj", "{BAED7A18-6B05-4BE0-B331-552E221B3150}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotEngine.UIElements", "..\..\DotUnity\DotUIElements\DotEngine.UIElements\DotEngine.UIElements.csproj", "{BAED7A18-6B05-4BE0-B331-552E221B3150}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
