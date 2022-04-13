@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotEngine</RootNamespace>
     <AssemblyName>DotEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,6 +66,39 @@
     <Compile Include="Extensions\RectExtension.cs" />
     <Compile Include="Extensions\TransformExtension.cs" />
     <Compile Include="Extensions\UnityObjectExtension.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\ContentAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\EnumButtonAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\FloatSliderAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\IntPopupAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\IntSliderAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\MultilineTextAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\OpenFilePathAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Content\OpenFolderPathAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Decorator\BoxedHeaderAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Decorator\ButtonAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Decorator\DecoratorAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Decorator\HelpAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Decorator\SeparatorLineAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Decorator\SpaceAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\DrawerAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\BeginGroupAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\BeginHorizontalAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\BeginIndentAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\EndGroupAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\EndHorizontalAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\EndIndentAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Layout\LayoutAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Listener\ListenerAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Listener\OnValueChangedAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Verification\CompareVerificationAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Verification\NotNullAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Verification\VerificationAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Verification\VerificationIfAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Visible\CompareVisibleAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Visible\HideAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Visible\ShowAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Visible\VisibleAttribute.cs" />
+    <Compile Include="IMGUI\NativeDrawer\Visible\VisibleIfAttribute.cs" />
     <Compile Include="Log\Appender\UnityConsoleAppender.cs" />
     <Compile Include="NetExt\NetworkManager.cs" />
     <Compile Include="PersistentUObjectHelper.cs" />
@@ -86,7 +120,6 @@
     <Folder Include="Asset\" />
     <Folder Include="Config\NDB\" />
     <Folder Include="Framework\" />
-    <Folder Include="IMGUI\" />
     <Folder Include="IO\" />
     <Folder Include="MathE\" />
     <Folder Include="Serialization\" />

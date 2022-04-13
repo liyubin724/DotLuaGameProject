@@ -5,13 +5,11 @@ namespace DotEngine.Log
 {
     public class UnityConsoleAppender : ALogAppender
     {
-        public const string NAME = "UnityConsoleAppender";
-
-        public UnityConsoleAppender() : base(NAME)
+        public UnityConsoleAppender(string name) : base(name)
         {
         }
 
-        protected override void OutputMessage(System.DateTime time, string tag, LogLevel level, string message, string stacktree)
+        protected override void OutputMessage(DateTime time, string tag, LogLevel level, string message, string stacktree)
         {
             string formattedMessage;
             if (string.IsNullOrEmpty(stacktree))

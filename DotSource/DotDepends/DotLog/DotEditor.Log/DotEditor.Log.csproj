@@ -56,10 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UIElements\DotEngine.UIElements\DotEngine.UIElements.csproj">
-      <Project>{baed7a18-6b05-4be0-b331-552e221b3150}</Project>
-      <Name>DotEngine.UIElements</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DotEngine.Log\DotEngine.Log.csproj">
       <Project>{61ebe018-c6ad-4962-a86a-7b831ff296f4}</Project>
       <Name>DotEngine.Log</Name>
