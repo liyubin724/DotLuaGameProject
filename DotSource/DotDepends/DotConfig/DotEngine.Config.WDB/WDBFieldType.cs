@@ -4,12 +4,13 @@
     {
         None = 0,
 
-        Int = 'i',
-        Ref = 'r',
-        Long = 'l',
-        Bool = 'b',
-        Float = 'f',
-        String = 's',
-        UAsset = 'u',
+        Int,
+        Ref,
+        Long,
+        Bool,
+        Float,
+        String,
+        UAsset,
+        DateTime,
     }
 }

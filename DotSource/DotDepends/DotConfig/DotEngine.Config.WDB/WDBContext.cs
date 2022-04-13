@@ -21,7 +21,7 @@ namespace DotEngine.Config.WDB
             Add(WDBContextKey.ERROR_NAME, errors);
         }
 
-        public bool HasError() => errors.Count == 0;
+        public bool HasError() => errors.Count > 0;
         public void AppendError(string message) => errors.Add(message);
         public string[] GetErrors() => errors.ToArray();
     }

@@ -3,6 +3,14 @@
     [CustomField(WDBFieldNames.REF_NAME)]
     public class WDBRefField : WDBField
     {
+        public override WDBFieldType FieldType
+        {
+            get
+            {
+                return WDBFieldType.Ref;
+            }
+        }
+
         public WDBRefField(int column, string type) : base(column, type)
         {
         }
@@ -14,7 +22,7 @@
 
         protected override string[] GetTypeDefaultValidations()
         {
-            return new string[] { WDBValidationNames.INT_NAME };
+            return new string[] { WDBCellValidationNames.INT_NAME };
         }
     }
 }

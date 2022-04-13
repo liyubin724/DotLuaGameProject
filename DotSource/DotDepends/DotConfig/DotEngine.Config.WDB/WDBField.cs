@@ -7,7 +7,7 @@ namespace DotEngine.Config.WDB
 {
     public abstract class WDBField : IWDBValidationChecker
     {
-        private const string NAME_REGEX_PATTERN = @"^[A-Za-z][A-Za-z0-9]{2,9}";
+        private const string NAME_REGEX_PATTERN = @"^[A-Za-z][A-Za-z0-9]{1,9}";
 
         public int Column { get; private set; }
 
@@ -18,21 +18,7 @@ namespace DotEngine.Config.WDB
         public string DefaultContent { get; set; }
         public string Validation { get; set; }
 
-        public WDBFieldType FieldType
-        {
-            get
-            {
-                if (Enum.TryParse<WDBFieldType>(Type, true, out var fieldType))
-                {
-                    return fieldType;
-                }
-                return WDBFieldType.None;
-            }
-            set
-            {
-                Type = value.ToString("G").ToLower();
-            }
-        }
+        public abstract WDBFieldType FieldType { get; }
 
         public WDBFieldPlatform FieldPlatform
         {
@@ -50,7 +36,7 @@ namespace DotEngine.Config.WDB
             }
         }
 
-        public WDBField(int column,string type)
+        public WDBField(int column, string type)
         {
             Column = column;
             Type = type;
@@ -67,15 +53,15 @@ namespace DotEngine.Config.WDB
 
             List<string> rules = new List<string>();
             var defaultValidations = GetTypeDefaultValidations();
-            if(defaultValidations!=null && defaultValidations.Length>0)
+            if (defaultValidations != null && defaultValidations.Length > 0)
             {
                 rules.AddRange(defaultValidations);
             }
-            if(!string.IsNullOrEmpty(Validation))
+            if (!string.IsNullOrEmpty(Validation))
             {
                 var customValidations = (from rule in Validation.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
                                          select rule.Trim()).ToArray();
-                if(customValidations!=null && customValidations.Length>0)
+                if (customValidations != null && customValidations.Length > 0)
                 {
                     rules.AddRange(customValidations);
                 }
@@ -119,8 +105,13 @@ namespace DotEngine.Config.WDB
             }
             else if (!Regex.IsMatch(Name, NAME_REGEX_PATTERN))
             {
-                context.AppendError(string.Format(WDBErrorMessages.FIELD_NAME_FORMAT_ERROR, Name,Column));
+                context.AppendError(string.Format(WDBErrorMessages.FIELD_NAME_FORMAT_ERROR, Name, Column));
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{{column = {Column},type = {Type},name = {Name}, desc = {Desc}, platform = {Platform}, default = {DefaultContent},validation = {Validation}}}";
         }
     }
 
@@ -149,7 +140,7 @@ namespace DotEngine.Config.WDB
         {
             if (fieldTypeDic.TryGetValue(fieldType, out var type))
             {
-                return Activator.CreateInstance(type, new object[] { column,fieldType }) as WDBField;
+                return Activator.CreateInstance(type, new object[] { column, fieldType }) as WDBField;
             }
             return null;
         }

@@ -50,8 +50,7 @@ namespace DotTool.Config
         static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args).WithParsed(OnSuccess).WithNotParsed(OnFaile);
-            PrintLog(LogType.Error, "FFFFFFFF");
-            System.Console.ReadLine();
+            System.Console.ReadKey();
         }
 
         static void OnFaile(IEnumerable<Error> errors)
@@ -121,9 +120,20 @@ namespace DotTool.Config
                 WDBContext context = new WDBContext();
                 foreach(var sheet in sheets)
                 {
+                    if(sheet == null)
+                    {
+                        printLogHandler(LogType.Error, "The sheet is null");
+                        continue;
+                    }
                     sheet.Check(context);
 
-                    if(context.HasError())
+                    string filePath = $"{options.OutputFileDir}/{sheet.Name}{options.OutputFileExtension}";
+                    if(File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+
+                    if (context.HasError())
                     {
                         foreach(var error in context.GetErrors())
                         {
@@ -142,7 +152,6 @@ namespace DotTool.Config
                     }
                     if(!string.IsNullOrEmpty(targetContent))
                     {
-                        string filePath = $"{options.OutputFileDir}/{sheet.Name}{options.OutputFileExtension}";
                         File.WriteAllText(filePath, targetContent);
                     }
                     else

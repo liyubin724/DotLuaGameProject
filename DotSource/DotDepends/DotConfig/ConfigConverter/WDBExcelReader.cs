@@ -115,7 +115,19 @@ namespace DotTool.Config
                         sm_Style.RowStartIndex = firstRowNum;
                         sm_Style.RowEndIndex = lastRowNum;
                         sm_Style.ColumnStartIndex = c;
-                        sm_Style.ColumnEndIndex = lastColumnNum;
+
+                        for(int rc = lastColumnNum;rc>=c;rc--)
+                        {
+                            ICell rCell = row.GetCell(rc);
+                            string rCellValue = GetCellValue(rCell);
+                            if (string.IsNullOrEmpty(rCellValue))
+                            {
+                                continue;
+                            }
+                            sm_Style.ColumnEndIndex = rc;
+                            break;
+                        }
+
                         break;
                     }
                 }
@@ -140,7 +152,7 @@ namespace DotTool.Config
                 return null;
             }
 
-            WDBRow[] rows = ReadRowFromSheet(sheet);
+            WDBRow[] rows = ReadRowFromSheet(sheet,fields);
             if (rows == null || rows.Length == 0)
             {
 
@@ -216,7 +228,7 @@ namespace DotTool.Config
             return field;
         }
 
-        private static WDBRow[] ReadRowFromSheet(ISheet sheet)
+        private static WDBRow[] ReadRowFromSheet(ISheet sheet,WDBField[] fields)
         {
             List<WDBRow> rows = new List<WDBRow>();
 
@@ -230,12 +242,6 @@ namespace DotTool.Config
                     {
                         break;
                     }
-
-                    WDBRow row = ReadRowFromSheet(sheet, i);
-                    if (row != null)
-                    {
-                        rows.Add(row);
-                    }
                 }
                 else
                 {
@@ -244,20 +250,28 @@ namespace DotTool.Config
                         isStarted = true;
                     }
                 }
+                if(isStarted)
+                {
+                    WDBRow row = ReadRowFromSheet(sheet, i,fields);
+                    if (row != null)
+                    {
+                        rows.Add(row);
+                    }
+                }
             }
 
             return rows.ToArray();
         }
 
-        private static WDBRow ReadRowFromSheet(ISheet sheet, int dataRow)
+        private static WDBRow ReadRowFromSheet(ISheet sheet, int dataRow,WDBField[] fields)
         {
             sm_LogHandler?.Invoke(LogType.Info, string.Format(LogMessage.INFO_START_READ_LINE, dataRow));
 
             WDBRow row = new WDBRow(dataRow);
             IRow r = sheet.GetRow(dataRow);
-            for (int i = sm_Style.ColumnStartIndex + 1; i <= sm_Style.ColumnEndIndex; i++)
+            for(int i = 0;i<fields.Length;i++)
             {
-                string cellValue = GetCellValue(r.GetCell(i));
+                string cellValue = GetCellValue(r.GetCell(fields[i].Column));
                 row.AddCell(i, cellValue);
             }
 
