@@ -1,4 +1,4 @@
-﻿using DotEngine.Utilities;
+﻿using DotEngine.Core.Utilities;
 using ReflectionMagic;
 using System;
 using UnityEditor;
@@ -70,10 +70,10 @@ namespace DotEditor.Utilities
         {
             if(IsInPrefabStage())
             {
-                Type changeType = AssemblyUtility.GetTypeByFullName("UnityEditor.SceneManagement.StageNavigationManager+Analytics+ChangeType");
+                Type changeType = AssemblyUtility.GetType("UnityEditor.SceneManagement.StageNavigationManager+Analytics+ChangeType");
                 var changeTypeValue = Enum.Parse(changeType, "NavigateBackViaHierarchyHeaderLeftArrow");
 
-                Type type = AssemblyUtility.GetTypeByFullName("UnityEditor.SceneManagement.StageNavigationManager");
+                Type type = AssemblyUtility.GetType("UnityEditor.SceneManagement.StageNavigationManager");
                 dynamic typeDynamic = type.AsDynamicType();
                 var snMgr = typeDynamic.instance;
                 snMgr.NavigateBack(changeTypeValue);

@@ -53,4 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>$(SolutionDir)..\Tools\pdb2mdb\pdb2mdb.exe $(TargetPath)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
