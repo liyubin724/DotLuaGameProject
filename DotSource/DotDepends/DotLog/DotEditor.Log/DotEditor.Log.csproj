@@ -67,9 +67,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>SET ToolDir=$(SolutionDir)..\..\
-SET BuildEventPath=%25ToolDir%25\Tools\build-events\post-build-events.bat
-CALL %25BuildEventPath%25 $(SolutionDir) $(ProjectDir) $(ConfigurationName) $(ProjectName) $(SolutionDir)\DotLogDemo\Assets\Dot.Log\ %25ToolDir%25
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

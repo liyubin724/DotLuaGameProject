@@ -70,6 +70,8 @@
     <Compile Include="Pool\ObjectPool.cs" />
     <Compile Include="Pool\ObjectPool_Generic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\BinarySerializer.cs" />
+    <Compile Include="Serialization\ISerialization.cs" />
     <Compile Include="Singleton.cs" />
     <Compile Include="Timer\HierarchicalTimerWheel.cs" />
     <Compile Include="Timer\TimerExceptions.cs" />
