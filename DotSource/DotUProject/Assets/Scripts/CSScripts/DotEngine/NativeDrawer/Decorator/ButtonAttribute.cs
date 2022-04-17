@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotEngine.GUIExt.NativeDrawer
+namespace DotEngine.NativeDrawer.Decorator
 {
     public enum ButtonSize
     {

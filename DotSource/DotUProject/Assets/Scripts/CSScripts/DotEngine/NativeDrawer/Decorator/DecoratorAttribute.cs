@@ -1,4 +1,4 @@
-﻿namespace DotEngine.GUIExt.NativeDrawer
+﻿namespace DotEngine.NativeDrawer.Decorator
 {
     public abstract class DecoratorAttribute : DrawerAttribute
     {

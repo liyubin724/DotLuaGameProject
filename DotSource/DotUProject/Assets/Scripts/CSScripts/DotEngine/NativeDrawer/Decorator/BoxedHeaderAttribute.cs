@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotEngine.GUIExt.NativeDrawer
+namespace DotEngine.NativeDrawer.Decorator
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
     public class BoxedHeaderAttribute : DecoratorAttribute

@@ -1,17 +1,7 @@
 ﻿using System;
 
-namespace DotEngine.GUIExt.NativeDrawer
+namespace DotEngine.NativeDrawer
 {
-    public enum CompareSymbol
-    {
-        Eq,
-        Neq,
-        Lt,
-        Gt,
-        Lte,
-        Gte,
-    }
-
     public abstract class DrawerAttribute : Attribute
     {
     }

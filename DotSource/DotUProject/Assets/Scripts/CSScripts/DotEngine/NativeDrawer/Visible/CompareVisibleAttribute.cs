@@ -1,20 +1,23 @@
-﻿using System;
-using SystemObject = System.Object;
-
-namespace DotEngine.GUIExt.NativeDrawer
+﻿namespace DotEngine.NativeDrawer.Visible
 {
-    [AttributeUsage(AttributeTargets.Field,AllowMultiple =false,Inherited =false)]
-    public class CompareVisibleAttribute : VisibleAttribute
+    public class CompareVisibleAttribute : VisibleAtrribute
     {
         public CompareSymbol Symbol { get; private set; }
-        public SystemObject Value { get; private set; }
+
+        public object Value { get; private set; }
+
         public string MemberName { get; private set; }
 
-        public CompareVisibleAttribute(string memberName, SystemObject value, CompareSymbol symbol = CompareSymbol.Eq)
+        public CompareVisibleAttribute(object value, CompareSymbol symbol = CompareSymbol.Eq) 
         {
-            MemberName = memberName;
-            Value = value;
             Symbol = symbol;
+            Value = value;
+        }
+
+        public CompareVisibleAttribute(string memberName, CompareSymbol symbol = CompareSymbol.Eq)
+        {
+            Symbol = symbol;
+            MemberName = memberName;
         }
     }
 }

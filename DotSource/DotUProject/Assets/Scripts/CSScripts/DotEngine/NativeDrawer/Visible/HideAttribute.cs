@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace DotEngine.GUIExt.NativeDrawer
+namespace DotEngine.NativeDrawer.Visible
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-    public class HideAttribute : VisibleAttribute
+    [AttributeUsage(AttributeTargets.Field,AllowMultiple =false,Inherited =true)]
+    public class HideAttribute : VisibleAtrribute
     {
     }
 }

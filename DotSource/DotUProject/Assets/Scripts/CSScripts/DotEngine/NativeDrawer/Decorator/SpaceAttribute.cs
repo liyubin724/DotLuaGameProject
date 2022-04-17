@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotEngine.GUIExt.NativeDrawer
+namespace DotEngine.NativeDrawer.Decorator
 {
     public enum SpaceDirection
     {
@@ -14,7 +14,7 @@ namespace DotEngine.GUIExt.NativeDrawer
         public SpaceDirection Direction { get; private set; }
         public float Size { get; private set; }
 
-        public SpaceAttribute(float size = 10.0f, SpaceDirection direction = SpaceDirection.Horizontal)
+        public SpaceAttribute(float size = 10.0f,SpaceDirection direction = SpaceDirection.Horizontal)
         {
             Direction = direction;
             Size = size;

@@ -1,4 +1,4 @@
-﻿namespace DotEngine.GUIExt.NativeDrawer
+﻿namespace DotEngine.NativeDrawer.Verification
 {
     public class CompareVerificationAttribute : VerificationAttribute
     {
@@ -8,7 +8,7 @@
 
         public string MemberName { get; private set; }
 
-        public CompareVerificationAttribute(string invalidMsg, object value, CompareSymbol symbol = CompareSymbol.Eq) : base(invalidMsg)
+        public CompareVerificationAttribute(string invalidMsg,object value, CompareSymbol symbol = CompareSymbol.Eq) : base(invalidMsg)
         {
             Symbol = symbol;
             Value = value;

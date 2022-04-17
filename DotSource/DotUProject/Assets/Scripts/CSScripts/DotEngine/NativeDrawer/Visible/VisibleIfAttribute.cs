@@ -1,9 +1,6 @@
-﻿using System;
-
-namespace DotEngine.GUIExt.NativeDrawer
+﻿namespace DotEngine.NativeDrawer.Visible
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-    public class VisibleIfAttribute : VisibleAttribute
+    public class VisibleIfAttribute : VisibleAtrribute
     {
         public string MemberName { get; private set; }
 

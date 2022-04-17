@@ -1,0 +1,9 @@
+{
+  "OutputDir": "D:/output",
+  "CleanupBeforeBuild": true,
+  "IsForceRebuild": false,
+  "PathFormat": 0,
+  "Target": 19,
+  "Compression": 1,
+  "BundleOptions": 16
+}

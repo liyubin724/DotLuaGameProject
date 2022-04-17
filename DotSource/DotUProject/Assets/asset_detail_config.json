@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Details": [
+    {
+      "Address": "ui_root",
+      "Path": "Assets/Resources/ui_root.prefab",
+      "Bundle": "assets/resources/ui_root_prefab",
+      "IsScene": false,
+      "Labels": []
+    }
+  ]
+}

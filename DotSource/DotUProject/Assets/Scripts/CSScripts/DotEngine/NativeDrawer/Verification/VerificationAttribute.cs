@@ -1,4 +1,4 @@
-﻿namespace DotEngine.GUIExt.NativeDrawer
+﻿namespace DotEngine.NativeDrawer.Verification
 {
     public abstract class VerificationAttribute : DrawerAttribute
     {
