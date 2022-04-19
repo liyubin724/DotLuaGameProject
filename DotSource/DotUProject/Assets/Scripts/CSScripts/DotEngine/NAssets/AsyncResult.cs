@@ -7,7 +7,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.NAssets
 {
-    public class AssetResult
+    public class AsyncResult
     {
         public int Id { get; private set; }
 

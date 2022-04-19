@@ -2,17 +2,17 @@
 
 namespace DotEngine.NAssets
 {
-    public class AssetRequest
+    internal class AsyncRequest
     {
         public int Id { get; set; }
         public string[] Addresses { get; set; }
         public string[] Paths { get; set; }
         public bool IsInstance { get; set; }
-        public AssetProgress OnProgress;
-        public AssetComplete OnComplete;
-        public AssetBatchProgress OnBatchProgress;
-        public AssetBatchComplete OnBatchComplete;
-        public AssetPriority Priority { get; set; }
+        public AssetAsyncProgress OnProgress;
+        public AssetAsyncComplete OnComplete;
+        public AssetBatchAsyncProgress OnBatchProgress;
+        public AssetBatchAsyncComplete OnBatchComplete;
+        public AssetAsyncPriority Priority { get; set; }
         public SystemObject Userdata { get; set; }
     }
 }
