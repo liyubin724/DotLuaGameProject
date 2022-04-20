@@ -7,7 +7,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace DotEngine.NAssets
 {
-    public class AsyncResult
+    public class AssetAsyncResult
     {
         public int Id { get; private set; }
 
@@ -16,7 +16,6 @@ namespace DotEngine.NAssets
         public UnityObject[] UObjects { get; private set; }
 
         private bool[] m_Flags = null;
-
         public bool IsDone
         {
             get
@@ -36,14 +35,14 @@ namespace DotEngine.NAssets
             }
         }
 
-        public void DoInitilize(int id,string[] addresses)
+        public AssetAsyncResult(int id, string[] addresses)
         {
             Id = id;
             Addresses = new string[addresses.Length];
             Progresses = new float[addresses.Length];
             UObjects = new UnityObject[addresses.Length];
             m_Flags = new bool[addresses.Length];
-            for(int i =0;i<addresses.Length;i++)
+            for (int i = 0; i < addresses.Length; i++)
             {
                 Addresses[i] = addresses[i];
                 Progresses[i] = 0.0f;
@@ -52,12 +51,15 @@ namespace DotEngine.NAssets
             }
         }
 
-        public void DoDestroy()
+        internal void SetProgress(int index,float progress)
         {
-            Id = 0;
-            Addresses = null;
-            Progresses = null;
-            UObjects = null;
+            Progresses[index] = progress;
+        }
+
+        internal void SetUObject(int index,UnityObject uObject)
+        {
+            UObjects[index] = uObject;
+            m_Flags[index] = true;
         }
     }
 }

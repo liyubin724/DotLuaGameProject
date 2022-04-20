@@ -11,6 +11,33 @@ namespace DotEngine.NAssets
         private Dictionary<string, AssetData> m_PathToDataDic = null;
         private Dictionary<string, List<string>> m_LabelToAddressListDic = null;
 
+        public AssetData GetDataByAddress(string address)
+        {
+            if (m_AddressToDataDic.TryGetValue(address, out var data))
+            {
+                return data;
+            }
+            return null;
+        }
+
+        public string GetPathByAddress(string address)
+        {
+            if(m_AddressToDataDic.TryGetValue(address,out var data))
+            {
+                return data.Path;
+            }
+            return null;
+        }
+
+        public string GetBundleByAddress(string address)
+        {
+            if (m_AddressToDataDic.TryGetValue(address, out var data))
+            {
+                return data.Bundle;
+            }
+            return null;
+        }
+
         public void DoDeserialize()
         {
             m_AddressToDataDic = new Dictionary<string, AssetData>();
